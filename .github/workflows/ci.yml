@@ -160,6 +160,168 @@ jobs:
           retention-days: 5
           if-no-files-found: error
 
+  build-release-win:
+    name: Build release (Windows)
+    needs: test-linux
+    runs-on: windows-2019
+    if: startsWith( github.ref, 'refs/tags/')
+
+    env:
+      GOPATH: ${{ github.workspace }}
+      GO111MODULE: off
+
+    defaults:
+      run:
+        working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
+        shell: msys2 {0}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.14'
+      - name: Setup msys2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          path-type: inherit
+          install: autoconf automake make sed zlib-devel
+      - name: Update msys2
+        run: pacman --noconfirm --needed -Syuu
+        continue-on-error: true
+      - name: Update msys2 again
+        run: pacman --noconfirm --needed -Syuu
+        continue-on-error: true
+      - name: Install dependencies
+        run: >
+          pacman --noconfirm --needed -Sy
+          mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-gdb
+          mingw-w64-x86_64-gtk3
+          mingw-w64-x86_64-libiconv
+          mingw-w64-x86_64-make
+          mingw-w64-x86_64-nsis
+          mingw-w64-x86_64-pango
+          mingw-w64-x86_64-pkg-config
+      - name: Create release dependencies
+        run: |
+          mkdir -p release/share
+          mkdir -p release/lib
+          export LDIR=/mingw64/bin
+
+          cp $LDIR/libatk-1.0-0.dll release
+          cp $LDIR/libbz2-1.dll release
+          cp $LDIR/libbrotlicommon.dll release
+          cp $LDIR/libbrotlidec.dll release
+          cp $LDIR/libcairo-2.dll release
+          cp $LDIR/libcairo-gobject-2.dll release
+          cp $LDIR/libdatrie-1.dll release
+          cp $LDIR/libepoxy-0.dll release
+          cp $LDIR/libexpat-1.dll release
+          cp $LDIR/libffi-*.dll release
+          cp $LDIR/libfontconfig-1.dll release
+          cp $LDIR/libfreetype-6.dll release
+          cp $LDIR/libfribidi-0.dll release
+          cp $LDIR/libgcc_s_seh-1.dll release
+          cp $LDIR/libgdk_pixbuf-2.0-0.dll release
+          cp $LDIR/libgdk-3-0.dll release
+          cp $LDIR/libgio-2.0-0.dll release
+          cp $LDIR/libglib-2.0-0.dll release
+          cp $LDIR/libgmodule-2.0-0.dll release
+          cp $LDIR/libgobject-2.0-0.dll release
+          cp $LDIR/libgraphite2.dll release
+          cp $LDIR/libgtk-3-0.dll release
+          cp $LDIR/libharfbuzz-0.dll release
+          cp $LDIR/libiconv-2.dll release
+          cp $LDIR/libintl-8.dll release
+          cp $LDIR/libjpeg-8.dll release
+          cp $LDIR/libpango-1.0-0.dll release
+          cp $LDIR/libpangocairo-1.0-0.dll release
+          cp $LDIR/libpangoft2-1.0-0.dll release
+          cp $LDIR/libpangowin32-1.0-0.dll release
+          cp $LDIR/libpcre-1.dll release
+          cp $LDIR/libpixman-1-0.dll release
+          cp $LDIR/libpng16-16.dll release
+          cp $LDIR/librsvg-2-2.dll release
+          cp $LDIR/libstdc++-6.dll release
+          cp $LDIR/libthai-0.dll release
+          cp $LDIR/libtiff-5.dll release
+          cp $LDIR/libtiffxx-5.dll release
+          cp $LDIR/libturbojpeg.dll release
+          cp $LDIR/libwinpthread-1.dll release
+          cp $LDIR/zlib1.dll release
+
+          cp -r /mingw64/lib/gdk-pixbuf-2.0 release/lib
+          cp -r /mingw64/share/icons release/share
+          cp -r /mingw64/share/glib-2.0 release/share
+      - name: Install Windows deps
+        run: make win-ci-deps
+      - name: Build release
+        run: make -C ci/ release-gui-win
+      - name: Create zip file
+        run: cd release && 7z a -tzip coyim.zip *
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist-win
+          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}/release/coyim.zip
+          retention-days: 5
+          if-no-files-found: error
+
+  build-windows-installer:
+    runs-on: windows-2019
+    needs: build-release-win
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup msys2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          path-type: inherit
+      - name: Update msys2
+        run: pacman --noconfirm --needed -Syuu
+        continue-on-error: true
+      - name: Update msys2 again
+        run: pacman --noconfirm --needed -Syuu
+        continue-on-error: true
+      - name: Install dependencies
+        run: |
+          pacman --noconfirm --needed -Sy mingw-w64-x86_64-nsis
+      - uses: actions/download-artifact@v2
+        name: dist-win
+      - name: Create windows installer input files
+        run: |
+          mkdir -p win_installer
+          cd win_installer
+          7z x -y -r -tzip ../dist-win/coyim.zip
+      - name: Get the current tag
+        id: current_tag
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+      - name: Create installer
+        uses: joncloud/makensis-action@v3.4
+        with:
+          script-file: ci/windows_installer.nsi
+          arguments: "/V3 /NOCD /DVERSION=${{ steps.current_tag.outputs.VERSION }}"
+      - name: Archive installer artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: installer-win
+          path: "CoyIM installer.exe"
+          retention-days: 5
+          if-no-files-found: error
+
   create-release-from-tag:
     name: Create release from tag
     runs-on: ubuntu-20.04
@@ -214,6 +376,35 @@ jobs:
           asset_path: dist-linux/checksum
           asset_name: coyim_linux_amd64_checksum
           asset_content_type: text/plain
+
+  upload-release-win:
+    name: Upload release (Windows)
+    needs: [build-release-win, build-windows-installer, create-release-from-tag]
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/download-artifact@v2
+        name: dist-win
+      - uses: actions/download-artifact@v2
+        name: installer-win
+      - name: Upload Windows zip
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release-from-tag.outputs.upload-url }}
+          asset_path: dist-win/coyim.zip
+          asset_name: "CoyIM (Windows).zip"
+          asset_content_type: application/zip
+      - name: Upload Windows Installer
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release-from-tag.outputs.upload-url }}
+          asset_path: "installer-win/CoyIM installer.exe"
+          asset_name: "CoyIM Installer.exe"
+          asset_content_type: application/octet-stream
 
   upload-release-osx:
     name: Upload release (OS X)
@@ -286,4 +477,3 @@ jobs:
         run: curl -C - -T dist-osx/coyim.dmg -u "${{secrets.BINTRAY_API_USER}}:${{secrets.BINTRAY_API_KEY}}" "https://api.bintray.com/content/coyim/coyim-bin/coyim-bin/${{ steps.current_tag.outputs.VERSION }}/${{ steps.current_tag.outputs.VERSION }}/mac-bundle/coyim.dmg?override=1&publish=1"
       - name: Upload OS X checksum
         run: curl -C - -T dist-osx/checksum -u "${{secrets.BINTRAY_API_USER}}:${{secrets.BINTRAY_API_KEY}}" "https://api.bintray.com/content/coyim/coyim-bin/coyim-bin/${{ steps.current_tag.outputs.VERSION }}/${{ steps.current_tag.outputs.VERSION }}/darwin/amd64/checksum?override=1&publish=1"
-        

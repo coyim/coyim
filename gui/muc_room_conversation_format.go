@@ -164,3 +164,7 @@ func (c *roomViewConversation) displayAlternativeRoomInfo(reason string, alterna
 func formatTimestamp(t time.Time) string {
 	return t.Format("15:04:05")
 }
+
+func formatTimeWithLayout(t time.Time, layout string) string {
+	return t.Format(layout)
+}

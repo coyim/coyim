@@ -141,8 +141,11 @@ func (u *gtkUI) newNotificationBar(text string, messageType gtki.MessageType) *n
 
 func (u *gtkUI) newNotificationBarWithTime(text string, messageType gtki.MessageType) *notificationBar {
 	nb := u.newNotificationBar(text, messageType)
+	now := time.Now()
+
 	mucStyles.setNotificationTimeLabelStyle(nb.timeLabel)
-	nb.setTickerTime(time.Now())
+	nb.iconTime.SetTooltipText(formatTimeWithLayout(now, "January 2, 2006 at 15:04:05"))
+	nb.setTickerTime(now)
 
 	return nb
 }

@@ -132,9 +132,8 @@ func (r *roomViewRosterInfo) validateOccupantPrivileges() {
 		r.changeAffiliationButton.SetVisible(false)
 	}
 
-	canChangeRole := (r.selfOccupant.Affiliation.IsAdmin() || r.selfOccupant.Affiliation.IsOwner()) &&
-		!r.occupant.Affiliation.IsAdmin() && !r.occupant.Affiliation.IsOwner()
-	r.changeRoleButton.SetVisible(canChangeRole)
+	showChangeRoleButton := r.selfOccupant.CanChangeRole(r.occupant, r.rosterView.roomView.room.ModeratedRoom)
+	r.changeRoleButton.SetVisible(showChangeRoleButton)
 }
 
 // refresh MUST be called from the UI thread

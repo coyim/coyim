@@ -20,32 +20,17 @@
                 <property name="halign">end</property>
                 <child>
                   <object class="GtkButton">
-                    <property name="label" translatable="yes">Cancel</property>
+                    <property name="label" translatable="yes">Ok</property>
                     <property name="visible">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_underline">True</property>
                     <property name="margin-right">12</property>
-                    <signal name="clicked" handler="on_cancel" swapped="no"/>
+                    <signal name="clicked" handler="on_ok" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">0</property>
-                    <property name="non_homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton">
-                    <property name="label" translatable="yes">Retry</property>
-                    <property name="visible">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_underline">True</property>
-                    <signal name="clicked" handler="on_retry" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
                     <property name="non_homogeneous">True</property>
                   </packing>
                 </child>

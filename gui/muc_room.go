@@ -371,10 +371,7 @@ func (v *roomView) onOccupantAffiliationUpdateError(o *muc.Occupant, affiliation
 		v.notifications.info(i18n.Local("The position change process failed"))
 		dr := createDialogErrorComponent(
 			i18n.Local("Couldn't change the position"),
-			i18n.Localf("The position of %s couldn't be changed", o.Nickname), "",
-			func() {
-				v.tryUpdateOccupantAffiliation(o, affiliation, reason)
-			})
+			i18n.Localf("The position of %s couldn't be changed", o.Nickname), "")
 		dr.updateMessageForDestroyError(err)
 		dr.show()
 	})
@@ -409,9 +406,6 @@ func (v *roomView) onOccupantRoleUpdateError(o *muc.Occupant, role data.Role, re
 			i18n.Local("The role update process failed"),
 			i18n.Localf("The role of %s couldn't be updated", o.Nickname),
 			i18n.Local("An error occurred while updating the occupant role."),
-			func() {
-				v.tryUpdateOccupantRole(o, role, reason)
-			},
 		)
 		dr.show()
 	})

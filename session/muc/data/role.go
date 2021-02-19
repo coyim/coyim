@@ -40,8 +40,8 @@ type Role interface {
 	IsVisitor() bool
 	// IsNone returns true if the user hasn't a role
 	IsNone() bool
-	// Equals returns a boolean value indicating whether the given role is the same as the current one
-	Equals(Role) bool
+	// IsDifferentFrom returns a boolean value indicating whether the given role is not the same as the current one
+	IsDifferentFrom(Role) bool
 }
 
 // NoneRole is a representation of MUC's "none" role
@@ -152,17 +152,25 @@ func (*ParticipantRole) IsNone() bool { return false }
 // IsNone implements Role interface
 func (*ModeratorRole) IsNone() bool { return false }
 
-// Equals implements Role interface
-func (*NoneRole) Equals(r Role) bool { return r.IsNone() }
+// IsDifferentFrom implements Role interface
+func (*NoneRole) IsDifferentFrom(r Role) bool {
+	return !r.IsNone()
+}
 
-// Equals implements Role interface
-func (*VisitorRole) Equals(r Role) bool { return r.IsVisitor() }
+// IsDifferentFrom implements Role interface
+func (*VisitorRole) IsDifferentFrom(r Role) bool {
+	return !r.IsVisitor()
+}
 
-// Equals implements Role interface
-func (*ParticipantRole) Equals(r Role) bool { return r.IsParticipant() }
+// IsDifferentFrom implements Role interface
+func (*ParticipantRole) IsDifferentFrom(r Role) bool {
+	return !r.IsParticipant()
+}
 
-// Equals implements Role interface
-func (*ModeratorRole) Equals(r Role) bool { return r.IsModerator() }
+// IsDifferentFrom implements Role interface
+func (*ModeratorRole) IsDifferentFrom(r Role) bool {
+	return !r.IsModerator()
+}
 
 // RoleFromString returns the role object that matches the string given, or an error if the string given doesn't match a known role
 func RoleFromString(s string) (Role, error) {

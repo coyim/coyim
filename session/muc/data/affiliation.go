@@ -40,8 +40,8 @@ type Affiliation interface {
 	Name() string
 	// IsLowerThan returns true if the caller affiliation has a lower hierarchy than the affiliation passed as argument
 	IsLowerThan(Affiliation) bool
-	// Equals returns a boolean value indicating whether the given affiliation is equal to the current one
-	Equals(Affiliation) bool
+	// IsDifferentFrom returns a boolean value indicating whether the given affiliation is not equal to the current one
+	IsDifferentFrom(Affiliation) bool
 }
 
 // NoneAffiliation is a representation of MUC's "none" affiliation
@@ -204,22 +204,30 @@ func (*OwnerAffiliation) IsLowerThan(a Affiliation) bool {
 	return false
 }
 
-// Equals implements Affiliation interface
-func (*NoneAffiliation) Equals(a Affiliation) bool { return a.IsNone() }
-
-// Equals implements Affiliation interface
-func (*OutcastAffiliation) Equals(a Affiliation) bool { return a.IsBanned() }
-
-// Equals implements Affiliation interface
-func (*MemberAffiliation) Equals(a Affiliation) bool {
-	return a.IsMember() && !a.IsAdmin() && !a.IsOwner()
+// IsDifferentFrom implements Affiliation interface
+func (*NoneAffiliation) IsDifferentFrom(a Affiliation) bool {
+	return !a.IsNone()
 }
 
-// Equals implements Affiliation interface
-func (*AdminAffiliation) Equals(a Affiliation) bool { return a.IsAdmin() }
+// IsDifferentFrom implements Affiliation interface
+func (*OutcastAffiliation) IsDifferentFrom(a Affiliation) bool {
+	return !a.IsBanned()
+}
 
-// Equals implements Affiliation interface
-func (*OwnerAffiliation) Equals(a Affiliation) bool { return a.IsOwner() }
+// IsDifferentFrom implements Affiliation interface
+func (*MemberAffiliation) IsDifferentFrom(a Affiliation) bool {
+	return !a.IsMember()
+}
+
+// IsDifferentFrom implements Affiliation interface
+func (*AdminAffiliation) IsDifferentFrom(a Affiliation) bool {
+	return !a.IsAdmin()
+}
+
+// IsDifferentFrom implements Affiliation interface
+func (*OwnerAffiliation) IsDifferentFrom(a Affiliation) bool {
+	return !a.IsOwner()
+}
 
 // AffiliationFromString returns an Affiliation from the given string, or an error if the string doesn't match a known affiliation type
 func AffiliationFromString(s string) (Affiliation, error) {

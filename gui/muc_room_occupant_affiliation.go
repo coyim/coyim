@@ -68,7 +68,8 @@ func (av *occupantAffiliationUpdateView) initBuilder() {
 
 // onRadioButtonToggled MUST be called from the UI thread
 func (av *occupantAffiliationUpdateView) onRadioButtonToggled() {
-	av.applyButton.SetSensitive(!av.occupant.Affiliation.Equals(av.getAffiliationBasedOnRadioSelected()))
+	s := av.occupant.Affiliation.IsDifferentFrom(av.getAffiliationBasedOnRadioSelected())
+	av.applyButton.SetSensitive(s)
 }
 
 func (av *occupantAffiliationUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event) {

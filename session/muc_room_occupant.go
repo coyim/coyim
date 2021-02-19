@@ -130,13 +130,13 @@ func (m *mucManager) handleOccupantAffiliationRoleUpdate(occupantUpdateInfo *occ
 	newRole := occupantUpdateInfo.newRole()
 
 	switch {
-	case !prevAffiliation.Equals(newAffiliation) && !prevRole.Equals(newRole):
+	case prevAffiliation.IsDifferentFrom(newAffiliation) && prevRole.IsDifferentFrom(newRole):
 		m.handleOccupantAffiliationRoleUpdated(occupantUpdateInfo)
 
-	case !prevAffiliation.Equals(newAffiliation):
+	case prevAffiliation.IsDifferentFrom(newAffiliation):
 		m.handleOccupantAffiliationUpdated(occupantUpdateInfo)
 
-	case !prevRole.Equals(newRole):
+	case prevRole.IsDifferentFrom(newRole):
 		m.handleOccupantRoleUpdated(occupantUpdateInfo)
 	}
 }

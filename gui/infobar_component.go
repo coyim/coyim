@@ -14,6 +14,7 @@ type infoBarComponent struct {
 
 	infoBar    gtki.InfoBar `gtk-widget:"infobar"`
 	timeBox    gtki.Box     `gtk-widget:"time-box"`
+	iconTime   gtki.Image   `gtk-widget:"icon-time"`
 	timeLabel  gtki.Label   `gtk-widget:"time-label"`
 	titleLabel gtki.Label   `gtk-widget:"title-label"`
 }

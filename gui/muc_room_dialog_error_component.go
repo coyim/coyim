@@ -63,6 +63,8 @@ func (d *dialogErrorComponent) updateMessageBasedOnError(err error) {
 	switch err {
 	case session.ErrRemoveOwnerAffiliation:
 		d.errorMessage.SetText(i18n.Local("You can't change your own position because you are the only owner for this room. Every room must have at least one owner."))
+	case session.ErrNotAllowedKickOccupant:
+		d.errorMessage.SetText(i18n.Local("You can't expel an occupant with a position higher or equals than yours."))
 	default:
 		d.errorMessage.SetText(i18n.Local("An unknown error occurred during the process. Please try again later."))
 	}

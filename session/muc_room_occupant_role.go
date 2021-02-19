@@ -1,10 +1,17 @@
 package session
 
 import (
+	"errors"
+
 	"github.com/coyim/coyim/session/muc/data"
 	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
+)
+
+var (
+	// ErrNotAllowedKickOccupant represents error occurred when an occupant tries kick out to other with a higher affiliation
+	ErrNotAllowedKickOccupant = errors.New("can't kick out an occupant with higher affiliation than the self-occupant")
 )
 
 func (s *session) UpdateOccupantRole(roomID jid.Bare, occupantNickname string, role data.Role, reason string) (<-chan bool, <-chan error) {

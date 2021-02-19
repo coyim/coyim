@@ -1,7 +1,6 @@
 # CoyIM - a safe and secure chat client
 
-[![Build Status Github](https://github.com/coyim/coyim/workflows/CoyIM%20CI/badge.svg)](https://github.com/coyim/coyim/actions?query=workflow%3A%22CoyIM+CI%22)
-[![Build Status Windows](https://ci.appveyor.com/api/projects/status/8jnqn0ocms99hr5v?svg=true)](https://ci.appveyor.com/project/olabini/coyim)
+[![Build Status](https://github.com/coyim/coyim/workflows/CoyIM%20CI/badge.svg)](https://github.com/coyim/coyim/actions?query=workflow%3A%22CoyIM+CI%22)
 [![Coverage Status](https://coveralls.io/repos/coyim/coyim/badge.svg?branch=main&service=github)](https://coveralls.io/github/coyim/coyim?branch=main)
 
 <p align="center">

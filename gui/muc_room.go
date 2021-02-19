@@ -370,10 +370,10 @@ func (v *roomView) onOccupantAffiliationUpdateSuccess(o *muc.Occupant, previousA
 func (v *roomView) onOccupantAffiliationUpdateError(o *muc.Occupant, affiliation data.Affiliation, reason string, err error) {
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
-		v.notifications.info(i18n.Local("The affiliation update process failed"))
+		v.notifications.info(i18n.Local("The position change process failed"))
 		dr := createDialogErrorComponent(
-			i18n.Local("Couldn't update the position"),
-			i18n.Localf("The position of %s couldn't be updated", o.Nickname), "",
+			i18n.Local("Couldn't change the position"),
+			i18n.Localf("The position of %s couldn't be changed", o.Nickname), "",
 			func() {
 				v.tryUpdateOccupantAffiliation(o, affiliation, reason)
 			})

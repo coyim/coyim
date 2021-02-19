@@ -44,7 +44,7 @@ Section "CoyIM"
   File win_installer\*.dll
   File /r win_installer\lib
   File /r win_installer\share
-  File /oname=CoyIM.ico ci/win_icon_256x256.ico
+  File /oname=CoyIM.ico ci\win_icon_256x256.ico
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${NAME}"   "DisplayName" "${NAME}"

@@ -56,6 +56,8 @@ func (t *roomViewToolbar) initSubscribers(v *roomView) {
 			t.selfOccupantRemovedEvent()
 		case occupantSelfJoinedEvent:
 			t.selfOccupantJoinedEvent(v.isSelfOccupantAnOwner())
+		case selfOccupantKickedEvent:
+			t.selfOccupantKickedEvent()
 		}
 	})
 }
@@ -71,6 +73,10 @@ func (t *roomViewToolbar) roomDestroyedEvent() {
 }
 
 func (t *roomViewToolbar) selfOccupantRemovedEvent() {
+	doInUIThread(t.disable)
+}
+
+func (t *roomViewToolbar) selfOccupantKickedEvent() {
 	doInUIThread(t.disable)
 }
 

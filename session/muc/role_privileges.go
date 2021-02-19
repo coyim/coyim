@@ -158,3 +158,24 @@ func (o *Occupant) CanRevokeVoice(oc *Occupant) bool {
 
 	return false
 }
+
+// CanChangeRole returns a boolean indicating if the occupant can change the role of the
+// given occupant based on the occupant's role and affiliation
+func (o *Occupant) CanChangeRole(oc *Occupant, moderatedRoom bool) bool {
+	if oc.Affiliation.IsOwner() || oc.Affiliation.IsAdmin() {
+		return false
+	}
+
+	if oc.Affiliation.IsMember() {
+		if moderatedRoom {
+			return false
+		}
+		return oc.Affiliation.IsLowerThan(o.Affiliation)
+	}
+
+	if oc.Affiliation.IsLowerThan(o.Affiliation) {
+		return true
+	}
+
+	return false
+}

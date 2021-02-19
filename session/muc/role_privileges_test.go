@@ -304,3 +304,67 @@ func (*MucOccupantRolePrivilegesSuite) Test_OccupantCanRevokeVoice_OfOwnerOccupa
 	o.ChangeRoleToModerator()
 	c.Assert(o.CanRevokeVoice(oc), Equals, false)
 }
+
+func (*MucOccupantRolePrivilegesSuite) Test_OccupantCanChangeRole(c *C) {
+	o := &Occupant{}
+	o.ChangeRoleToNone()
+	o.ChangeAffiliationToAdmin()
+
+	oc := &Occupant{}
+	oc.ChangeAffiliationToNone()
+
+	c.Assert(o.CanChangeRole(oc, false), Equals, true)
+
+	oc.ChangeAffiliationToOwner()
+	c.Assert(o.CanChangeRole(oc, false), Equals, false)
+
+	oc.ChangeAffiliationToAdmin()
+	c.Assert(o.CanChangeRole(oc, false), Equals, false)
+
+	oc.ChangeAffiliationToMember()
+	c.Assert(o.CanChangeRole(oc, true), Equals, false)
+
+	oc.ChangeAffiliationToMember()
+	c.Assert(o.CanChangeRole(oc, false), Equals, true)
+}
+
+func (*MucOccupantRolePrivilegesSuite) Test_OccupantCanChangeRole_OfLowerAffiliation(c *C) {
+	o := &Occupant{}
+	o.ChangeAffiliationToOwner()
+
+	oc := &Occupant{}
+	oc.ChangeRoleToModerator()
+	oc.ChangeAffiliationToMember()
+
+	c.Assert(o.CanChangeRole(oc, false), Equals, true)
+
+	o.ChangeAffiliationToAdmin()
+	c.Assert(o.CanChangeRole(oc, false), Equals, true)
+
+	o.ChangeAffiliationToAdmin()
+	oc.ChangeAffiliationToAdmin()
+	c.Assert(o.CanChangeRole(oc, false), Equals, false)
+
+	oc.ChangeAffiliationToNone()
+	c.Assert(o.CanChangeRole(oc, false), Equals, true)
+}
+
+func (*MucOccupantRolePrivilegesSuite) Test_OccupantCanChangeRole_OfHigherAffiliation(c *C) {
+	o := &Occupant{}
+	o.ChangeAffiliationToNone()
+
+	oc := &Occupant{}
+	oc.ChangeAffiliationToMember()
+
+	c.Assert(o.CanChangeRole(oc, false), Equals, false)
+
+	o.ChangeAffiliationToAdmin()
+	oc.ChangeAffiliationToAdmin()
+	c.Assert(o.CanChangeRole(oc, false), Equals, false)
+
+	oc.ChangeAffiliationToOwner()
+	c.Assert(o.CanChangeRole(oc, false), Equals, false)
+
+	oc.ChangeAffiliationToMember()
+	c.Assert(o.CanChangeRole(oc, false), Equals, true)
+}

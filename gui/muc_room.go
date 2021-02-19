@@ -429,6 +429,7 @@ func (v *roomView) onKickOccupantSuccess(occupantNickname string) {
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
 		v.notifications.info(i18n.Localf("The occupant %s was getting out", occupantNickname))
+		v.publishOccupantKickedSuccessEvent()
 	})
 }
 
@@ -549,6 +550,11 @@ func (v *roomView) publishOccupantRoleUpdatedEvent(roleUpdate data.RoleUpdate) {
 // publishSelfOccupantRoleUpdatedEvent MUST NOT be called from the UI thread
 func (v *roomView) publishSelfOccupantRoleUpdatedEvent(roleUpdate data.RoleUpdate) {
 	v.publishEvent(selfOccupantRoleUpdatedEvent{roleUpdate})
+}
+
+// publishOccupantAffiliationUpdatedEvent MUST NOT be called from the UI thread
+func (v *roomView) publishOccupantKickedSuccessEvent() {
+	v.publishEvent(occupantKickedSuccessEvent{})
 }
 
 // mainWindow MUST be called from the UI thread

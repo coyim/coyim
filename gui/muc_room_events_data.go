@@ -137,6 +137,8 @@ type selfOccupantKickedEvent struct {
 	actor    data.Actor
 }
 
+type occupantKickedSuccessEvent struct{}
+
 func (selfOccupantRemovedEvent) markAsRoomViewEvent()                {}
 func (occupantLeftEvent) markAsRoomViewEvent()                       {}
 func (occupantJoinedEvent) markAsRoomViewEvent()                     {}
@@ -170,3 +172,4 @@ func (occupantRoleUpdatedEvent) markAsRoomViewEvent()                {}
 func (selfOccupantRoleUpdatedEvent) markAsRoomViewEvent()            {}
 func (occupantKickedEvent) markAsRoomViewEvent()                     {}
 func (selfOccupantKickedEvent) markAsRoomViewEvent()                 {}
+func (occupantKickedSuccessEvent) markAsRoomViewEvent()              {}

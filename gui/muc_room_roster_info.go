@@ -99,6 +99,8 @@ func (r *roomViewRosterInfo) initSubscribers() {
 		switch ev.(type) {
 		case occupantUpdatedEvent:
 			doInUIThread(r.refresh)
+		case occupantKickedSuccessEvent:
+			r.hide()
 		}
 	})
 }

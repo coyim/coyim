@@ -11,58 +11,6 @@ type MUCRoomConversationDisplayAffiliationsSuite struct{}
 
 var _ = Suite(&MUCRoomConversationDisplayAffiliationsSuite{})
 
-func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisplay_displayForAffiliationUpdate(c *C) {
-	initMUCRoomConversationDisplayI18n()
-
-	none := newAffiliationFromString(data.AffiliationNone)
-	outcast := newAffiliationFromString(data.AffiliationOutcast)
-	member := newAffiliationFromString(data.AffiliationMember)
-
-	d := newAffiliationUpdateDisplayData(data.AffiliationUpdate{
-		Nickname: "nick",
-		New:      member,
-		Previous: none,
-		Actor: &data.Actor{
-			Nickname: "alex",
-		},
-	})
-
-	c.Assert(displayAffiliationUpdateMessage(d, ""), Equals,
-		"alex changed the position of nick to member.")
-
-	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{
-		Nickname: "robin",
-		Reason:   "I'm batman",
-		New:      none,
-		Previous: member,
-		Actor: &data.Actor{
-			Nickname:    "batman",
-			Affiliation: member,
-		},
-	}), Equals, "The member batman removed the member position from robin. The reason given was: I'm batman.")
-
-	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{
-		Nickname: "bob",
-		Reason:   "he was rude",
-		New:      outcast,
-		Previous: member,
-		Actor: &data.Actor{
-			Nickname:    "alice",
-			Affiliation: member,
-		},
-	}), Equals, "The member alice banned bob from the room. The reason given was: he was rude.")
-
-	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{
-		Nickname: "nick",
-		New:      none,
-		Previous: outcast,
-		Actor: &data.Actor{
-			Nickname:    "jonathan",
-			Affiliation: outcast,
-		},
-	}), Equals, "The outcast jonathan removed the outcast position from nick.")
-}
-
 func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisplay_displayForAffiliationRemoved(c *C) {
 	initMUCRoomConversationDisplayI18n()
 

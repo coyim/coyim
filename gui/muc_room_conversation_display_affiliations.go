@@ -42,11 +42,6 @@ func displayAffiliationUpdateMessage(d affiliationUpdateDisplayer, beforeReasonM
 	return message
 }
 
-func getDisplayForOccupantAffiliationUpdate(affiliationUpdate data.AffiliationUpdate) string {
-	d := newAffiliationUpdateDisplayData(affiliationUpdate)
-	return displayAffiliationUpdateMessage(d, "")
-}
-
 type affiliationUpdateDisplayData struct {
 	nickname            string
 	newAffiliation      data.Affiliation

@@ -144,7 +144,7 @@ func (c *roomViewConversation) occupantAffiliationRoleUpdatedEvent(affiliationRo
 
 func (c *roomViewConversation) occupantAffiliationEvent(affiliationUpdate data.AffiliationUpdate) {
 	doInUIThread(func() {
-		c.displayNewInfoMessage(getDisplayForOccupantAffiliationUpdate(affiliationUpdate))
+		c.displayNewInfoMessage(getMUCNotificationMessageFrom(affiliationUpdate))
 	})
 }
 

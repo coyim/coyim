@@ -238,6 +238,7 @@ func (m *mucManager) handleOccupantKick(roomID jid.Bare, op *muc.OccupantPresenc
 	occupantKicked := m.newOccupantPresenceUpdateData(r, op)
 	if occupantKicked.isOwnPresence() {
 		m.selfOccupantKicked(roomID, occupantKicked)
+		m.deleteRoomFromManager(roomID)
 		return
 	}
 	m.occupantKicked(roomID, occupantKicked)

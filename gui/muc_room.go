@@ -140,6 +140,8 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 		v.selfOccupantAffiliationRoleUpdatedEvent(t.affiliationRoleUpdate)
 	case selfOccupantRoleUpdatedEvent:
 		v.selfOccupantRoleUpdatedEvent(t.roleUpdate)
+	case selfOccupantKickedEvent:
+		v.selfOccupantKickedEvent()
 	}
 }
 
@@ -182,6 +184,11 @@ func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(affiliationRoleUpdate
 func (v *roomView) selfOccupantRoleUpdatedEvent(roleUpdate data.RoleUpdate) {
 	m := getDisplayForSelfOccupantRoleUpdate(roleUpdate)
 	v.notifications.info(m)
+}
+
+// selfOccupantKickedEvent MUST be called from the UI thread
+func (v *roomView) selfOccupantKickedEvent() {
+	v.account.removeRoomView(v.roomID())
 }
 
 func (v *roomView) showRoomWarnings(info data.RoomDiscoInfo) {

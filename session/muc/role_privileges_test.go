@@ -307,25 +307,22 @@ func (*MucOccupantRolePrivilegesSuite) Test_OccupantCanRevokeVoice_OfOwnerOccupa
 
 func (*MucOccupantRolePrivilegesSuite) Test_OccupantCanChangeRole(c *C) {
 	o := &Occupant{}
-	o.ChangeRoleToNone()
+	o.ChangeRoleToModerator()
 	o.ChangeAffiliationToAdmin()
 
 	oc := &Occupant{}
 	oc.ChangeAffiliationToNone()
 
-	c.Assert(o.CanChangeRole(oc, false), Equals, true)
+	c.Assert(o.CanChangeRole(oc), Equals, true)
 
 	oc.ChangeAffiliationToOwner()
-	c.Assert(o.CanChangeRole(oc, false), Equals, false)
+	c.Assert(o.CanChangeRole(oc), Equals, false)
 
 	oc.ChangeAffiliationToAdmin()
-	c.Assert(o.CanChangeRole(oc, false), Equals, false)
+	c.Assert(o.CanChangeRole(oc), Equals, false)
 
 	oc.ChangeAffiliationToMember()
-	c.Assert(o.CanChangeRole(oc, true), Equals, false)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(o.CanChangeRole(oc, false), Equals, true)
+	c.Assert(o.CanChangeRole(oc), Equals, true)
 }
 
 func (*MucOccupantRolePrivilegesSuite) Test_OccupantCanChangeRole_OfLowerAffiliation(c *C) {
@@ -336,17 +333,17 @@ func (*MucOccupantRolePrivilegesSuite) Test_OccupantCanChangeRole_OfLowerAffilia
 	oc.ChangeRoleToModerator()
 	oc.ChangeAffiliationToMember()
 
-	c.Assert(o.CanChangeRole(oc, false), Equals, true)
+	c.Assert(o.CanChangeRole(oc), Equals, true)
 
 	o.ChangeAffiliationToAdmin()
-	c.Assert(o.CanChangeRole(oc, false), Equals, true)
+	c.Assert(o.CanChangeRole(oc), Equals, true)
 
 	o.ChangeAffiliationToAdmin()
 	oc.ChangeAffiliationToAdmin()
-	c.Assert(o.CanChangeRole(oc, false), Equals, false)
+	c.Assert(o.CanChangeRole(oc), Equals, false)
 
 	oc.ChangeAffiliationToNone()
-	c.Assert(o.CanChangeRole(oc, false), Equals, true)
+	c.Assert(o.CanChangeRole(oc), Equals, true)
 }
 
 func (*MucOccupantRolePrivilegesSuite) Test_OccupantCanChangeRole_OfHigherAffiliation(c *C) {
@@ -356,15 +353,15 @@ func (*MucOccupantRolePrivilegesSuite) Test_OccupantCanChangeRole_OfHigherAffili
 	oc := &Occupant{}
 	oc.ChangeAffiliationToMember()
 
-	c.Assert(o.CanChangeRole(oc, false), Equals, false)
+	c.Assert(o.CanChangeRole(oc), Equals, false)
 
 	o.ChangeAffiliationToAdmin()
 	oc.ChangeAffiliationToAdmin()
-	c.Assert(o.CanChangeRole(oc, false), Equals, false)
+	c.Assert(o.CanChangeRole(oc), Equals, false)
 
 	oc.ChangeAffiliationToOwner()
-	c.Assert(o.CanChangeRole(oc, false), Equals, false)
+	c.Assert(o.CanChangeRole(oc), Equals, false)
 
 	oc.ChangeAffiliationToMember()
-	c.Assert(o.CanChangeRole(oc, false), Equals, true)
+	c.Assert(o.CanChangeRole(oc), Equals, true)
 }

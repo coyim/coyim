@@ -9,6 +9,8 @@ func getMUCNotificationMessageFrom(d interface{}) string {
 	switch t := d.(type) {
 	case data.AffiliationUpdate:
 		return getAffiliationUpdateMessage(t)
+	case data.RoleUpdate:
+		return getRoleUpdateMessage(t)
 	default:
 		return ""
 	}
@@ -153,7 +155,37 @@ func getAffiliationChangedMessage(affiliationUpdate data.AffiliationUpdate) stri
 }
 
 func getRoleUpdateMessage(roleUpdate data.RoleUpdate) string {
-	return ""
+	if roleUpdate.Actor == nil {
+		if roleUpdate.Reason == "" {
+			return i18n.Localf("The role of %s was changed from %s to %s.",
+				roleUpdate.Nickname,
+				displayNameForRole(roleUpdate.Previous),
+				displayNameForRole(roleUpdate.New))
+		}
+
+		return i18n.Localf("The role of %s was changed from %s to %s because: %s.",
+			roleUpdate.Nickname,
+			displayNameForRole(roleUpdate.Previous),
+			displayNameForRole(roleUpdate.New),
+			roleUpdate.Reason)
+	}
+
+	if roleUpdate.Reason == "" {
+		return i18n.Localf("The %s %s changed the role of %s from %s to %s.",
+			displayNameForAffiliation(roleUpdate.Actor.Affiliation),
+			roleUpdate.Actor.Nickname,
+			roleUpdate.Nickname,
+			displayNameForRole(roleUpdate.Previous),
+			displayNameForRole(roleUpdate.New))
+	}
+
+	return i18n.Localf("The %s %s changed the role of %s from %s to %s because: %s.",
+		displayNameForAffiliation(roleUpdate.Actor.Affiliation),
+		roleUpdate.Actor.Nickname,
+		roleUpdate.Nickname,
+		displayNameForRole(roleUpdate.Previous),
+		displayNameForRole(roleUpdate.New),
+		roleUpdate.Reason)
 }
 
 func getAffiliationRoleUpate(affiliationRoleUpdate data.AffiliationRoleUpdate) string {

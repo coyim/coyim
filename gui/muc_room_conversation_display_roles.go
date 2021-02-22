@@ -102,6 +102,8 @@ func displayNameForRole(role data.Role) string {
 		return i18n.Local("moderator")
 	case role.IsParticipant():
 		return i18n.Local("participant")
+	case role.IsVisitor():
+		return i18n.Local("visitor")
 	default:
 		return ""
 	}

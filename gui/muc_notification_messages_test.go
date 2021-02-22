@@ -129,6 +129,82 @@ func (*MUCNotificationMessagesSuite) Test_getMUCNotificationMessageFrom_affiliat
 	c.Assert(getMUCNotificationMessageFrom(au), Equals, "The position of chavo was changed from owner to member.")
 }
 
+func (*MUCNotificationMessagesSuite) Test_getRoleUpdateMessage_roleModerator(c *C) {
+	ru := data.RoleUpdate{
+		Nickname: "wanda",
+		New:      newTestRoleFromString(data.RoleModerator),
+		Previous: newTestRoleFromString(data.RoleParticipant),
+	}
+
+	c.Assert(getRoleUpdateMessage(ru), Equals, "The role of wanda was changed from participant to moderator.")
+
+	ru.Reason = "vision wanted it"
+	c.Assert(getRoleUpdateMessage(ru), Equals, "The role of wanda was changed from participant to moderator because: vision wanted it.")
+
+	ru.Reason = ""
+	ru.Actor = newTestActor("vision", newTestAffiliationFromString(data.AffiliationAdmin), newTestRoleFromString(data.RoleModerator))
+	c.Assert(getRoleUpdateMessage(ru), Equals, "The administrator vision changed the role of wanda from participant to moderator.")
+
+	ru.Reason = "vision wanted it"
+	c.Assert(getRoleUpdateMessage(ru), Equals, "The administrator vision changed the role of wanda from participant to moderator because: vision wanted it.")
+}
+
+func (*MUCNotificationMessagesSuite) Test_getRoleUpdateMessage_roleParticipant(c *C) {
+	ru := data.RoleUpdate{
+		Nickname: "sancho",
+		New:      newTestRoleFromString(data.RoleParticipant),
+		Previous: newTestRoleFromString(data.RoleModerator),
+	}
+
+	c.Assert(getRoleUpdateMessage(ru), Equals, "The role of sancho was changed from moderator to participant.")
+
+	ru.Reason = "los molinos son gigantes"
+	c.Assert(getRoleUpdateMessage(ru), Equals, "The role of sancho was changed from moderator to participant because: los molinos son gigantes.")
+
+	ru.Reason = ""
+	ru.Actor = newTestActor("panza", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
+	c.Assert(getRoleUpdateMessage(ru), Equals, "The owner panza changed the role of sancho from moderator to participant.")
+
+	ru.Reason = "los molinos son gigantes"
+	c.Assert(getRoleUpdateMessage(ru), Equals, "The owner panza changed the role of sancho from moderator to participant because: los molinos son gigantes.")
+}
+
+func (*MUCNotificationMessagesSuite) Test_getRoleUpdateMessage_roleVisitor(c *C) {
+	ru := data.RoleUpdate{
+		Nickname: "chapulin",
+		New:      newTestRoleFromString(data.RoleVisitor),
+		Previous: newTestRoleFromString(data.RoleModerator),
+	}
+
+	c.Assert(getRoleUpdateMessage(ru), Equals, "The role of chapulin was changed from moderator to visitor.")
+
+	ru.Reason = "no contaban con mi astucia"
+	c.Assert(getRoleUpdateMessage(ru), Equals, "The role of chapulin was changed from moderator to visitor because: no contaban con mi astucia.")
+
+	ru.Reason = ""
+	ru.Actor = newTestActor("chespirito", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
+	c.Assert(getRoleUpdateMessage(ru), Equals, "The owner chespirito changed the role of chapulin from moderator to visitor.")
+
+	ru.Reason = "no contaban con mi astucia"
+	c.Assert(getRoleUpdateMessage(ru), Equals, "The owner chespirito changed the role of chapulin from moderator to visitor because: no contaban con mi astucia.")
+}
+
+func (*MUCNotificationMessagesSuite) Test_getMUCNotificationMessageFrom_roleUpdate(c *C) {
+	ru := data.RoleUpdate{
+		Nickname: "pablo",
+		New:      newTestRoleFromString(data.RoleModerator),
+		Previous: newTestRoleFromString(data.RoleVisitor),
+	}
+
+	c.Assert(getMUCNotificationMessageFrom(ru), Equals, "The role of pablo was changed from visitor to moderator.")
+
+	ru.Previous = newTestRoleFromString(data.RoleParticipant)
+	c.Assert(getMUCNotificationMessageFrom(ru), Equals, "The role of pablo was changed from participant to moderator.")
+
+	ru.New = newTestRoleFromString(data.RoleVisitor)
+	c.Assert(getMUCNotificationMessageFrom(ru), Equals, "The role of pablo was changed from participant to visitor.")
+}
+
 func newTestActor(nickname string, affiliation data.Affiliation, role data.Role) *data.Actor {
 	return &data.Actor{
 		Nickname:    nickname,

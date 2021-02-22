@@ -220,7 +220,7 @@ func displayNameForAffiliation(affiliation data.Affiliation) string {
 func displayNameForAffiliationWithPreposition(affiliation data.Affiliation) string {
 	switch {
 	case affiliation.IsAdmin():
-		return i18n.Local("an admininistrator")
+		return i18n.Local("an administrator")
 	case affiliation.IsOwner():
 		return i18n.Local("an owner")
 	case affiliation.IsMember():

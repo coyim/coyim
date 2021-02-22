@@ -123,18 +123,10 @@ func (r *roomViewRosterInfo) showOccupantInfo(occupant *muc.Occupant) {
 }
 
 func (r *roomViewRosterInfo) validateOccupantPrivileges() {
-	// Privileges associated with affiliations
-	// See: https://xmpp.org/extensions/xep-0045.html#affil-priv
-	switch r.selfOccupant.Affiliation.(type) {
-	case *data.OwnerAffiliation:
-		r.changeAffiliationButton.SetVisible(true)
-	case *data.AdminAffiliation:
-		r.changeAffiliationButton.SetVisible(r.occupant.Affiliation.IsLowerThan(r.selfOccupant.Affiliation))
-	default:
-		r.changeAffiliationButton.SetVisible(false)
-	}
+	showChangeAffiliationButton := r.selfOccupant.CanChangeAffiliation(r.occupant)
+	r.changeAffiliationButton.SetVisible(showChangeAffiliationButton)
 
-	showChangeRoleButton := r.selfOccupant.CanChangeRole(r.occupant, r.rosterView.roomView.room.ModeratedRoom)
+	showChangeRoleButton := r.selfOccupant.CanChangeRole(r.occupant)
 	r.changeRoleButton.SetVisible(showChangeRoleButton)
 }
 

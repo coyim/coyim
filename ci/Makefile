@@ -72,6 +72,8 @@ release-gui-linux: build-linux
 
 release-gui-win: ../bin/coyim.exe
 	mkdir -p ../release
+	ls -alF ../
+	ls -alF ../build
 	cp ../build/windows/toast.exe ../release/toast.exe
 	cp ../bin/coyim.exe ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH).exe
 	openssl dgst -sha256 ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH).exe >> ../release/checksum

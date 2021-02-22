@@ -185,6 +185,13 @@ func (s *mucStylesProvider) setFormSectionLabelStyle(l gtki.Label) {
 	})
 }
 
+func (s *mucStylesProvider) setRoomDialogErrorComponentHeaderStyle(l gtki.Label) {
+	s.setLabelStyle(l, style{
+		"font-size":   "large",
+		"font-weight": "bold",
+	})
+}
+
 func (s *mucStylesProvider) setWidgetStyles(w gtki.Widget, st styles) {
 	updateWithStyles(w, providerWithStyles(st))
 }

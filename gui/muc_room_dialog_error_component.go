@@ -13,8 +13,8 @@ type dialogErrorComponent struct {
 	message string
 
 	dialog       gtki.Dialog `gtk-widget:"room-error-dialog"`
-	errorTitle   gtki.Label  `gtk-widget:"room-error-dialog-title"`
-	errorMessage gtki.Label  `gtk-widget:"room-error-dialog-message"`
+	headerLabel  gtki.Label  `gtk-widget:"room-error-dialog-header"`
+	messageLabel gtki.Label  `gtk-widget:"room-error-dialog-message"`
 }
 
 func createDialogErrorComponent(title, header, message string) *dialogErrorComponent {
@@ -31,11 +31,11 @@ func createDialogErrorComponent(title, header, message string) *dialogErrorCompo
 }
 
 func (d *dialogErrorComponent) initDefaults() {
-	mucStyles.setLabelBoldStyle(d.errorTitle)
+	mucStyles.setRoomDialogErrorComponentHeaderStyle(d.headerLabel)
 
 	d.dialog.SetTitle(d.title)
-	d.errorTitle.SetText(d.header)
-	d.errorMessage.SetText(d.message)
+	d.headerLabel.SetText(d.header)
+	d.messageLabel.SetText(d.message)
 }
 
 func (d *dialogErrorComponent) initBuilder() {
@@ -62,10 +62,10 @@ func (d *dialogErrorComponent) show() {
 func (d *dialogErrorComponent) updateMessageBasedOnError(err error) {
 	switch err {
 	case session.ErrRemoveOwnerAffiliation:
-		d.errorMessage.SetText(i18n.Local("You can't change your own position because you are the only owner for this room. Every room must have at least one owner."))
+		d.messageLabel.SetText(i18n.Local("You can't change your own position because you are the only owner for this room. Every room must have at least one owner."))
 	case session.ErrNotAllowedKickOccupant:
-		d.errorMessage.SetText(i18n.Local("You can't expel an occupant with a position higher or equals than yours."))
+		d.messageLabel.SetText(i18n.Local("You can't expel an occupant with a position higher or equals than yours."))
 	default:
-		d.errorMessage.SetText(i18n.Local("An unknown error occurred during the process. Please try again later."))
+		d.messageLabel.SetText(i18n.Local("An unknown error occurred during the process. Please try again later."))
 	}
 }

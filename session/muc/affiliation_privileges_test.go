@@ -223,3 +223,104 @@ func (*MucOccupantAffiliationPrivilegesSuite) Test_OccupantCanDestroyRoom(c *C) 
 	o.ChangeAffiliationToOwner()
 	c.Assert(o.CanDestroyRoom(), Equals, true)
 }
+
+func (*MucOccupantAffiliationPrivilegesSuite) Test_OccupantCanChangeAffiliation(c *C) {
+	o := &Occupant{}
+	o.ChangeAffiliationToNone()
+
+	oc := &Occupant{}
+	oc.ChangeAffiliationToNone()
+
+	c.Assert(o.CanChangeAffiliation(oc), Equals, false)
+
+	o.ChangeAffiliationToOwner()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, true)
+
+	o.ChangeAffiliationToAdmin()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, true)
+
+	o.ChangeAffiliationToMember()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, false)
+
+	o.ChangeAffiliationToNone()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, false)
+
+	o.ChangeAffiliationToOutcast()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, false)
+}
+
+func (*MucOccupantAffiliationPrivilegesSuite) Test_OccupantCanChangeAffiliation_OfNoAffiliation(c *C) {
+	o := &Occupant{}
+
+	oc := &Occupant{}
+	oc.ChangeAffiliationToNone()
+
+	o.ChangeAffiliationToNone()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, false)
+
+	o.ChangeAffiliationToMember()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, false)
+
+	o.ChangeAffiliationToAdmin()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, true)
+
+	o.ChangeAffiliationToOwner()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, true)
+}
+
+func (*MucOccupantAffiliationPrivilegesSuite) Test_OccupantCanChangeAffiliation_OfAMember(c *C) {
+	o := &Occupant{}
+
+	oc := &Occupant{}
+	oc.ChangeAffiliationToMember()
+
+	o.ChangeAffiliationToNone()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, false)
+
+	o.ChangeAffiliationToMember()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, false)
+
+	o.ChangeAffiliationToAdmin()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, true)
+
+	o.ChangeAffiliationToOwner()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, true)
+}
+
+func (*MucOccupantAffiliationPrivilegesSuite) Test_OccupantCanChangeAffiliation_OfAnAdmin(c *C) {
+	o := &Occupant{}
+
+	oc := &Occupant{}
+	oc.ChangeAffiliationToAdmin()
+
+	o.ChangeAffiliationToNone()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, false)
+
+	o.ChangeAffiliationToMember()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, false)
+
+	o.ChangeAffiliationToAdmin()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, false)
+
+	o.ChangeAffiliationToOwner()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, true)
+}
+
+func (*MucOccupantAffiliationPrivilegesSuite) Test_OccupantCanChangeAffiliation_OfAnOwner(c *C) {
+	o := &Occupant{}
+
+	oc := &Occupant{}
+	oc.ChangeAffiliationToOwner()
+
+	o.ChangeAffiliationToNone()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, false)
+
+	o.ChangeAffiliationToMember()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, false)
+
+	o.ChangeAffiliationToAdmin()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, false)
+
+	o.ChangeAffiliationToOwner()
+	c.Assert(o.CanChangeAffiliation(oc), Equals, true)
+}

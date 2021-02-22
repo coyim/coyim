@@ -215,8 +215,10 @@ func (*OutcastAffiliation) IsDifferentFrom(a Affiliation) bool {
 }
 
 // IsDifferentFrom implements Affiliation interface
+// An administrator and an owner are members too
+// For that reason, it validates if the affiliation given is an admin or owner, it should be different to member
 func (*MemberAffiliation) IsDifferentFrom(a Affiliation) bool {
-	return !a.IsMember()
+	return !a.IsMember() || a.IsAdmin() || a.IsOwner()
 }
 
 // IsDifferentFrom implements Affiliation interface

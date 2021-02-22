@@ -150,7 +150,7 @@ func (c *roomViewConversation) occupantAffiliationEvent(affiliationUpdate data.A
 
 func (c *roomViewConversation) occupantRoleEvent(roleUpdate data.RoleUpdate) {
 	doInUIThread(func() {
-		c.displayNewInfoMessage(getDisplayForOccupantRoleUpdate(roleUpdate))
+		c.displayNewInfoMessage(getMUCNotificationMessageFrom(roleUpdate))
 	})
 }
 

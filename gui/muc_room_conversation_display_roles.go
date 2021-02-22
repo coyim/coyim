@@ -10,11 +10,6 @@ type roleUpdateDisplayer interface {
 	updateReason() string
 }
 
-func getDisplayForOccupantRoleUpdate(roleUpdate data.RoleUpdate) string {
-	d := newRoleUpdateDisplayData(roleUpdate)
-	return displayRoleUpdateMessage(d)
-}
-
 func getDisplayForSelfOccupantRoleUpdate(roleUpdate data.RoleUpdate) string {
 	d := newSelfRoleUpdateDisplayData(roleUpdate)
 	return displayRoleUpdateMessage(d)

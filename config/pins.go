@@ -46,7 +46,7 @@ func (v *CertificatePin) UnmarshalJSON(data []byte) error {
 
 	v.Fingerprint, err = hex.DecodeString(vz.FingerprintHex)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	v.Subject = vz.Subject

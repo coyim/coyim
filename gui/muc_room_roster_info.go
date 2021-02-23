@@ -128,6 +128,9 @@ func (r *roomViewRosterInfo) validateOccupantPrivileges() {
 
 	showChangeRoleButton := r.selfOccupant.CanChangeRole(r.occupant)
 	r.changeRoleButton.SetVisible(showChangeRoleButton)
+
+	canKick := r.selfOccupant.CanKickOccupant(r.occupant)
+	r.kickOccupantButton.SetVisible(canKick)
 }
 
 // refresh MUST be called from the UI thread

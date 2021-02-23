@@ -285,14 +285,26 @@ func getAffiliationRoleUpdateForAffiliationAdded(affiliationRoleUpdate data.Affi
 func getAffiliationRoleUpdateForUnexpectedSituation(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
 	if affiliationRoleUpdate.Actor == nil {
 		if affiliationRoleUpdate.Reason == "" {
-			return i18n.Localf("The affiliation and the role of %s were changed.",
+			return i18n.Localf("The position and the role of %s were changed.",
 				affiliationRoleUpdate.Nickname)
 		}
 
-		return i18n.Localf("The affiliation and the role of %s were changed because: %s.",
+		return i18n.Localf("The position and the role of %s were changed because: %s.",
 			affiliationRoleUpdate.Nickname,
 			affiliationRoleUpdate.Reason)
 	}
 
-	return i18n.Local("The owner louis changed the affiliation of superman. As a result, the role was changed too.")
+	if affiliationRoleUpdate.Reason == "" {
+		return i18n.Localf("The %s %s changed the position of %s. As a result, their role was also changed.",
+			displayNameForAffiliation(affiliationRoleUpdate.Actor.Affiliation),
+			affiliationRoleUpdate.Actor.Nickname,
+			affiliationRoleUpdate.Nickname)
+	}
+
+	return i18n.Localf("The %s %s changed the position of %s. "+
+		"As a result, their role was also changed. The reason given was: %s.",
+		displayNameForAffiliation(affiliationRoleUpdate.Actor.Affiliation),
+		affiliationRoleUpdate.Actor.Nickname,
+		affiliationRoleUpdate.Nickname,
+		affiliationRoleUpdate.Reason)
 }

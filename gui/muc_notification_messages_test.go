@@ -214,14 +214,17 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpate_noCommonCases(
 		PreviousRole:        newTestRoleFromString(data.RoleModerator),
 	}
 
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The affiliation and the role of superman were changed.")
+	c.Assert(getAffiliationRoleUpate(aru), Equals, "The position and the role of superman were changed.")
 
 	aru.Reason = "foo"
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The affiliation and the role of superman were changed because: foo.")
+	c.Assert(getAffiliationRoleUpate(aru), Equals, "The position and the role of superman were changed because: foo.")
 
 	aru.Reason = ""
 	aru.Actor = newTestActor("louis", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The owner louis changed the affiliation of superman. As a result, the role was changed too.")
+	c.Assert(getAffiliationRoleUpate(aru), Equals, "The owner louis changed the position of superman. As a result, their role was also changed.")
+
+	aru.Reason = "foo"
+	c.Assert(getAffiliationRoleUpate(aru), Equals, "The owner louis changed the position of superman. As a result, their role was also changed. The reason given was: foo.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpate_affiliationRemoved(c *C) {

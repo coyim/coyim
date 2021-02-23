@@ -205,14 +205,14 @@ func getAffiliationRoleUpate(affiliationRoleUpdate data.AffiliationRoleUpdate) s
 func getAffiliationRoleUpateForAffiliationRemoved(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
 	if affiliationRoleUpdate.Actor == nil {
 		if affiliationRoleUpdate.Reason == "" {
-			return i18n.Localf("%s is not %s anymore. As a result, the role was changed from %s to %s.",
+			return i18n.Localf("%s is not %s anymore. As a result, their role was changed from %s to %s.",
 				affiliationRoleUpdate.Nickname,
 				displayNameForAffiliationWithPreposition(affiliationRoleUpdate.PreviousAffiliation),
 				displayNameForRole(affiliationRoleUpdate.PreviousRole),
 				displayNameForRole(affiliationRoleUpdate.NewRole))
 		}
 
-		return i18n.Localf("%s is not %s anymore. As a result, the role was changed from %s to %s. The reason given was: %s.",
+		return i18n.Localf("%s is not %s anymore. As a result, their role was changed from %s to %s. The reason given was: %s.",
 			affiliationRoleUpdate.Nickname,
 			displayNameForAffiliationWithPreposition(affiliationRoleUpdate.PreviousAffiliation),
 			displayNameForRole(affiliationRoleUpdate.PreviousRole),
@@ -221,7 +221,7 @@ func getAffiliationRoleUpateForAffiliationRemoved(affiliationRoleUpdate data.Aff
 	}
 
 	if affiliationRoleUpdate.Reason == "" {
-		return i18n.Localf("The %s %s changed the position of %s; %s is not an %s anymore. As a result, the role was changed from %s to %s.",
+		return i18n.Localf("The %s %s changed the position of %s; %s is not an %s anymore. As a result, their role was changed from %s to %s.",
 			displayNameForAffiliation(affiliationRoleUpdate.Actor.Affiliation),
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname,
@@ -232,7 +232,7 @@ func getAffiliationRoleUpateForAffiliationRemoved(affiliationRoleUpdate data.Aff
 	}
 
 	return i18n.Localf("The %s %s changed the position of %s; %s is not an %s anymore. "+
-		"As a result, the role was changed from %s to %s. The reason given was: %s.",
+		"As a result, their role was changed from %s to %s. The reason given was: %s.",
 		displayNameForAffiliation(affiliationRoleUpdate.Actor.Affiliation),
 		affiliationRoleUpdate.Actor.Nickname,
 		affiliationRoleUpdate.Nickname,
@@ -246,7 +246,7 @@ func getAffiliationRoleUpateForAffiliationRemoved(affiliationRoleUpdate data.Aff
 func getAffiliationRoleUpdateForAffiliationAdded(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
 	if affiliationRoleUpdate.Actor == nil {
 		if affiliationRoleUpdate.Reason == "" {
-			return i18n.Localf("The position of %s was changed to %s. As a result, the role was changed from %s to %s.",
+			return i18n.Localf("The position of %s was changed to %s. As a result, their role was changed from %s to %s.",
 				affiliationRoleUpdate.Nickname,
 				displayNameForAffiliation(affiliationRoleUpdate.NewAffiliation),
 				displayNameForRole(affiliationRoleUpdate.PreviousRole),
@@ -254,7 +254,7 @@ func getAffiliationRoleUpdateForAffiliationAdded(affiliationRoleUpdate data.Affi
 		}
 
 		return i18n.Localf("The position of %s was changed to %s. "+
-			"As a result, the role was changed from %s to %s. The reason given was: %s.",
+			"As a result, their role was changed from %s to %s. The reason given was: %s.",
 			affiliationRoleUpdate.Nickname,
 			displayNameForAffiliation(affiliationRoleUpdate.NewAffiliation),
 			displayNameForRole(affiliationRoleUpdate.PreviousRole),
@@ -264,7 +264,7 @@ func getAffiliationRoleUpdateForAffiliationAdded(affiliationRoleUpdate data.Affi
 
 	if affiliationRoleUpdate.Reason == "" {
 		return i18n.Localf("The %s %s changed the position of %s to %s. "+
-			"As a result, the role was changed from visitor to moderator.",
+			"As a result, their role was changed from visitor to moderator.",
 			displayNameForAffiliation(affiliationRoleUpdate.Actor.Affiliation),
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname,
@@ -272,7 +272,7 @@ func getAffiliationRoleUpdateForAffiliationAdded(affiliationRoleUpdate data.Affi
 	}
 
 	return i18n.Localf("The %s %s changed the position of %s to %s. "+
-		"As a result, the role was changed from %s to %s. The reason given was: %s.",
+		"As a result, their role was changed from %s to %s. The reason given was: %s.",
 		displayNameForAffiliation(affiliationRoleUpdate.Actor.Affiliation),
 		affiliationRoleUpdate.Actor.Nickname,
 		affiliationRoleUpdate.Nickname,

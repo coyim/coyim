@@ -236,17 +236,17 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpate_affiliationRem
 		PreviousRole:        newTestRoleFromString(data.RoleModerator),
 	}
 
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "007 is not an administrator anymore. As a result, the role was changed from moderator to visitor.")
+	c.Assert(getAffiliationRoleUpate(aru), Equals, "007 is not an administrator anymore. As a result, their role was changed from moderator to visitor.")
 
 	aru.Reason = "he is an assassin"
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "007 is not an administrator anymore. As a result, the role was changed from moderator to visitor. The reason given was: he is an assassin.")
+	c.Assert(getAffiliationRoleUpate(aru), Equals, "007 is not an administrator anymore. As a result, their role was changed from moderator to visitor. The reason given was: he is an assassin.")
 
 	aru.Reason = ""
 	aru.Actor = newTestActor("the enemy", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The owner the enemy changed the position of 007; 007 is not an administrator anymore. As a result, the role was changed from moderator to visitor.")
+	c.Assert(getAffiliationRoleUpate(aru), Equals, "The owner the enemy changed the position of 007; 007 is not an administrator anymore. As a result, their role was changed from moderator to visitor.")
 
 	aru.Reason = "bla"
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The owner the enemy changed the position of 007; 007 is not an administrator anymore. As a result, the role was changed from moderator to visitor. The reason given was: bla.")
+	c.Assert(getAffiliationRoleUpate(aru), Equals, "The owner the enemy changed the position of 007; 007 is not an administrator anymore. As a result, their role was changed from moderator to visitor. The reason given was: bla.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpate_affiliationAdded(c *C) {
@@ -258,17 +258,17 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpate_affiliationAdd
 		PreviousRole:        newTestRoleFromString(data.RoleVisitor),
 	}
 
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The position of alice was changed to administrator. As a result, the role was changed from visitor to moderator.")
+	c.Assert(getAffiliationRoleUpate(aru), Equals, "The position of alice was changed to administrator. As a result, their role was changed from visitor to moderator.")
 
 	aru.Reason = "she is lost in the world of wonders"
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The position of alice was changed to administrator. As a result, the role was changed from visitor to moderator. The reason given was: she is lost in the world of wonders.")
+	c.Assert(getAffiliationRoleUpate(aru), Equals, "The position of alice was changed to administrator. As a result, their role was changed from visitor to moderator. The reason given was: she is lost in the world of wonders.")
 
 	aru.Reason = ""
 	aru.Actor = newTestActor("rabbit", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The owner rabbit changed the position of alice to administrator. As a result, the role was changed from visitor to moderator.")
+	c.Assert(getAffiliationRoleUpate(aru), Equals, "The owner rabbit changed the position of alice to administrator. As a result, their role was changed from visitor to moderator.")
 
 	aru.Reason = "she is lost in the world of wonders"
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The owner rabbit changed the position of alice to administrator. As a result, the role was changed from visitor to moderator. The reason given was: she is lost in the world of wonders.")
+	c.Assert(getAffiliationRoleUpate(aru), Equals, "The owner rabbit changed the position of alice to administrator. As a result, their role was changed from visitor to moderator. The reason given was: she is lost in the world of wonders.")
 }
 
 func newTestActor(nickname string, affiliation data.Affiliation, role data.Role) *data.Actor {

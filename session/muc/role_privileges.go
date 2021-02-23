@@ -166,7 +166,7 @@ func (o *Occupant) CanChangeRole(oc *Occupant) bool {
 		return false
 	}
 
-	return oc.Affiliation.IsLowerThan(o.Affiliation)
+	return (o.Affiliation.IsAdmin() || o.Affiliation.IsOwner()) && oc.Affiliation.IsLowerThan(o.Affiliation)
 }
 
 // CanKickOccupant returns a boolean indicating if the occupant can kick another occupant

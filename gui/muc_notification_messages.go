@@ -39,6 +39,7 @@ func getAffiliationRemovedMessage(affiliationUpdate data.AffiliationUpdate) stri
 				affiliationUpdate.Nickname,
 				displayNameForAffiliationWithPreposition(affiliationUpdate.Previous))
 		}
+
 		return i18n.Localf("%s is not %s anymore because: %s.",
 			affiliationUpdate.Nickname,
 			displayNameForAffiliationWithPreposition(affiliationUpdate.Previous),
@@ -189,5 +190,109 @@ func getRoleUpdateMessage(roleUpdate data.RoleUpdate) string {
 }
 
 func getAffiliationRoleUpate(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
-	return ""
+	switch {
+	case affiliationRoleUpdate.NewAffiliation.IsNone() &&
+		affiliationRoleUpdate.PreviousAffiliation.IsDifferentFrom(affiliationRoleUpdate.NewAffiliation):
+		return getAffiliationRoleUpateForAffiliationRemoved(affiliationRoleUpdate)
+	case affiliationRoleUpdate.PreviousAffiliation.IsNone() &&
+		affiliationRoleUpdate.NewAffiliation.IsDifferentFrom(affiliationRoleUpdate.PreviousAffiliation):
+		return getAffiliationRoleUpdateForAffiliationAdded(affiliationRoleUpdate)
+	default:
+		return getAffiliationRoleUpdateForUnexpectedSituation(affiliationRoleUpdate)
+	}
+}
+
+func getAffiliationRoleUpateForAffiliationRemoved(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
+	if affiliationRoleUpdate.Actor == nil {
+		if affiliationRoleUpdate.Reason == "" {
+			return i18n.Localf("%s is not %s anymore. As a result, the role was changed from %s to %s.",
+				affiliationRoleUpdate.Nickname,
+				displayNameForAffiliationWithPreposition(affiliationRoleUpdate.PreviousAffiliation),
+				displayNameForRole(affiliationRoleUpdate.PreviousRole),
+				displayNameForRole(affiliationRoleUpdate.NewRole))
+		}
+
+		return i18n.Localf("%s is not %s anymore. As a result, the role was changed from %s to %s. The reason given was: %s.",
+			affiliationRoleUpdate.Nickname,
+			displayNameForAffiliationWithPreposition(affiliationRoleUpdate.PreviousAffiliation),
+			displayNameForRole(affiliationRoleUpdate.PreviousRole),
+			displayNameForRole(affiliationRoleUpdate.NewRole),
+			affiliationRoleUpdate.Reason)
+	}
+
+	if affiliationRoleUpdate.Reason == "" {
+		return i18n.Localf("The %s %s changed the position of %s; %s is not an %s anymore. As a result, the role was changed from %s to %s.",
+			displayNameForAffiliation(affiliationRoleUpdate.Actor.Affiliation),
+			affiliationRoleUpdate.Actor.Nickname,
+			affiliationRoleUpdate.Nickname,
+			affiliationRoleUpdate.Nickname,
+			displayNameForAffiliation(affiliationRoleUpdate.PreviousAffiliation),
+			displayNameForRole(affiliationRoleUpdate.PreviousRole),
+			displayNameForRole(affiliationRoleUpdate.NewRole))
+	}
+
+	return i18n.Localf("The %s %s changed the position of %s; %s is not an %s anymore. "+
+		"As a result, the role was changed from %s to %s. The reason given was: %s.",
+		displayNameForAffiliation(affiliationRoleUpdate.Actor.Affiliation),
+		affiliationRoleUpdate.Actor.Nickname,
+		affiliationRoleUpdate.Nickname,
+		affiliationRoleUpdate.Nickname,
+		displayNameForAffiliation(affiliationRoleUpdate.PreviousAffiliation),
+		displayNameForRole(affiliationRoleUpdate.PreviousRole),
+		displayNameForRole(affiliationRoleUpdate.NewRole),
+		affiliationRoleUpdate.Reason)
+}
+
+func getAffiliationRoleUpdateForAffiliationAdded(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
+	if affiliationRoleUpdate.Actor == nil {
+		if affiliationRoleUpdate.Reason == "" {
+			return i18n.Localf("The position of %s was changed to %s. As a result, the role was changed from %s to %s.",
+				affiliationRoleUpdate.Nickname,
+				displayNameForAffiliation(affiliationRoleUpdate.NewAffiliation),
+				displayNameForRole(affiliationRoleUpdate.PreviousRole),
+				displayNameForRole(affiliationRoleUpdate.NewRole))
+		}
+
+		return i18n.Localf("The position of %s was changed to %s. "+
+			"As a result, the role was changed from %s to %s. The reason given was: %s.",
+			affiliationRoleUpdate.Nickname,
+			displayNameForAffiliation(affiliationRoleUpdate.NewAffiliation),
+			displayNameForRole(affiliationRoleUpdate.PreviousRole),
+			displayNameForRole(affiliationRoleUpdate.NewRole),
+			affiliationRoleUpdate.Reason)
+	}
+
+	if affiliationRoleUpdate.Reason == "" {
+		return i18n.Localf("The %s %s changed the position of %s to %s. "+
+			"As a result, the role was changed from visitor to moderator.",
+			displayNameForAffiliation(affiliationRoleUpdate.Actor.Affiliation),
+			affiliationRoleUpdate.Actor.Nickname,
+			affiliationRoleUpdate.Nickname,
+			displayNameForAffiliation(affiliationRoleUpdate.NewAffiliation))
+	}
+
+	return i18n.Localf("The %s %s changed the position of %s to %s. "+
+		"As a result, the role was changed from %s to %s. The reason given was: %s.",
+		displayNameForAffiliation(affiliationRoleUpdate.Actor.Affiliation),
+		affiliationRoleUpdate.Actor.Nickname,
+		affiliationRoleUpdate.Nickname,
+		displayNameForAffiliation(affiliationRoleUpdate.NewAffiliation),
+		displayNameForRole(affiliationRoleUpdate.PreviousRole),
+		displayNameForRole(affiliationRoleUpdate.NewRole),
+		affiliationRoleUpdate.Reason)
+}
+
+func getAffiliationRoleUpdateForUnexpectedSituation(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
+	if affiliationRoleUpdate.Actor == nil {
+		if affiliationRoleUpdate.Reason == "" {
+			return i18n.Localf("The affiliation and the role of %s were changed.",
+				affiliationRoleUpdate.Nickname)
+		}
+
+		return i18n.Localf("The affiliation and the role of %s were changed because: %s.",
+			affiliationRoleUpdate.Nickname,
+			affiliationRoleUpdate.Reason)
+	}
+
+	return i18n.Local("The owner louis changed the affiliation of superman. As a result, the role was changed too.")
 }

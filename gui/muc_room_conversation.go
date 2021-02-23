@@ -138,7 +138,7 @@ func (c *roomViewConversation) roomDestroyedEvent(reason string, alternative jid
 
 func (c *roomViewConversation) occupantAffiliationRoleUpdatedEvent(affiliationRoleUpdate data.AffiliationRoleUpdate) {
 	doInUIThread(func() {
-		c.displayNewInfoMessage(getDisplayForOccupantAffiliationRoleUpdate(affiliationRoleUpdate))
+		c.displayNewInfoMessage(getMUCNotificationMessageFrom(affiliationRoleUpdate))
 	})
 }
 

@@ -205,7 +205,7 @@ func (*MUCNotificationMessagesSuite) Test_getMUCNotificationMessageFrom_roleUpda
 	c.Assert(getMUCNotificationMessageFrom(ru), Equals, "The role of pablo was changed from participant to visitor.")
 }
 
-func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpate_noCommonCases(c *C) {
+func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpdateMessage_noCommonCases(c *C) {
 	aru := data.AffiliationRoleUpdate{
 		Nickname:            "superman",
 		NewAffiliation:      newTestAffiliationFromString(data.AffiliationNone),
@@ -214,20 +214,20 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpate_noCommonCases(
 		PreviousRole:        newTestRoleFromString(data.RoleModerator),
 	}
 
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The position and the role of superman were changed.")
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The position and the role of superman were changed.")
 
 	aru.Reason = "foo"
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The position and the role of superman were changed because: foo.")
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The position and the role of superman were changed because: foo.")
 
 	aru.Reason = ""
 	aru.Actor = newTestActor("louis", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The owner louis changed the position of superman. As a result, their role was also changed.")
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The owner louis changed the position of superman. As a result, their role was also changed.")
 
 	aru.Reason = "foo"
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The owner louis changed the position of superman. As a result, their role was also changed. The reason given was: foo.")
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The owner louis changed the position of superman. As a result, their role was also changed. The reason given was: foo.")
 }
 
-func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpate_affiliationRemoved(c *C) {
+func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpdateMessage_affiliationRemoved(c *C) {
 	aru := data.AffiliationRoleUpdate{
 		Nickname:            "007",
 		NewAffiliation:      newTestAffiliationFromString(data.AffiliationNone),
@@ -236,20 +236,20 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpate_affiliationRem
 		PreviousRole:        newTestRoleFromString(data.RoleModerator),
 	}
 
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "007 is not an administrator anymore. As a result, their role was changed from moderator to visitor.")
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "007 is not an administrator anymore. As a result, their role was changed from moderator to visitor.")
 
 	aru.Reason = "he is an assassin"
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "007 is not an administrator anymore. As a result, their role was changed from moderator to visitor. The reason given was: he is an assassin.")
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "007 is not an administrator anymore. As a result, their role was changed from moderator to visitor. The reason given was: he is an assassin.")
 
 	aru.Reason = ""
 	aru.Actor = newTestActor("the enemy", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The owner the enemy changed the position of 007; 007 is not an administrator anymore. As a result, their role was changed from moderator to visitor.")
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The owner the enemy changed the position of 007; 007 is not an administrator anymore. As a result, their role was changed from moderator to visitor.")
 
 	aru.Reason = "bla"
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The owner the enemy changed the position of 007; 007 is not an administrator anymore. As a result, their role was changed from moderator to visitor. The reason given was: bla.")
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The owner the enemy changed the position of 007; 007 is not an administrator anymore. As a result, their role was changed from moderator to visitor. The reason given was: bla.")
 }
 
-func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpate_affiliationAdded(c *C) {
+func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpdateMessage_affiliationAdded(c *C) {
 	aru := data.AffiliationRoleUpdate{
 		Nickname:            "alice",
 		NewAffiliation:      newTestAffiliationFromString(data.AffiliationAdmin),
@@ -258,17 +258,35 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpate_affiliationAdd
 		PreviousRole:        newTestRoleFromString(data.RoleVisitor),
 	}
 
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The position of alice was changed to administrator. As a result, their role was changed from visitor to moderator.")
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The position of alice was changed to administrator. As a result, their role was changed from visitor to moderator.")
 
 	aru.Reason = "she is lost in the world of wonders"
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The position of alice was changed to administrator. As a result, their role was changed from visitor to moderator. The reason given was: she is lost in the world of wonders.")
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The position of alice was changed to administrator. As a result, their role was changed from visitor to moderator. The reason given was: she is lost in the world of wonders.")
 
 	aru.Reason = ""
 	aru.Actor = newTestActor("rabbit", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The owner rabbit changed the position of alice to administrator. As a result, their role was changed from visitor to moderator.")
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The owner rabbit changed the position of alice to administrator. As a result, their role was changed from visitor to moderator.")
 
 	aru.Reason = "she is lost in the world of wonders"
-	c.Assert(getAffiliationRoleUpate(aru), Equals, "The owner rabbit changed the position of alice to administrator. As a result, their role was changed from visitor to moderator. The reason given was: she is lost in the world of wonders.")
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The owner rabbit changed the position of alice to administrator. As a result, their role was changed from visitor to moderator. The reason given was: she is lost in the world of wonders.")
+}
+
+func (*MUCNotificationMessagesSuite) Test_getMUCNotificationMessageFrom_affiliationRoleUpdate(c *C) {
+	aru := data.AffiliationRoleUpdate{
+		Nickname:            "chavo",
+		NewAffiliation:      newTestAffiliationFromString(data.AffiliationNone),
+		PreviousAffiliation: newTestAffiliationFromString(data.AffiliationAdmin),
+		NewRole:             newTestRoleFromString(data.RoleVisitor),
+		PreviousRole:        newTestRoleFromString(data.RoleModerator),
+	}
+
+	c.Assert(getMUCNotificationMessageFrom(aru), Equals, "chavo is not an administrator anymore. As a result, their role was changed from moderator to visitor.")
+
+	aru.NewAffiliation = newTestAffiliationFromString(data.AffiliationAdmin)
+	aru.PreviousAffiliation = newTestAffiliationFromString(data.AffiliationNone)
+	aru.NewRole = newTestRoleFromString(data.RoleModerator)
+	aru.PreviousRole = newTestRoleFromString(data.RoleVisitor)
+	c.Assert(getMUCNotificationMessageFrom(aru), Equals, "The position of chavo was changed to administrator. As a result, their role was changed from visitor to moderator.")
 }
 
 func newTestActor(nickname string, affiliation data.Affiliation, role data.Role) *data.Actor {

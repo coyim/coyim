@@ -11,6 +11,8 @@ func getMUCNotificationMessageFrom(d interface{}) string {
 		return getAffiliationUpdateMessage(t)
 	case data.RoleUpdate:
 		return getRoleUpdateMessage(t)
+	case data.AffiliationRoleUpdate:
+		return getAffiliationRoleUpdateMessage(t)
 	default:
 		return ""
 	}
@@ -189,7 +191,7 @@ func getRoleUpdateMessage(roleUpdate data.RoleUpdate) string {
 		roleUpdate.Reason)
 }
 
-func getAffiliationRoleUpate(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
+func getAffiliationRoleUpdateMessage(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
 	switch {
 	case affiliationRoleUpdate.NewAffiliation.IsNone() &&
 		affiliationRoleUpdate.PreviousAffiliation.IsDifferentFrom(affiliationRoleUpdate.NewAffiliation):

@@ -91,7 +91,10 @@ func (av *occupantAffiliationUpdateView) initDefaults() {
 func (av *occupantAffiliationUpdateView) initRadioButtonsValues() {
 	if av.selfOccupant.Affiliation.IsAdmin() {
 		av.adminRadio.SetSensitive(false)
-		av.adminRadio.SetLabel(i18n.Local("Administrator (You can't edit the administrator list)"))
+		av.adminRadio.SetLabel(i18n.Local("Administrator (You can't edit the administrators list)"))
+
+		av.ownerRadio.SetSensitive(false)
+		av.ownerRadio.SetLabel(i18n.Local("Owner (You can't edit the owners list)"))
 	}
 
 	av.occupantNickname.SetLabel(av.occupant.Nickname)

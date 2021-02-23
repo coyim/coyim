@@ -14,8 +14,8 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateMessage_affiliatio
 
 	au := data.AffiliationUpdate{
 		Nickname: "batman",
-		New:      newAffiliationFromString(data.AffiliationNone),
-		Previous: newAffiliationFromString(data.AffiliationAdmin),
+		New:      newTestAffiliationFromString(data.AffiliationNone),
+		Previous: newTestAffiliationFromString(data.AffiliationAdmin),
 	}
 
 	c.Assert(getAffiliationUpdateMessage(au), Equals, "batman is not an administrator anymore.")
@@ -23,24 +23,24 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateMessage_affiliatio
 	au.Reason = "batman lost his mind"
 	c.Assert(getAffiliationUpdateMessage(au), Equals, "batman is not an administrator anymore because: batman lost his mind.")
 
-	au.Previous = newAffiliationFromString(data.AffiliationOwner)
+	au.Previous = newTestAffiliationFromString(data.AffiliationOwner)
 	c.Assert(getAffiliationUpdateMessage(au), Equals, "batman is not an owner anymore because: batman lost his mind.")
 
-	au.Previous = newAffiliationFromString(data.AffiliationMember)
+	au.Previous = newTestAffiliationFromString(data.AffiliationMember)
 	c.Assert(getAffiliationUpdateMessage(au), Equals, "batman is not a member anymore because: batman lost his mind.")
 
 	au.Reason = ""
-	au.Previous = newAffiliationFromString(data.AffiliationAdmin)
-	au.Actor = newTestActor("robin", newAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
+	au.Previous = newTestAffiliationFromString(data.AffiliationAdmin)
+	au.Actor = newTestActor("robin", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
 	c.Assert(getAffiliationUpdateMessage(au), Equals, "The owner robin changed the position of batman; batman is not an administrator anymore.")
 
 	au.Reason = "batman lost his mind"
 	c.Assert(getAffiliationUpdateMessage(au), Equals, "The owner robin changed the position of batman; batman is not an administrator anymore because: batman lost his mind.")
 
-	au.Previous = newAffiliationFromString(data.AffiliationOwner)
+	au.Previous = newTestAffiliationFromString(data.AffiliationOwner)
 	c.Assert(getAffiliationUpdateMessage(au), Equals, "The owner robin changed the position of batman; batman is not an owner anymore because: batman lost his mind.")
 
-	au.Previous = newAffiliationFromString(data.AffiliationMember)
+	au.Previous = newTestAffiliationFromString(data.AffiliationMember)
 	c.Assert(getAffiliationUpdateMessage(au), Equals, "The owner robin changed the position of batman; batman is not a member anymore because: batman lost his mind.")
 }
 
@@ -49,7 +49,7 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateMessage_affiliatio
 
 	au := data.AffiliationUpdate{
 		Nickname: "alice",
-		New:      newAffiliationFromString(data.AffiliationOutcast),
+		New:      newTestAffiliationFromString(data.AffiliationOutcast),
 	}
 
 	c.Assert(getAffiliationUpdateMessage(au), Equals, "alice was banned from the room.")
@@ -58,7 +58,7 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateMessage_affiliatio
 	c.Assert(getAffiliationUpdateMessage(au), Equals, "alice was banned from the room because: she was rude.")
 
 	au.Reason = ""
-	au.Actor = newTestActor("bob", newAffiliationFromString(data.AffiliationAdmin), newTestRoleFromString(data.RoleModerator))
+	au.Actor = newTestActor("bob", newTestAffiliationFromString(data.AffiliationAdmin), newTestRoleFromString(data.RoleModerator))
 	c.Assert(getAffiliationUpdateMessage(au), Equals, "The administrator bob banned alice from the room.")
 
 	au.Reason = "she was rude"
@@ -70,8 +70,8 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateMessage_affiliatio
 
 	au := data.AffiliationUpdate{
 		Nickname: "juanito",
-		New:      newAffiliationFromString(data.AffiliationMember),
-		Previous: newAffiliationFromString(data.AffiliationNone),
+		New:      newTestAffiliationFromString(data.AffiliationMember),
+		Previous: newTestAffiliationFromString(data.AffiliationNone),
 	}
 
 	c.Assert(getAffiliationUpdateMessage(au), Equals, "juanito is now a member.")
@@ -80,7 +80,7 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateMessage_affiliatio
 	c.Assert(getAffiliationUpdateMessage(au), Equals, "juanito is now a member because: el es súper chévere.")
 
 	au.Reason = ""
-	au.Actor = newTestActor("pepito", newAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
+	au.Actor = newTestActor("pepito", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
 	c.Assert(getAffiliationUpdateMessage(au), Equals, "The owner pepito changed the position of juanito; juanito is now a member.")
 
 	au.Reason = "el es súper chévere"
@@ -92,8 +92,8 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateMessage_affiliatio
 
 	au := data.AffiliationUpdate{
 		Nickname: "thor",
-		New:      newAffiliationFromString(data.AffiliationAdmin),
-		Previous: newAffiliationFromString(data.AffiliationMember),
+		New:      newTestAffiliationFromString(data.AffiliationAdmin),
+		Previous: newTestAffiliationFromString(data.AffiliationMember),
 	}
 
 	c.Assert(getAffiliationUpdateMessage(au), Equals, "The position of thor was changed from member to administrator.")
@@ -102,7 +102,7 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateMessage_affiliatio
 	c.Assert(getAffiliationUpdateMessage(au), Equals, "The position of thor was changed from member to administrator because: he is the strongest avenger.")
 
 	au.Reason = ""
-	au.Actor = newTestActor("odin", newAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
+	au.Actor = newTestActor("odin", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
 	c.Assert(getAffiliationUpdateMessage(au), Equals, "The owner odin changed the position of thor from member to administrator.")
 
 	au.Reason = "he is the strongest avenger"
@@ -112,20 +112,20 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateMessage_affiliatio
 func (*MUCNotificationMessagesSuite) Test_getMUCNotificationMessageFrom_affiliationUpdate(c *C) {
 	au := data.AffiliationUpdate{
 		Nickname: "chavo",
-		New:      newAffiliationFromString(data.AffiliationAdmin),
-		Previous: newAffiliationFromString(data.AffiliationMember),
+		New:      newTestAffiliationFromString(data.AffiliationAdmin),
+		Previous: newTestAffiliationFromString(data.AffiliationMember),
 	}
 
 	c.Assert(getMUCNotificationMessageFrom(au), Equals, "The position of chavo was changed from member to administrator.")
 
-	au.Previous = newAffiliationFromString(data.AffiliationNone)
+	au.Previous = newTestAffiliationFromString(data.AffiliationNone)
 	c.Assert(getMUCNotificationMessageFrom(au), Equals, "chavo is now an administrator.")
 
-	au.New = newAffiliationFromString(data.AffiliationOwner)
+	au.New = newTestAffiliationFromString(data.AffiliationOwner)
 	c.Assert(getMUCNotificationMessageFrom(au), Equals, "chavo is now an owner.")
 
-	au.Previous = newAffiliationFromString(data.AffiliationOwner)
-	au.New = newAffiliationFromString(data.AffiliationMember)
+	au.Previous = newTestAffiliationFromString(data.AffiliationOwner)
+	au.New = newTestAffiliationFromString(data.AffiliationMember)
 	c.Assert(getMUCNotificationMessageFrom(au), Equals, "The position of chavo was changed from owner to member.")
 }
 

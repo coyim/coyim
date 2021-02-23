@@ -6,12 +6,23 @@ import (
 	"sync"
 )
 
+// This rawLogger is a bit weird. For it to work properly, both
+// _this_ instance, and the _other_ instance needs to share the same
+// mutex.
+
 type rawLogger struct {
-	out    io.Writer
+	// the actual real writer where things will end up when flush is called
+	out io.Writer
+	// prefix will contain the prefix that each line will be preceded by
 	prefix []byte
-	lock   *sync.Mutex
-	other  *rawLogger
-	buf    []byte
+	// lock synchronizes the writes on this logger, but also the paired logger
+	// in the other field
+	lock *sync.Mutex
+	// other is another raw logger which will be flushed when writes happen on this
+	// logger
+	other *rawLogger
+	// buf contains the internal data waiting to be written
+	buf []byte
 }
 
 func (r *rawLogger) Write(data []byte) (int, error) {

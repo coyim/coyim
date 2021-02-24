@@ -5,6 +5,18 @@ import (
 	"github.com/coyim/coyim/session/muc/data"
 )
 
+func getAffiliationUpdateSuccessMessage(nickname string, previousAffiliation, affiliation data.Affiliation) string {
+	if affiliation.IsNone() {
+		// This is impossible to happen but we need to cover all cases.
+		if previousAffiliation.IsNone() {
+			return i18n.Localf("%s no longer has a position.", nickname)
+		}
+		return i18n.Localf("%s is not %s anymore.", nickname, displayNameForAffiliationWithPreposition(previousAffiliation))
+	}
+
+	return i18n.Localf("The position of %s was updated to %s.", nickname, displayNameForAffiliation(affiliation))
+}
+
 func getMUCNotificationMessageFrom(d interface{}) string {
 	switch t := d.(type) {
 	case data.AffiliationUpdate:

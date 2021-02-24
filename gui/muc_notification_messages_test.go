@@ -378,11 +378,42 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affili
 	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "Your position was changed from member to administrator because: you are loco.")
 
 	sau.Reason = ""
-	sau.Actor = newTestActor("tontin", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "The owner tontin changed your position from member to administrator.")
+	sau.Actor = newTestActor("chapulin", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "The owner chapulin changed your position from member to administrator.")
 
 	sau.Reason = "you are locote"
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "The owner tontin changed your position from member to administrator because: you are locote.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "The owner chapulin changed your position from member to administrator because: you are locote.")
+}
+
+func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateSuccessMessage(c *C) {
+	initMUCRoomConversationDisplayI18n()
+
+	nickname := "Juan"
+	owner := newTestAffiliationFromString(data.AffiliationOwner)
+	admin := newTestAffiliationFromString(data.AffiliationAdmin)
+	member := newTestAffiliationFromString(data.AffiliationMember)
+	none := newTestAffiliationFromString(data.AffiliationNone)
+
+	c.Assert(getAffiliationUpdateSuccessMessage(nickname, none, none), Equals,
+		"Juan no longer has a position.")
+
+	c.Assert(getAffiliationUpdateSuccessMessage(nickname, member, none), Equals,
+		"Juan is not a member anymore.")
+
+	c.Assert(getAffiliationUpdateSuccessMessage(nickname, admin, none), Equals,
+		"Juan is not an administrator anymore.")
+
+	c.Assert(getAffiliationUpdateSuccessMessage(nickname, owner, none), Equals,
+		"Juan is not an owner anymore.")
+
+	c.Assert(getAffiliationUpdateSuccessMessage(nickname, none, member), Equals,
+		"The position of Juan was updated to member.")
+
+	c.Assert(getAffiliationUpdateSuccessMessage(nickname, none, admin), Equals,
+		"The position of Juan was updated to administrator.")
+
+	c.Assert(getAffiliationUpdateSuccessMessage(nickname, none, owner), Equals,
+		"The position of Juan was updated to owner.")
 }
 
 func newTestActor(nickname string, affiliation data.Affiliation, role data.Role) *data.Actor {

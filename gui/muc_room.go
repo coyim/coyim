@@ -438,7 +438,7 @@ func (v *roomView) tryKickOccupant(occupantNickname string, reason string) {
 func (v *roomView) onKickOccupantSuccess(occupantNickname string) {
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
-		v.notifications.info(i18n.Localf("The occupant %s was getting out", occupantNickname))
+		v.notifications.info(i18n.Localf("%s was temporarily removed from the room", occupantNickname))
 		v.publishOccupantKickedSuccessEvent()
 	})
 }

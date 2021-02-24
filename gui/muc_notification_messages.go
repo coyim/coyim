@@ -320,7 +320,7 @@ func getSelfAffiliationUpdateMessage(selfAffiliationUpdate data.SelfAffiliationU
 	case selfAffiliationUpdate.Previous.IsNone():
 		return getSelfAffiliationAddedMessage(selfAffiliationUpdate)
 	default:
-		return ""
+		return getSelfAffiliationChangedMessage(selfAffiliationUpdate)
 	}
 }
 
@@ -372,5 +372,35 @@ func getSelfAffiliationAddedMessage(selfAffiliationUpdate data.SelfAffiliationUp
 		displayNameForAffiliation(selfAffiliationUpdate.Actor.Affiliation),
 		selfAffiliationUpdate.Actor.Nickname,
 		displayNameForAffiliationWithPreposition(selfAffiliationUpdate.New),
+		selfAffiliationUpdate.Reason)
+}
+
+func getSelfAffiliationChangedMessage(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
+	if selfAffiliationUpdate.Actor == nil {
+		if selfAffiliationUpdate.Reason == "" {
+			return i18n.Localf("Your position was changed from %s to %s.",
+				displayNameForAffiliation(selfAffiliationUpdate.Previous),
+				displayNameForAffiliation(selfAffiliationUpdate.New))
+		}
+
+		return i18n.Localf("Your position was changed from %s to %s because: %s.",
+			displayNameForAffiliation(selfAffiliationUpdate.Previous),
+			displayNameForAffiliation(selfAffiliationUpdate.New),
+			selfAffiliationUpdate.Reason)
+	}
+
+	if selfAffiliationUpdate.Reason == "" {
+		return i18n.Localf("The %s %s changed your position from %s to %s.",
+			displayNameForAffiliation(selfAffiliationUpdate.Actor.Affiliation),
+			selfAffiliationUpdate.Actor.Nickname,
+			displayNameForAffiliation(selfAffiliationUpdate.Previous),
+			displayNameForAffiliation(selfAffiliationUpdate.New))
+	}
+
+	return i18n.Localf("The %s %s changed your position from %s to %s because: %s.",
+		displayNameForAffiliation(selfAffiliationUpdate.Actor.Affiliation),
+		selfAffiliationUpdate.Actor.Nickname,
+		displayNameForAffiliation(selfAffiliationUpdate.Previous),
+		displayNameForAffiliation(selfAffiliationUpdate.New),
 		selfAffiliationUpdate.Reason)
 }

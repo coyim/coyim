@@ -362,6 +362,29 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affili
 	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "The administrator paco changed your position; you are now an administrator. The reason given was: you are funny.")
 }
 
+func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affiliationChanged(c *C) {
+	initMUCRoomConversationDisplayI18n()
+
+	sau := data.SelfAffiliationUpdate{
+		AffiliationUpdate: data.AffiliationUpdate{
+			New:      newTestAffiliationFromString(data.AffiliationAdmin),
+			Previous: newTestAffiliationFromString(data.AffiliationMember),
+		},
+	}
+
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "Your position was changed from member to administrator.")
+
+	sau.Reason = "you are loco"
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "Your position was changed from member to administrator because: you are loco.")
+
+	sau.Reason = ""
+	sau.Actor = newTestActor("tontin", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "The owner tontin changed your position from member to administrator.")
+
+	sau.Reason = "you are locote"
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "The owner tontin changed your position from member to administrator because: you are locote.")
+}
+
 func newTestActor(nickname string, affiliation data.Affiliation, role data.Role) *data.Actor {
 	return &data.Actor{
 		Nickname:    nickname,

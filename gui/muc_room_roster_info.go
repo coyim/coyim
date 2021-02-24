@@ -25,7 +25,9 @@ type roomViewRosterInfo struct {
 	statusMessage           gtki.Label  `gtk-widget:"status-message"`
 	currentAffiliationLabel gtki.Label  `gtk-widget:"current-affiliation"`
 	currentRoleLabel        gtki.Label  `gtk-widget:"current-role"`
+	roleActionContentBox    gtki.Box    `gtk-widget:"role-action-content"`
 	changeRoleButton        gtki.Button `gtk-widget:"change-role"`
+	roleDisableLabel        gtki.Label  `gtk-widget:"change-role-disabled"`
 	changeAffiliationButton gtki.Button `gtk-widget:"change-affiliation"`
 	kickOccupantButton      gtki.Button `gtk-widget:"kick-occupant"`
 
@@ -76,6 +78,7 @@ func (r *roomViewRosterInfo) initCSSStyles() {
 	mucStyles.setRoomRosterInfoNicknameLabelStyle(r.nicknameLabel)
 	mucStyles.setRoomRosterInfoUserJIDLabelStyle(r.realJIDLabel)
 	mucStyles.setRoomRosterInfoStatusLabelStyle(r.status)
+	mucStyles.setHelpTextStyleForRoleAction(r.roleActionContentBox)
 }
 
 func (r *roomViewRosterInfo) initDefaults() {
@@ -122,13 +125,32 @@ func (r *roomViewRosterInfo) showOccupantInfo(occupant *muc.Occupant) {
 	r.show()
 }
 
+// validateOccupantPrivileges MUST be called from the UI thread
 func (r *roomViewRosterInfo) validateOccupantPrivileges() {
+	r.refreshAffiliationSection()
+	r.refreshRoleSection()
+	r.refreshKickSection()
+}
+
+// refreshAffiliationSection MUST be called from the UI thread
+func (r *roomViewRosterInfo) refreshAffiliationSection() {
 	showChangeAffiliationButton := r.selfOccupant.CanChangeAffiliation(r.occupant)
 	r.changeAffiliationButton.SetVisible(showChangeAffiliationButton)
+}
 
+// refreshRoleSection MUST be called from the UI thread
+func (r *roomViewRosterInfo) refreshRoleSection() {
 	showChangeRoleButton := r.selfOccupant.CanChangeRole(r.occupant)
 	r.changeRoleButton.SetVisible(showChangeRoleButton)
 
+	r.roleDisableLabel.SetVisible(false)
+	if r.selfOccupant.Affiliation.IsOwner() && (r.occupant.Affiliation.IsOwner() || r.occupant.Affiliation.IsAdmin()) {
+		r.roleDisableLabel.SetVisible(true)
+	}
+}
+
+// refreshKickSection MUST be called from the UI thread
+func (r *roomViewRosterInfo) refreshKickSection() {
 	canKick := r.selfOccupant.CanKickOccupant(r.occupant)
 	r.kickOccupantButton.SetVisible(canKick)
 }

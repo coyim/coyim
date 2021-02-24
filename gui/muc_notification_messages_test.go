@@ -289,6 +289,79 @@ func (*MUCNotificationMessagesSuite) Test_getMUCNotificationMessageFrom_affiliat
 	c.Assert(getMUCNotificationMessageFrom(aru), Equals, "The position of chavo was changed to administrator. As a result, their role was changed from visitor to moderator.")
 }
 
+func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affiliationRemoved(c *C) {
+	initMUCRoomConversationDisplayI18n()
+
+	sau := data.SelfAffiliationUpdate{
+		AffiliationUpdate: data.AffiliationUpdate{
+			New:      newTestAffiliationFromString(data.AffiliationNone),
+			Previous: newTestAffiliationFromString(data.AffiliationAdmin),
+		},
+	}
+
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "You are not an administrator anymore.")
+
+	sau.Reason = "you are funny"
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "You are not an administrator anymore. The reason given was: you are funny.")
+
+	sau.Previous = newTestAffiliationFromString(data.AffiliationOwner)
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "You are not an owner anymore. The reason given was: you are funny.")
+
+	sau.Reason = ""
+	sau.Previous = newTestAffiliationFromString(data.AffiliationMember)
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "You are not a member anymore.")
+
+	sau.Actor = newTestActor("robin", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "The owner robin changed your position; you are not a member anymore.")
+
+	sau.Reason = "you are funny"
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "The owner robin changed your position; you are not a member anymore. The reason given was: you are funny.")
+
+	sau.Previous = newTestAffiliationFromString(data.AffiliationOwner)
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "The owner robin changed your position; you are not an owner anymore. The reason given was: you are funny.")
+
+	sau.Previous = newTestAffiliationFromString(data.AffiliationMember)
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "The owner robin changed your position; you are not a member anymore. The reason given was: you are funny.")
+}
+
+func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affiliationAdded(c *C) {
+	initMUCRoomConversationDisplayI18n()
+
+	sau := data.SelfAffiliationUpdate{
+		AffiliationUpdate: data.AffiliationUpdate{
+			New:      newTestAffiliationFromString(data.AffiliationAdmin),
+			Previous: newTestAffiliationFromString(data.AffiliationNone),
+		},
+	}
+
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "You are now an administrator.")
+
+	sau.Reason = "estás encopetao"
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "You are now an administrator. The reason given was: estás encopetao.")
+
+	sau.Reason = ""
+	sau.AffiliationUpdate.New = newTestAffiliationFromString(data.AffiliationMember)
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "You are now a member.")
+
+	sau.Reason = "you dance very well"
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "You are now a member. The reason given was: you dance very well.")
+
+	sau.Reason = ""
+	sau.AffiliationUpdate.New = newTestAffiliationFromString(data.AffiliationOwner)
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "You are now an owner.")
+
+	sau.Reason = "the day is cool"
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "You are now an owner. The reason given was: the day is cool.")
+
+	sau.Reason = ""
+	sau.AffiliationUpdate.New = newTestAffiliationFromString(data.AffiliationAdmin)
+	sau.Actor = newTestActor("paco", newTestAffiliationFromString(data.AffiliationAdmin), newTestRoleFromString(data.RoleModerator))
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "The administrator paco changed your position; you are now an administrator.")
+
+	sau.Reason = "you are funny"
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "The administrator paco changed your position; you are now an administrator. The reason given was: you are funny.")
+}
+
 func newTestActor(nickname string, affiliation data.Affiliation, role data.Role) *data.Actor {
 	return &data.Actor{
 		Nickname:    nickname,

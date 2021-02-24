@@ -13,6 +13,8 @@ func getMUCNotificationMessageFrom(d interface{}) string {
 		return getRoleUpdateMessage(t)
 	case data.AffiliationRoleUpdate:
 		return getAffiliationRoleUpdateMessage(t)
+	case data.SelfAffiliationUpdate:
+		return getSelfAffiliationUpdateMessage(t)
 	default:
 		return ""
 	}
@@ -309,4 +311,66 @@ func getAffiliationRoleUpdateForUnexpectedSituation(affiliationRoleUpdate data.A
 		affiliationRoleUpdate.Actor.Nickname,
 		affiliationRoleUpdate.Nickname,
 		affiliationRoleUpdate.Reason)
+}
+
+func getSelfAffiliationUpdateMessage(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
+	switch {
+	case selfAffiliationUpdate.New.IsNone():
+		return getSelfAffiliationRemovedMessage(selfAffiliationUpdate)
+	case selfAffiliationUpdate.Previous.IsNone():
+		return getSelfAffiliationAddedMessage(selfAffiliationUpdate)
+	default:
+		return ""
+	}
+}
+
+func getSelfAffiliationRemovedMessage(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
+	if selfAffiliationUpdate.Actor == nil {
+		if selfAffiliationUpdate.Reason == "" {
+			return i18n.Localf("You are not %s anymore.",
+				displayNameForAffiliationWithPreposition(selfAffiliationUpdate.Previous))
+		}
+
+		return i18n.Localf("You are not %s anymore. The reason given was: %s.",
+			displayNameForAffiliationWithPreposition(selfAffiliationUpdate.Previous),
+			selfAffiliationUpdate.Reason)
+	}
+
+	if selfAffiliationUpdate.Reason == "" {
+		return i18n.Localf("The %s %s changed your position; you are not %s anymore.",
+			displayNameForAffiliation(selfAffiliationUpdate.Actor.Affiliation),
+			selfAffiliationUpdate.Actor.Nickname,
+			displayNameForAffiliationWithPreposition(selfAffiliationUpdate.Previous))
+	}
+
+	return i18n.Localf("The %s %s changed your position; you are not %s anymore. The reason given was: %s.",
+		displayNameForAffiliation(selfAffiliationUpdate.Actor.Affiliation),
+		selfAffiliationUpdate.Actor.Nickname,
+		displayNameForAffiliationWithPreposition(selfAffiliationUpdate.Previous),
+		selfAffiliationUpdate.Reason)
+}
+
+func getSelfAffiliationAddedMessage(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
+	if selfAffiliationUpdate.Actor == nil {
+		if selfAffiliationUpdate.Reason == "" {
+			return i18n.Localf("You are now %s.", displayNameForAffiliationWithPreposition(selfAffiliationUpdate.New))
+		}
+
+		return i18n.Localf("You are now %s. The reason given was: %s.",
+			displayNameForAffiliationWithPreposition(selfAffiliationUpdate.New),
+			selfAffiliationUpdate.Reason)
+	}
+
+	if selfAffiliationUpdate.Reason == "" {
+		return i18n.Localf("The %s %s changed your position; you are now %s.",
+			displayNameForAffiliation(selfAffiliationUpdate.Actor.Affiliation),
+			selfAffiliationUpdate.Actor.Nickname,
+			displayNameForAffiliationWithPreposition(selfAffiliationUpdate.New))
+	}
+
+	return i18n.Localf("The %s %s changed your position; you are now %s. The reason given was: %s.",
+		displayNameForAffiliation(selfAffiliationUpdate.Actor.Affiliation),
+		selfAffiliationUpdate.Actor.Nickname,
+		displayNameForAffiliationWithPreposition(selfAffiliationUpdate.New),
+		selfAffiliationUpdate.Reason)
 }

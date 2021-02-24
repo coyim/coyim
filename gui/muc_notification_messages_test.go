@@ -416,6 +416,28 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateSuccessMessage(c *
 		"The position of Juan was updated to owner.")
 }
 
+func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affiliationOutcast(c *C) {
+	initMUCRoomConversationDisplayI18n()
+
+	sau := data.SelfAffiliationUpdate{
+		AffiliationUpdate: data.AffiliationUpdate{
+			New: newTestAffiliationFromString(data.AffiliationOutcast),
+		},
+	}
+
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "You has been banned from the room.")
+
+	sau.Reason = "it's so cold"
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "You has been banned from the room. The reason given was: it's so cold.")
+
+	sau.Reason = ""
+	sau.Actor = newTestActor("calvin", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "The owner calvin banned you from the room.")
+
+	sau.Reason = "it isn't cool"
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "The owner calvin banned you from the room. The reason given was: it isn't cool.")
+}
+
 func newTestActor(nickname string, affiliation data.Affiliation, role data.Role) *data.Actor {
 	return &data.Actor{
 		Nickname:    nickname,

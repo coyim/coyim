@@ -21,12 +21,12 @@ func getMUCNotificationMessageFrom(d interface{}) string {
 	switch t := d.(type) {
 	case data.AffiliationUpdate:
 		return getAffiliationUpdateMessage(t)
+	case data.SelfAffiliationUpdate:
+		return getSelfAffiliationUpdateMessage(t)
 	case data.RoleUpdate:
 		return getRoleUpdateMessage(t)
 	case data.AffiliationRoleUpdate:
 		return getAffiliationRoleUpdateMessage(t)
-	case data.SelfAffiliationUpdate:
-		return getSelfAffiliationUpdateMessage(t)
 	default:
 		return ""
 	}
@@ -329,6 +329,8 @@ func getSelfAffiliationUpdateMessage(selfAffiliationUpdate data.SelfAffiliationU
 	switch {
 	case selfAffiliationUpdate.New.IsNone():
 		return getSelfAffiliationRemovedMessage(selfAffiliationUpdate)
+	case selfAffiliationUpdate.New.IsBanned():
+		return getSelfAffiliationBannedMessage(selfAffiliationUpdate)
 	case selfAffiliationUpdate.Previous.IsNone():
 		return getSelfAffiliationAddedMessage(selfAffiliationUpdate)
 	default:
@@ -414,5 +416,26 @@ func getSelfAffiliationChangedMessage(selfAffiliationUpdate data.SelfAffiliation
 		selfAffiliationUpdate.Actor.Nickname,
 		displayNameForAffiliation(selfAffiliationUpdate.Previous),
 		displayNameForAffiliation(selfAffiliationUpdate.New),
+		selfAffiliationUpdate.Reason)
+}
+
+func getSelfAffiliationBannedMessage(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
+	if selfAffiliationUpdate.Actor == nil {
+		if selfAffiliationUpdate.Reason == "" {
+			return i18n.Localf("You has been banned from the room.")
+		}
+
+		return i18n.Localf("You has been banned from the room. The reason given was: %s.", selfAffiliationUpdate.Reason)
+	}
+
+	if selfAffiliationUpdate.Reason == "" {
+		return i18n.Localf("The %s %s banned you from the room.",
+			displayNameForAffiliation(selfAffiliationUpdate.Actor.Affiliation),
+			selfAffiliationUpdate.Actor.Nickname)
+	}
+
+	return i18n.Localf("The %s %s banned you from the room. The reason given was: %s.",
+		displayNameForAffiliation(selfAffiliationUpdate.Actor.Affiliation),
+		selfAffiliationUpdate.Actor.Nickname,
 		selfAffiliationUpdate.Reason)
 }

@@ -212,3 +212,100 @@ func (s *AccountPeerSuite) Test_Account_AuthorizeFingerprint_addsNewFingerprint(
 	c.Assert(a.Peers[1].Fingerprints[2].Trusted, Equals, true)
 	c.Assert(a.Peers[1].Fingerprints[2].Tag, Equals, "somewhere2")
 }
+
+func (s *AccountPeerSuite) Test_Account_HasFingerprint(c *C) {
+	a := &Account{
+		Peers: []*Peer{
+			&Peer{UserID: "one"},
+			&Peer{UserID: "four", Fingerprints: []*Fingerprint{
+				&Fingerprint{Fingerprint: []byte{0x01, 0x02}, Trusted: true},
+				&Fingerprint{Fingerprint: []byte{0x99, 0xAA}},
+			}},
+			&Peer{UserID: "three"},
+		},
+	}
+	c.Assert(a.HasFingerprint("unknown"), Equals, false)
+	c.Assert(a.HasFingerprint("one"), Equals, false)
+	c.Assert(a.HasFingerprint("four"), Equals, true)
+}
+
+func (s *AccountPeerSuite) Test_Peer_GetFingerprint(c *C) {
+	fpr := &Fingerprint{Fingerprint: []byte{0x01, 0x02}, Trusted: true}
+	peer := &Peer{UserID: "four", Fingerprints: []*Fingerprint{
+		&Fingerprint{Fingerprint: []byte{0x99, 0xAA}},
+		fpr,
+	}}
+
+	res, ok := peer.GetFingerprint([]byte{0x01, 0x02})
+	c.Assert(res, Equals, fpr)
+	c.Assert(ok, Equals, true)
+	res, ok = peer.GetFingerprint([]byte{0x01, 0x03})
+	c.Assert(res, IsNil)
+	c.Assert(ok, Equals, false)
+}
+
+func (s *AccountPeerSuite) Test_Account_removeEmptyFingerprints(c *C) {
+	a := &Account{
+		Peers: []*Peer{
+			&Peer{UserID: "one", Fingerprints: []*Fingerprint{
+				&Fingerprint{Fingerprint: []byte{0x99, 0xAA}},
+				&Fingerprint{Fingerprint: []byte{}},
+			}},
+			&Peer{UserID: "four", Fingerprints: []*Fingerprint{
+				&Fingerprint{Fingerprint: []byte{0x01, 0x02}, Trusted: true},
+				&Fingerprint{Fingerprint: []byte{0x99, 0xAA}},
+			}},
+			&Peer{UserID: "three"},
+		},
+	}
+
+	c.Assert(a.removeEmptyFingerprints(), Equals, true)
+	c.Assert(a.Peers[0].Fingerprints, HasLen, 1)
+	c.Assert(a.Peers[1].Fingerprints, HasLen, 2)
+	c.Assert(a.Peers[2].Fingerprints, HasLen, 0)
+}
+
+func (s *AccountPeerSuite) Test_Account_updateFingerprintsToLatestVersion_returnsFalseIfNoLegacyFingerprints(c *C) {
+	a := &Account{}
+
+	c.Assert(a.updateFingerprintsToLatestVersion(), Equals, false)
+}
+
+func (s *AccountPeerSuite) Test_Account_updateFingerprintsToLatestVersion_addsLegacyFingerprints(c *C) {
+	a := &Account{
+		LegacyKnownFingerprints: []KnownFingerprint{
+			KnownFingerprint{
+				UserID:      "one@some.org",
+				Fingerprint: []byte{0x01, 0x02, 0x03},
+				Untrusted:   true,
+			},
+			KnownFingerprint{
+				UserID:      "ignored@fingerprint.com",
+				Fingerprint: []byte{},
+				Untrusted:   true,
+			},
+			KnownFingerprint{
+				UserID:      "one@some.org",
+				Fingerprint: []byte{0x02, 0x02, 0x05},
+				Untrusted:   false,
+			},
+		},
+	}
+
+	c.Assert(a.updateFingerprintsToLatestVersion(), Equals, true)
+	c.Assert(a.LegacyKnownFingerprints, HasLen, 0)
+	c.Assert(a.Peers, HasLen, 1)
+	c.Assert(a.Peers[0].Fingerprints, HasLen, 2)
+	c.Assert(a.Peers[0].Fingerprints[0].Fingerprint, DeepEquals, []byte{0x01, 0x02, 0x03})
+	c.Assert(a.Peers[0].Fingerprints[0].Trusted, Equals, false)
+	c.Assert(a.Peers[0].Fingerprints[0].Tag, Equals, "")
+	c.Assert(a.Peers[0].Fingerprints[1].Fingerprint, DeepEquals, []byte{0x02, 0x02, 0x05})
+	c.Assert(a.Peers[0].Fingerprints[1].Trusted, Equals, true)
+	c.Assert(a.Peers[0].Fingerprints[1].Tag, Equals, "")
+}
+
+func (s *AccountPeerSuite) Test_Account_updateToLatestVersion_doesNothingForEmptyAccount(c *C) {
+	a := &Account{}
+
+	c.Assert(a.updateToLatestVersion(), Equals, false)
+}

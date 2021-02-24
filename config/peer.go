@@ -182,10 +182,7 @@ func (a *Account) AddTrustedFingerprint(fpr []byte, uid string, tag string) {
 // HasFingerprint returns true if we have the fingerprint for the given user
 func (a *Account) HasFingerprint(uid string) bool {
 	u, ok := a.GetPeer(uid)
-	if ok {
-		return len(u.Fingerprints) > 0
-	}
-	return false
+	return ok && len(u.Fingerprints) > 0
 }
 
 // UserIDForVerifiedFingerprint returns the user ID for the given verified fingerprint

@@ -419,7 +419,10 @@ func (v *roomView) onOccupantRoleUpdateError(o *muc.Occupant, role data.Role, re
 }
 
 func (v *roomView) tryKickOccupant(occupantNickname string, reason string) {
-	v.loadingViewOverlay.onKickOccupant()
+	doInUIThread(func() {
+		v.loadingViewOverlay.onKickOccupant(occupantNickname)
+	})
+
 	sc, ec := v.account.session.KickOccupant(v.roomID(), occupantNickname, reason)
 
 	select {

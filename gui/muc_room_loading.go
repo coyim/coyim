@@ -55,8 +55,8 @@ func (lo *roomViewLoadingOverlay) onOccupantRoleUpdate() {
 }
 
 // onKickOccupant MUST be called from the UI thread
-func (lo *roomViewLoadingOverlay) onKickOccupant() {
-	lo.setTitle(i18n.Local("Getting out the occupant from the room..."))
+func (lo *roomViewLoadingOverlay) onKickOccupant(nickname string) {
+	lo.setTitle(i18n.Localf("Removing %s from the room", nickname))
 	lo.setTransparent()
 	lo.show()
 }

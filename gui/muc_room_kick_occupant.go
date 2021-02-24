@@ -39,8 +39,11 @@ func (k *kickOccupantView) initBuilder() {
 
 // initDefaults MUST be called from the UI thread
 func (k *kickOccupantView) initDefaults() {
+	k.dialog.SetTitle(i18n.Localf("Expel %s from the room", k.occupant.Nickname))
 	k.dialog.SetTransientFor(k.roomViewRoster.roomView.window)
-	k.title.SetText(i18n.Localf("You are kicking %s", k.occupant.Nickname))
+
+	k.title.SetText(i18n.Localf("You are about to temporarily remove %s from the room.", k.occupant.Nickname))
+	mucStyles.setRoomDialogErrorComponentHeaderStyle(k.title)
 }
 
 // onKickClicked MUST be called from the UI thread

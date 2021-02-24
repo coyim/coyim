@@ -6,7 +6,7 @@ import (
 )
 
 func getDisplayForSelfOccupantAffiliationRoleUpdate(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
-	d := newSelfAffiliationUpdateDisplayData(data.AffiliationUpdate{
+	m := getMUCNotificationMessageFrom(data.AffiliationUpdate{
 		Nickname: affiliationRoleUpdate.Nickname,
 		Reason:   affiliationRoleUpdate.Reason,
 		New:      affiliationRoleUpdate.NewAffiliation,
@@ -14,9 +14,11 @@ func getDisplayForSelfOccupantAffiliationRoleUpdate(affiliationRoleUpdate data.A
 		Actor:    affiliationRoleUpdate.Actor,
 	})
 
-	message := displayAffiliationUpdateMessage(d, i18n.Localf("As a result, your role changed from %s to %s.",
+	// TODO: This functionality will be removed by `getMUCNotificationMessageFrom`
+	// when it supports changing role and affiliation
+	message := i18n.Localf("%s As a result, your role changed from %s to %s.", m,
 		displayNameForRole(affiliationRoleUpdate.PreviousRole),
-		displayNameForRole(affiliationRoleUpdate.NewRole)))
+		displayNameForRole(affiliationRoleUpdate.NewRole))
 
 	return message
 }

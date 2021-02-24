@@ -170,7 +170,7 @@ func (v *roomView) roomConfigRequestTimeoutEvent() {
 
 // selfOccupantAffiliationUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantAffiliationUpdatedEvent(selfAffiliationUpdate data.SelfAffiliationUpdate) {
-	m := displaySelfOccupantAffiliationUpdate(selfAffiliationUpdate.AffiliationUpdate)
+	m := getMUCNotificationMessageFrom(selfAffiliationUpdate)
 	v.notifications.info(m)
 }
 
@@ -367,7 +367,7 @@ func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, affiliation dat
 
 func (v *roomView) onOccupantAffiliationUpdateSuccess(o *muc.Occupant, previousAffiliation, affiliation data.Affiliation) {
 	doInUIThread(func() {
-		v.notifications.info(displayForAffiliationChanged(o.Nickname, previousAffiliation, affiliation))
+		v.notifications.info(getAffiliationUpdateSuccessMessage(o.Nickname, previousAffiliation, affiliation))
 		v.loadingViewOverlay.hide()
 	})
 }

@@ -24,6 +24,11 @@ type AffiliationUpdate struct {
 	Actor    *Actor
 }
 
+// SelfAffiliationUpdate contains information related to a new and previous affiliation of the self occupant
+type SelfAffiliationUpdate struct {
+	AffiliationUpdate
+}
+
 // Affiliation represents an affiliation as specificed by section 5.2 in XEP-0045
 type Affiliation interface {
 	// IsAdmin will return true if this specific affiliation can modify persistent information

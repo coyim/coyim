@@ -63,7 +63,7 @@ func (k *Fingerprint) UnmarshalJSON(data []byte) error {
 
 	k.Fingerprint, err = hex.DecodeString(v.FingerprintHex)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	k.Trusted = v.Trusted

@@ -22,21 +22,16 @@ type occupantAffiliationUpdateView struct {
 	selfOccupant   *muc.Occupant
 	rosterInfoView *roomViewRosterInfo
 
-	dialog                          gtki.Dialog      `gtk-widget:"affiliation-dialog"`
-	contentBox                      gtki.Box         `gtk-widget:"affiliation-content-box"`
-	occupantInformationLabel        gtki.Label       `gtk-widget:"affiliation-occupant-label"`
-	affiliationLabel                gtki.Label       `gtk-widget:"affiliation-type-label"`
-	occupantNicknameLabel           gtki.Label       `gtk-widget:"affiliation-occupant-nickname-label"`
-	occupantNickname                gtki.Label       `gtk-widget:"affiliation-occupant-nickname"`
-	occupantCurrentAffiliationLabel gtki.Label       `gtk-widget:"affiliation-occupant-current-label"`
-	occupantCurrentAffiliation      gtki.Label       `gtk-widget:"affiliation-occupant-current"`
-	ownerRadio                      gtki.RadioButton `gtk-widget:"affiliation-owner"`
-	adminRadio                      gtki.RadioButton `gtk-widget:"affiliation-admin"`
-	memberRadio                     gtki.RadioButton `gtk-widget:"affiliation-member"`
-	noneRadio                       gtki.RadioButton `gtk-widget:"affiliation-none"`
-	reasonLabel                     gtki.Label       `gtk-widget:"affiliation-reason-label"`
-	reasonEntry                     gtki.TextView    `gtk-widget:"affiliation-reason-entry"`
-	applyButton                     gtki.Button      `gtk-widget:"affiliation-apply-button"`
+	dialog               gtki.Dialog      `gtk-widget:"affiliation-dialog"`
+	contentBox           gtki.Box         `gtk-widget:"affiliation-content-box"`
+	titleLabel           gtki.Label       `gtk-widget:"affiliation-title-label"`
+	optionsDisabledLabel gtki.Label       `gtk-widget:"affiliation-options-disabled-label"`
+	ownerRadio           gtki.RadioButton `gtk-widget:"affiliation-owner"`
+	adminRadio           gtki.RadioButton `gtk-widget:"affiliation-admin"`
+	memberRadio          gtki.RadioButton `gtk-widget:"affiliation-member"`
+	noneRadio            gtki.RadioButton `gtk-widget:"affiliation-none"`
+	reasonEntry          gtki.TextView    `gtk-widget:"affiliation-reason-entry"`
+	applyButton          gtki.Button      `gtk-widget:"affiliation-apply-button"`
 }
 
 func (r *roomViewRosterInfo) newOccupantAffiliationUpdateView(a *account, roomID jid.Bare, o *muc.Occupant) *occupantAffiliationUpdateView {
@@ -80,25 +75,32 @@ func (av *occupantAffiliationUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event
 
 func (av *occupantAffiliationUpdateView) initDefaults() {
 	av.dialog.SetTransientFor(av.rosterInfoView.parentWindow())
-	mucStyles.setFormSectionLabelStyle(av.affiliationLabel)
-	mucStyles.setFormSectionLabelStyle(av.occupantInformationLabel)
+
+	av.titleLabel.SetText(av.titleLabelText())
+
+	mucStyles.setFormSectionLabelStyle(av.titleLabel)
 	mucStyles.setHelpTextStyle(av.contentBox)
 
 	av.initRadioButtonsValues()
+}
+
+func (av *occupantAffiliationUpdateView) titleLabelText() string {
+	if av.occupant.Affiliation.IsNone() {
+		return i18n.Localf("Changing the position of %s", av.occupant.Nickname)
+	}
+
+	return i18n.Localf("Changing the %s position of %s",
+		displayNameForAffiliation(av.occupant.Affiliation),
+		av.occupant.Nickname)
 }
 
 // initRadioButtonsValues MUST be called from UI thread
 func (av *occupantAffiliationUpdateView) initRadioButtonsValues() {
 	if av.selfOccupant.Affiliation.IsAdmin() {
 		av.adminRadio.SetSensitive(false)
-		av.adminRadio.SetLabel(i18n.Local("Administrator (You can't edit the administrators list)"))
-
 		av.ownerRadio.SetSensitive(false)
-		av.ownerRadio.SetLabel(i18n.Local("Owner (You can't edit the owners list)"))
+		av.optionsDisabledLabel.SetVisible(true)
 	}
-
-	av.occupantNickname.SetLabel(av.occupant.Nickname)
-	av.occupantCurrentAffiliation.SetLabel(displayNameForAffiliation(av.occupant.Affiliation))
 
 	switch av.occupant.Affiliation.(type) {
 	case *data.OwnerAffiliation:

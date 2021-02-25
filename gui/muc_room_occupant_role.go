@@ -20,19 +20,14 @@ type occupantRoleUpdateView struct {
 	occupant       *muc.Occupant
 	rosterInfoView *roomViewRosterInfo
 
-	dialog                   gtki.Dialog      `gtk-widget:"role-dialog"`
-	contentBox               gtki.Box         `gtk-widget:"role-content-box"`
-	occupantInformationLabel gtki.Label       `gtk-widget:"role-occupant-label"`
-	occupantNicknameLabel    gtki.Label       `gtk-widget:"role-occupant-nickname-label"`
-	occupantNickname         gtki.Label       `gtk-widget:"role-occupant-nickname"`
-	occupantCurrentRoleLabel gtki.Label       `gtk-widget:"role-occupant-current-label"`
-	occupantCurrentRole      gtki.Label       `gtk-widget:"role-occupant-current"`
-	roleLabel                gtki.Label       `gtk-widget:"role-type-label"`
-	moderatorRadio           gtki.RadioButton `gtk-widget:"role-moderator"`
-	participantRadio         gtki.RadioButton `gtk-widget:"role-participant"`
-	reasonLabel              gtki.Label       `gtk-widget:"role-reason-label"`
-	reasonEntry              gtki.TextView    `gtk-widget:"role-reason-entry"`
-	applyButton              gtki.Button      `gtk-widget:"role-apply-button"`
+	dialog           gtki.Dialog      `gtk-widget:"role-dialog"`
+	contentBox       gtki.Box         `gtk-widget:"role-content-box"`
+	roleLabel        gtki.Label       `gtk-widget:"role-type-label"`
+	moderatorRadio   gtki.RadioButton `gtk-widget:"role-moderator"`
+	participantRadio gtki.RadioButton `gtk-widget:"role-participant"`
+	reasonLabel      gtki.Label       `gtk-widget:"role-reason-label"`
+	reasonEntry      gtki.TextView    `gtk-widget:"role-reason-entry"`
+	applyButton      gtki.Button      `gtk-widget:"role-apply-button"`
 }
 
 func (r *roomViewRosterInfo) newOccupantRoleUpdateView(a *account, roomID jid.Bare, o *muc.Occupant) *occupantRoleUpdateView {
@@ -74,7 +69,11 @@ func (rv *occupantRoleUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event) {
 
 func (rv *occupantRoleUpdateView) initDefaults() {
 	rv.dialog.SetTransientFor(rv.rosterInfoView.parentWindow())
-	mucStyles.setFormSectionLabelStyle(rv.occupantInformationLabel)
+
+	rv.roleLabel.SetText(i18n.Localf("Changing the %s role from %s",
+		displayNameForRole(rv.occupant.Role),
+		rv.occupant.Nickname))
+
 	mucStyles.setFormSectionLabelStyle(rv.roleLabel)
 	mucStyles.setHelpTextStyle(rv.contentBox)
 
@@ -85,11 +84,8 @@ func (rv *occupantRoleUpdateView) initDefaults() {
 func (rv *occupantRoleUpdateView) initRadioButtonsValues() {
 	if rv.occupant.Affiliation.IsAdmin() || rv.occupant.Affiliation.IsOwner() {
 		rv.participantRadio.SetSensitive(false)
-		rv.participantRadio.SetLabel(i18n.Localf("You can't remove the moderator role to %s", displayNameForAffiliationWithPreposition(rv.occupant.Affiliation)))
+		rv.participantRadio.SetLabel(i18n.Localf("You can't change the role of moderator from %s", displayNameForAffiliationWithPreposition(rv.occupant.Affiliation)))
 	}
-
-	rv.occupantNickname.SetLabel(rv.occupant.Nickname)
-	rv.occupantCurrentRole.SetLabel(rv.occupant.Role.Name())
 
 	switch rv.occupant.Role.(type) {
 	case *data.ModeratorRole:

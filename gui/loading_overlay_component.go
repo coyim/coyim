@@ -6,6 +6,7 @@ type loadingOverlayComponent struct {
 	overlay     gtki.Overlay `gtk-widget:"loading-overlay"`
 	title       gtki.Label   `gtk-widget:"loading-overlay-title"`
 	description gtki.Label   `gtk-widget:"loading-overlay-description"`
+	content     gtki.Box     `gtk-widget:"loading-overlay-content"`
 	box         gtki.Box     `gtk-widget:"loading-overlay-box"`
 }
 
@@ -27,11 +28,13 @@ func (lo *loadingOverlayComponent) getOverlay() gtki.Overlay {
 // setTransparent MUST be called from the UI thread
 func (lo *loadingOverlayComponent) setTransparent() {
 	mucStyles.setRoomLoadingViewOverlayTransparentStyle(lo.box)
+	mucStyles.setRoomLoadingViewOverlayContentTransparentStyle(lo.content)
 }
 
 // setSolid MUST be called from the UI thread
 func (lo *loadingOverlayComponent) setSolid() {
 	mucStyles.setRoomLoadingViewOverlaySolidStyle(lo.box)
+	mucStyles.setRoomLoadingViewOverlayContentSolidStyle(lo.content)
 }
 
 // show MUST be called from the UI thread

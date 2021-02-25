@@ -170,7 +170,7 @@ func (a *Account) EnsurePrivateKey() (hasUpdate bool, e error) {
 	log.WithField("account", a.Account).Debug("EnsurePrivateKey()")
 
 	prevKeys := a.AllPrivateKeys()
-	newKeys, err := otr3.GenerateMissingKeys(prevKeys)
+	newKeys, err := generateMissingKeysFunc(prevKeys)
 
 	if err != nil {
 		return false, err

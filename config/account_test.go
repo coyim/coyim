@@ -1,6 +1,8 @@
 package config
 
 import (
+	"errors"
+
 	"github.com/coyim/otr3"
 
 	. "gopkg.in/check.v1"
@@ -94,6 +96,24 @@ func (s *AccountXMPPSuite) Test_EnsurePrivateKey_GeneratePrivateKeyIfMissing(c *
 	c.Check(err, IsNil)
 	c.Check(changed, Equals, true)
 	c.Check(len(a.PrivateKeys), Equals, 1)
+}
+
+func (s *AccountXMPPSuite) Test_EnsurePrivateKey_FailsIfKeyGenerationFails(c *C) {
+	originalFn := generateMissingKeysFunc
+	generateMissingKeysFunc = func([][]byte) ([]otr3.PrivateKey, error) {
+		return nil, errors.New("an unexpected IO error")
+	}
+
+	defer func() {
+		generateMissingKeysFunc = originalFn
+	}()
+
+	a := &Account{}
+
+	changed, err := a.EnsurePrivateKey()
+
+	c.Assert(err, ErrorMatches, "an unexpected IO error")
+	c.Assert(changed, Equals, false)
 }
 
 func (s *AccountXMPPSuite) Test_ID_generatesID(c *C) {

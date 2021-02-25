@@ -162,11 +162,13 @@ var caCertRootDER = []byte{
 	0x93, 0xda, 0x76, 0xad, 0x25, 0x73, 0x4c, 0xc5, 0x43,
 }
 
+var x509ParseCertificate = x509.ParseCertificate
+
 func rootCAFor(domain string) (*x509.CertPool, error) {
 	// jabber.ccc.de uses CACert but distros are removing that root
 	// certificate.
 	if domain == "jabber.ccc.de" {
-		caCertRoot, err := x509.ParseCertificate(caCertRootDER)
+		caCertRoot, err := x509ParseCertificate(caCertRootDER)
 		if err != nil {
 			return nil, err
 		}

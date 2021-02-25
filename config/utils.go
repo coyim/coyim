@@ -42,10 +42,12 @@ func randomUint64() uint64 {
 	return mrand.Uint64()
 }
 
+var ioReadFull = io.ReadFull
+
 func randomString(dest []byte) error {
 	src := make([]byte, len(dest))
 
-	if _, err := io.ReadFull(rand.Reader, src); err != nil {
+	if _, err := ioReadFull(rand.Reader, src); err != nil {
 		return err
 	}
 

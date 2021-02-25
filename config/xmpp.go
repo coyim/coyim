@@ -50,9 +50,11 @@ func genTorAutoAuth(u *url.URL) *proxy.Auth {
 	return auth
 }
 
+var tornetAddress = ournet.Tor.Address
+
 func genTorAutoAddr(u *url.URL) string {
 	if u.Host == "" {
-		return ournet.Tor.Address()
+		return tornetAddress()
 	}
 
 	return u.Host

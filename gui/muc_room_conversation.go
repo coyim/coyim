@@ -122,6 +122,8 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.occupantAffiliationEvent(t.selfAffiliationUpdate.AffiliationUpdate)
 		case occupantRoleUpdatedEvent:
 			c.occupantRoleEvent(t.roleUpdate)
+		case selfOccupantRoleUpdatedEvent:
+			c.occupantRoleEvent(t.selfRoleUpdate.RoleUpdate)
 		case selfOccupantKickedEvent:
 			c.selfOccupantKickedEvent()
 		}

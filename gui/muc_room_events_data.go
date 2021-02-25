@@ -122,7 +122,7 @@ type occupantRoleUpdatedEvent struct {
 }
 
 type selfOccupantRoleUpdatedEvent struct {
-	roleUpdate data.RoleUpdate
+	selfRoleUpdate data.SelfRoleUpdate
 }
 
 type occupantKickedEvent struct {

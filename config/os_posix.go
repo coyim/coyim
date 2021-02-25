@@ -7,6 +7,7 @@ func IsWindows() bool {
 	return false
 }
 
+// SystemConfigDir points to the function that gets the configuration directory for this system
 var SystemConfigDir = XdgConfigHome
 
 // // SystemConfigDir returns the application data directory, valid on both windows and posix systems

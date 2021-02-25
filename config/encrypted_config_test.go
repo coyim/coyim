@@ -191,6 +191,11 @@ func (s *EncryptedConfigXMPPSuite) Test_functionKeySupplier_LastAttemptFailed_se
 	c.Assert(fk.lastAttemptFailed, Equals, true)
 }
 
+func (s *EncryptedConfigXMPPSuite) Test_functionKeySupplier_Invalidate_doesntDoAnything(c *C) {
+	fk := &functionKeySupplier{}
+	fk.Invalidate()
+}
+
 func (s *EncryptedConfigXMPPSuite) Test_cachingKeySupplier_LastAttemptFailed_setsFlag(c *C) {
 	fk := &cachingKeySupplier{}
 	fk.LastAttemptFailed()

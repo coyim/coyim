@@ -1,7 +1,7 @@
 <interface>
   <object class="GtkDialog" id="role-dialog">
     <property name="width_request">600</property>
-    <property name="title" translatable="yes">Update occupant role</property>
+    <property name="title" translatable="yes">Change occupant role</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="type_hint">dialog</property>
@@ -10,313 +10,6 @@
     <child internal-child="vbox">
       <object class="GtkBox" id="role-content-box">
         <property name="orientation">vertical</property>
-        <property name="margin-left">12</property>
-        <property name="margin-right">12</property>
-        <child>
-          <object class="GtkBox" id="role-content">
-            <property name="visible">True</property>
-            <property name="orientation">vertical</property>
-            <child>
-              <object class="GtkBox">
-                <property name="visible">True</property>
-                <property name="valign">start</property>
-                <property name="spacing">12</property>
-                <property name="orientation">vertical</property>
-                <child>
-                  <object class="GtkLabel" id="role-occupant-label">
-                    <property name="visible">True</property>
-                    <property name="halign">start</property>
-                    <property name="label" translatable="yes">Occupant information</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkBox">
-                    <property name="visible">True</property>
-                    <property name="spacing">6</property>
-                    <property name="orientation">vertical</property>
-                    <property name="margin_left">24</property>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <child>
-                          <object class="GtkLabel" id="role-occupant-nickname-label">
-                            <property name="visible">True</property>
-                            <property name="halign">start</property>
-                            <property name="label" translatable="yes">Nickname:</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="role-occupant-nickname">
-                            <property name="visible">True</property>
-                            <property name="halign">start</property>
-                            <property name="margin_left">6</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <child>
-                          <object class="GtkLabel" id="role-occupant-current-label">
-                            <property name="visible">True</property>
-                            <property name="halign">start</property>
-                            <property name="label" translatable="yes">Current role:</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="role-occupant-current">
-                            <property name="visible">True</property>
-                            <property name="halign">start</property>
-                            <property name="margin_left">6</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">2</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="padding">12</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkBox" id="role-type">
-                <property name="visible">True</property>
-                <property name="valign">start</property>
-                <property name="orientation">vertical</property>
-                <property name="spacing">12</property>
-                <child>
-                  <object class="GtkLabel" id="role-type-label">
-                    <property name="visible">True</property>
-                    <property name="halign">start</property>
-                    <property name="label" translatable="yes">Role</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkBox">
-                    <property name="visible">True</property>
-                    <property name="orientation">vertical</property>
-                    <property name="spacing">12</property>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="orientation">vertical</property>
-                        <property name="spacing">6</property>
-                        <child>
-                          <object class="GtkRadioButton" id="role-moderator">
-                            <property name="label" translatable="yes">Moderator</property>
-                            <property name="visible">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="valign">center</property>
-                            <property name="draw_indicator">True</property>
-                            <property name="group">role-participant</property>
-                            <signal name="toggled" handler="on_toggled" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="label" translatable="yes">A moderator can kick users, grant or revoke voice and assign moderatorship. Administrators and owners will automatically become moderators when they enter a room, but they can also make other occupants into moderators.</property>
-                            <property name="wrap">True</property>
-                            <property name="width_chars">0</property>
-                            <property name="max_width_chars">40</property>
-                            <property name="lines">2</property>
-                            <property name="xalign">0</property>
-                            <property name="yalign">0</property>
-                            <property name="margin_left">24</property>
-                            <style>
-                              <class name="help-text"/>
-                            </style>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="orientation">vertical</property>
-                        <property name="spacing">6</property>
-                        <child>
-                          <object class="GtkRadioButton" id="role-participant">
-                            <property name="label" translatable="yes">Participant</property>
-                            <property name="visible">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="valign">center</property>
-                            <property name="draw_indicator">True</property>
-                            <signal name="toggled" handler="on_toggled" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="label" translatable="yes">In a moderated room, only participants and moderators can send messages to the room. In non-moderated rooms, there's no difference between a participant and a visitor.</property>
-                            <property name="wrap">True</property>
-                            <property name="width_chars">0</property>
-                            <property name="max_width_chars">40</property>
-                            <property name="lines">2</property>
-                            <property name="xalign">0</property>
-                            <property name="yalign">0</property>
-                            <property name="margin_left">24</property>
-                            <style>
-                              <class name="help-text"/>
-                            </style>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="padding">12</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkBox" id="role-reason">
-                <property name="visible">True</property>
-                <property name="orientation">vertical</property>
-                <property name="spacing">6</property>
-                <child>
-                  <object class="GtkLabel" id="role-reason-label">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">Here you can provide an optional reason for the change. Everyone in the room will see this reason.</property>
-                    <property name="wrap">True</property>
-                    <property name="width_chars">0</property>
-                    <property name="max_width_chars">40</property>
-                    <property name="lines">2</property>
-                    <property name="xalign">0</property>
-                    <property name="yalign">0</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkScrolledWindow">
-                    <property name="visible">True</property>
-                    <property name="hscrollbar_policy">never</property>
-                    <property name="shadow_type">in</property>
-                    <child>
-                      <object class="GtkTextView" id="role-reason-entry">
-                        <property name="visible">True</property>                        
-                        <property name="pixels_inside_wrap">3</property>
-                        <property name="top_margin">3</property>
-                        <property name="bottom_margin">3</property>
-                        <property name="indent">6</property>
-                        <property name="accepts_tab">False</property>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="padding">12</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="role-buttons">
             <property name="halign">end</property>
@@ -324,14 +17,13 @@
             <property name="layout_style">expand</property>
             <child>
               <object class="GtkBox">
-                <property name="visible">True</property>                
+                <property name="visible">True</property>
                 <property name="border_width">12</property>
                 <property name="spacing">12</property>
                 <child>
                   <object class="GtkButtonBox">
                     <property name="visible">True</property>
                     <property name="spacing">12</property>
-                    <property name="layout_style">start</property>
                     <child>
                       <object class="GtkButton" id="role-cancel-button">
                         <property name="label" translatable="yes">Cancel</property>
@@ -349,7 +41,7 @@
                       <object class="GtkButton" id="role-apply-button">
                         <property name="label" translatable="yes">Apply</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>                        
+                        <property name="sensitive">False</property>
                         <property name="receives_default">True</property>
                         <signal name="clicked" handler="on_apply" swapped="no"/>
                       </object>
@@ -379,6 +71,244 @@
             <property name="fill">False</property>
             <property name="pack_type">end</property>
             <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="role-content">
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="margin_top">12</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkBox" id="role-type">
+                    <property name="visible">True</property>
+                    <property name="valign">start</property>
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">12</property>
+                    <child>
+                      <object class="GtkLabel" id="role-type-label">
+                        <property name="visible">True</property>
+                        <property name="halign">start</property>
+                        <property name="label" translatable="yes">Change occupant role</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFrame">
+                        <property name="visible">True</property>
+                        <property name="label_xalign">0</property>
+                        <property name="shadow_type">in</property>
+                        <child>
+                          <object class="GtkListBox">
+                            <property name="visible">True</property>
+                            <property name="selection_mode">none</property>
+                            <property name="activate_on_single_click">False</property>
+                            <child>
+                              <object class="GtkListBoxRow">
+                                <property name="width_request">100</property>
+                                <property name="height_request">80</property>
+                                <property name="visible">True</property>
+                                <property name="activatable">False</property>
+                                <property name="selectable">False</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="border_width">12</property>
+                                    <property name="orientation">vertical</property>
+                                    <property name="spacing">6</property>
+                                    <child>
+                                      <object class="GtkRadioButton" id="role-moderator">
+                                        <property name="label" translatable="yes">Moderator</property>
+                                        <property name="visible">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="draw_indicator">True</property>
+                                        <property name="group">role-participant</property>
+                                        <signal name="toggled" handler="on_toggled" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="label" translatable="yes">A moderator can kick users, grant or revoke voice and assign moderatorship. Administrators and owners will automatically become moderators when they enter a room, but they can also make other occupants into moderators.</property>
+                                        <property name="wrap">True</property>
+                                        <property name="width_chars">0</property>
+                                        <property name="max_width_chars">40</property>
+                                        <property name="lines">2</property>
+                                        <property name="xalign">0</property>
+                                        <property name="yalign">0</property>
+                                        <style>
+                                          <class name="help-text"/>
+                                        </style>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkListBoxRow">
+                                <property name="visible">True</property>
+                                <child>
+                                  <object class="GtkSeparator">
+                                    <property name="visible">True</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkListBoxRow">
+                                <property name="width_request">100</property>
+                                <property name="height_request">80</property>
+                                <property name="visible">True</property>
+                                <property name="activatable">False</property>
+                                <property name="selectable">False</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="border_width">12</property>
+                                    <property name="orientation">vertical</property>
+                                    <property name="spacing">6</property>
+                                    <child>
+                                      <object class="GtkRadioButton" id="role-participant">
+                                        <property name="label" translatable="yes">Participant</property>
+                                        <property name="visible">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                        <signal name="toggled" handler="on_toggled" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="label" translatable="yes">In a moderated room, only participants and moderators can send messages to the room. In non-moderated rooms, there's no difference between a participant and a visitor.</property>
+                                        <property name="wrap">True</property>
+                                        <property name="width_chars">0</property>
+                                        <property name="max_width_chars">40</property>
+                                        <property name="lines">2</property>
+                                        <property name="xalign">0</property>
+                                        <property name="yalign">0</property>
+                                        <style>
+                                          <class name="help-text"/>
+                                        </style>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="padding">12</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="role-reason">
+                    <property name="visible">True</property>
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">6</property>
+                    <child>
+                      <object class="GtkLabel" id="role-reason-label">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Here you can provide an optional reason for the change. Everyone in the room will see this reason.</property>
+                        <property name="wrap">True</property>
+                        <property name="width_chars">0</property>
+                        <property name="max_width_chars">40</property>
+                        <property name="lines">2</property>
+                        <property name="xalign">0</property>
+                        <property name="yalign">0</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScrolledWindow">
+                        <property name="visible">True</property>
+                        <property name="hscrollbar_policy">never</property>
+                        <property name="shadow_type">in</property>
+                        <child>
+                          <object class="GtkTextView" id="role-reason-entry">
+                            <property name="visible">True</property>
+                            <property name="pixels_inside_wrap">3</property>
+                            <property name="top_margin">3</property>
+                            <property name="bottom_margin">3</property>
+                            <property name="indent">6</property>
+                            <property name="accepts_tab">False</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="padding">12</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="padding">12</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
           </packing>
         </child>
       </object>

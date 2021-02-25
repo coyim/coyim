@@ -67,6 +67,10 @@ func (a *Account) HasTorAuto() bool {
 	return false
 }
 
+var buildDialerFor = func(p *ConnectionPolicy, conf *Account, verifier ourtls.Verifier) (interfaces.Dialer, error) {
+	return p.buildDialerFor(conf, verifier)
+}
+
 func (p *ConnectionPolicy) buildDialerFor(conf *Account, verifier ourtls.Verifier) (interfaces.Dialer, error) {
 	//Account is a bare JID
 	jidParts := strings.SplitN(conf.Account, "@", 2)
@@ -127,10 +131,8 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account, verifier ourtls.Verifie
 	}
 
 	server := dialer.GetServer()
-	host, port, err := net.SplitHostPort(server)
-	if err != nil {
-		return nil, err
-	}
+	// This error can't logically happen, so we will ignore it here
+	host, port, _ := net.SplitHostPort(server)
 
 	known, ok := servers.Get(host)
 	if ok {
@@ -146,10 +148,14 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account, verifier ourtls.Verifie
 	return dialer, nil
 }
 
+var torDetect = func() bool {
+	return ournet.Tor.Detect()
+}
+
 // CreateTorProxy returns a dialer that uses the Tor connection if available
 func (a *Account) CreateTorProxy() (proxy.Dialer, error) {
 	if a.HasTorAuto() {
-		if !ournet.Tor.Detect() {
+		if !torDetect() {
 			return nil, ErrTorNotRunning
 		}
 	}
@@ -206,7 +212,7 @@ func buildInOutLogs(rawLog io.Writer) (io.Writer, io.Writer) {
 
 // Connect to the server and authenticates with the password
 func (p *ConnectionPolicy) Connect(password, resource string, conf *Account, verifier ourtls.Verifier) (interfaces.Conn, error) {
-	dialer, err := p.buildDialerFor(conf, verifier)
+	dialer, err := buildDialerFor(p, conf, verifier)
 	if err != nil {
 		return nil, err
 	}
@@ -223,7 +229,7 @@ func (p *ConnectionPolicy) Connect(password, resource string, conf *Account, ver
 
 // RegisterAccount register the account on the XMPP server.
 func (p *ConnectionPolicy) RegisterAccount(createCallback data.FormCallback, conf *Account, verifier ourtls.Verifier) (interfaces.Conn, error) {
-	dialer, err := p.buildDialerFor(conf, verifier)
+	dialer, err := buildDialerFor(p, conf, verifier)
 	if err != nil {
 		return nil, err
 	}

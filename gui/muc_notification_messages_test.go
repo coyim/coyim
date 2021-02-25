@@ -407,13 +407,13 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateSuccessMessage(c *
 		"Juan is not an owner anymore.")
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, none, member), Equals,
-		"The position of Juan was updated to member.")
+		"The position of Juan was changed to member.")
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, none, admin), Equals,
-		"The position of Juan was updated to administrator.")
+		"The position of Juan was changed to administrator.")
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, none, owner), Equals,
-		"The position of Juan was updated to owner.")
+		"The position of Juan was changed to owner.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affiliationOutcast(c *C) {

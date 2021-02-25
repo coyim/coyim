@@ -192,13 +192,11 @@ func (s *mucStylesProvider) setHelpTextStyle(p gtki.Box) {
 	})
 }
 
-func (s *mucStylesProvider) setHelpTextStyleForRoleAction(p gtki.Box) {
-	s.setWidgetStyles(p, styles{
-		".help-text": style{
-			"font-style": "italic",
-			"opacity":    "0.7",
-			"font-size":  "12px",
-		},
+func (s *mucStylesProvider) setChangeRoleDisableLabelStyle(l gtki.Label) {
+	s.setLabelStyle(l, style{
+		"font-style": "italic",
+		"opacity":    "0.7",
+		"font-size":  "small",
 	})
 }
 

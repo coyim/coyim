@@ -430,9 +430,6 @@
                             <property name="label" translatable="yes">You cannot change the moderator role of an owner or administrator.</property>
                             <property name="justify">fill</property>
                             <property name="wrap">True</property>
-                            <style>
-                              <class name="help-text"/>
-                            </style>
                           </object>
                           <packing>
                             <property name="expand">False</property>

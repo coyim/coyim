@@ -34,9 +34,11 @@ type EncryptionParameters struct {
 	saltInternal  []byte
 }
 
+var randReaderRead = rand.Reader.Read
+
 func genRand(size int) []byte {
 	buf := make([]byte, size)
-	if _, err := rand.Reader.Read(buf[:]); err != nil {
+	if _, err := randReaderRead(buf[:]); err != nil {
 		panic("Failed to read random bytes: " + err.Error())
 	}
 	return buf

@@ -38,6 +38,8 @@ func findConfigFile(filename string) string {
 
 const tmpExtension = ".000~"
 
+var osRename = os.Rename
+
 func safeWrite(name string, data []byte, perm os.FileMode) error {
 	// This function will leave a backup of the config file every time it writes
 
@@ -52,7 +54,7 @@ func safeWrite(name string, data []byte, perm os.FileMode) error {
 	}
 
 	if fileExists(name) {
-		err := os.Rename(name, backupName)
+		err := osRename(name, backupName)
 		if err != nil {
 			return err
 		}
@@ -64,7 +66,7 @@ func safeWrite(name string, data []byte, perm os.FileMode) error {
 		return err
 	}
 
-	return os.Rename(tempName, name)
+	return osRename(tempName, name)
 }
 
 func readFileOrTemporaryBackup(name string) (data []byte, e error) {

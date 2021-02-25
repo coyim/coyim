@@ -29,7 +29,9 @@ func IsWindows() bool {
 	return true
 }
 
-// SystemConfigDir returns the application data directory, valid on both windows and posix systems
-func SystemConfigDir() string {
-	return appdataFolderPath()
-}
+var SystemConfigDir = appdataFolderPath
+
+// // SystemConfigDir returns the application data directory, valid on both windows and posix systems
+// func SystemConfigDir() string {
+// 	return appdataFolderPath()
+// }

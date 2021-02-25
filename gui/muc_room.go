@@ -401,7 +401,7 @@ func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, role data.Role, reason
 func (v *roomView) onOccupantRoleUpdateSuccess(o *muc.Occupant, role data.Role) {
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
-		v.notifications.info(i18n.Localf("The role of %s was updated to %s", o.Nickname, role.Name()))
+		v.notifications.info(i18n.Localf("The role of %s was changed to %s", o.Nickname, displayNameForRole(role)))
 	})
 }
 

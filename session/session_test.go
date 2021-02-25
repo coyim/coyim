@@ -3,32 +3,21 @@ package session
 import (
 	"encoding/xml"
 	"errors"
-	"io/ioutil"
-	"testing"
 	"time"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
 
 	"github.com/coyim/coyim/config"
-	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/otrclient"
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
-	"github.com/coyim/gotk3adapter/glib_mock"
 
 	. "gopkg.in/check.v1"
 )
-
-func init() {
-	log.SetOutput(ioutil.Discard)
-	i18n.InitLocalization(&glib_mock.Mock{})
-}
-
-func Test(t *testing.T) { TestingT(t) }
 
 type SessionSuite struct{}
 

@@ -1,14 +1,6 @@
 package ui
 
 import (
-	"io/ioutil"
-	"testing"
-
-	log "github.com/sirupsen/logrus"
-
-	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/gotk3adapter/glib_mock"
-
 	. "gopkg.in/check.v1"
 )
 
@@ -18,13 +10,6 @@ var escapingTests = []string{
 	"foo\\",
 	"foo\\x01",
 	"العربية",
-}
-
-func Test(t *testing.T) { TestingT(t) }
-
-func init() {
-	log.SetOutput(ioutil.Discard)
-	i18n.InitLocalization(&glib_mock.Mock{})
 }
 
 type UISuite struct{}

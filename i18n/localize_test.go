@@ -1,17 +1,10 @@
 package i18n
 
 import (
-	"io/ioutil"
-	"testing"
-
-	log "github.com/sirupsen/logrus"
-
 	"github.com/coyim/gotk3adapter/glib_mock"
 
 	. "gopkg.in/check.v1"
 )
-
-func Test(t *testing.T) { TestingT(t) }
 
 type localGlibMock struct {
 	*glib_mock.Mock
@@ -19,11 +12,6 @@ type localGlibMock struct {
 
 func (*localGlibMock) Local(vx string) string {
 	return "[local]" + vx
-}
-
-func init() {
-	log.SetOutput(ioutil.Discard)
-	InitLocalization(&localGlibMock{&glib_mock.Mock{}})
 }
 
 type I18NSuite struct{}

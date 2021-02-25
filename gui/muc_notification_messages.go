@@ -14,7 +14,7 @@ func getAffiliationUpdateSuccessMessage(nickname string, previousAffiliation, af
 		return i18n.Localf("%s is not %s anymore.", nickname, displayNameForAffiliationWithPreposition(previousAffiliation))
 	}
 
-	return i18n.Localf("The position of %s was updated to %s.", nickname, displayNameForAffiliation(affiliation))
+	return i18n.Localf("The position of %s was changed to %s.", nickname, displayNameForAffiliation(affiliation))
 }
 
 func getMUCNotificationMessageFrom(d interface{}) string {

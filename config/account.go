@@ -63,9 +63,11 @@ func SerializedKeys(keys []otr3.PrivateKey) [][]byte {
 	return result
 }
 
+var generateMissingKeysFunc = otr3.GenerateMissingKeys
+
 // NewAccount creates a new account
 func NewAccount() (*Account, error) {
-	pkeys, err := otr3.GenerateMissingKeys([][]byte{})
+	pkeys, err := generateMissingKeysFunc([][]byte{})
 	if err != nil {
 		return nil, err
 	}

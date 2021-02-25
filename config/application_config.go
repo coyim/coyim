@@ -191,9 +191,8 @@ func (a *ApplicationConfig) tryLoad(ks KeySupplier) error {
 		return errInvalidConfigFile
 	}
 
-	if err = json.Unmarshal(contents, a); err != nil {
-		return errInvalidConfigFile
-	}
+	// This can't actually fail - since the JSON unmarshal would have already failed earlier
+	_ = json.Unmarshal(contents, a)
 
 	if len(a.Accounts) == 0 {
 		return errInvalidConfigFile
@@ -290,10 +289,12 @@ func (a *ApplicationConfig) UpdateToLatestVersion() bool {
 	return res
 }
 
+var jsonMarshalIndentFunc = json.MarshalIndent
+
 //TODO: This is where we generate a new JSON representation and serialize it.
 //We are currently serializing our internal representation (ApplicationConfig) directly.
 func (a *ApplicationConfig) serialize() ([]byte, error) {
-	return json.MarshalIndent(a, "", "\t")
+	return jsonMarshalIndentFunc(a, "", "\t")
 }
 
 // ByAccountNameAlphabetic sorts the accounts based on their account names

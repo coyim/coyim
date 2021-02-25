@@ -233,12 +233,18 @@ func (s *ConnectionPolicySuite) Test_Account_CreateTorProxy_withTorAuto_triesToD
 		torDetect = origTorDetect
 	}()
 
+	origTor := ournet.Tor
+	defer func() {
+		ournet.Tor = origTor
+	}()
+
 	a := &Account{
 		Proxies: []string{"tor-auto://"},
 	}
 
 	called := false
 	torDetect = func() bool {
+		ournet.Tor = mockTorState("127.0.0.1:9999", true)
 		called = true
 		return true
 	}

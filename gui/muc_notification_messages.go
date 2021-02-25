@@ -25,6 +25,8 @@ func getMUCNotificationMessageFrom(d interface{}) string {
 		return getSelfAffiliationUpdateMessage(t)
 	case data.RoleUpdate:
 		return getRoleUpdateMessage(t)
+	case data.SelfRoleUpdate:
+		return getSelfRoleUpdateMessage(t)
 	case data.AffiliationRoleUpdate:
 		return getAffiliationRoleUpdateMessage(t)
 	default:
@@ -203,6 +205,36 @@ func getRoleUpdateMessage(roleUpdate data.RoleUpdate) string {
 		displayNameForRole(roleUpdate.Previous),
 		displayNameForRole(roleUpdate.New),
 		roleUpdate.Reason)
+}
+
+func getSelfRoleUpdateMessage(selfRoleUpdate data.SelfRoleUpdate) string {
+	if selfRoleUpdate.Actor == nil {
+		if selfRoleUpdate.Reason == "" {
+			return i18n.Localf("Your role was changed from %s to %s.",
+				displayNameForRole(selfRoleUpdate.Previous),
+				displayNameForRole(selfRoleUpdate.New))
+		}
+
+		return i18n.Localf("Your role was changed from %s to %s because: %s.",
+			displayNameForRole(selfRoleUpdate.Previous),
+			displayNameForRole(selfRoleUpdate.New),
+			selfRoleUpdate.Reason)
+	}
+
+	if selfRoleUpdate.Reason == "" {
+		return i18n.Localf("The %s %s changed your role from %s to %s.",
+			displayNameForAffiliation(selfRoleUpdate.Actor.Affiliation),
+			selfRoleUpdate.Actor.Nickname,
+			displayNameForRole(selfRoleUpdate.Previous),
+			displayNameForRole(selfRoleUpdate.New))
+	}
+
+	return i18n.Localf("The %s %s changed your role from %s to %s because: %s.",
+		displayNameForAffiliation(selfRoleUpdate.Actor.Affiliation),
+		selfRoleUpdate.Actor.Nickname,
+		displayNameForRole(selfRoleUpdate.Previous),
+		displayNameForRole(selfRoleUpdate.New),
+		selfRoleUpdate.Reason)
 }
 
 func getAffiliationRoleUpdateMessage(affiliationRoleUpdate data.AffiliationRoleUpdate) string {

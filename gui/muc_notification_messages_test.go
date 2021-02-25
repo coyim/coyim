@@ -189,6 +189,72 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateMessage_roleVisitor(c *C)
 	c.Assert(getRoleUpdateMessage(ru), Equals, "The owner chespirito changed the role of chapulin from moderator to visitor because: no contaban con mi astucia.")
 }
 
+func (*MUCNotificationMessagesSuite) Test_getSelfRoleUpdateMessage_roleModerator(c *C) {
+	sru := data.SelfRoleUpdate{
+		RoleUpdate: data.RoleUpdate{
+			Nickname: "wanda",
+			New:      newTestRoleFromString(data.RoleModerator),
+			Previous: newTestRoleFromString(data.RoleParticipant),
+		},
+	}
+
+	c.Assert(getSelfRoleUpdateMessage(sru), Equals, "Your role was changed from participant to moderator.")
+
+	sru.Reason = "vision wanted it"
+	c.Assert(getSelfRoleUpdateMessage(sru), Equals, "Your role was changed from participant to moderator because: vision wanted it.")
+
+	sru.Reason = ""
+	sru.Actor = newTestActor("vision", newTestAffiliationFromString(data.AffiliationAdmin), newTestRoleFromString(data.RoleModerator))
+	c.Assert(getSelfRoleUpdateMessage(sru), Equals, "The administrator vision changed your role from participant to moderator.")
+
+	sru.Reason = "vision wanted it"
+	c.Assert(getSelfRoleUpdateMessage(sru), Equals, "The administrator vision changed your role from participant to moderator because: vision wanted it.")
+}
+
+func (*MUCNotificationMessagesSuite) Test_getSelfRoleUpdateMessage_roleParticipant(c *C) {
+	sru := data.SelfRoleUpdate{
+		RoleUpdate: data.RoleUpdate{
+			Nickname: "sancho",
+			New:      newTestRoleFromString(data.RoleParticipant),
+			Previous: newTestRoleFromString(data.RoleModerator),
+		},
+	}
+
+	c.Assert(getSelfRoleUpdateMessage(sru), Equals, "Your role was changed from moderator to participant.")
+
+	sru.Reason = "los molinos son gigantes"
+	c.Assert(getSelfRoleUpdateMessage(sru), Equals, "Your role was changed from moderator to participant because: los molinos son gigantes.")
+
+	sru.Reason = ""
+	sru.Actor = newTestActor("panza", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
+	c.Assert(getSelfRoleUpdateMessage(sru), Equals, "The owner panza changed your role from moderator to participant.")
+
+	sru.Reason = "los molinos son gigantes"
+	c.Assert(getSelfRoleUpdateMessage(sru), Equals, "The owner panza changed your role from moderator to participant because: los molinos son gigantes.")
+}
+
+func (*MUCNotificationMessagesSuite) Test_getSelfRoleUpdateMessage_roleVisitor(c *C) {
+	sru := data.SelfRoleUpdate{
+		RoleUpdate: data.RoleUpdate{
+			Nickname: "chapulin",
+			New:      newTestRoleFromString(data.RoleVisitor),
+			Previous: newTestRoleFromString(data.RoleModerator),
+		},
+	}
+
+	c.Assert(getSelfRoleUpdateMessage(sru), Equals, "Your role was changed from moderator to visitor.")
+
+	sru.Reason = "no contaban con mi astucia"
+	c.Assert(getSelfRoleUpdateMessage(sru), Equals, "Your role was changed from moderator to visitor because: no contaban con mi astucia.")
+
+	sru.Reason = ""
+	sru.Actor = newTestActor("chespirito", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
+	c.Assert(getSelfRoleUpdateMessage(sru), Equals, "The owner chespirito changed your role from moderator to visitor.")
+
+	sru.Reason = "no contaban con mi astucia"
+	c.Assert(getSelfRoleUpdateMessage(sru), Equals, "The owner chespirito changed your role from moderator to visitor because: no contaban con mi astucia.")
+}
+
 func (*MUCNotificationMessagesSuite) Test_getMUCNotificationMessageFrom_roleUpdate(c *C) {
 	ru := data.RoleUpdate{
 		Nickname: "pablo",

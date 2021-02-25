@@ -113,7 +113,21 @@ func (s *mucStylesProvider) setRoomOverlayMessagesBoxStyle(b gtki.Box) {
 
 func (s *mucStylesProvider) setRoomLoadingViewOverlayTransparentStyle(b gtki.Box) {
 	s.setBoxStyle(b, style{
-		"background-color": s.hexToRGBA(s.colors.roomOverlayBackground, 0.25),
+		"background-color": s.hexToRGBA(s.colors.roomOverlayBackground, 0.5),
+	})
+}
+
+func (s *mucStylesProvider) setRoomLoadingViewOverlayContentTransparentStyle(b gtki.Box) {
+	s.setRoomLoadingViewOverlayContentBoxStyle(b)
+}
+
+func (s *mucStylesProvider) setRoomLoadingViewOverlayContentBoxStyle(b gtki.Box) {
+	s.setBoxStyle(b, style{
+		"background-color": s.colors.roomOverlayContentBackground,
+		"color":            s.colors.roomOverlayContentForeground,
+		"border-radius":    "12px",
+		"padding":          "18px 24px",
+		"box-shadow":       s.boxShadow("0 10px 20px", s.rgba(0, 0, 0, 0.5)),
 	})
 }
 
@@ -123,12 +137,12 @@ func (s *mucStylesProvider) setRoomLoadingViewOverlaySolidStyle(b gtki.Box) {
 	})
 }
 
-func (s *mucStylesProvider) setRoomLoadingViewOverlayContentBoxStyle(b gtki.Box) {
+func (s *mucStylesProvider) setRoomLoadingViewOverlayContentSolidStyle(b gtki.Box) {
 	s.setBoxStyle(b, style{
-		"background-color": s.colors.roomOverlayContentBackground,
+		"background-color": s.colors.roomOverlayContentSolidBackground,
 		"color":            s.colors.roomOverlayContentForeground,
-		"border-radius":    "6px",
-		"box-shadow":       s.boxShadow("0 10px 20px", s.rgba(0, 0, 0, 0.5)),
+		"border-radius":    "0",
+		"box-shadow":       "none",
 	})
 }
 

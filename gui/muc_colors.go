@@ -6,28 +6,29 @@ import (
 )
 
 type mucColorSet struct {
-	warningForeground            string
-	warningBackground            string
-	someoneJoinedForeground      string
-	someoneLeftForeground        string
-	timestampForeground          string
-	nicknameForeground           string
-	subjectForeground            string
-	infoMessageForeground        string
-	messageForeground            string
-	errorForeground              string
-	configurationForeground      string
-	roomMessagesBackground       string
-	roomOverlaySolidBackground   string
-	roomOverlayContentBackground string
-	roomOverlayBackground        string
-	roomOverlayContentForeground string
-	roomNameDisabledForeground   string
-	roomRosterStatusForeground   string
-	roomSubjectForeground        string
-	roomWarningForeground        string
-	roomWarningBackground        string
-	roomWarningBorder            string
+	warningForeground                 string
+	warningBackground                 string
+	someoneJoinedForeground           string
+	someoneLeftForeground             string
+	timestampForeground               string
+	nicknameForeground                string
+	subjectForeground                 string
+	infoMessageForeground             string
+	messageForeground                 string
+	errorForeground                   string
+	configurationForeground           string
+	roomMessagesBackground            string
+	roomOverlaySolidBackground        string
+	roomOverlayContentSolidBackground string
+	roomOverlayContentBackground      string
+	roomOverlayBackground             string
+	roomOverlayContentForeground      string
+	roomNameDisabledForeground        string
+	roomRosterStatusForeground        string
+	roomSubjectForeground             string
+	roomWarningForeground             string
+	roomWarningBackground             string
+	roomWarningBorder                 string
 }
 
 func (u *gtkUI) currentMUCColorSet() mucColorSet {
@@ -41,28 +42,29 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 	cs := u.defaultLightColorSet()
 
 	return mucColorSet{
-		warningForeground:            cs.warningForeground,
-		warningBackground:            cs.warningBackground,
-		errorForeground:              cs.errorForeground,
-		someoneJoinedForeground:      "#297316",
-		someoneLeftForeground:        "#731629",
-		timestampForeground:          "#AAB7B8",
-		nicknameForeground:           "#395BA3",
-		subjectForeground:            "#000080",
-		infoMessageForeground:        "#395BA3",
-		messageForeground:            "#000000",
-		configurationForeground:      "#9a04bf",
-		roomMessagesBackground:       "#FFFFFF",
-		roomOverlaySolidBackground:   "#FFFFFF",
-		roomOverlayContentBackground: "#FFFFFF",
-		roomOverlayBackground:        "#000000",
-		roomOverlayContentForeground: "#333333",
-		roomNameDisabledForeground:   "#A9A9A9",
-		roomRosterStatusForeground:   "#666666",
-		roomSubjectForeground:        "#666666",
-		roomWarningForeground:        "#744210",
-		roomWarningBackground:        "#FEFCBF",
-		roomWarningBorder:            "#D69E2E",
+		warningForeground:                 cs.warningForeground,
+		warningBackground:                 cs.warningBackground,
+		errorForeground:                   cs.errorForeground,
+		someoneJoinedForeground:           "#297316",
+		someoneLeftForeground:             "#731629",
+		timestampForeground:               "#AAB7B8",
+		nicknameForeground:                "#395BA3",
+		subjectForeground:                 "#000080",
+		infoMessageForeground:             "#395BA3",
+		messageForeground:                 "#000000",
+		configurationForeground:           "#9a04bf",
+		roomMessagesBackground:            "#FFFFFF",
+		roomOverlaySolidBackground:        "#FFFFFF",
+		roomOverlayContentSolidBackground: "transparent",
+		roomOverlayContentBackground:      "#FFFFFF",
+		roomOverlayBackground:             "#000000",
+		roomOverlayContentForeground:      "#333333",
+		roomNameDisabledForeground:        "#A9A9A9",
+		roomRosterStatusForeground:        "#666666",
+		roomSubjectForeground:             "#666666",
+		roomWarningForeground:             "#744210",
+		roomWarningBackground:             "#FEFCBF",
+		roomWarningBorder:                 "#D69E2E",
 	}
 }
 
@@ -70,28 +72,29 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 	cs := u.defaultDarkColorSet()
 
 	return mucColorSet{
-		warningForeground:            cs.warningForeground,
-		warningBackground:            cs.warningBackground,
-		errorForeground:              cs.errorForeground,
-		someoneJoinedForeground:      "#297316",
-		someoneLeftForeground:        "#731629",
-		timestampForeground:          "#AAB7B8",
-		nicknameForeground:           "#395BA3",
-		subjectForeground:            "#000080",
-		infoMessageForeground:        "#E34267",
-		messageForeground:            "#000000",
-		configurationForeground:      "#9a04bf",
-		roomMessagesBackground:       "#FFFFFF",
-		roomOverlaySolidBackground:   "#FFFFFF",
-		roomOverlayContentBackground: "#FFFFFF",
-		roomOverlayBackground:        "#000000",
-		roomOverlayContentForeground: "#333333",
-		roomNameDisabledForeground:   "#A9A9A9",
-		roomRosterStatusForeground:   "#666666",
-		roomSubjectForeground:        "#666666",
-		roomWarningForeground:        "#744210",
-		roomWarningBackground:        "#FEFCBF",
-		roomWarningBorder:            "#D69E2E",
+		warningForeground:                 cs.warningForeground,
+		warningBackground:                 cs.warningBackground,
+		errorForeground:                   cs.errorForeground,
+		someoneJoinedForeground:           "#297316",
+		someoneLeftForeground:             "#731629",
+		timestampForeground:               "#AAB7B8",
+		nicknameForeground:                "#395BA3",
+		subjectForeground:                 "#000080",
+		infoMessageForeground:             "#E34267",
+		messageForeground:                 "#000000",
+		configurationForeground:           "#9a04bf",
+		roomMessagesBackground:            "#FFFFFF",
+		roomOverlaySolidBackground:        "#FFFFFF",
+		roomOverlayContentSolidBackground: "transparent",
+		roomOverlayContentBackground:      "#FFFFFF",
+		roomOverlayBackground:             "#000000",
+		roomOverlayContentForeground:      "#333333",
+		roomNameDisabledForeground:        "#A9A9A9",
+		roomRosterStatusForeground:        "#666666",
+		roomSubjectForeground:             "#666666",
+		roomWarningForeground:             "#744210",
+		roomWarningBackground:             "#FEFCBF",
+		roomWarningBorder:                 "#D69E2E",
 	}
 }
 

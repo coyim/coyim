@@ -182,7 +182,7 @@ func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(affiliationRoleUpdate
 
 // selfOccupantRoleUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.SelfRoleUpdate) {
-	m := getDisplayForSelfOccupantRoleUpdate(selfRoleUpdate)
+	m := getSelfRoleUpdateMessage(selfRoleUpdate)
 	v.notifications.info(m)
 }
 

@@ -415,9 +415,9 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_doesntAd
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_Save_failsOnSerialization(c *C) {
-	orgJsonMarshalIndentFn := jsonMarshalIndentFunc
+	orgJSONMarshalIndentFn := jsonMarshalIndentFunc
 	defer func() {
-		jsonMarshalIndentFunc = orgJsonMarshalIndentFn
+		jsonMarshalIndentFunc = orgJSONMarshalIndentFn
 	}()
 
 	jsonMarshalIndentFunc = func(v interface{}, v2, v3 string) ([]byte, error) {

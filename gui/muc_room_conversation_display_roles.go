@@ -10,8 +10,8 @@ type roleUpdateDisplayer interface {
 	updateReason() string
 }
 
-func getDisplayForSelfOccupantRoleUpdate(roleUpdate data.RoleUpdate) string {
-	d := newSelfRoleUpdateDisplayData(roleUpdate)
+func getDisplayForSelfOccupantRoleUpdate(selfRoleUpdate data.SelfRoleUpdate) string {
+	d := newSelfRoleUpdateDisplayData(selfRoleUpdate)
 	return displayRoleUpdateMessage(d)
 }
 
@@ -54,9 +54,9 @@ type selfRoleUpdateDisplayData struct {
 	*roleUpdateDisplayData
 }
 
-func newSelfRoleUpdateDisplayData(roleUpdate data.RoleUpdate) *selfRoleUpdateDisplayData {
+func newSelfRoleUpdateDisplayData(selfRoleUpdate data.SelfRoleUpdate) *selfRoleUpdateDisplayData {
 	return &selfRoleUpdateDisplayData{
-		newRoleUpdateDisplayData(roleUpdate),
+		newRoleUpdateDisplayData(selfRoleUpdate.RoleUpdate),
 	}
 }
 

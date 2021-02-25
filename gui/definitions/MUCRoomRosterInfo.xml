@@ -427,7 +427,7 @@
                             <property name="halign">start</property>
                             <property name="margin_left">12</property>
                             <property name="margin_right">12</property>
-                            <property name="label" translatable="yes">You can't remove the moderator role of an owner or administrator</property>
+                            <property name="label" translatable="yes">You cannot change the moderator role of an owner or administrator.</property>
                             <property name="justify">fill</property>
                             <property name="wrap">True</property>
                             <style>

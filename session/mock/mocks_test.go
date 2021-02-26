@@ -87,7 +87,6 @@ func (s *MockSuite) Test_SessionMock(c *C) {
 	_, _ = sm.DestroyRoom(nil, "", nil, "")
 	_, _ = sm.UpdateOccupantAffiliation(nil, "", nil, nil, "")
 	_, _ = sm.UpdateOccupantRole(nil, "", nil, "")
-	_, _ = sm.KickOccupant(nil, "", "")
 
 	c.Assert(sm.Log(), IsNil)
 

@@ -18,10 +18,6 @@ func (s *session) UpdateOccupantRole(roomID jid.Bare, occupantNickname string, r
 	return s.muc.updateOccupantRole(roomID, occupantNickname, role, reason)
 }
 
-func (s *session) KickOccupant(roomID jid.Bare, occupantNickname string, reason string) (<-chan bool, <-chan error) {
-	return s.muc.updateOccupantRole(roomID, occupantNickname, &data.NoneRole{}, reason)
-}
-
 func (m *mucManager) updateOccupantRole(roomID jid.Bare, occupantNickname string, role data.Role, reason string) (<-chan bool, <-chan error) {
 	l := m.log.WithFields(log.Fields{
 		"room": roomID,

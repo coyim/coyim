@@ -426,7 +426,7 @@ func (v *roomView) tryKickOccupant(occupantNickname string, reason string) {
 		v.loadingViewOverlay.onKickOccupant(occupantNickname)
 	})
 
-	sc, ec := v.account.session.KickOccupant(v.roomID(), occupantNickname, reason)
+	sc, ec := v.account.session.UpdateOccupantRole(v.roomID(), occupantNickname, &data.NoneRole{}, reason)
 
 	select {
 	case <-sc:

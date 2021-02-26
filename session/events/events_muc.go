@@ -180,7 +180,7 @@ type MUCOccupantAffiliationRoleUpdated struct {
 
 // MUCSelfOccupantAffiliationRoleUpdated signifies that the self-occupant affiliation and role was updated
 type MUCSelfOccupantAffiliationRoleUpdated struct {
-	MUCOccupantAffiliationRoleUpdated
+	AffiliationRoleUpdate data.SelfAffiliationRoleUpdate
 }
 
 // MUCOccupantAffiliationUpdated signifies that an occupant affiliation was updated

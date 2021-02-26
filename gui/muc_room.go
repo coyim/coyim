@@ -541,8 +541,8 @@ func (v *roomView) publishOccupantAffiliationRoleUpdatedEvent(affiliationRoleUpd
 }
 
 // publishSelfOccupantAffiliationUpdatedEvent MUST NOT be called from the UI thread
-func (v *roomView) publishSelfOccupantAffiliationRoleUpdatedEvent(affiliationRoleUpdate data.AffiliationRoleUpdate) {
-	v.publishEvent(selfOccupantAffiliationRoleUpdatedEvent{affiliationRoleUpdate})
+func (v *roomView) publishSelfOccupantAffiliationRoleUpdatedEvent(selfaffiliationRoleUpdate data.SelfAffiliationRoleUpdate) {
+	v.publishEvent(selfOccupantAffiliationRoleUpdatedEvent{selfaffiliationRoleUpdate.AffiliationRoleUpdate})
 }
 
 // publishOccupantAffiliationUpdatedEvent MUST NOT be called from the UI thread

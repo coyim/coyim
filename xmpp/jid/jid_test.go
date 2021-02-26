@@ -216,3 +216,8 @@ func (s *JidXMPPSuite) Test_WithAndWithout(c *C) {
 	c.Assert(wr, Equals, full{Local{"someone"}, Domain{"foo.bar"}, Resource{"bla"}})
 	c.Assert(wnr, Equals, bare{Local{"someone"}, Domain{"foo.bar"}})
 }
+
+func (s *JidXMPPSuite) Test_MarkerMethods(c *C) {
+	(bare{})._ForcedToNotHaveResource()
+	(Domain{})._ForcedToNotHaveResource()
+}

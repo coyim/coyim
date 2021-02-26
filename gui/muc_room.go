@@ -137,7 +137,7 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 	case selfOccupantAffiliationUpdatedEvent:
 		v.selfOccupantAffiliationUpdatedEvent(t.selfAffiliationUpdate)
 	case selfOccupantAffiliationRoleUpdatedEvent:
-		v.selfOccupantAffiliationRoleUpdatedEvent(t.affiliationRoleUpdate)
+		v.selfOccupantAffiliationRoleUpdatedEvent(t.selfAffiliationRoleUpdate)
 	case selfOccupantRoleUpdatedEvent:
 		v.selfOccupantRoleUpdatedEvent(t.selfRoleUpdate)
 	case selfOccupantKickedEvent:
@@ -175,8 +175,8 @@ func (v *roomView) selfOccupantAffiliationUpdatedEvent(selfAffiliationUpdate dat
 }
 
 // selfOccupantAffiliationRoleUpdatedEvent MUST be called from the UI thread
-func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(affiliationRoleUpdate data.AffiliationRoleUpdate) {
-	m := getDisplayForSelfOccupantAffiliationRoleUpdate(affiliationRoleUpdate)
+func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) {
+	m := getSelfAffiliationRoleUpdateMessage(selfAffiliationRoleUpdate)
 	v.notifications.info(m)
 }
 
@@ -541,8 +541,8 @@ func (v *roomView) publishOccupantAffiliationRoleUpdatedEvent(affiliationRoleUpd
 }
 
 // publishSelfOccupantAffiliationUpdatedEvent MUST NOT be called from the UI thread
-func (v *roomView) publishSelfOccupantAffiliationRoleUpdatedEvent(selfaffiliationRoleUpdate data.SelfAffiliationRoleUpdate) {
-	v.publishEvent(selfOccupantAffiliationRoleUpdatedEvent{selfaffiliationRoleUpdate.AffiliationRoleUpdate})
+func (v *roomView) publishSelfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) {
+	v.publishEvent(selfOccupantAffiliationRoleUpdatedEvent{selfAffiliationRoleUpdate})
 }
 
 // publishOccupantAffiliationUpdatedEvent MUST NOT be called from the UI thread

@@ -106,7 +106,7 @@ type occupantAffiliationRoleUpdatedEvent struct {
 }
 
 type selfOccupantAffiliationRoleUpdatedEvent struct {
-	affiliationRoleUpdate data.AffiliationRoleUpdate
+	selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate
 }
 
 type occupantAffiliationUpdatedEvent struct {

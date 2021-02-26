@@ -192,6 +192,12 @@ func (s *mucStylesProvider) setHelpTextStyle(p gtki.Box) {
 	})
 }
 
+func (s *mucStylesProvider) setDisableRoomStyle(p gtki.Box) {
+	s.setBoxStyle(p, style{
+		"opacity": "0.5",
+	})
+}
+
 func (s *mucStylesProvider) setChangeRoleDisableLabelStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
 		"font-style": "italic",

@@ -160,6 +160,7 @@ func (c *roomViewConversation) selfOccupantKickedEvent() {
 	doInUIThread(func() {
 		c.updateNotificationMessage(i18n.Local("You can't send messages because you were expelled from the room."))
 		c.disableSendCapabilities()
+		mucStyles.setDisableRoomStyle(c.view)
 	})
 }
 

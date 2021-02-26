@@ -100,7 +100,7 @@ func (r *roomViewRoster) initSubscribers() {
 		case occupantRemovedEvent:
 			r.onUpdateRoster()
 		case selfOccupantKickedEvent:
-			r.onUpdateRoster()
+			r.disableRoom()
 		case occupantKickedEvent:
 			r.onUpdateRoster()
 		}
@@ -181,6 +181,13 @@ func (r *roomViewRoster) getNicknameFromTreeModel(path gtki.TreePath) (string, e
 	}
 
 	return iterValue.GetString()
+}
+
+func (r *roomViewRoster) disableRoom() {
+	doInUIThread(func() {
+		r.redraw()
+		mucStyles.setDisableRoomStyle(r.view)
+	})
 }
 
 func (r *roomViewRoster) onUpdateRoster() {

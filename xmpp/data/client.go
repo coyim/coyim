@@ -3,6 +3,7 @@ package data
 import (
 	"encoding/xml"
 	"fmt"
+	"reflect"
 	"strings"
 )
 
@@ -76,7 +77,7 @@ type StanzaError struct {
 
 func anyNotNil(vals ...interface{}) interface{} {
 	for _, v := range vals {
-		if v != nil {
+		if !reflect.ValueOf(v).IsNil() {
 			return v
 		}
 	}

@@ -125,9 +125,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case occupantRoleUpdatedEvent:
 			c.occupantRoleEvent(t.roleUpdate)
 		case selfOccupantRoleUpdatedEvent:
-			c.occupantRoleEvent(t.selfRoleUpdate.RoleUpdate)
-		case selfOccupantKickedEvent:
-			c.selfOccupantKickedEvent()
+			c.selfOccupantRoleEvent(t.selfRoleUpdate.RoleUpdate)
 		}
 	})
 }
@@ -164,12 +162,17 @@ func (c *roomViewConversation) occupantRoleEvent(roleUpdate data.RoleUpdate) {
 	})
 }
 
-func (c *roomViewConversation) selfOccupantKickedEvent() {
-	doInUIThread(func() {
-		c.updateNotificationMessage(i18n.Local("You can't send messages because you were expelled from the room."))
-		c.disableSendCapabilities()
-		mucStyles.setDisableRoomStyle(c.view)
-	})
+func (c *roomViewConversation) selfOccupantRoleEvent(roleUpdate data.RoleUpdate) {
+	if roleUpdate.New.IsNone() {
+		doInUIThread(func() {
+			c.updateNotificationMessage(i18n.Local("You can't send messages because you were expelled from the room."))
+			c.disableSendCapabilities()
+			mucStyles.setDisableRoomStyle(c.view)
+		})
+		return
+	}
+
+	c.occupantRoleEvent(roleUpdate)
 }
 
 func (c *roomViewConversation) occupantSelfJoinedEvent(r data.Role) {

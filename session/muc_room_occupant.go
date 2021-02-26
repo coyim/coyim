@@ -229,19 +229,28 @@ func (m *mucManager) handleOccupantKick(roomID jid.Bare, op *muc.OccupantPresenc
 		return
 	}
 
+	occupantKicked := m.newOccupantPresenceUpdateData(r, op)
+
+	roleUpdate := data.RoleUpdate{
+		Nickname: occupantKicked.nickname(),
+		Reason:   occupantKicked.reason(),
+		Actor:    occupantKicked.actorOccupant,
+		New:      occupantKicked.newRole(),
+		Previous: occupantKicked.previousRole(),
+	}
+
 	err := r.Roster().RemoveOccupant(op.Nickname)
 	if err != nil {
 		l.WithError(err).Error("An error occurred trying to remove the occupant from the roster")
 		return
 	}
 
-	occupantKicked := m.newOccupantPresenceUpdateData(r, op)
 	if occupantKicked.isOwnPresence() {
-		m.selfOccupantKicked(roomID, occupantKicked)
+		m.selfOccupantKicked(roomID, roleUpdate)
 		m.deleteRoomFromManager(roomID)
 		return
 	}
-	m.occupantKicked(roomID, occupantKicked)
+	m.occupantKicked(roomID, roleUpdate)
 }
 
 func (m *mucManager) handleOccupantUnavailable(roomID jid.Bare, op *muc.OccupantPresenceInfo, u *xmppData.MUCUser) {

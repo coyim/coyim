@@ -140,8 +140,6 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 		v.selfOccupantAffiliationRoleUpdatedEvent(t.selfAffiliationRoleUpdate)
 	case selfOccupantRoleUpdatedEvent:
 		v.selfOccupantRoleUpdatedEvent(t.selfRoleUpdate)
-	case selfOccupantKickedEvent:
-		v.selfOccupantKickedEvent()
 	}
 }
 
@@ -182,16 +180,15 @@ func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUp
 
 // selfOccupantRoleUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.SelfRoleUpdate) {
+	if selfRoleUpdate.RoleUpdate.New.IsNone() {
+		doInUIThread(func() {
+			v.account.removeRoomView(v.roomID())
+			v.warningsInfoBar.hide()
+		})
+		return
+	}
 	m := getSelfRoleUpdateMessage(selfRoleUpdate)
 	v.notifications.info(m)
-}
-
-// selfOccupantKickedEvent MUST be called from the UI thread
-func (v *roomView) selfOccupantKickedEvent() {
-	doInUIThread(func() {
-		v.account.removeRoomView(v.roomID())
-		v.warningsInfoBar.hide()
-	})
 }
 
 func (v *roomView) showRoomWarnings(info data.RoomDiscoInfo) {
@@ -305,21 +302,6 @@ func (v *roomView) publishDestroyEvent(reason string, alternativeRoomID jid.Bare
 		reason:      reason,
 		alternative: alternativeRoomID,
 		password:    password,
-	})
-}
-
-func (v *roomView) publishOccupantKickedEvent(nickname, reason string) {
-	v.publishEvent(occupantKickedEvent{
-		nickname: nickname,
-		reason:   reason,
-	})
-}
-
-func (v *roomView) publishSelfOccupantKickedEvent(nickname, reason string, actor data.Actor) {
-	v.publishEvent(selfOccupantKickedEvent{
-		nickname: nickname,
-		reason:   reason,
-		actor:    actor,
 	})
 }
 

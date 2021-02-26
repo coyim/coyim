@@ -205,14 +205,12 @@ type MUCSelfOccupantRoleUpdated struct {
 
 // MUCOccupantKicked contains information about the occupant kicked
 type MUCOccupantKicked struct {
-	MUCOccupant
-	Actor  data.Actor
-	Reason string
+	RoleUpdate data.RoleUpdate
 }
 
 // MUCSelfOccupantKicked contains information about the self-occupant kicked
 type MUCSelfOccupantKicked struct {
-	MUCOccupantKicked
+	RoleUpdate data.SelfRoleUpdate
 }
 
 func (MUCError) markAsMUCEventTypeInterface()                              {}

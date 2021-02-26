@@ -99,9 +99,9 @@ func (r *roomViewRoster) initSubscribers() {
 			r.onUpdateRoster()
 		case occupantRemovedEvent:
 			r.onUpdateRoster()
-		case selfOccupantKickedEvent:
+		case selfOccupantRoleUpdatedEvent:
 			r.disableRoom()
-		case occupantKickedEvent:
+		case occupantRoleUpdatedEvent:
 			r.onUpdateRoster()
 		}
 	})

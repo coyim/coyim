@@ -337,6 +337,28 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpdateMessage_affili
 	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The owner rabbit changed the position of alice to administrator. As a result, their role was changed from visitor to moderator. The reason given was: she is lost in the world of wonders.")
 }
 
+func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpdateMessage_affiliationUpdated(c *C) {
+	aru := data.AffiliationRoleUpdate{
+		Nickname:            "Pegassus",
+		NewAffiliation:      newTestAffiliationFromString(data.AffiliationAdmin),
+		PreviousAffiliation: newTestAffiliationFromString(data.AffiliationOwner),
+		NewRole:             newTestRoleFromString(data.RoleModerator),
+		PreviousRole:        newTestRoleFromString(data.RoleVisitor),
+	}
+
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The position of Pegassus was changed from owner to administrator. As a result, their role was changed from visitor to moderator.")
+
+	aru.Reason = "he is a silver warrior"
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The position of Pegassus was changed from owner to administrator. As a result, their role was changed from visitor to moderator. The reason given was: he is a silver warrior.")
+
+	aru.Reason = ""
+	aru.Actor = newTestActor("Ikki", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The owner Ikki changed the position of Pegassus from owner to administrator. As a result, their role was changed from visitor to moderator.")
+
+	aru.Reason = "he has the phoenix flame"
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The owner Ikki changed the position of Pegassus from owner to administrator. As a result, their role was changed from visitor to moderator. The reason given was: he has the phoenix flame.")
+}
+
 func (*MUCNotificationMessagesSuite) Test_getMUCNotificationMessageFrom_affiliationRoleUpdate(c *C) {
 	aru := data.AffiliationRoleUpdate{
 		Nickname:            "chavo",

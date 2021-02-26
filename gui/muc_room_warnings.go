@@ -87,6 +87,10 @@ func (o *roomViewWarningsOverlay) show() {
 	o.revealer.SetRevealChild(true)
 }
 
+func (wi *roomViewWarningsInfoBar) hide() {
+	wi.infoBar.SetVisible(false)
+}
+
 func (o *roomViewWarningsOverlay) hide() {
 	o.revealer.SetRevealChild(false)
 }

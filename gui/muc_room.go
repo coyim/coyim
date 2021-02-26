@@ -188,7 +188,10 @@ func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.SelfRoleUpda
 
 // selfOccupantKickedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantKickedEvent() {
-	v.account.removeRoomView(v.roomID())
+	doInUIThread(func() {
+		v.account.removeRoomView(v.roomID())
+		v.warningsInfoBar.hide()
+	})
 }
 
 func (v *roomView) showRoomWarnings(info data.RoomDiscoInfo) {

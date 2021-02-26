@@ -599,6 +599,30 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_af
 	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "The owner rabbit changed your position to administrator. As a result, your role was changed from visitor to moderator. The reason given was: she is lost in the world of wonders.")
 }
 
+func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_affiliationUpdated(c *C) {
+	saru := data.SelfAffiliationRoleUpdate{
+		AffiliationRoleUpdate: data.AffiliationRoleUpdate{
+			Nickname:            "goku",
+			NewAffiliation:      newTestAffiliationFromString(data.AffiliationAdmin),
+			PreviousAffiliation: newTestAffiliationFromString(data.AffiliationMember),
+			NewRole:             newTestRoleFromString(data.RoleModerator),
+			PreviousRole:        newTestRoleFromString(data.RoleVisitor),
+		},
+	}
+
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "Your position was changed from member to administrator. As a result, your role was changed from visitor to moderator.")
+
+	saru.Reason = "you are a powerfull Saiyajin"
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "Your position was changed from member to administrator. As a result, your role was changed from visitor to moderator. The reason given was: you are a powerfull Saiyajin.")
+
+	saru.Reason = ""
+	saru.Actor = newTestActor("vegeta", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "The owner vegeta changed your position from member to administrator. As a result, your role was changed from visitor to moderator.")
+
+	saru.Reason = "he is the prince of the Saiyajins"
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "The owner vegeta changed your position from member to administrator. As a result, your role was changed from visitor to moderator. The reason given was: he is the prince of the Saiyajins.")
+}
+
 func newTestActor(nickname string, affiliation data.Affiliation, role data.Role) *data.Actor {
 	return &data.Actor{
 		Nickname:    nickname,

@@ -355,6 +355,30 @@ func (*MUCNotificationMessagesSuite) Test_getMUCNotificationMessageFrom_affiliat
 	c.Assert(getMUCNotificationMessageFrom(aru), Equals, "The position of chavo was changed to administrator. As a result, their role was changed from visitor to moderator.")
 }
 
+func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_noCommonCases(c *C) {
+	saru := data.SelfAffiliationRoleUpdate{
+		AffiliationRoleUpdate: data.AffiliationRoleUpdate{
+			Nickname:            "superman",
+			NewAffiliation:      newTestAffiliationFromString(data.AffiliationNone),
+			PreviousAffiliation: newTestAffiliationFromString(data.AffiliationNone),
+			NewRole:             newTestRoleFromString(data.RoleVisitor),
+			PreviousRole:        newTestRoleFromString(data.RoleModerator),
+		},
+	}
+
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "Your position and the role were changed.")
+
+	saru.Reason = "foo"
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "Your position and the role were changed because: foo.")
+
+	saru.Reason = ""
+	saru.Actor = newTestActor("louis", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "The owner louis changed your position. As a result, your role was also changed.")
+
+	saru.Reason = "foo"
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "The owner louis changed your position. As a result, your role was also changed. The reason given was: foo.")
+}
+
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affiliationRemoved(c *C) {
 	initMUCRoomConversationDisplayI18n()
 
@@ -502,6 +526,55 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affili
 
 	sau.Reason = "it isn't cool"
 	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "The owner calvin banned you from the room. The reason given was: it isn't cool.")
+}
+
+func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_affiliationRemoved(c *C) {
+	saru := data.SelfAffiliationRoleUpdate{
+		AffiliationRoleUpdate: data.AffiliationRoleUpdate{
+			Nickname:            "007",
+			NewAffiliation:      newTestAffiliationFromString(data.AffiliationNone),
+			PreviousAffiliation: newTestAffiliationFromString(data.AffiliationAdmin),
+			NewRole:             newTestRoleFromString(data.RoleVisitor),
+			PreviousRole:        newTestRoleFromString(data.RoleModerator),
+		},
+	}
+
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "You are not an administrator anymore. As a result, your role was changed from moderator to visitor.")
+
+	saru.Reason = "he is an assassin"
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "You are not an administrator anymore. As a result, your role was changed from moderator to visitor. The reason given was: he is an assassin.")
+
+	saru.Reason = ""
+	saru.Actor = newTestActor("the enemy", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "The owner the enemy changed your position; you are not an administrator anymore. As a result, your role was changed from moderator to visitor.")
+
+	saru.Reason = "bla"
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "The owner the enemy changed your position; you are not an administrator anymore. As a result, your role was changed from moderator to visitor. The reason given was: bla.")
+
+}
+
+func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_affiliationAdded(c *C) {
+	saru := data.SelfAffiliationRoleUpdate{
+		AffiliationRoleUpdate: data.AffiliationRoleUpdate{
+			Nickname:            "alice",
+			NewAffiliation:      newTestAffiliationFromString(data.AffiliationAdmin),
+			PreviousAffiliation: newTestAffiliationFromString(data.AffiliationNone),
+			NewRole:             newTestRoleFromString(data.RoleModerator),
+			PreviousRole:        newTestRoleFromString(data.RoleVisitor),
+		},
+	}
+
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "Your position was changed to administrator. As a result, your role was changed from visitor to moderator.")
+
+	saru.Reason = "she is lost in the world of wonders"
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "Your position was changed to administrator. As a result, your role was changed from visitor to moderator. The reason given was: she is lost in the world of wonders.")
+
+	saru.Reason = ""
+	saru.Actor = newTestActor("rabbit", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "The owner rabbit changed your position to administrator. As a result, your role was changed from visitor to moderator.")
+
+	saru.Reason = "she is lost in the world of wonders"
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "The owner rabbit changed your position to administrator. As a result, your role was changed from visitor to moderator. The reason given was: she is lost in the world of wonders.")
 }
 
 func newTestActor(nickname string, affiliation data.Affiliation, role data.Role) *data.Actor {

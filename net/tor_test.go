@@ -89,9 +89,9 @@ func (s *TorSuite) Test_defaultTorManager_Detect_usesDefaultsIfNoneGiven(c *C) {
 }
 
 func (s *TorSuite) Test_defaultTorManager_IsConnectionOverTor_works(c *C) {
-	origHttpGet := httpGet
+	origHTTPGet := httpGet
 	defer func() {
-		httpGet = origHttpGet
+		httpGet = origHTTPGet
 	}()
 
 	called := false
@@ -135,9 +135,9 @@ func (r *errorReader) Read([]byte) (int, error) {
 }
 
 func (s *TorSuite) Test_defaultTorManager_IsConnectionOverTor_failsWhenReadingBody(c *C) {
-	origHttpGet := httpGet
+	origHTTPGet := httpGet
 	defer func() {
-		httpGet = origHttpGet
+		httpGet = origHTTPGet
 	}()
 
 	httpGet = func(*http.Client, string) (*http.Response, error) {
@@ -151,9 +151,9 @@ func (s *TorSuite) Test_defaultTorManager_IsConnectionOverTor_failsWhenReadingBo
 }
 
 func (s *TorSuite) Test_defaultTorManager_IsConnectionOverTor_failsWhenGivenBadJSONResponse(c *C) {
-	origHttpGet := httpGet
+	origHTTPGet := httpGet
 	defer func() {
-		httpGet = origHttpGet
+		httpGet = origHTTPGet
 	}()
 
 	httpGet = func(*http.Client, string) (*http.Response, error) {

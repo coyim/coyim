@@ -6,11 +6,11 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type DigestMD5 struct{}
+type DigestMD5Suite struct{}
 
-var _ = Suite(&DigestMD5{})
+var _ = Suite(&DigestMD5Suite{})
 
-func (s *DigestMD5) Test(c *C) {
+func (s *DigestMD5Suite) Test(c *C) {
 	client := Mechanism.NewClient()
 	c.Check(client.NeedsMore(), Equals, true)
 
@@ -45,4 +45,13 @@ func (s *DigestMD5) Test(c *C) {
 	c.Check(err, IsNil)
 	c.Check(client.NeedsMore(), Equals, false)
 	c.Check(t, IsNil)
+}
+
+func (s *DigestMD5Suite) Test_Register(c *C) {
+	Register()
+	c.Assert(sasl.ClientSupport("DIGEST-MD5"), Equals, true)
+}
+func (s *DigestMD5Suite) Test_digestMD5_SetChannelBinding_doesNothing(c *C) {
+	p := &digestMD5{}
+	p.SetChannelBinding(nil)
 }

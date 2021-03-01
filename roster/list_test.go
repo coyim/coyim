@@ -235,6 +235,20 @@ func (s *ListSuite) Test_PeerBecameUnavailable_setsTheOfflineState(c *g.C) {
 	c.Assert(l.peers["foo@bar.com"].IsOnline(), g.Equals, false)
 }
 
+func (s *ListSuite) Test_PeerBecameUnavailable_clearsResources(c *g.C) {
+	l := New()
+	l.AddOrMerge(&Peer{Jid: tj("foo@bar.com"), resources: map[string]Status{"foo2": Status{"a", "b"}}})
+
+	// res := l.PeerBecameUnavailable(jid.Parse("hmm@bar.com"))
+	// c.Assert(res, g.Equals, false)
+
+	res := l.PeerBecameUnavailable(jid.Parse("foo@bar.com"))
+	c.Assert(res, g.Equals, true)
+	c.Assert(l.peers["foo@bar.com"].IsOnline(), g.Equals, false)
+	c.Assert(l.peers["foo@bar.com"].resources, g.DeepEquals, map[string]Status{})
+
+}
+
 func (s *ListSuite) Test_PeerPresenceUpdate_sometimesUpdatesNonExistantPeers(c *g.C) {
 	l := New()
 
@@ -338,4 +352,24 @@ func (s *ListSuite) Test_IterAll_willIterateOverAllTheListsGivenAndYieldTheirPee
 	}, l, l2)
 
 	c.Assert(result, g.DeepEquals, []*Peer{pp2, pp})
+}
+
+func (s *ListSuite) Test_List_GetGroupNames(c *g.C) {
+	l := New()
+	c.Assert(l.GetGroupNames(), g.DeepEquals, map[string]bool{})
+	l.AddOrMerge(&Peer{Jid: tj("foo@bar.com"), Groups: map[string]bool{
+		"one":      true,
+		"two::foo": true,
+	}})
+
+	l.AddOrMerge(&Peer{Jid: tj("bar@bar.com"), Groups: map[string]bool{
+		"four": true,
+	}})
+
+	l.AddOrMerge(&Peer{Jid: tj("some@bar.com"), Groups: map[string]bool{}})
+	c.Assert(l.GetGroupNames(), g.DeepEquals, map[string]bool{
+		"one":      true,
+		"four":     true,
+		"two::foo": true,
+	})
 }

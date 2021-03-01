@@ -195,6 +195,10 @@ func (p *Peer) AddResource(ss jid.Resource, status, statusMsg string) {
 	}
 }
 
+// firstResource will return one of the resources in the list of resources
+// it is NOT stable, since it's based on iteration of a hash-map
+// we might want to consider using a data structure with a fifo or lifo
+// style structure instead.
 func (p *Peer) firstResource() string {
 	for k := range p.resources {
 		return k

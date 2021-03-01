@@ -107,3 +107,138 @@ func (s *PeerSuite) Test_SetLatestError_setsLatestError(c *g.C) {
 
 	c.Assert(p1.LatestError, g.DeepEquals, &PeerError{"oen", "tow", "there"})
 }
+
+func (s *PeerSuite) Test_union(c *g.C) {
+	l := map[string]Status{
+		"foo": Status{"one", "two"},
+		"bar": Status{"three", "four"},
+	}
+	r := map[string]Status{
+		"baz": Status{"one", "two"},
+		"foo": Status{"hmm", "bar"},
+	}
+
+	res := union(l, r)
+
+	c.Assert(res, g.DeepEquals, map[string]Status{
+		"foo": Status{"hmm", "bar"},
+		"bar": Status{"three", "four"},
+		"baz": Status{"one", "two"},
+	})
+}
+
+func (s *PeerSuite) Test_Peer_SetGroups(c *g.C) {
+	p := &Peer{}
+	p.SetGroups([]string{"one", "two", "one"})
+
+	c.Assert(p.Groups, g.DeepEquals, map[string]bool{
+		"one": true,
+		"two": true,
+	})
+}
+
+func (s *PeerSuite) Test_Peer_firstResource(c *g.C) {
+	p := &Peer{}
+	c.Assert(p.firstResource(), g.Equals, "")
+
+	p.resources = map[string]Status{
+		"something": Status{"foo", "bar"},
+	}
+
+	c.Assert(p.firstResource(), g.Equals, "something")
+}
+
+func (s *PeerSuite) Test_Peer_RemoveResource_resetsLastResourceIfThereAreOtherResources(c *g.C) {
+	p := &Peer{
+		resources: map[string]Status{
+			"one": Status{"", ""},
+			"two": Status{"", ""},
+		},
+		lastResource: "one",
+	}
+
+	p.RemoveResource(jid.NewResource("one"))
+
+	c.Assert(p.resources, g.DeepEquals, map[string]Status{
+		"two": Status{"", ""},
+	})
+	c.Assert(p.lastResource, g.Equals, "two")
+}
+
+func (s *PeerSuite) Test_Peer_RemoveResource_doesntResetLastResourceIfThereAreNoOtherResources(c *g.C) {
+	p := &Peer{
+		resources: map[string]Status{
+			"one": Status{"", ""},
+		},
+		lastResource: "one",
+	}
+
+	p.RemoveResource(jid.NewResource("one"))
+
+	c.Assert(p.resources, g.DeepEquals, map[string]Status{})
+	c.Assert(p.lastResource, g.Equals, "one")
+}
+
+func (s *PeerSuite) Test_Peer_HasResources(c *g.C) {
+	p1 := &Peer{resources: map[string]Status{}}
+	p2 := &Peer{resources: map[string]Status{
+		"one": Status{"", ""},
+	}}
+	c.Assert(p1.HasResources(), g.Equals, false)
+	c.Assert(p2.HasResources(), g.Equals, true)
+}
+
+func (s *PeerSuite) Test_Peer_ClearResources(c *g.C) {
+	p := &Peer{resources: map[string]Status{
+		"one": Status{"", ""},
+	}}
+	p.ClearResources()
+	c.Assert(p.resources, g.DeepEquals, map[string]Status{})
+}
+
+func (s *PeerSuite) Test_Peer_LastSeen(c *g.C) {
+	p := &Peer{}
+	p.LastSeen(jid.ParseFull("foo@example.org/somewhere"))
+	c.Assert(p.lockedResource, g.DeepEquals, jid.NewResource("somewhere"))
+
+	p.LastSeen(jid.ParseBare("someone@foo.bar"))
+	c.Assert(p.lockedResource, g.DeepEquals, jid.NewResource(""))
+}
+
+func (s *PeerSuite) Test_Peer_ResourceToUse(c *g.C) {
+	p := &Peer{}
+	p.lockedResource = jid.NewResource("hmm")
+	c.Assert(p.ResourceToUse(), g.Equals, p.lockedResource)
+}
+
+func (s *PeerSuite) Test_Peer_ResourceToUseFallback_returnsLockedResource(c *g.C) {
+	p := &Peer{}
+	p.lockedResource = jid.NewResource("hmm")
+	c.Assert(p.ResourceToUseFallback(), g.Equals, p.lockedResource)
+}
+
+func (s *PeerSuite) Test_Peer_ResourceToUseFallback_returnsLastResource(c *g.C) {
+	p := &Peer{}
+	p.lockedResource = jid.NewResource("")
+	p.lastResource = "gaga"
+	c.Assert(p.ResourceToUseFallback(), g.DeepEquals, jid.NewResource("gaga"))
+}
+
+func (s *PeerSuite) Test_Peer_ResourceToUseFallback_returnsFirstResource(c *g.C) {
+	p := &Peer{}
+	p.lockedResource = jid.NewResource("")
+	p.lastResource = ""
+	p.resources = map[string]Status{
+		"sup": Status{"", ""},
+	}
+	c.Assert(p.ResourceToUseFallback(), g.DeepEquals, jid.NewResource("sup"))
+}
+
+func (s *PeerSuite) Test_Peer_currentResourceStatus_returnsTheStatusForLockedResource(c *g.C) {
+	p := &Peer{}
+	p.lockedResource = jid.NewResource("something")
+	p.resources = map[string]Status{
+		"something": Status{"hello", "goodbye"},
+	}
+	c.Assert(p.currentResourceStatus(), g.DeepEquals, Status{"hello", "goodbye"})
+}

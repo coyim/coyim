@@ -81,3 +81,12 @@ func (s *GroupListSuite) Test_Groups_willReturnTheGroups(c *g.C) {
 	c.Check(res[0].FullGroupName(), g.Equals, "goodbye")
 	c.Check(res[1].FullGroupName(), g.Equals, "hello")
 }
+
+func (s *GroupListSuite) Test_Groups_UnsortedPeers_returnsThePeersUnsorted(c *g.C) {
+	gr := &Group{}
+	p1 := &Peer{Jid: tj("one"), Name: "one", Subscription: "from"}
+	p2 := &Peer{Jid: tj("abc"), Name: "abc", Subscription: "from"}
+	p3 := &Peer{Jid: tj("q"), Name: "q", Subscription: "from"}
+	gr.peers = []*Peer{p1, p2, p3}
+	c.Assert(gr.UnsortedPeers(), g.DeepEquals, []*Peer{p1, p2, p3})
+}

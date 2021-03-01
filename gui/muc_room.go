@@ -337,7 +337,9 @@ func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, pas
 }
 
 func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, newAffiliation data.Affiliation, reason string) {
-	v.loadingViewOverlay.onOccupantAffiliationUpdate()
+	doInUIThread(func() {
+		v.loadingViewOverlay.onOccupantAffiliationUpdate()
+	})
 
 	previousAffiliation := o.Affiliation
 	sc, ec := v.account.session.UpdateOccupantAffiliation(v.roomID(), o.Nickname, o.RealJid, newAffiliation, reason)
@@ -377,7 +379,9 @@ func (v *roomView) onOccupantAffiliationUpdateError(nickname string, newAffiliat
 }
 
 func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, newRole data.Role, reason string) {
-	v.loadingViewOverlay.onOccupantRoleUpdate()
+	doInUIThread(func() {
+		v.loadingViewOverlay.onOccupantRoleUpdate()
+	})
 
 	previousRole := o.Role
 	sc, ec := v.account.session.UpdateOccupantRole(v.roomID(), o.Nickname, newRole, reason)

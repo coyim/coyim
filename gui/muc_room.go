@@ -440,8 +440,8 @@ func (v *roomView) onKickOccupantError(occupant *muc.Occupant, err error) {
 		v.loadingViewOverlay.hide()
 		v.notifications.info(i18n.Localf("%s couldn't be expelled", occupant.Nickname))
 		dr := createDialogErrorComponent(
-			i18n.Local("Expel occupant process failed"),
-			i18n.Localf("The occupant %s couldn't be expelled", occupant.Nickname), "")
+			i18n.Local("Expelling process failed"),
+			i18n.Localf("An error occurred expelling to %s", occupant.Nickname), "")
 		switch err {
 		case session.ErrNotAllowedKickOccupant:
 			dr.updateMessageError(i18n.Localf("As %s you don't have permissions to expel %s.",

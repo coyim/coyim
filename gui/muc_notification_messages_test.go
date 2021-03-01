@@ -528,6 +528,69 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateSuccessMessage(c *
 		"The position of Juan was changed to owner.")
 }
 
+func (*MUCNotificationMessagesSuite) Test_getRoleUpdateSuccessMessage(c *C) {
+	initMUCRoomConversationDisplayI18n()
+
+	moderator := newTestRoleFromString(data.RoleModerator)
+	participant := newTestRoleFromString(data.RoleParticipant)
+	visitor := newTestRoleFromString(data.RoleVisitor)
+	none := newTestRoleFromString(data.RoleNone)
+
+	// This doesn't make sense but we want to cover all possible cases
+	c.Assert(getRoleUpdateSuccessMessage("Mauricio", none, none), Equals, "The role of Mauricio wasn't changed.")
+	c.Assert(getRoleUpdateSuccessMessage("Mauricio", moderator, moderator), Equals, "The role of Mauricio wasn't changed.")
+	c.Assert(getRoleUpdateSuccessMessage("Mauricio", visitor, visitor), Equals, "The role of Mauricio wasn't changed.")
+	c.Assert(getRoleUpdateSuccessMessage("Mauricio", participant, participant), Equals, "The role of Mauricio wasn't changed.")
+
+	c.Assert(getRoleUpdateSuccessMessage("Maria", moderator, none), Equals, "Maria is not a moderator anymore.")
+	c.Assert(getRoleUpdateSuccessMessage("Carlos", participant, none), Equals, "Carlos is not a participant anymore.")
+	c.Assert(getRoleUpdateSuccessMessage("Mauricio", visitor, none), Equals, "Mauricio is not a visitor anymore.")
+
+	c.Assert(getRoleUpdateSuccessMessage("Jose", none, moderator), Equals, "The role of Jose was changed to moderator.")
+	c.Assert(getRoleUpdateSuccessMessage("Alberto", none, participant), Equals, "The role of Alberto was changed to participant.")
+	c.Assert(getRoleUpdateSuccessMessage("Juan", none, visitor), Equals, "The role of Juan was changed to visitor.")
+
+	c.Assert(getRoleUpdateSuccessMessage("Alberto", moderator, participant), Equals, "The role of Alberto was changed from moderator to participant.")
+	c.Assert(getRoleUpdateSuccessMessage("Alberto", moderator, visitor), Equals, "The role of Alberto was changed from moderator to visitor.")
+	c.Assert(getRoleUpdateSuccessMessage("Alberto", participant, moderator), Equals, "The role of Alberto was changed from participant to moderator.")
+	c.Assert(getRoleUpdateSuccessMessage("Carlos", participant, visitor), Equals, "The role of Carlos was changed from participant to visitor.")
+	c.Assert(getRoleUpdateSuccessMessage("Carlos", visitor, participant), Equals, "The role of Carlos was changed from visitor to participant.")
+	c.Assert(getRoleUpdateSuccessMessage("Juan", visitor, moderator), Equals, "The role of Juan was changed from visitor to moderator.")
+}
+
+func (*MUCNotificationMessagesSuite) Test_getRoleUpdateFailureMessage(c *C) {
+	initMUCRoomConversationDisplayI18n()
+
+	moderator := newTestRoleFromString(data.RoleModerator)
+	participant := newTestRoleFromString(data.RoleParticipant)
+	visitor := newTestRoleFromString(data.RoleVisitor)
+	none := newTestRoleFromString(data.RoleNone)
+
+	messages := getRoleUpdateFailureMessage("Mauricio", moderator)
+	c.Assert(messages.notificationMessage, Equals, "The process of changing the role of Mauricio failed")
+	c.Assert(messages.errorDialogTitle, Equals, "The process of changing the role failed")
+	c.Assert(messages.errorDialogHeader, Equals, "The role of Mauricio couldn't be changed")
+	c.Assert(messages.errorDialogMessage, Equals, "An error occurred when trying to change the role of Mauricio to moderator.")
+
+	messages = getRoleUpdateFailureMessage("Juan", participant)
+	c.Assert(messages.notificationMessage, Equals, "The process of changing the role of Juan failed")
+	c.Assert(messages.errorDialogTitle, Equals, "The process of changing the role failed")
+	c.Assert(messages.errorDialogHeader, Equals, "The role of Juan couldn't be changed")
+	c.Assert(messages.errorDialogMessage, Equals, "An error occurred when trying to change the role of Juan to participant.")
+
+	messages = getRoleUpdateFailureMessage("Pepe", visitor)
+	c.Assert(messages.notificationMessage, Equals, "The process of changing the role of Pepe failed")
+	c.Assert(messages.errorDialogTitle, Equals, "The process of changing the role failed")
+	c.Assert(messages.errorDialogHeader, Equals, "The role of Pepe couldn't be changed")
+	c.Assert(messages.errorDialogMessage, Equals, "An error occurred when trying to change the role of Pepe to visitor.")
+
+	messages = getRoleUpdateFailureMessage("Juana", none)
+	c.Assert(messages.notificationMessage, Equals, "The process of changing the role of Juana failed")
+	c.Assert(messages.errorDialogTitle, Equals, "The process of changing the role failed")
+	c.Assert(messages.errorDialogHeader, Equals, "The role of Juana couldn't be changed")
+	c.Assert(messages.errorDialogMessage, Equals, "An error occurred when trying to remove the role of Juana.")
+}
+
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affiliationOutcast(c *C) {
 	initMUCRoomConversationDisplayI18n()
 

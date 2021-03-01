@@ -17,6 +17,50 @@ func getAffiliationUpdateSuccessMessage(nickname string, previousAffiliation, af
 	return i18n.Localf("The position of %s was changed to %s.", nickname, displayNameForAffiliation(affiliation))
 }
 
+// getRoleUpdateSuccessMessage returns a friendly notification message for the role update process
+// This function receives the following params:
+// 	- nickname - The nickname of the occupant to whom the role was changed
+//  - previousRole - The original role of the occupant
+//  - newRole - The current role of the occupant
+func getRoleUpdateSuccessMessage(nickname string, previousRole, newRole data.Role) string {
+	if newRole.IsDifferentFrom(previousRole) {
+		switch {
+		case newRole.IsNone():
+			return i18n.Localf("%s is not a %s anymore.", nickname, displayNameForRole(previousRole))
+
+		case previousRole.IsNone():
+			return i18n.Localf("The role of %s was changed to %s.", nickname, displayNameForRole(newRole))
+
+		default:
+			return i18n.Localf("The role of %s was changed from %s to %s.", nickname, displayNameForRole(previousRole), displayNameForRole(newRole))
+		}
+	}
+
+	return i18n.Localf("The role of %s wasn't changed.", nickname)
+}
+
+type updateFailureMessages struct {
+	notificationMessage string
+	errorDialogTitle    string
+	errorDialogHeader   string
+	errorDialogMessage  string
+}
+
+func getRoleUpdateFailureMessage(nickname string, newRole data.Role) *updateFailureMessages {
+	m := &updateFailureMessages{
+		notificationMessage: i18n.Localf("The process of changing the role of %s failed", nickname),
+		errorDialogTitle:    i18n.Local("The process of changing the role failed"),
+		errorDialogHeader:   i18n.Localf("The role of %s couldn't be changed", nickname),
+		errorDialogMessage:  i18n.Localf("An error occurred when trying to change the role of %s to %s.", nickname, displayNameForRole(newRole)),
+	}
+
+	if newRole.IsNone() {
+		m.errorDialogMessage = i18n.Localf("An error occurred when trying to remove the role of %s.", nickname)
+	}
+
+	return m
+}
+
 func getMUCNotificationMessageFrom(d interface{}) string {
 	switch t := d.(type) {
 	case data.AffiliationUpdate:

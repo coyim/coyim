@@ -242,6 +242,36 @@ func getAffiliationChangedMessage(affiliationUpdate data.AffiliationUpdate) stri
 }
 
 func getRoleUpdateMessage(roleUpdate data.RoleUpdate) string {
+	if roleUpdate.New.IsNone() {
+		return getRoleRemovedMessage(roleUpdate)
+	}
+	return getRoleChangedMessage(roleUpdate)
+}
+
+func getRoleRemovedMessage(roleUpdate data.RoleUpdate) string {
+	if roleUpdate.Actor == nil {
+		if roleUpdate.Reason == "" {
+			return i18n.Localf("%s was temporarily removed from the room.", roleUpdate.Nickname)
+		}
+
+		return i18n.Localf("%s was temporarily removed from the room. The reason given was: %s.", roleUpdate.Nickname, roleUpdate.Reason)
+	}
+
+	if roleUpdate.Reason != "" {
+		return i18n.Localf("The %s %s temporarily removed %s from the room. The reason given was: %s.",
+			displayNameForAffiliation(roleUpdate.Actor.Affiliation),
+			roleUpdate.Actor.Nickname,
+			roleUpdate.Nickname,
+			roleUpdate.Reason)
+	}
+
+	return i18n.Localf("The %s %s temporarily removed %s from the room.",
+		displayNameForAffiliation(roleUpdate.Actor.Affiliation),
+		roleUpdate.Actor.Nickname,
+		roleUpdate.Nickname)
+}
+
+func getRoleChangedMessage(roleUpdate data.RoleUpdate) string {
 	if roleUpdate.Actor == nil {
 		if roleUpdate.Reason == "" {
 			return i18n.Localf("The role of %s was changed from %s to %s.",

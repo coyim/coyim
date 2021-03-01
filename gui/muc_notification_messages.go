@@ -69,15 +69,39 @@ func getAffiliationFailureErrorMessage(nickname string, newAffiliation data.Affi
 }
 
 func getRoleUpdateFailureMessage(nickname string, newRole data.Role) *updateFailureMessages {
-	m := &updateFailureMessages{
+	if newRole.IsNone() {
+		return getRoleRemoveFailureMessage(nickname, nil, nil)
+	}
+
+	return &updateFailureMessages{
 		notificationMessage: i18n.Localf("The process of changing the role of %s failed", nickname),
 		errorDialogTitle:    i18n.Local("The process of changing the role failed"),
 		errorDialogHeader:   i18n.Localf("The role of %s couldn't be changed", nickname),
 		errorDialogMessage:  i18n.Localf("An error occurred when trying to change the role of %s to %s.", nickname, displayNameForRole(newRole)),
 	}
+}
 
-	if newRole.IsNone() {
-		m.errorDialogMessage = i18n.Localf("An error occurred when trying to remove the role of %s.", nickname)
+func getRoleRemoveFailureMessage(nickname string, actorAffiliation data.Affiliation, err error) *updateFailureMessages {
+	m := &updateFailureMessages{
+		notificationMessage: i18n.Localf("%s can't be removed from the room.", nickname),
+		errorDialogTitle:    i18n.Localf("The process of removing %s from the room failed", nickname),
+		errorDialogHeader:   i18n.Localf("%s can't be removed from the room.", nickname),
+	}
+
+	switch err {
+	case session.ErrNotAllowedKickOccupant:
+		if actorAffiliation != nil {
+			m.errorDialogMessage = i18n.Localf("As %s you don't have permissions to remove %s from the room.",
+				displayNameForAffiliationWithPreposition(actorAffiliation),
+				nickname)
+		} else {
+			m.errorDialogMessage = i18n.Localf("You don't have permissions to remove %s from the room.",
+				nickname)
+		}
+
+	default:
+		m.errorDialogMessage = i18n.Localf("An error occurred when trying to remove %s from the room.",
+			nickname)
 	}
 
 	return m

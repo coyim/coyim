@@ -370,36 +370,42 @@ func (v *roomView) onOccupantAffiliationUpdateError(o *muc.Occupant, affiliation
 	})
 }
 
-func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, role data.Role, reason string) {
+func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, newRole data.Role, reason string) {
 	v.loadingViewOverlay.onOccupantRoleUpdate()
-	sc, ec := v.account.session.UpdateOccupantRole(v.roomID(), o.Nickname, role, reason)
+
+	previousRole := o.Role
+	sc, ec := v.account.session.UpdateOccupantRole(v.roomID(), o.Nickname, newRole, reason)
 
 	select {
 	case <-sc:
 		v.log.Info("The role has been changed")
-		v.onOccupantRoleUpdateSuccess(o, role)
+		v.onOccupantRoleUpdateSuccess(o.Nickname, previousRole, newRole)
 	case err := <-ec:
 		v.log.WithError(err).Error("An error occurred in the role update process")
-		v.onOccupantRoleUpdateError(o, role, reason)
+		v.onOccupantRoleUpdateError(o.Nickname, newRole)
 	}
 }
 
-func (v *roomView) onOccupantRoleUpdateSuccess(o *muc.Occupant, role data.Role) {
+func (v *roomView) onOccupantRoleUpdateSuccess(nickname string, previousRole, newRole data.Role) {
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
-		v.notifications.info(i18n.Localf("The role of %s was changed to %s", o.Nickname, displayNameForRole(role)))
+		v.notifications.info(getRoleUpdateSuccessMessage(nickname, previousRole, newRole))
 	})
 }
 
-func (v *roomView) onOccupantRoleUpdateError(o *muc.Occupant, role data.Role, reason string) {
+func (v *roomView) onOccupantRoleUpdateError(nickname string, newRole data.Role) {
+	messages := getRoleUpdateFailureMessage(nickname, newRole)
+
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
-		v.notifications.info(i18n.Local("The role update process failed"))
+		v.notifications.error(messages.notificationMessage)
+
 		dr := createDialogErrorComponent(
-			i18n.Local("The role update process failed"),
-			i18n.Localf("The role of %s couldn't be updated", o.Nickname),
-			i18n.Local("An error occurred while updating the occupant role."),
+			messages.errorDialogTitle,
+			messages.errorDialogHeader,
+			messages.errorDialogMessage,
 		)
+
 		dr.show()
 	})
 }

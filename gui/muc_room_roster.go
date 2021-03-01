@@ -135,14 +135,14 @@ func (r *roomViewRoster) updateOccupantAffiliation(o *muc.Occupant, previousAffi
 }
 
 // updateOccupantRole MUST NOT be called from the UI thread
-func (r *roomViewRoster) updateOccupantRole(o *muc.Occupant, role data.Role, reason string) {
+func (r *roomViewRoster) updateOccupantRole(o *muc.Occupant, newRole data.Role, reason string) {
 	r.log.WithFields(log.Fields{
 		"where":    "updateOccupantRole",
 		"occupant": o.Nickname,
 		"role":     o.Role.Name(),
 	}).Info("The occupant role is going to be updated")
 
-	r.roomView.tryUpdateOccupantRole(o, role, reason)
+	r.roomView.tryUpdateOccupantRole(o, newRole, reason)
 }
 
 func (r *roomViewRoster) kickOccupant(occupant *muc.Occupant, reason string) {

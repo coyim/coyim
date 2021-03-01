@@ -558,6 +558,40 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateSuccessMessage(c *C) {
 	c.Assert(getRoleUpdateSuccessMessage("Juan", visitor, moderator), Equals, "The role of Juan was changed from visitor to moderator.")
 }
 
+func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateFailureMessage(c *C) {
+	initMUCRoomConversationDisplayI18n()
+
+	owner := newTestAffiliationFromString(data.AffiliationOwner)
+	admin := newTestAffiliationFromString(data.AffiliationAdmin)
+	member := newTestAffiliationFromString(data.AffiliationMember)
+	none := newTestAffiliationFromString(data.AffiliationNone)
+
+	messages := getAffiliationUpdateFailureMessage("Luisa", owner, nil)
+	c.Assert(messages.notificationMessage, Equals, "The process of changing the position of Luisa failed")
+	c.Assert(messages.errorDialogTitle, Equals, "The process of changing the position failed")
+	c.Assert(messages.errorDialogHeader, Equals, "The position of Luisa couldn't be changed")
+	c.Assert(messages.errorDialogMessage, Equals, "An error occurred when trying to change the position of Luisa to owner.")
+
+	messages = getAffiliationUpdateFailureMessage("Marco", admin, nil)
+	c.Assert(messages.notificationMessage, Equals, "The process of changing the position of Marco failed")
+	c.Assert(messages.errorDialogTitle, Equals, "The process of changing the position failed")
+	c.Assert(messages.errorDialogHeader, Equals, "The position of Marco couldn't be changed")
+	c.Assert(messages.errorDialogMessage, Equals, "An error occurred when trying to change the position of Marco to administrator.")
+
+	messages = getAffiliationUpdateFailureMessage("Pedro", member, nil)
+	c.Assert(messages.notificationMessage, Equals, "The process of changing the position of Pedro failed")
+	c.Assert(messages.errorDialogTitle, Equals, "The process of changing the position failed")
+	c.Assert(messages.errorDialogHeader, Equals, "The position of Pedro couldn't be changed")
+	c.Assert(messages.errorDialogMessage, Equals, "An error occurred when trying to change the position of Pedro to member.")
+
+	messages = getAffiliationUpdateFailureMessage("José", none, nil)
+	c.Assert(messages.notificationMessage, Equals, "The process of changing the position of José failed")
+	c.Assert(messages.errorDialogTitle, Equals, "The process of changing the position failed")
+	c.Assert(messages.errorDialogHeader, Equals, "The position of José couldn't be changed")
+	c.Assert(messages.errorDialogMessage, Equals, "An error occurred when trying to change the position of José.")
+
+}
+
 func (*MUCNotificationMessagesSuite) Test_getRoleUpdateFailureMessage(c *C) {
 	initMUCRoomConversationDisplayI18n()
 

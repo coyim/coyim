@@ -2,6 +2,7 @@ package gui
 
 import (
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/session/muc/data"
 )
 
@@ -44,6 +45,27 @@ type updateFailureMessages struct {
 	errorDialogTitle    string
 	errorDialogHeader   string
 	errorDialogMessage  string
+}
+
+func getAffiliationUpdateFailureMessage(nickname string, newAffiliation data.Affiliation, err error) *updateFailureMessages {
+	return &updateFailureMessages{
+		notificationMessage: i18n.Localf("The process of changing the position of %s failed", nickname),
+		errorDialogTitle:    i18n.Local("The process of changing the position failed"),
+		errorDialogHeader:   i18n.Localf("The position of %s couldn't be changed", nickname),
+		errorDialogMessage:  getAffiliationFailureErrorMessage(nickname, newAffiliation, err),
+	}
+}
+
+func getAffiliationFailureErrorMessage(nickname string, newAffiliation data.Affiliation, err error) string {
+	switch err {
+	case session.ErrRemoveOwnerAffiliation:
+		return i18n.Local("You can't change your own position because you are the only owner for this room. Every room must have at least one owner.")
+	default:
+		if newAffiliation.IsNone() {
+			return i18n.Localf("An error occurred when trying to change the position of %s.", nickname)
+		}
+		return i18n.Localf("An error occurred when trying to change the position of %s to %s.", nickname, displayNameForAffiliation(newAffiliation))
+	}
 }
 
 func getRoleUpdateFailureMessage(nickname string, newRole data.Role) *updateFailureMessages {

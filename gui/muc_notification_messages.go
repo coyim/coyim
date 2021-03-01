@@ -60,7 +60,7 @@ func getAffiliationRemovedMessage(affiliationUpdate data.AffiliationUpdate) stri
 				displayNameForAffiliationWithPreposition(affiliationUpdate.Previous))
 		}
 
-		return i18n.Localf("%s is not %s anymore because: %s.",
+		return i18n.Localf("%s is not %s anymore. The reason given was: %s.",
 			affiliationUpdate.Nickname,
 			displayNameForAffiliationWithPreposition(affiliationUpdate.Previous),
 			affiliationUpdate.Reason)
@@ -75,7 +75,7 @@ func getAffiliationRemovedMessage(affiliationUpdate data.AffiliationUpdate) stri
 			displayNameForAffiliationWithPreposition(affiliationUpdate.Previous))
 	}
 
-	return i18n.Localf("The %s %s changed the position of %s; %s is not %s anymore because: %s.",
+	return i18n.Localf("The %s %s changed the position of %s; %s is not %s anymore. The reason given was: %s.",
 		displayNameForAffiliation(affiliationUpdate.Actor.Affiliation),
 		affiliationUpdate.Actor.Nickname,
 		affiliationUpdate.Nickname,
@@ -90,7 +90,7 @@ func getAffiliationBannedMessage(affiliationUpdate data.AffiliationUpdate) strin
 			return i18n.Localf("%s was banned from the room.", affiliationUpdate.Nickname)
 		}
 
-		return i18n.Localf("%s was banned from the room because: %s.",
+		return i18n.Localf("%s was banned from the room. The reason given was: %s.",
 			affiliationUpdate.Nickname,
 			affiliationUpdate.Reason)
 	}
@@ -102,7 +102,7 @@ func getAffiliationBannedMessage(affiliationUpdate data.AffiliationUpdate) strin
 			affiliationUpdate.Nickname)
 	}
 
-	return i18n.Localf("The %s %s banned %s from the room because: %s.",
+	return i18n.Localf("The %s %s banned %s from the room. The reason given was: %s.",
 		displayNameForAffiliation(affiliationUpdate.Actor.Affiliation),
 		affiliationUpdate.Actor.Nickname,
 		affiliationUpdate.Nickname,
@@ -117,7 +117,7 @@ func getAffiliationAddedMessage(affiliationUpdate data.AffiliationUpdate) string
 				displayNameForAffiliationWithPreposition(affiliationUpdate.New))
 		}
 
-		return i18n.Localf("%s is now %s because: %s.",
+		return i18n.Localf("%s is now %s. The reason given was: %s.",
 			affiliationUpdate.Nickname,
 			displayNameForAffiliationWithPreposition(affiliationUpdate.New),
 			affiliationUpdate.Reason)
@@ -132,7 +132,7 @@ func getAffiliationAddedMessage(affiliationUpdate data.AffiliationUpdate) string
 			displayNameForAffiliationWithPreposition(affiliationUpdate.New))
 	}
 
-	return i18n.Localf("The %s %s changed the position of %s; %s is now %s because: %s.",
+	return i18n.Localf("The %s %s changed the position of %s; %s is now %s. The reason given was: %s.",
 		displayNameForAffiliation(affiliationUpdate.Actor.Affiliation),
 		affiliationUpdate.Actor.Nickname,
 		affiliationUpdate.Nickname,
@@ -150,7 +150,7 @@ func getAffiliationChangedMessage(affiliationUpdate data.AffiliationUpdate) stri
 				displayNameForAffiliation(affiliationUpdate.New))
 		}
 
-		return i18n.Localf("The position of %s was changed from %s to %s because: %s.",
+		return i18n.Localf("The position of %s was changed from %s to %s. The reason given was: %s.",
 			affiliationUpdate.Nickname,
 			displayNameForAffiliation(affiliationUpdate.Previous),
 			displayNameForAffiliation(affiliationUpdate.New),
@@ -166,7 +166,7 @@ func getAffiliationChangedMessage(affiliationUpdate data.AffiliationUpdate) stri
 			displayNameForAffiliation(affiliationUpdate.New))
 	}
 
-	return i18n.Localf("The %s %s changed the position of %s from %s to %s because: %s.",
+	return i18n.Localf("The %s %s changed the position of %s from %s to %s. The reason given was: %s.",
 		displayNameForAffiliation(affiliationUpdate.Actor.Affiliation),
 		affiliationUpdate.Actor.Nickname,
 		affiliationUpdate.Nickname,
@@ -184,7 +184,7 @@ func getRoleUpdateMessage(roleUpdate data.RoleUpdate) string {
 				displayNameForRole(roleUpdate.New))
 		}
 
-		return i18n.Localf("The role of %s was changed from %s to %s because: %s.",
+		return i18n.Localf("The role of %s was changed from %s to %s. The reason given was: %s.",
 			roleUpdate.Nickname,
 			displayNameForRole(roleUpdate.Previous),
 			displayNameForRole(roleUpdate.New),
@@ -200,7 +200,7 @@ func getRoleUpdateMessage(roleUpdate data.RoleUpdate) string {
 			displayNameForRole(roleUpdate.New))
 	}
 
-	return i18n.Localf("The %s %s changed the role of %s from %s to %s because: %s.",
+	return i18n.Localf("The %s %s changed the role of %s from %s to %s. The reason given was: %s.",
 		displayNameForAffiliation(roleUpdate.Actor.Affiliation),
 		roleUpdate.Actor.Nickname,
 		roleUpdate.Nickname,
@@ -217,7 +217,7 @@ func getSelfRoleUpdateMessage(selfRoleUpdate data.SelfRoleUpdate) string {
 				displayNameForRole(selfRoleUpdate.New))
 		}
 
-		return i18n.Localf("Your role was changed from %s to %s because: %s.",
+		return i18n.Localf("Your role was changed from %s to %s. The reason given was: %s.",
 			displayNameForRole(selfRoleUpdate.Previous),
 			displayNameForRole(selfRoleUpdate.New),
 			selfRoleUpdate.Reason)
@@ -231,7 +231,7 @@ func getSelfRoleUpdateMessage(selfRoleUpdate data.SelfRoleUpdate) string {
 			displayNameForRole(selfRoleUpdate.New))
 	}
 
-	return i18n.Localf("The %s %s changed your role from %s to %s because: %s.",
+	return i18n.Localf("The %s %s changed your role from %s to %s. The reason given was: %s.",
 		displayNameForAffiliation(selfRoleUpdate.Actor.Affiliation),
 		selfRoleUpdate.Actor.Nickname,
 		displayNameForRole(selfRoleUpdate.Previous),
@@ -384,7 +384,7 @@ func getAffiliationRoleUpdateForUnexpectedSituation(affiliationRoleUpdate data.A
 				affiliationRoleUpdate.Nickname)
 		}
 
-		return i18n.Localf("The position and the role of %s were changed because: %s.",
+		return i18n.Localf("The position and the role of %s were changed. The reason given was: %s.",
 			affiliationRoleUpdate.Nickname,
 			affiliationRoleUpdate.Reason)
 	}
@@ -620,7 +620,7 @@ func getSelfAffiliationChangedMessage(selfAffiliationUpdate data.SelfAffiliation
 				displayNameForAffiliation(selfAffiliationUpdate.New))
 		}
 
-		return i18n.Localf("Your position was changed from %s to %s because: %s.",
+		return i18n.Localf("Your position was changed from %s to %s. The reason given was: %s.",
 			displayNameForAffiliation(selfAffiliationUpdate.Previous),
 			displayNameForAffiliation(selfAffiliationUpdate.New),
 			selfAffiliationUpdate.Reason)
@@ -634,7 +634,7 @@ func getSelfAffiliationChangedMessage(selfAffiliationUpdate data.SelfAffiliation
 			displayNameForAffiliation(selfAffiliationUpdate.New))
 	}
 
-	return i18n.Localf("The %s %s changed your position from %s to %s because: %s.",
+	return i18n.Localf("The %s %s changed your position from %s to %s. The reason given was: %s.",
 		displayNameForAffiliation(selfAffiliationUpdate.Actor.Affiliation),
 		selfAffiliationUpdate.Actor.Nickname,
 		displayNameForAffiliation(selfAffiliationUpdate.Previous),

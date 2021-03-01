@@ -26,8 +26,9 @@ const (
 )
 
 type roomViewRoster struct {
-	u        *gtkUI
-	roomView *roomView
+	u          *gtkUI
+	roomView   *roomView
+	rosterInfo *roomViewRosterInfo
 
 	roster  *muc.RoomRoster
 	account *account
@@ -69,6 +70,8 @@ func (r *roomViewRoster) initBuilder() {
 }
 
 func (r *roomViewRoster) initDefaults() {
+	r.rosterInfo = r.newRoomViewRosterInfo()
+
 	r.model, _ = g.gtk.TreeStoreNew(
 		// icon
 		pixbufType(),
@@ -88,7 +91,7 @@ func (r *roomViewRoster) initSubscribers() {
 	r.roomView.subscribe("roster", func(ev roomViewEvent) {
 		switch ev.(type) {
 		case occupantSelfJoinedEvent:
-			r.onUpdateRoster()
+			r.onSelfOccupantJoined()
 		case occupantJoinedEvent:
 			r.onUpdateRoster()
 		case occupantUpdatedEvent:
@@ -151,20 +154,19 @@ func (r *roomViewRoster) kickOccupant(occupant *muc.Occupant, reason string) {
 
 // showOccupantInfo MUST be called from the UI thread
 func (r *roomViewRoster) showOccupantInfo(o *muc.Occupant) {
-	ri := r.newRoomViewRosterInfo()
-	ri.showOccupantInfo(o)
-	r.showRosterInfoPanel(ri)
+	r.rosterInfo.showOccupantInfo(o)
+	r.showRosterInfoPanel()
 }
 
 // showRosterInfoPanel MUST be called from the UI thread
-func (r *roomViewRoster) showRosterInfoPanel(ri *roomViewRosterInfo) {
+func (r *roomViewRoster) showRosterInfoPanel() {
 	r.rosterPanel.Hide()
-	r.view.Add(ri.contentBox())
+	r.view.Add(r.rosterInfo.contentBox())
 }
 
 // hideRosterInfoPanel MUST be called from the UI thread
-func (r *roomViewRoster) hideRosterInfoPanel(ri *roomViewRosterInfo) {
-	r.view.Remove(ri.contentBox())
+func (r *roomViewRoster) hideRosterInfoPanel() {
+	r.view.Remove(r.rosterInfo.contentBox())
 	r.rosterPanel.Show()
 }
 
@@ -188,6 +190,11 @@ func (r *roomViewRoster) disableRoom() {
 		r.redraw()
 		mucStyles.setDisableRoomStyle(r.view)
 	})
+}
+
+func (r *roomViewRoster) onSelfOccupantJoined() {
+	r.rosterInfo.updateSelfOccupant(r.roomView.room.SelfOccupant())
+	r.onUpdateRoster()
 }
 
 func (r *roomViewRoster) onUpdateRoster() {

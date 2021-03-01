@@ -431,7 +431,7 @@ func (v *roomView) onKickOccupantSuccess(occupantNickname string) {
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
 		v.notifications.info(i18n.Localf("%s was temporarily removed from the room", occupantNickname))
-		v.publishOccupantKickedSuccessEvent()
+		v.roster.hideRosterInfoPanel()
 	})
 }
 
@@ -560,11 +560,6 @@ func (v *roomView) publishOccupantRoleUpdatedEvent(roleUpdate data.RoleUpdate) {
 // publishSelfOccupantRoleUpdatedEvent MUST NOT be called from the UI thread
 func (v *roomView) publishSelfOccupantRoleUpdatedEvent(selfRoleUpdate data.SelfRoleUpdate) {
 	v.publishEvent(selfOccupantRoleUpdatedEvent{selfRoleUpdate})
-}
-
-// publishOccupantAffiliationUpdatedEvent MUST NOT be called from the UI thread
-func (v *roomView) publishOccupantKickedSuccessEvent() {
-	v.publishEvent(occupantKickedSuccessEvent{})
 }
 
 // mainWindow MUST be called from the UI thread

@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -57,7 +58,7 @@ func (t *roomViewToolbar) initSubscribers(v *roomView) {
 		case occupantSelfJoinedEvent:
 			t.selfOccupantJoinedEvent(v.isSelfOccupantAnOwner())
 		case selfOccupantRoleUpdatedEvent:
-			t.selfOccupantRoleUpdatedEvent()
+			t.selfOccupantRoleUpdatedEvent(e.selfRoleUpdate.New)
 		}
 	})
 }
@@ -76,8 +77,10 @@ func (t *roomViewToolbar) selfOccupantRemovedEvent() {
 	doInUIThread(t.disable)
 }
 
-func (t *roomViewToolbar) selfOccupantRoleUpdatedEvent() {
-	doInUIThread(t.disable)
+func (t *roomViewToolbar) selfOccupantRoleUpdatedEvent(role data.Role) {
+	if role.IsNone() {
+		doInUIThread(t.disable)
+	}
 }
 
 func (t *roomViewToolbar) selfOccupantJoinedEvent(owner bool) {

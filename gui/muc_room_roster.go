@@ -89,7 +89,7 @@ func (r *roomViewRoster) initDefaults() {
 
 func (r *roomViewRoster) initSubscribers() {
 	r.roomView.subscribe("roster", func(ev roomViewEvent) {
-		switch ev.(type) {
+		switch e := ev.(type) {
 		case occupantSelfJoinedEvent:
 			r.onSelfOccupantJoined()
 		case occupantJoinedEvent:
@@ -103,7 +103,7 @@ func (r *roomViewRoster) initSubscribers() {
 		case occupantRemovedEvent:
 			r.onUpdateRoster()
 		case selfOccupantRoleUpdatedEvent:
-			r.disableRoom()
+			r.selfOccupantUpdated(e.selfRoleUpdate.New)
 		case occupantRoleUpdatedEvent:
 			r.onUpdateRoster()
 		}
@@ -185,10 +185,12 @@ func (r *roomViewRoster) getNicknameFromTreeModel(path gtki.TreePath) (string, e
 	return iterValue.GetString()
 }
 
-func (r *roomViewRoster) disableRoom() {
+func (r *roomViewRoster) selfOccupantUpdated(role data.Role) {
 	doInUIThread(func() {
 		r.redraw()
-		mucStyles.setDisableRoomStyle(r.view)
+		if role.IsNone() {
+			mucStyles.setDisableRoomStyle(r.view)
+		}
 	})
 }
 

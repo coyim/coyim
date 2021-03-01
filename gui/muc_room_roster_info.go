@@ -100,9 +100,15 @@ func (r *roomViewRosterInfo) initSubscribers() {
 	r.rosterView.roomView.subscribe("rosterInfo", func(ev roomViewEvent) {
 		switch ev.(type) {
 		case occupantUpdatedEvent:
-			doInUIThread(r.refresh)
+			r.occupantUpdated()
 		}
 	})
+}
+
+func (r *roomViewRosterInfo) occupantUpdated() {
+	if r.occupant != nil {
+		doInUIThread(r.refresh)
+	}
 }
 
 func (r *roomViewRosterInfo) updateSelfOccupant(occupant *muc.Occupant) {

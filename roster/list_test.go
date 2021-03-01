@@ -239,9 +239,6 @@ func (s *ListSuite) Test_PeerBecameUnavailable_clearsResources(c *g.C) {
 	l := New()
 	l.AddOrMerge(&Peer{Jid: tj("foo@bar.com"), resources: map[string]Status{"foo2": Status{"a", "b"}}})
 
-	// res := l.PeerBecameUnavailable(jid.Parse("hmm@bar.com"))
-	// c.Assert(res, g.Equals, false)
-
 	res := l.PeerBecameUnavailable(jid.Parse("foo@bar.com"))
 	c.Assert(res, g.Equals, true)
 	c.Assert(l.peers["foo@bar.com"].IsOnline(), g.Equals, false)

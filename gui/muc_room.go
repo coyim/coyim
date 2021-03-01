@@ -336,18 +336,19 @@ func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, pas
 	}()
 }
 
-func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, affiliation data.Affiliation, reason string) {
+func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, newAffiliation data.Affiliation, reason string) {
 	v.loadingViewOverlay.onOccupantAffiliationUpdate()
+
 	previousAffiliation := o.Affiliation
-	sc, ec := v.account.session.UpdateOccupantAffiliation(v.roomID(), o.Nickname, o.RealJid, affiliation, reason)
+	sc, ec := v.account.session.UpdateOccupantAffiliation(v.roomID(), o.Nickname, o.RealJid, newAffiliation, reason)
 
 	select {
 	case <-sc:
 		v.log.Info("The affiliation has been changed")
-		v.onOccupantAffiliationUpdateSuccess(o, previousAffiliation, affiliation)
+		v.onOccupantAffiliationUpdateSuccess(o, previousAffiliation, newAffiliation)
 	case err := <-ec:
 		v.log.WithError(err).Error("An error occurred in the affiliation update process")
-		v.onOccupantAffiliationUpdateError(o, affiliation, reason, err)
+		v.onOccupantAffiliationUpdateError(o.Nickname, newAffiliation, err)
 	}
 }
 
@@ -358,14 +359,19 @@ func (v *roomView) onOccupantAffiliationUpdateSuccess(o *muc.Occupant, previousA
 	})
 }
 
-func (v *roomView) onOccupantAffiliationUpdateError(o *muc.Occupant, affiliation data.Affiliation, reason string, err error) {
+func (v *roomView) onOccupantAffiliationUpdateError(nickname string, newAffiliation data.Affiliation, err error) {
+	messages := getAffiliationUpdateFailureMessage(nickname, newAffiliation, err)
+
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
-		v.notifications.info(i18n.Local("The position change process failed"))
+		v.notifications.info(messages.notificationMessage)
+
 		dr := createDialogErrorComponent(
-			i18n.Local("Couldn't change the position"),
-			i18n.Localf("The position of %s couldn't be changed", o.Nickname), "")
-		dr.updateMessageBasedOnError(err)
+			messages.errorDialogTitle,
+			messages.errorDialogHeader,
+			messages.errorDialogMessage,
+		)
+
 		dr.show()
 	})
 }

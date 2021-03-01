@@ -100,3 +100,9 @@ func (s *ScramSuite) TestScramSha256WithRFC7677TestVector(c *C) {
 	c.Check(client.NeedsMore(), Equals, false)
 	c.Check(t, IsNil)
 }
+
+func (s *ScramSuite) Test_scram_SetChannelBinding(c *C) {
+	sc := &scram{}
+	sc.SetChannelBinding([]byte("something"))
+	c.Assert(sc.channelBinding, DeepEquals, []byte("something"))
+}

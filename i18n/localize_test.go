@@ -19,11 +19,16 @@ type I18NSuite struct{}
 var _ = Suite(&I18NSuite{})
 
 func (s *I18NSuite) Test_Local_willReturnTheString(c *C) {
-	c.Assert(Local("hello"), Equals, "[local]hello")
-	c.Assert(Local("helllo"), Equals, "[local]helllo")
+	c.Check(Local("hello"), Equals, "[local]hello")
+	c.Check(Local("helllo"), Equals, "[local]helllo")
 }
 
 func (s *I18NSuite) Test_Localf_willReturnTheString(c *C) {
-	c.Assert(Localf("hello"), Equals, "[local]hello")
-	c.Assert(Localf("helllo %d", 42), Equals, "[local]helllo 42")
+	c.Check(Localf("hello"), Equals, "[local]hello")
+	c.Check(Localf("helllo %d", 42), Equals, "[local]helllo 42")
+}
+
+func (s *I18NSuite) Test_nullLocalizer_Local_returnsStringWithMarker(c *C) {
+	c.Check((&nullLocalizer{}).Local("foo"), Equals, "[NULL LOCALIZER] - foo")
+	c.Check((&nullLocalizer{}).Local("bar"), Equals, "[NULL LOCALIZER] - bar")
 }

@@ -70,9 +70,9 @@ func (rv *occupantRoleUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event) {
 func (rv *occupantRoleUpdateView) initDefaults() {
 	rv.dialog.SetTransientFor(rv.rosterInfoView.parentWindow())
 
-	rv.roleLabel.SetText(i18n.Localf("Changing the %s role from %s",
-		displayNameForRole(rv.occupant.Role),
-		rv.occupant.Nickname))
+	rv.roleLabel.SetText(i18n.Localf("You are changing the role of %s from %s to:",
+		rv.occupant.Nickname,
+		displayNameForRole(rv.occupant.Role)))
 
 	mucStyles.setFormSectionLabelStyle(rv.roleLabel)
 	mucStyles.setHelpTextStyle(rv.contentBox)

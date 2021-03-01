@@ -208,7 +208,6 @@ func (s *mucStylesProvider) setChangeRoleDisableLabelStyle(l gtki.Label) {
 
 func (s *mucStylesProvider) setFormSectionLabelStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
-		"font-size":   "20px",
 		"font-weight": "bold",
 	})
 }

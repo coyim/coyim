@@ -3,7 +3,6 @@ package gui
 import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/session"
 
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
@@ -421,6 +420,8 @@ func (v *roomView) onOccupantRoleUpdateError(nickname string, newRole data.Role)
 }
 
 func (v *roomView) tryKickOccupant(occupant *muc.Occupant, reason string) {
+	l := v.log.WithField("occupant", occupant.Nickname)
+
 	doInUIThread(func() {
 		v.loadingViewOverlay.onKickOccupant(occupant.Nickname)
 	})
@@ -429,10 +430,10 @@ func (v *roomView) tryKickOccupant(occupant *muc.Occupant, reason string) {
 
 	select {
 	case <-sc:
-		v.log.Info("The occupant was kicked")
+		l.Info("The occupant was removed from the room")
 		v.onKickOccupantSuccess(occupant.Nickname)
 	case err := <-ec:
-		v.log.WithError(err).Error("Error on occupant kicking")
+		l.WithError(err).Error("An error occurred while trying to remove the occupant from the room")
 		v.onKickOccupantError(occupant, err)
 	}
 }
@@ -446,20 +447,18 @@ func (v *roomView) onKickOccupantSuccess(occupantNickname string) {
 }
 
 func (v *roomView) onKickOccupantError(occupant *muc.Occupant, err error) {
+	actorAffiliation := v.room.SelfOccupant().Affiliation
+	messages := getRoleRemoveFailureMessage(occupant.Nickname, actorAffiliation, err)
+
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
-		v.notifications.info(i18n.Localf("%s couldn't be expelled", occupant.Nickname))
+		v.notifications.info(messages.notificationMessage)
+
 		dr := createDialogErrorComponent(
-			i18n.Local("Expelling process failed"),
-			i18n.Localf("An error occurred expelling to %s", occupant.Nickname), "")
-		switch err {
-		case session.ErrNotAllowedKickOccupant:
-			dr.updateMessageError(i18n.Localf("As %s you don't have permissions to expel %s.",
-				displayNameForRole(v.room.SelfOccupant().Role),
-				displayNameForAffiliationWithPreposition(occupant.Affiliation)))
-		default:
-			dr.updateMessageBasedOnError(err)
-		}
+			messages.errorDialogTitle,
+			messages.errorDialogHeader,
+			messages.errorDialogMessage,
+		)
 
 		dr.show()
 	})

@@ -1,8 +1,6 @@
 package gui
 
 import (
-	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/session"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -57,16 +55,6 @@ func (d *dialogErrorComponent) onRetry() {
 
 func (d *dialogErrorComponent) show() {
 	d.dialog.Show()
-}
-
-// updateMessageBasedOnError MUST be called from the UI thread
-func (d *dialogErrorComponent) updateMessageBasedOnError(err error) {
-	switch err {
-	case session.ErrRemoveOwnerAffiliation:
-		d.messageLabel.SetText(i18n.Local("You can't change your own position because you are the only owner for this room. Every room must have at least one owner."))
-	default:
-		d.messageLabel.SetText(i18n.Local("An unknown error occurred during the process. Please try again later."))
-	}
 }
 
 // updateMessageError MUST be called from the UI thread

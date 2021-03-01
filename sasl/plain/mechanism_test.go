@@ -31,3 +31,18 @@ func (s *SASLPlain) Test(c *C) {
 	c.Check(client.NeedsMore(), Equals, false)
 	c.Check(t, DeepEquals, expected)
 }
+
+func (s *SASLPlain) Test_Register(c *C) {
+	Register()
+	c.Assert(sasl.ClientSupport("PLAIN"), Equals, true)
+}
+
+func (s *SASLPlain) Test_plain_SetProperty_failsOnUnknownProperty(c *C) {
+	p := &plain{}
+	c.Assert(p.SetProperty(sasl.Property(42), "else"), Equals, sasl.ErrUnsupportedProperty)
+}
+
+func (s *SASLPlain) Test_plain_SetChannelBinding_doesNothing(c *C) {
+	p := &plain{}
+	p.SetChannelBinding(nil)
+}

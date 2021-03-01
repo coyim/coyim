@@ -1,6 +1,8 @@
 package roster
 
 import (
+	"sort"
+
 	"github.com/coyim/coyim/xmpp/jid"
 	g "gopkg.in/check.v1"
 )
@@ -89,4 +91,21 @@ func (s *GroupListSuite) Test_Groups_UnsortedPeers_returnsThePeersUnsorted(c *g.
 	p3 := &Peer{Jid: tj("q"), Name: "q", Subscription: "from"}
 	gr.peers = []*Peer{p1, p2, p3}
 	c.Assert(gr.UnsortedPeers(), g.DeepEquals, []*Peer{p1, p2, p3})
+}
+
+func (s *GroupListSuite) Test_Groups_byGroupNameAlphabetic(c *g.C) {
+	gs := []*Group{
+		&Group{GroupName: "foo"},
+		&Group{GroupName: "bar"},
+		&Group{GroupName: "baz"},
+		&Group{GroupName: "quux"},
+		&Group{GroupName: "alf"},
+	}
+
+	sort.Sort(byGroupNameAlphabetic(gs))
+	c.Assert(gs[0].GroupName, g.Equals, "alf")
+	c.Assert(gs[1].GroupName, g.Equals, "bar")
+	c.Assert(gs[2].GroupName, g.Equals, "baz")
+	c.Assert(gs[3].GroupName, g.Equals, "foo")
+	c.Assert(gs[4].GroupName, g.Equals, "quux")
 }

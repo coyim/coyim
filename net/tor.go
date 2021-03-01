@@ -61,7 +61,9 @@ func (m *defaultTorManager) Address() string {
 	return m.addr
 }
 
-func detectTor(host string, ports []string) (string, bool) {
+var detectTor = detectTorInternal
+
+func detectTorInternal(host string, ports []string) (string, bool) {
 	for _, port := range ports {
 		addr := net.JoinHostPort(host, port)
 		conn, err := net.DialTimeout("tcp", addr, timeout)
@@ -84,6 +86,10 @@ type CheckTorResult struct {
 	IP    string
 }
 
+var httpGet = func(c *http.Client, url string) (*http.Response, error) {
+	return c.Get(url)
+}
+
 // IsConnectionOverTor will make a connection to the check.torproject page to see if we're using Tor or not
 func (*defaultTorManager) IsConnectionOverTor(d proxy.Dialer) bool {
 	if d == nil {
@@ -94,7 +100,7 @@ func (*defaultTorManager) IsConnectionOverTor(d proxy.Dialer) bool {
 		return d.Dial(network, addr)
 	}}}
 
-	resp, err := c.Get("https://check.torproject.org/api/ip")
+	resp, err := httpGet(c, "https://check.torproject.org/api/ip")
 	if err != nil {
 		log.WithError(err).Warn("Got error when trying to check tor")
 		return false

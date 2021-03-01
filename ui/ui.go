@@ -28,8 +28,12 @@ func init() {
 }
 
 // UnescapeNewlineTags will remove all newline tags and replace them with actual newlines
-func UnescapeNewlineTags(msg []byte) (out []byte) {
-	z := html.NewTokenizer(bytes.NewReader(msg))
+func UnescapeNewlineTags(msg []byte) []byte {
+	return unescapeNewlineTagsInternal(msg, bytes.NewReader(msg))
+}
+
+func unescapeNewlineTagsInternal(msg []byte, r io.Reader) (out []byte) {
+	z := html.NewTokenizer(r)
 
 loop:
 	for {
@@ -63,8 +67,12 @@ loop:
 }
 
 // StripSomeHTML removes the most common html presentation tags from the text
-func StripSomeHTML(msg []byte) (out []byte) {
-	z := html.NewTokenizer(bytes.NewReader(msg))
+func StripSomeHTML(msg []byte) []byte {
+	return stripSomeHTMLInternal(msg, bytes.NewReader(msg))
+}
+
+func stripSomeHTMLInternal(msg []byte, r io.Reader) (out []byte) {
+	z := html.NewTokenizer(r)
 
 loop:
 	for {
@@ -96,8 +104,12 @@ loop:
 }
 
 // StripHTML removes all html in the text
-func StripHTML(msg []byte) (out []byte) {
-	z := html.NewTokenizer(bytes.NewReader(msg))
+func StripHTML(msg []byte) []byte {
+	return stripHTMLInternal(msg, bytes.NewReader(msg))
+}
+
+func stripHTMLInternal(msg []byte, r io.Reader) (out []byte) {
+	z := html.NewTokenizer(r)
 
 loop:
 	for {
@@ -119,9 +131,13 @@ loop:
 
 // EscapeAllHTMLTags escapes all html tags in the text
 func EscapeAllHTMLTags(in string) (out string) {
-	var b []byte
 	msg := []byte(in)
-	z := html.NewTokenizer(bytes.NewReader(msg))
+	return escapeAllHTMLTagsInternal(msg, bytes.NewReader(msg))
+}
+
+func escapeAllHTMLTagsInternal(msg []byte, in io.Reader) (out string) {
+	var b []byte
+	z := html.NewTokenizer(in)
 
 loop:
 	for {

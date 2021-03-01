@@ -145,8 +145,8 @@ func (r *roomViewRoster) updateOccupantRole(o *muc.Occupant, role data.Role, rea
 	r.roomView.tryUpdateOccupantRole(o, role, reason)
 }
 
-func (r *roomViewRoster) kickOccupant(occupantNickname, reason string) {
-	r.roomView.tryKickOccupant(occupantNickname, reason)
+func (r *roomViewRoster) kickOccupant(occupant *muc.Occupant, reason string) {
+	r.roomView.tryKickOccupant(occupant, reason)
 }
 
 // showOccupantInfo MUST be called from the UI thread

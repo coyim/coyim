@@ -48,7 +48,7 @@ func (k *kickOccupantView) initDefaults() {
 
 // onKickClicked MUST be called from the UI thread
 func (k *kickOccupantView) onKickClicked() {
-	go k.roomViewRoster.kickOccupant(k.occupant.Nickname, getTextViewText(k.reason))
+	go k.roomViewRoster.kickOccupant(k.occupant, getTextViewText(k.reason))
 	k.close()
 }
 

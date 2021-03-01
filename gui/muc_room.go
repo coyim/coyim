@@ -3,6 +3,7 @@ package gui
 import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session"
 
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
@@ -403,20 +404,20 @@ func (v *roomView) onOccupantRoleUpdateError(o *muc.Occupant, role data.Role, re
 	})
 }
 
-func (v *roomView) tryKickOccupant(occupantNickname string, reason string) {
+func (v *roomView) tryKickOccupant(occupant *muc.Occupant, reason string) {
 	doInUIThread(func() {
-		v.loadingViewOverlay.onKickOccupant(occupantNickname)
+		v.loadingViewOverlay.onKickOccupant(occupant.Nickname)
 	})
 
-	sc, ec := v.account.session.UpdateOccupantRole(v.roomID(), occupantNickname, &data.NoneRole{}, reason)
+	sc, ec := v.account.session.UpdateOccupantRole(v.roomID(), occupant.Nickname, &data.NoneRole{}, reason)
 
 	select {
 	case <-sc:
 		v.log.Info("The occupant was kicked")
-		v.onKickOccupantSuccess(occupantNickname)
+		v.onKickOccupantSuccess(occupant.Nickname)
 	case err := <-ec:
 		v.log.WithError(err).Error("Error on occupant kicking")
-		v.onKickOccupantError(occupantNickname, err)
+		v.onKickOccupantError(occupant, err)
 	}
 }
 
@@ -428,14 +429,22 @@ func (v *roomView) onKickOccupantSuccess(occupantNickname string) {
 	})
 }
 
-func (v *roomView) onKickOccupantError(occupantNickname string, err error) {
+func (v *roomView) onKickOccupantError(occupant *muc.Occupant, err error) {
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
-		v.notifications.info(i18n.Localf("%s couldn't be expelled", occupantNickname))
+		v.notifications.info(i18n.Localf("%s couldn't be expelled", occupant.Nickname))
 		dr := createDialogErrorComponent(
 			i18n.Local("Expel occupant process failed"),
-			i18n.Localf("The occupant %s couldn't be expelled", occupantNickname), "")
-		dr.updateMessageBasedOnError(err)
+			i18n.Localf("The occupant %s couldn't be expelled", occupant.Nickname), "")
+		switch err {
+		case session.ErrNotAllowedKickOccupant:
+			dr.updateMessageError(i18n.Localf("As %s you don't have permissions to expel %s.",
+				displayNameForRole(v.room.SelfOccupant().Role),
+				displayNameForAffiliationWithPreposition(occupant.Affiliation)))
+		default:
+			dr.updateMessageBasedOnError(err)
+		}
+
 		dr.show()
 	})
 }

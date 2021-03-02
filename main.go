@@ -35,6 +35,10 @@ var BuildTag = "(no tag)"
 var BuildTimestamp = "UNKNOWN"
 
 func init() {
+	mainInit()
+}
+
+func mainInit() {
 	if BuildTag == "(no tag)" || BuildTag == "" {
 		coyimVersion = BuildCommit
 	} else {

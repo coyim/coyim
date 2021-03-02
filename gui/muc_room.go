@@ -378,6 +378,8 @@ func (v *roomView) onOccupantAffiliationUpdateError(nickname string, newAffiliat
 }
 
 func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, newRole data.Role, reason string) {
+	l := v.log.WithField("occupant", o.Nickname)
+
 	doInUIThread(func() {
 		v.loadingViewOverlay.onOccupantRoleUpdate()
 	})
@@ -387,10 +389,10 @@ func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, newRole data.Role, rea
 
 	select {
 	case <-sc:
-		v.log.Info("The role has been changed")
+		l.Info("The role has been changed")
 		v.onOccupantRoleUpdateSuccess(o.Nickname, previousRole, newRole)
 	case err := <-ec:
-		v.log.WithError(err).Error("An error occurred in the role update process")
+		l.WithError(err).Error("An error occurred in the role update process")
 		v.onOccupantRoleUpdateError(o.Nickname, newRole)
 	}
 }

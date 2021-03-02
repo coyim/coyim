@@ -63,9 +63,9 @@ func getAffiliationFailureErrorMessage(nickname string, newAffiliation data.Affi
 		return i18n.Local("You can't change your own position because you are the only owner for this room. Every room must have at least one owner.")
 	default:
 		if newAffiliation.IsNone() {
-			return i18n.Localf("An error occurred when trying to change the position of %s.", nickname)
+			return i18n.Localf("An error occurred trying to change the position of %s.", nickname)
 		}
-		return i18n.Localf("An error occurred when trying to change the position of %s to %s.", nickname, displayNameForAffiliation(newAffiliation))
+		return i18n.Localf("An error occurred trying to change the position of %s to %s.", nickname, displayNameForAffiliation(newAffiliation))
 	}
 }
 
@@ -78,7 +78,7 @@ func getRoleUpdateFailureMessage(nickname string, newRole data.Role) *updateFail
 		notificationMessage: i18n.Localf("The process of changing the role of %s failed", nickname),
 		errorDialogTitle:    i18n.Local("The process of changing the role failed"),
 		errorDialogHeader:   i18n.Localf("The role of %s couldn't be changed", nickname),
-		errorDialogMessage:  i18n.Localf("An error occurred when trying to change the role of %s to %s.", nickname, displayNameForRole(newRole)),
+		errorDialogMessage:  i18n.Localf("An error occurred trying to change the role of %s to %s.", nickname, displayNameForRole(newRole)),
 	}
 }
 

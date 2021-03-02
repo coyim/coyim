@@ -591,25 +591,25 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateFailureMessage(c *
 	c.Assert(messages.notificationMessage, Equals, "The process of changing the position of Luisa failed")
 	c.Assert(messages.errorDialogTitle, Equals, "The process of changing the position failed")
 	c.Assert(messages.errorDialogHeader, Equals, "The position of Luisa couldn't be changed")
-	c.Assert(messages.errorDialogMessage, Equals, "An error occurred when trying to change the position of Luisa to owner.")
+	c.Assert(messages.errorDialogMessage, Equals, "An error occurred trying to change the position of Luisa to owner.")
 
 	messages = getAffiliationUpdateFailureMessage("Marco", admin, nil)
 	c.Assert(messages.notificationMessage, Equals, "The process of changing the position of Marco failed")
 	c.Assert(messages.errorDialogTitle, Equals, "The process of changing the position failed")
 	c.Assert(messages.errorDialogHeader, Equals, "The position of Marco couldn't be changed")
-	c.Assert(messages.errorDialogMessage, Equals, "An error occurred when trying to change the position of Marco to administrator.")
+	c.Assert(messages.errorDialogMessage, Equals, "An error occurred trying to change the position of Marco to administrator.")
 
 	messages = getAffiliationUpdateFailureMessage("Pedro", member, nil)
 	c.Assert(messages.notificationMessage, Equals, "The process of changing the position of Pedro failed")
 	c.Assert(messages.errorDialogTitle, Equals, "The process of changing the position failed")
 	c.Assert(messages.errorDialogHeader, Equals, "The position of Pedro couldn't be changed")
-	c.Assert(messages.errorDialogMessage, Equals, "An error occurred when trying to change the position of Pedro to member.")
+	c.Assert(messages.errorDialogMessage, Equals, "An error occurred trying to change the position of Pedro to member.")
 
 	messages = getAffiliationUpdateFailureMessage("José", none, nil)
 	c.Assert(messages.notificationMessage, Equals, "The process of changing the position of José failed")
 	c.Assert(messages.errorDialogTitle, Equals, "The process of changing the position failed")
 	c.Assert(messages.errorDialogHeader, Equals, "The position of José couldn't be changed")
-	c.Assert(messages.errorDialogMessage, Equals, "An error occurred when trying to change the position of José.")
+	c.Assert(messages.errorDialogMessage, Equals, "An error occurred trying to change the position of José.")
 
 }
 
@@ -625,19 +625,19 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateFailureMessage(c *C) {
 	c.Assert(messages.notificationMessage, Equals, "The process of changing the role of Mauricio failed")
 	c.Assert(messages.errorDialogTitle, Equals, "The process of changing the role failed")
 	c.Assert(messages.errorDialogHeader, Equals, "The role of Mauricio couldn't be changed")
-	c.Assert(messages.errorDialogMessage, Equals, "An error occurred when trying to change the role of Mauricio to moderator.")
+	c.Assert(messages.errorDialogMessage, Equals, "An error occurred trying to change the role of Mauricio to moderator.")
 
 	messages = getRoleUpdateFailureMessage("Juan", participant)
 	c.Assert(messages.notificationMessage, Equals, "The process of changing the role of Juan failed")
 	c.Assert(messages.errorDialogTitle, Equals, "The process of changing the role failed")
 	c.Assert(messages.errorDialogHeader, Equals, "The role of Juan couldn't be changed")
-	c.Assert(messages.errorDialogMessage, Equals, "An error occurred when trying to change the role of Juan to participant.")
+	c.Assert(messages.errorDialogMessage, Equals, "An error occurred trying to change the role of Juan to participant.")
 
 	messages = getRoleUpdateFailureMessage("Pepe", visitor)
 	c.Assert(messages.notificationMessage, Equals, "The process of changing the role of Pepe failed")
 	c.Assert(messages.errorDialogTitle, Equals, "The process of changing the role failed")
 	c.Assert(messages.errorDialogHeader, Equals, "The role of Pepe couldn't be changed")
-	c.Assert(messages.errorDialogMessage, Equals, "An error occurred when trying to change the role of Pepe to visitor.")
+	c.Assert(messages.errorDialogMessage, Equals, "An error occurred trying to change the role of Pepe to visitor.")
 
 	messages = getRoleUpdateFailureMessage("Juana", none)
 	c.Assert(messages.notificationMessage, Equals, "Juana couldn't be expelled.")

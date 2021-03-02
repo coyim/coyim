@@ -26,10 +26,10 @@ type occupantAffiliationUpdateView struct {
 	contentBox           gtki.Box         `gtk-widget:"affiliation-content-box"`
 	titleLabel           gtki.Label       `gtk-widget:"affiliation-title-label"`
 	optionsDisabledLabel gtki.Label       `gtk-widget:"affiliation-options-disabled-label"`
-	ownerRadio           gtki.RadioButton `gtk-widget:"affiliation-owner"`
-	adminRadio           gtki.RadioButton `gtk-widget:"affiliation-admin"`
-	memberRadio          gtki.RadioButton `gtk-widget:"affiliation-member"`
-	noneRadio            gtki.RadioButton `gtk-widget:"affiliation-none"`
+	ownerOption          gtki.RadioButton `gtk-widget:"affiliation-owner"`
+	adminOption          gtki.RadioButton `gtk-widget:"affiliation-admin"`
+	memberOption         gtki.RadioButton `gtk-widget:"affiliation-member"`
+	noneOption           gtki.RadioButton `gtk-widget:"affiliation-none"`
 	reasonEntry          gtki.TextView    `gtk-widget:"affiliation-reason-entry"`
 	applyButton          gtki.Button      `gtk-widget:"affiliation-apply-button"`
 }
@@ -97,20 +97,20 @@ func (av *occupantAffiliationUpdateView) titleLabelText() string {
 // initRadioButtonsValues MUST be called from UI thread
 func (av *occupantAffiliationUpdateView) initRadioButtonsValues() {
 	if av.selfOccupant.Affiliation.IsAdmin() {
-		av.adminRadio.SetSensitive(false)
-		av.ownerRadio.SetSensitive(false)
+		av.adminOption.SetSensitive(false)
+		av.ownerOption.SetSensitive(false)
 		av.optionsDisabledLabel.SetVisible(true)
 	}
 
 	switch av.occupant.Affiliation.(type) {
 	case *data.OwnerAffiliation:
-		av.ownerRadio.SetActive(true)
+		av.ownerOption.SetActive(true)
 	case *data.AdminAffiliation:
-		av.adminRadio.SetActive(true)
+		av.adminOption.SetActive(true)
 	case *data.MemberAffiliation:
-		av.memberRadio.SetActive(true)
+		av.memberOption.SetActive(true)
 	case *data.NoneAffiliation:
-		av.noneRadio.SetActive(true)
+		av.noneOption.SetActive(true)
 	}
 }
 
@@ -122,11 +122,11 @@ func (av *occupantAffiliationUpdateView) onApply() {
 
 func (av *occupantAffiliationUpdateView) getAffiliationBasedOnRadioSelected() data.Affiliation {
 	switch {
-	case av.ownerRadio.GetActive():
+	case av.ownerOption.GetActive():
 		return &data.OwnerAffiliation{}
-	case av.adminRadio.GetActive():
+	case av.adminOption.GetActive():
 		return &data.AdminAffiliation{}
-	case av.memberRadio.GetActive():
+	case av.memberOption.GetActive():
 		return &data.MemberAffiliation{}
 	default:
 		return &data.NoneAffiliation{}

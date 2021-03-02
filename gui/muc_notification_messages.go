@@ -37,6 +37,7 @@ func getRoleUpdateSuccessMessage(nickname string, previousRole, newRole data.Rol
 		}
 	}
 
+	// This is impossible to happen but we need to cover all cases.
 	return i18n.Localf("The role of %s wasn't changed.", nickname)
 }
 

@@ -77,7 +77,6 @@ func (av *occupantAffiliationUpdateView) initDefaults() {
 	av.dialog.SetTransientFor(av.rosterInfoView.parentWindow())
 
 	av.titleLabel.SetText(av.titleLabelText())
-	av.optionsDisabledLabel.SetText(i18n.Localf("As an administrator you don't have permissions to assign the owner or administrator position to %s.", av.occupant.Nickname))
 
 	mucStyles.setFormSectionLabelStyle(av.titleLabel)
 	mucStyles.setHelpTextStyle(av.contentBox)

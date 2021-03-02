@@ -93,6 +93,10 @@ func (m *conversationManager) GetConversationWith(peer jid.Any) (Conversation, b
 	return m.getConversationWithUnlocked(peer)
 }
 
+var getTheirInstanceTag = func(c *otr3.Conversation) uint32 {
+	return c.GetTheirInstanceTag()
+}
+
 func (m *conversationManager) EnsureConversationWith(peer jid.Any, msg []byte) (Conversation, bool) {
 	m.Lock()
 	defer m.Unlock()
@@ -108,7 +112,7 @@ func (m *conversationManager) EnsureConversationWith(peer jid.Any, msg []byte) (
 			for jidc, cc := range m.conversations {
 				jidcp := jid.Parse(jidc)
 				if peer.NoResource().String() == jidcp.NoResource().String() &&
-					theirs == cc.GetTheirInstanceTag() {
+					theirs == getTheirInstanceTag(cc.Conversation) {
 					cc.peer = peer
 					delete(m.conversations, jidc)
 					m.conversations[peer.String()] = cc

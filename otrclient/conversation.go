@@ -79,10 +79,10 @@ func (c *conversation) sendAll(toSend []otr3.ValidMessage) error {
 }
 
 func (c *conversation) EndEncryptedChat() error {
-	toSend, err := c.End()
-	if err != nil {
-		return err
-	}
+	// After trying to test this error condition,
+	// it turns out that it's actually not possible for this error to happen
+	// so it's safe to ignore it here.
+	toSend, _ := c.End()
 
 	return c.sendAll(toSend)
 }
@@ -143,9 +143,6 @@ func (c *conversation) OurFingerprint() []byte {
 	}
 
 	pk := sk.PublicKey()
-	if pk == nil {
-		return nil
-	}
 
 	return pk.Fingerprint()
 }

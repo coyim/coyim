@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"io/ioutil"
+	"sync"
 
 	log "github.com/sirupsen/logrus"
 
@@ -226,4 +227,39 @@ func (s *EventHandlerSuite) Test_HandleMessageEvent_handlesMessageEventSetupCorr
 	c.Assert(l, Matches, ".*?account=me2@foo\\.bar.*?\n")
 	c.Assert(l, Matches, ".*?msg=\"Error setting up private conversation\".*?\n")
 	c.Assert(l, Matches, ".*?with=them2@somewhere.com.*?\n")
+}
+
+func (s *EventHandlerSuite) Test_EventHandler_ConsumeDelayedState(c *C) {
+	ev := &EventHandler{
+		delays: map[int]bool{},
+	}
+
+	ev.delays[42] = true
+	res := ev.ConsumeDelayedState(42)
+	c.Assert(res, Equals, true)
+}
+
+func (s *EventHandlerSuite) Test_EventHandler_HandleMessageEvent_MessageEventMessageSent_addsDelay(c *C) {
+	ev := &EventHandler{
+		delays: map[int]bool{},
+	}
+
+	ch := make(chan int)
+	ev.delayedMessageSent = ch
+
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+
+	receivedValue := 0
+	go func() {
+		receivedValue = <-ch
+		wg.Done()
+	}()
+
+	ev.HandleMessageEvent(otr3.MessageEventMessageSent, nil, nil)
+	ev.HandleMessageEvent(otr3.MessageEventMessageSent, nil, nil, 55)
+
+	wg.Wait()
+
+	c.Assert(receivedValue, Equals, 55)
 }

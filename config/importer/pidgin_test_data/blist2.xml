@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<purple version='1.0'>
+	<blist>
+		<group>
+			<setting name='collapsed' type='bool'>0</setting>
+			<contact>
+				<buddy account='left.misery@coy.im/' proto='prpl-jabber'>
+					<name>abc@dukgo.com</name>
+					<setting name='last_seen' type='int'>1439888876</setting>
+					<setting name='buddy_icon' type='string'>2caaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa9c.png</setting>
+					<setting name='icon_checksum' type='string'>2caaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa9c</setting>
+				</buddy>
+				<setting name='gtk-mute-sound' type='bool'>0</setting>
+			</contact>
+			<contact>
+				<buddy account='left.misery@coy.im/' proto='prpl-jabber'>
+					<name>not@coyim.com</name>
+					<setting name='OTR/enabled' type='bool'>1</setting>
+					<setting name='OTR/automatic' type='bool'>0</setting>
+					<setting name='OTR/overridedefault' type='bool'>0</setting>
+					<setting name='OTR/avoidloggingotr' type='bool'>1</setting>
+					<setting name='OTR/onlyprivate' type='bool'>1</setting>
+				</buddy>
+				<setting name='gtk-mute-sound' type='bool'>0</setting>
+			</contact>
+			<contact>
+				<buddy account='left.misery@coy.im/' proto='prpl-jabber'>
+					<name>foo@coyim.com</name>
+					<setting name='OTR/enabled' type='bool'>0</setting>
+					<setting name='OTR/automatic' type='bool'>0</setting>
+					<setting name='OTR/overridedefault' type='bool'>0</setting>
+					<setting name='OTR/avoidloggingotr' type='bool'>1</setting>
+					<setting name='OTR/onlyprivate' type='bool'>1</setting>
+				</buddy>
+				<setting name='gtk-mute-sound' type='bool'>0</setting>
+			</contact>
+			<contact>
+				<buddy account='left.misery2@coy.im/' proto='prpl-icq'>
+					<name>not@coyim.com</name>
+					<setting name='OTR/enabled' type='bool'>1</setting>
+					<setting name='OTR/automatic' type='bool'>0</setting>
+					<setting name='OTR/overridedefault' type='bool'>0</setting>
+					<setting name='OTR/avoidloggingotr' type='bool'>1</setting>
+					<setting name='OTR/onlyprivate' type='bool'>1</setting>
+				</buddy>
+				<setting name='gtk-mute-sound' type='bool'>0</setting>
+			</contact>
+		</group>
+	</blist>
+	<privacy>
+	</privacy>
+</purple>

@@ -2,7 +2,12 @@ package importer
 
 import (
 	"encoding/hex"
+	"errors"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 
+	"github.com/coyim/coyim/config"
 	. "gopkg.in/check.v1"
 )
 
@@ -57,4 +62,72 @@ func (s *XMPPClientXMPPSuite) Test_XmppClient_canImportXmppClientConfiguration(c
 	c.Assert(res.RawLogFile, Equals, "bla")
 	c.Assert(res.NotifyCommand, DeepEquals, []string{"hello"})
 	c.Assert(res.IdleSecondsBeforeNotification, Equals, 42)
+}
+
+func (s *XMPPClientXMPPSuite) Test_xmppClientImporter_TryImport(c *C) {
+	dir, _ := ioutil.TempDir("", "")
+	defer os.RemoveAll(dir)
+
+	origHome := os.Getenv("HOME")
+	defer func() {
+		os.Setenv("HOME", origHome)
+	}()
+	os.Setenv("HOME", dir)
+
+	input, _ := ioutil.ReadFile(testResourceFilename("xmpp_client_test_conf.json"))
+	_ = ioutil.WriteFile(filepath.Join(dir, ".xmpp-client"), input, 0644)
+
+	res := (&xmppClientImporter{}).TryImport()
+	c.Assert(res, HasLen, 1)
+}
+
+func (s *XMPPClientXMPPSuite) Test_xmppClientImporter_TryImport_noFilesFound(c *C) {
+	dir, _ := ioutil.TempDir("", "")
+	defer os.RemoveAll(dir)
+
+	origHome := os.Getenv("HOME")
+	defer func() {
+		os.Setenv("HOME", origHome)
+	}()
+	os.Setenv("HOME", dir)
+
+	res := (&xmppClientImporter{}).TryImport()
+	c.Assert(res, HasLen, 0)
+}
+
+func (s *XMPPClientXMPPSuite) Test_xmppClientImporter_TryImport_failsOnBadFile(c *C) {
+	dir, _ := ioutil.TempDir("", "")
+	defer os.RemoveAll(dir)
+
+	origHome := os.Getenv("HOME")
+	defer func() {
+		os.Setenv("HOME", origHome)
+	}()
+	os.Setenv("HOME", dir)
+
+	_ = ioutil.WriteFile(filepath.Join(dir, ".xmpp-client"), []byte("{"), 0644)
+
+	res := (&xmppClientImporter{}).TryImport()
+	c.Assert(res, HasLen, 0)
+}
+
+func (s *XMPPClientXMPPSuite) Test_xmppClientImporter_importFrom_failsOnReadingFile(c *C) {
+	res, ok := (&xmppClientImporter{}).importFrom("bla-file-that-hopefully-doesnt-exists")
+	c.Assert(res, IsNil)
+	c.Assert(ok, Equals, false)
+}
+
+func (s *XMPPClientXMPPSuite) Test_xmppClientImporter_importFrom_failsOnAddingAccount(c *C) {
+	origAddNewAccount := addNewAccount
+	defer func() {
+		addNewAccount = origAddNewAccount
+	}()
+
+	addNewAccount = func(a *config.ApplicationConfig) (*config.Account, error) {
+		return nil, errors.New("marker return")
+	}
+
+	res, ok := (&xmppClientImporter{}).importFrom(testResourceFilename("xmpp_client_test_conf.json"))
+	c.Assert(res, IsNil)
+	c.Assert(ok, Equals, false)
 }

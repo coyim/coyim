@@ -1,6 +1,10 @@
 package importer
 
 import (
+	"io/ioutil"
+	"os"
+	"path/filepath"
+
 	"github.com/coyim/coyim/config"
 	. "gopkg.in/check.v1"
 )
@@ -267,4 +271,112 @@ func (s *AdiumSuite) Test_AdiumImporter_canDoAFullImport(c *C) {
 		ConnectAutomatically: false}
 
 	c.Assert(*res.Accounts[2], DeepEquals, expectedAccount)
+}
+
+func (s *AdiumSuite) Test_adiumImporter_TryImport(c *C) {
+	dir, _ := ioutil.TempDir("", "")
+	defer os.RemoveAll(dir)
+
+	origHome := os.Getenv("HOME")
+	defer func() {
+		os.Setenv("HOME", origHome)
+	}()
+	os.Setenv("HOME", dir)
+
+	os.MkdirAll(filepath.Join(dir, adiumConfigDir), 0755)
+	os.MkdirAll(filepath.Join(dir, adiumConfigDir, "libpurple"), 0755)
+
+	input, _ := ioutil.ReadFile(testResourceFilename("adium_test_data/Accounts.plist"))
+	_ = ioutil.WriteFile(filepath.Join(dir, adiumConfigDir, adiumAccountMappingsFile), input, 0644)
+
+	input, _ = ioutil.ReadFile(testResourceFilename("adium_test_data/libpurple/accounts.xml"))
+	_ = ioutil.WriteFile(filepath.Join(dir, adiumConfigDir, "libpurple", pidginAccountsFile), input, 0644)
+
+	res := (&adiumImporter{}).TryImport()
+	c.Assert(res, HasLen, 1)
+}
+
+func (s *AdiumSuite) Test_adiumImporter_importAllFrom_failsIfAccountMappingFileIsMissing(c *C) {
+	i := &adiumImporter{}
+	res, ok := i.importAllFrom("", testResourceFilename("adium_test_data/libpurple/accounts.xml"), "", "", "", "")
+	c.Assert(res, IsNil)
+	c.Assert(ok, Equals, false)
+}
+
+func (s *AdiumSuite) Test_adiumImporter_importAllFrom_failsIfAccountFileIsMissing(c *C) {
+	i := &adiumImporter{}
+	res, ok := i.importAllFrom(testResourceFilename("adium_test_data/Accounts.plist"), "", "", "", "", "")
+	c.Assert(res, IsNil)
+	c.Assert(ok, Equals, false)
+}
+
+func (s *AdiumSuite) Test_adiumImporter_importAllFrom_setsOnlyPrivateSettings(c *C) {
+	i := &adiumImporter{}
+	res, ok := i.importAllFrom(
+		testResourceFilename("adium_test_data/Accounts.plist"),
+		testResourceFilename("adium_test_data/libpurple/accounts.xml"),
+		testResourceFilename("adium_test_data/libpurple/prefs2.xml"),
+		testResourceFilename("adium_test_data/libpurple/blist.xml"),
+		testResourceFilename("adium_test_data/otr.private_key"),
+		testResourceFilename("adium_test_data/otr.fingerprints"),
+	)
+
+	c.Assert(ok, Equals, true)
+	c.Assert(res, Not(IsNil))
+	c.Assert(res.Accounts[0].AlwaysEncrypt, Equals, true)
+	c.Assert(res.Accounts[0].OTRAutoStartSession, Equals, true)
+	c.Assert(res.Accounts[0].OTRAutoAppendTag, Equals, false)
+}
+
+func (s *AdiumSuite) Test_adiumImporter_importAllFrom_setsAutomaticOTRSettings(c *C) {
+	i := &adiumImporter{}
+	res, ok := i.importAllFrom(
+		testResourceFilename("adium_test_data/Accounts.plist"),
+		testResourceFilename("adium_test_data/libpurple/accounts.xml"),
+		testResourceFilename("adium_test_data/libpurple/prefs3.xml"),
+		testResourceFilename("adium_test_data/libpurple/blist.xml"),
+		testResourceFilename("adium_test_data/otr.private_key"),
+		testResourceFilename("adium_test_data/otr.fingerprints"),
+	)
+
+	c.Assert(ok, Equals, true)
+	c.Assert(res, Not(IsNil))
+	c.Assert(res.Accounts[0].AlwaysEncrypt, Equals, false)
+	c.Assert(res.Accounts[0].OTRAutoStartSession, Equals, true)
+	c.Assert(res.Accounts[0].OTRAutoAppendTag, Equals, true)
+}
+
+func (s *AdiumSuite) Test_adiumImporter_importAllFrom_setsOTRNotEnabled(c *C) {
+	i := &adiumImporter{}
+	res, ok := i.importAllFrom(
+		testResourceFilename("adium_test_data/Accounts.plist"),
+		testResourceFilename("adium_test_data/libpurple/accounts.xml"),
+		testResourceFilename("adium_test_data/libpurple/prefs4.xml"),
+		testResourceFilename("adium_test_data/libpurple/blist.xml"),
+		testResourceFilename("adium_test_data/otr.private_key"),
+		testResourceFilename("adium_test_data/otr.fingerprints"),
+	)
+
+	c.Assert(ok, Equals, true)
+	c.Assert(res, Not(IsNil))
+	c.Assert(res.Accounts[0].AlwaysEncrypt, Equals, false)
+	c.Assert(res.Accounts[0].OTRAutoStartSession, Equals, false)
+	c.Assert(res.Accounts[0].OTRAutoAppendTag, Equals, false)
+}
+
+func (s *AdiumSuite) Test_adiumImporter_importAllFrom_setsOnlyPrivateForPeer(c *C) {
+	i := &adiumImporter{}
+	res, ok := i.importAllFrom(
+		testResourceFilename("adium_test_data/Accounts.plist"),
+		testResourceFilename("adium_test_data/libpurple/accounts.xml"),
+		testResourceFilename("adium_test_data/libpurple/prefs.xml"),
+		testResourceFilename("adium_test_data/libpurple/blist2.xml"),
+		testResourceFilename("adium_test_data/otr.private_key"),
+		testResourceFilename("adium_test_data/otr.fingerprints"),
+	)
+
+	c.Assert(ok, Equals, true)
+	c.Assert(res, Not(IsNil))
+	c.Assert(res.Accounts[0].AlwaysEncryptWith, DeepEquals, []string{"abcaaaa@mesopotamia.xmpp"})
+	c.Assert(res.Accounts[0].DontEncryptWith, DeepEquals, []string{"fooooooo@mesopotamia.xmpp"})
 }

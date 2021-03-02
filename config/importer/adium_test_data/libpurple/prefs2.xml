@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<pref version='1' name='/'>
+	<pref name='purple'>
+		<pref name='away'>
+			<pref name='idle_reporting' type='string' value='system'/>
+			<pref name='away_when_idle' type='bool' value='0'/>
+			<pref name='mins_before_away' type='int' value='5'/>
+			<pref name='auto_reply' type='string' value='never'/>
+			<pref name='report_idle' type='bool' value='0'/>
+		</pref>
+		<pref name='buddies'>
+			<pref name='use_server_alias' type='bool' value='1'/>
+		</pref>
+		<pref name='contact'>
+			<pref name='last_match' type='bool' value='0'/>
+		</pref>
+		<pref name='debug'>
+			<pref name='timestamps' type='bool' value='1'/>
+		</pref>
+		<pref name='status'>
+			<pref name='scores'>
+				<pref name='offline' type='int' value='-500'/>
+				<pref name='available' type='int' value='100'/>
+				<pref name='invisible' type='int' value='-50'/>
+				<pref name='away' type='int' value='-100'/>
+				<pref name='extended_away' type='int' value='-200'/>
+				<pref name='idle' type='int' value='-10'/>
+				<pref name='offline_msg' type='int' value='10'/>
+			</pref>
+		</pref>
+		<pref name='savedstatus'>
+			<pref name='default' type='int' value='0'/>
+			<pref name='startup' type='int' value='0'/>
+			<pref name='startup_current_status' type='bool' value='1'/>
+			<pref name='idleaway' type='int' value='0'/>
+			<pref name='isidleaway' type='bool' value='0'/>
+		</pref>
+		<pref name='conversations'>
+			<pref name='chat'>
+				<pref name='show_nick_change' type='bool' value='1'/>
+			</pref>
+			<pref name='im'>
+				<pref name='send_typing' type='bool' value='1'/>
+			</pref>
+		</pref>
+		<pref name='logging'>
+			<pref name='log_ims' type='bool' value='0'/>
+			<pref name='log_chats' type='bool' value='0'/>
+			<pref name='log_system' type='bool' value='0'/>
+			<pref name='format' type='string' value='html'/>
+		</pref>
+		<pref name='network'>
+			<pref name='stun_server' type='string' value=''/>
+			<pref name='turn_server' type='string' value=''/>
+			<pref name='turn_port' type='int' value='3478'/>
+			<pref name='turn_username' type='string' value=''/>
+			<pref name='turn_password' type='string' value=''/>
+			<pref name='auto_ip' type='bool' value='1'/>
+			<pref name='public_ip' type='string' value=''/>
+			<pref name='map_ports' type='bool' value='1'/>
+			<pref name='ports_range_use' type='bool' value='0'/>
+			<pref name='ports_range_start' type='int' value='1024'/>
+			<pref name='ports_range_end' type='int' value='2048'/>
+			<pref name='turn_port_tcp' type='int' value='3478'/>
+		</pref>
+		<pref name='proxy'>
+			<pref name='type' type='string' value='none'/>
+			<pref name='host' type='string' value=''/>
+			<pref name='port' type='int' value='0'/>
+			<pref name='username' type='string' value=''/>
+			<pref name='password' type='string' value=''/>
+			<pref name='socks4_remotedns' type='bool' value='0'/>
+		</pref>
+		<pref name='sound'>
+			<pref name='while_status' type='int' value='1'/>
+		</pref>
+	</pref>
+	<pref name='plugins'>
+		<pref name='core'/>
+		<pref name='lopl'/>
+		<pref name='prpl'>
+			<pref name='oscar'>
+				<pref name='recent_buddies' type='bool' value='0'/>
+			</pref>
+			<pref name='qq'>
+				<pref name='show_status_by_icon' type='bool' value='1'/>
+				<pref name='show_fake_video' type='bool' value='0'/>
+				<pref name='auto_get_authorize_info' type='bool' value='1'/>
+				<pref name='resend_interval' type='int' value='3'/>
+				<pref name='resend_times' type='int' value='10'/>
+			</pref>
+			<pref name='meanwhile'>
+				<pref name='blist_action' type='int' value='4'/>
+			</pref>
+		</pref>
+	</pref>
+	<pref name='OTR'>
+		<pref name='enabled' type='bool' value='1'/>
+		<pref name='automatic' type='bool' value='1'/>
+		<pref name='onlyprivate' type='bool' value='1'/>
+		<pref name='avoidloggingotr' type='bool' value='1'/>
+	</pref>
+</pref>

@@ -29,6 +29,8 @@ func composeProxyString(tp, user, pass, host, port string) string {
 	return main
 }
 
+// ifExists checks if the file in question exists
+// and if it does, adds it to the argument
 func ifExists(fs []string, f string) []string {
 	if fi, err := os.Stat(f); err == nil && !fi.IsDir() {
 		return append(fs, f)
@@ -36,6 +38,9 @@ func ifExists(fs []string, f string) []string {
 	return fs
 }
 
+// ifExistsDir will see if argument `d` is a directory
+// if it is, it will add all files inside the directory
+// to the result and return that
 func ifExistsDir(fs []string, d string) []string {
 	if fi, err := os.Stat(d); err == nil && fi.IsDir() {
 		entries, err := ioutil.ReadDir(d)

@@ -35,15 +35,7 @@ func getFilesMatching(dir, ext string) []string {
 }
 
 func (g *gajimImporter) findFiles() (configFile string, pluginFile string, keyFiles []string, fingerprintFiles []string) {
-	var configRoot, dataRoot string
-
-	if config.IsWindows() {
-		configRoot = filepath.Join(config.SystemConfigDir(), "Gajim")
-		dataRoot = configRoot
-	} else {
-		configRoot = filepath.Join(config.XdgConfigHome(), "gajim")
-		dataRoot = filepath.Join(config.XdgDataHome(), "gajim")
-	}
+	configRoot, dataRoot := gajimGetConfigAndDataDirs()
 
 	configFile = filepath.Join(configRoot, "config")
 	pluginFile = filepath.Join(configRoot, "pluginsconfig/gotr")
@@ -191,11 +183,13 @@ func composeProxyStringFrom(proxy map[string]string) string {
 		return ""
 	}
 
+	user := proxy["user"]
+
 	if proxy["useauth"] != "True" {
-		proxy["user"] = ""
+		user = ""
 	}
 
-	return composeProxyString(proxy["type"], proxy["user"], proxy["pass"], proxy["host"], proxy["port"])
+	return composeProxyString(proxy["type"], user, proxy["pass"], proxy["host"], proxy["port"])
 }
 
 func transformSettingsIntoAccount(user string, settings map[string]string, proxies map[string]map[string]string) gajimAccountInfo {

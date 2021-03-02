@@ -219,15 +219,7 @@ func (p *pidginImporter) findDir() (string, bool) {
 		return config.WithHome(pidginConfigDir), true
 	}
 
-	if config.IsWindows() {
-		app := filepath.Join(config.SystemConfigDir(), pidginConfigDir)
-
-		if fi, err := os.Stat(filepath.Join(app, pidginAccountsFile)); err == nil && !fi.IsDir() {
-			return app, true
-		}
-	}
-
-	return "", false
+	return findDirOSDependent()
 }
 
 func (p *pidginImporter) composeFileNamesFrom(dir string) (accountsFile, prefsFile, blistFile, keyFile, fprFile string) {

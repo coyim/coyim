@@ -2,6 +2,9 @@ package importer
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/otr3"
@@ -476,4 +479,70 @@ func (s *GajimSuite) Test_GajimImporter_canFailAFullImport(c *C) {
 	)
 
 	c.Assert(ok, Equals, false)
+}
+
+func copyFile(from, to string) {
+	input, _ := ioutil.ReadFile(from)
+	_ = ioutil.WriteFile(to, input, 0644)
+}
+
+func (s *GajimSuite) Test_gajimImporter_TryImport_works(c *C) {
+	dir, _ := ioutil.TempDir("", "")
+	defer os.RemoveAll(dir)
+
+	origEnv1 := os.Getenv("XDG_CONFIG_HOME")
+	origEnv2 := os.Getenv("XDG_DATA_HOME")
+	defer func() {
+		os.Setenv("XDG_CONFIG_HOME", origEnv1)
+		os.Setenv("XDG_DATA_HOME", origEnv2)
+	}()
+	os.Setenv("XDG_CONFIG_HOME", dir)
+	os.Setenv("XDG_DATA_HOME", dir)
+
+	os.MkdirAll(filepath.Join(dir, "gajim"), 0755)
+	os.MkdirAll(filepath.Join(dir, "gajim", "pluginsconfig"), 0755)
+
+	copyFile(testResourceFilename("gajim_test_data/config2"), filepath.Join(dir, "gajim", "config"))
+	copyFile(testResourceFilename("gajim_test_data/gotr2"), filepath.Join(dir, "gajim", "pluginsconfig", "gotr"))
+	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.key3"), filepath.Join(dir, "gajim", "aba.baba@jabber.ccc.de.key3"))
+	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.fpr"), filepath.Join(dir, "gajim", "aba.baba@jabber.ccc.de.fpr"))
+
+	i := &gajimImporter{}
+	res := i.TryImport()
+	c.Assert(res, HasLen, 1)
+}
+
+func (s *GajimSuite) Test_gajimImporter_importFingerprintsFrom_ignoresNonXMPPAndBadFingerprints(c *C) {
+	i := &gajimImporter{}
+	res, fprs, ok := i.importFingerprintsFrom(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.fpr2"))
+	c.Assert(res, Equals, "aba.baba@jabber.ccc.de")
+	c.Assert(fprs, HasLen, 4)
+	c.Assert(ok, Equals, true)
+}
+
+func (s *GajimSuite) Test_composeProxyStringFrom(c *C) {
+	data := map[string]string{
+		"type": "http",
+		"user": "someone",
+		"pass": "somewhere",
+		"host": "blab.com",
+		"port": "123",
+	}
+
+	res := composeProxyStringFrom(data)
+	c.Assert(res, Equals, "http://blab.com:123")
+
+	data["useauth"] = "True"
+	res = composeProxyStringFrom(data)
+	c.Assert(res, Equals, "http://someone:somewhere@blab.com:123")
+}
+
+func (s *GajimSuite) Test_mergeAccountInformation_setRequireEncryption(c *C) {
+	peerSettings := map[string]gajimOTRSettings{}
+	peerSettings["foo@bar.com"] = gajimOTRSettings{requireEncryption: true}
+	peerSettings["bar@someone.com"] = gajimOTRSettings{}
+	res := mergeAccountInformation(gajimAccountInfo{}, gajimOTRSettings{}, peerSettings, nil, nil)
+
+	c.Assert(res, Not(IsNil))
+	c.Assert(res.AlwaysEncryptWith, DeepEquals, []string{"foo@bar.com"})
 }

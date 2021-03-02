@@ -25,7 +25,11 @@ type adiumAccountMapping struct {
 }
 
 func (p *adiumImporter) readAccountMappings(s string) (map[string]adiumAccountMapping, bool) {
-	contents, _ := ioutil.ReadFile(filepath.Clean(s))
+	contents, e := ioutil.ReadFile(filepath.Clean(s))
+	if e != nil {
+		return nil, false
+	}
+
 	var res map[string]interface{}
 	_, _ = plist.Unmarshal(contents, &res)
 

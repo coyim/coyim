@@ -1,6 +1,10 @@
 package importer
 
 import (
+	"io/ioutil"
+	"os"
+	"path/filepath"
+
 	"github.com/coyim/coyim/config"
 	. "gopkg.in/check.v1"
 )
@@ -201,4 +205,79 @@ func (s *PidginSuite) Test_PidginImporter_canDoAFullImport(c *C) {
 		AlwaysEncryptWith:   []string(nil),
 		DontEncryptWith:     []string(nil),
 		InstanceTag:         0x0})
+}
+
+func (s *PidginSuite) Test_parseIntOr(c *C) {
+	c.Assert(parseIntOr("123", 111), Equals, 123)
+	c.Assert(parseIntOr("bla", 222), Equals, 222)
+}
+
+func (s *PidginSuite) Test_pidginPrefXML_failsOnMissingReceiver(c *C) {
+	var p *pidginPrefXML
+	res, ok := p.lookup()
+	c.Assert(res, IsNil)
+	c.Assert(ok, Equals, false)
+}
+
+func (s *PidginSuite) Test_pidginPrefXML_failsOnMissingPrefs(c *C) {
+	p := &pidginPrefXML{}
+	res, ok := p.lookup("hello")
+	c.Assert(res, IsNil)
+	c.Assert(ok, Equals, false)
+}
+
+func (s *PidginSuite) Test_pidginImporter_importAllFrom_failsOnBadAccountsFile(c *C) {
+	p := &pidginImporter{}
+	res, ok := p.importAllFrom("file-that-hopefully-doesnt-exist", "", "", "", "")
+	c.Assert(res, IsNil)
+	c.Assert(ok, Equals, false)
+}
+
+func (s *PidginSuite) Test_pidginImporter_importAllFrom_usesAutomaticGlobalPrefs(c *C) {
+	p := &pidginImporter{}
+	res, ok := p.importAllFrom(testResourceFilename("pidgin_test_data/accounts.xml"), testResourceFilename("pidgin_test_data/prefs2.xml"), "", "", "")
+	c.Assert(res, Not(IsNil))
+	c.Assert(res.Accounts, HasLen, 2)
+	c.Assert(res.Accounts[0].OTRAutoStartSession, Equals, true)
+	c.Assert(res.Accounts[0].OTRAutoAppendTag, Equals, true)
+	c.Assert(ok, Equals, true)
+}
+
+func (s *PidginSuite) Test_pidginImporter_importAllFrom_setsAlwaysEncryptToFalseIfNoGlobalPrefs(c *C) {
+	p := &pidginImporter{}
+	res, ok := p.importAllFrom(testResourceFilename("pidgin_test_data/accounts.xml"), testResourceFilename("pidgin_test_data/prefs3.xml"), "", "", "")
+	c.Assert(res, Not(IsNil))
+	c.Assert(res.Accounts, HasLen, 2)
+	c.Assert(res.Accounts[0].AlwaysEncrypt, Equals, false)
+	c.Assert(ok, Equals, true)
+}
+
+func (s *PidginSuite) Test_pidginImporter_importAllFrom_setsAlwaysEncryptWithAndDontEncryptWithForPeers(c *C) {
+	p := &pidginImporter{}
+	res, ok := p.importAllFrom(testResourceFilename("pidgin_test_data/accounts.xml"), "", testResourceFilename("pidgin_test_data/blist2.xml"), "", "")
+	c.Assert(res, Not(IsNil))
+	c.Assert(res.Accounts, HasLen, 2)
+	c.Assert(res.Accounts[0].AlwaysEncryptWith, DeepEquals, []string{"not@coyim.com"})
+	c.Assert(res.Accounts[0].DontEncryptWith, DeepEquals, []string{"foo@coyim.com"})
+	c.Assert(ok, Equals, true)
+}
+
+func (s *PidginSuite) Test_pidginImporter_TryImport_works(c *C) {
+	dir, _ := ioutil.TempDir("", "")
+	defer os.RemoveAll(dir)
+
+	origHome := os.Getenv("HOME")
+	defer func() {
+		os.Setenv("HOME", origHome)
+	}()
+	os.Setenv("HOME", dir)
+
+	os.Mkdir(filepath.Join(dir, pidginConfigDir), 0755)
+	os.Create(filepath.Join(dir, pidginConfigDir, pidginAccountsFile))
+
+	input, _ := ioutil.ReadFile(testResourceFilename("pidgin_test_data/accounts.xml"))
+	_ = ioutil.WriteFile(filepath.Join(dir, pidginConfigDir, pidginAccountsFile), input, 0644)
+
+	res := (&pidginImporter{}).TryImport()
+	c.Assert(res, HasLen, 1)
 }

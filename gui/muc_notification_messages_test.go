@@ -640,32 +640,32 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateFailureMessage(c *C) {
 	c.Assert(messages.errorDialogMessage, Equals, "An error occurred when trying to change the role of Pepe to visitor.")
 
 	messages = getRoleUpdateFailureMessage("Juana", none)
-	c.Assert(messages.notificationMessage, Equals, "Juana can't be removed from the room.")
-	c.Assert(messages.errorDialogTitle, Equals, "The process of removing Juana from the room failed")
-	c.Assert(messages.errorDialogHeader, Equals, "Juana can't be removed from the room.")
-	c.Assert(messages.errorDialogMessage, Equals, "An error occurred when trying to remove Juana from the room.")
+	c.Assert(messages.notificationMessage, Equals, "Juana couldn't be expelled.")
+	c.Assert(messages.errorDialogTitle, Equals, "Expelling process failed")
+	c.Assert(messages.errorDialogHeader, Equals, "Juana couldn't be expelled")
+	c.Assert(messages.errorDialogMessage, Equals, "An error occurred expelling to Juana.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getRoleRemoveFailureMessage(c *C) {
 	initMUCRoomConversationDisplayI18n()
 
 	messages := getRoleRemoveFailureMessage("foo", newTestAffiliationFromString(data.AffiliationOwner), nil)
-	c.Assert(messages.notificationMessage, Equals, "foo can't be removed from the room.")
-	c.Assert(messages.errorDialogTitle, Equals, "The process of removing foo from the room failed")
-	c.Assert(messages.errorDialogHeader, Equals, "foo can't be removed from the room.")
-	c.Assert(messages.errorDialogMessage, Equals, "An error occurred when trying to remove foo from the room.")
+	c.Assert(messages.notificationMessage, Equals, "foo couldn't be expelled.")
+	c.Assert(messages.errorDialogTitle, Equals, "Expelling process failed")
+	c.Assert(messages.errorDialogHeader, Equals, "foo couldn't be expelled")
+	c.Assert(messages.errorDialogMessage, Equals, "An error occurred expelling to foo.")
 
 	messages = getRoleRemoveFailureMessage("nil", nil, session.ErrNotAllowedKickOccupant)
-	c.Assert(messages.notificationMessage, Equals, "nil can't be removed from the room.")
-	c.Assert(messages.errorDialogTitle, Equals, "The process of removing nil from the room failed")
-	c.Assert(messages.errorDialogHeader, Equals, "nil can't be removed from the room.")
-	c.Assert(messages.errorDialogMessage, Equals, "You don't have permissions to remove nil from the room.")
+	c.Assert(messages.notificationMessage, Equals, "nil couldn't be expelled.")
+	c.Assert(messages.errorDialogTitle, Equals, "Expelling process failed")
+	c.Assert(messages.errorDialogHeader, Equals, "nil couldn't be expelled")
+	c.Assert(messages.errorDialogMessage, Equals, "You don't have permissions to expel nil.")
 
 	messages = getRoleRemoveFailureMessage("bla", newTestAffiliationFromString(data.AffiliationAdmin), session.ErrNotAllowedKickOccupant)
-	c.Assert(messages.notificationMessage, Equals, "bla can't be removed from the room.")
-	c.Assert(messages.errorDialogTitle, Equals, "The process of removing bla from the room failed")
-	c.Assert(messages.errorDialogHeader, Equals, "bla can't be removed from the room.")
-	c.Assert(messages.errorDialogMessage, Equals, "As an administrator you don't have permissions to remove bla from the room.")
+	c.Assert(messages.notificationMessage, Equals, "bla couldn't be expelled.")
+	c.Assert(messages.errorDialogTitle, Equals, "Expelling process failed")
+	c.Assert(messages.errorDialogHeader, Equals, "bla couldn't be expelled")
+	c.Assert(messages.errorDialogMessage, Equals, "As an administrator you don't have permissions to expel bla.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affiliationOutcast(c *C) {

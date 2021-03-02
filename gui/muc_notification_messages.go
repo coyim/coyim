@@ -83,25 +83,24 @@ func getRoleUpdateFailureMessage(nickname string, newRole data.Role) *updateFail
 
 func getRoleRemoveFailureMessage(nickname string, actorAffiliation data.Affiliation, err error) *updateFailureMessages {
 	m := &updateFailureMessages{
-		notificationMessage: i18n.Localf("%s can't be removed from the room.", nickname),
-		errorDialogTitle:    i18n.Localf("The process of removing %s from the room failed", nickname),
-		errorDialogHeader:   i18n.Localf("%s can't be removed from the room.", nickname),
+		notificationMessage: i18n.Localf("%s couldn't be expelled.", nickname),
+		errorDialogTitle:    i18n.Local("Expelling process failed"),
+		errorDialogHeader:   i18n.Localf("%s couldn't be expelled", nickname),
 	}
 
 	switch err {
 	case session.ErrNotAllowedKickOccupant:
 		if actorAffiliation != nil {
-			m.errorDialogMessage = i18n.Localf("As %s you don't have permissions to remove %s from the room.",
+			m.errorDialogMessage = i18n.Localf("As %s you don't have permissions to expel %s.",
 				displayNameForAffiliationWithPreposition(actorAffiliation),
 				nickname)
 		} else {
-			m.errorDialogMessage = i18n.Localf("You don't have permissions to remove %s from the room.",
+			m.errorDialogMessage = i18n.Localf("You don't have permissions to expel %s.",
 				nickname)
 		}
 
 	default:
-		m.errorDialogMessage = i18n.Localf("An error occurred when trying to remove %s from the room.",
-			nickname)
+		m.errorDialogMessage = i18n.Localf("An error occurred expelling to %s.", nickname)
 	}
 
 	return m

@@ -17,9 +17,9 @@ type MucOccupantRoleAffiliationPrivilegesSuite struct{}
 var _ = Suite(&MucOccupantRoleAffiliationPrivilegesSuite{})
 
 type canKickOccupantTest struct {
-	actor    *Occupant
-	occupant *Occupant
-	expected bool
+	occupantAffiliation data.Affiliation
+	occupantRole        data.Role
+	expected            bool
 }
 
 func newTestOccupant(affiliation data.Affiliation, role data.Role) *Occupant {
@@ -31,94 +31,35 @@ func newTestOccupant(affiliation data.Affiliation, role data.Role) *Occupant {
 
 func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleModeratorAffiliationNone_CanKickAnOccupant(c *C) {
 	testCases := []canKickOccupantTest{
-		// Actor: Moderator - None
-		{
-			actor:    newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{}),
-			occupant: newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{}),
-			expected: false,
-		},
-		{
-			actor:    newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{}),
-			occupant: newTestOccupant(&data.MemberAffiliation{}, &data.ModeratorRole{}),
-			expected: false,
-		},
-		{
-			actor:    newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{}),
-			occupant: newTestOccupant(&data.AdminAffiliation{}, &data.ModeratorRole{}),
-			expected: false,
-		},
-		{
-			actor:    newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{}),
-			occupant: newTestOccupant(&data.OwnerAffiliation{}, &data.ModeratorRole{}),
-			expected: false,
-		},
+		// Occupant: ModeratorRole
+		{occupantAffiliation: &data.NoneAffiliation{}, occupantRole: &data.ModeratorRole{}, expected: false},
+		{occupantAffiliation: &data.MemberAffiliation{}, occupantRole: &data.ModeratorRole{}, expected: false},
+		{occupantAffiliation: &data.AdminAffiliation{}, occupantRole: &data.ModeratorRole{}, expected: false},
+		{occupantAffiliation: &data.OwnerAffiliation{}, occupantRole: &data.ModeratorRole{}, expected: false},
 
-		{
-			actor:    newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{}),
-			occupant: newTestOccupant(&data.NoneAffiliation{}, &data.ParticipantRole{}),
-			expected: false,
-		},
-		{
-			actor:    newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{}),
-			occupant: newTestOccupant(&data.MemberAffiliation{}, &data.ParticipantRole{}),
-			expected: false,
-		},
-		{
-			actor:    newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{}),
-			occupant: newTestOccupant(&data.AdminAffiliation{}, &data.ParticipantRole{}),
-			expected: false,
-		},
-		{
-			actor:    newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{}),
-			occupant: newTestOccupant(&data.OwnerAffiliation{}, &data.ParticipantRole{}),
-			expected: false,
-		},
+		// Occupant: ParticipantRole
+		{occupantAffiliation: &data.NoneAffiliation{}, occupantRole: &data.ParticipantRole{}, expected: false},
+		{occupantAffiliation: &data.MemberAffiliation{}, occupantRole: &data.ParticipantRole{}, expected: false},
+		{occupantAffiliation: &data.AdminAffiliation{}, occupantRole: &data.ParticipantRole{}, expected: false},
+		{occupantAffiliation: &data.OwnerAffiliation{}, occupantRole: &data.ParticipantRole{}, expected: false},
 
-		{
-			actor:    newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{}),
-			occupant: newTestOccupant(&data.NoneAffiliation{}, &data.VisitorRole{}),
-			expected: false,
-		},
-		{
-			actor:    newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{}),
-			occupant: newTestOccupant(&data.MemberAffiliation{}, &data.VisitorRole{}),
-			expected: false,
-		},
-		{
-			actor:    newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{}),
-			occupant: newTestOccupant(&data.AdminAffiliation{}, &data.VisitorRole{}),
-			expected: false,
-		},
-		{
-			actor:    newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{}),
-			occupant: newTestOccupant(&data.OwnerAffiliation{}, &data.VisitorRole{}),
-			expected: false,
-		},
+		// Occupant: VisitorRole
+		{occupantAffiliation: &data.NoneAffiliation{}, occupantRole: &data.VisitorRole{}, expected: false},
+		{occupantAffiliation: &data.MemberAffiliation{}, occupantRole: &data.VisitorRole{}, expected: false},
+		{occupantAffiliation: &data.AdminAffiliation{}, occupantRole: &data.VisitorRole{}, expected: false},
+		{occupantAffiliation: &data.OwnerAffiliation{}, occupantRole: &data.VisitorRole{}, expected: false},
 
-		{
-			actor:    newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{}),
-			occupant: newTestOccupant(&data.NoneAffiliation{}, &data.NoneRole{}),
-			expected: false,
-		},
-		{
-			actor:    newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{}),
-			occupant: newTestOccupant(&data.MemberAffiliation{}, &data.NoneRole{}),
-			expected: false,
-		},
-		{
-			actor:    newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{}),
-			occupant: newTestOccupant(&data.AdminAffiliation{}, &data.NoneRole{}),
-			expected: false,
-		},
-		{
-			actor:    newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{}),
-			occupant: newTestOccupant(&data.OwnerAffiliation{}, &data.NoneRole{}),
-			expected: false,
-		},
+		// Occupant: NoneRole
+		{occupantAffiliation: &data.NoneAffiliation{}, occupantRole: &data.NoneRole{}, expected: false},
+		{occupantAffiliation: &data.MemberAffiliation{}, occupantRole: &data.NoneRole{}, expected: false},
+		{occupantAffiliation: &data.AdminAffiliation{}, occupantRole: &data.NoneRole{}, expected: false},
+		{occupantAffiliation: &data.OwnerAffiliation{}, occupantRole: &data.NoneRole{}, expected: false},
 	}
 
+	// Actor: ModeratorAffiliation - NoneRole
+	actor := newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{})
 	for _, scenario := range testCases {
-		c.Assert(scenario.actor.CanKickOccupant(scenario.occupant), Equals, scenario.expected)
+		c.Assert(actor.CanKickOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole)), Equals, scenario.expected)
 	}
 }
 

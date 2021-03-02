@@ -117,7 +117,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case occupantAffiliationRoleUpdatedEvent:
 			c.occupantAffiliationRoleUpdatedEvent(t.affiliationRoleUpdate)
 		case selfOccupantAffiliationRoleUpdatedEvent:
-			c.selfOccupantAffiliationRoleUpdatedEvent(t.selfAffiliationRoleUpdate)
+			c.occupantAffiliationRoleUpdatedEvent(t.selfAffiliationRoleUpdate.AffiliationRoleUpdate)
 		case occupantAffiliationUpdatedEvent:
 			c.occupantAffiliationEvent(t.affiliationUpdate)
 		case selfOccupantAffiliationUpdatedEvent:
@@ -141,12 +141,6 @@ func (c *roomViewConversation) roomDestroyedEvent(reason string, alternative jid
 func (c *roomViewConversation) occupantAffiliationRoleUpdatedEvent(affiliationRoleUpdate data.AffiliationRoleUpdate) {
 	doInUIThread(func() {
 		c.displayNewInfoMessage(getMUCNotificationMessageFrom(affiliationRoleUpdate))
-	})
-}
-
-func (c *roomViewConversation) selfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) {
-	doInUIThread(func() {
-		c.displayNewInfoMessage(getMUCNotificationMessageFrom(selfAffiliationRoleUpdate))
 	})
 }
 

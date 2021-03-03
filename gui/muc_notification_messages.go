@@ -50,8 +50,8 @@ type updateFailureMessages struct {
 
 func getAffiliationUpdateFailureMessage(nickname string, newAffiliation data.Affiliation, err error) *updateFailureMessages {
 	return &updateFailureMessages{
-		notificationMessage: i18n.Localf("The process of changing the position of %s failed", nickname),
-		errorDialogTitle:    i18n.Local("The process of changing the position failed"),
+		notificationMessage: i18n.Localf("The position of %s couldn't be changed", nickname),
+		errorDialogTitle:    i18n.Local("Changing the position failed"),
 		errorDialogHeader:   i18n.Localf("The position of %s couldn't be changed", nickname),
 		errorDialogMessage:  getAffiliationFailureErrorMessage(nickname, newAffiliation, err),
 	}
@@ -75,8 +75,8 @@ func getRoleUpdateFailureMessage(nickname string, newRole data.Role) *updateFail
 	}
 
 	return &updateFailureMessages{
-		notificationMessage: i18n.Localf("The process of changing the role of %s failed", nickname),
-		errorDialogTitle:    i18n.Local("The process of changing the role failed"),
+		notificationMessage: i18n.Localf("The role of %s couldn't be changed", nickname),
+		errorDialogTitle:    i18n.Local("Changing the role failed"),
 		errorDialogHeader:   i18n.Localf("The role of %s couldn't be changed", nickname),
 		errorDialogMessage:  i18n.Localf("An error occurred trying to change the role of %s to %s.", nickname, displayNameForRole(newRole)),
 	}

@@ -132,7 +132,7 @@
                                         <property name="valign">center</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">role-participant</property>
-                                        <signal name="toggled" handler="on_toggled" swapped="no"/>
+                                        <signal name="toggled" handler="on_role_option_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -197,7 +197,7 @@
                                         <property name="valign">center</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
-                                        <signal name="toggled" handler="on_toggled" swapped="no"/>
+                                        <signal name="toggled" handler="on_role_option_changed" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>

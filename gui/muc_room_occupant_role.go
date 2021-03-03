@@ -49,16 +49,16 @@ func (rv *occupantRoleUpdateView) initBuilder() {
 	panicOnDevError(builder.bindObjects(rv))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_cancel":    rv.closeDialog,
-		"on_apply":     rv.onApply,
-		"on_key_press": rv.onKeyPress,
-		"on_toggled":   rv.onRadioButtonToggled,
+		"on_cancel":              rv.closeDialog,
+		"on_apply":               rv.onApply,
+		"on_key_press":           rv.onKeyPress,
+		"on_role_option_changed": rv.onRoleOptionChanged,
 	})
 }
 
-// onRadioButtonToggled MUST be called from the UI thread
-func (rv *occupantRoleUpdateView) onRadioButtonToggled() {
-	rv.applyButton.SetSensitive(rv.occupant.Role.Name() != rv.getRoleBasedOnRadioSelected().Name())
+// onRoleOptionChanged MUST be called from the UI thread
+func (rv *occupantRoleUpdateView) onRoleOptionChanged() {
+	rv.applyButton.SetSensitive(rv.occupant.Role.IsDifferentFrom(rv.getRoleBasedOnRadioSelected()))
 }
 
 func (rv *occupantRoleUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event) {

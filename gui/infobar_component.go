@@ -83,5 +83,6 @@ func (ib *infoBarComponent) setTickerTime(t time.Time) {
 		}
 	}()
 	ib.timeLabel.SetText(elapsedFriendlyTime(t))
+	ib.iconTime.SetFromPixbuf(getMUCIconPixbuf("time-notification"))
 	ib.timeBox.Show()
 }

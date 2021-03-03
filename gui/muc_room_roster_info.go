@@ -150,10 +150,8 @@ func (r *roomViewRosterInfo) refreshRoleSection() {
 	showChangeRoleButton := r.selfOccupant.CanChangeRole(r.occupant)
 	r.changeRoleButton.SetVisible(showChangeRoleButton)
 
-	r.roleDisableLabel.SetVisible(false)
-	if r.selfOccupant.Affiliation.IsOwner() && (r.occupant.Affiliation.IsOwner() || r.occupant.Affiliation.IsAdmin()) {
-		r.roleDisableLabel.SetVisible(true)
-	}
+	v := r.selfOccupant.Affiliation.IsOwner() && (r.occupant.Affiliation.IsOwner() || r.occupant.Affiliation.IsAdmin())
+	r.roleDisableLabel.SetVisible(v)
 }
 
 // refreshKickSection MUST be called from the UI thread

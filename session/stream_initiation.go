@@ -24,6 +24,7 @@ func streamInitIQ(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqt
 	var si data.SI
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&si); err != nil {
 		s.Log().WithError(err).Warn("Failed to parse stream initiation")
+		return nil, "", false
 	}
 
 	prof, ok := supportedSIProfiles[si.Profile]

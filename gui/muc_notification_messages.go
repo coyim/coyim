@@ -20,14 +20,14 @@ func getAffiliationUpdateSuccessMessage(nickname string, previousAffiliation, af
 
 // getRoleUpdateSuccessMessage returns a friendly notification message for the role update process
 // This function receives the following params:
-// 	- nickname - The nickname of the occupant to whom the role was changed
-//  - previousRole - The original role of the occupant
-//  - newRole - The current role of the occupant
+// nickname - The nickname of the occupant to whom the role was changed
+// previousRole - The previous role of the occupant
+// newRole - The new role of the occupant
 func getRoleUpdateSuccessMessage(nickname string, previousRole, newRole data.Role) string {
 	if newRole.IsDifferentFrom(previousRole) {
 		switch {
 		case newRole.IsNone():
-			return i18n.Localf("%s is not a %s anymore.", nickname, displayNameForRole(previousRole))
+			return i18n.Localf("%s is not %s anymore.", nickname, displayNameForRoleWithPreposition(previousRole))
 
 		case previousRole.IsNone():
 			return i18n.Localf("The role of %s was changed to %s.", nickname, displayNameForRole(newRole))

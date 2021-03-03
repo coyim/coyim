@@ -198,7 +198,7 @@ func (s *mucStylesProvider) setDisableRoomStyle(p gtki.Box) {
 	})
 }
 
-func (s *mucStylesProvider) setChangeRoleDisableLabelStyle(l gtki.Label) {
+func (s *mucStylesProvider) assignStyleForLabelOnDisabledRole(l gtki.Label) {
 	s.setLabelStyle(l, style{
 		"font-style": "italic",
 		"opacity":    "0.7",

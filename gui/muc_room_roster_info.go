@@ -77,7 +77,7 @@ func (r *roomViewRosterInfo) initCSSStyles() {
 	mucStyles.setRoomRosterInfoNicknameLabelStyle(r.nicknameLabel)
 	mucStyles.setRoomRosterInfoUserJIDLabelStyle(r.realJIDLabel)
 	mucStyles.setRoomRosterInfoStatusLabelStyle(r.status)
-	mucStyles.setChangeRoleDisableLabelStyle(r.roleDisableLabel)
+	mucStyles.assignStyleForLabelOnDisabledRole(r.roleDisableLabel)
 }
 
 func (r *roomViewRosterInfo) initDefaults() {

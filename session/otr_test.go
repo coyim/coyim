@@ -337,6 +337,7 @@ func (s *OTRSuite) Test_listenToOtrDelayedMessageDelivery_works(c *C) {
 	}()
 
 	cc <- 41
+	<-done
 	cc <- 25
 	close(cc)
 

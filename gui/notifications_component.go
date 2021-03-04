@@ -6,6 +6,8 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+const dateTimeFormat = "January 2, 2006 at 15:04:05"
+
 type notificationsComponent struct {
 	u             *gtkUI
 	box           gtki.Box
@@ -144,7 +146,7 @@ func (u *gtkUI) newNotificationBarWithTime(text string, messageType gtki.Message
 	now := time.Now()
 
 	mucStyles.setNotificationTimeLabelStyle(nb.timeLabel)
-	nb.timeBox.SetTooltipText(formatTimeWithLayout(now, "January 2, 2006 at 15:04:05"))
+	nb.timeBox.SetTooltipText(formatTimeWithLayout(now, dateTimeFormat))
 	nb.setTickerTime(now)
 
 	return nb

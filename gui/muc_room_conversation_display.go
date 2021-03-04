@@ -21,13 +21,6 @@ func getDisplayRoomSubject(subject string) string {
 	return i18n.Localf("The room subject is \"%s\"", subject)
 }
 
-func displayActorWithAffiliation(actor string, affiliation data.Affiliation) string {
-	if affiliation != nil {
-		return i18n.Localf("The %s %s", displayNameForAffiliation(affiliation), actor)
-	}
-	return actor
-}
-
 func displayNameForAffiliation(affiliation data.Affiliation) string {
 	switch {
 	case affiliation.IsAdmin():

@@ -115,6 +115,7 @@ func parseFromConfig(cu *config.Account) []otr3.PrivateKey {
 	l.WithField("numKeys", len(allKeys)).Info("Loading configured keys")
 	for _, pp := range allKeys {
 		_, ok, parsedKey := otr3.ParsePrivateKey(pp)
+		fmt.Printf("ok, parsedKey: %#v %#v\n", ok, parsedKey)
 		if ok {
 			result = append(result, parsedKey)
 			l.WithField("key", config.FormatFingerprint(parsedKey.PublicKey().Fingerprint())).Info("Loaded key")

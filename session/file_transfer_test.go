@@ -12,19 +12,19 @@ type FileTransferSuite struct{}
 
 var _ = Suite(&FileTransferSuite{})
 
-type discoveryFeaturesXmppConnMock struct {
+type discoveryFeaturesXMPPConnMock struct {
 	*mock.Conn
 
 	discoveryFeatures func(string) ([]string, bool)
 }
 
-func (d *discoveryFeaturesXmppConnMock) DiscoveryFeatures(v1 string) ([]string, bool) {
+func (d *discoveryFeaturesXMPPConnMock) DiscoveryFeatures(v1 string) ([]string, bool) {
 	return d.discoveryFeatures(v1)
 }
 
 func (s *FileTransferSuite) Test_session_SendFileTo(c *C) {
 	l, hook := test.NewNullLogger()
-	mc := &discoveryFeaturesXmppConnMock{
+	mc := &discoveryFeaturesXMPPConnMock{
 		discoveryFeatures: func(string) ([]string, bool) {
 			return nil, false
 		},
@@ -39,7 +39,7 @@ func (s *FileTransferSuite) Test_session_SendFileTo(c *C) {
 
 func (s *FileTransferSuite) Test_session_SendDirTo(c *C) {
 	l, hook := test.NewNullLogger()
-	mc := &discoveryFeaturesXmppConnMock{
+	mc := &discoveryFeaturesXMPPConnMock{
 		discoveryFeatures: func(string) ([]string, bool) {
 			return nil, false
 		},

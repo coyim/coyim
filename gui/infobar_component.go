@@ -74,12 +74,10 @@ func (ib *infoBarComponent) setTickerTime(t time.Time) {
 	ticker := time.NewTicker(1 * time.Second)
 	go func() {
 		for {
-			select {
-			case <-ticker.C:
-				doInUIThread(func() {
-					ib.timeLabel.SetText(elapsedFriendlyTime(t))
-				})
-			}
+			<-ticker.C
+			doInUIThread(func() {
+				ib.timeLabel.SetText(elapsedFriendlyTime(t))
+			})
 		}
 	}()
 	ib.timeLabel.SetText(elapsedFriendlyTime(t))

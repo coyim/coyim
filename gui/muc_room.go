@@ -348,7 +348,7 @@ func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, newAffiliation 
 		v.log.Info("The affiliation has been changed")
 		v.onOccupantAffiliationUpdateSuccess(o, previousAffiliation, newAffiliation)
 	case err := <-ec:
-		v.log.WithError(err).Error("An error occurred in the affiliation update process")
+		v.log.WithError(err).Error("An error occurred while updating the occupant affiliation")
 		v.onOccupantAffiliationUpdateError(o.Nickname, newAffiliation, err)
 	}
 }

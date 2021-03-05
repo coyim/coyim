@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	enterOpenRoom int = iota
+	enterOpenRoom privilege = iota
 	registerWithOpenRoom
 	retrieveMemberList
 	enterMembersOnlyRoom
@@ -53,12 +53,12 @@ func definedPrivilegesForAffiliations() map[string]*privileges {
 	}
 }
 
-func affiliationCan(privilege int, affiliation data.Affiliation) bool {
+func affiliationCan(privilege privilege, affiliation data.Affiliation) bool {
 	affiliationPrivileges := definedPrivilegesForAffiliation(affiliation)
 	return affiliationPrivileges.can(privilege)
 }
 
-func (o *Occupant) affiliationHasPrivilege(privilege int) bool {
+func (o *Occupant) affiliationHasPrivilege(privilege privilege) bool {
 	return affiliationCan(privilege, o.Affiliation)
 }
 

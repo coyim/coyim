@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	presentInRoom int = iota
+	presentInRoom privilege = iota
 	receiveMessages
 	receiveOccupantPresence
 	presenceToAllOccupants
@@ -63,12 +63,12 @@ func definedPrivilegesForRoles() map[string]*privileges {
 	}
 }
 
-func roleCan(privilege int, role data.Role) bool {
+func roleCan(privilege privilege, role data.Role) bool {
 	rolePrivileges := definedPrivilegesForRole(role)
 	return rolePrivileges.can(privilege)
 }
 
-func (o *Occupant) roleHasPrivilege(privilege int) bool {
+func (o *Occupant) roleHasPrivilege(privilege privilege) bool {
 	return roleCan(privilege, o.Role)
 }
 

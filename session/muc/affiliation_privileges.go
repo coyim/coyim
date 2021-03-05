@@ -139,9 +139,5 @@ func (o *Occupant) CanChangeAffiliation(oc *Occupant) bool {
 		return false
 	}
 
-	if o.Affiliation.IsAdmin() && (oc.Affiliation.IsMember() || oc.Affiliation.IsNone() || oc.Affiliation.IsBanned()) {
-		return true
-	}
-
-	return false
+	return o.Affiliation.IsAdmin() && (oc.Affiliation.IsMember() || oc.Affiliation.IsNone() || oc.Affiliation.IsBanned())
 }

@@ -1,9 +1,5 @@
 package muc
 
-import (
-	"github.com/coyim/coyim/session/muc/data"
-)
-
 const (
 	presentInRoom privilege = iota
 	receiveMessages
@@ -20,56 +16,24 @@ const (
 	revokeVoice
 )
 
-func definedPrivilegesForRoles() map[string]*privileges {
-	return map[string]*privileges{
-		data.RoleNone: newPrivileges(),
-		data.RoleVisitor: newPrivileges(
-			presentInRoom,
-			receiveMessages,
-			receiveOccupantPresence,
-			presenceToAllOccupants,
-			changeAvailabilityStatus,
-			changeRoomNickname,
-			sendPrivateMessages,
-			inviteOtherUsers,
-		),
-		data.RoleParticipant: newPrivileges(
-			presentInRoom,
-			receiveMessages,
-			receiveOccupantPresence,
-			presenceToAllOccupants,
-			changeAvailabilityStatus,
-			changeRoomNickname,
-			sendPrivateMessages,
-			inviteOtherUsers,
-			sendMessagesToAll,
-			modifySubject,
-		),
-		data.RoleModerator: newPrivileges(
-			presentInRoom,
-			receiveMessages,
-			receiveOccupantPresence,
-			presenceToAllOccupants,
-			changeAvailabilityStatus,
-			changeRoomNickname,
-			sendPrivateMessages,
-			inviteOtherUsers,
-			sendMessagesToAll,
-			modifySubject,
-			kickParticipantsAndVisitors,
-			grantVoice,
-			revokeVoice,
-		),
-	}
-}
-
-func roleCan(privilege privilege, role data.Role) bool {
-	rolePrivileges := definedPrivilegesForRole(role)
-	return rolePrivileges.can(privilege)
+var rolePrivileges = [][]bool{
+	{false /*none*/, true /*visitor*/, true /*participant*/, true /*moderator*/},   //presentInRoom
+	{false /*none*/, true /*visitor*/, true /*participant*/, true /*moderator*/},   //receiveMessages
+	{false /*none*/, true /*visitor*/, true /*participant*/, true /*moderator*/},   //receiveOccupantPresence
+	{false /*none*/, true /*visitor*/, true /*participant*/, true /*moderator*/},   //presenceToAllOccupants
+	{false /*none*/, true /*visitor*/, true /*participant*/, true /*moderator*/},   //changeAvailabilityStatus
+	{false /*none*/, true /*visitor*/, true /*participant*/, true /*moderator*/},   //changeRoomNickname
+	{false /*none*/, true /*visitor*/, true /*participant*/, true /*moderator*/},   //sendPrivateMessages
+	{false /*none*/, true /*visitor*/, true /*participant*/, true /*moderator*/},   //inviteOtherUsers
+	{false /*none*/, false /*visitor*/, true /*participant*/, true /*moderator*/},  //sendMessagesToAll
+	{false /*none*/, false /*visitor*/, true /*participant*/, true /*moderator*/},  //modifySubject
+	{false /*none*/, false /*visitor*/, false /*participant*/, true /*moderator*/}, //kickParticipantsAndVisitors
+	{false /*none*/, false /*visitor*/, false /*participant*/, true /*moderator*/}, //grantVoice
+	{false /*none*/, false /*visitor*/, false /*participant*/, true /*moderator*/}, //revokeVoice
 }
 
 func (o *Occupant) roleHasPrivilege(privilege privilege) bool {
-	return roleCan(privilege, o.Role)
+	return rolePrivileges[privilege][o.Role.RoleTypeAsNumber()]
 }
 
 // CanPresentInRoom returns a boolean indicating if the occupant can be present in the room

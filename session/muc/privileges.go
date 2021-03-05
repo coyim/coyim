@@ -37,7 +37,6 @@ func (p *privileges) can(privilege privilege) bool {
 func definedPrivilegesForGroup(groupName string) map[string]*privileges {
 	privilegesInitOnce.Do(func() {
 		privilegesSingleton = map[string]map[string]*privileges{
-			"roles":        definedPrivilegesForRoles(),
 			"affiliations": definedPrivilegesForAffiliations(),
 		}
 	})
@@ -47,10 +46,6 @@ func definedPrivilegesForGroup(groupName string) map[string]*privileges {
 func definedPrivilegesForGroupItem(groupName, groupItem string) *privileges {
 	privilegesGroup := definedPrivilegesForGroup(groupName)
 	return privilegesGroup[groupItem]
-}
-
-func definedPrivilegesForRole(r data.Role) *privileges {
-	return definedPrivilegesForGroupItem("roles", r.Name())
 }
 
 func definedPrivilegesForAffiliation(a data.Affiliation) *privileges {

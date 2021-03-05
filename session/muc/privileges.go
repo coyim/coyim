@@ -3,7 +3,6 @@ package muc
 import (
 	"sync"
 
-	"github.com/coyim/coyim/session/muc/data"
 	"github.com/golang-collections/collections/set"
 )
 
@@ -32,22 +31,4 @@ func newPrivileges(l ...privilege) *privileges {
 
 func (p *privileges) can(privilege privilege) bool {
 	return p.list.Has(privilege)
-}
-
-func definedPrivilegesForGroup(groupName string) map[string]*privileges {
-	privilegesInitOnce.Do(func() {
-		privilegesSingleton = map[string]map[string]*privileges{
-			"affiliations": definedPrivilegesForAffiliations(),
-		}
-	})
-	return privilegesSingleton[groupName]
-}
-
-func definedPrivilegesForGroupItem(groupName, groupItem string) *privileges {
-	privilegesGroup := definedPrivilegesForGroup(groupName)
-	return privilegesGroup[groupItem]
-}
-
-func definedPrivilegesForAffiliation(a data.Affiliation) *privileges {
-	return definedPrivilegesForGroupItem("affiliations", a.Name())
 }

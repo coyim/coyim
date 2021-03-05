@@ -18,44 +18,22 @@ const (
 	destroyRoom
 )
 
-func definedPrivilegesForAffiliations() map[string]*privileges {
-	return map[string]*privileges{
-		data.AffiliationOutcast: newPrivileges(),
-		data.AffiliationNone: newPrivileges(
-			enterOpenRoom,
-			registerWithOpenRoom,
-		),
-		data.AffiliationMember: newPrivileges(
-			enterOpenRoom,
-			retrieveMemberList,
-			enterMembersOnlyRoom,
-		),
-		data.AffiliationAdmin: newPrivileges(
-			enterOpenRoom,
-			retrieveMemberList,
-			enterMembersOnlyRoom,
-			banMembersAndUnaffiliatedUsers,
-			editMemberList,
-			assignAndRemoveModeratorRole,
-		),
-		data.AffiliationOwner: newPrivileges(
-			enterOpenRoom,
-			retrieveMemberList,
-			enterMembersOnlyRoom,
-			banMembersAndUnaffiliatedUsers,
-			editMemberList,
-			assignAndRemoveModeratorRole,
-			editAdminList,
-			editOwnerList,
-			changeRoomConfiguration,
-			destroyRoom,
-		),
-	}
+var affiliationPrivileges = [][]bool{
+	{false /*outcast*/, true /*none*/, true /*member*/, true /*administrator*/, true /*owner*/},    //enterOpenRoom
+	{false /*outcast*/, true /*none*/, false /*member*/, false /*administrator*/, false /*owner*/}, //registerWithOpenRoom
+	{false /*outcast*/, false /*none*/, true /*member*/, true /*administrator*/, true /*owner*/},   //retrieveMemberList
+	{false /*outcast*/, false /*none*/, true /*member*/, true /*administrator*/, true /*owner*/},   //enterMembersOnlyRoom
+	{false /*outcast*/, false /*none*/, false /*member*/, true /*administrator*/, true /*owner*/},  //banMembersAndUnaffiliatedUsers
+	{false /*outcast*/, false /*none*/, false /*member*/, true /*administrator*/, true /*owner*/},  //editMemberList
+	{false /*outcast*/, false /*none*/, false /*member*/, true /*administrator*/, true /*owner*/},  //assignAndRemoveModeratorRole
+	{false /*outcast*/, false /*none*/, false /*member*/, false /*administrator*/, true /*owner*/}, //editAdminList
+	{false /*outcast*/, false /*none*/, false /*member*/, false /*administrator*/, true /*owner*/}, //editOwnerList
+	{false /*outcast*/, false /*none*/, false /*member*/, false /*administrator*/, true /*owner*/}, //changeRoomConfiguration
+	{false /*outcast*/, false /*none*/, false /*member*/, false /*administrator*/, true /*owner*/}, //destroyRoom
 }
 
 func affiliationCan(privilege privilege, affiliation data.Affiliation) bool {
-	affiliationPrivileges := definedPrivilegesForAffiliation(affiliation)
-	return affiliationPrivileges.can(privilege)
+	return affiliationPrivileges[privilege][affiliation.AffiliationTypeAsNumber()]
 }
 
 func (o *Occupant) affiliationHasPrivilege(privilege privilege) bool {

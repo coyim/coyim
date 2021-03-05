@@ -2,7 +2,7 @@ package data
 
 import "fmt"
 
-// RoleNumberType description
+// RoleNumberType represents an identifier for each role
 type RoleNumberType int
 
 const (

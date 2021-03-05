@@ -362,12 +362,12 @@ func getSelfRoleUpdateMessage(selfRoleUpdate data.SelfRoleUpdate) string {
 func getAffiliationRoleUpdateMessage(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
 	switch {
 	case affiliationRoleUpdate.NewAffiliation.IsNone() &&
-		affiliationRoleUpdate.PreviousAffiliation.IsDifferentFrom(affiliationRoleUpdate.NewAffiliation):
+		data.AreAffiliationsDifferent(affiliationRoleUpdate.PreviousAffiliation, affiliationRoleUpdate.NewAffiliation):
 		return getAffiliationRoleUpateForAffiliationRemoved(affiliationRoleUpdate)
 	case affiliationRoleUpdate.PreviousAffiliation.IsNone() &&
-		affiliationRoleUpdate.NewAffiliation.IsDifferentFrom(affiliationRoleUpdate.PreviousAffiliation):
+		data.AreAffiliationsDifferent(affiliationRoleUpdate.NewAffiliation, affiliationRoleUpdate.PreviousAffiliation):
 		return getAffiliationRoleUpdateForAffiliationAdded(affiliationRoleUpdate)
-	case affiliationRoleUpdate.NewAffiliation.IsDifferentFrom(affiliationRoleUpdate.PreviousAffiliation):
+	case data.AreAffiliationsDifferent(affiliationRoleUpdate.NewAffiliation, affiliationRoleUpdate.PreviousAffiliation):
 		return getAffiliationRoleUpdateForAffiliationUpdated(affiliationRoleUpdate)
 	default:
 		return getAffiliationRoleUpdateForUnexpectedSituation(affiliationRoleUpdate)
@@ -527,12 +527,12 @@ func getAffiliationRoleUpdateForUnexpectedSituation(affiliationRoleUpdate data.A
 func getSelfAffiliationRoleUpdateMessage(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) string {
 	switch {
 	case selfAffiliationRoleUpdate.NewAffiliation.IsNone() &&
-		selfAffiliationRoleUpdate.PreviousAffiliation.IsDifferentFrom(selfAffiliationRoleUpdate.NewAffiliation):
+		data.AreAffiliationsDifferent(selfAffiliationRoleUpdate.PreviousAffiliation, selfAffiliationRoleUpdate.NewAffiliation):
 		return getSelfAffiliationRoleUpateForAffiliationRemoved(selfAffiliationRoleUpdate)
 	case selfAffiliationRoleUpdate.PreviousAffiliation.IsNone() &&
-		selfAffiliationRoleUpdate.NewAffiliation.IsDifferentFrom(selfAffiliationRoleUpdate.PreviousAffiliation):
+		data.AreAffiliationsDifferent(selfAffiliationRoleUpdate.NewAffiliation, selfAffiliationRoleUpdate.PreviousAffiliation):
 		return getSelfAffiliationRoleUpdateForAffiliationAdded(selfAffiliationRoleUpdate)
-	case selfAffiliationRoleUpdate.NewAffiliation.IsDifferentFrom(selfAffiliationRoleUpdate.PreviousAffiliation):
+	case data.AreAffiliationsDifferent(selfAffiliationRoleUpdate.NewAffiliation, selfAffiliationRoleUpdate.PreviousAffiliation):
 		return getSelfAffiliationRoleUpdateForAffiliationUpdated(selfAffiliationRoleUpdate)
 	default:
 		return getSelfAffiliationRoleUpdateForUnexpectedSituation(selfAffiliationRoleUpdate)

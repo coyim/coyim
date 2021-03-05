@@ -64,8 +64,6 @@ type Affiliation interface {
 	Name() string
 	// IsLowerThan returns true if the caller affiliation has a lower hierarchy than the affiliation passed as argument
 	IsLowerThan(Affiliation) bool
-	// IsDifferentFrom returns a Boolean value indicating whether the given affiliation is different from the current one
-	IsDifferentFrom(Affiliation) bool
 }
 
 func (*NoneAffiliation) affiliationTypeAsNumber() affilitionNumberType {
@@ -248,31 +246,9 @@ func (*OwnerAffiliation) IsLowerThan(a Affiliation) bool {
 	return affiliationLowerThan[affilitionTypeOwner][a.affiliationTypeAsNumber()]
 }
 
-// IsDifferentFrom implements Affiliation interface
-func (*NoneAffiliation) IsDifferentFrom(a Affiliation) bool {
-	return !a.IsNone()
-}
-
-// IsDifferentFrom implements Affiliation interface
-func (*OutcastAffiliation) IsDifferentFrom(a Affiliation) bool {
-	return !a.IsBanned()
-}
-
-// IsDifferentFrom implements Affiliation interface
-// An administrator and an owner are members too
-// For that reason, it validates if the affiliation given is an admin or owner, it should be different to member
-func (*MemberAffiliation) IsDifferentFrom(a Affiliation) bool {
-	return !a.IsMember() || a.IsAdmin() || a.IsOwner()
-}
-
-// IsDifferentFrom implements Affiliation interface
-func (*AdminAffiliation) IsDifferentFrom(a Affiliation) bool {
-	return !a.IsAdmin()
-}
-
-// IsDifferentFrom implements Affiliation interface
-func (*OwnerAffiliation) IsDifferentFrom(a Affiliation) bool {
-	return !a.IsOwner()
+// AreAffiliationsDifferent returns a Boolean value indicating whether the given affiliation is different from the current one
+func AreAffiliationsDifferent(a, a1 Affiliation) bool {
+	return a.affiliationTypeAsNumber() != a1.affiliationTypeAsNumber()
 }
 
 // AffiliationFromString returns an Affiliation from the given string, or an error if the string doesn't match a known affiliation type

@@ -82,11 +82,6 @@ func (rv *occupantRoleUpdateView) initDefaults() {
 
 // initRadioButtonsValues MUST be called from de UI thread
 func (rv *occupantRoleUpdateView) initRadioButtonsValues() {
-	if rv.occupant.Affiliation.IsAdmin() || rv.occupant.Affiliation.IsOwner() {
-		rv.participantRadio.SetSensitive(false)
-		rv.participantRadio.SetLabel(i18n.Localf("You can't change the role of moderator from %s", displayNameForAffiliationWithPreposition(rv.occupant.Affiliation)))
-	}
-
 	switch rv.occupant.Role.(type) {
 	case *data.ModeratorRole:
 		rv.moderatorRadio.SetActive(true)

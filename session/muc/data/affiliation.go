@@ -15,6 +15,24 @@ const (
 	AffiliationNone = "none"
 )
 
+type affilitionNumberType int
+
+const (
+	affilitionTypeNone affilitionNumberType = iota
+	affilitionTypeOutcast
+	affilitionTypeMember
+	affilitionTypeAdmin
+	affilitionTypeOwner
+)
+
+var affiliationLowerThan = [][]bool{
+	{false /*none*/, false /*outcast*/, true /*member*/, true /*admin*/, true /*owner*/},    // none
+	{false /*none*/, false /*outcast*/, true /*member*/, true /*admin*/, true /*owner*/},    // outcast
+	{false /*none*/, false /*outcast*/, false /*member*/, true /*admin*/, true /*owner*/},   // member
+	{false /*none*/, false /*outcast*/, false /*member*/, false /*admin*/, true /*owner*/},  // admin
+	{false /*none*/, false /*outcast*/, false /*member*/, false /*admin*/, false /*owner*/}, // owner
+}
+
 // AffiliationUpdate contains information related to a new and previous affiliation
 type AffiliationUpdate struct {
 	Nickname string
@@ -31,6 +49,7 @@ type SelfAffiliationUpdate struct {
 
 // Affiliation represents an affiliation as specificed by section 5.2 in XEP-0045
 type Affiliation interface {
+	affiliationTypeAsNumber() affilitionNumberType
 	// IsAdmin will return true if this specific affiliation can modify persistent information
 	IsAdmin() bool
 	// IsBanned will return true if this specific affiliation means that the jid is banned from the room
@@ -47,6 +66,26 @@ type Affiliation interface {
 	IsLowerThan(Affiliation) bool
 	// IsDifferentFrom returns a Boolean value indicating whether the given affiliation is different from the current one
 	IsDifferentFrom(Affiliation) bool
+}
+
+func (*NoneAffiliation) affiliationTypeAsNumber() affilitionNumberType {
+	return affilitionTypeNone
+}
+
+func (*OutcastAffiliation) affiliationTypeAsNumber() affilitionNumberType {
+	return affilitionTypeOutcast
+}
+
+func (*MemberAffiliation) affiliationTypeAsNumber() affilitionNumberType {
+	return affilitionTypeMember
+}
+
+func (*AdminAffiliation) affiliationTypeAsNumber() affilitionNumberType {
+	return affilitionTypeAdmin
+}
+
+func (*OwnerAffiliation) affiliationTypeAsNumber() affilitionNumberType {
+	return affilitionTypeOwner
 }
 
 // NoneAffiliation is a representation of MUC's "none" affiliation
@@ -186,27 +225,27 @@ func (*OwnerAffiliation) Name() string { return AffiliationOwner }
 
 // IsLowerThan implements Affiliation interface
 func (*NoneAffiliation) IsLowerThan(a Affiliation) bool {
-	return !a.IsNone()
+	return affiliationLowerThan[affilitionTypeNone][a.affiliationTypeAsNumber()]
 }
 
 // IsLowerThan implements Affiliation interface
-func (*OutcastAffiliation) IsLowerThan(Affiliation) bool {
-	return true
+func (*OutcastAffiliation) IsLowerThan(a Affiliation) bool {
+	return affiliationLowerThan[affilitionTypeOutcast][a.affiliationTypeAsNumber()]
 }
 
 // IsLowerThan implements Affiliation interface
 func (*MemberAffiliation) IsLowerThan(a Affiliation) bool {
-	return a.IsAdmin() || a.IsOwner()
+	return affiliationLowerThan[affilitionTypeMember][a.affiliationTypeAsNumber()]
 }
 
 // IsLowerThan implements Affiliation interface
 func (*AdminAffiliation) IsLowerThan(a Affiliation) bool {
-	return a.IsOwner()
+	return affiliationLowerThan[affilitionTypeAdmin][a.affiliationTypeAsNumber()]
 }
 
 // IsLowerThan implements Affiliation interface
 func (*OwnerAffiliation) IsLowerThan(a Affiliation) bool {
-	return false
+	return affiliationLowerThan[affilitionTypeOwner][a.affiliationTypeAsNumber()]
 }
 
 // IsDifferentFrom implements Affiliation interface

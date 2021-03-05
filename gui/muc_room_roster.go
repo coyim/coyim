@@ -95,7 +95,7 @@ func (r *roomViewRoster) initSubscribers() {
 		case occupantJoinedEvent:
 			r.onUpdateRoster()
 		case occupantUpdatedEvent:
-			r.onUpdateRoster()
+			r.occupantUpdateEvent()
 		case occupantLeftEvent:
 			r.onUpdateRoster()
 		case selfOccupantRemovedEvent:
@@ -197,6 +197,11 @@ func (r *roomViewRoster) selfOccupantUpdated(role data.Role) {
 func (r *roomViewRoster) onSelfOccupantJoined() {
 	r.rosterInfo.updateSelfOccupant(r.roomView.room.SelfOccupant())
 	r.onUpdateRoster()
+}
+
+func (r *roomViewRoster) occupantUpdateEvent() {
+	r.onUpdateRoster()
+	r.rosterInfo.occupantUpdated()
 }
 
 func (r *roomViewRoster) onUpdateRoster() {

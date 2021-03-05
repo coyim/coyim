@@ -409,10 +409,10 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_no
 		},
 	}
 
-	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "Your position and the role were changed.")
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "Your position and role were changed.")
 
 	saru.Reason = "foo"
-	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "Your position and the role were changed because: foo.")
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "Your position and role were changed because: foo.")
 
 	saru.Reason = ""
 	saru.Actor = newTestActor("louis", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))

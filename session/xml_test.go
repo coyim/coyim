@@ -23,7 +23,7 @@ func (s *XMLSuite) Test_tryDecodeXML_failsIfNoData(c *C) {
 }
 
 func (s *XMLSuite) Test_tryDecodeXML_failsIfWrongToken(c *C) {
-	nspace, local, ok := tryDecodeXML([]byte(`</foo>`))
+	nspace, local, ok := tryDecodeXML([]byte(`<!-- comment -->`))
 	c.Assert(ok, Equals, false)
 	c.Assert(nspace, Equals, "")
 	c.Assert(local, Equals, "")

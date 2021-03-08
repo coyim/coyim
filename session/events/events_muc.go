@@ -200,7 +200,7 @@ type MUCOccupantRoleUpdated struct {
 
 // MUCSelfOccupantRoleUpdated signifies that the self-occupant role was updated
 type MUCSelfOccupantRoleUpdated struct {
-	RoleUpdate data.SelfRoleUpdate
+	RoleUpdate data.RoleUpdate
 }
 
 // MUCOccupantKicked contains information about the occupant kicked
@@ -210,7 +210,7 @@ type MUCOccupantKicked struct {
 
 // MUCSelfOccupantKicked contains information about the self-occupant kicked
 type MUCSelfOccupantKicked struct {
-	RoleUpdate data.SelfRoleUpdate
+	RoleUpdate data.RoleUpdate
 }
 
 func (MUCError) markAsMUCEventTypeInterface()                              {}

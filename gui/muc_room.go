@@ -179,8 +179,8 @@ func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUp
 }
 
 // selfOccupantRoleUpdatedEvent MUST be called from the UI thread
-func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.SelfRoleUpdate) {
-	if selfRoleUpdate.RoleUpdate.New.IsNone() {
+func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleUpdate) {
+	if selfRoleUpdate.New.IsNone() {
 		doInUIThread(func() {
 			v.account.removeRoomView(v.roomID())
 			v.warningsInfoBar.hide()
@@ -569,7 +569,7 @@ func (v *roomView) publishOccupantRoleUpdatedEvent(roleUpdate data.RoleUpdate) {
 }
 
 // publishSelfOccupantRoleUpdatedEvent MUST NOT be called from the UI thread
-func (v *roomView) publishSelfOccupantRoleUpdatedEvent(selfRoleUpdate data.SelfRoleUpdate) {
+func (v *roomView) publishSelfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleUpdate) {
 	v.publishEvent(selfOccupantRoleUpdatedEvent{selfRoleUpdate})
 }
 

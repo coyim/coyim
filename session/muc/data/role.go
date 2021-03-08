@@ -32,11 +32,6 @@ type RoleUpdate struct {
 	Actor    *Actor
 }
 
-// SelfRoleUpdate contains information related to a new and previous role of the self occupant
-type SelfRoleUpdate struct {
-	RoleUpdate
-}
-
 // Role represents the specific role that a user has inside a specific room
 type Role interface {
 	// HasVoice returns true if the user can speak in this room

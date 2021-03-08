@@ -211,12 +211,10 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateMessage_roleNone(c *C) {
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfRoleUpdateMessage_roleModerator(c *C) {
-	sru := data.SelfRoleUpdate{
-		RoleUpdate: data.RoleUpdate{
-			Nickname: "wanda",
-			New:      newTestRoleFromString(data.RoleModerator),
-			Previous: newTestRoleFromString(data.RoleParticipant),
-		},
+	sru := data.RoleUpdate{
+		Nickname: "wanda",
+		New:      newTestRoleFromString(data.RoleModerator),
+		Previous: newTestRoleFromString(data.RoleParticipant),
 	}
 
 	c.Assert(getSelfRoleUpdateMessage(sru), Equals, "Your role was changed from participant to moderator.")
@@ -233,12 +231,10 @@ func (*MUCNotificationMessagesSuite) Test_getSelfRoleUpdateMessage_roleModerator
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfRoleUpdateMessage_roleParticipant(c *C) {
-	sru := data.SelfRoleUpdate{
-		RoleUpdate: data.RoleUpdate{
-			Nickname: "sancho",
-			New:      newTestRoleFromString(data.RoleParticipant),
-			Previous: newTestRoleFromString(data.RoleModerator),
-		},
+	sru := data.RoleUpdate{
+		Nickname: "sancho",
+		New:      newTestRoleFromString(data.RoleParticipant),
+		Previous: newTestRoleFromString(data.RoleModerator),
 	}
 
 	c.Assert(getSelfRoleUpdateMessage(sru), Equals, "Your role was changed from moderator to participant.")
@@ -255,12 +251,10 @@ func (*MUCNotificationMessagesSuite) Test_getSelfRoleUpdateMessage_roleParticipa
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfRoleUpdateMessage_roleVisitor(c *C) {
-	sru := data.SelfRoleUpdate{
-		RoleUpdate: data.RoleUpdate{
-			Nickname: "chapulin",
-			New:      newTestRoleFromString(data.RoleVisitor),
-			Previous: newTestRoleFromString(data.RoleModerator),
-		},
+	sru := data.RoleUpdate{
+		Nickname: "chapulin",
+		New:      newTestRoleFromString(data.RoleVisitor),
+		Previous: newTestRoleFromString(data.RoleModerator),
 	}
 
 	c.Assert(getSelfRoleUpdateMessage(sru), Equals, "Your role was changed from moderator to visitor.")

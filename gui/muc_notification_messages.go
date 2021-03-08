@@ -115,8 +115,6 @@ func getMUCNotificationMessageFrom(d interface{}) string {
 		return getSelfAffiliationUpdateMessage(t)
 	case data.RoleUpdate:
 		return getRoleUpdateMessage(t)
-	case data.SelfRoleUpdate:
-		return getSelfRoleUpdateMessage(t)
 	case data.AffiliationRoleUpdate:
 		return getAffiliationRoleUpdateMessage(t)
 	case data.SelfAffiliationRoleUpdate:
@@ -329,7 +327,7 @@ func getRoleChangedMessage(roleUpdate data.RoleUpdate) string {
 		roleUpdate.Reason)
 }
 
-func getSelfRoleUpdateMessage(selfRoleUpdate data.SelfRoleUpdate) string {
+func getSelfRoleUpdateMessage(selfRoleUpdate data.RoleUpdate) string {
 	if selfRoleUpdate.Actor == nil {
 		if selfRoleUpdate.Reason == "" {
 			return i18n.Localf("Your role was changed from %s to %s.",

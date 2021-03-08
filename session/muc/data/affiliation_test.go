@@ -54,8 +54,8 @@ func (s *MucSuite) Test_Affiliation_IsMember(c *C) {
 	c.Assert((&NoneAffiliation{}).IsMember(), Equals, false)
 	c.Assert((&OutcastAffiliation{}).IsMember(), Equals, false)
 	c.Assert((&MemberAffiliation{}).IsMember(), Equals, true)
-	c.Assert((&AdminAffiliation{}).IsMember(), Equals, true)
-	c.Assert((&OwnerAffiliation{}).IsMember(), Equals, true)
+	c.Assert((&AdminAffiliation{}).IsMember(), Equals, false)
+	c.Assert((&OwnerAffiliation{}).IsMember(), Equals, false)
 }
 
 func (s *MucSuite) Test_Affiliation_IsModerator(c *C) {

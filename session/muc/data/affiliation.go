@@ -123,10 +123,10 @@ func (*OutcastAffiliation) IsMember() bool { return false }
 func (*MemberAffiliation) IsMember() bool { return true }
 
 // IsMember implements Affiliation interface
-func (*AdminAffiliation) IsMember() bool { return true }
+func (*AdminAffiliation) IsMember() bool { return false }
 
 // IsMember implements Affiliation interface
-func (*OwnerAffiliation) IsMember() bool { return true }
+func (*OwnerAffiliation) IsMember() bool { return false }
 
 // IsModerator implements Affiliation interface
 func (*NoneAffiliation) IsModerator() bool { return false }

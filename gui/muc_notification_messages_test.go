@@ -286,28 +286,6 @@ func (*MUCNotificationMessagesSuite) Test_getMUCNotificationMessageFrom_roleUpda
 	c.Assert(getMUCNotificationMessageFrom(ru), Equals, "The role of pablo was changed from participant to visitor.")
 }
 
-func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpdateMessage_noCommonCases(c *C) {
-	aru := data.AffiliationRoleUpdate{
-		Nickname:            "superman",
-		NewAffiliation:      newTestAffiliationFromString(data.AffiliationNone),
-		PreviousAffiliation: newTestAffiliationFromString(data.AffiliationNone),
-		NewRole:             newTestRoleFromString(data.RoleVisitor),
-		PreviousRole:        newTestRoleFromString(data.RoleModerator),
-	}
-
-	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The position and the role of superman were changed.")
-
-	aru.Reason = "foo"
-	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The position and the role of superman were changed. The reason given was: foo.")
-
-	aru.Reason = ""
-	aru.Actor = newTestActor("louis", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The owner louis changed the position of superman. As a result, their role was also changed.")
-
-	aru.Reason = "foo"
-	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "The owner louis changed the position of superman. As a result, their role was also changed. The reason given was: foo.")
-}
-
 func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpdateMessage_affiliationRemoved(c *C) {
 	aru := data.AffiliationRoleUpdate{
 		Nickname:            "007",

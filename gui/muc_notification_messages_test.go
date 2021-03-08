@@ -393,14 +393,12 @@ func (*MUCNotificationMessagesSuite) Test_getMUCNotificationMessageFrom_affiliat
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_noCommonCases(c *C) {
-	saru := data.SelfAffiliationRoleUpdate{
-		AffiliationRoleUpdate: data.AffiliationRoleUpdate{
-			Nickname:            "superman",
-			NewAffiliation:      newTestAffiliationFromString(data.AffiliationNone),
-			PreviousAffiliation: newTestAffiliationFromString(data.AffiliationNone),
-			NewRole:             newTestRoleFromString(data.RoleVisitor),
-			PreviousRole:        newTestRoleFromString(data.RoleModerator),
-		},
+	saru := data.AffiliationRoleUpdate{
+		Nickname:            "superman",
+		NewAffiliation:      newTestAffiliationFromString(data.AffiliationNone),
+		PreviousAffiliation: newTestAffiliationFromString(data.AffiliationNone),
+		NewRole:             newTestRoleFromString(data.RoleVisitor),
+		PreviousRole:        newTestRoleFromString(data.RoleModerator),
 	}
 
 	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "Your position and role were changed.")
@@ -685,14 +683,12 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affili
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_affiliationRemoved(c *C) {
-	saru := data.SelfAffiliationRoleUpdate{
-		AffiliationRoleUpdate: data.AffiliationRoleUpdate{
-			Nickname:            "007",
-			NewAffiliation:      newTestAffiliationFromString(data.AffiliationNone),
-			PreviousAffiliation: newTestAffiliationFromString(data.AffiliationAdmin),
-			NewRole:             newTestRoleFromString(data.RoleVisitor),
-			PreviousRole:        newTestRoleFromString(data.RoleModerator),
-		},
+	saru := data.AffiliationRoleUpdate{
+		Nickname:            "007",
+		NewAffiliation:      newTestAffiliationFromString(data.AffiliationNone),
+		PreviousAffiliation: newTestAffiliationFromString(data.AffiliationAdmin),
+		NewRole:             newTestRoleFromString(data.RoleVisitor),
+		PreviousRole:        newTestRoleFromString(data.RoleModerator),
 	}
 
 	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "You are not an administrator anymore. As a result, your role was changed from moderator to visitor.")
@@ -710,14 +706,12 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_af
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_affiliationAdded(c *C) {
-	saru := data.SelfAffiliationRoleUpdate{
-		AffiliationRoleUpdate: data.AffiliationRoleUpdate{
-			Nickname:            "alice",
-			NewAffiliation:      newTestAffiliationFromString(data.AffiliationAdmin),
-			PreviousAffiliation: newTestAffiliationFromString(data.AffiliationNone),
-			NewRole:             newTestRoleFromString(data.RoleModerator),
-			PreviousRole:        newTestRoleFromString(data.RoleVisitor),
-		},
+	saru := data.AffiliationRoleUpdate{
+		Nickname:            "alice",
+		NewAffiliation:      newTestAffiliationFromString(data.AffiliationAdmin),
+		PreviousAffiliation: newTestAffiliationFromString(data.AffiliationNone),
+		NewRole:             newTestRoleFromString(data.RoleModerator),
+		PreviousRole:        newTestRoleFromString(data.RoleVisitor),
 	}
 
 	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "Your position was changed to administrator. As a result, your role was changed from visitor to moderator.")
@@ -734,14 +728,12 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_af
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_affiliationUpdated(c *C) {
-	saru := data.SelfAffiliationRoleUpdate{
-		AffiliationRoleUpdate: data.AffiliationRoleUpdate{
-			Nickname:            "goku",
-			NewAffiliation:      newTestAffiliationFromString(data.AffiliationAdmin),
-			PreviousAffiliation: newTestAffiliationFromString(data.AffiliationMember),
-			NewRole:             newTestRoleFromString(data.RoleModerator),
-			PreviousRole:        newTestRoleFromString(data.RoleVisitor),
-		},
+	saru := data.AffiliationRoleUpdate{
+		Nickname:            "goku",
+		NewAffiliation:      newTestAffiliationFromString(data.AffiliationAdmin),
+		PreviousAffiliation: newTestAffiliationFromString(data.AffiliationMember),
+		NewRole:             newTestRoleFromString(data.RoleModerator),
+		PreviousRole:        newTestRoleFromString(data.RoleVisitor),
 	}
 
 	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "Your position was changed from member to administrator. As a result, your role was changed from visitor to moderator.")

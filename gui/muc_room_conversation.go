@@ -117,7 +117,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case occupantAffiliationRoleUpdatedEvent:
 			c.occupantAffiliationRoleUpdatedEvent(t.affiliationRoleUpdate)
 		case selfOccupantAffiliationRoleUpdatedEvent:
-			c.occupantAffiliationRoleUpdatedEvent(t.selfAffiliationRoleUpdate.AffiliationRoleUpdate)
+			c.occupantAffiliationRoleUpdatedEvent(t.selfAffiliationRoleUpdate)
 		case occupantAffiliationUpdatedEvent:
 			c.occupantAffiliationEvent(t.affiliationUpdate)
 		case selfOccupantAffiliationUpdatedEvent:

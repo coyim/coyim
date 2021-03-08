@@ -269,26 +269,27 @@ func getRoleUpdateMessage(roleUpdate data.RoleUpdate) string {
 }
 
 func getRoleRemovedMessage(roleUpdate data.RoleUpdate) string {
-	if roleUpdate.Actor == nil {
-		if roleUpdate.Reason == "" {
-			return i18n.Localf("%s was temporarily removed from the room.", roleUpdate.Nickname)
-		}
-
-		return i18n.Localf("%s was temporarily removed from the room. The reason given was: %s.", roleUpdate.Nickname, roleUpdate.Reason)
+	m := getRoleRemovedMessageWithoutActor(roleUpdate)
+	if roleUpdate.Actor != nil {
+		m = getRoleRemovedMessageWithActor(roleUpdate)
 	}
 
-	if roleUpdate.Reason != "" {
-		return i18n.Localf("The %s %s temporarily removed %s from the room. The reason given was: %s.",
-			displayNameForAffiliation(roleUpdate.Actor.Affiliation),
-			roleUpdate.Actor.Nickname,
-			roleUpdate.Nickname,
-			roleUpdate.Reason)
-	}
+	return appendReasonToMessage(m, roleUpdate.Reason)
+}
 
-	return i18n.Localf("The %s %s temporarily removed %s from the room.",
-		displayNameForAffiliation(roleUpdate.Actor.Affiliation),
-		roleUpdate.Actor.Nickname,
-		roleUpdate.Nickname)
+func getRoleRemovedMessageWithoutActor(roleUpdate data.RoleUpdate) string {
+	return i18n.Localf("%s was temporarily removed from the room.", roleUpdate.Nickname)
+}
+
+func getRoleRemovedMessageWithActor(roleUpdate data.RoleUpdate) string {
+	switch {
+	case roleUpdate.Actor.Affiliation.IsOwner():
+		return i18n.Localf("The owner %s temporarily removed %s from the room.", roleUpdate.Actor.Nickname, roleUpdate.Nickname)
+	case roleUpdate.Actor.Affiliation.IsAdmin():
+		return i18n.Localf("The administrator %s temporarily removed %s from the room.", roleUpdate.Actor.Nickname, roleUpdate.Nickname)
+	default:
+		return i18n.Localf("%s temporarily removed %s from the room.", roleUpdate.Actor.Nickname, roleUpdate.Nickname)
+	}
 }
 
 func getRoleChangedMessage(roleUpdate data.RoleUpdate) string {

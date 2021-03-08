@@ -370,28 +370,6 @@ func (*MUCNotificationMessagesSuite) Test_getMUCNotificationMessageFrom_affiliat
 	c.Assert(getMUCNotificationMessageFrom(aru), Equals, "The position of chavo was changed to administrator. As a result, their role was changed from visitor to moderator.")
 }
 
-func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_noCommonCases(c *C) {
-	saru := data.AffiliationRoleUpdate{
-		Nickname:            "superman",
-		NewAffiliation:      newTestAffiliationFromString(data.AffiliationNone),
-		PreviousAffiliation: newTestAffiliationFromString(data.AffiliationNone),
-		NewRole:             newTestRoleFromString(data.RoleVisitor),
-		PreviousRole:        newTestRoleFromString(data.RoleModerator),
-	}
-
-	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "Your position and role were changed.")
-
-	saru.Reason = "foo"
-	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "Your position and role were changed because: foo.")
-
-	saru.Reason = ""
-	saru.Actor = newTestActor("louis", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "The owner louis changed your position. As a result, your role was also changed.")
-
-	saru.Reason = "foo"
-	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "The owner louis changed your position. As a result, your role was also changed. The reason given was: foo.")
-}
-
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affiliationRemoved(c *C) {
 	initMUCRoomConversationDisplayI18n()
 

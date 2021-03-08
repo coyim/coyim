@@ -243,37 +243,43 @@ func getAffiliationAddedMessageWithActor(affiliationUpdate data.AffiliationUpdat
 }
 
 func getAffiliationChangedMessage(affiliationUpdate data.AffiliationUpdate) string {
-	if affiliationUpdate.Actor == nil {
-		if affiliationUpdate.Reason == "" {
-			return i18n.Localf("The position of %s was changed from %s to %s.",
-				affiliationUpdate.Nickname,
-				displayNameForAffiliation(affiliationUpdate.Previous),
-				displayNameForAffiliation(affiliationUpdate.New))
-		}
+	m := getAffiliationChangedMessageWithoutActor(affiliationUpdate)
 
-		return i18n.Localf("The position of %s was changed from %s to %s. The reason given was: %s.",
-			affiliationUpdate.Nickname,
-			displayNameForAffiliation(affiliationUpdate.Previous),
-			displayNameForAffiliation(affiliationUpdate.New),
-			affiliationUpdate.Reason)
+	if affiliationUpdate.Actor != nil {
+		m = getAffiliationChangedMessageWithActor(affiliationUpdate)
 	}
 
-	if affiliationUpdate.Reason == "" {
-		return i18n.Localf("The %s %s changed the position of %s from %s to %s.",
-			displayNameForAffiliation(affiliationUpdate.Actor.Affiliation),
+	return appendReasonToMessage(m, affiliationUpdate.Reason)
+}
+
+func getAffiliationChangedMessageWithoutActor(affiliationUpdate data.AffiliationUpdate) string {
+	return i18n.Localf("The position of %s was changed from %s to %s.",
+		affiliationUpdate.Nickname,
+		displayNameForAffiliation(affiliationUpdate.Previous),
+		displayNameForAffiliation(affiliationUpdate.New))
+}
+
+func getAffiliationChangedMessageWithActor(affiliationUpdate data.AffiliationUpdate) string {
+	switch {
+	case affiliationUpdate.Actor.Affiliation.IsOwner():
+		return i18n.Localf("The owner %s changed the position of %s from %s to %s.",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname,
+			displayNameForAffiliation(affiliationUpdate.Previous),
+			displayNameForAffiliation(affiliationUpdate.New))
+	case affiliationUpdate.Actor.Affiliation.IsAdmin():
+		return i18n.Localf("The administrator %s changed the position of %s from %s to %s.",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname,
+			displayNameForAffiliation(affiliationUpdate.Previous),
+			displayNameForAffiliation(affiliationUpdate.New))
+	default:
+		return i18n.Localf("%s changed the position of %s from %s to %s.",
 			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname,
 			displayNameForAffiliation(affiliationUpdate.Previous),
 			displayNameForAffiliation(affiliationUpdate.New))
 	}
-
-	return i18n.Localf("The %s %s changed the position of %s from %s to %s. The reason given was: %s.",
-		displayNameForAffiliation(affiliationUpdate.Actor.Affiliation),
-		affiliationUpdate.Actor.Nickname,
-		affiliationUpdate.Nickname,
-		displayNameForAffiliation(affiliationUpdate.Previous),
-		displayNameForAffiliation(affiliationUpdate.New),
-		affiliationUpdate.Reason)
 }
 
 func getRoleUpdateMessage(roleUpdate data.RoleUpdate) string {
@@ -308,37 +314,42 @@ func getRoleRemovedMessageWithActor(roleUpdate data.RoleUpdate) string {
 }
 
 func getRoleChangedMessage(roleUpdate data.RoleUpdate) string {
-	if roleUpdate.Actor == nil {
-		if roleUpdate.Reason == "" {
-			return i18n.Localf("The role of %s was changed from %s to %s.",
-				roleUpdate.Nickname,
-				displayNameForRole(roleUpdate.Previous),
-				displayNameForRole(roleUpdate.New))
-		}
-
-		return i18n.Localf("The role of %s was changed from %s to %s. The reason given was: %s.",
-			roleUpdate.Nickname,
-			displayNameForRole(roleUpdate.Previous),
-			displayNameForRole(roleUpdate.New),
-			roleUpdate.Reason)
+	m := getRoleChangedMessageWithoutActor(roleUpdate)
+	if roleUpdate.Actor != nil {
+		m = getRoleChangedMessageWithActor(roleUpdate)
 	}
 
-	if roleUpdate.Reason == "" {
-		return i18n.Localf("The %s %s changed the role of %s from %s to %s.",
-			displayNameForAffiliation(roleUpdate.Actor.Affiliation),
+	return appendReasonToMessage(m, roleUpdate.Reason)
+}
+
+func getRoleChangedMessageWithoutActor(roleUpdate data.RoleUpdate) string {
+	return i18n.Localf("The role of %s was changed from %s to %s.",
+		roleUpdate.Nickname,
+		displayNameForRole(roleUpdate.Previous),
+		displayNameForRole(roleUpdate.New))
+}
+
+func getRoleChangedMessageWithActor(roleUpdate data.RoleUpdate) string {
+	switch {
+	case roleUpdate.Actor.Affiliation.IsOwner():
+		return i18n.Localf("The owner %s changed the role of %s from %s to %s.",
+			roleUpdate.Actor.Nickname,
+			roleUpdate.Nickname,
+			displayNameForRole(roleUpdate.Previous),
+			displayNameForRole(roleUpdate.New))
+	case roleUpdate.Actor.Affiliation.IsAdmin():
+		return i18n.Localf("The administrator %s changed the role of %s from %s to %s.",
+			roleUpdate.Actor.Nickname,
+			roleUpdate.Nickname,
+			displayNameForRole(roleUpdate.Previous),
+			displayNameForRole(roleUpdate.New))
+	default:
+		return i18n.Localf("%s changed the role of %s from %s to %s.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname,
 			displayNameForRole(roleUpdate.Previous),
 			displayNameForRole(roleUpdate.New))
 	}
-
-	return i18n.Localf("The %s %s changed the role of %s from %s to %s. The reason given was: %s.",
-		displayNameForAffiliation(roleUpdate.Actor.Affiliation),
-		roleUpdate.Actor.Nickname,
-		roleUpdate.Nickname,
-		displayNameForRole(roleUpdate.Previous),
-		displayNameForRole(roleUpdate.New),
-		roleUpdate.Reason)
 }
 
 func getSelfRoleUpdateMessage(selfRoleUpdate data.RoleUpdate) string {

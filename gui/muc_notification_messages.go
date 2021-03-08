@@ -633,26 +633,30 @@ func getSelfAffiliationRoleUpdateForAffiliationAddedWithActorAndReason(selfAffil
 
 func getSelfAffiliationRoleUpdateForAffiliationUpdated(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
 	if selfAffiliationRoleUpdate.Actor == nil {
-		getSelfAffiliationRoleUpdateForAffiliationUpdatedWithoutActor(selfAffiliationRoleUpdate)
+		if selfAffiliationRoleUpdate.Reason == "" {
+			return getSelfAffiliationRoleUpdateForAffiliationUpdatedWithoutActorAndReason(selfAffiliationRoleUpdate)
+		}
+
+		return getSelfAffiliationRoleUpdateForAffiliationUpdatedWithReasonAndWithoutActor(selfAffiliationRoleUpdate)
 	}
 
-	return getSelfAffiliationRoleUpdateForAffiliationUpdatedWithActor(selfAffiliationRoleUpdate)
+	if selfAffiliationRoleUpdate.Reason == "" {
+		return getSelfAffiliationRoleUpdateForAffiliationUpdatedWithActorAndWithoutReason(selfAffiliationRoleUpdate)
+	}
+
+	return getSelfAffiliationRoleUpdateForAffiliationUpdatedWithActorAndReason(selfAffiliationRoleUpdate)
 }
 
-func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithActor(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
-	if selfAffiliationRoleUpdate.Reason == "" {
-		return i18n.Localf("The %s %s changed your position from %s to %s. As a result, your role was changed from %s to %s.",
-			displayNameForAffiliation(selfAffiliationRoleUpdate.Actor.Affiliation),
-			selfAffiliationRoleUpdate.Actor.Nickname,
-			displayNameForAffiliation(selfAffiliationRoleUpdate.PreviousAffiliation),
-			displayNameForAffiliation(selfAffiliationRoleUpdate.NewAffiliation),
-			displayNameForRole(selfAffiliationRoleUpdate.PreviousRole),
-			displayNameForRole(selfAffiliationRoleUpdate.NewRole))
-	}
+func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithoutActorAndReason(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
+	return i18n.Localf("Your position was changed from %s to %s. As a result, your role was changed from %s to %s.",
+		displayNameForAffiliation(selfAffiliationRoleUpdate.PreviousAffiliation),
+		displayNameForAffiliation(selfAffiliationRoleUpdate.NewAffiliation),
+		displayNameForRole(selfAffiliationRoleUpdate.PreviousRole),
+		displayNameForRole(selfAffiliationRoleUpdate.NewRole))
+}
 
-	return i18n.Localf("The %s %s changed your position from %s to %s. As a result, your role was changed from %s to %s. The reason given was: %s.",
-		displayNameForAffiliation(selfAffiliationRoleUpdate.Actor.Affiliation),
-		selfAffiliationRoleUpdate.Actor.Nickname,
+func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithReasonAndWithoutActor(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
+	return i18n.Localf("Your position was changed from %s to %s. As a result, your role was changed from %s to %s. The reason given was: %s.",
 		displayNameForAffiliation(selfAffiliationRoleUpdate.PreviousAffiliation),
 		displayNameForAffiliation(selfAffiliationRoleUpdate.NewAffiliation),
 		displayNameForRole(selfAffiliationRoleUpdate.PreviousRole),
@@ -660,16 +664,20 @@ func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithActor(selfAffiliationR
 		selfAffiliationRoleUpdate.Reason)
 }
 
-func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithoutActor(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
-	if selfAffiliationRoleUpdate.Reason == "" {
-		return i18n.Localf("Your position was changed from %s to %s. As a result, your role was changed from %s to %s.",
-			displayNameForAffiliation(selfAffiliationRoleUpdate.PreviousAffiliation),
-			displayNameForAffiliation(selfAffiliationRoleUpdate.NewAffiliation),
-			displayNameForRole(selfAffiliationRoleUpdate.PreviousRole),
-			displayNameForRole(selfAffiliationRoleUpdate.NewRole))
-	}
+func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithActorAndWithoutReason(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
+	return i18n.Localf("The %s %s changed your position from %s to %s. As a result, your role was changed from %s to %s.",
+		displayNameForAffiliation(selfAffiliationRoleUpdate.Actor.Affiliation),
+		selfAffiliationRoleUpdate.Actor.Nickname,
+		displayNameForAffiliation(selfAffiliationRoleUpdate.PreviousAffiliation),
+		displayNameForAffiliation(selfAffiliationRoleUpdate.NewAffiliation),
+		displayNameForRole(selfAffiliationRoleUpdate.PreviousRole),
+		displayNameForRole(selfAffiliationRoleUpdate.NewRole))
+}
 
-	return i18n.Localf("Your position was changed from %s to %s. As a result, your role was changed from %s to %s. The reason given was: %s.",
+func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithActorAndReason(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
+	return i18n.Localf("The %s %s changed your position from %s to %s. As a result, your role was changed from %s to %s. The reason given was: %s.",
+		displayNameForAffiliation(selfAffiliationRoleUpdate.Actor.Affiliation),
+		selfAffiliationRoleUpdate.Actor.Nickname,
 		displayNameForAffiliation(selfAffiliationRoleUpdate.PreviousAffiliation),
 		displayNameForAffiliation(selfAffiliationRoleUpdate.NewAffiliation),
 		displayNameForRole(selfAffiliationRoleUpdate.PreviousRole),

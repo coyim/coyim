@@ -151,7 +151,20 @@ func getRoleUpdateFailureMessage(nickname string, newRole data.Role) *updateFail
 		notificationMessage: i18n.Localf("The role of %s couldn't be changed", nickname),
 		errorDialogTitle:    i18n.Local("Changing the role failed"),
 		errorDialogHeader:   i18n.Localf("The role of %s couldn't be changed", nickname),
-		errorDialogMessage:  i18n.Localf("An error occurred trying to change the role of %s to %s.", nickname, displayNameForRole(newRole)),
+		errorDialogMessage:  getUpdateRoleFailureErrorMessage(nickname, newRole),
+	}
+}
+
+func getUpdateRoleFailureErrorMessage(nickname string, newRole data.Role) string {
+	switch {
+	case newRole.IsModerator():
+		return i18n.Localf("An error occurred trying to change the role of %[1]s to moderator.", nickname)
+	case newRole.IsParticipant():
+		return i18n.Localf("An error occurred trying to change the role of %[1]s to participant.", nickname)
+	case newRole.IsVisitor():
+		return i18n.Localf("An error occurred trying to change the role of %[1]s to visitor.", nickname)
+	default:
+		return i18n.Localf("An error occurred trying to change the role of %[1]s.", nickname)
 	}
 }
 

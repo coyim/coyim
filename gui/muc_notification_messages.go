@@ -8,10 +8,6 @@ import (
 
 func getAffiliationUpdateSuccessMessage(nickname string, previousAffiliation, affiliation data.Affiliation) string {
 	if affiliation.IsNone() {
-		// This is impossible to happen but we need to cover all cases.
-		if previousAffiliation.IsNone() {
-			return i18n.Localf("%[1]s no longer has a position.", nickname)
-		}
 		return getAffiliationRemovedSuccessMessage(nickname, previousAffiliation)
 	}
 	return getAffiliationChangedSuccessMessage(nickname, affiliation)
@@ -28,7 +24,6 @@ func getAffiliationRemovedSuccessMessage(nickname string, previousAffiliation da
 	default:
 		return i18n.Localf("%[1]s is not banned anymore.", nickname)
 	}
-
 }
 
 func getAffiliationChangedSuccessMessage(nickname string, affiliation data.Affiliation) string {

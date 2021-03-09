@@ -475,9 +475,6 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateSuccessMessage(c *
 	member := newTestAffiliationFromString(data.AffiliationMember)
 	none := newTestAffiliationFromString(data.AffiliationNone)
 
-	c.Assert(getAffiliationUpdateSuccessMessage(nickname, none, none), Equals,
-		"Juan no longer has a position.")
-
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, member, none), Equals,
 		"Juan is not a member anymore.")
 

@@ -53,18 +53,57 @@ func getRoleUpdateSuccessMessage(nickname string, previousRole, newRole data.Rol
 	if newRole.IsDifferentFrom(previousRole) {
 		switch {
 		case newRole.IsNone():
-			return i18n.Localf("%s is not %s anymore.", nickname, displayNameForRoleWithPreposition(previousRole))
-
+			return getRoleRemovedSuccessMessage(nickname, previousRole)
 		case previousRole.IsNone():
-			return i18n.Localf("The role of %s was changed to %s.", nickname, displayNameForRole(newRole))
-
+			return getRoleAddedSuccessMessage(nickname, newRole)
 		default:
-			return i18n.Localf("The role of %s was changed from %s to %s.", nickname, displayNameForRole(previousRole), displayNameForRole(newRole))
+			return getRoleChangedSuccessMessage(nickname, previousRole, newRole)
 		}
 	}
 
 	// This is impossible to happen but we need to cover all cases.
-	return i18n.Localf("The role of %s wasn't changed.", nickname)
+	return i18n.Localf("The role of %[1]s wasn't changed.", nickname)
+}
+
+func getRoleRemovedSuccessMessage(nickname string, previousRole data.Role) string {
+	switch {
+	case previousRole.IsModerator():
+		return i18n.Localf("%[1]s is not a moderator anymore.", nickname)
+	case previousRole.IsParticipant():
+		return i18n.Localf("%[1]s is not a participant anymore.", nickname)
+	default:
+		return i18n.Localf("%[1]s is not a visitor anymore.", nickname)
+	}
+}
+
+func getRoleAddedSuccessMessage(nickname string, newRole data.Role) string {
+	switch {
+	case newRole.IsModerator():
+		return i18n.Localf("The role of %[1]s was changed to moderator.", nickname)
+	case newRole.IsParticipant():
+		return i18n.Localf("The role of %[1]s was changed to participant.", nickname)
+	default:
+		return i18n.Localf("The role of %[1]s was changed to visitor.", nickname)
+	}
+}
+
+func getRoleChangedSuccessMessage(nickname string, previousRole, newRole data.Role) string {
+	switch {
+	case previousRole.IsModerator() && newRole.IsParticipant():
+		return i18n.Localf("The role of %[1]s was changed from moderator to participant.", nickname)
+	case previousRole.IsModerator() && newRole.IsVisitor():
+		return i18n.Localf("The role of %[1]s was changed from moderator to visitor.", nickname)
+	case previousRole.IsParticipant() && newRole.IsModerator():
+		return i18n.Localf("The role of %[1]s was changed from participant to moderator.", nickname)
+	case previousRole.IsParticipant() && newRole.IsVisitor():
+		return i18n.Localf("The role of %[1]s was changed from participant to visitor.", nickname)
+	case previousRole.IsVisitor() && newRole.IsModerator():
+		return i18n.Localf("The role of %[1]s was changed from visitor to moderator.", nickname)
+	case previousRole.IsVisitor() && newRole.IsParticipant():
+		return i18n.Localf("The role of %[1]s was changed from visitor to participant.", nickname)
+	default:
+		return i18n.Localf("The role of %[1]s was changed.", nickname)
+	}
 }
 
 type updateFailureMessages struct {

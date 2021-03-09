@@ -35,18 +35,3 @@ func displayNameForRole(role data.Role) string {
 		return ""
 	}
 }
-
-func displayNameForRoleWithPreposition(role data.Role) string {
-	switch {
-	case role.IsModerator():
-		return i18n.Local("a moderator")
-	case role.IsParticipant():
-		return i18n.Local("a participant")
-	case role.IsVisitor():
-		return i18n.Local("a visitor")
-	case role.IsNone():
-		return i18n.Local("removed")
-	default:
-		return ""
-	}
-}

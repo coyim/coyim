@@ -716,7 +716,7 @@ func newTestActor(nickname string, affiliation data.Affiliation, role data.Role)
 func newTestAffiliationFromString(s string) data.Affiliation {
 	a, err := data.AffiliationFromString(s)
 	if err != nil {
-		return nil
+		panic("Error produced trying to get an affiliation from a string")
 	}
 	return a
 }

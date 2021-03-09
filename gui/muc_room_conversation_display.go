@@ -2,7 +2,6 @@ package gui
 
 import (
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/session/muc/data"
 )
 
 func getDisplayRoomSubjectForNickname(nickname, subject string) string {
@@ -19,19 +18,4 @@ func getDisplayRoomSubject(subject string) string {
 	}
 
 	return i18n.Localf("The room subject is \"%s\"", subject)
-}
-
-func displayNameForRole(role data.Role) string {
-	switch {
-	case role.IsModerator():
-		return i18n.Local("moderator")
-	case role.IsParticipant():
-		return i18n.Local("participant")
-	case role.IsVisitor():
-		return i18n.Local("visitor")
-	case role.IsNone():
-		return i18n.Local("removed")
-	default: // Other values get the default treatment
-		return ""
-	}
 }

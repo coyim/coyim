@@ -70,14 +70,25 @@ func (rv *occupantRoleUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event) {
 func (rv *occupantRoleUpdateView) initDefaults() {
 	rv.dialog.SetTransientFor(rv.rosterInfoView.parentWindow())
 
-	rv.roleLabel.SetText(i18n.Localf("You are changing the role of %s from %s to:",
-		rv.occupant.Nickname,
-		displayNameForRole(rv.occupant.Role)))
+	rv.roleLabel.SetText(rv.titleLabelText())
 
 	mucStyles.setFormSectionLabelStyle(rv.roleLabel)
 	mucStyles.setHelpTextStyle(rv.contentBox)
 
 	rv.initRadioButtonsValues()
+}
+
+func (rv *occupantRoleUpdateView) titleLabelText() string {
+	switch {
+	case rv.occupant.Role.IsModerator():
+		return i18n.Localf("You are changing the role of %[1]s from moderator to:", rv.occupant.Nickname)
+	case rv.occupant.Role.IsParticipant():
+		return i18n.Localf("You are changing the role of %[1]s from participant to:", rv.occupant.Nickname)
+	case rv.occupant.Role.IsVisitor():
+		return i18n.Localf("You are changing the role of %[1]s from visitor to:", rv.occupant.Nickname)
+	default:
+		return i18n.Localf("You are changing the role of %[1]s to:", rv.occupant.Nickname)
+	}
 }
 
 // initRadioButtonsValues MUST be called from de UI thread

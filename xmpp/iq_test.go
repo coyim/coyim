@@ -36,7 +36,7 @@ func (s *IqXMPPSuite) Test_SendIQReply_writesAnEmptyReplyIfEmptyIsGiven(c *C) {
 
 	err := conn.SendIQReply("f&o", "b\"ar", "b<az", data.EmptyReply{})
 	c.Assert(err, IsNil)
-	c.Assert(string(mockIn.write), Equals, "<iq to='f&amp;o' from='som&apos;ewhat@foo.com/somewhere' type='b&quot;ar' id='b&lt;az'></iq>")
+	c.Assert(string(mockIn.write), Equals, "<iq xmlns='jabber:client' to='f&amp;o' from='som&apos;ewhat@foo.com/somewhere' type='b&quot;ar' id='b&lt;az'></iq>")
 }
 
 func (s *IqXMPPSuite) Test_SendIQReply_returnsErrorIfAnUnXMLableEntryIsGiven(c *C) {
@@ -140,6 +140,6 @@ func (s *IqXMPPSuite) TestConnSendIQReply(c *C) {
 		jid: "jid",
 	}
 	err := conn.SendIQReply("example@xmpp.com", "typ", "id", nil)
-	c.Assert(string(mockOut.write), Matches, "<iq to='example@xmpp.com' from='jid' type='typ' id='id'></iq>")
+	c.Assert(string(mockOut.write), Matches, "<iq xmlns='jabber:client' to='example@xmpp.com' from='jid' type='typ' id='id'></iq>")
 	c.Assert(err, IsNil)
 }

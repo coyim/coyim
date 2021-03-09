@@ -26,10 +26,10 @@ func (c *conn) SendIQ(to, typ string, value interface{}) (reply <-chan data.Stan
 	nextCookie := c.getCookie()
 	toAttr := ""
 	if len(to) > 0 {
-		toAttr = "to='" + xmlEscape(to) + "'"
+		toAttr = "to='" + xmlEscape(to) + "' "
 	}
 
-	if _, err = fmt.Fprintf(out, "<iq xmlns='jabber:client' %s from='%s' type='%s' id='%x'>", toAttr, xmlEscape(c.jid), xmlEscape(typ), nextCookie); err != nil {
+	if _, err = fmt.Fprintf(out, "<iq xmlns='jabber:client' %sfrom='%s' type='%s' id='%x'>", toAttr, xmlEscape(c.jid), xmlEscape(typ), nextCookie); err != nil {
 		return
 	}
 
@@ -63,7 +63,12 @@ func (c *conn) SendIQReply(to, typ, id string, value interface{}) error {
 	var outb bytes.Buffer
 	out := &outb
 
-	if _, err := fmt.Fprintf(out, "<iq to='%s' from='%s' type='%s' id='%s'>", xmlEscape(to), xmlEscape(c.jid), xmlEscape(typ), xmlEscape(id)); err != nil {
+	toAttr := ""
+	if len(to) > 0 {
+		toAttr = "to='" + xmlEscape(to) + "' "
+	}
+
+	if _, err := fmt.Fprintf(out, "<iq xmlns='jabber:client' %sfrom='%s' type='%s' id='%s'>", toAttr, xmlEscape(c.jid), xmlEscape(typ), xmlEscape(id)); err != nil {
 		return err
 	}
 	if _, ok := value.(data.EmptyReply); !ok {

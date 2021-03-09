@@ -6,6 +6,8 @@ import (
 	"github.com/coyim/coyim/gui"
 )
 
-func hooks() gui.OSHooks {
+var hooks = noHooks
+
+func noHooks() gui.OSHooks {
 	return &gui.NoHooks{}
 }

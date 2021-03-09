@@ -203,6 +203,15 @@ func (s *MainSuite) Test_createGTK_works(c *C) {
 	}()
 	os.Setenv("XDG_DATA_HOME", "somewhere-hopefully-not-existing")
 
+	orgHooks := hooks
+	defer func() {
+		hooks = orgHooks
+	}()
+
+	hooks = func() gui.OSHooks {
+		return &gui.NoHooks{}
+	}
+
 	ss := &mockSettingsSchemaSource{}
 	sch := &mockSettingsSchema{}
 	ss.lookupReturn = sch

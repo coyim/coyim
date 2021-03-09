@@ -117,28 +117,36 @@ func getRoleUpdateFailureMessage(nickname string, newRole data.Role) *updateFail
 }
 
 func getRoleRemoveFailureMessage(nickname string, actorAffiliation data.Affiliation, err error) *updateFailureMessages {
-	m := &updateFailureMessages{
-		notificationMessage: i18n.Localf("%s couldn't be expelled.", nickname),
+	return &updateFailureMessages{
+		notificationMessage: i18n.Localf("%[1]s couldn't be expelled.", nickname),
 		errorDialogTitle:    i18n.Local("Expelling process failed"),
-		errorDialogHeader:   i18n.Localf("%s couldn't be expelled", nickname),
+		errorDialogHeader:   i18n.Localf("%[1]s couldn't be expelled", nickname),
+		errorDialogMessage:  getRoleRemoveFailureMessageBasedOnError(nickname, actorAffiliation, err),
 	}
+}
 
+func getRoleRemoveFailureMessageBasedOnError(nickname string, actorAffiliation data.Affiliation, err error) string {
 	switch err {
 	case session.ErrNotAllowedKickOccupant:
-		if actorAffiliation != nil {
-			m.errorDialogMessage = i18n.Localf("As %s you don't have permissions to expel %s.",
-				displayNameForAffiliationWithPreposition(actorAffiliation),
-				nickname)
-		} else {
-			m.errorDialogMessage = i18n.Localf("You don't have permissions to expel %s.",
-				nickname)
-		}
-
+		return getRoleRemoveFailureMessageWithActor(nickname, actorAffiliation)
 	default:
-		m.errorDialogMessage = i18n.Localf("An error occurred expelling to %s.", nickname)
+		return i18n.Localf("An error occurred expelling to %[1]s.", nickname)
+	}
+}
+
+func getRoleRemoveFailureMessageWithActor(nickname string, actorAffiliation data.Affiliation) string {
+	if actorAffiliation != nil {
+		switch {
+		case actorAffiliation.IsOwner():
+			return i18n.Localf("As an owner you don't have permissions to expel %[1]s.", nickname)
+		case actorAffiliation.IsAdmin():
+			return i18n.Localf("As an administrator you don't have permissions to expel %[1]s.", nickname)
+		case actorAffiliation.IsMember():
+			return i18n.Localf("As a member you don't have permissions to expel %[1]s.", nickname)
+		}
 	}
 
-	return m
+	return i18n.Localf("You don't have permissions to expel %[1]s.", nickname)
 }
 
 func getMUCNotificationMessageFrom(d interface{}) string {
@@ -156,81 +164,115 @@ func getMUCNotificationMessageFrom(d interface{}) string {
 	}
 }
 
-func getAffiliationUpdateMessage(affiliationUpdate data.AffiliationUpdate) string {
+func getAffiliationUpdateMessage(affiliationUpdate data.AffiliationUpdate) (m string) {
 	switch {
 	case affiliationUpdate.New.IsNone():
-		return getAffiliationRemovedMessage(affiliationUpdate)
-
+		m = getAffiliationRemovedMessage(affiliationUpdate)
 	case affiliationUpdate.New.IsBanned():
-		return getAffiliationBannedMessage(affiliationUpdate)
-
+		m = getAffiliationBannedMessage(affiliationUpdate)
 	case affiliationUpdate.Previous.IsNone():
-		return getAffiliationAddedMessage(affiliationUpdate)
-
+		m = getAffiliationAddedMessage(affiliationUpdate)
 	default:
-		return getAffiliationChangedMessage(affiliationUpdate)
-	}
-}
-
-func getAffiliationRemovedMessage(affiliationUpdate data.AffiliationUpdate) string {
-	m := getAffiliationRemovedMessageWithoutActor(affiliationUpdate)
-	if affiliationUpdate.Actor != nil {
-		m = getAffiliationRemovedMessageWithActor(affiliationUpdate)
+		m = getAffiliationChangedMessage(affiliationUpdate)
 	}
 
 	return appendReasonToMessage(m, affiliationUpdate.Reason)
 }
 
+func getAffiliationRemovedMessage(affiliationUpdate data.AffiliationUpdate) string {
+	if affiliationUpdate.Actor == nil {
+		return getAffiliationRemovedMessageWithoutActor(affiliationUpdate)
+	}
+	return getAffiliationRemovedMessageWithActor(affiliationUpdate)
+}
+
 func getAffiliationRemovedMessageWithoutActor(affiliationUpdate data.AffiliationUpdate) string {
-	return i18n.Localf("%s is not %s anymore.",
-		affiliationUpdate.Nickname,
-		displayNameForAffiliationWithPreposition(affiliationUpdate.Previous))
+	switch {
+	case affiliationUpdate.Previous.IsOwner():
+		return i18n.Localf("%[1]s is not an owner anymore.", affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsAdmin():
+		return i18n.Localf("%[1]s is not an administrator anymore.", affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsMember():
+		return i18n.Localf("%[1]s is not a member anymore.", affiliationUpdate.Nickname)
+	default:
+		return i18n.Localf("%[1]s is not banned anymore.", affiliationUpdate.Nickname)
+	}
 }
 
 func getAffiliationRemovedMessageWithActor(affiliationUpdate data.AffiliationUpdate) string {
+	if affiliationUpdate.Actor.Affiliation.IsOwner() {
+		return getAffiliationRemovedMessageWithOwnerActor(affiliationUpdate)
+	}
+	return getAffiliationRemovedMessageWithAdminActor(affiliationUpdate)
+}
+func getAffiliationRemovedMessageWithOwnerActor(affiliationUpdate data.AffiliationUpdate) string {
 	switch {
-	case affiliationUpdate.Actor.Affiliation.IsOwner():
-		return i18n.Localf("The owner %s changed the position of %s; %s is not %s anymore.",
+	case affiliationUpdate.Previous.IsOwner():
+		return i18n.Localf("The owner %[1]s changed the position of %[2]s; %[3]s is not an owner anymore.",
 			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname,
-			affiliationUpdate.Nickname,
-			displayNameForAffiliationWithPreposition(affiliationUpdate.Previous))
-	case affiliationUpdate.Actor.Affiliation.IsAdmin():
-		return i18n.Localf("The administrator %s changed the position of %s; %s is not %s anymore.",
+			affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsAdmin():
+		return i18n.Localf("The owner %[1]s changed the position of %[2]s; %[3]s is not an administrator anymore.",
 			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname,
+			affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsMember():
+		return i18n.Localf("The owner %[1]s changed the position of %[2]s; %[3]s is not a member anymore.",
+			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname,
-			displayNameForAffiliationWithPreposition(affiliationUpdate.Previous))
+			affiliationUpdate.Nickname)
 	default:
-		return i18n.Localf("%s changed the position of %s; %s is not %s anymore.",
+		return i18n.Localf("The owner %[1]s changed the position of %[2]s.",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname)
+	}
+
+}
+
+func getAffiliationRemovedMessageWithAdminActor(affiliationUpdate data.AffiliationUpdate) string {
+	switch {
+	case affiliationUpdate.Previous.IsOwner():
+		return i18n.Localf("The administrator %[1]s changed the position of %[2]s; %[3]s is not an owner anymore.",
 			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname,
+			affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsAdmin():
+		return i18n.Localf("The administrator %[1]s changed the position of %[2]s; %[3]s is not an administrator anymore.",
+			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname,
-			displayNameForAffiliationWithPreposition(affiliationUpdate.Previous))
+			affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsMember():
+		return i18n.Localf("The administrator %[1]s changed the position of %[2]s; %[3]s is not a member anymore.",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname,
+			affiliationUpdate.Nickname)
+	default:
+		return i18n.Localf("The administrator %[1]s changed the position of %[2]s.",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname)
 	}
 }
 
 func getAffiliationBannedMessage(affiliationUpdate data.AffiliationUpdate) string {
-	m := getAffiliationBannedMessageWithoutActor(affiliationUpdate)
-	if affiliationUpdate.Actor != nil {
-		m = getAffiliationBannedMessageWithActor(affiliationUpdate)
+	if affiliationUpdate.Actor == nil {
+		return getAffiliationBannedMessageWithoutActor(affiliationUpdate)
 	}
-
-	return appendReasonToMessage(m, affiliationUpdate.Reason)
+	return getAffiliationBannedMessageWithActor(affiliationUpdate)
 }
 
 func getAffiliationBannedMessageWithoutActor(affiliationUpdate data.AffiliationUpdate) string {
-	return i18n.Localf("%s was banned from the room.", affiliationUpdate.Nickname)
+	return i18n.Localf("%[1]s was banned from the room.", affiliationUpdate.Nickname)
 }
 
 func getAffiliationBannedMessageWithActor(affiliationUpdate data.AffiliationUpdate) string {
 	switch {
 	case affiliationUpdate.Actor.Affiliation.IsOwner():
-		return i18n.Localf("The owner %s banned %s from the room.",
+		return i18n.Localf("The owner %[1]s banned %[2]s from the room.",
 			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname)
 	case affiliationUpdate.Actor.Affiliation.IsAdmin():
-		return i18n.Localf("The administrator %s banned %s from the room.",
+		return i18n.Localf("The administrator %[1]s banned %[2]s from the room.",
 			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname)
 	default:
@@ -239,79 +281,179 @@ func getAffiliationBannedMessageWithActor(affiliationUpdate data.AffiliationUpda
 }
 
 func getAffiliationAddedMessage(affiliationUpdate data.AffiliationUpdate) string {
-	m := getAffiliationAddedMessageWithoutActor(affiliationUpdate)
-	if affiliationUpdate.Actor != nil {
-		m = getAffiliationAddedMessageWithActor(affiliationUpdate)
+	if affiliationUpdate.Actor == nil {
+		return getAffiliationAddedMessageWithoutActor(affiliationUpdate)
 	}
-
-	return appendReasonToMessage(m, affiliationUpdate.Reason)
+	return getAffiliationAddedMessageWithActor(affiliationUpdate)
 }
 
 func getAffiliationAddedMessageWithoutActor(affiliationUpdate data.AffiliationUpdate) string {
-	return i18n.Localf("%s is now %s.",
-		affiliationUpdate.Nickname,
-		displayNameForAffiliationWithPreposition(affiliationUpdate.New))
+	switch {
+	case affiliationUpdate.New.IsOwner():
+		return i18n.Localf("%[1]s is now an owner.", affiliationUpdate.Nickname)
+	case affiliationUpdate.New.IsAdmin():
+		return i18n.Localf("%[1]s is now an administrator.", affiliationUpdate.Nickname)
+	case affiliationUpdate.New.IsMember():
+		return i18n.Localf("%[1]s is now a member.", affiliationUpdate.Nickname)
+	default:
+		return i18n.Localf("%[1]s is now banned.", affiliationUpdate.Nickname)
+
+	}
 }
 
 func getAffiliationAddedMessageWithActor(affiliationUpdate data.AffiliationUpdate) string {
+	if affiliationUpdate.Actor.Affiliation.IsOwner() {
+		return getAffiliationAddedMessageWithOwnerActor(affiliationUpdate)
+	}
+	return getAffiliationAddedMessageWithAdminActor(affiliationUpdate)
+}
+
+func getAffiliationAddedMessageWithOwnerActor(affiliationUpdate data.AffiliationUpdate) string {
 	switch {
-	case affiliationUpdate.Actor.Affiliation.IsOwner():
-		return i18n.Localf("The owner %s changed the position of %s; %s is now %s.",
+	case affiliationUpdate.New.IsOwner():
+		return i18n.Localf("The owner %[1]s changed the position of %[2]s; %[3]s is now an owner.",
 			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname,
-			affiliationUpdate.Nickname,
-			displayNameForAffiliationWithPreposition(affiliationUpdate.New))
-	case affiliationUpdate.Actor.Affiliation.IsAdmin():
-		return i18n.Localf("The administrator %s changed the position of %s; %s is now %s.",
+			affiliationUpdate.Nickname)
+	case affiliationUpdate.New.IsAdmin():
+		return i18n.Localf("The owner %[1]s changed the position of %[2]s; %[3]s is now an administrator.",
 			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname,
+			affiliationUpdate.Nickname)
+	case affiliationUpdate.New.IsMember():
+		return i18n.Localf("The owner %[1]s changed the position of %[2]s; %[3]s is now a member.",
+			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname,
-			displayNameForAffiliationWithPreposition(affiliationUpdate.New))
+			affiliationUpdate.Nickname)
 	default:
-		return i18n.Localf("%s changed the position of %s; %s is now %s.",
+		return i18n.Localf("The owner %[1]s changed the position of %[2]s; %[3]s is now banned",
 			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname,
+			affiliationUpdate.Nickname)
+	}
+}
+
+func getAffiliationAddedMessageWithAdminActor(affiliationUpdate data.AffiliationUpdate) string {
+	switch {
+	case affiliationUpdate.New.IsOwner():
+		return i18n.Localf("The administrator %[1]s changed the position of %[2]s; %[3]s is now an owner",
+			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname,
-			displayNameForAffiliationWithPreposition(affiliationUpdate.New))
+			affiliationUpdate.Nickname)
+	case affiliationUpdate.New.IsAdmin():
+		return i18n.Localf("The administrator %[1]s changed the position of %[2]s; %[3]s is now an administrator",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname,
+			affiliationUpdate.Nickname)
+	case affiliationUpdate.New.IsMember():
+		return i18n.Localf("The administrator %[1]s changed the position of %[2]s; %[3]s is now a member",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname,
+			affiliationUpdate.Nickname)
+	default:
+		return i18n.Localf("The administrator %[1]s changed the position of %[2]s; %[3]s is now banned",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname,
+			affiliationUpdate.Nickname)
 	}
 }
 
 func getAffiliationChangedMessage(affiliationUpdate data.AffiliationUpdate) string {
-	m := getAffiliationChangedMessageWithoutActor(affiliationUpdate)
-	if affiliationUpdate.Actor != nil {
-		m = getAffiliationChangedMessageWithActor(affiliationUpdate)
+	if affiliationUpdate.Actor == nil {
+		return getAffiliationChangedMessageWithoutActor(affiliationUpdate)
 	}
-
-	return appendReasonToMessage(m, affiliationUpdate.Reason)
+	return getAffiliationChangedMessageWithActor(affiliationUpdate)
 }
 
 func getAffiliationChangedMessageWithoutActor(affiliationUpdate data.AffiliationUpdate) string {
-	return i18n.Localf("The position of %s was changed from %s to %s.",
-		affiliationUpdate.Nickname,
-		displayNameForAffiliation(affiliationUpdate.Previous),
-		displayNameForAffiliation(affiliationUpdate.New))
+	switch {
+	case affiliationUpdate.Previous.IsOwner() && affiliationUpdate.New.IsAdmin():
+		return i18n.Localf("The position of %[1]s was changed from owner to administrator.", affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsOwner() && affiliationUpdate.New.IsMember():
+		return i18n.Localf("The position of %[1]s was changed from owner to member.", affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsAdmin() && affiliationUpdate.New.IsMember():
+		return i18n.Localf("The position of %[1]s was changed from administrator to member.", affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsAdmin() && affiliationUpdate.New.IsOwner():
+		return i18n.Localf("The position of %[1]s was changed from administrator to owner.", affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsMember() && affiliationUpdate.New.IsAdmin():
+		return i18n.Localf("The position of %[1]s was changed from member to administrator.", affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsMember() && affiliationUpdate.New.IsOwner():
+		return i18n.Localf("The position of %[1]s was changed from member to owner.", affiliationUpdate.Nickname)
+	default:
+		return i18n.Localf("The position of %[1]s was changed.", affiliationUpdate.Nickname)
+	}
 }
 
 func getAffiliationChangedMessageWithActor(affiliationUpdate data.AffiliationUpdate) string {
+	if affiliationUpdate.Actor.Affiliation.IsOwner() {
+		return getAffiliationChangedMessageWithOwnerActor(affiliationUpdate)
+	}
+	return getAffiliationChangedMessageWithAdminActor(affiliationUpdate)
+}
+
+func getAffiliationChangedMessageWithOwnerActor(affiliationUpdate data.AffiliationUpdate) string {
 	switch {
-	case affiliationUpdate.Actor.Affiliation.IsOwner():
-		return i18n.Localf("The owner %s changed the position of %s from %s to %s.",
+	case affiliationUpdate.Previous.IsOwner() && affiliationUpdate.New.IsAdmin():
+		return i18n.Localf("The owner %[1]s changed the position of %[2]s from owner to administrator.",
 			affiliationUpdate.Actor.Nickname,
-			affiliationUpdate.Nickname,
-			displayNameForAffiliation(affiliationUpdate.Previous),
-			displayNameForAffiliation(affiliationUpdate.New))
-	case affiliationUpdate.Actor.Affiliation.IsAdmin():
-		return i18n.Localf("The administrator %s changed the position of %s from %s to %s.",
+			affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsOwner() && affiliationUpdate.New.IsMember():
+		return i18n.Localf("The owner %[1]s changed the position of %[2]s from owner to member.",
 			affiliationUpdate.Actor.Nickname,
-			affiliationUpdate.Nickname,
-			displayNameForAffiliation(affiliationUpdate.Previous),
-			displayNameForAffiliation(affiliationUpdate.New))
+			affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsAdmin() && affiliationUpdate.New.IsOwner():
+		return i18n.Localf("The owner %[1]s changed the position of %[2]s from administrator to owner.",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsAdmin() && affiliationUpdate.New.IsMember():
+		return i18n.Localf("The owner %[1]s changed the position of %[2]s from administrator to member.",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsMember() && affiliationUpdate.New.IsOwner():
+		return i18n.Localf("The owner %[1]s changed the position of %[2]s from member to owner.",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsMember() && affiliationUpdate.New.IsAdmin():
+		return i18n.Localf("The owner %[1]s changed the position of %[2]s from member to administrator.",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname)
 	default:
-		return i18n.Localf("%s changed the position of %s from %s to %s.",
+		return i18n.Localf("The owner %[1]s changed the position of %[2]s.",
 			affiliationUpdate.Actor.Nickname,
-			affiliationUpdate.Nickname,
-			displayNameForAffiliation(affiliationUpdate.Previous),
-			displayNameForAffiliation(affiliationUpdate.New))
+			affiliationUpdate.Nickname)
+	}
+}
+
+func getAffiliationChangedMessageWithAdminActor(affiliationUpdate data.AffiliationUpdate) string {
+	switch {
+	case affiliationUpdate.Previous.IsOwner() && affiliationUpdate.New.IsAdmin():
+		return i18n.Localf("The administrator %[1]s changed the position of %[2]s from owner to administrator.",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsOwner() && affiliationUpdate.New.IsMember():
+		return i18n.Localf("The administrator %[1]s changed the position of %[2]s from owner to member.",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsAdmin() && affiliationUpdate.New.IsOwner():
+		return i18n.Localf("The administrator %[1]s changed the position of %[2]s from administrator to owner.",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsAdmin() && affiliationUpdate.New.IsMember():
+		return i18n.Localf("The administrator %[1]s changed the position of %[2]s from administrator to member.",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsMember() && affiliationUpdate.New.IsOwner():
+		return i18n.Localf("The administrator %[1]s changed the position of %[2]s from member to owner.",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname)
+	case affiliationUpdate.Previous.IsMember() && affiliationUpdate.New.IsAdmin():
+		return i18n.Localf("The administrator %[1]s changed the position of %[2]s from member to administrator.",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname)
+	default:
+		return i18n.Localf("The administrator %[1]s changed the position of %[2]s.",
+			affiliationUpdate.Actor.Nickname,
+			affiliationUpdate.Nickname)
 	}
 }
 

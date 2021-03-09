@@ -85,13 +85,16 @@ func (av *occupantAffiliationUpdateView) initDefaults() {
 }
 
 func (av *occupantAffiliationUpdateView) titleLabelText() string {
-	if av.occupant.Affiliation.IsNone() {
-		return i18n.Localf("You are changing the position of %s to:", av.occupant.Nickname)
+	switch {
+	case av.occupant.Affiliation.IsOwner():
+		return i18n.Localf("You are changing the position of %[1]s from owner to:", av.occupant.Nickname)
+	case av.occupant.Affiliation.IsAdmin():
+		return i18n.Localf("You are changing the position of %[1]s from administrator to:", av.occupant.Nickname)
+	case av.occupant.Affiliation.IsMember():
+		return i18n.Localf("You are changing the position of %[1]s from member to:", av.occupant.Nickname)
+	default:
+		return i18n.Localf("You are changing the position of %[1]s to:", av.occupant.Nickname)
 	}
-
-	return i18n.Localf("You are changing the position of %s from %s to:",
-		av.occupant.Nickname,
-		displayNameForAffiliation(av.occupant.Affiliation))
 }
 
 // initRadioButtonsValues MUST be called from UI thread

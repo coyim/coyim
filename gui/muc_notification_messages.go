@@ -10,12 +10,38 @@ func getAffiliationUpdateSuccessMessage(nickname string, previousAffiliation, af
 	if affiliation.IsNone() {
 		// This is impossible to happen but we need to cover all cases.
 		if previousAffiliation.IsNone() {
-			return i18n.Localf("%s no longer has a position.", nickname)
+			return i18n.Localf("%[1]s no longer has a position.", nickname)
 		}
-		return i18n.Localf("%s is not %s anymore.", nickname, displayNameForAffiliationWithPreposition(previousAffiliation))
+		return getAffiliationRemovedSuccessMessage(nickname, previousAffiliation)
+	}
+	return getAffiliationChangedSuccessMessage(nickname, affiliation)
+}
+
+func getAffiliationRemovedSuccessMessage(nickname string, previousAffiliation data.Affiliation) string {
+	switch {
+	case previousAffiliation.IsOwner():
+		return i18n.Localf("%[1]s is not an owner anymore.", nickname)
+	case previousAffiliation.IsAdmin():
+		return i18n.Localf("%[1]s is not an administrator anymore.", nickname)
+	case previousAffiliation.IsMember():
+		return i18n.Localf("%[1]s is not a member anymore.", nickname)
+	default:
+		return i18n.Localf("%[1]s is not banned anymore.", nickname)
 	}
 
-	return i18n.Localf("The position of %s was changed to %s.", nickname, displayNameForAffiliation(affiliation))
+}
+
+func getAffiliationChangedSuccessMessage(nickname string, affiliation data.Affiliation) string {
+	switch {
+	case affiliation.IsOwner():
+		return i18n.Localf("The position of %[1]s was changed to owner.", nickname)
+	case affiliation.IsAdmin():
+		return i18n.Localf("The position of %[1]s was changed to administrator.", nickname)
+	case affiliation.IsMember():
+		return i18n.Localf("The position of %[1]s was changed to member.", nickname)
+	default:
+		return i18n.Localf("The position of %[1]s was changed.", nickname)
+	}
 }
 
 // getRoleUpdateSuccessMessage returns a friendly notification message for the role update process
@@ -50,22 +76,30 @@ type updateFailureMessages struct {
 
 func getAffiliationUpdateFailureMessage(nickname string, newAffiliation data.Affiliation, err error) *updateFailureMessages {
 	return &updateFailureMessages{
-		notificationMessage: i18n.Localf("The position of %s couldn't be changed", nickname),
+		notificationMessage: i18n.Localf("The position of %[1]s couldn't be changed", nickname),
 		errorDialogTitle:    i18n.Local("Changing the position failed"),
-		errorDialogHeader:   i18n.Localf("The position of %s couldn't be changed", nickname),
+		errorDialogHeader:   i18n.Localf("The position of %[1]s couldn't be changed", nickname),
 		errorDialogMessage:  getAffiliationFailureErrorMessage(nickname, newAffiliation, err),
 	}
 }
 
 func getAffiliationFailureErrorMessage(nickname string, newAffiliation data.Affiliation, err error) string {
-	switch err {
-	case session.ErrRemoveOwnerAffiliation:
+	if err == session.ErrRemoveOwnerAffiliation {
 		return i18n.Local("You can't change your own position because you are the only owner for this room. Every room must have at least one owner.")
+	}
+	return getUpdateAffiliationFailureErrorMessage(nickname, newAffiliation)
+}
+
+func getUpdateAffiliationFailureErrorMessage(nickname string, newAffiliation data.Affiliation) string {
+	switch {
+	case newAffiliation.IsOwner():
+		return i18n.Localf("An error occurred trying to change the position of %[1]s to owner.", nickname)
+	case newAffiliation.IsAdmin():
+		return i18n.Localf("An error occurred trying to change the position of %[1]s to administrator.", nickname)
+	case newAffiliation.IsMember():
+		return i18n.Localf("An error occurred trying to change the position of %[1]s to member.", nickname)
 	default:
-		if newAffiliation.IsNone() {
-			return i18n.Localf("An error occurred trying to change the position of %s.", nickname)
-		}
-		return i18n.Localf("An error occurred trying to change the position of %s to %s.", nickname, displayNameForAffiliation(newAffiliation))
+		return i18n.Localf("An error occurred trying to change the position of %[1]s.", nickname)
 	}
 }
 

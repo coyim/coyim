@@ -622,10 +622,10 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affili
 		},
 	}
 
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "You has been banned from the room.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "You have been banned from the room.")
 
 	sau.Reason = "it's so cold"
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "You has been banned from the room. The reason given was: it's so cold.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "You have been banned from the room. The reason given was: it's so cold.")
 
 	sau.Reason = ""
 	sau.Actor = newTestActor("calvin", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))

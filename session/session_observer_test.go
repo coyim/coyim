@@ -52,7 +52,7 @@ func (s *SessionObserverSuite) Test_observe_onDisconnected(c *C) {
 	<-done
 
 	c.Assert(sess.r.ToSlice(), HasLen, 0)
-	c.Assert(evs, DeepEquals, []interface{}{"hello", events.Event{Type: events.Ping}, events.Event{Type: events.Disconnected}})
+	c.Assert(evs[0:3], DeepEquals, []interface{}{"hello", events.Event{Type: events.Ping}, events.Event{Type: events.Disconnected}})
 }
 
 func (s *SessionObserverSuite) Test_observe_onConnectionLost(c *C) {
@@ -96,5 +96,5 @@ func (s *SessionObserverSuite) Test_observe_onConnectionLost(c *C) {
 	<-done
 
 	c.Assert(sess.r.ToSlice(), HasLen, 0)
-	c.Assert(evs, DeepEquals, []interface{}{"hello", events.Event{Type: events.Ping}, events.Event{Type: events.ConnectionLost}})
+	c.Assert(evs[0:3], DeepEquals, []interface{}{"hello", events.Event{Type: events.Ping}, events.Event{Type: events.ConnectionLost}})
 }

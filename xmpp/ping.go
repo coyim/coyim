@@ -42,9 +42,9 @@ func ParsePong(reply data.Stanza) error {
 	case "result":
 		return nil
 	case "error":
-		return errors.New("xmpp: ping request resulted in a error: " + iq.Error.Text)
+		return errors.New("xmpp: ping request resulted in an error: " + iq.Error.Text)
 	default:
-		return errors.New("xmpp: ping request resulted in a unexpected type")
+		return errors.New("xmpp: ping request resulted in an unexpected type")
 	}
 }
 

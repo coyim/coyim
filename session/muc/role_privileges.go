@@ -130,7 +130,7 @@ func (o *Occupant) CanChangeRole(oc *Occupant) bool {
 		return false
 	}
 
-	return o.areChangeRolConditionsMeet(oc)
+	return o.isAllowedToChangeRoleOf(oc)
 }
 
 // CanKickOccupant returns a boolean indicating if the occupant can kick another occupant
@@ -140,6 +140,6 @@ func (o *Occupant) CanKickOccupant(oc *Occupant) bool {
 		oc.Affiliation.IsLowerThan(o.Affiliation)
 }
 
-func (o *Occupant) areChangeRolConditionsMeet(oc *Occupant) bool {
+func (o *Occupant) isAllowedToChangeRoleOf(oc *Occupant) bool {
 	return (o.Affiliation.IsAdmin() || o.Affiliation.IsOwner()) && oc.Affiliation.IsLowerThan(o.Affiliation)
 }

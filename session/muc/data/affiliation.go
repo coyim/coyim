@@ -34,6 +34,10 @@ var affiliationLowerThan = [][]bool{
 	{false /*none*/, false /*outcast*/, false /*member*/, false /*admin*/, false /*owner*/}, // owner
 }
 
+func (at AffilitionNumberType) isLowerThan(at1 AffilitionNumberType) bool {
+	return affiliationLowerThan[at][at1]
+}
+
 // AffiliationUpdate contains information related to a new and previous affiliation
 type AffiliationUpdate struct {
 	Nickname string
@@ -204,28 +208,28 @@ func (*AdminAffiliation) Name() string { return AffiliationAdmin }
 func (*OwnerAffiliation) Name() string { return AffiliationOwner }
 
 // IsLowerThan implements Affiliation interface
-func (*NoneAffiliation) IsLowerThan(a Affiliation) bool {
-	return affiliationLowerThan[affilitionTypeNone][a.AffiliationTypeAsNumber()]
+func (a *NoneAffiliation) IsLowerThan(a1 Affiliation) bool {
+	return isAffiliationLowerThan(a, a1)
 }
 
 // IsLowerThan implements Affiliation interface
-func (*OutcastAffiliation) IsLowerThan(a Affiliation) bool {
-	return affiliationLowerThan[affilitionTypeOutcast][a.AffiliationTypeAsNumber()]
+func (a *OutcastAffiliation) IsLowerThan(a1 Affiliation) bool {
+	return isAffiliationLowerThan(a, a1)
 }
 
 // IsLowerThan implements Affiliation interface
-func (*MemberAffiliation) IsLowerThan(a Affiliation) bool {
-	return affiliationLowerThan[affilitionTypeMember][a.AffiliationTypeAsNumber()]
+func (a *MemberAffiliation) IsLowerThan(a1 Affiliation) bool {
+	return isAffiliationLowerThan(a, a1)
 }
 
 // IsLowerThan implements Affiliation interface
-func (*AdminAffiliation) IsLowerThan(a Affiliation) bool {
-	return affiliationLowerThan[affilitionTypeAdmin][a.AffiliationTypeAsNumber()]
+func (a *AdminAffiliation) IsLowerThan(a1 Affiliation) bool {
+	return isAffiliationLowerThan(a, a1)
 }
 
 // IsLowerThan implements Affiliation interface
-func (*OwnerAffiliation) IsLowerThan(a Affiliation) bool {
-	return affiliationLowerThan[affilitionTypeOwner][a.AffiliationTypeAsNumber()]
+func (a *OwnerAffiliation) IsLowerThan(a1 Affiliation) bool {
+	return isAffiliationLowerThan(a, a1)
 }
 
 // AreAffiliationsDifferent returns a Boolean value indicating whether the given affiliation is different from the current one
@@ -274,4 +278,8 @@ func AffiliationFromString(s string) (Affiliation, error) {
 	default:
 		return nil, fmt.Errorf("unknown affiliation string: '%s'", s)
 	}
+}
+
+func isAffiliationLowerThan(a, a1 Affiliation) bool {
+	return a.AffiliationTypeAsNumber().isLowerThan(a1.AffiliationTypeAsNumber())
 }

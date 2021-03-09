@@ -1,5 +1,7 @@
 package muc
 
+type privilege int
+
 const (
 	presentInRoom privilege = iota
 	receiveMessages
@@ -32,8 +34,8 @@ var rolePrivileges = [][]bool{
 	{false /*none*/, false /*visitor*/, false /*participant*/, true /*moderator*/}, //revokeVoice
 }
 
-func (o *Occupant) roleHasPrivilege(privilege privilege) bool {
-	return rolePrivileges[privilege][o.Role.RoleTypeAsNumber()]
+func (o *Occupant) roleHasPrivilege(p privilege) bool {
+	return rolePrivileges[p][o.Role.RoleTypeAsNumber()]
 }
 
 // CanPresentInRoom returns a boolean indicating if the occupant can be present in the room

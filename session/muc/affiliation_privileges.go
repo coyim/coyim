@@ -32,12 +32,12 @@ var affiliationPrivileges = [][]bool{
 	{false /*outcast*/, false /*none*/, false /*member*/, false /*administrator*/, true /*owner*/}, //destroyRoom
 }
 
-func affiliationCan(privilege privilege, affiliation data.Affiliation) bool {
-	return affiliationPrivileges[privilege][affiliation.AffiliationTypeAsNumber()]
+func affiliationCan(p privilege, affiliation data.Affiliation) bool {
+	return affiliationPrivileges[p][affiliation.AffiliationTypeAsNumber()]
 }
 
-func (o *Occupant) affiliationHasPrivilege(privilege privilege) bool {
-	return affiliationCan(privilege, o.Affiliation)
+func (o *Occupant) affiliationHasPrivilege(p privilege) bool {
+	return affiliationCan(p, o.Affiliation)
 }
 
 // CanEnterOpenRoom returns true if the occupant can enter to an open room

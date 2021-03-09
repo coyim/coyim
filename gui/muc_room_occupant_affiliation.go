@@ -63,7 +63,7 @@ func (av *occupantAffiliationUpdateView) initBuilder() {
 
 // onRadioButtonToggled MUST be called from the UI thread
 func (av *occupantAffiliationUpdateView) onRadioButtonToggled() {
-	s := data.AreAffiliationsDifferent(av.occupant.Affiliation, av.getAffiliationBasedOnRadioSelected())
+	s := av.occupant.Affiliation.IsDifferentFrom(av.getAffiliationBasedOnRadioSelected())
 	av.applyButton.SetSensitive(s)
 }
 

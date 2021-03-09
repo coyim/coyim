@@ -114,34 +114,40 @@ func (s *MucSuite) Test_Affiliation_IsLowerThan(c *C) {
 	c.Assert((&OwnerAffiliation{}).IsLowerThan(&OwnerAffiliation{}), Equals, false)
 }
 
-func (s *MucSuite) Test_AreAffiliationsDifferent(c *C) {
-	c.Assert(AreAffiliationsDifferent(&NoneAffiliation{}, &NoneAffiliation{}), Equals, false)
-	c.Assert(AreAffiliationsDifferent(&NoneAffiliation{}, &OutcastAffiliation{}), Equals, true)
-	c.Assert(AreAffiliationsDifferent(&NoneAffiliation{}, &MemberAffiliation{}), Equals, true)
-	c.Assert(AreAffiliationsDifferent(&NoneAffiliation{}, &AdminAffiliation{}), Equals, true)
-	c.Assert(AreAffiliationsDifferent(&NoneAffiliation{}, &OwnerAffiliation{}), Equals, true)
+func (s *MucSuite) Test_Affiliation_IsDifferentFrom(c *C) {
+	none := &NoneAffiliation{}
+	outcast := &OutcastAffiliation{}
+	member := &MemberAffiliation{}
+	admin := &AdminAffiliation{}
+	owner := &OwnerAffiliation{}
 
-	c.Assert(AreAffiliationsDifferent(&OutcastAffiliation{}, &NoneAffiliation{}), Equals, true)
-	c.Assert(AreAffiliationsDifferent(&OutcastAffiliation{}, &OutcastAffiliation{}), Equals, false)
-	c.Assert(AreAffiliationsDifferent(&OutcastAffiliation{}, &MemberAffiliation{}), Equals, true)
-	c.Assert(AreAffiliationsDifferent(&OutcastAffiliation{}, &AdminAffiliation{}), Equals, true)
-	c.Assert(AreAffiliationsDifferent(&OutcastAffiliation{}, &OwnerAffiliation{}), Equals, true)
+	c.Assert(none.IsDifferentFrom(none), Equals, false)
+	c.Assert(none.IsDifferentFrom(outcast), Equals, true)
+	c.Assert(none.IsDifferentFrom(member), Equals, true)
+	c.Assert(none.IsDifferentFrom(admin), Equals, true)
+	c.Assert(none.IsDifferentFrom(owner), Equals, true)
 
-	c.Assert(AreAffiliationsDifferent(&MemberAffiliation{}, &NoneAffiliation{}), Equals, true)
-	c.Assert(AreAffiliationsDifferent(&MemberAffiliation{}, &OutcastAffiliation{}), Equals, true)
-	c.Assert(AreAffiliationsDifferent(&MemberAffiliation{}, &MemberAffiliation{}), Equals, false)
-	c.Assert(AreAffiliationsDifferent(&MemberAffiliation{}, &AdminAffiliation{}), Equals, true)
-	c.Assert(AreAffiliationsDifferent(&MemberAffiliation{}, &OwnerAffiliation{}), Equals, true)
+	c.Assert(outcast.IsDifferentFrom(none), Equals, true)
+	c.Assert(outcast.IsDifferentFrom(outcast), Equals, false)
+	c.Assert(outcast.IsDifferentFrom(member), Equals, true)
+	c.Assert(outcast.IsDifferentFrom(admin), Equals, true)
+	c.Assert(outcast.IsDifferentFrom(owner), Equals, true)
 
-	c.Assert(AreAffiliationsDifferent(&AdminAffiliation{}, &NoneAffiliation{}), Equals, true)
-	c.Assert(AreAffiliationsDifferent(&AdminAffiliation{}, &OutcastAffiliation{}), Equals, true)
-	c.Assert(AreAffiliationsDifferent(&AdminAffiliation{}, &MemberAffiliation{}), Equals, true)
-	c.Assert(AreAffiliationsDifferent(&AdminAffiliation{}, &AdminAffiliation{}), Equals, false)
-	c.Assert(AreAffiliationsDifferent(&AdminAffiliation{}, &OwnerAffiliation{}), Equals, true)
+	c.Assert(member.IsDifferentFrom(none), Equals, true)
+	c.Assert(member.IsDifferentFrom(outcast), Equals, true)
+	c.Assert(member.IsDifferentFrom(member), Equals, false)
+	c.Assert(member.IsDifferentFrom(admin), Equals, true)
+	c.Assert(member.IsDifferentFrom(owner), Equals, true)
 
-	c.Assert(AreAffiliationsDifferent(&OwnerAffiliation{}, &NoneAffiliation{}), Equals, true)
-	c.Assert(AreAffiliationsDifferent(&OwnerAffiliation{}, &OutcastAffiliation{}), Equals, true)
-	c.Assert(AreAffiliationsDifferent(&OwnerAffiliation{}, &MemberAffiliation{}), Equals, true)
-	c.Assert(AreAffiliationsDifferent(&OwnerAffiliation{}, &AdminAffiliation{}), Equals, true)
-	c.Assert(AreAffiliationsDifferent(&OwnerAffiliation{}, &OwnerAffiliation{}), Equals, false)
+	c.Assert(admin.IsDifferentFrom(none), Equals, true)
+	c.Assert(admin.IsDifferentFrom(outcast), Equals, true)
+	c.Assert(admin.IsDifferentFrom(member), Equals, true)
+	c.Assert(admin.IsDifferentFrom(admin), Equals, false)
+	c.Assert(admin.IsDifferentFrom(owner), Equals, true)
+
+	c.Assert(owner.IsDifferentFrom(none), Equals, true)
+	c.Assert(owner.IsDifferentFrom(outcast), Equals, true)
+	c.Assert(owner.IsDifferentFrom(member), Equals, true)
+	c.Assert(owner.IsDifferentFrom(admin), Equals, true)
+	c.Assert(owner.IsDifferentFrom(owner), Equals, false)
 }

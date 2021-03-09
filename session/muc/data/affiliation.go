@@ -68,6 +68,8 @@ type Affiliation interface {
 	Name() string
 	// IsLowerThan returns true if the caller affiliation has a lower hierarchy than the affiliation passed as argument
 	IsLowerThan(Affiliation) bool
+	// IsDifferentFrom returns true if the caller affiliation is different from the affiliation passed as argument
+	IsDifferentFrom(Affiliation) bool
 	// AffiliationTypeAsNumber returns an int value indicating the affiliation number through a AffilitionNumberType
 	AffiliationTypeAsNumber() AffilitionNumberType
 }
@@ -232,9 +234,29 @@ func (a *OwnerAffiliation) IsLowerThan(a1 Affiliation) bool {
 	return isAffiliationLowerThan(a, a1)
 }
 
-// AreAffiliationsDifferent returns a Boolean value indicating whether the given affiliation is different from the current one
-func AreAffiliationsDifferent(a, a1 Affiliation) bool {
-	return a.AffiliationTypeAsNumber() != a1.AffiliationTypeAsNumber()
+// IsDifferentFrom implements Affiliation interface
+func (a *NoneAffiliation) IsDifferentFrom(a1 Affiliation) bool {
+	return areDifferentAffiliations(a, a1)
+}
+
+// IsDifferentFrom implements Affiliation interface
+func (a *OutcastAffiliation) IsDifferentFrom(a1 Affiliation) bool {
+	return areDifferentAffiliations(a, a1)
+}
+
+// IsDifferentFrom implements Affiliation interface
+func (a *MemberAffiliation) IsDifferentFrom(a1 Affiliation) bool {
+	return areDifferentAffiliations(a, a1)
+}
+
+// IsDifferentFrom implements Affiliation interface
+func (a *AdminAffiliation) IsDifferentFrom(a1 Affiliation) bool {
+	return areDifferentAffiliations(a, a1)
+}
+
+// IsDifferentFrom implements Affiliation interface
+func (a *OwnerAffiliation) IsDifferentFrom(a1 Affiliation) bool {
+	return areDifferentAffiliations(a, a1)
 }
 
 // AffiliationTypeAsNumber implements Affiliation interface
@@ -282,4 +304,8 @@ func AffiliationFromString(s string) (Affiliation, error) {
 
 func isAffiliationLowerThan(a, a1 Affiliation) bool {
 	return a.AffiliationTypeAsNumber().isLowerThan(a1.AffiliationTypeAsNumber())
+}
+
+func areDifferentAffiliations(a, a1 Affiliation) bool {
+	return a.AffiliationTypeAsNumber() != a1.AffiliationTypeAsNumber()
 }

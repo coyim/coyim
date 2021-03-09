@@ -1645,7 +1645,7 @@ func getSelfAffiliationChangedMessageWithAdminActor(selfAffiliationUpdate data.S
 
 func getSelfAffiliationBannedMessage(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
 	if selfAffiliationUpdate.Actor == nil {
-		return i18n.Localf("You has been banned from the room.")
+		return i18n.Localf("You have been banned from the room.")
 	}
 	return getSelfAffiliationBannedMessageWithActor(selfAffiliationUpdate)
 }

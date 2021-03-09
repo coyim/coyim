@@ -126,7 +126,7 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	ensureInstalled()
 
 	ret := &gtkUI{
-		commands: make(chan interface{}, 5),
+		commands:                             make(chan interface{}, 5),
 		toggleConnectAllAutomaticallyRequest: make(chan bool, 100),
 		setShowAdvancedSettingsRequest:       make(chan bool, 100),
 		dialerFactory:                        df,

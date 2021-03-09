@@ -50,7 +50,7 @@ func (u *gtkUI) isDarkThemeVariant() bool {
 	}
 
 	prefDark, _ := settings.GetProperty("gtk-application-prefer-dark-theme")
-	if prefDark.(bool) {
+	if val, ok := prefDark.(bool); val && ok {
 		themeVariant = "dark"
 		return true
 	}

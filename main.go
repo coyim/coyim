@@ -57,28 +57,56 @@ func initLog() {
 	log.SetReportCaller(*config.DebugFunctionCalls)
 }
 
+func printVersion() {
+	fmt.Printf("CoyIM version %s (commit: %v built at: %v)\n", coyimVersion, BuildShortCommit, BuildTimestamp)
+}
+
+var osCreate = os.Create
+
+func startProfileIfNecessary() {
+	if *config.CPUProfile != "" {
+		f, err := osCreate(*config.CPUProfile)
+		if err != nil {
+			log.WithError(err).Fatal("could not create CPU profile")
+		}
+		if err := pprof.StartCPUProfile(f); err != nil {
+			log.WithError(err).Fatal("could not start CPU profile")
+		}
+	}
+}
+
+func stopProfileIfNecessary() {
+	if *config.CPUProfile != "" {
+		pprof.StopCPUProfile()
+	}
+}
+
+func printFinalNewline() {
+	_, _ = os.Stdout.Write([]byte("\n"))
+}
+
 func main() {
 	flag.Parse()
 
 	if *config.VersionFlag {
-		fmt.Printf("CoyIM version %s (commit: %v built at: %v)\n", coyimVersion, BuildShortCommit, BuildTimestamp)
+		printVersion()
 		return
 	}
 
-	if *config.CPUProfile != "" {
-		f, err := os.Create(*config.CPUProfile)
-		if err != nil {
-			log.Fatal("could not create CPU profile: ", err)
-		}
-		if err := pprof.StartCPUProfile(f); err != nil {
-			log.Fatal("could not start CPU profile: ", err)
-		}
-		defer pprof.StopCPUProfile()
-	}
+	startProfileIfNecessary()
+	defer stopProfileIfNecessary()
 
 	initLog()
 	runClient()
-	_, _ = os.Stdout.Write([]byte("\n"))
+	printFinalNewline()
+}
+
+type looper interface {
+	Loop()
+}
+
+var createGTK = func(g gui.Graphics) looper {
+	return gui.NewGTK(coyimVersion, session.Factory, xmpp.DialerFactory, g, hooks())
 }
 
 func runClient() {
@@ -92,5 +120,5 @@ func runClient() {
 	i18n.InitLocalization(gliba.Real)
 	settings.InitSettings(gliba.Real)
 
-	gui.NewGTK(coyimVersion, session.Factory, xmpp.DialerFactory, g, hooks()).Loop()
+	createGTK(g).Loop()
 }

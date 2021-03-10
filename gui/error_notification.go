@@ -34,18 +34,22 @@ func (n *errorNotification) ShowMessage(label string) {
 	n.label.SetText(i18n.Local(label))
 
 	parent, _ := n.area.GetParent()
-	parent.ShowAll()
+	if parent != nil {
+		parent.ShowAll()
+	}
 }
 
 func (n *errorNotification) Hide() {
 	parent, _ := n.area.GetParent()
-	parent.Hide()
+	if parent != nil {
+		parent.Hide()
+	}
 }
 
 func (n *errorNotification) IsVisible() bool {
 	parent, _ := n.area.GetParent()
 
-	return parent.IsVisible()
+	return parent != nil && parent.IsVisible()
 }
 
 type canNotifyErrors interface {

@@ -21,9 +21,8 @@ func getAffiliationRemovedSuccessMessage(nickname string, previousAffiliation da
 		return i18n.Localf("%s is not an administrator anymore.", nickname)
 	case previousAffiliation.IsMember():
 		return i18n.Localf("%s is not a member anymore.", nickname)
-	default:
-		return i18n.Localf("%s is not banned anymore.", nickname)
 	}
+	return i18n.Localf("%s is not banned anymore.", nickname)
 }
 
 func getAffiliationChangedSuccessMessage(nickname string, affiliation data.Affiliation) string {
@@ -34,9 +33,8 @@ func getAffiliationChangedSuccessMessage(nickname string, affiliation data.Affil
 		return i18n.Localf("The position of %s was changed to administrator.", nickname)
 	case affiliation.IsMember():
 		return i18n.Localf("The position of %s was changed to member.", nickname)
-	default:
-		return i18n.Localf("The position of %s was changed.", nickname)
 	}
+	return i18n.Localf("The position of %s was changed.", nickname)
 }
 
 // getRoleUpdateSuccessMessage returns a friendly notification message for the role update process
@@ -50,9 +48,8 @@ func getRoleUpdateSuccessMessage(nickname string, previousRole, newRole data.Rol
 		return getRoleRemovedSuccessMessage(nickname, previousRole)
 	case previousRole.IsNone():
 		return getRoleAddedSuccessMessage(nickname, newRole)
-	default:
-		return getRoleChangedSuccessMessage(nickname, previousRole, newRole)
 	}
+	return getRoleChangedSuccessMessage(nickname, previousRole, newRole)
 }
 
 func getRoleRemovedSuccessMessage(nickname string, previousRole data.Role) string {
@@ -61,9 +58,8 @@ func getRoleRemovedSuccessMessage(nickname string, previousRole data.Role) strin
 		return i18n.Localf("%s is not a moderator anymore.", nickname)
 	case previousRole.IsOnlyParticipant():
 		return i18n.Localf("%s is not a participant anymore.", nickname)
-	default:
-		return i18n.Localf("%s is not a visitor anymore.", nickname)
 	}
+	return i18n.Localf("%s is not a visitor anymore.", nickname)
 }
 
 func getRoleAddedSuccessMessage(nickname string, newRole data.Role) string {
@@ -72,9 +68,8 @@ func getRoleAddedSuccessMessage(nickname string, newRole data.Role) string {
 		return i18n.Localf("The role of %s was changed to moderator.", nickname)
 	case newRole.IsOnlyParticipant():
 		return i18n.Localf("The role of %s was changed to participant.", nickname)
-	default:
-		return i18n.Localf("The role of %s was changed to visitor.", nickname)
 	}
+	return i18n.Localf("The role of %s was changed to visitor.", nickname)
 }
 
 func getRoleChangedSuccessMessage(nickname string, previousRole, newRole data.Role) string {
@@ -91,9 +86,8 @@ func getRoleChangedSuccessMessage(nickname string, previousRole, newRole data.Ro
 		return i18n.Localf("The role of %s was changed from visitor to moderator.", nickname)
 	case previousRole.IsVisitor() && newRole.IsOnlyParticipant():
 		return i18n.Localf("The role of %s was changed from visitor to participant.", nickname)
-	default:
-		return i18n.Localf("The role of %s was changed.", nickname)
 	}
+	return i18n.Localf("The role of %s was changed.", nickname)
 }
 
 type updateFailureMessages struct {
@@ -127,9 +121,8 @@ func getUpdateAffiliationFailureErrorMessage(nickname string, newAffiliation dat
 		return i18n.Localf("An error occurred trying to change the position of %s to administrator.", nickname)
 	case newAffiliation.IsMember():
 		return i18n.Localf("An error occurred trying to change the position of %s to member.", nickname)
-	default:
-		return i18n.Localf("An error occurred trying to change the position of %s.", nickname)
 	}
+	return i18n.Localf("An error occurred trying to change the position of %s.", nickname)
 }
 
 func getRoleUpdateFailureMessage(nickname string, newRole data.Role) *updateFailureMessages {
@@ -153,9 +146,8 @@ func getUpdateRoleFailureErrorMessage(nickname string, newRole data.Role) string
 		return i18n.Localf("An error occurred trying to change the role of %s to participant.", nickname)
 	case newRole.IsVisitor():
 		return i18n.Localf("An error occurred trying to change the role of %s to visitor.", nickname)
-	default:
-		return i18n.Localf("An error occurred trying to change the role of %s.", nickname)
 	}
+	return i18n.Localf("An error occurred trying to change the role of %s.", nickname)
 }
 
 func getRoleRemoveFailureMessage(nickname string, actorAffiliation data.Affiliation, err error) *updateFailureMessages {
@@ -171,9 +163,8 @@ func getRoleRemoveFailureMessageBasedOnError(nickname string, actorAffiliation d
 	switch err {
 	case session.ErrNotAllowedKickOccupant:
 		return getRoleRemoveFailureMessageWithActor(nickname, actorAffiliation)
-	default:
-		return i18n.Localf("An error occurred expelling to %s.", nickname)
 	}
+	return i18n.Localf("An error occurred expelling to %s.", nickname)
 }
 
 func getRoleRemoveFailureMessageWithActor(nickname string, actorAffiliation data.Affiliation) string {
@@ -201,9 +192,8 @@ func getMUCNotificationMessageFrom(d interface{}) string {
 		return getRoleUpdateMessage(t)
 	case data.AffiliationRoleUpdate:
 		return getAffiliationRoleUpdateMessage(t)
-	default:
-		panic("unkown update type")
 	}
+	panic("unkown update type")
 }
 
 func getAffiliationUpdateMessage(affiliationUpdate data.AffiliationUpdate) string {
@@ -218,9 +208,8 @@ func getAffiliationUpdateBaseMessage(affiliationUpdate data.AffiliationUpdate) s
 		return getAffiliationBannedMessage(affiliationUpdate)
 	case affiliationUpdate.Previous.IsNone():
 		return getAffiliationAddedMessage(affiliationUpdate)
-	default:
-		return getAffiliationChangedMessage(affiliationUpdate)
 	}
+	return getAffiliationChangedMessage(affiliationUpdate)
 }
 
 func getAffiliationRemovedMessage(affiliationUpdate data.AffiliationUpdate) string {
@@ -238,9 +227,8 @@ func getAffiliationRemovedMessageWithoutActor(affiliationUpdate data.Affiliation
 		return i18n.Localf("%s is not an administrator anymore.", affiliationUpdate.Nickname)
 	case affiliationUpdate.Previous.IsMember():
 		return i18n.Localf("%s is not a member anymore.", affiliationUpdate.Nickname)
-	default:
-		return i18n.Localf("%s is not banned anymore.", affiliationUpdate.Nickname)
 	}
+	return i18n.Localf("%s is not banned anymore.", affiliationUpdate.Nickname)
 }
 
 func getAffiliationRemovedMessageWithActor(affiliationUpdate data.AffiliationUpdate) string {
@@ -263,12 +251,10 @@ func getAffiliationRemovedMessageWithOwnerActor(affiliationUpdate data.Affiliati
 		return i18n.Localf("The owner %[1]s changed the position of %[2]s; %[2]s is not a member anymore.",
 			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname)
-	default:
-		return i18n.Localf("The owner %[1]s changed the position of %[2]s.",
-			affiliationUpdate.Actor.Nickname,
-			affiliationUpdate.Nickname)
 	}
-
+	return i18n.Localf("The owner %[1]s changed the position of %[2]s.",
+		affiliationUpdate.Actor.Nickname,
+		affiliationUpdate.Nickname)
 }
 
 func getAffiliationRemovedMessageWithAdminActor(affiliationUpdate data.AffiliationUpdate) string {
@@ -285,11 +271,10 @@ func getAffiliationRemovedMessageWithAdminActor(affiliationUpdate data.Affiliati
 		return i18n.Localf("The administrator %[1]s changed the position of %[2]s; %[2]s is not a member anymore.",
 			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname)
-	default:
-		return i18n.Localf("The administrator %[1]s changed the position of %[2]s.",
-			affiliationUpdate.Actor.Nickname,
-			affiliationUpdate.Nickname)
 	}
+	return i18n.Localf("The administrator %[1]s changed the position of %[2]s.",
+		affiliationUpdate.Actor.Nickname,
+		affiliationUpdate.Nickname)
 }
 
 func getAffiliationBannedMessage(affiliationUpdate data.AffiliationUpdate) string {
@@ -313,9 +298,8 @@ func getAffiliationBannedMessageWithActor(affiliationUpdate data.AffiliationUpda
 		return i18n.Localf("The administrator %[1]s banned %[2]s from the room.",
 			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname)
-	default:
-		return i18n.Localf("%[1]s banned %[2]s from the room.", affiliationUpdate.Actor.Nickname, affiliationUpdate.Nickname)
 	}
+	return i18n.Localf("%[1]s banned %[2]s from the room.", affiliationUpdate.Actor.Nickname, affiliationUpdate.Nickname)
 }
 
 func getAffiliationAddedMessage(affiliationUpdate data.AffiliationUpdate) string {
@@ -333,10 +317,8 @@ func getAffiliationAddedMessageWithoutActor(affiliationUpdate data.AffiliationUp
 		return i18n.Localf("%s is now an administrator.", affiliationUpdate.Nickname)
 	case affiliationUpdate.New.IsMember():
 		return i18n.Localf("%s is now a member.", affiliationUpdate.Nickname)
-	default:
-		return i18n.Localf("%s is now banned.", affiliationUpdate.Nickname)
-
 	}
+	return i18n.Localf("%s is now banned.", affiliationUpdate.Nickname)
 }
 
 func getAffiliationAddedMessageWithActor(affiliationUpdate data.AffiliationUpdate) string {
@@ -360,11 +342,10 @@ func getAffiliationAddedMessageWithOwnerActor(affiliationUpdate data.Affiliation
 		return i18n.Localf("The owner %[1]s changed the position of %[2]s; %[2]s is now a member.",
 			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname)
-	default:
-		return i18n.Localf("The owner %[1]s changed the position of %[2]s; %[2]s is now banned",
-			affiliationUpdate.Actor.Nickname,
-			affiliationUpdate.Nickname)
 	}
+	return i18n.Localf("The owner %[1]s changed the position of %[2]s; %[2]s is now banned",
+		affiliationUpdate.Actor.Nickname,
+		affiliationUpdate.Nickname)
 }
 
 func getAffiliationAddedMessageWithAdminActor(affiliationUpdate data.AffiliationUpdate) string {
@@ -381,11 +362,10 @@ func getAffiliationAddedMessageWithAdminActor(affiliationUpdate data.Affiliation
 		return i18n.Localf("The administrator %[1]s changed the position of %[2]s; %[2]s is now a member",
 			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname)
-	default:
-		return i18n.Localf("The administrator %[1]s changed the position of %[2]s; %[2]s is now banned",
-			affiliationUpdate.Actor.Nickname,
-			affiliationUpdate.Nickname)
 	}
+	return i18n.Localf("The administrator %[1]s changed the position of %[2]s; %[2]s is now banned",
+		affiliationUpdate.Actor.Nickname,
+		affiliationUpdate.Nickname)
 }
 
 func getAffiliationChangedMessage(affiliationUpdate data.AffiliationUpdate) string {
@@ -415,9 +395,8 @@ func getAffiliationChangedMessageWithoutActor(affiliationUpdate data.Affiliation
 	case affiliationUpdate.Previous.IsMember() && affiliationUpdate.New.IsOwner():
 		return i18n.Localf("The position of %s was changed from member to owner.",
 			affiliationUpdate.Nickname)
-	default:
-		return i18n.Localf("The position of %s was changed.", affiliationUpdate.Nickname)
 	}
+	return i18n.Localf("The position of %s was changed.", affiliationUpdate.Nickname)
 }
 
 func getAffiliationChangedMessageWithActor(affiliationUpdate data.AffiliationUpdate) string {
@@ -453,11 +432,10 @@ func getAffiliationChangedMessageWithOwnerActor(affiliationUpdate data.Affiliati
 		return i18n.Localf("The owner %[1]s changed the position of %[2]s from member to administrator.",
 			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname)
-	default:
-		return i18n.Localf("The owner %[1]s changed the position of %[2]s.",
-			affiliationUpdate.Actor.Nickname,
-			affiliationUpdate.Nickname)
 	}
+	return i18n.Localf("The owner %[1]s changed the position of %[2]s.",
+		affiliationUpdate.Actor.Nickname,
+		affiliationUpdate.Nickname)
 }
 
 func getAffiliationChangedMessageWithAdminActor(affiliationUpdate data.AffiliationUpdate) string {
@@ -486,11 +464,10 @@ func getAffiliationChangedMessageWithAdminActor(affiliationUpdate data.Affiliati
 		return i18n.Localf("The administrator %[1]s changed the position of %[2]s from member to administrator.",
 			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname)
-	default:
-		return i18n.Localf("The administrator %[1]s changed the position of %[2]s.",
-			affiliationUpdate.Actor.Nickname,
-			affiliationUpdate.Nickname)
 	}
+	return i18n.Localf("The administrator %[1]s changed the position of %[2]s.",
+		affiliationUpdate.Actor.Nickname,
+		affiliationUpdate.Nickname)
 }
 
 func getRoleUpdateMessage(roleUpdate data.RoleUpdate) string {
@@ -521,11 +498,10 @@ func getRoleRemovedMessageWithActor(roleUpdate data.RoleUpdate) string {
 		return i18n.Localf("The administrator %[1]s temporarily removed %[2]s from the room.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
-	default:
-		return i18n.Localf("%[1]s temporarily removed %[2]s from the room.",
-			roleUpdate.Actor.Nickname,
-			roleUpdate.Nickname)
 	}
+	return i18n.Localf("%[1]s temporarily removed %[2]s from the room.",
+		roleUpdate.Actor.Nickname,
+		roleUpdate.Nickname)
 }
 
 func getRoleChangedMessage(roleUpdate data.RoleUpdate) string {
@@ -555,10 +531,9 @@ func getRoleChangedMessageWithoutActor(roleUpdate data.RoleUpdate) string {
 	case roleUpdate.Previous.IsVisitor() && roleUpdate.New.IsOnlyParticipant():
 		return i18n.Localf("The role of %s was changed from visitor to participant.",
 			roleUpdate.Nickname)
-	default:
-		return i18n.Localf("The role of %s was changed.",
-			roleUpdate.Nickname)
 	}
+	return i18n.Localf("The role of %s was changed.",
+		roleUpdate.Nickname)
 }
 
 func getRoleChangedMessageWithActor(roleUpdate data.RoleUpdate) string {
@@ -567,9 +542,8 @@ func getRoleChangedMessageWithActor(roleUpdate data.RoleUpdate) string {
 		return getRoleChangedMessageWithOwnerActor(roleUpdate)
 	case roleUpdate.Actor.Affiliation.IsAdmin():
 		return getRoleChangedMessageWithAdminActor(roleUpdate)
-	default:
-		return getRoleChangedMessageForActor(roleUpdate)
 	}
+	return getRoleChangedMessageForActor(roleUpdate)
 }
 
 func getRoleChangedMessageWithOwnerActor(roleUpdate data.RoleUpdate) string {
@@ -598,11 +572,10 @@ func getRoleChangedMessageWithOwnerActor(roleUpdate data.RoleUpdate) string {
 		return i18n.Localf("The owner %[1]s changed the role of %[2]s from visitor to participant.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
-	default:
-		return i18n.Localf("The owner %[1]s changed the role of %[2]s.",
-			roleUpdate.Actor.Nickname,
-			roleUpdate.Nickname)
 	}
+	return i18n.Localf("The owner %[1]s changed the role of %[2]s.",
+		roleUpdate.Actor.Nickname,
+		roleUpdate.Nickname)
 }
 
 func getRoleChangedMessageWithAdminActor(roleUpdate data.RoleUpdate) string {
@@ -631,11 +604,10 @@ func getRoleChangedMessageWithAdminActor(roleUpdate data.RoleUpdate) string {
 		return i18n.Localf("The administrator %[1]s changed the role of %[2]s from visitor to participant.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
-	default:
-		return i18n.Localf("The administrator %[1]s changed the role of %[2]s.",
-			roleUpdate.Actor.Nickname,
-			roleUpdate.Nickname)
 	}
+	return i18n.Localf("The administrator %[1]s changed the role of %[2]s.",
+		roleUpdate.Actor.Nickname,
+		roleUpdate.Nickname)
 }
 
 func getRoleChangedMessageForActor(roleUpdate data.RoleUpdate) string {
@@ -664,11 +636,10 @@ func getRoleChangedMessageForActor(roleUpdate data.RoleUpdate) string {
 		return i18n.Localf("%[1]s changed the role of %[2]s from visitor to participant.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
-	default:
-		return i18n.Localf("%[1]s changed the role of %[2]s.",
-			roleUpdate.Actor.Nickname,
-			roleUpdate.Nickname)
 	}
+	return i18n.Localf("%[1]s changed the role of %[2]s.",
+		roleUpdate.Actor.Nickname,
+		roleUpdate.Nickname)
 }
 
 func getSelfRoleUpdateMessage(selfRoleUpdate data.RoleUpdate) string {
@@ -696,9 +667,8 @@ func getSelfRoleUpdateMessageWithoutActor(selfRoleUpdate data.RoleUpdate) string
 		return i18n.Local("Your role was changed from moderator to visitor.")
 	case selfRoleUpdate.Previous.IsModerator() && selfRoleUpdate.New.IsOnlyParticipant():
 		return i18n.Local("Your role was changed from moderator to participant.")
-	default:
-		return i18n.Local("Your role was changed.")
 	}
+	return i18n.Local("Your role was changed.")
 }
 
 func getSelfRoleUpdateMessageWithActor(selfRoleUpdate data.RoleUpdate) string {
@@ -707,9 +677,8 @@ func getSelfRoleUpdateMessageWithActor(selfRoleUpdate data.RoleUpdate) string {
 		return getSelfRoleUpdateMessageForOwnerActor(selfRoleUpdate)
 	case selfRoleUpdate.Actor.Affiliation.IsAdmin():
 		return getSelfRoleUpdateMessageForAdminActor(selfRoleUpdate)
-	default:
-		return getSelfRoleUpdateMessageForActor(selfRoleUpdate)
 	}
+	return getSelfRoleUpdateMessageForActor(selfRoleUpdate)
 }
 
 func getSelfRoleUpdateMessageForOwnerActor(selfRoleUpdate data.RoleUpdate) string {
@@ -732,10 +701,9 @@ func getSelfRoleUpdateMessageForOwnerActor(selfRoleUpdate data.RoleUpdate) strin
 	case selfRoleUpdate.Previous.IsModerator() && selfRoleUpdate.New.IsOnlyParticipant():
 		return i18n.Localf("The owner %s changed your role from moderator to participant.",
 			selfRoleUpdate.Actor.Nickname)
-	default:
-		return i18n.Localf("The owner %s changed your role.",
-			selfRoleUpdate.Actor.Nickname)
 	}
+	return i18n.Localf("The owner %s changed your role.",
+		selfRoleUpdate.Actor.Nickname)
 }
 
 func getSelfRoleUpdateMessageForAdminActor(selfRoleUpdate data.RoleUpdate) string {
@@ -758,10 +726,9 @@ func getSelfRoleUpdateMessageForAdminActor(selfRoleUpdate data.RoleUpdate) strin
 	case selfRoleUpdate.Previous.IsModerator() && selfRoleUpdate.New.IsOnlyParticipant():
 		return i18n.Localf("The administrator %s changed your role from moderator to participant.",
 			selfRoleUpdate.Actor.Nickname)
-	default:
-		return i18n.Localf("The administrator %s changed your role.",
-			selfRoleUpdate.Actor.Nickname)
 	}
+	return i18n.Localf("The administrator %s changed your role.",
+		selfRoleUpdate.Actor.Nickname)
 }
 
 func getSelfRoleUpdateMessageForActor(selfRoleUpdate data.RoleUpdate) string {
@@ -784,10 +751,9 @@ func getSelfRoleUpdateMessageForActor(selfRoleUpdate data.RoleUpdate) string {
 	case selfRoleUpdate.Previous.IsModerator() && selfRoleUpdate.New.IsOnlyParticipant():
 		return i18n.Localf("%s changed your role from moderator to participant.",
 			selfRoleUpdate.Actor.Nickname)
-	default:
-		return i18n.Localf("%s changed your role.",
-			selfRoleUpdate.Actor.Nickname)
 	}
+	return i18n.Localf("%s changed your role.",
+		selfRoleUpdate.Actor.Nickname)
 }
 
 func getAffiliationRoleUpdateMessage(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -806,9 +772,8 @@ func getAffiliationRoleUpdateMessageForAffiliation(affiliationRoleUpdate data.Af
 		return getAffiliationRoleUpateForAffiliationRemoved(affiliationRoleUpdate)
 	case affiliationRoleUpdate.PreviousAffiliation.IsNone():
 		return getAffiliationRoleUpdateForAffiliationAdded(affiliationRoleUpdate)
-	default:
-		return getAffiliationRoleUpdateForAffiliationUpdated(affiliationRoleUpdate)
 	}
+	return getAffiliationRoleUpdateForAffiliationUpdated(affiliationRoleUpdate)
 }
 
 func getAffiliationRoleUpdateMessageForRole(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -825,9 +790,8 @@ func getAffiliationRoleUpdateMessageForRole(affiliationRoleUpdate data.Affiliati
 		return i18n.Local("As a result, their role was changed from moderator to visitor.")
 	case affiliationRoleUpdate.PreviousRole.IsModerator() && affiliationRoleUpdate.NewRole.IsOnlyParticipant():
 		return i18n.Local("As a result, their role was changed from moderator to participant.")
-	default:
-		return i18n.Local("As a result, their role was also changed.")
 	}
+	return i18n.Local("As a result, their role was also changed.")
 }
 
 func getSelfAffiliationRoleUpdateMessageForRole(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -844,9 +808,8 @@ func getSelfAffiliationRoleUpdateMessageForRole(affiliationRoleUpdate data.Affil
 		return i18n.Local("As a result, your role was changed from moderator to visitor.")
 	case affiliationRoleUpdate.PreviousRole.IsModerator() && affiliationRoleUpdate.NewRole.IsOnlyParticipant():
 		return i18n.Local("As a result, your role was changed from moderator to participant.")
-	default:
-		return i18n.Local("As a result, your role was also changed.")
 	}
+	return i18n.Local("As a result, your role was also changed.")
 }
 
 func getAffiliationRoleUpateForAffiliationRemoved(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -867,10 +830,9 @@ func getAffiliationRoleUpateForAffiliationRemovedWithoutActor(affiliationRoleUpd
 	case affiliationRoleUpdate.PreviousAffiliation.IsMember():
 		return i18n.Localf("%s is not a member anymore.",
 			affiliationRoleUpdate.Nickname)
-	default:
-		return i18n.Localf("%s is not banned anymore.",
-			affiliationRoleUpdate.Nickname)
 	}
+	return i18n.Localf("%s is not banned anymore.",
+		affiliationRoleUpdate.Nickname)
 }
 
 func getAffiliationRoleUpateForAffiliationRemovedWithActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -879,9 +841,8 @@ func getAffiliationRoleUpateForAffiliationRemovedWithActor(affiliationRoleUpdate
 		return getAffiliationRoleUpateForAffiliationRemovedWithOwnerActor(affiliationRoleUpdate)
 	case affiliationRoleUpdate.Actor.Affiliation.IsAdmin():
 		return getAffiliationRoleUpateForAffiliationRemovedWithAdminActor(affiliationRoleUpdate)
-	default:
-		return getAffiliationRoleUpateForAffiliationRemovedForActor(affiliationRoleUpdate)
 	}
+	return getAffiliationRoleUpateForAffiliationRemovedForActor(affiliationRoleUpdate)
 }
 
 func getAffiliationRoleUpateForAffiliationRemovedWithOwnerActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -898,11 +859,10 @@ func getAffiliationRoleUpateForAffiliationRemovedWithOwnerActor(affiliationRoleU
 		return i18n.Localf("The owner %[1]s changed the position of %[2]s; %[2]s is not a member anymore.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
-	default:
-		return i18n.Localf("The owner %[1]s changed the position of %[2]s; %[2]s is not banned anymore.",
-			affiliationRoleUpdate.Actor.Nickname,
-			affiliationRoleUpdate.Nickname)
 	}
+	return i18n.Localf("The owner %[1]s changed the position of %[2]s; %[2]s is not banned anymore.",
+		affiliationRoleUpdate.Actor.Nickname,
+		affiliationRoleUpdate.Nickname)
 }
 
 func getAffiliationRoleUpateForAffiliationRemovedWithAdminActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -919,11 +879,10 @@ func getAffiliationRoleUpateForAffiliationRemovedWithAdminActor(affiliationRoleU
 		return i18n.Localf("The administrator %[1]s changed the position of %[2]s; %[2]s is not a member anymore.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
-	default:
-		return i18n.Localf("The administrator %[1]s changed the position of %[2]s; %[2]s is not banned anymore.",
-			affiliationRoleUpdate.Actor.Nickname,
-			affiliationRoleUpdate.Nickname)
 	}
+	return i18n.Localf("The administrator %[1]s changed the position of %[2]s; %[2]s is not banned anymore.",
+		affiliationRoleUpdate.Actor.Nickname,
+		affiliationRoleUpdate.Nickname)
 }
 
 func getAffiliationRoleUpateForAffiliationRemovedForActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -940,11 +899,10 @@ func getAffiliationRoleUpateForAffiliationRemovedForActor(affiliationRoleUpdate 
 		return i18n.Localf("%[1]s changed the position of %[2]s; %[2]s is not a member anymore.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
-	default:
-		return i18n.Localf("%[1]s changed the position of %[2]s; %[2]s is not banned anymore.",
-			affiliationRoleUpdate.Actor.Nickname,
-			affiliationRoleUpdate.Nickname)
 	}
+	return i18n.Localf("%[1]s changed the position of %[2]s; %[2]s is not banned anymore.",
+		affiliationRoleUpdate.Actor.Nickname,
+		affiliationRoleUpdate.Nickname)
 }
 
 func getAffiliationRoleUpdateForAffiliationAdded(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -965,10 +923,9 @@ func getAffiliationRoleUpdateForAffiliationAddedWithoutActor(affiliationRoleUpda
 	case affiliationRoleUpdate.NewAffiliation.IsMember():
 		return i18n.Localf("The position of %s was changed to member.",
 			affiliationRoleUpdate.Nickname)
-	default:
-		return i18n.Localf("The position of %s was changed.",
-			affiliationRoleUpdate.Nickname)
 	}
+	return i18n.Localf("The position of %s was changed.",
+		affiliationRoleUpdate.Nickname)
 }
 
 func getAffiliationRoleUpdateForAffiliationAddedWithActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -977,9 +934,8 @@ func getAffiliationRoleUpdateForAffiliationAddedWithActor(affiliationRoleUpdate 
 		return getAffiliationRoleUpdateForAffiliationAddedWithOwnerActor(affiliationRoleUpdate)
 	case affiliationRoleUpdate.Actor.Affiliation.IsAdmin():
 		return getAffiliationRoleUpdateForAffiliationAddedWithAdminActor(affiliationRoleUpdate)
-	default:
-		return getAffiliationRoleUpdateForAffiliationAddedForActor(affiliationRoleUpdate)
 	}
+	return getAffiliationRoleUpdateForAffiliationAddedForActor(affiliationRoleUpdate)
 }
 
 func getAffiliationRoleUpdateForAffiliationAddedWithOwnerActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -996,11 +952,10 @@ func getAffiliationRoleUpdateForAffiliationAddedWithOwnerActor(affiliationRoleUp
 		return i18n.Localf("The owner %[1]s changed the position of %[2]s to member.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
-	default:
-		return i18n.Localf("The owner %[1]s changed the position of %[2]s.",
-			affiliationRoleUpdate.Actor.Nickname,
-			affiliationRoleUpdate.Nickname)
 	}
+	return i18n.Localf("The owner %[1]s changed the position of %[2]s.",
+		affiliationRoleUpdate.Actor.Nickname,
+		affiliationRoleUpdate.Nickname)
 }
 
 func getAffiliationRoleUpdateForAffiliationAddedWithAdminActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -1017,11 +972,10 @@ func getAffiliationRoleUpdateForAffiliationAddedWithAdminActor(affiliationRoleUp
 		return i18n.Localf("The administrator %[1]s changed the position of %[2]s to member.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
-	default:
-		return i18n.Localf("The administrator %[1]s changed the position of %[2]s.",
-			affiliationRoleUpdate.Actor.Nickname,
-			affiliationRoleUpdate.Nickname)
 	}
+	return i18n.Localf("The administrator %[1]s changed the position of %[2]s.",
+		affiliationRoleUpdate.Actor.Nickname,
+		affiliationRoleUpdate.Nickname)
 }
 
 func getAffiliationRoleUpdateForAffiliationAddedForActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -1038,11 +992,10 @@ func getAffiliationRoleUpdateForAffiliationAddedForActor(affiliationRoleUpdate d
 		return i18n.Localf("%[1]s changed the position of %[2]s to member.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
-	default:
-		return i18n.Localf("%[1]s changed the position of %[2]s.",
-			affiliationRoleUpdate.Actor.Nickname,
-			affiliationRoleUpdate.Nickname)
 	}
+	return i18n.Localf("%[1]s changed the position of %[2]s.",
+		affiliationRoleUpdate.Actor.Nickname,
+		affiliationRoleUpdate.Nickname)
 }
 
 func getAffiliationRoleUpdateForAffiliationUpdated(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -1072,10 +1025,9 @@ func getAffiliationRoleUpdateForAffiliationUpdatedWithoutActor(affiliationRoleUp
 	case affiliationRoleUpdate.PreviousAffiliation.IsMember() && affiliationRoleUpdate.NewAffiliation.IsOwner():
 		return i18n.Localf("The position of %s was changed from member to owner.",
 			affiliationRoleUpdate.Nickname)
-	default:
-		return i18n.Localf("The position of %s was changed.",
-			affiliationRoleUpdate.Nickname)
 	}
+	return i18n.Localf("The position of %s was changed.",
+		affiliationRoleUpdate.Nickname)
 }
 
 func getAffiliationRoleUpdateForAffiliationUpdatedWithActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -1084,9 +1036,8 @@ func getAffiliationRoleUpdateForAffiliationUpdatedWithActor(affiliationRoleUpdat
 		return getAffiliationRoleUpdateForAffiliationUpdatedWithOwnerActor(affiliationRoleUpdate)
 	case affiliationRoleUpdate.Actor.Affiliation.IsAdmin():
 		return getAffiliationRoleUpdateForAffiliationUpdatedWithAdminActor(affiliationRoleUpdate)
-	default:
-		return getAffiliationRoleUpdateForAffiliationUpdatedForActor(affiliationRoleUpdate)
 	}
+	return getAffiliationRoleUpdateForAffiliationUpdatedForActor(affiliationRoleUpdate)
 }
 
 func getAffiliationRoleUpdateForAffiliationUpdatedWithOwnerActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -1115,10 +1066,9 @@ func getAffiliationRoleUpdateForAffiliationUpdatedWithOwnerActor(affiliationRole
 		return i18n.Localf("The owner %[1]s changed the position of %[2]s from owner to administrator.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
-	default:
-		return i18n.Localf("The owner %[1]s changed the position of %[2]s.",
-			affiliationRoleUpdate.Nickname)
 	}
+	return i18n.Localf("The owner %[1]s changed the position of %[2]s.",
+		affiliationRoleUpdate.Nickname)
 }
 
 func getAffiliationRoleUpdateForAffiliationUpdatedWithAdminActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -1147,11 +1097,10 @@ func getAffiliationRoleUpdateForAffiliationUpdatedWithAdminActor(affiliationRole
 		return i18n.Localf("The administrator %[1]s changed the position of %[2]s from owner to administrator.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
-	default:
-		return i18n.Localf("The administrator %[1]s changed the position of %[2]s.",
-			affiliationRoleUpdate.Actor.Nickname,
-			affiliationRoleUpdate.Nickname)
 	}
+	return i18n.Localf("The administrator %[1]s changed the position of %[2]s.",
+		affiliationRoleUpdate.Actor.Nickname,
+		affiliationRoleUpdate.Nickname)
 }
 
 func getAffiliationRoleUpdateForAffiliationUpdatedForActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -1180,11 +1129,10 @@ func getAffiliationRoleUpdateForAffiliationUpdatedForActor(affiliationRoleUpdate
 		return i18n.Localf("%[1]s changed the position of %[2]s from owner to administrator.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
-	default:
-		return i18n.Localf("%[1]s changed the position of %[2]s.",
-			affiliationRoleUpdate.Actor.Nickname,
-			affiliationRoleUpdate.Nickname)
 	}
+	return i18n.Localf("%[1]s changed the position of %[2]s.",
+		affiliationRoleUpdate.Actor.Nickname,
+		affiliationRoleUpdate.Nickname)
 }
 
 func getSelfAffiliationRoleUpdateMessage(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -1203,9 +1151,8 @@ func getSelfAffiliationRoleUpdateMessageForAffiliation(selfAffiliationRoleUpdate
 		return getSelfAffiliationRoleUpateForAffiliationRemoved(selfAffiliationRoleUpdate)
 	case selfAffiliationRoleUpdate.PreviousAffiliation.IsNone():
 		return getSelfAffiliationRoleUpdateForAffiliationAdded(selfAffiliationRoleUpdate)
-	default:
-		return getSelfAffiliationRoleUpdateForAffiliationUpdated(selfAffiliationRoleUpdate)
 	}
+	return getSelfAffiliationRoleUpdateForAffiliationUpdated(selfAffiliationRoleUpdate)
 }
 
 func getSelfAffiliationRoleUpateForAffiliationRemoved(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -1222,10 +1169,8 @@ func getSelfAffiliationRoleUpateForAffiliationRemovedWithoutActor(selfAffiliatio
 		return i18n.Local("You are not an owner anymore.")
 	case selfAffiliationRoleUpdate.PreviousAffiliation.IsAdmin():
 		return i18n.Local("You are not an administrator anymore.")
-	default:
-		return i18n.Local("You are not a member anymore.")
-
 	}
+	return i18n.Local("You are not a member anymore.")
 }
 
 func getSelfAffiliationRoleUpateForAffiliationRemovedWithActor(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -1248,10 +1193,9 @@ func getSelfAffiliationRoleUpateForAffiliationRemovedWithActor(selfAffiliationRo
 	case selfAffiliationRoleUpdate.Actor.Affiliation.IsAdmin() && selfAffiliationRoleUpdate.PreviousAffiliation.IsMember():
 		return i18n.Localf("The administrator %s changed your position; you are not a member anymore.",
 			selfAffiliationRoleUpdate.Actor.Nickname)
-	default:
-		return i18n.Localf("The administrator %s changed your position.",
-			selfAffiliationRoleUpdate.Actor.Nickname)
 	}
+	return i18n.Localf("The administrator %s changed your position.",
+		selfAffiliationRoleUpdate.Actor.Nickname)
 }
 
 func getSelfAffiliationRoleUpdateForAffiliationAdded(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -1267,11 +1211,8 @@ func getSelfAffiliationRoleUpdateForAffiliationAddedWithoutActor(selfAffiliation
 		return i18n.Localf("Your position was changed to owner.")
 	case selfAffiliationRoleUpdate.NewAffiliation.IsAdmin():
 		return i18n.Localf("Your position was changed to administrator.")
-	default:
-		return i18n.Localf("Your position was changed to member.")
-
 	}
-
+	return i18n.Localf("Your position was changed to member.")
 }
 
 func getSelfAffiliationRoleUpdateForAffiliationAddedWithActor(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -1291,10 +1232,9 @@ func getSelfAffiliationRoleUpdateForAffiliationAddedWithActor(selfAffiliationRol
 	case selfAffiliationRoleUpdate.Actor.Affiliation.IsAdmin() && selfAffiliationRoleUpdate.NewAffiliation.IsAdmin():
 		return i18n.Localf("The administrator %s changed your position to administrator.",
 			selfAffiliationRoleUpdate.Actor.Nickname)
-	default:
-		return i18n.Localf("The administrator %s changed your position to member.",
-			selfAffiliationRoleUpdate.Actor.Nickname)
 	}
+	return i18n.Localf("The administrator %s changed your position to member.",
+		selfAffiliationRoleUpdate.Actor.Nickname)
 }
 
 func getSelfAffiliationRoleUpdateForAffiliationUpdated(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -1319,9 +1259,8 @@ func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithoutActor(selfAffiliati
 		return i18n.Localf("Your position was changed from member to owner.")
 	case selfAffiliationRoleUpdate.PreviousAffiliation.IsMember() && selfAffiliationRoleUpdate.NewAffiliation.IsAdmin():
 		return i18n.Localf("Your position was changed from member to administrator.")
-	default:
-		return i18n.Localf("Your position was changed.")
 	}
+	return i18n.Localf("Your position was changed.")
 }
 
 func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithActor(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) (m string) {
@@ -1330,9 +1269,8 @@ func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithActor(selfAffiliationR
 		return getSelfAffiliationRoleUpdateForAffiliationUpdatedWithOwnerActor(selfAffiliationRoleUpdate)
 	case selfAffiliationRoleUpdate.Actor.Affiliation.IsAdmin():
 		return getSelfAffiliationRoleUpdateForAffiliationUpdatedWithAdminActor(selfAffiliationRoleUpdate)
-	default:
-		return getSelfAffiliationRoleUpdateForAffiliationUpdatedForActor(selfAffiliationRoleUpdate)
 	}
+	return getSelfAffiliationRoleUpdateForAffiliationUpdatedForActor(selfAffiliationRoleUpdate)
 }
 
 func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithOwnerActor(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -1355,10 +1293,9 @@ func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithOwnerActor(selfAffilia
 	case selfAffiliationRoleUpdate.PreviousAffiliation.IsMember() && selfAffiliationRoleUpdate.NewAffiliation.IsAdmin():
 		return i18n.Localf("The owner %s changed your position from member to administrator.",
 			selfAffiliationRoleUpdate.Actor.Nickname)
-	default:
-		return i18n.Localf("The owner %s changed your position.",
-			selfAffiliationRoleUpdate.Actor.Nickname)
 	}
+	return i18n.Localf("The owner %s changed your position.",
+		selfAffiliationRoleUpdate.Actor.Nickname)
 }
 
 func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithAdminActor(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -1381,10 +1318,9 @@ func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithAdminActor(selfAffilia
 	case selfAffiliationRoleUpdate.PreviousAffiliation.IsMember() && selfAffiliationRoleUpdate.NewAffiliation.IsAdmin():
 		return i18n.Localf("The administrator %s changed your position from member to administrator.",
 			selfAffiliationRoleUpdate.Actor.Nickname)
-	default:
-		return i18n.Localf("The administrator %s changed your position.",
-			selfAffiliationRoleUpdate.Actor.Nickname)
 	}
+	return i18n.Localf("The administrator %s changed your position.",
+		selfAffiliationRoleUpdate.Actor.Nickname)
 }
 
 func getSelfAffiliationRoleUpdateForAffiliationUpdatedForActor(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
@@ -1407,10 +1343,9 @@ func getSelfAffiliationRoleUpdateForAffiliationUpdatedForActor(selfAffiliationRo
 	case selfAffiliationRoleUpdate.PreviousAffiliation.IsMember() && selfAffiliationRoleUpdate.NewAffiliation.IsAdmin():
 		return i18n.Localf("%s changed your position from member to administrator.",
 			selfAffiliationRoleUpdate.Actor.Nickname)
-	default:
-		return i18n.Localf("%s changed your position.",
-			selfAffiliationRoleUpdate.Actor.Nickname)
 	}
+	return i18n.Localf("%s changed your position.",
+		selfAffiliationRoleUpdate.Actor.Nickname)
 }
 
 func getSelfAffiliationUpdateMessage(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
@@ -1425,9 +1360,8 @@ func getSelfAffiliationUpdateBaseMessage(selfAffiliationUpdate data.SelfAffiliat
 		return getSelfAffiliationBannedMessage(selfAffiliationUpdate)
 	case selfAffiliationUpdate.Previous.IsNone():
 		return getSelfAffiliationAddedMessage(selfAffiliationUpdate)
-	default:
-		return getSelfAffiliationChangedMessage(selfAffiliationUpdate)
 	}
+	return getSelfAffiliationChangedMessage(selfAffiliationUpdate)
 }
 
 func getSelfAffiliationRemovedMessage(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
@@ -1445,9 +1379,8 @@ func getSelfAffiliationRemovedMessageWithoutActor(selfAffiliationUpdate data.Sel
 		return i18n.Local("You are not an administrator anymore.")
 	case selfAffiliationUpdate.Previous.IsMember():
 		return i18n.Local("You are not a member anymore.")
-	default:
-		return i18n.Local("You are not banned anymore.")
 	}
+	return i18n.Local("You are not banned anymore.")
 }
 
 func getSelfAffiliationRemovedMessageWithActor(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
@@ -1468,10 +1401,9 @@ func getSelfAffiliationRemovedMessageWithOwnerActor(selfAffiliationUpdate data.S
 	case selfAffiliationUpdate.Previous.IsMember():
 		return i18n.Localf("The owner %s changed your position; you are not a member anymore.",
 			selfAffiliationUpdate.Actor.Nickname)
-	default:
-		return i18n.Localf("The owner %s changed your position; you are not banned anymore.",
-			selfAffiliationUpdate.Actor.Nickname)
 	}
+	return i18n.Localf("The owner %s changed your position; you are not banned anymore.",
+		selfAffiliationUpdate.Actor.Nickname)
 }
 
 func getSelfAffiliationRemovedMessageWithAdminActor(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
@@ -1485,10 +1417,9 @@ func getSelfAffiliationRemovedMessageWithAdminActor(selfAffiliationUpdate data.S
 	case selfAffiliationUpdate.Previous.IsMember():
 		return i18n.Localf("The administrator %s changed your position; you are not a member anymore.",
 			selfAffiliationUpdate.Actor.Nickname)
-	default:
-		return i18n.Localf("The administrator %s changed your position; you are not banned anymore.",
-			selfAffiliationUpdate.Actor.Nickname)
 	}
+	return i18n.Localf("The administrator %s changed your position; you are not banned anymore.",
+		selfAffiliationUpdate.Actor.Nickname)
 }
 
 func getSelfAffiliationAddedMessage(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
@@ -1506,9 +1437,8 @@ func getSelfAffiliationAddedMessageWithoutActor(selfAffiliationUpdate data.SelfA
 		return i18n.Local("You are now an administrator.")
 	case selfAffiliationUpdate.New.IsMember():
 		return i18n.Local("You are now a member.")
-	default:
-		return i18n.Local("You are now banned.")
 	}
+	return i18n.Local("You are now banned.")
 }
 
 func getSelfAffiliationAddedMessageWithActor(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
@@ -1529,10 +1459,9 @@ func getSelfAffiliationAddedMessageWithOwnerActor(selfAffiliationUpdate data.Sel
 	case selfAffiliationUpdate.New.IsMember():
 		return i18n.Localf("The owner %s changed your position; you are now an member.",
 			selfAffiliationUpdate.Actor.Nickname)
-	default:
-		return i18n.Localf("The owner %s changed your position; you are now banned.",
-			selfAffiliationUpdate.Actor.Nickname)
 	}
+	return i18n.Localf("The owner %s changed your position; you are now banned.",
+		selfAffiliationUpdate.Actor.Nickname)
 }
 
 func getSelfAffiliationAddedMessageWithAdminActor(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
@@ -1546,11 +1475,9 @@ func getSelfAffiliationAddedMessageWithAdminActor(selfAffiliationUpdate data.Sel
 	case selfAffiliationUpdate.New.IsMember():
 		return i18n.Localf("The administrator %s changed your position; you are now an member.",
 			selfAffiliationUpdate.Actor.Nickname)
-	default:
-		return i18n.Localf("The administrator %s changed your position; you are now banned.",
-			selfAffiliationUpdate.Actor.Nickname)
 	}
-
+	return i18n.Localf("The administrator %s changed your position; you are now banned.",
+		selfAffiliationUpdate.Actor.Nickname)
 }
 
 func getSelfAffiliationChangedMessage(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
@@ -1574,9 +1501,8 @@ func getSelfAffiliationChangedMessageWithoutActor(selfAffiliationUpdate data.Sel
 		return i18n.Local("Your position was changed from member to administrator.")
 	case selfAffiliationUpdate.Previous.IsMember() && selfAffiliationUpdate.New.IsOwner():
 		return i18n.Local("Your position was changed from member to owner.")
-	default:
-		return i18n.Local("Your position was changed.")
 	}
+	return i18n.Local("Your position was changed.")
 }
 
 func getSelfAffiliationChangedMessageWithActor(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
@@ -1606,10 +1532,9 @@ func getSelfAffiliationChangedMessageWithOwnerActor(selfAffiliationUpdate data.S
 	case selfAffiliationUpdate.Previous.IsMember() && selfAffiliationUpdate.New.IsOwner():
 		return i18n.Localf("The owner %s changed your position from member to owner.",
 			selfAffiliationUpdate.Actor.Nickname)
-	default:
-		return i18n.Localf("The owner %s changed your position.",
-			selfAffiliationUpdate.Actor.Nickname)
 	}
+	return i18n.Localf("The owner %s changed your position.",
+		selfAffiliationUpdate.Actor.Nickname)
 }
 
 func getSelfAffiliationChangedMessageWithAdminActor(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
@@ -1632,10 +1557,9 @@ func getSelfAffiliationChangedMessageWithAdminActor(selfAffiliationUpdate data.S
 	case selfAffiliationUpdate.Previous.IsMember() && selfAffiliationUpdate.New.IsOwner():
 		return i18n.Localf("The administrator %s changed your position from member to owner.",
 			selfAffiliationUpdate.Actor.Nickname)
-	default:
-		return i18n.Localf("The administrator %s changed your position.",
-			selfAffiliationUpdate.Actor.Nickname)
 	}
+	return i18n.Localf("The administrator %s changed your position.",
+		selfAffiliationUpdate.Actor.Nickname)
 }
 
 func getSelfAffiliationBannedMessage(selfAffiliationUpdate data.SelfAffiliationUpdate) string {

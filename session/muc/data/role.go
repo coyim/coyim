@@ -50,7 +50,7 @@ type Role interface {
 	IsVisitor() bool
 	// IsNone returns true if the user hasn't a role
 	IsNone() bool
-	// IsDifferentFrom returns a boolean value indicating whether the given role is not the same as the current one
+	// IsDifferentFrom returns true if the caller role is different from the role passed as argument
 	IsDifferentFrom(Role) bool
 	// RoleTypeAsNumber returns an int value indicating the role number through a RoleNumberType
 	RoleTypeAsNumber() RoleNumberType

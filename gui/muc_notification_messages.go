@@ -166,7 +166,7 @@ func getUpdateRoleFailureErrorMessage(nickname string, newRole data.Role) string
 func getRoleRemoveFailureMessage(nickname string, actorAffiliation data.Affiliation, err error) *updateFailureMessages {
 	return &updateFailureMessages{
 		notificationMessage: i18n.Localf("%[1]s couldn't be expelled.", nickname),
-		errorDialogTitle:    i18n.Local("Expelling process failed"),
+		errorDialogTitle:    i18n.Local("Expelling failed"),
 		errorDialogHeader:   i18n.Localf("%[1]s couldn't be expelled", nickname),
 		errorDialogMessage:  getRoleRemoveFailureMessageBasedOnError(nickname, actorAffiliation, err),
 	}

@@ -490,24 +490,35 @@ func (s *GajimSuite) Test_gajimImporter_TryImport_works(c *C) {
 	dir, _ := ioutil.TempDir("", "")
 	defer os.RemoveAll(dir)
 
-	origEnv1 := os.Getenv("XDG_CONFIG_HOME")
-	origEnv2 := os.Getenv("XDG_DATA_HOME")
-	defer func() {
-		os.Setenv("XDG_CONFIG_HOME", origEnv1)
-		os.Setenv("XDG_DATA_HOME", origEnv2)
-	}()
-	os.Setenv("XDG_CONFIG_HOME", dir)
-	os.Setenv("XDG_DATA_HOME", dir)
+	if !config.IsWindows() {
+		origEnv1 := os.Getenv("XDG_CONFIG_HOME")
+		origEnv2 := os.Getenv("XDG_DATA_HOME")
 
-	os.MkdirAll(filepath.Join(dir, "gajim"), 0755)
-	os.MkdirAll(filepath.Join(dir, "gajim", "pluginsconfig"), 0755)
+		defer func() {
+			os.Setenv("XDG_CONFIG_HOME", origEnv1)
+			os.Setenv("XDG_DATA_HOME", origEnv2)
+		}()
 
-	copyFile(testResourceFilename("gajim_test_data/config2"), filepath.Join(dir, "gajim", "config"))
-	copyFile(testResourceFilename("gajim_test_data/gotr2"), filepath.Join(dir, "gajim", "pluginsconfig", "gotr"))
-	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.key3"), filepath.Join(dir, "gajim", "aba.baba@jabber.ccc.de.key3"))
-	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.fpr"), filepath.Join(dir, "gajim", "aba.baba@jabber.ccc.de.fpr"))
+		os.Setenv("XDG_CONFIG_HOME", dir)
+		os.Setenv("XDG_DATA_HOME", dir)
+	}
 
-	i := &gajimImporter{}
+	gajimDir := filepath.Join(dir, "gajim")
+
+	os.MkdirAll(dir, 0755)
+	os.MkdirAll(filepath.Join(gajimDir, "config"), 0755)
+	os.MkdirAll(filepath.Join(gajimDir, "pluginsconfig"), 0755)
+
+	copyFile(testResourceFilename("gajim_test_data/config2"), filepath.Join(gajimDir, "config"))
+	copyFile(testResourceFilename("gajim_test_data/gotr3"), filepath.Join(gajimDir, "pluginsconfig", "gotr"))
+	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.key3"), filepath.Join(gajimDir, "aba.baba@jabber.ccc.de.key3"))
+	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.fpr"), filepath.Join(gajimDir, "aba.baba@jabber.ccc.de.fpr"))
+
+	gajimGetConfigAndDataDirs := func() (string, string) {
+		return gajimDir, gajimDir
+	}
+
+	i := &gajimImporter{gajimGetConfigAndDataDirs}
 	res := i.TryImport()
 	c.Assert(res, HasLen, 1)
 }

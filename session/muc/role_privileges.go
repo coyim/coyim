@@ -138,7 +138,7 @@ func (o *Occupant) CanChangeRole(oc *Occupant) bool {
 // CanKickOccupant returns a boolean indicating if the occupant can kick another occupant
 // based on the occupant's role
 func (o *Occupant) CanKickOccupant(oc *Occupant) bool {
-	return o.Role.IsModerator() && (oc.Role.IsParticipant() || oc.Role.IsVisitor()) &&
+	return o.Role.IsModerator() && (oc.Role.IsOnlyParticipant() || oc.Role.IsVisitor()) &&
 		oc.Affiliation.IsLowerThan(o.Affiliation)
 }
 

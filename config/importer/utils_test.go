@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"sort"
 
+	"github.com/coyim/coyim/config"
 	. "gopkg.in/check.v1"
 )
 
@@ -62,9 +63,18 @@ func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfReadingDirF
 
 	os.Chmod(dir, 0000)
 
-	res := ifExistsDir([]string{"foo", "bar"}, dir)
+	defaultDirs := []string{"foo", "bar"}
+	res := ifExistsDir(defaultDirs, dir)
 
-	c.Assert(res, DeepEquals, []string{"foo", "bar"})
+	// Windows manage directory permissions in other way
+	// We should remove this when we find a way to make a directory in windows unaccessible
+	// The next is an article in which the file perms in Windows with Go
+	// are described: https://medium.com/@MichalPristas/go-and-file-perms-on-windows-3c944d55dd44
+	if config.IsWindows() {
+		defaultDirs = append(defaultDirs, filepath.Join(dir, "goodbye.conf"), filepath.Join(dir, "hello.conf"))
+	}
+
+	c.Assert(res, DeepEquals, defaultDirs)
 }
 
 func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueAndFilesInside(c *C) {

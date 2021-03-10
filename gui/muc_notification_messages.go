@@ -45,19 +45,14 @@ func getAffiliationChangedSuccessMessage(nickname string, affiliation data.Affil
 // previousRole - The previous role of the occupant
 // newRole - The new role of the occupant
 func getRoleUpdateSuccessMessage(nickname string, previousRole, newRole data.Role) string {
-	if newRole.IsDifferentFrom(previousRole) {
-		switch {
-		case newRole.IsNone():
-			return getRoleRemovedSuccessMessage(nickname, previousRole)
-		case previousRole.IsNone():
-			return getRoleAddedSuccessMessage(nickname, newRole)
-		default:
-			return getRoleChangedSuccessMessage(nickname, previousRole, newRole)
-		}
+	switch {
+	case newRole.IsNone():
+		return getRoleRemovedSuccessMessage(nickname, previousRole)
+	case previousRole.IsNone():
+		return getRoleAddedSuccessMessage(nickname, newRole)
+	default:
+		return getRoleChangedSuccessMessage(nickname, previousRole, newRole)
 	}
-
-	// This is impossible to happen but we need to cover all cases.
-	return i18n.Localf("The role of %[1]s wasn't changed.", nickname)
 }
 
 func getRoleRemovedSuccessMessage(nickname string, previousRole data.Role) string {

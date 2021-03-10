@@ -502,12 +502,6 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateSuccessMessage(c *C) {
 	visitor := newTestRoleFromString(data.RoleVisitor)
 	none := newTestRoleFromString(data.RoleNone)
 
-	// This doesn't make sense but we want to cover all possible cases
-	c.Assert(getRoleUpdateSuccessMessage("Mauricio", none, none), Equals, "The role of Mauricio wasn't changed.")
-	c.Assert(getRoleUpdateSuccessMessage("Mauricio", moderator, moderator), Equals, "The role of Mauricio wasn't changed.")
-	c.Assert(getRoleUpdateSuccessMessage("Mauricio", visitor, visitor), Equals, "The role of Mauricio wasn't changed.")
-	c.Assert(getRoleUpdateSuccessMessage("Mauricio", participant, participant), Equals, "The role of Mauricio wasn't changed.")
-
 	c.Assert(getRoleUpdateSuccessMessage("Maria", moderator, none), Equals, "Maria is not a moderator anymore.")
 	c.Assert(getRoleUpdateSuccessMessage("Carlos", participant, none), Equals, "Carlos is not a participant anymore.")
 	c.Assert(getRoleUpdateSuccessMessage("Mauricio", visitor, none), Equals, "Mauricio is not a visitor anymore.")
@@ -586,7 +580,7 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateFailureMessage(c *C) {
 
 	messages = getRoleUpdateFailureMessage("Juana", none)
 	c.Assert(messages.notificationMessage, Equals, "Juana couldn't be expelled.")
-	c.Assert(messages.errorDialogTitle, Equals, "Expelling process failed")
+	c.Assert(messages.errorDialogTitle, Equals, "Expelling failed")
 	c.Assert(messages.errorDialogHeader, Equals, "Juana couldn't be expelled")
 	c.Assert(messages.errorDialogMessage, Equals, "An error occurred expelling to Juana.")
 }
@@ -596,19 +590,19 @@ func (*MUCNotificationMessagesSuite) Test_getRoleRemoveFailureMessage(c *C) {
 
 	messages := getRoleRemoveFailureMessage("foo", newTestAffiliationFromString(data.AffiliationOwner), nil)
 	c.Assert(messages.notificationMessage, Equals, "foo couldn't be expelled.")
-	c.Assert(messages.errorDialogTitle, Equals, "Expelling process failed")
+	c.Assert(messages.errorDialogTitle, Equals, "Expelling failed")
 	c.Assert(messages.errorDialogHeader, Equals, "foo couldn't be expelled")
 	c.Assert(messages.errorDialogMessage, Equals, "An error occurred expelling to foo.")
 
 	messages = getRoleRemoveFailureMessage("nil", nil, session.ErrNotAllowedKickOccupant)
 	c.Assert(messages.notificationMessage, Equals, "nil couldn't be expelled.")
-	c.Assert(messages.errorDialogTitle, Equals, "Expelling process failed")
+	c.Assert(messages.errorDialogTitle, Equals, "Expelling failed")
 	c.Assert(messages.errorDialogHeader, Equals, "nil couldn't be expelled")
 	c.Assert(messages.errorDialogMessage, Equals, "You don't have permissions to expel nil.")
 
 	messages = getRoleRemoveFailureMessage("bla", newTestAffiliationFromString(data.AffiliationAdmin), session.ErrNotAllowedKickOccupant)
 	c.Assert(messages.notificationMessage, Equals, "bla couldn't be expelled.")
-	c.Assert(messages.errorDialogTitle, Equals, "Expelling process failed")
+	c.Assert(messages.errorDialogTitle, Equals, "Expelling failed")
 	c.Assert(messages.errorDialogHeader, Equals, "bla couldn't be expelled")
 	c.Assert(messages.errorDialogMessage, Equals, "As an administrator you don't have permissions to expel bla.")
 }

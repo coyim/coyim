@@ -552,16 +552,15 @@ func (s *AccountsSuite) Test_ApplicationConfig_removeOldFileOnNextSave_dontRemov
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_removeOldFileOnNextSave_doesntDoAnythingIfFileDoesntExist(c *C) {
-	tmpfile, _ := ioutil.TempFile("", "")
-	os.Remove(tmpfile.Name())
+	tmpFileName := generateTempFileName()
 
-	a := &ApplicationConfig{filename: tmpfile.Name()}
+	a := &ApplicationConfig{filename: tmpFileName}
 
 	a.removeOldFileOnNextSave()
 	a.filename = "somethingelse"
 	a.afterSave[0]()
 
-	c.Assert(fileExists(tmpfile.Name()), Equals, false)
+	c.Assert(fileExists(tmpFileName), Equals, false)
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsWhenReadingNonExistingFile(c *C) {

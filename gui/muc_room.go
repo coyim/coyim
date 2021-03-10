@@ -392,7 +392,7 @@ func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, newRole data.Role, rea
 		l.Info("The role has been changed")
 		v.onOccupantRoleUpdateSuccess(o.Nickname, previousRole, newRole)
 	case err := <-ec:
-		l.WithError(err).Error("An error occurred in the role update process")
+		l.WithError(err).Error("An error occurred while updating the occupant role")
 		v.onOccupantRoleUpdateError(o.Nickname, newRole)
 	}
 }

@@ -1,6 +1,8 @@
 package session
 
 import (
+	"time"
+
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -23,17 +25,19 @@ func (s *SessionObserverSuite) Test_observe_onDisconnected(c *C) {
 
 	sess.Subscribe(evc)
 
-	evs := []interface{}{}
+	evs := []interface{}{nil, nil, nil}
 	go func() {
-		for ev := range evc {
-			evs = append(evs, ev)
-		}
+		evs[0] = <-evc
+		evs[1] = <-evc
+		evs[2] = <-evc
 	}()
 
 	go func() {
 		observe(sess)
 		done <- true
 	}()
+
+	waitUntilHasSubscribers(sess, 2)
 
 	sess.publishEvent("hello")
 	<-evsDone
@@ -55,6 +59,20 @@ func (s *SessionObserverSuite) Test_observe_onDisconnected(c *C) {
 	c.Assert(evs[0:3], DeepEquals, []interface{}{"hello", events.Event{Type: events.Ping}, events.Event{Type: events.Disconnected}})
 }
 
+func waitUntilHasSubscribers(sess *session, num int) {
+	timeout := time.After(3 * time.Second)
+	for {
+		select {
+		case <-time.After(10 * time.Millisecond):
+			if sess.subscribers.subs != nil && len(sess.subscribers.subs) >= num {
+				return
+			}
+		case <-timeout:
+			return
+		}
+	}
+}
+
 func (s *SessionObserverSuite) Test_observe_onConnectionLost(c *C) {
 	done := make(chan bool)
 	evc := make(chan interface{})
@@ -67,17 +85,19 @@ func (s *SessionObserverSuite) Test_observe_onConnectionLost(c *C) {
 
 	sess.Subscribe(evc)
 
-	evs := []interface{}{}
+	evs := []interface{}{nil, nil, nil}
 	go func() {
-		for ev := range evc {
-			evs = append(evs, ev)
-		}
+		evs[0] = <-evc
+		evs[1] = <-evc
+		evs[2] = <-evc
 	}()
 
 	go func() {
 		observe(sess)
 		done <- true
 	}()
+
+	waitUntilHasSubscribers(sess, 2)
 
 	sess.publishEvent("hello")
 	<-evsDone

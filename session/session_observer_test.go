@@ -1,6 +1,8 @@
 package session
 
 import (
+	"fmt"
+	"reflect"
 	"time"
 
 	"github.com/coyim/coyim/roster"
@@ -25,11 +27,16 @@ func (s *SessionObserverSuite) Test_observe_onDisconnected(c *C) {
 
 	sess.Subscribe(evc)
 
-	evs := []interface{}{nil, nil, nil}
+	evs := []interface{}{nil, nil, nil, nil}
 	go func() {
 		evs[0] = <-evc
 		evs[1] = <-evc
 		evs[2] = <-evc
+		evs[3] = <-evc
+		for _, sub := range sess.subscribers.subs {
+			close(sub)
+		}
+		sess.subscribers.subs = sess.subscribers.subs[0:0]
 	}()
 
 	go func() {
@@ -50,13 +57,14 @@ func (s *SessionObserverSuite) Test_observe_onDisconnected(c *C) {
 
 	sess.publish(events.Disconnected)
 	<-evsDone
-	close(sess.subscribers.subs[0])
-	close(sess.subscribers.subs[1])
 
 	<-done
 
 	c.Assert(sess.r.ToSlice(), HasLen, 0)
-	c.Assert(evs[0:3], DeepEquals, []interface{}{"hello", events.Event{Type: events.Ping}, events.Event{Type: events.Disconnected}})
+	c.Assert(listContains(evs, "hello"), Equals, true)
+	c.Assert(listContains(evs, events.Event{Type: events.Ping}), Equals, true)
+	c.Assert(listContains(evs, events.Event{Type: events.Disconnected}), Equals, true)
+	c.Assert(listContains(evs, events.Event{Type: events.RosterReceived}), Equals, true)
 }
 
 func waitUntilHasSubscribers(sess *session, num int) {
@@ -68,6 +76,7 @@ func waitUntilHasSubscribers(sess *session, num int) {
 				return
 			}
 		case <-timeout:
+			fmt.Printf("reached timeout waiting for subscribers\n")
 			return
 		}
 	}
@@ -85,11 +94,16 @@ func (s *SessionObserverSuite) Test_observe_onConnectionLost(c *C) {
 
 	sess.Subscribe(evc)
 
-	evs := []interface{}{nil, nil, nil}
+	evs := []interface{}{nil, nil, nil, nil}
 	go func() {
 		evs[0] = <-evc
 		evs[1] = <-evc
 		evs[2] = <-evc
+		evs[3] = <-evc
+		for _, sub := range sess.subscribers.subs {
+			close(sub)
+		}
+		sess.subscribers.subs = sess.subscribers.subs[0:0]
 	}()
 
 	go func() {
@@ -110,11 +124,22 @@ func (s *SessionObserverSuite) Test_observe_onConnectionLost(c *C) {
 
 	sess.publish(events.ConnectionLost)
 	<-evsDone
-	close(sess.subscribers.subs[0])
-	close(sess.subscribers.subs[1])
 
 	<-done
 
 	c.Assert(sess.r.ToSlice(), HasLen, 0)
-	c.Assert(evs[0:3], DeepEquals, []interface{}{"hello", events.Event{Type: events.Ping}, events.Event{Type: events.ConnectionLost}})
+
+	c.Assert(listContains(evs, "hello"), Equals, true)
+	c.Assert(listContains(evs, events.Event{Type: events.Ping}), Equals, true)
+	c.Assert(listContains(evs, events.Event{Type: events.ConnectionLost}), Equals, true)
+	c.Assert(listContains(evs, events.Event{Type: events.RosterReceived}), Equals, true)
+}
+
+func listContains(ll []interface{}, val interface{}) bool {
+	for _, v := range ll {
+		if reflect.DeepEqual(v, val) {
+			return true
+		}
+	}
+	return false
 }

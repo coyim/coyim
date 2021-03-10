@@ -263,16 +263,15 @@ func (s *AccountsSuite) Test_ApplicationConfig_onAfterSave(c *C) {
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithoutEncryption(c *C) {
-	tmpfile, _ := ioutil.TempFile("", "")
-	os.Remove(tmpfile.Name())
+	tmpfileName := generateTempFileName()
 
 	a := &ApplicationConfig{
 		shouldEncrypt: false,
-		filename:      tmpfile.Name(),
+		filename:      tmpfileName,
 	}
 
 	e := a.Save(nil)
-	defer os.Remove(tmpfile.Name())
+	defer os.Remove(tmpfileName)
 
 	c.Assert(e, IsNil)
 
@@ -736,4 +735,13 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsIfWrongPasswordIsSup
 
 	e := a.tryLoad(ks)
 	c.Assert(e, Equals, errDecryptionFailed)
+}
+
+func generateTempFileName() string {
+	tmpfile, _ := ioutil.TempFile("", "")
+	tmpfileName := tmpfile.Name()
+	tmpfile.Close()
+	os.Remove(tmpfileName)
+
+	return tmpfileName
 }

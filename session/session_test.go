@@ -1,6 +1,7 @@
 package session
 
 import (
+	"bytes"
 	"encoding/xml"
 	"errors"
 	"time"
@@ -1175,4 +1176,28 @@ func (s *SessionSuite) Test_logsError_whenWeAbortSMPWithoutAConversation(c *C) {
 	c.Assert(len(hook.Entries), Equals, 1)
 	c.Assert(hook.LastEntry().Level, Equals, log.ErrorLevel)
 	c.Assert(hook.LastEntry().Message, Equals, "tried to abort SMP when a conversation does not exist")
+}
+
+func (s *SessionSuite) Test_session_GetInMemoryLog_works(c *C) {
+	b := &bytes.Buffer{}
+
+	sess := &session{
+		inMemoryLog: b,
+	}
+
+	c.Assert(sess.GetInMemoryLog(), Equals, b)
+}
+
+func (s *SessionSuite) Test_parseFromConfig_works(c *C) {
+	data := alicePrivateKey.Serialize()
+	acc := &config.Account{
+		PrivateKeys: [][]byte{
+			data,
+			[]byte{0x99, 0x99, 0x99},
+		},
+	}
+
+	res := parseFromConfig(acc)
+	c.Assert(res, HasLen, 1)
+	c.Assert(res[0], DeepEquals, alicePrivateKey)
 }

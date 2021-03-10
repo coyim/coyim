@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	. "gopkg.in/check.v1"
 )
@@ -13,6 +14,10 @@ import (
 type FileSuite struct{}
 
 var _ = Suite(&FileSuite{})
+
+func isNotWindows() bool {
+	return runtime.GOOS != "windows"
+}
 
 func (s *FileSuite) Test_ensureDir_createsUnknownDirectories(c *C) {
 	dir, _ := ioutil.TempDir("", "")
@@ -25,12 +30,16 @@ func (s *FileSuite) Test_ensureDir_createsUnknownDirectories(c *C) {
 	st, e := os.Stat(filepath.Join(dir, "foo"))
 	c.Assert(e, IsNil)
 	c.Assert(st.IsDir(), Equals, true)
-	c.Assert(int(st.Mode().Perm()), Equals, int(0755))
+	if isNotWindows() {
+		c.Assert(int(st.Mode().Perm()), Equals, int(0755))
+	}
 
 	st, e = os.Stat(filepath.Join(dir, "foo", "bar"))
 	c.Assert(e, IsNil)
 	c.Assert(st.IsDir(), Equals, true)
-	c.Assert(int(st.Mode().Perm()), Equals, int(0755))
+	if isNotWindows() {
+		c.Assert(int(st.Mode().Perm()), Equals, int(0755))
+	}
 }
 
 func (s *FileSuite) Test_findConfigFile_returnsBasicPathIfNoFileFound(c *C) {

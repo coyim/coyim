@@ -181,5 +181,5 @@ func (s *FileSuite) Test_safeWrite_failsIfImpossibleToWriteFile(c *C) {
 
 	ioutil.WriteFile(filepath.Join(dir, "accounts.json.000~"), []byte("previous content"), 0444)
 	e := safeWrite(filepath.Join(dir, "accounts.json"), []byte("12345678910111213"), 0700)
-	c.Assert(e, ErrorMatches, ".*permission denied.*")
+	c.Assert(e, ErrorMatches, ".*denied.*")
 }

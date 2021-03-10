@@ -48,9 +48,11 @@ func (s *UtilsSuite) Test_FindFile_returnsTheFirstFileFound(c *C) {
 
 func (s *UtilsSuite) Test_FindFile_returnsTheSecondFileIfTheFirstDoesntExist(c *C) {
 	tmpfile1, _ := ioutil.TempFile("", "")
+	tmpfile1.Close()
 	os.Remove(tmpfile1.Name())
 
 	tmpfile2, _ := ioutil.TempFile("", "")
+	tmpfile1.Close()
 	defer os.Remove(tmpfile2.Name())
 
 	res, ok := FindFile([]string{tmpfile1.Name(), tmpfile2.Name()})

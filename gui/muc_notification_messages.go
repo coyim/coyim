@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"fmt"
+
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/session/muc/data"
@@ -193,7 +195,7 @@ func getMUCNotificationMessageFrom(d interface{}) string {
 	case data.AffiliationRoleUpdate:
 		return getAffiliationRoleUpdateMessage(t)
 	}
-	panic("unkown update type")
+	panic(fmt.Sprintf("unkown update type: %T", d))
 }
 
 func getAffiliationUpdateMessage(affiliationUpdate data.AffiliationUpdate) string {

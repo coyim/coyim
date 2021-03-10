@@ -202,7 +202,7 @@ func getMUCNotificationMessageFrom(d interface{}) string {
 	case data.AffiliationRoleUpdate:
 		return getAffiliationRoleUpdateMessage(t)
 	default:
-		return "UNKNOW UPDATE TYPE"
+		panic("unkown update type")
 	}
 }
 

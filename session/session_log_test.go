@@ -36,7 +36,7 @@ func (s *SessionLogSuite) Test_openLogFile_failsIfCantOpenFile(c *C) {
 	c.Assert(len(hook.Entries), Equals, 2)
 	c.Assert(hook.LastEntry().Level, Equals, log.WarnLevel)
 	c.Assert(hook.LastEntry().Message, Equals, "Failed to open log file.")
-	c.Assert(hook.LastEntry().Data["error"], ErrorMatches, ".*not a directory")
+	c.Assert(hook.LastEntry().Data["error"], ErrorMatches, ".*(cannot find the path|not a directory).*")
 }
 
 func (s *SessionLogSuite) Test_openLogFile_succeeds(c *C) {

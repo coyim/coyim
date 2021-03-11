@@ -32,31 +32,31 @@ func newTestOccupant(affiliation data.Affiliation, role data.Role) *Occupant {
 func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleModeratorAffiliationNone_CanKickAnOccupant(c *C) {
 	testCases := []canKickOccupantTest{
 		// Occupant: ModeratorRole
-		{occupantAffiliation: &data.NoneAffiliation{}, occupantRole: &data.ModeratorRole{}, expected: false},
-		{occupantAffiliation: &data.MemberAffiliation{}, occupantRole: &data.ModeratorRole{}, expected: false},
-		{occupantAffiliation: &data.AdminAffiliation{}, occupantRole: &data.ModeratorRole{}, expected: false},
-		{occupantAffiliation: &data.OwnerAffiliation{}, occupantRole: &data.ModeratorRole{}, expected: false},
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
 
 		// Occupant: ParticipantRole
-		{occupantAffiliation: &data.NoneAffiliation{}, occupantRole: &data.ParticipantRole{}, expected: false},
-		{occupantAffiliation: &data.MemberAffiliation{}, occupantRole: &data.ParticipantRole{}, expected: false},
-		{occupantAffiliation: &data.AdminAffiliation{}, occupantRole: &data.ParticipantRole{}, expected: false},
-		{occupantAffiliation: &data.OwnerAffiliation{}, occupantRole: &data.ParticipantRole{}, expected: false},
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.AdminAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ParticipantRole{}, false},
 
 		// Occupant: VisitorRole
-		{occupantAffiliation: &data.NoneAffiliation{}, occupantRole: &data.VisitorRole{}, expected: false},
-		{occupantAffiliation: &data.MemberAffiliation{}, occupantRole: &data.VisitorRole{}, expected: false},
-		{occupantAffiliation: &data.AdminAffiliation{}, occupantRole: &data.VisitorRole{}, expected: false},
-		{occupantAffiliation: &data.OwnerAffiliation{}, occupantRole: &data.VisitorRole{}, expected: false},
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, false},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
+		{&data.AdminAffiliation{}, &data.VisitorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.VisitorRole{}, false},
 
 		// Occupant: NoneRole
-		{occupantAffiliation: &data.NoneAffiliation{}, occupantRole: &data.NoneRole{}, expected: false},
-		{occupantAffiliation: &data.MemberAffiliation{}, occupantRole: &data.NoneRole{}, expected: false},
-		{occupantAffiliation: &data.AdminAffiliation{}, occupantRole: &data.NoneRole{}, expected: false},
-		{occupantAffiliation: &data.OwnerAffiliation{}, occupantRole: &data.NoneRole{}, expected: false},
+		{&data.NoneAffiliation{}, &data.NoneRole{}, false},
+		{&data.MemberAffiliation{}, &data.NoneRole{}, false},
+		{&data.AdminAffiliation{}, &data.NoneRole{}, false},
+		{&data.OwnerAffiliation{}, &data.NoneRole{}, false},
 	}
 
-	// Actor: ModeratorAffiliation - NoneRole
+	// Actor: NoneAffiliation - ModeratorRole
 	actor := newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{})
 	for _, scenario := range testCases {
 		c.Assert(actor.CanKickOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole)), Equals, scenario.expected)
@@ -64,551 +64,309 @@ func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleModeratorAffiliationN
 }
 
 func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleModeratorAffiliationMember_CanKickAnOccupant(c *C) {
-	actor := &Occupant{}
-	actor.ChangeRoleToModerator()
-	actor.ChangeAffiliationToMember()
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
 
-	oc := &Occupant{}
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, true},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.AdminAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ParticipantRole{}, false},
 
-	// Testing role moderator
-	oc.ChangeRoleToModerator()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, true},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
+		{&data.AdminAffiliation{}, &data.VisitorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.VisitorRole{}, false},
+	}
 
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role participant
-	oc.ChangeRoleToParticipant()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, true)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role visitor
-	oc.ChangeRoleToVisitor()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, true)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+	// Actor: MemberAffiliation - ModeratorRole
+	actor := newTestOccupant(&data.MemberAffiliation{}, &data.ModeratorRole{})
+	for _, scenario := range testCases {
+		c.Assert(actor.CanKickOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole)), Equals, scenario.expected)
+	}
 }
 
 func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleModeratorAffiliationAdmin_CanKickAnOccupant(c *C) {
-	actor := &Occupant{}
-	actor.ChangeRoleToModerator()
-	actor.ChangeAffiliationToAdmin()
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
 
-	oc := &Occupant{}
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, true},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, true},
+		{&data.AdminAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ParticipantRole{}, false},
 
-	// Testing role moderator
-	oc.ChangeRoleToModerator()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, true},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, true},
+		{&data.AdminAffiliation{}, &data.VisitorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.VisitorRole{}, false},
+	}
 
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role participant
-	oc.ChangeRoleToParticipant()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, true)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, true)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role visitor
-	oc.ChangeRoleToVisitor()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, true)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, true)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+	// Actor: AdminAffiliation - ModeratorRole
+	actor := newTestOccupant(&data.AdminAffiliation{}, &data.ModeratorRole{})
+	for _, scenario := range testCases {
+		c.Assert(actor.CanKickOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole)), Equals, scenario.expected)
+	}
 }
 
 func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleModeratorAffiliationOwner_CanKickAnOccupant(c *C) {
-	actor := &Occupant{}
-	actor.ChangeRoleToModerator()
-	actor.ChangeAffiliationToOwner()
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
 
-	oc := &Occupant{}
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, true},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, true},
+		{&data.AdminAffiliation{}, &data.ParticipantRole{}, true},
+		{&data.OwnerAffiliation{}, &data.ParticipantRole{}, false},
 
-	// Testing role moderator
-	oc.ChangeRoleToModerator()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, true},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, true},
+		{&data.AdminAffiliation{}, &data.VisitorRole{}, true},
+		{&data.OwnerAffiliation{}, &data.VisitorRole{}, false},
+	}
 
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role participant
-	oc.ChangeRoleToParticipant()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, true)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, true)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, true)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role visitor
-	oc.ChangeRoleToVisitor()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, true)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, true)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, true)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+	// Actor: OwnerAffiliation - ModeratorRole
+	actor := newTestOccupant(&data.OwnerAffiliation{}, &data.ModeratorRole{})
+	for _, scenario := range testCases {
+		c.Assert(actor.CanKickOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole)), Equals, scenario.expected)
+	}
 }
 
 func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleParticipantAffiliationNone_CanKickAnOccupant(c *C) {
-	actor := &Occupant{}
-	actor.ChangeRoleToParticipant()
-	actor.ChangeAffiliationToNone()
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
 
-	oc := &Occupant{}
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.AdminAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ParticipantRole{}, false},
 
-	// Testing role moderator
-	oc.ChangeRoleToModerator()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, false},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
+		{&data.AdminAffiliation{}, &data.VisitorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.VisitorRole{}, false},
+	}
 
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role participant
-	oc.ChangeRoleToParticipant()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role visitor
-	oc.ChangeRoleToVisitor()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+	// Actor: NoneAffiliation - ParticipantRole
+	actor := newTestOccupant(&data.NoneAffiliation{}, &data.ParticipantRole{})
+	for _, scenario := range testCases {
+		c.Assert(actor.CanKickOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole)), Equals, scenario.expected)
+	}
 }
 
 func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleParticipantAffiliationMember_CanKickAnOccupant(c *C) {
-	actor := &Occupant{}
-	actor.ChangeRoleToParticipant()
-	actor.ChangeAffiliationToMember()
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
 
-	oc := &Occupant{}
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.AdminAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ParticipantRole{}, false},
 
-	// Testing role moderator
-	oc.ChangeRoleToModerator()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, false},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
+		{&data.AdminAffiliation{}, &data.VisitorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.VisitorRole{}, false},
+	}
 
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role participant
-	oc.ChangeRoleToParticipant()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role visitor
-	oc.ChangeRoleToVisitor()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+	// Actor: MemberAffiliation - ParticipantRole
+	actor := newTestOccupant(&data.MemberAffiliation{}, &data.ParticipantRole{})
+	for _, scenario := range testCases {
+		c.Assert(actor.CanKickOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole)), Equals, scenario.expected)
+	}
 }
 
 func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleParticipantAffiliationAdmin_CanKickAnOccupant(c *C) {
-	actor := &Occupant{}
-	actor.ChangeRoleToParticipant()
-	actor.ChangeAffiliationToAdmin()
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
 
-	oc := &Occupant{}
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.AdminAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ParticipantRole{}, false},
 
-	// Testing role moderator
-	oc.ChangeRoleToModerator()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, false},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
+		{&data.AdminAffiliation{}, &data.VisitorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.VisitorRole{}, false},
+	}
 
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role participant
-	oc.ChangeRoleToParticipant()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role visitor
-	oc.ChangeRoleToVisitor()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+	// Actor: AdminAffiliation - ParticipantRole
+	actor := newTestOccupant(&data.AdminAffiliation{}, &data.ParticipantRole{})
+	for _, scenario := range testCases {
+		c.Assert(actor.CanKickOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole)), Equals, scenario.expected)
+	}
 }
 
 func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleParticipantAffiliationOwner_CanKickAnOccupant(c *C) {
-	actor := &Occupant{}
-	actor.ChangeRoleToParticipant()
-	actor.ChangeAffiliationToOwner()
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
 
-	oc := &Occupant{}
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.AdminAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ParticipantRole{}, false},
 
-	// Testing role moderator
-	oc.ChangeRoleToModerator()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, false},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
+		{&data.AdminAffiliation{}, &data.VisitorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.VisitorRole{}, false},
+	}
 
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role participant
-	oc.ChangeRoleToParticipant()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role visitor
-	oc.ChangeRoleToVisitor()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+	// Actor: OwnerAffiliation - ParticipantRole
+	actor := newTestOccupant(&data.OwnerAffiliation{}, &data.ParticipantRole{})
+	for _, scenario := range testCases {
+		c.Assert(actor.CanKickOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole)), Equals, scenario.expected)
+	}
 }
 
 func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleVisitorAffiliationNone_CanKickAnOccupant(c *C) {
-	actor := &Occupant{}
-	actor.ChangeRoleToVisitor()
-	actor.ChangeAffiliationToNone()
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
 
-	oc := &Occupant{}
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.AdminAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ParticipantRole{}, false},
 
-	// Testing role moderator
-	oc.ChangeRoleToModerator()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, false},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
+		{&data.AdminAffiliation{}, &data.VisitorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.VisitorRole{}, false},
+	}
 
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role participant
-	oc.ChangeRoleToParticipant()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role visitor
-	oc.ChangeRoleToVisitor()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+	// Actor: NoneAffiliation - VisitorRole
+	actor := newTestOccupant(&data.NoneAffiliation{}, &data.VisitorRole{})
+	for _, scenario := range testCases {
+		c.Assert(actor.CanKickOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole)), Equals, scenario.expected)
+	}
 }
 
 func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleVisitorAffiliationMember_CanKickAnOccupant(c *C) {
-	actor := &Occupant{}
-	actor.ChangeRoleToVisitor()
-	actor.ChangeAffiliationToMember()
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
 
-	oc := &Occupant{}
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.AdminAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ParticipantRole{}, false},
 
-	// Testing role moderator
-	oc.ChangeRoleToModerator()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, false},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
+		{&data.AdminAffiliation{}, &data.VisitorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.VisitorRole{}, false},
+	}
 
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role participant
-	oc.ChangeRoleToParticipant()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role visitor
-	oc.ChangeRoleToVisitor()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+	// Actor: MemberAffiliation - VisitorRole
+	actor := newTestOccupant(&data.MemberAffiliation{}, &data.VisitorRole{})
+	for _, scenario := range testCases {
+		c.Assert(actor.CanKickOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole)), Equals, scenario.expected)
+	}
 }
 
 func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleVisitorAffiliationAdmin_CanKickAnOccupant(c *C) {
-	actor := &Occupant{}
-	actor.ChangeRoleToVisitor()
-	actor.ChangeAffiliationToAdmin()
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
 
-	oc := &Occupant{}
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.AdminAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ParticipantRole{}, false},
 
-	// Testing role moderator
-	oc.ChangeRoleToModerator()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, false},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
+		{&data.AdminAffiliation{}, &data.VisitorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.VisitorRole{}, false},
+	}
 
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role participant
-	oc.ChangeRoleToParticipant()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role visitor
-	oc.ChangeRoleToVisitor()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+	// Actor: AdminAffiliation - VisitorRole
+	actor := newTestOccupant(&data.AdminAffiliation{}, &data.VisitorRole{})
+	for _, scenario := range testCases {
+		c.Assert(actor.CanKickOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole)), Equals, scenario.expected)
+	}
 }
 
 func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleVisitorAffiliationOwner_CanKickAnOccupant(c *C) {
-	actor := &Occupant{}
-	actor.ChangeRoleToVisitor()
-	actor.ChangeAffiliationToOwner()
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
 
-	oc := &Occupant{}
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.AdminAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ParticipantRole{}, false},
 
-	// Testing role moderator
-	oc.ChangeRoleToModerator()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, false},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
+		{&data.AdminAffiliation{}, &data.VisitorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.VisitorRole{}, false},
+	}
 
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role participant
-	oc.ChangeRoleToParticipant()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	// Testing role visitor
-	oc.ChangeRoleToVisitor()
-	oc.ChangeAffiliationToNone()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToMember()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToAdmin()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
-
-	oc.ChangeAffiliationToOwner()
-	c.Assert(actor.CanKickOccupant(oc), Equals, false)
+	// Actor: OwnerAffiliation - VisitorRole
+	actor := newTestOccupant(&data.OwnerAffiliation{}, &data.VisitorRole{})
+	for _, scenario := range testCases {
+		c.Assert(actor.CanKickOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole)), Equals, scenario.expected)
+	}
 }

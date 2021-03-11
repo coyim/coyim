@@ -29,10 +29,10 @@ const (
 
 func getActualDefsFolder() string {
 	wd, _ := os.Getwd()
-	if strings.HasSuffix(wd, "/gui") {
-		return "definitions"
+	if strings.HasSuffix(wd, "gui") {
+		return filepath.Join(wd, "definitions")
 	}
-	return "gui/definitions"
+	return filepath.Join(wd, "gui/definitions")
 }
 
 func getDefinitionWithFileFallback(uiName string) string {

@@ -1459,7 +1459,7 @@ func getSelfAffiliationAddedMessageWithOwnerActor(selfAffiliationUpdate data.Sel
 		return i18n.Localf("The owner %s changed your position; you are now an administrator.",
 			selfAffiliationUpdate.Actor.Nickname)
 	case selfAffiliationUpdate.New.IsMember():
-		return i18n.Localf("The owner %s changed your position; you are now an member.",
+		return i18n.Localf("The owner %s changed your position; you are now a member.",
 			selfAffiliationUpdate.Actor.Nickname)
 	}
 	return i18n.Localf("The owner %s changed your position; you are now banned.",
@@ -1475,7 +1475,7 @@ func getSelfAffiliationAddedMessageWithAdminActor(selfAffiliationUpdate data.Sel
 		return i18n.Localf("The administrator %s changed your position; you are now an administrator.",
 			selfAffiliationUpdate.Actor.Nickname)
 	case selfAffiliationUpdate.New.IsMember():
-		return i18n.Localf("The administrator %s changed your position; you are now an member.",
+		return i18n.Localf("The administrator %s changed your position; you are now a member.",
 			selfAffiliationUpdate.Actor.Nickname)
 	}
 	return i18n.Localf("The administrator %s changed your position; you are now banned.",

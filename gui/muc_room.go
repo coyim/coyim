@@ -443,7 +443,7 @@ func (v *roomView) tryKickOccupant(occupant *muc.Occupant, reason string) {
 func (v *roomView) onKickOccupantSuccess(occupantNickname string) {
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
-		v.notifications.info(i18n.Localf("%s was temporarily removed from the room", occupantNickname))
+		v.notifications.info(i18n.Localf("%s was temporarily removed from the room.", occupantNickname))
 		v.roster.hideRosterInfoPanel()
 	})
 }

@@ -101,7 +101,7 @@ type updateFailureMessages struct {
 
 func getAffiliationUpdateFailureMessage(nickname string, newAffiliation data.Affiliation, err error) *updateFailureMessages {
 	return &updateFailureMessages{
-		notificationMessage: i18n.Localf("The position of %s couldn't be changed", nickname),
+		notificationMessage: i18n.Localf("The position of %s couldn't be changed.", nickname),
 		errorDialogTitle:    i18n.Local("Changing the position failed"),
 		errorDialogHeader:   i18n.Localf("The position of %s couldn't be changed", nickname),
 		errorDialogMessage:  getAffiliationFailureErrorMessage(nickname, newAffiliation, err),
@@ -133,7 +133,7 @@ func getRoleUpdateFailureMessage(nickname string, newRole data.Role) *updateFail
 	}
 
 	return &updateFailureMessages{
-		notificationMessage: i18n.Localf("The role of %s couldn't be changed", nickname),
+		notificationMessage: i18n.Localf("The role of %s couldn't be changed.", nickname),
 		errorDialogTitle:    i18n.Local("Changing the role failed"),
 		errorDialogHeader:   i18n.Localf("The role of %s couldn't be changed", nickname),
 		errorDialogMessage:  getUpdateRoleFailureErrorMessage(nickname, newRole),
@@ -195,7 +195,7 @@ func getMUCNotificationMessageFrom(d interface{}) string {
 	case data.AffiliationRoleUpdate:
 		return getAffiliationRoleUpdateMessage(t)
 	}
-	panic(fmt.Sprintf("unkown update type: %T", d))
+	panic(fmt.Sprintf("unkown update type: %v", d))
 }
 
 func getAffiliationUpdateMessage(affiliationUpdate data.AffiliationUpdate) string {

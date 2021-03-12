@@ -19,9 +19,7 @@ import (
 const gajimOtrDataKeyExtension = ".key3"
 const gajimOtrDataFingerprintsExtension = ".fpr"
 
-type gajimImporter struct {
-	configAndDataDirs func() (configRoot, dataRoot string)
-}
+type gajimImporter struct{}
 
 func getFilesMatching(dir, ext string) []string {
 	var files []string
@@ -36,15 +34,8 @@ func getFilesMatching(dir, ext string) []string {
 	return files
 }
 
-func (g *gajimImporter) findConfigAndDataDirs() (configRoot, dataRoot string) {
-	if g.configAndDataDirs != nil {
-		return g.configAndDataDirs()
-	}
-	return gajimGetConfigAndDataDirs()
-}
-
 func (g *gajimImporter) findFiles() (configFile string, pluginFile string, keyFiles []string, fingerprintFiles []string) {
-	configRoot, dataRoot := g.findConfigAndDataDirs()
+	configRoot, dataRoot := gajimGetConfigAndDataDirs()
 
 	configFile = filepath.Join(configRoot, "config")
 	pluginFile = filepath.Join(configRoot, "pluginsconfig/gotr")

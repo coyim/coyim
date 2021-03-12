@@ -33,8 +33,6 @@ func (m *mucManager) handleOccupantUpdate(roomID jid.Bare, op *muc.OccupantPrese
 	occupantUpdateInfo := m.newOccupantPresenceUpdateData(room, op)
 
 	updated := room.Roster().UpdateOrAddOccupant(op)
-	// Added IsSelfOccupantInTheRoom validation to avoid publishing the events of
-	// other occupants until receive the selfPresence.
 	// This validation is temporally while 'state machine' pattern is implemented.
 	if room.IsSelfOccupantInTheRoom() {
 		if updated {

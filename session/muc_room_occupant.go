@@ -33,7 +33,7 @@ func (m *mucManager) handleOccupantUpdate(roomID jid.Bare, op *muc.OccupantPrese
 	occupantUpdateInfo := m.newOccupantPresenceUpdateData(room, op)
 
 	updated := room.Roster().UpdateOrAddOccupant(op)
-	// This validation is temporally while 'state machine' pattern is implemented.
+	// This validation is temporarily while 'state machine' pattern is implemented.
 	if room.IsSelfOccupantInTheRoom() {
 		if updated {
 			m.handleOccupantAffiliationRoleUpdate(occupantUpdateInfo)

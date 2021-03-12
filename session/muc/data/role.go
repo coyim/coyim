@@ -2,11 +2,10 @@ package data
 
 import "fmt"
 
-// RoleNumberType represents an identifier for each role
-type RoleNumberType int
+type roleNumberType int
 
 const (
-	roleTypeNone RoleNumberType = iota
+	roleTypeNone roleNumberType = iota
 	roleTypeVisitor
 	roleTypeParticipant
 	roleTypeModerator
@@ -53,7 +52,7 @@ type Role interface {
 	// IsDifferentFrom returns true if the caller role is different from the role passed as argument
 	IsDifferentFrom(Role) bool
 	// RoleTypeAsNumber returns an int value indicating the role number through a RoleNumberType
-	RoleTypeAsNumber() RoleNumberType
+	RoleTypeAsNumber() int
 }
 
 // NoneRole is a representation of MUC's "none" role
@@ -185,16 +184,16 @@ func (*ModeratorRole) IsDifferentFrom(r Role) bool {
 }
 
 // RoleTypeAsNumber implements Role interface
-func (*NoneRole) RoleTypeAsNumber() RoleNumberType { return roleTypeNone }
+func (*NoneRole) RoleTypeAsNumber() int { return int(roleTypeNone) }
 
 // RoleTypeAsNumber implements Role interface
-func (*VisitorRole) RoleTypeAsNumber() RoleNumberType { return roleTypeVisitor }
+func (*VisitorRole) RoleTypeAsNumber() int { return int(roleTypeVisitor) }
 
 // RoleTypeAsNumber implements Role interface
-func (*ParticipantRole) RoleTypeAsNumber() RoleNumberType { return roleTypeParticipant }
+func (*ParticipantRole) RoleTypeAsNumber() int { return int(roleTypeParticipant) }
 
 // RoleTypeAsNumber implements Role interface
-func (*ModeratorRole) RoleTypeAsNumber() RoleNumberType { return roleTypeModerator }
+func (*ModeratorRole) RoleTypeAsNumber() int { return int(roleTypeModerator) }
 
 // RoleFromString returns the role object that matches the string given, or an error if the string given doesn't match a known role
 func RoleFromString(s string) (Role, error) {

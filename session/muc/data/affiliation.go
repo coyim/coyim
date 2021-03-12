@@ -15,11 +15,10 @@ const (
 	AffiliationNone = "none"
 )
 
-// AffilitionNumberType represents an identifier for each affiliation
-type AffilitionNumberType int
+type affilitionNumberType int
 
 const (
-	affilitionTypeOutcast AffilitionNumberType = iota
+	affilitionTypeOutcast affilitionNumberType = iota
 	affilitionTypeNone
 	affilitionTypeMember
 	affilitionTypeAdmin
@@ -32,10 +31,6 @@ var affiliationLowerThan = [][]bool{
 	{false /*none*/, false /*outcast*/, false /*member*/, true /*admin*/, true /*owner*/},   // member
 	{false /*none*/, false /*outcast*/, false /*member*/, false /*admin*/, true /*owner*/},  // admin
 	{false /*none*/, false /*outcast*/, false /*member*/, false /*admin*/, false /*owner*/}, // owner
-}
-
-func (at AffilitionNumberType) isLowerThan(at1 AffilitionNumberType) bool {
-	return affiliationLowerThan[at][at1]
 }
 
 // AffiliationUpdate contains information related to a new and previous affiliation
@@ -70,8 +65,8 @@ type Affiliation interface {
 	IsLowerThan(Affiliation) bool
 	// IsDifferentFrom returns true if the caller affiliation is different from the affiliation passed as argument
 	IsDifferentFrom(Affiliation) bool
-	// AffiliationTypeAsNumber returns an int value indicating the affiliation number through a AffilitionNumberType
-	AffiliationTypeAsNumber() AffilitionNumberType
+	// affiliationTypeAsNumber returns an int value indicating the affiliation number through a AffilitionNumberType
+	AffiliationTypeAsNumber() int
 }
 
 // NoneAffiliation is a representation of MUC's "none" affiliation
@@ -260,28 +255,28 @@ func (a *OwnerAffiliation) IsDifferentFrom(a1 Affiliation) bool {
 }
 
 // AffiliationTypeAsNumber implements Affiliation interface
-func (*NoneAffiliation) AffiliationTypeAsNumber() AffilitionNumberType {
-	return affilitionTypeNone
+func (*NoneAffiliation) AffiliationTypeAsNumber() int {
+	return int(affilitionTypeNone)
 }
 
 // AffiliationTypeAsNumber implements Affiliation interface
-func (*OutcastAffiliation) AffiliationTypeAsNumber() AffilitionNumberType {
-	return affilitionTypeOutcast
+func (*OutcastAffiliation) AffiliationTypeAsNumber() int {
+	return int(affilitionTypeOutcast)
 }
 
 // AffiliationTypeAsNumber implements Affiliation interface
-func (*MemberAffiliation) AffiliationTypeAsNumber() AffilitionNumberType {
-	return affilitionTypeMember
+func (*MemberAffiliation) AffiliationTypeAsNumber() int {
+	return int(affilitionTypeMember)
 }
 
 // AffiliationTypeAsNumber implements Affiliation interface
-func (*AdminAffiliation) AffiliationTypeAsNumber() AffilitionNumberType {
-	return affilitionTypeAdmin
+func (*AdminAffiliation) AffiliationTypeAsNumber() int {
+	return int(affilitionTypeAdmin)
 }
 
 // AffiliationTypeAsNumber implements Affiliation interface
-func (*OwnerAffiliation) AffiliationTypeAsNumber() AffilitionNumberType {
-	return affilitionTypeOwner
+func (*OwnerAffiliation) AffiliationTypeAsNumber() int {
+	return int(affilitionTypeOwner)
 }
 
 // AffiliationFromString returns an Affiliation from the given string, or an error if the string doesn't match a known affiliation type
@@ -303,7 +298,7 @@ func AffiliationFromString(s string) (Affiliation, error) {
 }
 
 func isAffiliationLowerThan(a, a1 Affiliation) bool {
-	return a.AffiliationTypeAsNumber().isLowerThan(a1.AffiliationTypeAsNumber())
+	return affiliationLowerThan[a.AffiliationTypeAsNumber()][a1.AffiliationTypeAsNumber()]
 }
 
 func areDifferentAffiliations(a, a1 Affiliation) bool {

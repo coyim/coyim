@@ -4,6 +4,9 @@ import (
 	"bytes"
 	"encoding/xml"
 	"errors"
+	"fmt"
+	"io/ioutil"
+	"os"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -1200,4 +1203,317 @@ func (s *SessionSuite) Test_parseFromConfig_works(c *C) {
 	res := parseFromConfig(acc)
 	c.Assert(res, HasLen, 1)
 	c.Assert(res[0], DeepEquals, alicePrivateKey)
+}
+
+func (s *SessionSuite) Test_CreateXMPPLogger_works(c *C) {
+	orgDebug := *config.DebugFlag
+	defer func() {
+		*config.DebugFlag = orgDebug
+	}()
+	*config.DebugFlag = false
+
+	inm, l := CreateXMPPLogger("")
+	c.Assert(inm, IsNil)
+	c.Assert(l, IsNil)
+}
+
+func (s *SessionSuite) Test_CreateXMPPLogger_createsMultiWriterWhenDebugFlag(c *C) {
+	tf, _ := ioutil.TempFile("", "")
+	defer os.Remove(tf.Name())
+	_ = tf.Close()
+
+	orgDebug := *config.DebugFlag
+	defer func() {
+		*config.DebugFlag = orgDebug
+	}()
+	*config.DebugFlag = true
+
+	inm, l := CreateXMPPLogger(tf.Name())
+	c.Assert(inm, Not(IsNil))
+	c.Assert(l, Not(IsNil))
+	c.Assert(l, Not(FitsTypeOf), &bytes.Buffer{})
+}
+
+func (s *SessionSuite) Test_CreateXMPPLogger_usesInMemoryBufferWhenDebugFlag(c *C) {
+	orgDebug := *config.DebugFlag
+	defer func() {
+		*config.DebugFlag = orgDebug
+	}()
+	*config.DebugFlag = true
+
+	inm, l := CreateXMPPLogger("")
+	c.Assert(inm, Not(IsNil))
+	c.Assert(l, Not(IsNil))
+	c.Assert(l.(*bytes.Buffer), Equals, inm)
+}
+
+func (s *SessionSuite) Test_session_Send_returnsOfflineError(c *C) {
+	sess := &session{
+		connStatus: DISCONNECTED,
+	}
+
+	res := sess.Send(jid.Parse("hello@goodbye.com"), "something", false)
+	c.Assert(res, ErrorMatches, "Couldn't send message since we are not connected")
+}
+
+func (s *SessionSuite) Test_session_Send_sends(c *C) {
+	mockIn := &mockConnIOReaderWriter{}
+	conn := xmpp.NewConn(
+		xml.NewDecoder(mockIn),
+		mockIn,
+		"some@one.org/foo",
+	)
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log:        l,
+		conn:       conn,
+		connStatus: CONNECTED,
+	}
+
+	res := sess.Send(jid.Parse("hello@goodbye.com"), "something", false)
+	c.Assert(res, IsNil)
+	c.Assert(string(mockIn.write), Equals, "<message to='hello@goodbye.com' from='some@one.org/foo'"+
+		" type='chat'><body>something</body><nos:x xmlns:nos='google:nosave' value='enabled'/>"+
+		"<arc:record xmlns:arc='http://jabber.org/protocol/archive' otr='require'/>"+
+		"<no-copy xmlns='urn:xmpp:hints'/><no-permanent-store xmlns='urn:xmpp:hints'/><private xmlns='urn:xmpp:carbons:2'/></message>")
+
+	c.Assert(len(hook.Entries), Equals, 1)
+	c.Assert(hook.LastEntry().Level, Equals, log.DebugLevel)
+	c.Assert(hook.LastEntry().Message, Equals, "Send()")
+	c.Assert(hook.LastEntry().Data["to"], DeepEquals, jid.Parse("hello@goodbye.com"))
+	c.Assert(hook.LastEntry().Data["sentMsg"], Equals, "something")
+}
+
+func closeToNow(t time.Time) bool {
+	nw := time.Now()
+
+	return t.After(nw.Add(-1*time.Second)) && t.Before(nw)
+}
+
+func (s *SessionSuite) Test_retrieveMessageTime_returnsEmptyTimeIfNoDelayFound(c *C) {
+	c.Assert(closeToNow(retrieveMessageTime(&data.ClientMessage{})), Equals, true)
+	c.Assert(closeToNow(retrieveMessageTime(&data.ClientMessage{Delay: &data.Delay{}})), Equals, true)
+}
+
+func (s *SessionSuite) Test_retrieveMessageTime_returnsEmptyTimeIfCantParseTime(c *C) {
+	c.Assert(closeToNow(retrieveMessageTime(&data.ClientMessage{Delay: &data.Delay{Stamp: "qqqqqqqqqqqqqq"}})), Equals, true)
+}
+
+func (s *SessionSuite) Test_retrieveMessageTime_returnsTimestamp(c *C) {
+	expTime := time.Date(2012, 2, 3, 19, 11, 2, 0, time.UTC)
+	c.Assert(expTime.Equal(retrieveMessageTime(&data.ClientMessage{Delay: &data.Delay{Stamp: "2012-02-03T19:11:02Z"}})), Equals, true)
+}
+
+func (s *SessionSuite) Test_session_receivedClientMessage_processesExtensions(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+	}
+
+	cm := &data.ClientMessage{
+		Body: "",
+		Extensions: data.Extensions{
+			&data.Extension{
+				Body: "<un-unknown xmlns='urn:test:namespace'/>",
+			},
+		},
+	}
+
+	res := sess.receivedClientMessage(cm)
+
+	c.Assert(res, Equals, true)
+	c.Assert(hook.Entries, HasLen, 2)
+	c.Assert(hook.Entries[0].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "receivedClientMessage()")
+	c.Assert(hook.Entries[0].Data["stanza"], Not(Equals), "")
+	c.Assert(hook.Entries[1].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "Unknown extension")
+	c.Assert(fmt.Sprintf("%s", hook.Entries[1].Data["extension"]), Equals, "<un-unknown xmlns='urn:test:namespace'/>")
+}
+
+func (s *SessionSuite) Test_session_receivedClientMessage_works(c *C) {
+	mcm := &mockConvManager{}
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+	sess := &session{
+		log:         l,
+		connStatus:  CONNECTED,
+		convManager: mcm,
+		config:      &config.ApplicationConfig{},
+	}
+
+	mc := &mockConv{}
+
+	mc.receive = func(s3 []byte) ([]byte, error) {
+		return s3, nil
+	}
+
+	mc.isEncrypted = func() bool {
+		return false
+	}
+
+	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
+		return mc, false
+	}
+
+	observer := make(chan interface{}, 1000)
+	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
+
+	cm := &data.ClientMessage{
+		Body: "hello",
+		From: "some@example.org/foo",
+	}
+
+	res := sess.receivedClientMessage(cm)
+
+	c.Assert(res, Equals, true)
+	c.Assert(hook.Entries, HasLen, 1)
+}
+
+func (s *SessionSuite) Test_session_receivedClientMessage_processesEncryptionTag(c *C) {
+	mcm := &mockConvManager{}
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+	sess := &session{
+		log:         l,
+		connStatus:  CONNECTED,
+		convManager: mcm,
+		config:      &config.ApplicationConfig{},
+	}
+
+	mc := &mockConv{}
+
+	mc.receive = func(s3 []byte) ([]byte, error) {
+		return s3, nil
+	}
+
+	mc.isEncrypted = func() bool {
+		return false
+	}
+
+	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
+		return mc, false
+	}
+
+	observer := make(chan interface{}, 1000)
+	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
+
+	cm := &data.ClientMessage{
+		Body: "",
+		From: "some@example.org/foo",
+		Encryption: &data.Encryption{
+			Namespace: otrEncryptionNamespace,
+		},
+	}
+
+	res := sess.receivedClientMessage(cm)
+
+	c.Assert(res, Equals, true)
+	c.Assert(hook.Entries, HasLen, 2)
+}
+
+func (s *SessionSuite) Test_session_receivedClientMessage_handlesRegularErrorType(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+	}
+
+	cm := &data.ClientMessage{
+		Body: "",
+		Type: "error",
+		From: "helu@baba.gan/foo",
+		Error: &data.StanzaError{
+			Type: "cancel",
+			Text: "bla",
+		},
+	}
+
+	res := sess.receivedClientMessage(cm)
+
+	c.Assert(res, Equals, true)
+	c.Assert(hook.Entries, HasLen, 2)
+	c.Assert(hook.Entries[1].Level, Equals, log.ErrorLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "Error reported from peer")
+	c.Assert(hook.Entries[1].Data["error"], FitsTypeOf, &data.StanzaError{})
+	c.Assert(fmt.Sprintf("%s", hook.Entries[1].Data["peer"]), Equals, "helu@baba.gan")
+}
+
+func (s *SessionSuite) Test_session_receivedClientMessage_handlesMUCError(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+	}
+
+	published := []interface{}{}
+
+	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev interface{}) {
+		published = append(published, ev)
+	})
+
+	cm := &data.ClientMessage{
+		Body: "",
+		Type: "error",
+		From: "helu@baba.gan/foo",
+		Error: &data.StanzaError{
+			Type:             "cancel",
+			Text:             "bla",
+			MUCNotAcceptable: &data.MUCNotAcceptable{},
+		},
+	}
+
+	res := sess.receivedClientMessage(cm)
+
+	c.Assert(res, Equals, true)
+	c.Assert(hook.Entries, HasLen, 1)
+
+	c.Assert(published, DeepEquals, []interface{}{
+		events.MUCError{
+			ErrorType: events.MUCMessageNotAcceptable,
+			Room:      jid.ParseBare("helu@baba.gan"),
+		},
+	})
+}
+
+func (s *SessionSuite) Test_session_receivedClientMessage_handlesGroupChat(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+	}
+
+	published := []interface{}{}
+
+	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev interface{}) {
+		published = append(published, ev)
+	})
+
+	cm := &data.ClientMessage{
+		Body: "",
+		Type: "groupchat",
+		From: "helu@baba.gan/foo",
+	}
+
+	res := sess.receivedClientMessage(cm)
+
+	c.Assert(res, Equals, true)
+	c.Assert(hook.Entries, HasLen, 2)
+	c.Assert(hook.Entries[1].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "handleMUCReceivedClientMessage()")
+	c.Assert(hook.Entries[1].Data["stanza"], Not(IsNil))
+
+	c.Assert(published, HasLen, 0)
 }

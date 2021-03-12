@@ -1,12 +1,14 @@
 package importer
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"sort"
 
-	"github.com/coyim/coyim/config"
 	. "gopkg.in/check.v1"
 )
 
@@ -53,26 +55,46 @@ func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfDoesntExist
 	c.Assert(res, DeepEquals, []string{"foo", "bar"})
 }
 
+func windowsIcaclsExec(dir, action, permissions string, done chan bool) {
+	c := exec.Command("icacls", dir, action, permissions)
+	c.Run()
+	done <- true
+}
+
+func grantWindowsUserDirPermissions(dir string, done chan bool) {
+	windowsIcaclsExec(dir, "/grant", fmt.Sprintf("%s:(RX,W)", os.Getenv("username")), done)
+}
+
+func denyWindowsUserDirPermissions(dir string, done chan bool) {
+	windowsIcaclsExec(dir, "/deny", fmt.Sprintf("%s:(RX,W)", os.Getenv("username")), done)
+}
+
 func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfReadingDirFails(c *C) {
 	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	defer func() {
+		if runtime.GOOS == "windows" {
+			done := make(chan bool)
+			go grantWindowsUserDirPermissions(dir, done)
+			<-done
+		}
+		os.RemoveAll(dir)
+	}()
 
 	os.Mkdir(filepath.Join(dir, "foo"), 0755)
 	os.Create(filepath.Join(dir, "hello.conf"))
 	os.Create(filepath.Join(dir, "goodbye.conf"))
 
-	os.Chmod(dir, 0000)
+	switch runtime.GOOS {
+	case "windows":
+		done := make(chan bool)
+		go denyWindowsUserDirPermissions(dir, done)
+		<-done
+	default:
+		os.Chmod(dir, 0000)
+	}
 
 	defaultDirs := []string{"foo", "bar"}
 	res := ifExistsDir(defaultDirs, dir)
-
-	// Windows manage directory permissions in other way
-	// We should remove this when we find a way to make a directory in windows unaccessible
-	// The next is an article in which the file perms in Windows with Go
-	// are described: https://medium.com/@MichalPristas/go-and-file-perms-on-windows-3c944d55dd44
-	if config.IsWindows() {
-		defaultDirs = append(defaultDirs, filepath.Join(dir, "goodbye.conf"), filepath.Join(dir, "hello.conf"))
-	}
 
 	c.Assert(res, DeepEquals, defaultDirs)
 }

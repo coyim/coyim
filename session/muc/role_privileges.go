@@ -1,5 +1,28 @@
 package muc
 
+import "github.com/coyim/coyim/session/muc/data"
+
+type roleNumberType int
+
+const (
+	roleTypeNone roleNumberType = iota
+	roleTypeVisitor
+	roleTypeParticipant
+	roleTypeModerator
+)
+
+func roleNumberTypeFrom(r data.Role) roleNumberType {
+	switch {
+	case r.IsModerator():
+		return roleTypeModerator
+	case r.IsParticipant():
+		return roleTypeParticipant
+	case r.IsVisitor():
+		return roleTypeVisitor
+	}
+	return roleTypeNone
+}
+
 type privilege int
 
 const (
@@ -35,7 +58,7 @@ var rolePrivileges = [][]bool{
 }
 
 func (o *Occupant) roleHasPrivilege(p privilege) bool {
-	return rolePrivileges[p][o.Role.RoleTypeAsNumber()]
+	return rolePrivileges[p][roleNumberTypeFrom(o.Role)]
 }
 
 // CanPresentInRoom returns a boolean indicating if the occupant can be present in the room

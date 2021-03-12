@@ -2,15 +2,6 @@ package data
 
 import "fmt"
 
-type roleNumberType int
-
-const (
-	roleTypeNone roleNumberType = iota
-	roleTypeVisitor
-	roleTypeParticipant
-	roleTypeModerator
-)
-
 const (
 	// RoleNone represents XMPP muc 'none' role
 	RoleNone = "none"
@@ -51,8 +42,6 @@ type Role interface {
 	IsNone() bool
 	// IsDifferentFrom returns true if the caller role is different from the role passed as argument
 	IsDifferentFrom(Role) bool
-	// RoleTypeAsNumber returns an int value indicating the role number through a RoleNumberType
-	RoleTypeAsNumber() int
 }
 
 // NoneRole is a representation of MUC's "none" role
@@ -182,18 +171,6 @@ func (*ParticipantRole) IsDifferentFrom(r Role) bool {
 func (*ModeratorRole) IsDifferentFrom(r Role) bool {
 	return !r.IsModerator()
 }
-
-// RoleTypeAsNumber implements Role interface
-func (*NoneRole) RoleTypeAsNumber() int { return int(roleTypeNone) }
-
-// RoleTypeAsNumber implements Role interface
-func (*VisitorRole) RoleTypeAsNumber() int { return int(roleTypeVisitor) }
-
-// RoleTypeAsNumber implements Role interface
-func (*ParticipantRole) RoleTypeAsNumber() int { return int(roleTypeParticipant) }
-
-// RoleTypeAsNumber implements Role interface
-func (*ModeratorRole) RoleTypeAsNumber() int { return int(roleTypeModerator) }
 
 // RoleFromString returns the role object that matches the string given, or an error if the string given doesn't match a known role
 func RoleFromString(s string) (Role, error) {

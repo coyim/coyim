@@ -93,3 +93,50 @@ func (s *MucSuite) Test_Occupant_Update(c *C) {
 	c.Assert(o.Status.Status, Equals, "away")
 	c.Assert(o.Status.StatusMsg, Equals, "here")
 }
+
+func (s *MucSuite) Test_Occupant_UpdateAffilition(c *C) {
+	o := newOccupantForTest(&data.NoneAffiliation{}, nil)
+
+	o.UpdateAffiliation(&data.OwnerAffiliation{})
+	c.Assert(o.Affiliation.IsOwner(), Equals, true)
+
+	o.UpdateAffiliation(&data.AdminAffiliation{})
+	c.Assert(o.Affiliation.IsAdmin(), Equals, true)
+
+	o.UpdateAffiliation(&data.MemberAffiliation{})
+	c.Assert(o.Affiliation.IsMember(), Equals, true)
+
+	o.UpdateAffiliation(&data.OutcastAffiliation{})
+	c.Assert(o.Affiliation.IsBanned(), Equals, true)
+
+	o.UpdateAffiliation(&data.NoneAffiliation{})
+	c.Assert(o.Affiliation.IsNone(), Equals, true)
+}
+
+func (s *MucSuite) Test_Occupant_UpdateRole(c *C) {
+	o := newOccupantForTest(nil, &data.NoneRole{})
+
+	o.UpdateRole(&data.ModeratorRole{})
+	c.Assert(o.Role.IsModerator(), Equals, true)
+
+	o.UpdateRole(&data.ParticipantRole{})
+	c.Assert(o.Role.IsParticipant(), Equals, true)
+
+	o.UpdateRole(&data.VisitorRole{})
+	c.Assert(o.Role.IsVisitor(), Equals, true)
+
+	o.UpdateRole(&data.NoneRole{})
+	c.Assert(o.Role.IsNone(), Equals, true)
+}
+
+func (s *MucSuite) Test_Occupant_HasVoice(c *C) {
+	var o *Occupant
+
+	c.Assert(o.HasVoice(), Equals, false)
+
+	o = &Occupant{}
+	c.Assert(o.HasVoice(), Equals, false)
+
+	o.Role = &data.ParticipantRole{}
+	c.Assert(o.HasVoice(), Equals, true)
+}

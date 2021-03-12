@@ -306,6 +306,15 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_new(c *C) {
 	c.Assert(occ.RealJid, Equals, jid.ParseFull("foo@example.org/test1"))
 }
 
+func (s *MucSuite) Test_RoomRoster_UpdatePresence_failsOnEmptyNickname(c *C) {
+	rr := newRoomRoster()
+	pi := &OccupantPresenceInfo{Nickname: ""}
+	j, l, e := rr.UpdatePresence(pi, "")
+	c.Assert(j, Equals, false)
+	c.Assert(l, Equals, false)
+	c.Assert(e, ErrorMatches, "nickname was not provided")
+}
+
 func (s *MucSuite) Test_RoomRoster_UpdatePresence_update(c *C) {
 	rr := newRoomRoster()
 
@@ -333,4 +342,14 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_update(c *C) {
 	c.Assert(occ.Status.Status, Equals, "away")
 	c.Assert(occ.Status.StatusMsg, Equals, "gone")
 	c.Assert(occ.RealJid, Equals, jid.ParseFull("foo@example.org/test1"))
+}
+
+func (s *MucSuite) Test_RoomRoster_GetOccupant(c *C) {
+	rr := newRoomRoster()
+
+	oo := &Occupant{}
+	rr.occupants["hello"] = oo
+	o, ok := rr.GetOccupant("hello")
+	c.Assert(ok, Equals, true)
+	c.Assert(o, Equals, oo)
 }

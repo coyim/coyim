@@ -82,7 +82,7 @@ func (rv *occupantRoleUpdateView) titleLabelText() string {
 	switch {
 	case rv.occupant.Role.IsModerator():
 		return i18n.Localf("You are changing the role of %[1]s from moderator to:", rv.occupant.Nickname)
-	case rv.occupant.Role.IsOnlyParticipant():
+	case rv.occupant.Role.IsParticipant():
 		return i18n.Localf("You are changing the role of %[1]s from participant to:", rv.occupant.Nickname)
 	case rv.occupant.Role.IsVisitor():
 		return i18n.Localf("You are changing the role of %[1]s from visitor to:", rv.occupant.Nickname)

@@ -58,7 +58,7 @@ func getRoleRemovedSuccessMessage(nickname string, previousRole data.Role) strin
 	switch {
 	case previousRole.IsModerator():
 		return i18n.Localf("%s is not a moderator anymore.", nickname)
-	case previousRole.IsOnlyParticipant():
+	case previousRole.IsParticipant():
 		return i18n.Localf("%s is not a participant anymore.", nickname)
 	}
 	return i18n.Localf("%s is not a visitor anymore.", nickname)
@@ -68,7 +68,7 @@ func getRoleAddedSuccessMessage(nickname string, newRole data.Role) string {
 	switch {
 	case newRole.IsModerator():
 		return i18n.Localf("The role of %s was changed to moderator.", nickname)
-	case newRole.IsOnlyParticipant():
+	case newRole.IsParticipant():
 		return i18n.Localf("The role of %s was changed to participant.", nickname)
 	}
 	return i18n.Localf("The role of %s was changed to visitor.", nickname)
@@ -76,17 +76,17 @@ func getRoleAddedSuccessMessage(nickname string, newRole data.Role) string {
 
 func getRoleChangedSuccessMessage(nickname string, previousRole, newRole data.Role) string {
 	switch {
-	case previousRole.IsModerator() && newRole.IsOnlyParticipant():
+	case previousRole.IsModerator() && newRole.IsParticipant():
 		return i18n.Localf("The role of %s was changed from moderator to participant.", nickname)
 	case previousRole.IsModerator() && newRole.IsVisitor():
 		return i18n.Localf("The role of %s was changed from moderator to visitor.", nickname)
-	case previousRole.IsOnlyParticipant() && newRole.IsModerator():
+	case previousRole.IsParticipant() && newRole.IsModerator():
 		return i18n.Localf("The role of %s was changed from participant to moderator.", nickname)
-	case previousRole.IsOnlyParticipant() && newRole.IsVisitor():
+	case previousRole.IsParticipant() && newRole.IsVisitor():
 		return i18n.Localf("The role of %s was changed from participant to visitor.", nickname)
 	case previousRole.IsVisitor() && newRole.IsModerator():
 		return i18n.Localf("The role of %s was changed from visitor to moderator.", nickname)
-	case previousRole.IsVisitor() && newRole.IsOnlyParticipant():
+	case previousRole.IsVisitor() && newRole.IsParticipant():
 		return i18n.Localf("The role of %s was changed from visitor to participant.", nickname)
 	}
 	return i18n.Localf("The role of %s was changed.", nickname)
@@ -144,7 +144,7 @@ func getUpdateRoleFailureErrorMessage(nickname string, newRole data.Role) string
 	switch {
 	case newRole.IsModerator():
 		return i18n.Localf("An error occurred trying to change the role of %s to moderator.", nickname)
-	case newRole.IsOnlyParticipant():
+	case newRole.IsParticipant():
 		return i18n.Localf("An error occurred trying to change the role of %s to participant.", nickname)
 	case newRole.IsVisitor():
 		return i18n.Localf("An error occurred trying to change the role of %s to visitor.", nickname)
@@ -515,22 +515,22 @@ func getRoleChangedMessage(roleUpdate data.RoleUpdate) string {
 
 func getRoleChangedMessageWithoutActor(roleUpdate data.RoleUpdate) string {
 	switch {
-	case roleUpdate.Previous.IsModerator() && roleUpdate.New.IsOnlyParticipant():
+	case roleUpdate.Previous.IsModerator() && roleUpdate.New.IsParticipant():
 		return i18n.Localf("The role of %s was changed from moderator to participant.",
 			roleUpdate.Nickname)
 	case roleUpdate.Previous.IsModerator() && roleUpdate.New.IsVisitor():
 		return i18n.Localf("The role of %s was changed from moderator to visitor.",
 			roleUpdate.Nickname)
-	case roleUpdate.Previous.IsOnlyParticipant() && roleUpdate.New.IsModerator():
+	case roleUpdate.Previous.IsParticipant() && roleUpdate.New.IsModerator():
 		return i18n.Localf("The role of %s was changed from participant to moderator.",
 			roleUpdate.Nickname)
-	case roleUpdate.Previous.IsOnlyParticipant() && roleUpdate.New.IsVisitor():
+	case roleUpdate.Previous.IsParticipant() && roleUpdate.New.IsVisitor():
 		return i18n.Localf("The role of %s was changed from participant to visitor.",
 			roleUpdate.Nickname)
 	case roleUpdate.Previous.IsVisitor() && roleUpdate.New.IsModerator():
 		return i18n.Localf("The role of %s was changed from visitor to moderator.",
 			roleUpdate.Nickname)
-	case roleUpdate.Previous.IsVisitor() && roleUpdate.New.IsOnlyParticipant():
+	case roleUpdate.Previous.IsVisitor() && roleUpdate.New.IsParticipant():
 		return i18n.Localf("The role of %s was changed from visitor to participant.",
 			roleUpdate.Nickname)
 	}
@@ -550,7 +550,7 @@ func getRoleChangedMessageWithActor(roleUpdate data.RoleUpdate) string {
 
 func getRoleChangedMessageWithOwnerActor(roleUpdate data.RoleUpdate) string {
 	switch {
-	case roleUpdate.Previous.IsModerator() && roleUpdate.New.IsOnlyParticipant():
+	case roleUpdate.Previous.IsModerator() && roleUpdate.New.IsParticipant():
 		return i18n.Localf("The owner %[1]s changed the role of %[2]s from moderator to participant.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
@@ -558,11 +558,11 @@ func getRoleChangedMessageWithOwnerActor(roleUpdate data.RoleUpdate) string {
 		return i18n.Localf("The owner %[1]s changed the role of %[2]s from moderator to visitor.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
-	case roleUpdate.Previous.IsOnlyParticipant() && roleUpdate.New.IsModerator():
+	case roleUpdate.Previous.IsParticipant() && roleUpdate.New.IsModerator():
 		return i18n.Localf("The owner %[1]s changed the role of %[2]s from participant to moderator.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
-	case roleUpdate.Previous.IsOnlyParticipant() && roleUpdate.New.IsVisitor():
+	case roleUpdate.Previous.IsParticipant() && roleUpdate.New.IsVisitor():
 		return i18n.Localf("The owner %[1]s changed the role of %[2]s from participant to visitor.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
@@ -570,7 +570,7 @@ func getRoleChangedMessageWithOwnerActor(roleUpdate data.RoleUpdate) string {
 		return i18n.Localf("The owner %[1]s changed the role of %[2]s from visitor to moderator.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
-	case roleUpdate.Previous.IsVisitor() && roleUpdate.New.IsOnlyParticipant():
+	case roleUpdate.Previous.IsVisitor() && roleUpdate.New.IsParticipant():
 		return i18n.Localf("The owner %[1]s changed the role of %[2]s from visitor to participant.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
@@ -582,7 +582,7 @@ func getRoleChangedMessageWithOwnerActor(roleUpdate data.RoleUpdate) string {
 
 func getRoleChangedMessageWithAdminActor(roleUpdate data.RoleUpdate) string {
 	switch {
-	case roleUpdate.Previous.IsModerator() && roleUpdate.New.IsOnlyParticipant():
+	case roleUpdate.Previous.IsModerator() && roleUpdate.New.IsParticipant():
 		return i18n.Localf("The administrator %[1]s changed the role of %[2]s from moderator to participant.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
@@ -590,11 +590,11 @@ func getRoleChangedMessageWithAdminActor(roleUpdate data.RoleUpdate) string {
 		return i18n.Localf("The administrator %[1]s changed the role of %[2]s from moderator to visitor.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
-	case roleUpdate.Previous.IsOnlyParticipant() && roleUpdate.New.IsModerator():
+	case roleUpdate.Previous.IsParticipant() && roleUpdate.New.IsModerator():
 		return i18n.Localf("The administrator %[1]s changed the role of %[2]s from participant to moderator.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
-	case roleUpdate.Previous.IsOnlyParticipant() && roleUpdate.New.IsVisitor():
+	case roleUpdate.Previous.IsParticipant() && roleUpdate.New.IsVisitor():
 		return i18n.Localf("The administrator %[1]s changed the role of %[2]s from participant to visitor.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
@@ -602,7 +602,7 @@ func getRoleChangedMessageWithAdminActor(roleUpdate data.RoleUpdate) string {
 		return i18n.Localf("The administrator %[1]s changed the role of %[2]s from visitor to moderator.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
-	case roleUpdate.Previous.IsVisitor() && roleUpdate.New.IsOnlyParticipant():
+	case roleUpdate.Previous.IsVisitor() && roleUpdate.New.IsParticipant():
 		return i18n.Localf("The administrator %[1]s changed the role of %[2]s from visitor to participant.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
@@ -614,7 +614,7 @@ func getRoleChangedMessageWithAdminActor(roleUpdate data.RoleUpdate) string {
 
 func getRoleChangedMessageForActor(roleUpdate data.RoleUpdate) string {
 	switch {
-	case roleUpdate.Previous.IsModerator() && roleUpdate.New.IsOnlyParticipant():
+	case roleUpdate.Previous.IsModerator() && roleUpdate.New.IsParticipant():
 		return i18n.Localf("%[1]s changed the role of %[2]s from moderator to participant.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
@@ -622,11 +622,11 @@ func getRoleChangedMessageForActor(roleUpdate data.RoleUpdate) string {
 		return i18n.Localf("%[1]s changed the role of %[2]s from moderator to visitor.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
-	case roleUpdate.Previous.IsOnlyParticipant() && roleUpdate.New.IsModerator():
+	case roleUpdate.Previous.IsParticipant() && roleUpdate.New.IsModerator():
 		return i18n.Localf("%[1]s changed the role of %[2]s from participant to moderator.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
-	case roleUpdate.Previous.IsOnlyParticipant() && roleUpdate.New.IsVisitor():
+	case roleUpdate.Previous.IsParticipant() && roleUpdate.New.IsVisitor():
 		return i18n.Localf("%[1]s changed the role of %[2]s from participant to visitor.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
@@ -634,7 +634,7 @@ func getRoleChangedMessageForActor(roleUpdate data.RoleUpdate) string {
 		return i18n.Localf("%[1]s changed the role of %[2]s from visitor to moderator.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
-	case roleUpdate.Previous.IsVisitor() && roleUpdate.New.IsOnlyParticipant():
+	case roleUpdate.Previous.IsVisitor() && roleUpdate.New.IsParticipant():
 		return i18n.Localf("%[1]s changed the role of %[2]s from visitor to participant.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
@@ -657,17 +657,17 @@ func getSelfRoleUpdateBaseMessage(selfRoleUpdate data.RoleUpdate) string {
 
 func getSelfRoleUpdateMessageWithoutActor(selfRoleUpdate data.RoleUpdate) string {
 	switch {
-	case selfRoleUpdate.Previous.IsOnlyParticipant() && selfRoleUpdate.New.IsVisitor():
+	case selfRoleUpdate.Previous.IsParticipant() && selfRoleUpdate.New.IsVisitor():
 		return i18n.Local("Your role was changed from participant to visitor.")
-	case selfRoleUpdate.Previous.IsOnlyParticipant() && selfRoleUpdate.New.IsModerator():
+	case selfRoleUpdate.Previous.IsParticipant() && selfRoleUpdate.New.IsModerator():
 		return i18n.Local("Your role was changed from participant to moderator.")
-	case selfRoleUpdate.Previous.IsVisitor() && selfRoleUpdate.New.IsOnlyParticipant():
+	case selfRoleUpdate.Previous.IsVisitor() && selfRoleUpdate.New.IsParticipant():
 		return i18n.Local("Your role was changed from visitor to participant.")
 	case selfRoleUpdate.Previous.IsVisitor() && selfRoleUpdate.New.IsModerator():
 		return i18n.Local("Your role was changed from visitor to moderator.")
 	case selfRoleUpdate.Previous.IsModerator() && selfRoleUpdate.New.IsVisitor():
 		return i18n.Local("Your role was changed from moderator to visitor.")
-	case selfRoleUpdate.Previous.IsModerator() && selfRoleUpdate.New.IsOnlyParticipant():
+	case selfRoleUpdate.Previous.IsModerator() && selfRoleUpdate.New.IsParticipant():
 		return i18n.Local("Your role was changed from moderator to participant.")
 	}
 	return i18n.Local("Your role was changed.")
@@ -685,13 +685,13 @@ func getSelfRoleUpdateMessageWithActor(selfRoleUpdate data.RoleUpdate) string {
 
 func getSelfRoleUpdateMessageForOwnerActor(selfRoleUpdate data.RoleUpdate) string {
 	switch {
-	case selfRoleUpdate.Previous.IsOnlyParticipant() && selfRoleUpdate.New.IsVisitor():
+	case selfRoleUpdate.Previous.IsParticipant() && selfRoleUpdate.New.IsVisitor():
 		return i18n.Localf("The owner %s changed your role from participant to visitor.",
 			selfRoleUpdate.Actor.Nickname)
-	case selfRoleUpdate.Previous.IsOnlyParticipant() && selfRoleUpdate.New.IsModerator():
+	case selfRoleUpdate.Previous.IsParticipant() && selfRoleUpdate.New.IsModerator():
 		return i18n.Localf("The owner %s changed your role from participant to moderator.",
 			selfRoleUpdate.Actor.Nickname)
-	case selfRoleUpdate.Previous.IsVisitor() && selfRoleUpdate.New.IsOnlyParticipant():
+	case selfRoleUpdate.Previous.IsVisitor() && selfRoleUpdate.New.IsParticipant():
 		return i18n.Localf("The owner %s changed your role from visitor to participant.",
 			selfRoleUpdate.Actor.Nickname)
 	case selfRoleUpdate.Previous.IsVisitor() && selfRoleUpdate.New.IsModerator():
@@ -700,7 +700,7 @@ func getSelfRoleUpdateMessageForOwnerActor(selfRoleUpdate data.RoleUpdate) strin
 	case selfRoleUpdate.Previous.IsModerator() && selfRoleUpdate.New.IsVisitor():
 		return i18n.Localf("The owner %s changed your role from moderator to visitor.",
 			selfRoleUpdate.Actor.Nickname)
-	case selfRoleUpdate.Previous.IsModerator() && selfRoleUpdate.New.IsOnlyParticipant():
+	case selfRoleUpdate.Previous.IsModerator() && selfRoleUpdate.New.IsParticipant():
 		return i18n.Localf("The owner %s changed your role from moderator to participant.",
 			selfRoleUpdate.Actor.Nickname)
 	}
@@ -710,13 +710,13 @@ func getSelfRoleUpdateMessageForOwnerActor(selfRoleUpdate data.RoleUpdate) strin
 
 func getSelfRoleUpdateMessageForAdminActor(selfRoleUpdate data.RoleUpdate) string {
 	switch {
-	case selfRoleUpdate.Previous.IsOnlyParticipant() && selfRoleUpdate.New.IsVisitor():
+	case selfRoleUpdate.Previous.IsParticipant() && selfRoleUpdate.New.IsVisitor():
 		return i18n.Localf("The administrator %s changed your role from participant to visitor.",
 			selfRoleUpdate.Actor.Nickname)
-	case selfRoleUpdate.Previous.IsOnlyParticipant() && selfRoleUpdate.New.IsModerator():
+	case selfRoleUpdate.Previous.IsParticipant() && selfRoleUpdate.New.IsModerator():
 		return i18n.Localf("The administrator %s changed your role from participant to moderator.",
 			selfRoleUpdate.Actor.Nickname)
-	case selfRoleUpdate.Previous.IsVisitor() && selfRoleUpdate.New.IsOnlyParticipant():
+	case selfRoleUpdate.Previous.IsVisitor() && selfRoleUpdate.New.IsParticipant():
 		return i18n.Localf("The administrator %s changed your role from visitor to participant.",
 			selfRoleUpdate.Actor.Nickname)
 	case selfRoleUpdate.Previous.IsVisitor() && selfRoleUpdate.New.IsModerator():
@@ -725,7 +725,7 @@ func getSelfRoleUpdateMessageForAdminActor(selfRoleUpdate data.RoleUpdate) strin
 	case selfRoleUpdate.Previous.IsModerator() && selfRoleUpdate.New.IsVisitor():
 		return i18n.Localf("The administrator %s changed your role from moderator to visitor.",
 			selfRoleUpdate.Actor.Nickname)
-	case selfRoleUpdate.Previous.IsModerator() && selfRoleUpdate.New.IsOnlyParticipant():
+	case selfRoleUpdate.Previous.IsModerator() && selfRoleUpdate.New.IsParticipant():
 		return i18n.Localf("The administrator %s changed your role from moderator to participant.",
 			selfRoleUpdate.Actor.Nickname)
 	}
@@ -735,13 +735,13 @@ func getSelfRoleUpdateMessageForAdminActor(selfRoleUpdate data.RoleUpdate) strin
 
 func getSelfRoleUpdateMessageForActor(selfRoleUpdate data.RoleUpdate) string {
 	switch {
-	case selfRoleUpdate.Previous.IsOnlyParticipant() && selfRoleUpdate.New.IsVisitor():
+	case selfRoleUpdate.Previous.IsParticipant() && selfRoleUpdate.New.IsVisitor():
 		return i18n.Localf("%s changed your role from participant to visitor.",
 			selfRoleUpdate.Actor.Nickname)
-	case selfRoleUpdate.Previous.IsOnlyParticipant() && selfRoleUpdate.New.IsModerator():
+	case selfRoleUpdate.Previous.IsParticipant() && selfRoleUpdate.New.IsModerator():
 		return i18n.Localf("%s changed your role from participant to moderator.",
 			selfRoleUpdate.Actor.Nickname)
-	case selfRoleUpdate.Previous.IsVisitor() && selfRoleUpdate.New.IsOnlyParticipant():
+	case selfRoleUpdate.Previous.IsVisitor() && selfRoleUpdate.New.IsParticipant():
 		return i18n.Localf("%s changed your role from visitor to participant.",
 			selfRoleUpdate.Actor.Nickname)
 	case selfRoleUpdate.Previous.IsVisitor() && selfRoleUpdate.New.IsModerator():
@@ -750,7 +750,7 @@ func getSelfRoleUpdateMessageForActor(selfRoleUpdate data.RoleUpdate) string {
 	case selfRoleUpdate.Previous.IsModerator() && selfRoleUpdate.New.IsVisitor():
 		return i18n.Localf("%s changed your role from moderator to visitor.",
 			selfRoleUpdate.Actor.Nickname)
-	case selfRoleUpdate.Previous.IsModerator() && selfRoleUpdate.New.IsOnlyParticipant():
+	case selfRoleUpdate.Previous.IsModerator() && selfRoleUpdate.New.IsParticipant():
 		return i18n.Localf("%s changed your role from moderator to participant.",
 			selfRoleUpdate.Actor.Nickname)
 	}
@@ -780,17 +780,17 @@ func getAffiliationRoleUpdateMessageForAffiliation(affiliationRoleUpdate data.Af
 
 func getAffiliationRoleUpdateMessageForRole(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
 	switch {
-	case affiliationRoleUpdate.PreviousRole.IsVisitor() && affiliationRoleUpdate.NewRole.IsOnlyParticipant():
+	case affiliationRoleUpdate.PreviousRole.IsVisitor() && affiliationRoleUpdate.NewRole.IsParticipant():
 		return i18n.Local("As a result, their role was changed from visitor to participant.")
 	case affiliationRoleUpdate.PreviousRole.IsVisitor() && affiliationRoleUpdate.NewRole.IsModerator():
 		return i18n.Local("As a result, their role was changed from visitor to moderator.")
-	case affiliationRoleUpdate.PreviousRole.IsOnlyParticipant() && affiliationRoleUpdate.NewRole.IsVisitor():
+	case affiliationRoleUpdate.PreviousRole.IsParticipant() && affiliationRoleUpdate.NewRole.IsVisitor():
 		return i18n.Local("As a result, their role was changed from participant to visitor.")
-	case affiliationRoleUpdate.PreviousRole.IsOnlyParticipant() && affiliationRoleUpdate.NewRole.IsModerator():
+	case affiliationRoleUpdate.PreviousRole.IsParticipant() && affiliationRoleUpdate.NewRole.IsModerator():
 		return i18n.Local("As a result, their role was changed from participant to moderator.")
 	case affiliationRoleUpdate.PreviousRole.IsModerator() && affiliationRoleUpdate.NewRole.IsVisitor():
 		return i18n.Local("As a result, their role was changed from moderator to visitor.")
-	case affiliationRoleUpdate.PreviousRole.IsModerator() && affiliationRoleUpdate.NewRole.IsOnlyParticipant():
+	case affiliationRoleUpdate.PreviousRole.IsModerator() && affiliationRoleUpdate.NewRole.IsParticipant():
 		return i18n.Local("As a result, their role was changed from moderator to participant.")
 	}
 	return i18n.Local("As a result, their role was also changed.")
@@ -798,17 +798,17 @@ func getAffiliationRoleUpdateMessageForRole(affiliationRoleUpdate data.Affiliati
 
 func getSelfAffiliationRoleUpdateMessageForRole(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
 	switch {
-	case affiliationRoleUpdate.PreviousRole.IsVisitor() && affiliationRoleUpdate.NewRole.IsOnlyParticipant():
+	case affiliationRoleUpdate.PreviousRole.IsVisitor() && affiliationRoleUpdate.NewRole.IsParticipant():
 		return i18n.Local("As a result, your role was changed from visitor to participant.")
 	case affiliationRoleUpdate.PreviousRole.IsVisitor() && affiliationRoleUpdate.NewRole.IsModerator():
 		return i18n.Local("As a result, your role was changed from visitor to moderator.")
-	case affiliationRoleUpdate.PreviousRole.IsOnlyParticipant() && affiliationRoleUpdate.NewRole.IsVisitor():
+	case affiliationRoleUpdate.PreviousRole.IsParticipant() && affiliationRoleUpdate.NewRole.IsVisitor():
 		return i18n.Local("As a result, your role was changed from participant to visitor.")
-	case affiliationRoleUpdate.PreviousRole.IsOnlyParticipant() && affiliationRoleUpdate.NewRole.IsModerator():
+	case affiliationRoleUpdate.PreviousRole.IsParticipant() && affiliationRoleUpdate.NewRole.IsModerator():
 		return i18n.Local("As a result, your role was changed from participant to moderator.")
 	case affiliationRoleUpdate.PreviousRole.IsModerator() && affiliationRoleUpdate.NewRole.IsVisitor():
 		return i18n.Local("As a result, your role was changed from moderator to visitor.")
-	case affiliationRoleUpdate.PreviousRole.IsModerator() && affiliationRoleUpdate.NewRole.IsOnlyParticipant():
+	case affiliationRoleUpdate.PreviousRole.IsModerator() && affiliationRoleUpdate.NewRole.IsParticipant():
 		return i18n.Local("As a result, your role was changed from moderator to participant.")
 	}
 	return i18n.Local("As a result, your role was also changed.")

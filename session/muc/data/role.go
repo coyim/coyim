@@ -43,8 +43,8 @@ type Role interface {
 	Name() string
 	// IsModerator returns true if the user is a moderator
 	IsModerator() bool
-	// IsOnlyParticipant returns true if the caller role is specifically a participant
-	IsOnlyParticipant() bool
+	// IsParticipant returns true if the caller role is specifically a participant
+	IsParticipant() bool
 	// IsVisitor returns true if the user has a visitor role
 	IsVisitor() bool
 	// IsNone returns true if the user hasn't a role
@@ -127,17 +127,17 @@ func (*ParticipantRole) IsModerator() bool { return false }
 // IsModerator implements Role interface
 func (*ModeratorRole) IsModerator() bool { return true }
 
-// IsOnlyParticipant implements Role interface
-func (*NoneRole) IsOnlyParticipant() bool { return false }
+// IsParticipant implements Role interface
+func (*NoneRole) IsParticipant() bool { return false }
 
-// IsOnlyParticipant implements Role interface
-func (*VisitorRole) IsOnlyParticipant() bool { return false }
+// IsParticipant implements Role interface
+func (*VisitorRole) IsParticipant() bool { return false }
 
-// IsOnlyParticipant implements Role interface
-func (*ParticipantRole) IsOnlyParticipant() bool { return true }
+// IsParticipant implements Role interface
+func (*ParticipantRole) IsParticipant() bool { return true }
 
-// IsOnlyParticipant implements Role interface
-func (*ModeratorRole) IsOnlyParticipant() bool { return false }
+// IsParticipant implements Role interface
+func (*ModeratorRole) IsParticipant() bool { return false }
 
 // IsVisitor implements Role interface
 func (*NoneRole) IsVisitor() bool { return false }
@@ -175,7 +175,7 @@ func (*VisitorRole) IsDifferentFrom(r Role) bool {
 
 // IsDifferentFrom implements Role interface
 func (*ParticipantRole) IsDifferentFrom(r Role) bool {
-	return !r.IsOnlyParticipant()
+	return !r.IsParticipant()
 }
 
 // IsDifferentFrom implements Role interface

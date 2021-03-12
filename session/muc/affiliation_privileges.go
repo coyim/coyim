@@ -4,6 +4,30 @@ import (
 	"github.com/coyim/coyim/session/muc/data"
 )
 
+type affilitionNumberType int
+
+const (
+	affilitionTypeOutcast affilitionNumberType = iota
+	affilitionTypeNone
+	affilitionTypeMember
+	affilitionTypeAdmin
+	affilitionTypeOwner
+)
+
+func affiliationNumberTypeFrom(a data.Affiliation) affilitionNumberType {
+	switch {
+	case a.IsOwner():
+		return affilitionTypeOwner
+	case a.IsAdmin():
+		return affilitionTypeAdmin
+	case a.IsMember():
+		return affilitionTypeMember
+	case a.IsNone():
+		return affilitionTypeNone
+	}
+	return affilitionTypeOutcast
+}
+
 const (
 	enterOpenRoom privilege = iota
 	registerWithOpenRoom
@@ -32,12 +56,8 @@ var affiliationPrivileges = [][]bool{
 	{false /*outcast*/, false /*none*/, false /*member*/, false /*administrator*/, true /*owner*/}, //destroyRoom
 }
 
-func affiliationCan(p privilege, affiliation data.Affiliation) bool {
-	return affiliationPrivileges[p][affiliation.AffiliationTypeAsNumber()]
-}
-
 func (o *Occupant) affiliationHasPrivilege(p privilege) bool {
-	return affiliationCan(p, o.Affiliation)
+	return affiliationPrivileges[p][affiliationNumberTypeFrom(o.Affiliation)]
 }
 
 // CanEnterOpenRoom returns true if the occupant can enter to an open room

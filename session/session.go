@@ -941,10 +941,6 @@ func (s *session) Conn() xi.Conn {
 	return s.conn
 }
 
-func (s *session) SetSessionEventHandler(eh access.EventHandler) {
-	s.sessionEventHandler = eh
-}
-
 func (s *session) SetLastActionTime(t time.Time) {
 	s.lastActionTime = t
 }

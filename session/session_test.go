@@ -19,6 +19,7 @@ import (
 	"github.com/coyim/coyim/xmpp"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
+	"github.com/coyim/otr3"
 
 	. "gopkg.in/check.v1"
 )
@@ -1516,4 +1517,186 @@ func (s *SessionSuite) Test_session_receivedClientMessage_handlesGroupChat(c *C)
 	c.Assert(hook.Entries[1].Data["stanza"], Not(IsNil))
 
 	c.Assert(published, HasLen, 0)
+}
+
+func (s *SessionSuite) Test_session_SendMUCMessage_failsWhenNotConnected(c *C) {
+	sess := &session{
+		connStatus: DISCONNECTED,
+	}
+
+	res := sess.SendMUCMessage("to@foo.com", "from@bar.com", "hello there")
+	c.Assert(res, ErrorMatches, "session is not connected")
+}
+
+func (s *SessionSuite) Test_session_SendMUCMessage_works(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	mockIn := &mockConnIOReaderWriter{}
+	conn := xmpp.NewConn(
+		xml.NewDecoder(mockIn),
+		mockIn,
+		"some@one.org/foo",
+	)
+
+	sess := &session{
+		conn:       conn,
+		log:        l,
+		connStatus: CONNECTED,
+		config:     &config.ApplicationConfig{},
+	}
+
+	published := []interface{}{}
+
+	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev interface{}) {
+		published = append(published, ev)
+	})
+
+	res := sess.SendMUCMessage("to@foo.com", "from@bar.com", "hello there")
+
+	c.Assert(res, IsNil)
+	c.Assert(hook.Entries, HasLen, 0)
+	c.Assert(published, HasLen, 0)
+	c.Assert(string(mockIn.write), Matches, `<message xmlns="jabber:client" from="from@bar.com" id="[0-9]+" to="to@foo.com" type="groupchat"><body>hello there</body></message>`)
+}
+
+func (s *SessionSuite) Test_session_CommandManager_accessors(c *C) {
+	sess := &session{}
+	sess.SetCommandManager(nil)
+	c.Assert(sess.CommandManager(), IsNil)
+
+	vv := &mockCommandManager{}
+	sess.SetCommandManager(vv)
+	c.Assert(sess.CommandManager(), Equals, vv)
+}
+
+func (s *SessionSuite) Test_session_SetWantToBeOnline(c *C) {
+	sess := &session{}
+
+	sess.SetWantToBeOnline(true)
+	c.Assert(sess.wantToBeOnline, Equals, true)
+
+	sess.SetWantToBeOnline(false)
+	c.Assert(sess.wantToBeOnline, Equals, false)
+}
+
+func (s *SessionSuite) Test_session_PrivateKeys(c *C) {
+	sess := &session{}
+
+	vv := []otr3.PrivateKey{nil, nil, nil}
+
+	sess.privateKeys = vv
+
+	c.Assert(sess.PrivateKeys(), DeepEquals, vv)
+}
+
+func (s *SessionSuite) Test_session_R(c *C) {
+	sess := &session{}
+
+	vv := &roster.List{}
+
+	sess.r = vv
+
+	c.Assert(sess.R(), Equals, vv)
+}
+
+type mockConnector struct{}
+
+func (*mockConnector) Connect() {}
+
+func (s *SessionSuite) Test_session_SetConnector(c *C) {
+	sess := &session{}
+	vv := &mockConnector{}
+	sess.SetConnector(vv)
+	c.Assert(sess.connector, Equals, vv)
+}
+
+func (s *SessionSuite) Test_session_GroupDelimiter(c *C) {
+	sess := &session{
+		groupDelimiter: "abcfoo",
+	}
+	c.Assert(sess.GroupDelimiter(), Equals, "abcfoo")
+}
+
+func (s *SessionSuite) Test_session_Config(c *C) {
+	vv := &config.ApplicationConfig{}
+
+	sess := &session{
+		config: vv,
+	}
+
+	c.Assert(sess.Config(), Equals, vv)
+}
+
+func (s *SessionSuite) Test_session_SetLastActionTime(c *C) {
+	vv := time.Now()
+
+	sess := &session{}
+
+	sess.SetLastActionTime(vv)
+
+	c.Assert(sess.lastActionTime, Equals, vv)
+}
+
+func (s *SessionSuite) Test_session_setStatus_setsConnected(c *C) {
+	sess := &session{}
+
+	observer := make(chan interface{}, 1000)
+	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
+
+	sess.setStatus(CONNECTED)
+
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Event)
+		if !ok {
+			return false
+		}
+
+		c.Assert(t.Type, Equals, events.Connected)
+		return true
+	})
+}
+
+func (s *SessionSuite) Test_session_setStatus_setsDisconnected(c *C) {
+	sess := &session{}
+
+	observer := make(chan interface{}, 1000)
+	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
+
+	sess.setStatus(DISCONNECTED)
+
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Event)
+		if !ok {
+			return false
+		}
+
+		c.Assert(t.Type, Equals, events.Disconnected)
+		return true
+	})
+}
+
+func (s *SessionSuite) Test_session_setStatus_setsConnecting(c *C) {
+	sess := &session{}
+
+	observer := make(chan interface{}, 1000)
+	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
+
+	sess.setStatus(CONNECTING)
+
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Event)
+		if !ok {
+			return false
+		}
+
+		c.Assert(t.Type, Equals, events.Connecting)
+		return true
+	})
 }

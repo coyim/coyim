@@ -63,7 +63,6 @@ type Session interface {
 	SetCommandManager(otrclient.CommandManager)
 	SetConnector(Connector)
 	SetLastActionTime(time.Time)
-	SetSessionEventHandler(EventHandler)
 	SetWantToBeOnline(bool)
 	Subscribe(chan<- interface{})
 	Timeout(data.Cookie, time.Time)

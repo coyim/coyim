@@ -153,9 +153,6 @@ func (*SessionMock) SetConnector(access.Connector) {}
 // SetLastActionTime is the implementation for Session interface
 func (*SessionMock) SetLastActionTime(time.Time) {}
 
-// SetSessionEventHandler is the implementation for Session interface
-func (*SessionMock) SetSessionEventHandler(access.EventHandler) {}
-
 // SetWantToBeOnline is the implementation for Session interface
 func (*SessionMock) SetWantToBeOnline(bool) {}
 

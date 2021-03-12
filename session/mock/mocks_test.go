@@ -54,7 +54,6 @@ func (s *MockSuite) Test_SessionMock(c *C) {
 	sm.SetCommandManager(nil)
 	sm.SetConnector(nil)
 	sm.SetLastActionTime(time.Time{})
-	sm.SetSessionEventHandler(nil)
 	sm.SetWantToBeOnline(false)
 	sm.Subscribe(nil)
 	sm.Timeout(data.Cookie(0), time.Time{})

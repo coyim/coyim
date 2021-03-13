@@ -1708,3 +1708,101 @@ func (s *SessionSuite) Test_session_setStatus_setsConnecting(c *C) {
 		return true
 	})
 }
+
+func (s *SessionSuite) Test_session_receivedClientPresence_subscribe_handlesAutoApprove(c *C) {
+	mockIn := &mockConnIOReaderWriter{}
+	conn := xmpp.NewConn(
+		xml.NewDecoder(mockIn),
+		mockIn,
+		"some@one.org/foo",
+	)
+
+	appr := map[string]bool{}
+	sess := &session{
+		autoApproves: appr,
+		conn:         conn,
+	}
+
+	stanza := &data.ClientPresence{
+		From: "hello@goodbye.com/compu",
+		Type: "subscribe",
+		ID:   "an-id-maybe",
+	}
+
+	appr["hello@goodbye.com"] = true
+
+	res := sess.receivedClientPresence(stanza)
+	c.Assert(res, Equals, true)
+
+	_, ok := appr["hello@goodbye.com"]
+	c.Assert(ok, Equals, false)
+	c.Assert(string(mockIn.write), Equals, `<presence xmlns="jabber:client" id="an-id-maybe" to="hello@goodbye.com" type="subscribed"></presence>`)
+}
+
+func (s *SessionSuite) Test_session_receivedClientPresence_unavailable_forMUC(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	mockIn := &mockConnIOReaderWriter{}
+	conn := xmpp.NewConn(
+		xml.NewDecoder(mockIn),
+		mockIn,
+		"some@one.org/foo",
+	)
+
+	sess := &session{
+		conn: conn,
+		log:  l,
+	}
+
+	published := []interface{}{}
+
+	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev interface{}) {
+		published = append(published, ev)
+	})
+
+	stanza := &data.ClientPresence{
+		From: "hello@goodbye.com/compu",
+		Type: "unavailable",
+		ID:   "an-id-maybe",
+		MUCUser: &data.MUCUser{
+			Item: &data.MUCUserItem{},
+		},
+	}
+
+	res := sess.receivedClientPresence(stanza)
+	c.Assert(res, Equals, true)
+
+	c.Assert(string(mockIn.write), Equals, ``)
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.ErrorLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Trying to get a room that is not in the room manager")
+	c.Assert(hook.Entries[0].Data["method"], Equals, "handleOccupantLeft")
+	c.Assert(hook.Entries[0].Data["occupant"], Equals, "compu")
+	c.Assert(hook.Entries[0].Data["room"], DeepEquals, jid.ParseBare("hello@goodbye.com"))
+	c.Assert(published, HasLen, 0)
+}
+
+func (s *SessionSuite) Test_session_receivedClientPresence_empty_withoutResource(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+	}
+
+	stanza := &data.ClientPresence{
+		From: "hello@goodbye.com",
+		Type: "",
+		ID:   "an-id-maybe",
+	}
+
+	res := sess.receivedClientPresence(stanza)
+	c.Assert(res, Equals, true)
+
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.WarnLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Got a presence without resource in 'from' - this is likely an error")
+	c.Assert(hook.Entries[0].Data["from"], Equals, "hello@goodbye.com")
+	c.Assert(hook.Entries[0].Data["stanza"], Equals, stanza)
+}

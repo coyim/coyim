@@ -3,7 +3,6 @@ package muc
 import (
 	"strconv"
 
-	"github.com/coyim/coyim/session/muc/data"
 	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 )
@@ -241,26 +240,6 @@ func formFieldOptionsValues(options []xmppData.FormFieldOptionX) (list []string)
 	}
 
 	return list
-}
-
-func formFieldInt(values []string) int {
-	if len(values) > 0 {
-		res, e := strconv.Atoi(values[0])
-		if e == nil {
-			return res
-		}
-	}
-	return 0
-}
-
-func formFieldRoles(values []string) (roles []data.Role) {
-	for _, v := range values {
-		r, err := data.RoleFromString(v)
-		if err == nil {
-			roles = append(roles, r)
-		}
-	}
-	return roles
 }
 
 func formFieldJidList(values []string) (list []jid.Any) {

@@ -1602,9 +1602,15 @@ func (s *SessionSuite) Test_session_R(c *C) {
 	c.Assert(sess.R(), Equals, vv)
 }
 
-type mockConnector struct{}
+type mockConnector struct {
+	connect func()
+}
 
-func (*mockConnector) Connect() {}
+func (m *mockConnector) Connect() {
+	if m.connect != nil {
+		m.connect()
+	}
+}
 
 func (s *SessionSuite) Test_session_SetConnector(c *C) {
 	sess := &session{}

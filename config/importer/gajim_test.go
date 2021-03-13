@@ -3,11 +3,6 @@ package importer
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
-	"path/filepath"
-	"runtime"
-	"syscall"
-	"unsafe"
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/otr3"
@@ -493,68 +488,68 @@ const (
 	csidlApdata = 0x1a
 )
 
-func getWindowsCurrentAppDataPath() string {
-	shell32 := syscall.NewLazyDLL("shell32.dll")
-	procShGetFolderPath := shell32.NewProc("SHGetFolderPathW")
+// func getWindowsCurrentAppDataPath() string {
+// 	shell32 := syscall.NewLazyDLL("shell32.dll")
+// 	procShGetFolderPath := shell32.NewProc("SHGetFolderPathW")
 
-	b := make([]uint16, syscall.MAX_PATH)
-	ret, _, err := syscall.Syscall6(procShGetFolderPath.Addr(), 5, 0, csidlApdata, 0, 0, uintptr(unsafe.Pointer(&b[0])), 0)
-	if int(ret) != 0 {
-		panic(fmt.Sprintf("SHGetFolderPathW : err %d", int(err)))
-	}
+// 	b := make([]uint16, syscall.MAX_PATH)
+// 	ret, _, err := syscall.Syscall6(procShGetFolderPath.Addr(), 5, 0, csidlApdata, 0, 0, uintptr(unsafe.Pointer(&b[0])), 0)
+// 	if int(ret) != 0 {
+// 		panic(fmt.Sprintf("SHGetFolderPathW : err %d", int(err)))
+// 	}
 
-	return syscall.UTF16ToString(b)
-}
+// 	return syscall.UTF16ToString(b)
+// }
 
-func setWindowsCurrentAppDataPath(path string) {
-	shell32 := syscall.NewLazyDLL("shell32.dll")
-	procShSetFolderPath := shell32.NewProc("SHSetFolderPathW")
+// func setWindowsCurrentAppDataPath(path string) {
+// 	shell32 := syscall.NewLazyDLL("shell32.dll")
+// 	procShSetFolderPath := shell32.NewProc("SHSetFolderPathW")
 
-	b, _ := syscall.UTF16PtrFromString(path)
-	procShSetFolderPath.Call(uintptr(csidlApdata), 0, 0, uintptr(unsafe.Pointer(b)))
-}
+// 	b, _ := syscall.UTF16PtrFromString(path)
+// 	procShSetFolderPath.Call(uintptr(csidlApdata), 0, 0, uintptr(unsafe.Pointer(b)))
+// }
 
-func (s *GajimSuite) Test_gajimImporter_TryImport_works(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+// func (s *GajimSuite) Test_gajimImporter_TryImport_works(c *C) {
+// 	dir, _ := ioutil.TempDir("", "")
+// 	defer os.RemoveAll(dir)
 
-	switch runtime.GOOS {
-	case "windows":
-		origEnv1 := getWindowsCurrentAppDataPath()
+// 	switch runtime.GOOS {
+// 	case "windows":
+// 		origEnv1 := getWindowsCurrentAppDataPath()
 
-		defer func() {
-			setWindowsCurrentAppDataPath(origEnv1)
-		}()
+// 		defer func() {
+// 			setWindowsCurrentAppDataPath(origEnv1)
+// 		}()
 
-		setWindowsCurrentAppDataPath(dir)
-	default:
-		origEnv1 := os.Getenv("XDG_CONFIG_HOME")
-		origEnv2 := os.Getenv("XDG_DATA_HOME")
+// 		setWindowsCurrentAppDataPath(dir)
+// 	default:
+// 		origEnv1 := os.Getenv("XDG_CONFIG_HOME")
+// 		origEnv2 := os.Getenv("XDG_DATA_HOME")
 
-		defer func() {
-			os.Setenv("XDG_CONFIG_HOME", origEnv1)
-			os.Setenv("XDG_DATA_HOME", origEnv2)
-		}()
+// 		defer func() {
+// 			os.Setenv("XDG_CONFIG_HOME", origEnv1)
+// 			os.Setenv("XDG_DATA_HOME", origEnv2)
+// 		}()
 
-		os.Setenv("XDG_CONFIG_HOME", dir)
-		os.Setenv("XDG_DATA_HOME", dir)
-	}
+// 		os.Setenv("XDG_CONFIG_HOME", dir)
+// 		os.Setenv("XDG_DATA_HOME", dir)
+// 	}
 
-	gajimDir := filepath.Join(dir, "gajim")
+// 	gajimDir := filepath.Join(dir, "gajim")
 
-	os.MkdirAll(dir, 0755)
-	os.MkdirAll(filepath.Join(gajimDir, "config"), 0755)
-	os.MkdirAll(filepath.Join(gajimDir, "pluginsconfig"), 0755)
+// 	os.MkdirAll(dir, 0755)
+// 	os.MkdirAll(filepath.Join(gajimDir, "config"), 0755)
+// 	os.MkdirAll(filepath.Join(gajimDir, "pluginsconfig"), 0755)
 
-	copyFile(testResourceFilename("gajim_test_data/config2"), filepath.Join(gajimDir, "config"))
-	copyFile(testResourceFilename("gajim_test_data/gotr2"), filepath.Join(gajimDir, "pluginsconfig", "gotr"))
-	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.key3"), filepath.Join(gajimDir, "aba.baba@jabber.ccc.de.key3"))
-	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.fpr"), filepath.Join(gajimDir, "aba.baba@jabber.ccc.de.fpr"))
+// 	copyFile(testResourceFilename("gajim_test_data/config2"), filepath.Join(gajimDir, "config"))
+// 	copyFile(testResourceFilename("gajim_test_data/gotr2"), filepath.Join(gajimDir, "pluginsconfig", "gotr"))
+// 	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.key3"), filepath.Join(gajimDir, "aba.baba@jabber.ccc.de.key3"))
+// 	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.fpr"), filepath.Join(gajimDir, "aba.baba@jabber.ccc.de.fpr"))
 
-	i := &gajimImporter{}
-	res := i.TryImport()
-	c.Assert(res, HasLen, 1)
-}
+// 	i := &gajimImporter{}
+// 	res := i.TryImport()
+// 	c.Assert(res, HasLen, 1)
+// }
 
 func (s *GajimSuite) Test_gajimImporter_importFingerprintsFrom_ignoresNonXMPPAndBadFingerprints(c *C) {
 	i := &gajimImporter{}

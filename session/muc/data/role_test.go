@@ -54,3 +54,60 @@ func (s *MucSuite) Test_Role_AsModerator(c *C) {
 	c.Assert((&ParticipantRole{}).AsModerator(), FitsTypeOf, &ModeratorRole{})
 	c.Assert((&ModeratorRole{}).AsModerator(), FitsTypeOf, &ModeratorRole{})
 }
+
+func (s *MucSuite) Test_Role_Name(c *C) {
+	c.Assert((&NoneRole{}).Name(), Equals, "none")
+	c.Assert((&VisitorRole{}).Name(), Equals, "visitor")
+	c.Assert((&ParticipantRole{}).Name(), Equals, "participant")
+	c.Assert((&ModeratorRole{}).Name(), Equals, "moderator")
+}
+
+func (s *MucSuite) Test_Role_IsModerator(c *C) {
+	c.Assert((&NoneRole{}).IsModerator(), Equals, false)
+	c.Assert((&VisitorRole{}).IsModerator(), Equals, false)
+	c.Assert((&ParticipantRole{}).IsModerator(), Equals, false)
+	c.Assert((&ModeratorRole{}).IsModerator(), Equals, true)
+}
+
+func (s *MucSuite) Test_Role_IsParticipant(c *C) {
+	c.Assert((&NoneRole{}).IsParticipant(), Equals, false)
+	c.Assert((&VisitorRole{}).IsParticipant(), Equals, false)
+	c.Assert((&ParticipantRole{}).IsParticipant(), Equals, true)
+	c.Assert((&ModeratorRole{}).IsParticipant(), Equals, false)
+}
+
+func (s *MucSuite) Test_Role_IsVisitor(c *C) {
+	c.Assert((&NoneRole{}).IsVisitor(), Equals, false)
+	c.Assert((&VisitorRole{}).IsVisitor(), Equals, true)
+	c.Assert((&ParticipantRole{}).IsVisitor(), Equals, false)
+	c.Assert((&ModeratorRole{}).IsVisitor(), Equals, false)
+}
+
+func (s *MucSuite) Test_Role_IsNone(c *C) {
+	c.Assert((&NoneRole{}).IsNone(), Equals, true)
+	c.Assert((&VisitorRole{}).IsNone(), Equals, false)
+	c.Assert((&ParticipantRole{}).IsNone(), Equals, false)
+	c.Assert((&ModeratorRole{}).IsNone(), Equals, false)
+}
+
+func (s *MucSuite) Test_Role_IsDifferentFrom(c *C) {
+	c.Assert((&NoneRole{}).IsDifferentFrom(&NoneRole{}), Equals, false)
+	c.Assert((&NoneRole{}).IsDifferentFrom(&VisitorRole{}), Equals, true)
+	c.Assert((&NoneRole{}).IsDifferentFrom(&ParticipantRole{}), Equals, true)
+	c.Assert((&NoneRole{}).IsDifferentFrom(&ModeratorRole{}), Equals, true)
+
+	c.Assert((&VisitorRole{}).IsDifferentFrom(&NoneRole{}), Equals, true)
+	c.Assert((&VisitorRole{}).IsDifferentFrom(&VisitorRole{}), Equals, false)
+	c.Assert((&VisitorRole{}).IsDifferentFrom(&ParticipantRole{}), Equals, true)
+	c.Assert((&VisitorRole{}).IsDifferentFrom(&ModeratorRole{}), Equals, true)
+
+	c.Assert((&ParticipantRole{}).IsDifferentFrom(&NoneRole{}), Equals, true)
+	c.Assert((&ParticipantRole{}).IsDifferentFrom(&VisitorRole{}), Equals, true)
+	c.Assert((&ParticipantRole{}).IsDifferentFrom(&ParticipantRole{}), Equals, false)
+	c.Assert((&ParticipantRole{}).IsDifferentFrom(&ModeratorRole{}), Equals, true)
+
+	c.Assert((&ModeratorRole{}).IsDifferentFrom(&NoneRole{}), Equals, true)
+	c.Assert((&ModeratorRole{}).IsDifferentFrom(&VisitorRole{}), Equals, true)
+	c.Assert((&ModeratorRole{}).IsDifferentFrom(&ParticipantRole{}), Equals, true)
+	c.Assert((&ModeratorRole{}).IsDifferentFrom(&ModeratorRole{}), Equals, false)
+}

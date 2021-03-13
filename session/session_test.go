@@ -1289,9 +1289,11 @@ func (s *SessionSuite) Test_session_Send_sends(c *C) {
 }
 
 func closeToNow(t time.Time) bool {
-	nw := time.Now().Add(10 * time.Second)
+	nw := time.Now()
+	late := nw.Add(10 * time.Second)
+	early := nw.Add(-10 * time.Second)
 
-	return t.After(nw.Add(-10*time.Second)) && t.Before(nw)
+	return t.After(early) && t.Before(late)
 }
 
 func (s *SessionSuite) Test_retrieveMessageTime_returnsEmptyTimeIfNoDelayFound(c *C) {

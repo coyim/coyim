@@ -19,6 +19,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:e253b776b408e594c4c9cbcb81f9c06d3d90ba63586104b53841524f1fb0a4e1"
+  name = "github.com/olabiniV2/memcall"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "51be66ea74b4ad1cfd88658dec928fcfb9b1b9e7"
+
+[[projects]]
+  branch = "master"
   digest = "1:30986a354a6c49a3706fa3483998a10328724f105b32b2911ac3554fc649579b"
   name = "golang.org/x/sys"
   packages = [
@@ -35,7 +43,7 @@
   input-imports = [
     "github.com/awnumar/memcall",
     "github.com/coyim/constbn",
-    "golang.org/x/sys/windows",
+    "github.com/olabiniV2/memcall",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

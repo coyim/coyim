@@ -2,6 +2,7 @@ package memcall
 
 import (
 	"runtime"
+	"unsafe"
 )
 
 // MemoryProtectionFlag specifies some particular memory protection flag.
@@ -38,4 +39,19 @@ func wipe(buf []byte) {
 		buf[i] = 0
 	}
 	runtime.KeepAlive(buf)
+}
+
+// Placeholder variable for when we need a valid pointer to zero bytes.
+var _zero uintptr
+
+// Auxiliary functions.
+func _getStartPtr(b []byte) unsafe.Pointer {
+	if len(b) > 0 {
+		return unsafe.Pointer(&b[0])
+	}
+	return unsafe.Pointer(&_zero)
+}
+
+func _getPtr(b []byte) uintptr {
+	return uintptr(_getStartPtr(b))
 }

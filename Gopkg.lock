@@ -11,14 +11,6 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:23b9850a220387962bae181bf0eaec5ae228cf3415ff365daa57de5e4820b33e"
-  name = "github.com/awnumar/memcall"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "73db50fd9f807b4e2811f9f0b33c92e9da6b2489"
-
-[[projects]]
-  branch = "master"
   digest = "1:ed92efe00830105b4a9c18cc700c412104645a1980d588445b3c295b36847d07"
   name = "github.com/coyim/constbn"
   packages = ["."]
@@ -35,9 +27,10 @@
 
 [[projects]]
   branch = "main"
-  digest = "1:120309b418ddd423bc8b9daa6bd5e6fabdfbf5bdadbfe144d4d377992ae18dad"
+  digest = "1:56300cb524bc1747eb906e374bc45da83cc78c50faef7d4892eb24305f77ed9d"
   name = "github.com/coyim/gotk3adapter"
   packages = [
+    "gdk_mock",
     "gdka",
     "gdki",
     "glib_mock",
@@ -46,6 +39,7 @@
     "gtk_mock",
     "gtka",
     "gtki",
+    "pango_mock",
     "pangoa",
     "pangoi",
   ]
@@ -69,15 +63,15 @@
   revision = "0bc104b9d83d107422dfcb1c4981938e74f6e8a7"
 
 [[projects]]
-  branch = "master"
-  digest = "1:306cb61e6c2f9200dd82690d5cb7a4d5d41741c09d62e55a2268256e532f002e"
+  branch = "main"
+  digest = "1:e96c45ad24341a29a27f5c63d249b67583062847b3350058769ca3891dcd5f2e"
   name = "github.com/coyim/otr3"
   packages = [
     ".",
     "sexp",
   ]
   pruneopts = "UT"
-  revision = "4375c7dd785bbe4cbf10210e2459710b27efa580"
+  revision = "12557db2addf8859d38d2efb6ad807d32ccda05a"
 
 [[projects]]
   digest = "1:57fa4c058c21ce25d0b7272518dd746065117abf6cc706158b0d361202024520"
@@ -156,6 +150,14 @@
   packages = ["."]
   pruneopts = "UT"
   revision = "a10e7caefd8e0d600cea437f5c3613aeb1553d56"
+
+[[projects]]
+  branch = "master"
+  digest = "1:e253b776b408e594c4c9cbcb81f9c06d3d90ba63586104b53841524f1fb0a4e1"
+  name = "github.com/olabiniV2/memcall"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "51be66ea74b4ad1cfd88658dec928fcfb9b1b9e7"
 
 [[projects]]
   digest = "1:1705716d33e69b9567ec6fd8e318a6e60869838b60643e54d0301bed8ac427d1"
@@ -300,6 +302,7 @@
   input-imports = [
     "github.com/TheCreeper/go-notify",
     "github.com/coyim/gosx-notifier",
+    "github.com/coyim/gotk3adapter/gdk_mock",
     "github.com/coyim/gotk3adapter/gdka",
     "github.com/coyim/gotk3adapter/gdki",
     "github.com/coyim/gotk3adapter/glib_mock",
@@ -308,6 +311,7 @@
     "github.com/coyim/gotk3adapter/gtk_mock",
     "github.com/coyim/gotk3adapter/gtka",
     "github.com/coyim/gotk3adapter/gtki",
+    "github.com/coyim/gotk3adapter/pango_mock",
     "github.com/coyim/gotk3adapter/pangoa",
     "github.com/coyim/gotk3adapter/pangoi",
     "github.com/coyim/gotk3osx",

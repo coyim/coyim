@@ -35,8 +35,16 @@ endif
 #	go get github.com/golangci/golangci-lint/...
 #	go get github.com/securego/gosec/cmd/gosec...
 
-cover:
+deps-ci: deps
+	go get -u github.com/mattn/goveralls
+
+run-cover:
 	go test . -coverprofile=coverage.out
+
+coveralls: run-cover
+	goveralls -coverprofile=coverage.out
+
+cover: run-cover
 	go tool cover -html=coverage.out
 
 lint-aggregator:

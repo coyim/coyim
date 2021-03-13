@@ -1,4 +1,4 @@
-// +build darwin
+// +build !windows,!darwin,!openbsd,!freebsd
 
 package memcall
 
@@ -9,10 +9,14 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-// Lock is a wrapper for mlock(2).
+// Lock is a wrapper for mlock(2), with extra precautions.
 func Lock(b []byte) error {
+	// Advise the kernel not to dump. Ignore failure.
+	unix.Madvise(b, unix.MADV_DONTDUMP)
+
+	// Call mlock.
 	if err := unix.Mlock(b); err != nil {
-		return fmt.Errorf("<memcall> could not acquire lock on %p, limit reached? [Err: %s]", &b[0], err)
+		return fmt.Errorf("<memcall> could not acquire lock on %p, limit reached? [Err: %s]", _getStartPtr(b), err)
 	}
 
 	return nil
@@ -21,7 +25,7 @@ func Lock(b []byte) error {
 // Unlock is a wrapper for munlock(2).
 func Unlock(b []byte) error {
 	if err := unix.Munlock(b); err != nil {
-		return fmt.Errorf("<memcall> could not free lock on %p [Err: %s]", &b[0], err)
+		return fmt.Errorf("<memcall> could not free lock on %p [Err: %s]", _getStartPtr(b), err)
 	}
 
 	return nil
@@ -30,7 +34,7 @@ func Unlock(b []byte) error {
 // Alloc allocates a byte slice of length n and returns it.
 func Alloc(n int) ([]byte, error) {
 	// Allocate the memory.
-	b, err := unix.Mmap(-1, 0, n, unix.PROT_READ|unix.PROT_WRITE, unix.MAP_PRIVATE|unix.MAP_ANON)
+	b, err := unix.Mmap(-1, 0, n, unix.PROT_READ|unix.PROT_WRITE, unix.MAP_PRIVATE|unix.MAP_ANONYMOUS)
 	if err != nil {
 		return nil, fmt.Errorf("<memcall> could not allocate [Err: %s]", err)
 	}
@@ -54,7 +58,7 @@ func Free(b []byte) error {
 
 	// Free the memory back to the kernel.
 	if err := unix.Munmap(b); err != nil {
-		return fmt.Errorf("<memcall> could not deallocate %p [Err: %s]", &b[0], err)
+		return fmt.Errorf("<memcall> could not deallocate %p [Err: %s]", _getStartPtr(b), err)
 	}
 
 	return nil
@@ -75,7 +79,7 @@ func Protect(b []byte, mpf MemoryProtectionFlag) error {
 
 	// Change the protection value of the byte slice.
 	if err := unix.Mprotect(b, prot); err != nil {
-		return fmt.Errorf("<memcall> could not set %d on %p [Err: %s]", prot, &b[0], err)
+		return fmt.Errorf("<memcall> could not set %d on %p [Err: %s]", prot, _getStartPtr(b), err)
 	}
 
 	return nil

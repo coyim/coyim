@@ -10,13 +10,10 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-// Placeholder variable for when we need a valid pointer to zero bytes.
-var _zero uintptr
-
 // Lock is a wrapper for windows.VirtualLock()
 func Lock(b []byte) error {
 	if err := windows.VirtualLock(_getPtr(b), uintptr(len(b))); err != nil {
-		return fmt.Errorf("<memcall> could not acquire lock on %p, limit reached? [Err: %s]", &b[0], err)
+		return fmt.Errorf("<memcall> could not acquire lock on %p, limit reached? [Err: %s]", _getStartPtr(b), err)
 	}
 
 	return nil
@@ -25,7 +22,7 @@ func Lock(b []byte) error {
 // Unlock is a wrapper for windows.VirtualUnlock()
 func Unlock(b []byte) error {
 	if err := windows.VirtualUnlock(_getPtr(b), uintptr(len(b))); err != nil {
-		return fmt.Errorf("<memcall> could not free lock on %p [Err: %s]", &b[0], err)
+		return fmt.Errorf("<memcall> could not free lock on %p [Err: %s]", _getStartPtr(b), err)
 	}
 
 	return nil
@@ -61,7 +58,7 @@ func Free(b []byte) error {
 
 	// Free the memory back to the kernel.
 	if err := windows.VirtualFree(_getPtr(b), uintptr(0), 0x8000); err != nil {
-		return fmt.Errorf("<memcall> could not deallocate %p [Err: %s]", &b[0], err)
+		return fmt.Errorf("<memcall> could not deallocate %p [Err: %s]", _getStartPtr(b), err)
 	}
 
 	return nil
@@ -82,7 +79,7 @@ func Protect(b []byte, mpf MemoryProtectionFlag) error {
 
 	var oldProtect uint32
 	if err := windows.VirtualProtect(_getPtr(b), uintptr(len(b)), uint32(prot), &oldProtect); err != nil {
-		return fmt.Errorf("<memcall> could not set %d on %p [Err: %s]", prot, &b[0], err)
+		return fmt.Errorf("<memcall> could not set %d on %p [Err: %s]", prot, _getStartPtr(b), err)
 	}
 
 	return nil
@@ -90,17 +87,6 @@ func Protect(b []byte, mpf MemoryProtectionFlag) error {
 
 // DisableCoreDumps is included for compatibility reasons. On windows it is a no-op function.
 func DisableCoreDumps() error { return nil }
-
-// Auxiliary functions.
-func _getPtr(b []byte) uintptr {
-	var _p0 unsafe.Pointer
-	if len(b) > 0 {
-		_p0 = unsafe.Pointer(&b[0])
-	} else {
-		_p0 = unsafe.Pointer(&_zero)
-	}
-	return uintptr(_p0)
-}
 
 func _getBytes(ptr uintptr, len int, cap int) []byte {
 	var sl = struct {

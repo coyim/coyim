@@ -1857,7 +1857,15 @@ func (s *SessionSuite) Test_session_receivedClientPresence_subscribed(c *C) {
 
 	sess := &session{
 		log: l,
+		r:   roster.New(),
 	}
+
+	sess.r.AddOrReplace(&roster.Peer{Jid: jid.ParseBare("hello@goodbye.com")})
+
+	observer := make(chan interface{}, 1000)
+	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
 
 	stanza := &data.ClientPresence{
 		From: "hello@goodbye.com/compu",
@@ -1867,11 +1875,19 @@ func (s *SessionSuite) Test_session_receivedClientPresence_subscribed(c *C) {
 
 	res := sess.receivedClientPresence(stanza)
 	c.Assert(res, Equals, true)
+	v, _ := sess.r.Get(jid.ParseBare("hello@goodbye.com"))
+	c.Assert(v.Subscription, Equals, "to")
 
-	c.Assert(hook.Entries, HasLen, 1)
-	c.Assert(hook.Entries[0].Level, Equals, log.ErrorLevel)
-	c.Assert(hook.Entries[0].Message, Equals, "Trying to get a room that is not in the room manager")
-	c.Assert(hook.Entries[0].Data["method"], Equals, "handleOccupantUpdate")
-	c.Assert(hook.Entries[0].Data["occupant"], Equals, "compu")
-	c.Assert(hook.Entries[0].Data["room"], DeepEquals, jid.ParseBare("hello@goodbye.com"))
+	c.Assert(hook.Entries, HasLen, 0)
+
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Peer)
+		if !ok {
+			return false
+		}
+
+		c.Assert(t.Type, Equals, events.Subscribed)
+		c.Assert(t.From, Equals, jid.Parse("hello@goodbye.com"))
+		return true
+	})
 }

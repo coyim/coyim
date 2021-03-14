@@ -1806,3 +1806,72 @@ func (s *SessionSuite) Test_session_receivedClientPresence_empty_withoutResource
 	c.Assert(hook.Entries[0].Data["from"], Equals, "hello@goodbye.com")
 	c.Assert(hook.Entries[0].Data["stanza"], Equals, stanza)
 }
+
+func (s *SessionSuite) Test_session_receivedClientPresence_empty_forMUC(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	mockIn := &mockConnIOReaderWriter{}
+	conn := xmpp.NewConn(
+		xml.NewDecoder(mockIn),
+		mockIn,
+		"some@one.org/foo",
+	)
+
+	sess := &session{
+		conn: conn,
+		log:  l,
+	}
+
+	published := []interface{}{}
+
+	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev interface{}) {
+		published = append(published, ev)
+	})
+
+	stanza := &data.ClientPresence{
+		From: "hello@goodbye.com/compu",
+		Type: "",
+		ID:   "an-id-maybe",
+		MUCUser: &data.MUCUser{
+			Item: &data.MUCUserItem{},
+		},
+	}
+
+	res := sess.receivedClientPresence(stanza)
+	c.Assert(res, Equals, true)
+
+	c.Assert(string(mockIn.write), Equals, ``)
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.ErrorLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Trying to get a room that is not in the room manager")
+	c.Assert(hook.Entries[0].Data["method"], Equals, "handleOccupantUpdate")
+	c.Assert(hook.Entries[0].Data["occupant"], Equals, "compu")
+	c.Assert(hook.Entries[0].Data["room"], DeepEquals, jid.ParseBare("hello@goodbye.com"))
+	c.Assert(published, HasLen, 0)
+}
+
+func (s *SessionSuite) Test_session_receivedClientPresence_subscribed(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+	}
+
+	stanza := &data.ClientPresence{
+		From: "hello@goodbye.com/compu",
+		Type: "subscribed",
+		ID:   "an-id-maybe",
+	}
+
+	res := sess.receivedClientPresence(stanza)
+	c.Assert(res, Equals, true)
+
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.ErrorLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Trying to get a room that is not in the room manager")
+	c.Assert(hook.Entries[0].Data["method"], Equals, "handleOccupantUpdate")
+	c.Assert(hook.Entries[0].Data["occupant"], Equals, "compu")
+	c.Assert(hook.Entries[0].Data["room"], DeepEquals, jid.ParseBare("hello@goodbye.com"))
+}

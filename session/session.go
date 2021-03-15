@@ -954,6 +954,8 @@ func (s *session) SetLastActionTime(t time.Time) {
 	s.lastActionTime = t
 }
 
+var pingTimeout = 10 * time.Second
+
 // SendPing is called to checks if account's connection still alive
 func (s *session) SendPing() {
 	reply, _, err := s.conn.SendPing()
@@ -962,24 +964,21 @@ func (s *session) SendPing() {
 		return
 	}
 
-	pingTimeout := 10 * time.Second
-
-	go func() {
-		select {
-		case <-time.After(pingTimeout):
-			s.log.Info("Ping timeout. Disconnecting...")
-			s.setStatus(DISCONNECTED)
-		case stanza := <-reply:
-			iq, ok := stanza.Value.(*data.ClientIQ)
-			if !ok {
-				return
-			}
-			if iq.Type == "error" {
-				s.log.Warn("Server does not support Ping")
-				return
-			}
+	select {
+	case <-time.After(pingTimeout):
+		s.log.Info("Ping timeout. Disconnecting...")
+		s.setStatus(DISCONNECTED)
+	case stanza := <-reply:
+		iq, ok := stanza.Value.(*data.ClientIQ)
+		if !ok {
+			s.log.WithField("stanza", stanza.Value).Warn("Server returned weird result")
+			return
 		}
-	}()
+		if iq.Type == "error" {
+			s.log.Warn("Server does not support Ping")
+			return
+		}
+	}
 }
 
 // SendMUCMessage is used to send a group chat message

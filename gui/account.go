@@ -241,7 +241,7 @@ func (account *account) observeConnectionEvents(u *gtkUI, f func()) {
 func (account *account) createCheckConnectionItem(u *gtkUI) gtki.MenuItem {
 	checkConnectionItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Check Connection"))
 	_, _ = checkConnectionItem.Connect("activate", func() {
-		account.session.SendPing()
+		go account.session.SendPing()
 	})
 	checkConnectionItem.SetSensitive(account.session.IsConnected())
 

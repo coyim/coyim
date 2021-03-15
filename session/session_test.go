@@ -19,6 +19,7 @@ import (
 	"github.com/coyim/coyim/xmpp"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
+	"github.com/coyim/coyim/xmpp/mock"
 	"github.com/coyim/otr3"
 
 	. "gopkg.in/check.v1"
@@ -966,8 +967,10 @@ func (mcm *mockConvManager) TerminateAll() {
 }
 
 type mockConv struct {
-	receive     func([]byte) ([]byte, error)
-	isEncrypted func() bool
+	receive          func([]byte) ([]byte, error)
+	isEncrypted      func() bool
+	endEncryptedChat func() error
+	eh               *otrclient.EventHandler
 }
 
 func (mc *mockConv) Receive(s []byte) ([]byte, error) {
@@ -987,6 +990,9 @@ func (mc *mockConv) StartEncryptedChat() error {
 }
 
 func (mc *mockConv) EndEncryptedChat() error {
+	if mc.endEncryptedChat != nil {
+		return mc.endEncryptedChat()
+	}
 	return nil
 }
 
@@ -1007,6 +1013,9 @@ func (mc *mockConv) GetSSID() [8]byte {
 }
 
 func (mc *mockConv) EventHandler() *otrclient.EventHandler {
+	if mc.eh != nil {
+		return mc.eh
+	}
 	return &otrclient.EventHandler{}
 }
 
@@ -2250,4 +2259,671 @@ func (s *SessionSuite) Test_session_AwaitVersionReply_failsWhenBadXML(c *C) {
 	c.Assert(hook.Entries[0].Message, Equals, "Failed to parse version reply")
 	c.Assert(hook.Entries[0].Data["user"], Equals, "foobarium@example.org/hello")
 	c.Assert(hook.Entries[0].Data["error"], ErrorMatches, "XML syntax error.*")
+}
+
+func (s *SessionSuite) Test_peerFrom_works(c *C) {
+	p := peerFrom(data.RosterEntry{
+		Jid:          "romeo@example.net",
+		Subscription: "both",
+		Name:         "Mo",
+		Group:        []string{"Foes"},
+	}, &config.Account{})
+
+	c.Assert(p.Jid, DeepEquals, jid.Parse("romeo@example.net"))
+	c.Assert(p.Subscription, Equals, "both")
+	c.Assert(p.Name, Equals, "Mo")
+	c.Assert(p.Nickname, Equals, "")
+	c.Assert(p.Groups, DeepEquals, map[string]bool{"Foes": true})
+
+	ac := &config.Account{
+		Peers: []*config.Peer{
+			&config.Peer{
+				UserID:   "romeo@example.net",
+				Nickname: "blaha",
+				Groups: []string{
+					"something",
+					"else::bar",
+				},
+			},
+		},
+	}
+
+	p = peerFrom(data.RosterEntry{
+		Jid:          "romeo@example.net",
+		Subscription: "both",
+		Name:         "Mo",
+		Group:        []string{"Foes"},
+	}, ac)
+	c.Assert(p.Jid, DeepEquals, jid.Parse("romeo@example.net"))
+	c.Assert(p.Subscription, Equals, "both")
+	c.Assert(p.Name, Equals, "Mo")
+	c.Assert(p.Nickname, Equals, "blaha")
+	c.Assert(p.BelongsTo, Equals, ac.ID())
+	c.Assert(p.Groups, DeepEquals, map[string]bool{"something": true, "else::bar": true})
+}
+
+func (s *SessionSuite) Test_receiveClientMessage_logsConversationReceivalError(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	mcm := &mockConvManager{}
+	sess := &session{
+		log:         l,
+		connStatus:  CONNECTED,
+		convManager: mcm,
+		config:      &config.ApplicationConfig{},
+	}
+
+	mc := &mockConv{}
+	mc.receive = func(s []byte) ([]byte, error) { return nil, errors.New("marker error") }
+	mc.isEncrypted = func() bool { return true }
+	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
+		return mc, false
+	}
+
+	observer := make(chan interface{}, 1000)
+	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
+
+	sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello")
+
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.ErrorLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "While processing message from peer")
+	c.Assert(hook.Entries[0].Data["peer"], Equals, "someone@some.org/something")
+	c.Assert(hook.Entries[0].Data["error"], ErrorMatches, "marker error")
+}
+
+func (s *SessionSuite) Test_receiveClientMessage_handlesNewOTRKeys(c *C) {
+	eh := &otrclient.EventHandler{
+		Log: log.StandardLogger(),
+	}
+	mcm := &mockConvManager{}
+	sess := &session{
+		log:         log.StandardLogger(),
+		connStatus:  CONNECTED,
+		convManager: mcm,
+		config:      &config.ApplicationConfig{},
+	}
+
+	mc := &mockConv{}
+	mc.eh = eh
+	mc.receive = func(s []byte) ([]byte, error) { return nil, nil }
+	mc.isEncrypted = func() bool { return true }
+	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
+		return mc, false
+	}
+
+	observer := make(chan interface{}, 1000)
+	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
+
+	eh.HandleSecurityEvent(otr3.GoneSecure)
+	sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello")
+
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Peer)
+		if !ok {
+			return false
+		}
+
+		c.Assert(t.From, DeepEquals, jid.Parse("someone@some.org/something"))
+		c.Assert(t.Type, Equals, events.OTRNewKeys)
+		return true
+	})
+}
+
+func (s *SessionSuite) Test_receiveClientMessage_handlesRenewedOTRKeys(c *C) {
+	eh := &otrclient.EventHandler{
+		Log: log.StandardLogger(),
+	}
+	mcm := &mockConvManager{}
+	sess := &session{
+		log:         log.StandardLogger(),
+		connStatus:  CONNECTED,
+		convManager: mcm,
+		config:      &config.ApplicationConfig{},
+	}
+
+	mc := &mockConv{}
+	mc.eh = eh
+	mc.receive = func(s []byte) ([]byte, error) { return nil, nil }
+	mc.isEncrypted = func() bool { return true }
+	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
+		return mc, false
+	}
+
+	observer := make(chan interface{}, 1000)
+	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
+
+	eh.HandleSecurityEvent(otr3.StillSecure)
+	sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello")
+
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Peer)
+		if !ok {
+			return false
+		}
+
+		c.Assert(t.From, DeepEquals, jid.Parse("someone@some.org/something"))
+		c.Assert(t.Type, Equals, events.OTRRenewedKeys)
+		return true
+	})
+}
+
+func (s *SessionSuite) Test_receiveClientMessage_handlesConversationEnded(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	eh := &otrclient.EventHandler{
+		Log: l,
+	}
+	mcm := &mockConvManager{}
+	ac := &config.Account{}
+	sess := &session{
+		log:           l,
+		connStatus:    CONNECTED,
+		convManager:   mcm,
+		config:        &config.ApplicationConfig{},
+		accountConfig: ac,
+	}
+
+	mc := &mockConv{}
+	mc.eh = eh
+	mc.receive = func(s []byte) ([]byte, error) { return nil, nil }
+	mc.isEncrypted = func() bool { return true }
+	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
+		return mc, false
+	}
+
+	observer := make(chan interface{}, 1000)
+	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
+
+	eh.HandleSecurityEvent(otr3.GoneInsecure)
+	sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello")
+
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Peer)
+		if !ok {
+			return false
+		}
+
+		c.Assert(t.From, DeepEquals, jid.Parse("someone@some.org/something"))
+		c.Assert(t.Type, Equals, events.OTREnded)
+		return true
+	})
+
+	c.Assert(hook.Entries, HasLen, 2)
+
+	c.Assert(hook.Entries[0].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "HandleSecurityEvent()")
+	c.Assert(hook.Entries[0].Data["event"], Equals, otr3.GoneInsecure)
+
+	c.Assert(hook.Entries[1].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "Peer has ended the secure conversation. You should do likewise")
+	c.Assert(hook.Entries[1].Data["peer"], DeepEquals, jid.Parse("someone@some.org/something"))
+}
+
+func (s *SessionSuite) Test_receiveClientMessage_handlesConversationEnded_withAutoTearDownFailing(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	eh := &otrclient.EventHandler{
+		Log: l,
+	}
+	mcm := &mockConvManager{}
+	ac := &config.Account{OTRAutoTearDown: true}
+	sess := &session{
+		log:           l,
+		connStatus:    CONNECTED,
+		convManager:   mcm,
+		config:        &config.ApplicationConfig{},
+		accountConfig: ac,
+	}
+
+	mc := &mockConv{}
+	mc.eh = eh
+	mc.receive = func(s []byte) ([]byte, error) { return nil, nil }
+	mc.endEncryptedChat = func() error { return errors.New("another marker error") }
+	mc.isEncrypted = func() bool { return true }
+	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
+		return mc, false
+	}
+
+	observer := make(chan interface{}, 1000)
+	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
+
+	eh.HandleSecurityEvent(otr3.GoneInsecure)
+	sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello")
+
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Peer)
+		if !ok {
+			return false
+		}
+
+		c.Assert(t.From, DeepEquals, jid.Parse("someone@some.org/something"))
+		c.Assert(t.Type, Equals, events.OTREnded)
+		return true
+	})
+
+	c.Assert(hook.Entries, HasLen, 3)
+
+	c.Assert(hook.Entries[0].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "HandleSecurityEvent()")
+	c.Assert(hook.Entries[0].Data["event"], Equals, otr3.GoneInsecure)
+
+	c.Assert(hook.Entries[1].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "Peer has ended the secure conversation.")
+	c.Assert(hook.Entries[1].Data["peer"], DeepEquals, jid.Parse("someone@some.org/something"))
+
+	c.Assert(hook.Entries[2].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[2].Message, Equals, "Unable to automatically tear down OTR conversation with peer")
+	c.Assert(hook.Entries[2].Data["peer"], DeepEquals, jid.Parse("someone@some.org/something"))
+	c.Assert(hook.Entries[2].Data["error"], ErrorMatches, "another marker error")
+}
+
+func (s *SessionSuite) Test_receiveClientMessage_handlesConversationEnded_withAutoTearDownSucceeding(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	eh := &otrclient.EventHandler{
+		Log: l,
+	}
+	mcm := &mockConvManager{}
+	ac := &config.Account{OTRAutoTearDown: true}
+	sess := &session{
+		log:           l,
+		connStatus:    CONNECTED,
+		convManager:   mcm,
+		config:        &config.ApplicationConfig{},
+		accountConfig: ac,
+	}
+
+	mc := &mockConv{}
+	mc.eh = eh
+	mc.receive = func(s []byte) ([]byte, error) { return nil, nil }
+	mc.isEncrypted = func() bool { return true }
+	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
+		return mc, false
+	}
+
+	observer := make(chan interface{}, 1000)
+	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
+
+	eh.HandleSecurityEvent(otr3.GoneInsecure)
+	sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello")
+
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Peer)
+		if !ok {
+			return false
+		}
+
+		c.Assert(t.From, DeepEquals, jid.Parse("someone@some.org/something"))
+		c.Assert(t.Type, Equals, events.OTREnded)
+		return true
+	})
+
+	c.Assert(hook.Entries, HasLen, 3)
+
+	c.Assert(hook.Entries[0].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "HandleSecurityEvent()")
+	c.Assert(hook.Entries[0].Data["event"], Equals, otr3.GoneInsecure)
+
+	c.Assert(hook.Entries[1].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "Peer has ended the secure conversation.")
+	c.Assert(hook.Entries[1].Data["peer"], DeepEquals, jid.Parse("someone@some.org/something"))
+
+	c.Assert(hook.Entries[2].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[2].Message, Equals, "Secure session with peer has been automatically ended. Messages will be sent in the clear until another OTR session is established.")
+	c.Assert(hook.Entries[2].Data["peer"], DeepEquals, jid.Parse("someone@some.org/something"))
+}
+
+func (s *SessionSuite) Test_receiveClientMessage_handlesSMPSecretNeeded(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+	eh := &otrclient.EventHandler{
+		Log: l,
+	}
+	mcm := &mockConvManager{}
+	sess := &session{
+		log:         l,
+		connStatus:  CONNECTED,
+		convManager: mcm,
+		config:      &config.ApplicationConfig{},
+	}
+
+	mc := &mockConv{}
+	mc.eh = eh
+	mc.receive = func(s []byte) ([]byte, error) { return nil, nil }
+	mc.isEncrypted = func() bool { return true }
+	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
+		return mc, false
+	}
+
+	observer := make(chan interface{}, 1000)
+	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
+
+	eh.HandleSMPEvent(otr3.SMPEventAskForSecret, 42, "the life, universe and everything")
+	sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello")
+
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.SMP)
+		if !ok {
+			return false
+		}
+
+		c.Assert(t.From, DeepEquals, jid.Parse("someone@some.org/something"))
+		c.Assert(t.Type, Equals, events.SecretNeeded)
+		c.Assert(t.Body, Equals, "the life, universe and everything")
+		return true
+	})
+
+	c.Assert(hook.Entries, HasLen, 1)
+}
+
+func (s *SessionSuite) Test_receiveClientMessage_handlesSMPFailed(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+	eh := &otrclient.EventHandler{
+		Log: l,
+	}
+	mcm := &mockConvManager{}
+	sess := &session{
+		log:         l,
+		connStatus:  CONNECTED,
+		convManager: mcm,
+		config:      &config.ApplicationConfig{},
+	}
+
+	mc := &mockConv{}
+	mc.eh = eh
+	mc.receive = func(s []byte) ([]byte, error) { return nil, nil }
+	mc.isEncrypted = func() bool { return true }
+	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
+		return mc, false
+	}
+
+	observer := make(chan interface{}, 1000)
+	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
+
+	eh.HandleSMPEvent(otr3.SMPEventCheated, 42, "the life, universe and everything")
+	sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello")
+
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.SMP)
+		if !ok {
+			return false
+		}
+
+		c.Assert(t.From, DeepEquals, jid.Parse("someone@some.org/something"))
+		c.Assert(t.Type, Equals, events.Failure)
+		c.Assert(t.Body, Equals, "")
+		return true
+	})
+
+	c.Assert(hook.Entries, HasLen, 1)
+}
+
+func (s *SessionSuite) Test_receiveClientMessage_handlesSMPComplete(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+	eh := &otrclient.EventHandler{
+		Log: l,
+	}
+	mcm := &mockConvManager{}
+
+	var commands []interface{}
+	mcmdm := &mockCommandManager{
+		exec: func(v interface{}) {
+			commands = append(commands, v)
+		},
+	}
+
+	sess := &session{
+		log:         l,
+		connStatus:  CONNECTED,
+		convManager: mcm,
+		cmdManager:  mcmdm,
+		config:      &config.ApplicationConfig{},
+	}
+
+	mc := &mockConv{}
+	mc.eh = eh
+	mc.receive = func(s []byte) ([]byte, error) { return nil, nil }
+	mc.isEncrypted = func() bool { return true }
+	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
+		return mc, false
+	}
+
+	observer := make(chan interface{}, 1000)
+	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
+
+	eh.HandleSMPEvent(otr3.SMPEventSuccess, 100, "the life, universe and everything")
+	sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello")
+
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.SMP)
+		if !ok {
+			return false
+		}
+
+		c.Assert(t.From, DeepEquals, jid.Parse("someone@some.org/something"))
+		c.Assert(t.Type, Equals, events.Success)
+		c.Assert(t.Body, Equals, "")
+		return true
+	})
+
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(commands, HasLen, 1)
+	c.Assert(commands[0], DeepEquals, otrclient.AuthorizeFingerprintCmd{
+		Account:     nil,
+		Session:     sess,
+		Peer:        jid.NR("someone@some.org"),
+		Fingerprint: nil,
+		Tag:         "SMP",
+	})
+}
+
+func (s *SessionSuite) Test_session_Timeout(c *C) {
+	sess := &session{
+		timeouts: make(map[data.Cookie]time.Time),
+	}
+
+	tt := time.Now()
+
+	sess.Timeout(42, tt)
+
+	c.Assert(sess.timeouts[data.Cookie(42)], DeepEquals, tt)
+}
+
+func (s *SessionSuite) Test_waitForNextRosterRequest(c *C) {
+	orgRosterRequestDelay := rosterRequestDelay
+	defer func() {
+		rosterRequestDelay = orgRosterRequestDelay
+	}()
+
+	rosterRequestDelay = 1 * time.Millisecond
+
+	waitForNextRosterRequest()
+}
+
+func (s *SessionSuite) Test_session_SendPing_failsIfConnectionFails(c *C) {
+	mockIn := &mockConnIOReaderWriter{
+		err: errors.New("another marker"),
+	}
+	conn := xmpp.NewConn(
+		xml.NewDecoder(mockIn),
+		mockIn,
+		"some@one.org/foo",
+	)
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log:        l,
+		connStatus: CONNECTED,
+	}
+	sess.conn = conn
+
+	sess.SendPing()
+
+	c.Assert(hook.Entries, HasLen, 1)
+
+	c.Assert(hook.Entries[0].Level, Equals, log.WarnLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Failure to ping server")
+	c.Assert(hook.Entries[0].Data["error"], ErrorMatches, "another marker")
+}
+
+func (s *SessionSuite) Test_session_SendPing_timesOut(c *C) {
+	orgPingTimeout := pingTimeout
+	defer func() {
+		pingTimeout = orgPingTimeout
+	}()
+
+	pingTimeout = 1 * time.Millisecond
+
+	mockIn := &mockConnIOReaderWriter{}
+	conn := xmpp.NewConn(
+		xml.NewDecoder(mockIn),
+		mockIn,
+		"some@one.org/foo",
+	)
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log:        l,
+		connStatus: CONNECTED,
+	}
+	sess.conn = conn
+
+	sess.SendPing()
+
+	c.Assert(sess.connStatus, Equals, DISCONNECTED)
+
+	c.Assert(hook.Entries, HasLen, 1)
+
+	c.Assert(hook.Entries[0].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Ping timeout. Disconnecting...")
+}
+
+type sendPingMockConn struct {
+	*mock.Conn
+	f func() (<-chan data.Stanza, data.Cookie, error)
+}
+
+func (m *sendPingMockConn) SendPing() (<-chan data.Stanza, data.Cookie, error) {
+	return m.f()
+}
+
+func (s *SessionSuite) Test_session_SendPing_works(c *C) {
+	ch := make(chan data.Stanza, 1)
+	conn := &sendPingMockConn{
+		f: func() (<-chan data.Stanza, data.Cookie, error) {
+			return ch, 0, nil
+		},
+	}
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		conn:       conn,
+		log:        l,
+		connStatus: CONNECTED,
+	}
+
+	ch <- data.Stanza{
+		Value: &data.ClientIQ{
+			Type: "result",
+		},
+	}
+
+	sess.SendPing()
+
+	c.Assert(sess.connStatus, Equals, CONNECTED)
+	c.Assert(hook.Entries, HasLen, 0)
+}
+
+func (s *SessionSuite) Test_session_SendPing_failsWithWeirdStanzaMixup(c *C) {
+	ch := make(chan data.Stanza, 1)
+	conn := &sendPingMockConn{
+		f: func() (<-chan data.Stanza, data.Cookie, error) {
+			return ch, 0, nil
+		},
+	}
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		conn:       conn,
+		log:        l,
+		connStatus: CONNECTED,
+	}
+
+	ch <- data.Stanza{
+		Value: "hello",
+	}
+
+	sess.SendPing()
+
+	c.Assert(sess.connStatus, Equals, CONNECTED)
+	c.Assert(hook.Entries, HasLen, 1)
+
+	c.Assert(hook.Entries[0].Level, Equals, log.WarnLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Server returned weird result")
+	c.Assert(hook.Entries[0].Data["stanza"], DeepEquals, "hello")
+}
+
+func (s *SessionSuite) Test_session_SendPing_failsIfServerDoesntSupportPing(c *C) {
+	ch := make(chan data.Stanza, 1)
+	conn := &sendPingMockConn{
+		f: func() (<-chan data.Stanza, data.Cookie, error) {
+			return ch, 0, nil
+		},
+	}
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		conn:       conn,
+		log:        l,
+		connStatus: CONNECTED,
+	}
+
+	ch <- data.Stanza{
+		Value: &data.ClientIQ{
+			Type: "error",
+		},
+	}
+
+	sess.SendPing()
+
+	c.Assert(sess.connStatus, Equals, CONNECTED)
+	c.Assert(hook.Entries, HasLen, 1)
+
+	c.Assert(hook.Entries[0].Level, Equals, log.WarnLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Server does not support Ping")
 }

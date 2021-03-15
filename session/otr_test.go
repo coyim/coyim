@@ -26,9 +26,15 @@ func (s *OTRSuite) Test_GetAndWipeSymmetricKeyFor_failsIfConversationNotFound(c 
 	c.Assert(res, IsNil)
 }
 
-type mockCommandManager struct{}
+type mockCommandManager struct {
+	exec func(interface{})
+}
 
-func (*mockCommandManager) ExecuteCmd(c interface{}) {}
+func (m *mockCommandManager) ExecuteCmd(c interface{}) {
+	if m.exec != nil {
+		m.exec(c)
+	}
+}
 
 type collectingSender struct {
 	sentPeer  []jid.Any

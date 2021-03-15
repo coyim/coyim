@@ -157,7 +157,7 @@ func (m *conversationManager) createEventHandler(peer jid.Any, conversation *otr
 		account:            m.account,
 		notifications:      notificationsChan,
 		delayedMessageSent: delayedChan,
-		log:                m.log,
+		Log:                m.log,
 	}
 	m.onCreateEH(peer, eh, notificationsChan, delayedChan)
 	conversation.SetSMPEventHandler(eh)

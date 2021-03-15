@@ -26,7 +26,7 @@ type EventHandlerSuite struct{}
 var _ = Suite(&EventHandlerSuite{})
 
 func (s *EventHandlerSuite) Test_HandleErrorMessage_handlesAllErrorMessages(c *C) {
-	handler := &EventHandler{log: log.New().WithFields(log.Fields{})}
+	handler := &EventHandler{Log: log.New().WithFields(log.Fields{})}
 	c.Check(string(handler.HandleErrorMessage(otr3.ErrorCodeEncryptionError)), DeepEquals, "Error occurred encrypting message.")
 	c.Check(string(handler.HandleErrorMessage(otr3.ErrorCodeMessageUnreadable)), DeepEquals, "You transmitted an unreadable encrypted message.")
 	c.Check(string(handler.HandleErrorMessage(otr3.ErrorCodeMessageMalformed)), DeepEquals, "You transmitted a malformed data message.")
@@ -35,7 +35,7 @@ func (s *EventHandlerSuite) Test_HandleErrorMessage_handlesAllErrorMessages(c *C
 }
 
 func (s *EventHandlerSuite) Test_HandleSecurityEvent_HandlesAllSecurityEvents(c *C) {
-	handler := &EventHandler{securityChange: -1, log: log.New().WithFields(log.Fields{})}
+	handler := &EventHandler{securityChange: -1, Log: log.New().WithFields(log.Fields{})}
 
 	handler.HandleSecurityEvent(otr3.GoneSecure)
 	c.Assert(handler.securityChange, Equals, NewKeys)
@@ -52,7 +52,7 @@ func (s *EventHandlerSuite) Test_HandleSecurityEvent_HandlesAllSecurityEvents(c 
 }
 
 func (s *EventHandlerSuite) Test_ConsumeSecurityChange_returnsTheChangeAndSetsItBack(c *C) {
-	handler := &EventHandler{securityChange: RenewedKeys, log: log.New().WithFields(log.Fields{})}
+	handler := &EventHandler{securityChange: RenewedKeys, Log: log.New().WithFields(log.Fields{})}
 
 	res := handler.ConsumeSecurityChange()
 	c.Assert(handler.securityChange, Equals, NoChange)
@@ -60,13 +60,13 @@ func (s *EventHandlerSuite) Test_ConsumeSecurityChange_returnsTheChangeAndSetsIt
 }
 
 func (s *EventHandlerSuite) Test_HandleSMPEvent_handlesSMPEventsAboutSecrets(c *C) {
-	handler := &EventHandler{log: log.New().WithFields(log.Fields{})}
+	handler := &EventHandler{Log: log.New().WithFields(log.Fields{})}
 	handler.HandleSMPEvent(otr3.SMPEventAskForSecret, 72, "foo bar?")
 	c.Assert(handler.securityChange, Equals, SMPSecretNeeded)
 	c.Assert(handler.SmpQuestion, Equals, "foo bar?")
 	c.Assert(handler.WaitingForSecret, Equals, true)
 
-	handler = &EventHandler{log: log.New().WithFields(log.Fields{})}
+	handler = &EventHandler{Log: log.New().WithFields(log.Fields{})}
 	handler.HandleSMPEvent(otr3.SMPEventAskForAnswer, 72, "foo bar2?")
 	c.Assert(handler.securityChange, Equals, SMPSecretNeeded)
 	c.Assert(handler.SmpQuestion, Equals, "foo bar2?")
@@ -74,7 +74,7 @@ func (s *EventHandlerSuite) Test_HandleSMPEvent_handlesSMPEventsAboutSecrets(c *
 }
 
 func (s *EventHandlerSuite) Test_HandleSMPEvent_handlesSMPEventsAboutSuccess(c *C) {
-	handler := &EventHandler{log: log.New().WithFields(log.Fields{})}
+	handler := &EventHandler{Log: log.New().WithFields(log.Fields{})}
 	handler.HandleSMPEvent(otr3.SMPEventSuccess, 72, "")
 	c.Assert(handler.securityChange, Equals, NoChange)
 
@@ -83,19 +83,19 @@ func (s *EventHandlerSuite) Test_HandleSMPEvent_handlesSMPEventsAboutSuccess(c *
 }
 
 func (s *EventHandlerSuite) Test_HandleSMPEvent_handlesSMPEventsAboutFailure(c *C) {
-	handler := &EventHandler{log: log.New().WithFields(log.Fields{})}
+	handler := &EventHandler{Log: log.New().WithFields(log.Fields{})}
 	handler.HandleSMPEvent(otr3.SMPEventAbort, 72, "")
 	c.Assert(handler.securityChange, Equals, SMPFailed)
 
-	handler = &EventHandler{log: log.New().WithFields(log.Fields{})}
+	handler = &EventHandler{Log: log.New().WithFields(log.Fields{})}
 	handler.HandleSMPEvent(otr3.SMPEventFailure, 72, "")
 	c.Assert(handler.securityChange, Equals, SMPFailed)
 
-	handler = &EventHandler{log: log.New().WithFields(log.Fields{})}
+	handler = &EventHandler{Log: log.New().WithFields(log.Fields{})}
 	handler.HandleSMPEvent(otr3.SMPEventCheated, 72, "")
 	c.Assert(handler.securityChange, Equals, SMPFailed)
 
-	handler = &EventHandler{log: log.New().WithFields(log.Fields{})}
+	handler = &EventHandler{Log: log.New().WithFields(log.Fields{})}
 	handler.HandleSMPEvent(otr3.SMPEvent(42), 72, "")
 	c.Assert(handler.securityChange, Equals, NoChange)
 }
@@ -114,7 +114,7 @@ func captureLog(ll *log.Logger, f func()) string {
 
 func (s *EventHandlerSuite) Test_HandleMessageEvent_logsHeartbeatEvents(c *C) {
 	ll := log.New()
-	handler := &EventHandler{account: "me1@foo.bar", peer: jid.NR("them1@somewhere.com"), log: ll.WithField("account", "me1@foo.bar")}
+	handler := &EventHandler{account: "me1@foo.bar", peer: jid.NR("them1@somewhere.com"), Log: ll.WithField("account", "me1@foo.bar")}
 	l := captureLog(ll, func() {
 		handler.HandleMessageEvent(otr3.MessageEventLogHeartbeatReceived, nil, nil)
 	})
@@ -136,7 +136,7 @@ func (s *EventHandlerSuite) Test_HandleMessageEvent_logsHeartbeatEvents(c *C) {
 
 func (s *EventHandlerSuite) Test_HandleMessageEvent_logsUnrecognizedMessage(c *C) {
 	ll := log.New()
-	handler := &EventHandler{account: "me1@foo.bar", peer: jid.NR("them1@somewhere.com"), log: ll.WithField("account", "me1@foo.bar")}
+	handler := &EventHandler{account: "me1@foo.bar", peer: jid.NR("them1@somewhere.com"), Log: ll.WithField("account", "me1@foo.bar")}
 	l := captureLog(ll, func() {
 		handler.HandleMessageEvent(otr3.MessageEventReceivedMessageUnrecognized, nil, nil)
 	})
@@ -148,7 +148,7 @@ func (s *EventHandlerSuite) Test_HandleMessageEvent_logsUnrecognizedMessage(c *C
 
 func (s *EventHandlerSuite) Test_HandleMessageEvent_logsUnhandledEvent(c *C) {
 	ll := log.New()
-	handler := &EventHandler{account: "me1@foo.bar", peer: jid.NR("them1@somewhere.com"), log: ll.WithField("account", "me1@foo.bar")}
+	handler := &EventHandler{account: "me1@foo.bar", peer: jid.NR("them1@somewhere.com"), Log: ll.WithField("account", "me1@foo.bar")}
 	l := captureLog(ll, func() {
 		handler.HandleMessageEvent(otr3.MessageEvent(44422), nil, nil)
 	})
@@ -160,7 +160,7 @@ func (s *EventHandlerSuite) Test_HandleMessageEvent_logsUnhandledEvent(c *C) {
 
 func (s *EventHandlerSuite) Test_HandleMessageEvent_ignoresMessageForOtherInstance(c *C) {
 	ll := log.New()
-	handler := &EventHandler{account: "me1@foo.bar", peer: jid.NR("them1@somewhere.com"), log: ll}
+	handler := &EventHandler{account: "me1@foo.bar", peer: jid.NR("them1@somewhere.com"), Log: ll}
 	l := captureLog(ll, func() {
 		handler.HandleMessageEvent(otr3.MessageEventReceivedMessageForOtherInstance, nil, nil)
 	})
@@ -213,7 +213,7 @@ func (s *EventHandlerSuite) Test_HandleMessageEvent_handlesMessageEventSetupCorr
 		close(nn)
 	}()
 
-	handler := &EventHandler{account: "me2@foo.bar", peer: jid.NR("them2@somewhere.com"), notifications: nn, log: ll.WithField("account", "me2@foo.bar")}
+	handler := &EventHandler{account: "me2@foo.bar", peer: jid.NR("them2@somewhere.com"), notifications: nn, Log: ll.WithField("account", "me2@foo.bar")}
 	l := captureLog(ll, func() {
 		handler.HandleMessageEvent(otr3.MessageEventSetupError, nil, nil)
 	})

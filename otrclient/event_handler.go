@@ -26,7 +26,7 @@ type EventHandler struct {
 	delayedMessageSent chan<- int
 	delays             map[int]bool
 	pendingDelays      int
-	log                coylog.Logger
+	Log                coylog.Logger
 }
 
 // ConsumeDelayedState returns whether the given trace has been delayed or not, blanking out that status as a side effect
@@ -42,7 +42,7 @@ func (e *EventHandler) notify(s string) {
 
 // HandleErrorMessage is called when asked to handle a specific error message
 func (e *EventHandler) HandleErrorMessage(error otr3.ErrorCode) []byte {
-	e.log.WithField("error", error).Debug("HandleErrorMessage()")
+	e.Log.WithField("error", error).Debug("HandleErrorMessage()")
 
 	switch error {
 	case otr3.ErrorCodeEncryptionError:
@@ -60,7 +60,7 @@ func (e *EventHandler) HandleErrorMessage(error otr3.ErrorCode) []byte {
 
 // HandleSecurityEvent is called to handle a specific security event
 func (e *EventHandler) HandleSecurityEvent(event otr3.SecurityEvent) {
-	e.log.WithFields(log.Fields{
+	e.Log.WithFields(log.Fields{
 		"event": event,
 	}).Debug("HandleSecurityEvent()")
 	switch event {
@@ -76,7 +76,7 @@ func (e *EventHandler) HandleSecurityEvent(event otr3.SecurityEvent) {
 
 // HandleSMPEvent is called to handle a specific SMP event
 func (e *EventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent int, question string) {
-	e.log.WithFields(log.Fields{
+	e.Log.WithFields(log.Fields{
 		"event":    event,
 		"progress": progressPercent,
 		"question": question,
@@ -100,15 +100,15 @@ func (e *EventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent int, 
 func (e *EventHandler) HandleMessageEvent(event otr3.MessageEvent, message []byte, err error, trace ...interface{}) {
 	switch event {
 	case otr3.MessageEventLogHeartbeatReceived:
-		e.log.WithFields(log.Fields{
+		e.Log.WithFields(log.Fields{
 			"from": e.peer,
 		}).Debug("Heartbeat received")
 	case otr3.MessageEventLogHeartbeatSent:
-		e.log.WithFields(log.Fields{
+		e.Log.WithFields(log.Fields{
 			"to": e.peer,
 		}).Debug("Heartbeat sent")
 	case otr3.MessageEventReceivedMessageUnrecognized:
-		e.log.WithFields(log.Fields{
+		e.Log.WithFields(log.Fields{
 			"from": e.peer,
 		}).Debug("Unrecognized OTR message received")
 	case otr3.MessageEventEncryptionRequired:
@@ -128,7 +128,7 @@ func (e *EventHandler) HandleMessageEvent(event otr3.MessageEvent, message []byt
 	case otr3.MessageEventSetupError:
 		e.notify(i18n.Local("Error setting up private conversation."))
 		if err != nil {
-			e.log.WithError(err).WithField("with", e.peer).
+			e.Log.WithError(err).WithField("with", e.peer).
 				Warn("Error setting up private conversation")
 		}
 	case otr3.MessageEventMessageSent:
@@ -157,7 +157,7 @@ func (e *EventHandler) HandleMessageEvent(event otr3.MessageEvent, message []byt
 	case otr3.MessageEventReceivedMessageForOtherInstance:
 		// We ignore this message on purpose, for now it would be too noisy to notify about it
 	default:
-		e.log.WithError(err).WithFields(log.Fields{
+		e.Log.WithError(err).WithFields(log.Fields{
 			"from":    e.peer,
 			"event":   event,
 			"message": message,

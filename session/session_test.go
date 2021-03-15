@@ -1891,3 +1891,191 @@ func (s *SessionSuite) Test_session_receivedClientPresence_subscribed(c *C) {
 		return true
 	})
 }
+
+func (s *SessionSuite) Test_session_receivedClientPresence_unsubscribe(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+		r:   roster.New(),
+	}
+
+	sess.r.AddOrReplace(&roster.Peer{Jid: jid.ParseBare("hello@goodbye.com")})
+
+	observer := make(chan interface{}, 1000)
+	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
+
+	stanza := &data.ClientPresence{
+		From: "hello@goodbye.com/compu",
+		Type: "unsubscribe",
+		ID:   "an-id-maybe",
+	}
+
+	res := sess.receivedClientPresence(stanza)
+	c.Assert(res, Equals, true)
+	v, _ := sess.r.Get(jid.ParseBare("hello@goodbye.com"))
+	c.Assert(v.Subscription, Equals, "")
+
+	c.Assert(hook.Entries, HasLen, 0)
+
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Peer)
+		if !ok {
+			return false
+		}
+
+		c.Assert(t.Type, Equals, events.Unsubscribe)
+		c.Assert(t.From, Equals, jid.Parse("hello@goodbye.com"))
+		return true
+	})
+
+}
+
+func (s *SessionSuite) Test_session_receivedClientPresence_unsubscribed(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+		r:   roster.New(),
+	}
+
+	stanza := &data.ClientPresence{
+		From: "hello@goodbye.com/compu",
+		Type: "unsubscribed",
+		ID:   "an-id-maybe",
+	}
+
+	res := sess.receivedClientPresence(stanza)
+	c.Assert(res, Equals, true)
+	c.Assert(hook.Entries, HasLen, 0)
+}
+
+func (s *SessionSuite) Test_session_receivedClientPresence_error(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+		r:   roster.New(),
+	}
+
+	sess.r.AddOrReplace(&roster.Peer{Jid: jid.ParseBare("hello@goodbye.com")})
+
+	stanza := &data.ClientPresence{
+		From: "hello@goodbye.com/compu",
+		Type: "error",
+		ID:   "an-id-maybe",
+		Error: &data.StanzaError{
+			By:   "hmm",
+			Code: "12342",
+			Type: "modify",
+			Text: "what are you really thinking",
+		},
+	}
+
+	stanza.Error.Condition.XMLName.Space = "urn:test:42"
+	stanza.Error.Condition.XMLName.Local = "summathing"
+	stanza.Error.Condition.Body = "<hello>foo</hello>"
+
+	res := sess.receivedClientPresence(stanza)
+	c.Assert(res, Equals, true)
+	v, _ := sess.r.Get(jid.ParseBare("hello@goodbye.com"))
+
+	c.Assert(v.LatestError, DeepEquals, &roster.PeerError{
+		Code: "12342",
+		Type: "modify",
+		More: "urn:test:42 summathing",
+	})
+
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.ErrorLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Got a presence error")
+	c.Assert(hook.Entries[0].Data["from"], Equals, "hello@goodbye.com/compu")
+	c.Assert(hook.Entries[0].Data["error"], Equals, stanza.Error)
+}
+
+func (s *SessionSuite) Test_session_receivedClientPresence_MUCerror(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+		r:   roster.New(),
+	}
+
+	published := []interface{}{}
+
+	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev interface{}) {
+		published = append(published, ev)
+	})
+
+	sess.r.AddOrReplace(&roster.Peer{Jid: jid.ParseBare("hello@goodbye.com")})
+
+	stanza := &data.ClientPresence{
+		From: "hello@goodbye.com/compu",
+		Type: "error",
+		ID:   "an-id-maybe",
+		Error: &data.StanzaError{
+			By:            "hmm2",
+			Code:          "12343",
+			Type:          "cancel",
+			Text:          "you think so?",
+			MUCNotAllowed: &data.MUCNotAllowed{},
+		},
+	}
+
+	stanza.Error.Condition.XMLName.Space = "urn:test:43"
+	stanza.Error.Condition.XMLName.Local = "else"
+	stanza.Error.Condition.Body = "<hello>foo</hello>"
+
+	res := sess.receivedClientPresence(stanza)
+	c.Assert(res, Equals, true)
+	v, _ := sess.r.Get(jid.ParseBare("hello@goodbye.com"))
+
+	c.Assert(v.LatestError, DeepEquals, &roster.PeerError{
+		Code: "12343",
+		Type: "cancel",
+		More: "urn:test:43 else",
+	})
+
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.ErrorLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Got a presence error")
+	c.Assert(hook.Entries[0].Data["from"], Equals, "hello@goodbye.com/compu")
+	c.Assert(hook.Entries[0].Data["error"], Equals, stanza.Error)
+
+	c.Assert(published, HasLen, 1)
+	c.Assert(published[0], DeepEquals, events.MUCError{
+		ErrorType: events.MUCNotAllowed,
+		Room:      jid.ParseBare("hello@goodbye.com"),
+		Nickname:  "compu",
+	})
+}
+
+func (s *SessionSuite) Test_session_receivedClientPresence_unknown_type(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+	}
+
+	stanza := &data.ClientPresence{
+		From: "hello@goodbye.com/compu",
+		Type: "something else",
+		ID:   "an-id-maybe",
+	}
+
+	res := sess.receivedClientPresence(stanza)
+	c.Assert(res, Equals, true)
+
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.WarnLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Unrecognized presence")
+	c.Assert(hook.Entries[0].Data["from"], Equals, "hello@goodbye.com/compu")
+	c.Assert(hook.Entries[0].Data["stanza"], Equals, stanza)
+}

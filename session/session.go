@@ -335,7 +335,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 	case "unsubscribed":
 		// Ignore
 	case "error":
-		log.WithFields(log.Fields{
+		s.log.WithFields(log.Fields{
 			"from":  stanza.From,
 			"error": stanza.Error,
 		}).Error("Got a presence error")
@@ -347,7 +347,10 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		}
 
 	default:
-		log.WithField("stanza", stanza).Warn("Unrecognized presence")
+		s.log.WithFields(log.Fields{
+			"stanza": stanza,
+			"from":   stanza.From,
+		}).Warn("Unrecognized presence")
 	}
 
 	return true

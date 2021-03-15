@@ -2079,3 +2079,175 @@ func (s *SessionSuite) Test_session_receivedClientPresence_unknown_type(c *C) {
 	c.Assert(hook.Entries[0].Data["from"], Equals, "hello@goodbye.com/compu")
 	c.Assert(hook.Entries[0].Data["stanza"], Equals, stanza)
 }
+
+func (s *SessionSuite) Test_session_AwaitVersionReply_failsOnClosedChannel(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+	}
+
+	ch := make(chan data.Stanza, 1)
+
+	close(ch)
+
+	sess.AwaitVersionReply(ch, "foobarium@example.org/hello")
+
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.WarnLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Version request timed out")
+	c.Assert(hook.Entries[0].Data["user"], Equals, "foobarium@example.org/hello")
+}
+
+func (s *SessionSuite) Test_session_AwaitVersionReply_works(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+	}
+
+	ch := make(chan data.Stanza, 1)
+
+	st := data.Stanza{
+		Value: &data.ClientIQ{
+			Type: "result",
+			Query: []byte(`<query xmlns="jabber:iq:version">
+  <name>One</name>
+  <version>Two</version>
+  <os>Three</os>
+</query>`),
+		},
+	}
+
+	ch <- st
+
+	sess.AwaitVersionReply(ch, "foobarium@example.org/hello")
+
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Version reply from peer")
+	c.Assert(hook.Entries[0].Data["user"], Equals, "foobarium@example.org/hello")
+	c.Assert(hook.Entries[0].Data["version"], DeepEquals, data.VersionReply{
+		XMLName: xml.Name{Space: "jabber:iq:version", Local: "query"},
+		Name:    "One",
+		Version: "Two",
+		OS:      "Three",
+	})
+}
+
+func (s *SessionSuite) Test_session_AwaitVersionReply_failsWhenNotIQ(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+	}
+
+	ch := make(chan data.Stanza, 1)
+
+	st := data.Stanza{
+		Value: "something else",
+	}
+
+	ch <- st
+
+	sess.AwaitVersionReply(ch, "foobarium@example.org/hello")
+
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.WarnLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Version request resulted in bad reply type")
+	c.Assert(hook.Entries[0].Data["user"], Equals, "foobarium@example.org/hello")
+}
+
+func (s *SessionSuite) Test_session_AwaitVersionReply_failsWhenStanzaError(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+	}
+
+	ch := make(chan data.Stanza, 1)
+
+	st := data.Stanza{
+		Value: &data.ClientIQ{
+			Type: "error",
+			Query: []byte(`<query xmlns="jabber:iq:version">
+  <name>One</name>
+  <version>Two</version>
+  <os>Three</os>
+</query>`),
+		},
+	}
+
+	ch <- st
+
+	sess.AwaitVersionReply(ch, "foobarium@example.org/hello")
+
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.WarnLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Version request resulted in XMPP error")
+	c.Assert(hook.Entries[0].Data["user"], Equals, "foobarium@example.org/hello")
+}
+
+func (s *SessionSuite) Test_session_AwaitVersionReply_failsWhenUnknownType(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+	}
+
+	ch := make(chan data.Stanza, 1)
+
+	st := data.Stanza{
+		Value: &data.ClientIQ{
+			Type: "unknownium",
+			Query: []byte(`<query xmlns="jabber:iq:version">
+  <name>One</name>
+  <version>Two</version>
+  <os>Three</os>
+</query>`),
+		},
+	}
+
+	ch <- st
+
+	sess.AwaitVersionReply(ch, "foobarium@example.org/hello")
+
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.WarnLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Version request resulted in response with unknown type")
+	c.Assert(hook.Entries[0].Data["user"], Equals, "foobarium@example.org/hello")
+	c.Assert(hook.Entries[0].Data["type"], Equals, "unknownium")
+}
+
+func (s *SessionSuite) Test_session_AwaitVersionReply_failsWhenBadXML(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+	}
+
+	ch := make(chan data.Stanza, 1)
+
+	st := data.Stanza{
+		Value: &data.ClientIQ{
+			Type:  "result",
+			Query: []byte(`<query`),
+		},
+	}
+
+	ch <- st
+
+	sess.AwaitVersionReply(ch, "foobarium@example.org/hello")
+
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.WarnLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Failed to parse version reply")
+	c.Assert(hook.Entries[0].Data["user"], Equals, "foobarium@example.org/hello")
+	c.Assert(hook.Entries[0].Data["error"], ErrorMatches, "XML syntax error.*")
+}

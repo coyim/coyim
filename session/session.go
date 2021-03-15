@@ -687,9 +687,15 @@ func (s *session) Timeout(c data.Cookie, t time.Time) {
 
 const defaultDelimiter = "::"
 
+var rosterRequestDelay = time.Duration(3) * time.Minute
+
+var waitForNextRosterRequest = func() {
+	time.Sleep(rosterRequestDelay)
+}
+
 func (s *session) watchRoster() {
 	for s.requestRoster() {
-		time.Sleep(time.Duration(3) * time.Minute)
+		waitForNextRosterRequest()
 	}
 }
 

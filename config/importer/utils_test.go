@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"sort"
 
 	. "gopkg.in/check.v1"
@@ -72,11 +71,7 @@ func denyWindowsUserDirPermissions(dir string, done chan bool) {
 func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfReadingDirFails(c *C) {
 	dir, _ := ioutil.TempDir("", "")
 	defer func() {
-		if runtime.GOOS == "windows" {
-			done := make(chan bool)
-			go grantWindowsUserDirPermissions(dir, done)
-			<-done
-		}
+		makeDirectoryAccesible(dir)
 		os.RemoveAll(dir)
 	}()
 
@@ -84,19 +79,11 @@ func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfReadingDirF
 	os.Create(filepath.Join(dir, "hello.conf"))
 	os.Create(filepath.Join(dir, "goodbye.conf"))
 
-	switch runtime.GOOS {
-	case "windows":
-		done := make(chan bool)
-		go denyWindowsUserDirPermissions(dir, done)
-		<-done
-	default:
-		os.Chmod(dir, 0000)
-	}
+	makeDirectoryUnnaccesible(dir)
 
-	defaultDirs := []string{"foo", "bar"}
-	res := ifExistsDir(defaultDirs, dir)
+	res := ifExistsDir([]string{"foo", "bar"}, dir)
 
-	c.Assert(res, DeepEquals, defaultDirs)
+	c.Assert(res, DeepEquals, []string{"foo", "bar"})
 }
 
 func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueAndFilesInside(c *C) {

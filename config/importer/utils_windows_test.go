@@ -8,13 +8,13 @@ import (
 	"os/exec"
 )
 
-func makeDirectoryUnnaccesible(dir string) {
+func makeDirectoryUnnaccesibleOSDependent(dir string) {
 	done := make(chan bool)
 	go denyWindowsUserDirPermissions(dir, done)
 	<-done
 }
 
-func makeDirectoryAccesible(dir string) {
+func makeDirectoryAccesibleOSDependent(dir string) {
 	done := make(chan bool)
 	go grantWindowsUserDirPermissions(dir, done)
 	<-done

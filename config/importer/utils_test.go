@@ -71,7 +71,7 @@ func denyWindowsUserDirPermissions(dir string, done chan bool) {
 func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfReadingDirFails(c *C) {
 	dir, _ := ioutil.TempDir("", "")
 	defer func() {
-		makeDirectoryAccesible(dir)
+		makeDirectoryAccesibleOSDependent(dir)
 		os.RemoveAll(dir)
 	}()
 
@@ -79,7 +79,7 @@ func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfReadingDirF
 	os.Create(filepath.Join(dir, "hello.conf"))
 	os.Create(filepath.Join(dir, "goodbye.conf"))
 
-	makeDirectoryUnnaccesible(dir)
+	makeDirectoryUnnaccesibleOSDependent(dir)
 
 	res := ifExistsDir([]string{"foo", "bar"}, dir)
 

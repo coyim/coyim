@@ -138,7 +138,7 @@
                                 <property name="visible">True</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="label" translatable="yes">Allow members to invite other users to the room</property>
+                                <property name="label" translatable="yes">Allow members to invite others to the room</property>
                                 <property name="justify">right</property>
                               </object>
                               <packing>

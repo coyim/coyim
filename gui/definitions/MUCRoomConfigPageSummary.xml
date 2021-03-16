@@ -17,9 +17,8 @@
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
-                    <property name="border_width">24</property>
                     <property name="orientation">vertical</property>
-                    <property name="spacing">32</property>
+                    <property name="spacing">24</property>
                     <child>
                       <object class="GtkBox" id="basic-information">
                         <property name="visible">True</property>

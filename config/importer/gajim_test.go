@@ -3,6 +3,7 @@ package importer
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/coyim/coyim/config"
@@ -10,9 +11,41 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type GajimSuite struct{}
+type GajimSuite struct {
+	origEnv1 string
+	origEnv2 string
+	tempPath string
+}
 
 var _ = Suite(&GajimSuite{})
+
+func (s *GajimSuite) setupAppConfigAndHomeDirectories() {
+	dir, _ := ioutil.TempDir("", "")
+	s.tempPath = dir
+
+	s.setAppDataDirOSDependent()
+
+	os.MkdirAll(dir, 0755)
+	os.MkdirAll(filepath.Join(s.appDir(), "config"), 0755)
+	os.MkdirAll(filepath.Join(s.appDir(), "pluginsconfig"), 0755)
+}
+
+func (s *GajimSuite) tearDownAppConfigAndHomeDirectories() {
+	s.restoreAppDataDirOSDependent()
+	os.RemoveAll(s.tempPath)
+}
+
+func (s *GajimSuite) appDir() string {
+	return filepath.Join(s.tempPath, "gajim")
+}
+
+func (s *GajimSuite) SetUpSuite(c *C) {
+	s.setupAppConfigAndHomeDirectories()
+}
+
+func (s *GajimSuite) TearDownSuite(c *C) {
+	s.tearDownAppConfigAndHomeDirectories()
+}
 
 func (s *GajimSuite) Test_GajimImporter_canImportFingerprintsFromFile(c *C) {
 	importer := gajimImporter{}
@@ -486,15 +519,10 @@ func copyFile(from, to string) {
 }
 
 func (s *GajimSuite) Test_gajimImporter_TryImport_works(c *C) {
-	gi := newGajimImportPathsForTesting()
-	defer gi.restorePaths()
-
-	gajimDir := gi.dir()
-
-	copyFile(testResourceFilename("gajim_test_data/config2"), filepath.Join(gajimDir, "config"))
-	copyFile(testResourceFilename("gajim_test_data/gotr2"), filepath.Join(gajimDir, "pluginsconfig", "gotr"))
-	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.key3"), filepath.Join(gajimDir, "aba.baba@jabber.ccc.de.key3"))
-	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.fpr"), filepath.Join(gajimDir, "aba.baba@jabber.ccc.de.fpr"))
+	copyFile(testResourceFilename("gajim_test_data/config2"), filepath.Join(s.appDir(), "config"))
+	copyFile(testResourceFilename("gajim_test_data/gotr2"), filepath.Join(s.appDir(), "pluginsconfig", "gotr"))
+	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.key3"), filepath.Join(s.appDir(), "aba.baba@jabber.ccc.de.key3"))
+	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.fpr"), filepath.Join(s.appDir(), "aba.baba@jabber.ccc.de.fpr"))
 
 	i := &gajimImporter{}
 	res := i.TryImport()

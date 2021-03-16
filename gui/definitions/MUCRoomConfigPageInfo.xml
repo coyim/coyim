@@ -6,9 +6,8 @@
         <property name="visible">True</property>
         <property name="halign">start</property>
         <property name="valign">start</property>
-        <property name="border_width">24</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">32</property>
+        <property name="spacing">24</property>
         <child>
           <object class="GtkLabel">
             <property name="width_request">300</property>
@@ -116,7 +115,7 @@
                     <property name="visible">True</property>
                     <property name="hscrollbar_policy">never</property>
                     <property name="shadow_type">in</property>
-                    <property name="min_content_height">100</property>
+                    <property name="min_content_height">50</property>
                     <child>
                       <object class="GtkTextView" id="room-description">
                         <property name="visible">True</property>

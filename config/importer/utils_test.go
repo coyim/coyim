@@ -1,10 +1,8 @@
 package importer
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"sort"
 
@@ -52,20 +50,6 @@ func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfDoesntExist
 	res := ifExistsDir([]string{"foo", "bar"}, "bla-dir-that-hopefully-doesnt-exist")
 
 	c.Assert(res, DeepEquals, []string{"foo", "bar"})
-}
-
-func windowsIcaclsExec(dir, action, permissions string, done chan bool) {
-	c := exec.Command("icacls", dir, action, permissions)
-	c.Run()
-	done <- true
-}
-
-func grantWindowsUserDirPermissions(dir string, done chan bool) {
-	windowsIcaclsExec(dir, "/grant", fmt.Sprintf("%s:(RX,W)", os.Getenv("username")), done)
-}
-
-func denyWindowsUserDirPermissions(dir string, done chan bool) {
-	windowsIcaclsExec(dir, "/deny", fmt.Sprintf("%s:(RX,W)", os.Getenv("username")), done)
 }
 
 func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfReadingDirFails(c *C) {

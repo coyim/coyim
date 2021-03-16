@@ -21,14 +21,14 @@ func makeDirectoryAccesibleOSDependent(dir string) {
 }
 
 func denyWindowsUserDirPermissions(dir string, done chan bool) {
-	windowsIcaclsExec(dir, "/deny", fmt.Sprintf("%s:(RX,W)", os.Getenv("username")), done)
+	icaclsExec(dir, "/deny", fmt.Sprintf("%s:(RX,W)", os.Getenv("username")), done)
 }
 
 func grantWindowsUserDirPermissions(dir string, done chan bool) {
-	windowsIcaclsExec(dir, "/grant", fmt.Sprintf("%s:(RX,W)", os.Getenv("username")), done)
+	icaclsExec(dir, "/grant", fmt.Sprintf("%s:(RX,W)", os.Getenv("username")), done)
 }
 
-func windowsIcaclsExec(dir, action, permissions string, done chan bool) {
+func icaclsExec(dir, action, permissions string, done chan bool) {
 	c := exec.Command("icacls", dir, action, permissions)
 	c.Run()
 	done <- true

@@ -204,7 +204,7 @@ func supportedLanguageDescription(langCode string) string {
 	friendlyName := systemLangNamer.Name(langTag)
 	langName := display.Self.Name(langTag)
 
-	if langName != "" {
+	if langName != "" && friendlyName != langName {
 		return i18n.Localf("%s (%s)", friendlyName, langName)
 	}
 

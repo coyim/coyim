@@ -12,7 +12,7 @@ func (s *GajimSuite) setAppDataDirOSDependent() {
 }
 
 func (s *GajimSuite) restoreAppDataDirOSDependent() {
-	setWindowsCurrentAppDataPath(gi.origEnv1)
+	setWindowsCurrentAppDataPath(s.origEnv1)
 }
 
 const (

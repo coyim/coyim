@@ -969,6 +969,7 @@ func (mcm *mockConvManager) TerminateAll() {
 }
 
 type mockConv struct {
+	send             func([]byte) (int, error)
 	receive          func([]byte) ([]byte, error)
 	isEncrypted      func() bool
 	endEncryptedChat func() error
@@ -983,7 +984,10 @@ func (mc *mockConv) IsEncrypted() bool {
 	return mc.isEncrypted()
 }
 
-func (mc *mockConv) Send([]byte) (trace int, err error) {
+func (mc *mockConv) Send(v []byte) (trace int, err error) {
+	if mc.send != nil {
+		return mc.send(v)
+	}
 	return 0, nil
 }
 
@@ -3716,5 +3720,158 @@ func (s *SessionSuite) Test_session_Connect_doesntDoAnythingWhenConnected(c *C) 
 	res := sess.Connect("one", nil)
 
 	c.Assert(res, IsNil)
+	c.Assert(hook.Entries, HasLen, 0)
+}
+
+func (s *SessionSuite) Test_session_Close_doesntDoAnythingIfDisconnected(c *C) {
+	sess := &session{
+		connStatus: DISCONNECTED,
+	}
+
+	sess.Close()
+}
+
+func (s *SessionSuite) Test_session_Close_setsTheConnectionDisconnectedIfNoConnectionExists(c *C) {
+	sess := &session{
+		conn:       nil,
+		connStatus: CONNECTED,
+	}
+
+	sess.Close()
+	c.Assert(sess.connStatus, Equals, DISCONNECTED)
+}
+
+type closeMockConn struct {
+	*mock.Conn
+	f func() error
+}
+
+func (m *closeMockConn) Close() error {
+	if m.f != nil {
+		return m.f()
+	}
+	return nil
+}
+
+func (s *SessionSuite) Test_session_Close_closesTheConnection(c *C) {
+	called := false
+	cn := &closeMockConn{
+		f: func() error {
+			called = true
+			return nil
+		},
+	}
+
+	sess := &session{
+		conn:           cn,
+		connStatus:     CONNECTED,
+		wantToBeOnline: true,
+	}
+
+	sess.Close()
+	c.Assert(sess.conn, IsNil)
+	c.Assert(sess.connStatus, Equals, DISCONNECTED)
+	c.Assert(called, Equals, true)
+}
+
+func (s *SessionSuite) Test_session_Close_closesTheConnectionAndTerminatesConnections(c *C) {
+	cn := &closeMockConn{}
+	cm := &mockConvManager{}
+
+	sess := &session{
+		conn:           cn,
+		connStatus:     CONNECTED,
+		wantToBeOnline: false,
+		convManager:    cm,
+	}
+	called := false
+	cm.terminateAll = func() {
+		called = true
+	}
+
+	sess.Close()
+	c.Assert(sess.conn, IsNil)
+	c.Assert(sess.connStatus, Equals, DISCONNECTED)
+	c.Assert(called, Equals, true)
+}
+
+func (s *SessionSuite) Test_session_connectionLost_closes(c *C) {
+	called := false
+	cn := &closeMockConn{
+		f: func() error {
+			called = true
+			return nil
+		},
+	}
+
+	sess := &session{
+		conn:           cn,
+		connStatus:     CONNECTED,
+		wantToBeOnline: true,
+	}
+
+	observer := make(chan interface{}, 1000)
+	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
+
+	sess.connectionLost()
+	c.Assert(sess.conn, IsNil)
+	c.Assert(sess.connStatus, Equals, DISCONNECTED)
+	c.Assert(called, Equals, true)
+
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Event)
+		if !ok || t.Type != events.ConnectionLost {
+			return false
+		}
+
+		c.Assert(t.Type, Equals, events.ConnectionLost)
+		return true
+	})
+}
+
+func (s *SessionSuite) Test_session_EncryptAndSendTo_returnsErrorWhenOffline(c *C) {
+	sess := &session{
+		connStatus: DISCONNECTED,
+	}
+
+	trace, delay, e := sess.EncryptAndSendTo(jid.Parse("someone@foo.org"), "hello")
+	c.Assert(trace, Equals, 0)
+	c.Assert(delay, Equals, false)
+	c.Assert(e, ErrorMatches, "Couldn't send message since we are not connected")
+}
+
+func (s *SessionSuite) Test_session_EncryptAndSendTo_sendsMessageThroughOTR(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	eh := &otrclient.EventHandler{
+		Log: l,
+	}
+	mcm := &mockConvManager{}
+
+	sess := &session{
+		connStatus:  CONNECTED,
+		convManager: mcm,
+		config:      &config.ApplicationConfig{},
+	}
+
+	mc := &mockConv{}
+	mc.eh = eh
+	vals := []byte{}
+	mc.send = func(v []byte) (int, error) {
+		vals = v
+		return 42, errors.New("marker error")
+	}
+	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
+		return mc, false
+	}
+
+	trace, delayed, e := sess.EncryptAndSendTo(jid.Parse("some@two.org/bla"), "allo over there")
+	c.Assert(string(vals), Equals, "allo over there")
+	c.Assert(trace, Equals, 42)
+	c.Assert(delayed, Equals, false)
+	c.Assert(e, ErrorMatches, "marker error")
 	c.Assert(hook.Entries, HasLen, 0)
 }

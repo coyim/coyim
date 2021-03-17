@@ -4,10 +4,10 @@ package importer
 
 import "os"
 
-func makeDirectoryUnnaccesibleOSDependent(dir string) {
+func makeDirectoryInaccessible(dir string) {
 	os.Chmod(dir, 0000)
 }
 
-func makeDirectoryAccesibleOSDependent(dir string) {
+func makeDirectoryAccessible(dir string) {
 	os.Chmod(dir, 0755)
 }

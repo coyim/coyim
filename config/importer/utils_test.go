@@ -55,7 +55,7 @@ func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfDoesntExist
 func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfReadingDirFails(c *C) {
 	dir, _ := ioutil.TempDir("", "")
 	defer func() {
-		makeDirectoryAccesibleOSDependent(dir)
+		makeDirectoryAccessible(dir)
 		os.RemoveAll(dir)
 	}()
 
@@ -63,7 +63,7 @@ func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfReadingDirF
 	os.Create(filepath.Join(dir, "hello.conf"))
 	os.Create(filepath.Join(dir, "goodbye.conf"))
 
-	makeDirectoryUnnaccesibleOSDependent(dir)
+	makeDirectoryInaccessible(dir)
 
 	res := ifExistsDir([]string{"foo", "bar"}, dir)
 

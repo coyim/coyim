@@ -16,8 +16,10 @@ import (
 	"github.com/coyim/coyim/otrclient"
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/tls"
 	"github.com/coyim/coyim/xmpp"
 	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/coyim/xmpp/mock"
 	"github.com/coyim/otr3"
@@ -2926,4 +2928,793 @@ func (s *SessionSuite) Test_session_SendPing_failsIfServerDoesntSupportPing(c *C
 
 	c.Assert(hook.Entries[0].Level, Equals, log.WarnLevel)
 	c.Assert(hook.Entries[0].Message, Equals, "Server does not support Ping")
+}
+
+type mockRunnable struct {
+	ret error
+}
+
+func (m *mockRunnable) Run() error {
+	return m.ret
+}
+
+func (s *SessionSuite) Test_session_maybeNotify_works(c *C) {
+	orgExecCommand := execCommand
+	defer func() {
+		execCommand = orgExecCommand
+	}()
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+		config: &config.ApplicationConfig{
+			IdleSecondsBeforeNotification: 1,
+			NotifyCommand: []string{
+				"hello",
+				"goodbye",
+				"somewhere",
+			},
+		},
+		lastActionTime: time.Now().Add(-1000 * time.Second),
+	}
+
+	res := orgExecCommand("foo", "bar")
+	c.Assert(res, Not(IsNil))
+
+	called := []string{}
+
+	execCommand = func(name string, arg ...string) runnable {
+		called = append(called, name)
+		called = append(called, arg...)
+		return &mockRunnable{}
+	}
+
+	sess.maybeNotify()
+
+	c.Assert(called, DeepEquals, []string{"hello", "goodbye", "somewhere"})
+	c.Assert(hook.Entries, HasLen, 0)
+}
+
+func (s *SessionSuite) Test_session_maybeNotify_logsErrorWhenFailingCommand(c *C) {
+	orgExecCommand := execCommand
+	defer func() {
+		execCommand = orgExecCommand
+	}()
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+		config: &config.ApplicationConfig{
+			IdleSecondsBeforeNotification: 1,
+			NotifyCommand: []string{
+				"hello",
+				"goodbye",
+				"somewhere",
+			},
+		},
+		lastActionTime: time.Now().Add(-1000 * time.Second),
+	}
+
+	execCommand = func(string, ...string) runnable {
+		return &mockRunnable{errors.New("a nice marker error")}
+	}
+
+	sess.maybeNotify()
+
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.ErrorLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Failed to run notify command")
+	c.Assert(hook.Entries[0].Data["error"], ErrorMatches, "a nice marker error")
+}
+
+type requestVCardMockConn struct {
+	*mock.Conn
+	f func() (<-chan data.Stanza, data.Cookie, error)
+}
+
+func (m *requestVCardMockConn) RequestVCard() (<-chan data.Stanza, data.Cookie, error) {
+	return m.f()
+}
+
+func (s *SessionSuite) Test_session_getVCard_works(c *C) {
+	mc := &requestVCardMockConn{}
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		conn:       mc,
+		log:        l,
+		connStatus: CONNECTED,
+	}
+
+	ch := make(chan data.Stanza, 1)
+
+	mc.f = func() (<-chan data.Stanza, data.Cookie, error) {
+		return ch, 0, nil
+	}
+
+	stz := data.Stanza{
+		Value: &data.ClientIQ{
+			Query: []byte(`<vCard xmlns="vcard-temp">
+<FN>Hello</FN>
+<NICKNAME>Again</NICKNAME>
+</vCard>`),
+		},
+	}
+
+	ch <- stz
+
+	sess.getVCard()
+
+	c.Assert(sess.nicknames, DeepEquals, []string{"Again", "Hello"})
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Fetching VCard")
+}
+
+func (s *SessionSuite) Test_session_getVCard_reportsErrorWhenParsingTheXML(c *C) {
+	mc := &requestVCardMockConn{}
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		conn:       mc,
+		log:        l,
+		connStatus: CONNECTED,
+	}
+
+	ch := make(chan data.Stanza, 1)
+
+	mc.f = func() (<-chan data.Stanza, data.Cookie, error) {
+		return ch, 0, nil
+	}
+
+	stz := data.Stanza{
+		Value: &data.ClientIQ{
+			Query: []byte(`<vCard xmlns="vcard-temp">
+<FN>Hel`),
+		},
+	}
+
+	ch <- stz
+
+	sess.getVCard()
+
+	c.Assert(sess.nicknames, IsNil)
+	c.Assert(hook.Entries, HasLen, 2)
+	c.Assert(hook.Entries[1].Level, Equals, log.ErrorLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "Failed to parse vcard")
+	c.Assert(hook.Entries[1].Data["error"], ErrorMatches, "XML syntax error.*")
+}
+
+func (s *SessionSuite) Test_session_getVCard_failsWhenChannelIsClosed(c *C) {
+	mc := &requestVCardMockConn{}
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		conn:       mc,
+		log:        l,
+		connStatus: CONNECTED,
+	}
+
+	ch := make(chan data.Stanza, 1)
+
+	mc.f = func() (<-chan data.Stanza, data.Cookie, error) {
+		return ch, 0, nil
+	}
+
+	close(ch)
+
+	sess.getVCard()
+
+	c.Assert(sess.nicknames, IsNil)
+	c.Assert(hook.Entries, HasLen, 2)
+	c.Assert(hook.Entries[1].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "session: vcard request cancelled or timed out")
+}
+
+func (s *SessionSuite) Test_session_getVCard_failsWhenRequestFails(c *C) {
+	mc := &requestVCardMockConn{}
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		conn:       mc,
+		log:        l,
+		connStatus: CONNECTED,
+	}
+
+	mc.f = func() (<-chan data.Stanza, data.Cookie, error) {
+		return nil, 0, errors.New("another marker error")
+	}
+
+	sess.getVCard()
+
+	c.Assert(sess.nicknames, IsNil)
+	c.Assert(hook.Entries, HasLen, 2)
+	c.Assert(hook.Entries[1].Level, Equals, log.ErrorLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "Failed to request vcard")
+	c.Assert(hook.Entries[1].Data["error"], ErrorMatches, "another marker error")
+}
+
+func (s *SessionSuite) Test_session_getVCard_doesntDoAnythingIfNotConnected(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log:        l,
+		connStatus: DISCONNECTED,
+	}
+
+	sess.getVCard()
+
+	c.Assert(sess.nicknames, IsNil)
+	c.Assert(hook.Entries, HasLen, 0)
+}
+
+func (s *SessionSuite) Test_session_DisplayName_works(c *C) {
+	c.Assert((&session{accountConfig: &config.Account{}, nicknames: []string{}}).DisplayName(), Equals, "")
+	c.Assert((&session{accountConfig: &config.Account{Nickname: "name 1", Account: "name 4"}, nicknames: []string{"", "name 2", "name 3"}}).DisplayName(), Equals, "name 1")
+	c.Assert((&session{accountConfig: &config.Account{Account: "name 4"}, nicknames: []string{"", "name 2", "name 3"}}).DisplayName(), Equals, "name 2")
+	c.Assert((&session{accountConfig: &config.Account{Account: "name 4"}, nicknames: []string{""}}).DisplayName(), Equals, "name 4")
+}
+
+type requestRosterMockConn struct {
+	*mock.Conn
+	frr func() (<-chan data.Stanza, data.Cookie, error)
+	frd func() (string, error)
+}
+
+func (m *requestRosterMockConn) RequestRoster() (<-chan data.Stanza, data.Cookie, error) {
+	return m.frr()
+}
+
+func (m *requestRosterMockConn) GetRosterDelimiter() (string, error) {
+	return m.frd()
+}
+
+func (s *SessionSuite) Test_session_requestRoster_works(c *C) {
+	mc := &requestRosterMockConn{}
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		conn:       mc,
+		log:        l,
+		connStatus: CONNECTED,
+		config:     &config.ApplicationConfig{},
+		accountConfig: &config.Account{
+			Account: "some@one.org",
+		},
+		r: roster.New(),
+	}
+
+	mc.frd = func() (string, error) {
+		return ":X:", nil
+	}
+
+	ch := make(chan data.Stanza, 1)
+
+	mc.frr = func() (<-chan data.Stanza, data.Cookie, error) {
+		return ch, 0, nil
+	}
+
+	stz := data.Stanza{
+		Value: &data.ClientIQ{
+			Query: []byte(`<query xmlns='jabber:iq:roster'>
+  <item jid='nurse@example.com'/>
+  <item jid='romeo@example.net'/>
+  <item jid='foo@somewhere.com'/>
+  <item jid='abc@example.org'/>
+</query>`),
+		},
+	}
+
+	ch <- stz
+
+	res := sess.requestRoster()
+
+	c.Assert(res, Equals, true)
+	c.Assert(sess.groupDelimiter, Equals, ":X:")
+	c.Assert(sess.r.ToSlice(), HasLen, 4)
+	c.Assert(hook.Entries, HasLen, 2)
+	c.Assert(hook.Entries[0].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Fetching roster")
+	c.Assert(hook.Entries[0].Data, HasLen, 0)
+	c.Assert(hook.Entries[1].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "Roster received")
+	c.Assert(hook.Entries[1].Data, HasLen, 0)
+}
+
+func (s *SessionSuite) Test_session_requestRoster_parsingXMLFails(c *C) {
+	mc := &requestRosterMockConn{}
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		conn:       mc,
+		log:        l,
+		connStatus: CONNECTED,
+		config:     &config.ApplicationConfig{},
+		accountConfig: &config.Account{
+			Account: "some@one.org",
+		},
+		r: roster.New(),
+	}
+
+	mc.frd = func() (string, error) {
+		return ":X:", nil
+	}
+
+	ch := make(chan data.Stanza, 1)
+
+	mc.frr = func() (<-chan data.Stanza, data.Cookie, error) {
+		return ch, 0, nil
+	}
+
+	stz := data.Stanza{
+		Value: &data.ClientIQ{
+			Query: []byte(`<query xmlns='jabber:iq:roster'`),
+		},
+	}
+
+	ch <- stz
+
+	res := sess.requestRoster()
+
+	c.Assert(res, Equals, true)
+	c.Assert(sess.groupDelimiter, Equals, ":X:")
+	c.Assert(sess.r.ToSlice(), HasLen, 0)
+	c.Assert(hook.Entries, HasLen, 2)
+	c.Assert(hook.Entries[0].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Fetching roster")
+	c.Assert(hook.Entries[0].Data, HasLen, 0)
+	c.Assert(hook.Entries[1].Level, Equals, log.ErrorLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "Failed to parse roster")
+	c.Assert(hook.Entries[1].Data, HasLen, 1)
+	c.Assert(hook.Entries[1].Data["error"], ErrorMatches, "XML syntax error.*")
+}
+
+func (s *SessionSuite) Test_session_requestRoster_failsIfChannelClosed(c *C) {
+	mc := &requestRosterMockConn{}
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		conn:       mc,
+		log:        l,
+		connStatus: CONNECTED,
+		config:     &config.ApplicationConfig{},
+		accountConfig: &config.Account{
+			Account: "some@one.org",
+		},
+		r: roster.New(),
+	}
+
+	mc.frd = func() (string, error) {
+		return ":X:", nil
+	}
+
+	ch := make(chan data.Stanza, 1)
+
+	mc.frr = func() (<-chan data.Stanza, data.Cookie, error) {
+		return ch, 0, nil
+	}
+
+	close(ch)
+
+	res := sess.requestRoster()
+
+	c.Assert(res, Equals, true)
+	c.Assert(sess.groupDelimiter, Equals, ":X:")
+	c.Assert(sess.r.ToSlice(), HasLen, 0)
+	c.Assert(hook.Entries, HasLen, 2)
+	c.Assert(hook.Entries[0].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Fetching roster")
+	c.Assert(hook.Entries[0].Data, HasLen, 0)
+	c.Assert(hook.Entries[1].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "session: roster request cancelled or timed out")
+	c.Assert(hook.Entries[1].Data, HasLen, 0)
+}
+
+func (s *SessionSuite) Test_session_requestRoster_failsIfRequestingTheRosterFails(c *C) {
+	mc := &requestRosterMockConn{}
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		conn:       mc,
+		log:        l,
+		connStatus: CONNECTED,
+		config:     &config.ApplicationConfig{},
+		accountConfig: &config.Account{
+			Account: "some@one.org",
+		},
+		r: roster.New(),
+	}
+
+	mc.frd = func() (string, error) {
+		return ":X:", nil
+	}
+
+	mc.frr = func() (<-chan data.Stanza, data.Cookie, error) {
+		return nil, 0, errors.New("this is also a marker")
+	}
+
+	res := sess.requestRoster()
+
+	c.Assert(res, Equals, true)
+	c.Assert(sess.groupDelimiter, Equals, ":X:")
+	c.Assert(sess.r.ToSlice(), HasLen, 0)
+	c.Assert(hook.Entries, HasLen, 2)
+	c.Assert(hook.Entries[0].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Fetching roster")
+	c.Assert(hook.Entries[0].Data, HasLen, 0)
+	c.Assert(hook.Entries[1].Level, Equals, log.ErrorLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "Failed to request roster")
+	c.Assert(hook.Entries[1].Data, HasLen, 1)
+	c.Assert(hook.Entries[1].Data["error"], ErrorMatches, "this is also a marker")
+}
+
+func (s *SessionSuite) Test_session_requestRoster_usesDefaultDelimiterWhenFailingToRequestIt(c *C) {
+	mc := &requestRosterMockConn{}
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		conn:       mc,
+		log:        l,
+		connStatus: CONNECTED,
+		config:     &config.ApplicationConfig{},
+		accountConfig: &config.Account{
+			Account: "some@one.org",
+		},
+		r: roster.New(),
+	}
+
+	mc.frd = func() (string, error) {
+		return "foo", errors.New("humma")
+	}
+
+	mc.frr = func() (<-chan data.Stanza, data.Cookie, error) {
+		return nil, 0, errors.New("this is also a marker")
+	}
+
+	res := sess.requestRoster()
+
+	c.Assert(res, Equals, true)
+	c.Assert(sess.groupDelimiter, Equals, "::")
+	c.Assert(sess.r.ToSlice(), HasLen, 0)
+	c.Assert(hook.Entries, HasLen, 2)
+	c.Assert(hook.Entries[0].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Fetching roster")
+	c.Assert(hook.Entries[0].Data, HasLen, 0)
+	c.Assert(hook.Entries[1].Level, Equals, log.ErrorLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "Failed to request roster")
+	c.Assert(hook.Entries[1].Data, HasLen, 1)
+	c.Assert(hook.Entries[1].Data["error"], ErrorMatches, "this is also a marker")
+}
+
+func (s *SessionSuite) Test_session_requestRoster_usesDefaultDelimiterWhenEmptyReturned(c *C) {
+	mc := &requestRosterMockConn{}
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		conn:       mc,
+		log:        l,
+		connStatus: CONNECTED,
+		config:     &config.ApplicationConfig{},
+		accountConfig: &config.Account{
+			Account: "some@one.org",
+		},
+		r: roster.New(),
+	}
+
+	mc.frd = func() (string, error) {
+		return "", nil
+	}
+
+	mc.frr = func() (<-chan data.Stanza, data.Cookie, error) {
+		return nil, 0, errors.New("this is also a marker")
+	}
+
+	res := sess.requestRoster()
+
+	c.Assert(res, Equals, true)
+	c.Assert(sess.groupDelimiter, Equals, "::")
+	c.Assert(sess.r.ToSlice(), HasLen, 0)
+	c.Assert(hook.Entries, HasLen, 2)
+	c.Assert(hook.Entries[0].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Fetching roster")
+	c.Assert(hook.Entries[0].Data, HasLen, 0)
+	c.Assert(hook.Entries[1].Level, Equals, log.ErrorLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "Failed to request roster")
+	c.Assert(hook.Entries[1].Data, HasLen, 1)
+	c.Assert(hook.Entries[1].Data["error"], ErrorMatches, "this is also a marker")
+}
+
+func (s *SessionSuite) Test_session_requestRoster_returnsWhenNotDisconnected(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log:        l,
+		connStatus: DISCONNECTED,
+	}
+
+	res := sess.requestRoster()
+
+	c.Assert(res, Equals, false)
+	c.Assert(sess.groupDelimiter, Equals, "")
+	c.Assert(hook.Entries, HasLen, 0)
+}
+
+func (s *SessionSuite) Test_session_watchRoster_works(c *C) {
+	orgWaitForNextRosterRequest := waitForNextRosterRequest
+	defer func() {
+		waitForNextRosterRequest = orgWaitForNextRosterRequest
+	}()
+
+	mc := &requestRosterMockConn{}
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		conn:       mc,
+		log:        l,
+		connStatus: CONNECTED,
+		config:     &config.ApplicationConfig{},
+		accountConfig: &config.Account{
+			Account: "some@one.org",
+		},
+		r: roster.New(),
+	}
+
+	waitForNextRosterRequest = func() {
+		sess.connStatus = DISCONNECTED
+	}
+
+	mc.frd = func() (string, error) {
+		return ":X:", nil
+	}
+
+	mc.frr = func() (<-chan data.Stanza, data.Cookie, error) {
+		return nil, 0, errors.New("this is also a marker")
+	}
+
+	sess.watchRoster()
+
+	c.Assert(sess.connStatus, Equals, DISCONNECTED)
+	c.Assert(sess.groupDelimiter, Equals, ":X:")
+	c.Assert(sess.r.ToSlice(), HasLen, 0)
+	c.Assert(hook.Entries, HasLen, 2)
+	c.Assert(hook.Entries[0].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Fetching roster")
+	c.Assert(hook.Entries[0].Data, HasLen, 0)
+	c.Assert(hook.Entries[1].Level, Equals, log.ErrorLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "Failed to request roster")
+	c.Assert(hook.Entries[1].Data, HasLen, 1)
+	c.Assert(hook.Entries[1].Data["error"], ErrorMatches, "this is also a marker")
+}
+
+type mockDialer struct {
+	*mock.Dialer
+
+	f func() (interfaces.Conn, error)
+}
+
+func (m *mockDialer) Dial() (interfaces.Conn, error) {
+	if m.f != nil {
+		return m.f()
+	}
+	return nil, nil
+}
+
+type mockConnectConn struct {
+	*mock.Conn
+
+	getResource      func() string
+	serverHasFeature func(string) bool
+}
+
+func (m *mockConnectConn) GetJIDResource() string {
+	if m.getResource != nil {
+		return m.getResource()
+	}
+	return ""
+}
+
+func (m *mockConnectConn) ServerHasFeature(v string) bool {
+	if m.serverHasFeature != nil {
+		return m.serverHasFeature(v)
+	}
+	return false
+}
+
+func (s *SessionSuite) Test_session_Connect_works(c *C) {
+	md := &mockDialer{}
+	mc := &mockConnectConn{
+		getResource:      func() string { return "hoho" },
+		serverHasFeature: func(string) bool { return true },
+	}
+	md.f = func() (interfaces.Conn, error) { return mc, nil }
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		dialerFactory: func(tls.Verifier, tls.Factory) interfaces.Dialer { return md },
+		log:           l,
+		connStatus:    DISCONNECTED,
+		config:        &config.ApplicationConfig{},
+		accountConfig: &config.Account{
+			Account: "some@one.org",
+		},
+		wantToBeOnline: true,
+		resource:       "somewhere",
+		r:              roster.New(),
+	}
+
+	res := sess.Connect("one", nil)
+
+	c.Assert(res, IsNil)
+	c.Assert(sess.resource, Equals, "hoho")
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Connect()")
+	c.Assert(hook.Entries[0].Data, HasLen, 2)
+	c.Assert(hook.Entries[0].Data["resource"], Equals, "somewhere")
+	c.Assert(hook.Entries[0].Data["wantToBeOnline"], Equals, true)
+}
+
+func (s *SessionSuite) Test_session_Connect_worksWithoutVCard(c *C) {
+	md := &mockDialer{}
+	mc := &mockConnectConn{
+		getResource:      func() string { return "hoho" },
+		serverHasFeature: func(string) bool { return false },
+	}
+	md.f = func() (interfaces.Conn, error) { return mc, nil }
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		dialerFactory: func(tls.Verifier, tls.Factory) interfaces.Dialer { return md },
+		log:           l,
+		connStatus:    DISCONNECTED,
+		config:        &config.ApplicationConfig{},
+		accountConfig: &config.Account{
+			Account: "some@one.org",
+		},
+		wantToBeOnline: false,
+		resource:       "somewhere",
+		r:              roster.New(),
+	}
+
+	res := sess.Connect("one", nil)
+
+	c.Assert(res, IsNil)
+	c.Assert(sess.resource, Equals, "hoho")
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Connect()")
+	c.Assert(hook.Entries[0].Data, HasLen, 2)
+	c.Assert(hook.Entries[0].Data["resource"], Equals, "")
+	c.Assert(hook.Entries[0].Data["wantToBeOnline"], Equals, false)
+}
+
+func (s *SessionSuite) Test_session_Connect_closesIfWeChangeConnStatus(c *C) {
+	md := &mockDialer{}
+	mc := &mockConnectConn{
+		getResource:      func() string { return "hoho" },
+		serverHasFeature: func(string) bool { return true },
+	}
+	md.f = func() (interfaces.Conn, error) { return mc, nil }
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	var sess *session
+	sess = &session{
+		conn: mc,
+		dialerFactory: func(tls.Verifier, tls.Factory) interfaces.Dialer {
+			sess.connStatus = DISCONNECTED
+			return md
+		},
+		log:        l,
+		connStatus: DISCONNECTED,
+		config:     &config.ApplicationConfig{},
+		accountConfig: &config.Account{
+			Account: "some@one.org",
+		},
+		wantToBeOnline: true,
+		resource:       "somewhere",
+		r:              roster.New(),
+	}
+
+	res := sess.Connect("one", nil)
+
+	c.Assert(res, IsNil)
+	c.Assert(sess.resource, Equals, "somewhere")
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Connect()")
+	c.Assert(hook.Entries[0].Data, HasLen, 2)
+	c.Assert(hook.Entries[0].Data["resource"], Equals, "somewhere")
+	c.Assert(hook.Entries[0].Data["wantToBeOnline"], Equals, true)
+}
+
+func (s *SessionSuite) Test_session_Connect_failsOnConnectionFailure(c *C) {
+	md := &mockDialer{}
+	md.f = func() (interfaces.Conn, error) { return nil, errors.New("dialer marker failure") }
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		dialerFactory: func(tls.Verifier, tls.Factory) interfaces.Dialer { return md },
+		log:           l,
+		connStatus:    DISCONNECTED,
+		config:        &config.ApplicationConfig{},
+		accountConfig: &config.Account{
+			Account: "some@one.org",
+		},
+		wantToBeOnline: true,
+		resource:       "somewhere",
+		r:              roster.New(),
+	}
+
+	res := sess.Connect("one", nil)
+
+	c.Assert(res, ErrorMatches, "dialer marker failure")
+	c.Assert(sess.connStatus, Equals, DISCONNECTED)
+	c.Assert(hook.Entries, HasLen, 2)
+	c.Assert(hook.Entries[0].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Connect()")
+	c.Assert(hook.Entries[0].Data, HasLen, 2)
+	c.Assert(hook.Entries[0].Data["resource"], Equals, "somewhere")
+	c.Assert(hook.Entries[0].Data["wantToBeOnline"], Equals, true)
+	c.Assert(hook.Entries[1].Level, Equals, log.ErrorLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "failed to connect")
+	c.Assert(hook.Entries[1].Data, HasLen, 1)
+	c.Assert(hook.Entries[1].Data["error"], ErrorMatches, "dialer marker failure")
+}
+
+func (s *SessionSuite) Test_session_Connect_doesntDoAnythingWhenConnected(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log:        l,
+		connStatus: CONNECTED,
+		config:     &config.ApplicationConfig{},
+		accountConfig: &config.Account{
+			Account: "some@one.org",
+		},
+		wantToBeOnline: true,
+		resource:       "somewhere",
+		r:              roster.New(),
+	}
+
+	res := sess.Connect("one", nil)
+
+	c.Assert(res, IsNil)
+	c.Assert(hook.Entries, HasLen, 0)
 }

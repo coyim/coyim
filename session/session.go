@@ -590,7 +590,16 @@ func (s *session) messageReceived(peer jid.Any, timestamp time.Time, encrypted b
 		Encrypted: encrypted,
 	})
 
-	s.maybeNotify()
+	go s.maybeNotify()
+}
+
+type runnable interface {
+	Run() error
+}
+
+/* #nosec G204 */
+var execCommand = func(name string, arg ...string) runnable {
+	return exec.Command(name, arg...)
 }
 
 func (s *session) maybeNotify() {
@@ -610,12 +619,10 @@ func (s *session) maybeNotify() {
 	}
 
 	/* #nosec G204 */
-	cmd := exec.Command(s.config.NotifyCommand[0], s.config.NotifyCommand[1:]...)
-	go func() {
-		if err := cmd.Run(); err != nil {
-			s.log.WithError(err).Error("Failed to run notify command")
-		}
-	}()
+	cmd := execCommand(s.config.NotifyCommand[0], s.config.NotifyCommand[1:]...)
+	if err := cmd.Run(); err != nil {
+		s.log.WithError(err).Error("Failed to run notify command")
+	}
 }
 
 // AwaitVersionReply listens on the channel and waits for the version reply

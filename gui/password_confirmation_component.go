@@ -61,7 +61,7 @@ func (pc *passwordConfirmationComponent) contentBox() gtki.Widget {
 // onPasswordChange MUST be called from the UI thread
 func (pc *passwordConfirmationComponent) onPasswordChange() {
 	if pc.entry.GetVisibility() {
-		pc.updateConfirmPasswordEntry()
+		pc.confirmEntry.SetText(getEntryText(pc.entry))
 	}
 }
 
@@ -69,7 +69,7 @@ func (pc *passwordConfirmationComponent) onPasswordChange() {
 func (pc *passwordConfirmationComponent) onShowPasswordClicked() {
 	visible := pc.entry.GetVisibility()
 	if !visible {
-		pc.updateConfirmPasswordEntry()
+		pc.confirmEntry.SetText(getEntryText(pc.entry))
 	}
 	pc.confirmEntry.SetVisibility(!visible)
 	pc.confirmEntry.SetSensitive(visible)
@@ -84,10 +84,4 @@ func (pc *passwordConfirmationComponent) updateShowPasswordLabel(v bool) {
 		return
 	}
 	pc.showPasswordButton.SetLabel(i18n.Local("Show"))
-}
-
-// updateConfirmPasswordEntry MUST be called from the UI thread
-func (pc *passwordConfirmationComponent) updateConfirmPasswordEntry() {
-	pe, _ := pc.entry.GetText()
-	pc.confirmEntry.SetText(pe)
 }

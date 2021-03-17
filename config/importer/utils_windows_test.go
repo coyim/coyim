@@ -8,28 +8,23 @@ import (
 	"os/exec"
 )
 
-func makeDirectoryInaccessible(dir string) {
-	done := make(chan bool)
-	go denyWindowsUserDirPermissions(dir, done)
-	<-done
+func makeDirectoryUnnaccesibleOSDependent(dir string) {
+	denyWindowsUserDirPermissions(dir)
 }
 
-func makeDirectoryAccessible(dir string) {
-	done := make(chan bool)
-	go grantWindowsUserDirPermissions(dir, done)
-	<-done
+func makeDirectoryAccesibleOSDependent(dir string) {
+	grantWindowsUserDirPermissions(dir)
 }
 
-func denyWindowsUserDirPermissions(dir string, done chan bool) {
-	icaclsExec(dir, "/deny", fmt.Sprintf("%s:(RX,W)", os.Getenv("username")), done)
+func denyWindowsUserDirPermissions(dir string) {
+	icaclsExec(dir, "/deny", fmt.Sprintf("%s:(RX,W)", os.Getenv("username")))
 }
 
-func grantWindowsUserDirPermissions(dir string, done chan bool) {
-	icaclsExec(dir, "/grant", fmt.Sprintf("%s:(RX,W)", os.Getenv("username")), done)
+func grantWindowsUserDirPermissions(dir string) {
+	icaclsExec(dir, "/grant", fmt.Sprintf("%s:(RX,W)", os.Getenv("username")))
 }
 
-func icaclsExec(dir, action, permissions string, done chan bool) {
+func icaclsExec(dir, action, permissions string) {
 	c := exec.Command("icacls", dir, action, permissions)
 	c.Run()
-	done <- true
 }

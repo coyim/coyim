@@ -5,7 +5,6 @@ package memcall
 import (
 	"errors"
 	"fmt"
-	"unsafe"
 
 	"golang.org/x/sys/windows"
 )
@@ -87,12 +86,3 @@ func Protect(b []byte, mpf MemoryProtectionFlag) error {
 
 // DisableCoreDumps is included for compatibility reasons. On windows it is a no-op function.
 func DisableCoreDumps() error { return nil }
-
-func _getBytes(ptr uintptr, len int, cap int) []byte {
-	var sl = struct {
-		addr uintptr
-		len  int
-		cap  int
-	}{ptr, len, cap}
-	return *(*[]byte)(unsafe.Pointer(&sl))
-}

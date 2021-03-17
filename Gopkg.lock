@@ -11,6 +11,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:3db5ccda56ed97cfd893bff5addd686305f8655e5d2cc02a4669193beb2db184"
+  name = "github.com/awnumar/memcall"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "b5f0ac18f9af19462e35c1939613db6bec26cef4"
+
+[[projects]]
+  branch = "master"
   digest = "1:ed92efe00830105b4a9c18cc700c412104645a1980d588445b3c295b36847d07"
   name = "github.com/coyim/constbn"
   packages = ["."]
@@ -64,14 +72,14 @@
 
 [[projects]]
   branch = "main"
-  digest = "1:e96c45ad24341a29a27f5c63d249b67583062847b3350058769ca3891dcd5f2e"
+  digest = "1:432fdae8fa7647d184810d5387adc9fd51a1473a089785171da100c119fff45d"
   name = "github.com/coyim/otr3"
   packages = [
     ".",
     "sexp",
   ]
   pruneopts = "UT"
-  revision = "12557db2addf8859d38d2efb6ad807d32ccda05a"
+  revision = "417d73d89c37578dc532ff40df46a61478659b17"
 
 [[projects]]
   digest = "1:57fa4c058c21ce25d0b7272518dd746065117abf6cc706158b0d361202024520"
@@ -150,14 +158,6 @@
   packages = ["."]
   pruneopts = "UT"
   revision = "a10e7caefd8e0d600cea437f5c3613aeb1553d56"
-
-[[projects]]
-  branch = "master"
-  digest = "1:e253b776b408e594c4c9cbcb81f9c06d3d90ba63586104b53841524f1fb0a4e1"
-  name = "github.com/olabiniV2/memcall"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "51be66ea74b4ad1cfd88658dec928fcfb9b1b9e7"
 
 [[projects]]
   digest = "1:1705716d33e69b9567ec6fd8e318a6e60869838b60643e54d0301bed8ac427d1"

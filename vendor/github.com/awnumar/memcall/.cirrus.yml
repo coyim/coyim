@@ -14,7 +14,7 @@ linux_task:
 
 osx_task:
   osx_instance:
-    image: mojave-base
+    image: big-sur-base
   env:
     GO111MODULE: on
     GOPATH: /tmp/go
@@ -31,13 +31,14 @@ osx_task:
 
 windows_task:
   windows_container:
-    image: golang:windowsservercore-1803
-    os_version: 1803
+    image: cirrusci/windowsservercore:2019
   env:
     GO111MODULE: on
     GOPATH: C:\golang
-    PATH: ${GOPATH}\bin:${PATH}
+    PATH: ${GOPATH}\bin;C:\Program Files\Go\bin;C:\Users\ContainerAdministrator\go\bin;${PATH}
     CIRRUS_WORKING_DIR: C:\golang\src\github.com\${CIRRUS_REPO_FULL_NAME}
+  install_script:
+    - choco install -y golang
   build_script:
     - go version
     - go get ./...
@@ -47,7 +48,7 @@ windows_task:
 
 freebsd_task:
   freebsd_instance:
-    image: freebsd-12-0-release-amd64
+    image: freebsd-12-2-release-amd64
   env:
     GO111MODULE: on
     GOPATH: /tmp/go

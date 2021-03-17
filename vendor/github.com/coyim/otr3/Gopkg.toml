@@ -36,7 +36,3 @@
 [[constraint]]
   branch = "master"
   name = "github.com/awnumar/memcall"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/olabiniV2/memcall"

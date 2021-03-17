@@ -6,7 +6,7 @@ import (
 	"sync"
 	"unsafe"
 
-	"github.com/olabiniV2/memcall"
+	"github.com/awnumar/memcall"
 )
 
 var notifiedLockFailure sync.Once

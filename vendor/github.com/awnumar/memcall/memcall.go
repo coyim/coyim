@@ -1,6 +1,7 @@
 package memcall
 
 import (
+	"reflect"
 	"runtime"
 	"unsafe"
 )
@@ -54,4 +55,9 @@ func _getStartPtr(b []byte) unsafe.Pointer {
 
 func _getPtr(b []byte) uintptr {
 	return uintptr(_getStartPtr(b))
+}
+
+func _getBytes(ptr uintptr, len int, cap int) []byte {
+	var sl = reflect.SliceHeader{Data: ptr, Len: len, Cap: cap}
+	return *(*[]byte)(unsafe.Pointer(&sl))
 }

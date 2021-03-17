@@ -3,11 +3,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:23b9850a220387962bae181bf0eaec5ae228cf3415ff365daa57de5e4820b33e"
+  digest = "1:3db5ccda56ed97cfd893bff5addd686305f8655e5d2cc02a4669193beb2db184"
   name = "github.com/awnumar/memcall"
   packages = ["."]
   pruneopts = "UT"
-  revision = "73db50fd9f807b4e2811f9f0b33c92e9da6b2489"
+  revision = "b5f0ac18f9af19462e35c1939613db6bec26cef4"
 
 [[projects]]
   branch = "master"
@@ -16,14 +16,6 @@
   packages = ["."]
   pruneopts = "UT"
   revision = "bb6a806b950f1f1d198984686471f7a025f3afc1"
-
-[[projects]]
-  branch = "master"
-  digest = "1:e253b776b408e594c4c9cbcb81f9c06d3d90ba63586104b53841524f1fb0a4e1"
-  name = "github.com/olabiniV2/memcall"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "51be66ea74b4ad1cfd88658dec928fcfb9b1b9e7"
 
 [[projects]]
   branch = "master"
@@ -43,7 +35,6 @@
   input-imports = [
     "github.com/awnumar/memcall",
     "github.com/coyim/constbn",
-    "github.com/olabiniV2/memcall",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -13,7 +13,7 @@
           <object class="GtkEntry" id="room-config-list-jid">
             <property name="visible">True</property>
             <property name="hexpand">True</property>
-            <property name="placeholder_text" translatable="yes">Identifier (JID)</property>
+            <property name="placeholder_text" translatable="yes">Account address</property>
             <signal name="activate" handler="on_field_activate" swapped="no"/>
             <signal name="changed" handler="on_field_changed" swapped="no"/>
           </object>

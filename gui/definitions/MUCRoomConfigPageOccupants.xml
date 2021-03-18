@@ -186,7 +186,7 @@
                             </child>
                             <child>
                               <object class="GtkTreeViewColumn" id="owner-jid-column">
-                                <property name="title" translatable="yes">Identifier (JID)</property>
+                                <property name="title" translatable="yes">Account address</property>
                                 <child>
                                   <object class="GtkCellRendererText" id="owner-jid-text-renderer">
                                     <signal name="edited" handler="on_owner_jid_edited" swapped="no"/>
@@ -372,7 +372,7 @@
                             </child>
                             <child>
                               <object class="GtkTreeViewColumn" id="admin-jid-column">
-                                <property name="title" translatable="yes">Identifier (JID)</property>
+                                <property name="title" translatable="yes">Account address</property>
                                 <child>
                                   <object class="GtkCellRendererText" id="admin-jid-text-renderer">
                                     <signal name="edited" handler="on_admin_jid_edited" swapped="no"/>

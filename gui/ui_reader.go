@@ -29,7 +29,7 @@ const (
 
 func getActualDefsFolder() string {
 	wd, _ := os.Getwd()
-	if strings.HasSuffix(wd, "gui") {
+	if strings.HasSuffix(filepath.ToSlash(wd), "/gui") {
 		return "./definitions"
 	}
 	return "./gui/definitions"

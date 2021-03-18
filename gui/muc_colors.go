@@ -29,6 +29,9 @@ type mucColorSet struct {
 	roomWarningForeground             string
 	roomWarningBackground             string
 	roomWarningBorder                 string
+	entryErrorBackground              string
+	entryErrorBorderShadow            string
+	entryErrorBorder                  string
 }
 
 func (u *gtkUI) currentMUCColorSet() mucColorSet {
@@ -65,6 +68,9 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		roomWarningForeground:             "#744210",
 		roomWarningBackground:             "#FEFCBF",
 		roomWarningBorder:                 "#D69E2E",
+		entryErrorBackground:              "#FFF5F6",
+		entryErrorBorderShadow:            "#FF7F50",
+		entryErrorBorder:                  "#E44635",
 	}
 }
 
@@ -95,6 +101,9 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		roomWarningForeground:             "#744210",
 		roomWarningBackground:             "#FEFCBF",
 		roomWarningBorder:                 "#D69E2E",
+		entryErrorBackground:              "#FFF5F6",
+		entryErrorBorderShadow:            "#FF7F50",
+		entryErrorBorder:                  "#E44635",
 	}
 }
 

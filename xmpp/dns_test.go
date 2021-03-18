@@ -54,13 +54,3 @@ func (s *DNSXMPPSuite) Test_resolve_resolvesCorrectly(c *C) {
 	c.Assert(hostport[0], DeepEquals, &connectEntry{host: "xmpp.olabini.se", port: 5222, priority: 0, weight: 5, tls: true})
 	c.Check(p, MatchesExpectations)
 }
-
-// WARNING: this test requires a real live connection to the Internet. Not so good...
-func (s *DNSXMPPSuite) Test_resolve_handlesErrors(c *C) {
-	_, err := resolve("doesntexist.olabini.se")
-
-	//It only happens when using golang resolver
-	//resolveSRVWithProxy will not return an error
-	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Matches, "lookup _xmpps-client._tcp.doesntexist.olabini.se.*?")
-}

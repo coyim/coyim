@@ -55,12 +55,6 @@ func (s byPriorityWeight) Less(i, j int) bool {
 }
 func (s byPriorityWeight) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
-// resolve performs a DNS SRV lookup for the XMPP server that serves the given
-// domain.
-func resolve(domain string) (hosts []*connectEntry, err error) {
-	return resolveWithCustom(domain, net.LookupSRV)
-}
-
 // resolveSRVWithProxy performs a DNS SRV lookup for the xmpp server that serves the given domain over the given proxy
 func resolveSRVWithProxy(proxy proxy.Dialer, domain string) (hosts []*connectEntry, err error) {
 	return resolveWithCustom(domain, resolverWithProxy(proxy))

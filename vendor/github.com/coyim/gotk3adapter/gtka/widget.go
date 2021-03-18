@@ -56,6 +56,10 @@ func (v *widget) SetSensitive(v1 bool) {
 	v.internal.SetSensitive(v1)
 }
 
+func (v *widget) SetOpacity(v2 float64) {
+	v.internal.SetOpacity(v2)
+}
+
 func (v *widget) SetTooltipText(text string) {
 	v.internal.SetTooltipText(text)
 }

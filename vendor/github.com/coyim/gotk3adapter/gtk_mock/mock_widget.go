@@ -102,5 +102,8 @@ func (*MockWidget) SetHAlign(v2 gtki.Align) {
 func (*MockWidget) SetVAlign(v2 gtki.Align) {
 }
 
+func (*MockWidget) SetOpacity(v2 float64) {
+}
+
 func (*MockWidget) Destroy() {
 }

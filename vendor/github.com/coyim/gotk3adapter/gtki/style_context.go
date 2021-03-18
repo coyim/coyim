@@ -9,6 +9,7 @@ type StyleContext interface {
 	glibi.Object
 
 	AddClass(string)
+	RemoveClass(string)
 	AddProvider(StyleProvider, uint)
 	GetScreen() (gdki.Screen, error)
 	GetProperty2(string, StateFlags) (interface{}, error)

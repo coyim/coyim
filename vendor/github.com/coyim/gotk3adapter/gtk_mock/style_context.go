@@ -13,6 +13,9 @@ type MockStyleContext struct {
 func (v *MockStyleContext) AddClass(v1 string) {
 }
 
+func (v *MockStyleContext) RemoveClass(v1 string) {
+}
+
 func (v *MockStyleContext) AddProvider(v1 gtki.StyleProvider, v2 uint) {
 }
 

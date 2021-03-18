@@ -35,6 +35,10 @@ func (v *styleContext) AddClass(v1 string) {
 	v.internal.AddClass(v1)
 }
 
+func (v *styleContext) RemoveClass(v1 string) {
+	v.internal.RemoveClass(v1)
+}
+
 func (v *styleContext) AddProvider(v1 gtki.StyleProvider, v2 uint) {
 	v.internal.AddProvider(UnwrapStyleProvider(v1), v2)
 }

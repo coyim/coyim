@@ -13,6 +13,8 @@ import (
 
 type GajimSuite struct{}
 
+var _ = Suite(&GajimSuite{})
+
 func (s *GajimSuite) Test_GajimImporter_canImportFingerprintsFromFile(c *C) {
 	importer := gajimImporter{}
 
@@ -519,16 +521,16 @@ func copyFile(from, to string) {
 	_ = ioutil.WriteFile(to, input, 0644)
 }
 
-type GajimImportSuite struct {
+type GajimTryImportSuite struct {
 	origEnv1 string
 	origEnv2 string
 	appPath  string
 	tempPath string
 }
 
-var _ = Suite(&GajimImportSuite{})
+var _ = Suite(&GajimTryImportSuite{})
 
-func (s *GajimImportSuite) SetUpTest(c *C) {
+func (s *GajimTryImportSuite) SetUpTest(c *C) {
 	tempPath, _ := ioutil.TempDir("", "")
 	s.tempPath = tempPath
 	s.appPath = filepath.Join(s.tempPath, s.appDirName())
@@ -540,12 +542,12 @@ func (s *GajimImportSuite) SetUpTest(c *C) {
 	os.MkdirAll(filepath.Join(s.appPath, "pluginsconfig"), 0755)
 }
 
-func (s *GajimImportSuite) TearDownTest(c *C) {
+func (s *GajimTryImportSuite) TearDownTest(c *C) {
 	s.restoreAppDataHome()
 	os.RemoveAll(s.tempPath)
 }
 
-func (s *GajimImportSuite) Test_gajimImporter_TryImport_works(c *C) {
+func (s *GajimTryImportSuite) Test_gajimImporter_TryImport_works(c *C) {
 	copyFile(testResourceFilename("gajim_test_data/config2"), filepath.Join(s.appPath, "config"))
 	copyFile(testResourceFilename("gajim_test_data/gotr2"), filepath.Join(s.appPath, "pluginsconfig", "gotr"))
 	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.key3"), filepath.Join(s.appPath, "aba.baba@jabber.ccc.de.key3"))

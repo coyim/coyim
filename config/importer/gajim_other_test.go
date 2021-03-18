@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func (s *GajimSuite) setAppDataDirOSDependent() {
+func (s *GajimImportSuite) setAppDataHome() {
 	s.origEnv1 = os.Getenv("XDG_CONFIG_HOME")
 	s.origEnv2 = os.Getenv("XDG_DATA_HOME")
 
@@ -14,7 +14,11 @@ func (s *GajimSuite) setAppDataDirOSDependent() {
 	os.Setenv("XDG_DATA_HOME", s.tempPath)
 }
 
-func (s *GajimSuite) restoreAppDataDirOSDependent() {
+func (s *GajimImportSuite) restoreAppDataHome() {
 	os.Setenv("XDG_CONFIG_HOME", s.origEnv1)
 	os.Setenv("XDG_DATA_HOME", s.origEnv2)
+}
+
+func (s *GajimImportSuite) appDirName() string {
+	return "gajim"
 }

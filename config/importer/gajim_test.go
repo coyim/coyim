@@ -11,41 +11,7 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type GajimSuite struct {
-	origEnv1 string
-	origEnv2 string
-	tempPath string
-}
-
-var _ = Suite(&GajimSuite{})
-
-func (s *GajimSuite) setupAppConfigAndHomeDirectories() {
-	dir, _ := ioutil.TempDir("", "")
-	s.tempPath = dir
-
-	s.setAppDataDirOSDependent()
-
-	os.MkdirAll(dir, 0755)
-	os.MkdirAll(filepath.Join(s.appDir(), "config"), 0755)
-	os.MkdirAll(filepath.Join(s.appDir(), "pluginsconfig"), 0755)
-}
-
-func (s *GajimSuite) tearDownAppConfigAndHomeDirectories() {
-	s.restoreAppDataDirOSDependent()
-	os.RemoveAll(s.tempPath)
-}
-
-func (s *GajimSuite) appDir() string {
-	return filepath.Join(s.tempPath, "gajim")
-}
-
-func (s *GajimSuite) SetUpSuite(c *C) {
-	s.setupAppConfigAndHomeDirectories()
-}
-
-func (s *GajimSuite) TearDownSuite(c *C) {
-	s.tearDownAppConfigAndHomeDirectories()
-}
+type GajimSuite struct{}
 
 func (s *GajimSuite) Test_GajimImporter_canImportFingerprintsFromFile(c *C) {
 	importer := gajimImporter{}
@@ -513,22 +479,6 @@ func (s *GajimSuite) Test_GajimImporter_canFailAFullImport(c *C) {
 	c.Assert(ok, Equals, false)
 }
 
-func copyFile(from, to string) {
-	input, _ := ioutil.ReadFile(from)
-	_ = ioutil.WriteFile(to, input, 0644)
-}
-
-func (s *GajimSuite) Test_gajimImporter_TryImport_works(c *C) {
-	copyFile(testResourceFilename("gajim_test_data/config2"), filepath.Join(s.appDir(), "config"))
-	copyFile(testResourceFilename("gajim_test_data/gotr2"), filepath.Join(s.appDir(), "pluginsconfig", "gotr"))
-	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.key3"), filepath.Join(s.appDir(), "aba.baba@jabber.ccc.de.key3"))
-	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.fpr"), filepath.Join(s.appDir(), "aba.baba@jabber.ccc.de.fpr"))
-
-	i := &gajimImporter{}
-	res := i.TryImport()
-	c.Assert(res, HasLen, 1)
-}
-
 func (s *GajimSuite) Test_gajimImporter_importFingerprintsFrom_ignoresNonXMPPAndBadFingerprints(c *C) {
 	i := &gajimImporter{}
 	res, fprs, ok := i.importFingerprintsFrom(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.fpr2"))
@@ -562,4 +512,46 @@ func (s *GajimSuite) Test_mergeAccountInformation_setRequireEncryption(c *C) {
 
 	c.Assert(res, Not(IsNil))
 	c.Assert(res.AlwaysEncryptWith, DeepEquals, []string{"foo@bar.com"})
+}
+
+func copyFile(from, to string) {
+	input, _ := ioutil.ReadFile(from)
+	_ = ioutil.WriteFile(to, input, 0644)
+}
+
+type GajimImportSuite struct {
+	origEnv1 string
+	origEnv2 string
+	appPath  string
+	tempPath string
+}
+
+var _ = Suite(&GajimImportSuite{})
+
+func (s *GajimImportSuite) SetUpTest(c *C) {
+	tempPath, _ := ioutil.TempDir("", "")
+	s.tempPath = tempPath
+	s.appPath = filepath.Join(s.tempPath, s.appDirName())
+
+	s.setAppDataHome()
+
+	os.MkdirAll(s.tempPath, 0755)
+	os.MkdirAll(filepath.Join(s.appPath, "config"), 0755)
+	os.MkdirAll(filepath.Join(s.appPath, "pluginsconfig"), 0755)
+}
+
+func (s *GajimImportSuite) TearDownTest(c *C) {
+	s.restoreAppDataHome()
+	os.RemoveAll(s.tempPath)
+}
+
+func (s *GajimImportSuite) Test_gajimImporter_TryImport_works(c *C) {
+	copyFile(testResourceFilename("gajim_test_data/config2"), filepath.Join(s.appPath, "config"))
+	copyFile(testResourceFilename("gajim_test_data/gotr2"), filepath.Join(s.appPath, "pluginsconfig", "gotr"))
+	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.key3"), filepath.Join(s.appPath, "aba.baba@jabber.ccc.de.key3"))
+	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.fpr"), filepath.Join(s.appPath, "aba.baba@jabber.ccc.de.fpr"))
+
+	i := &gajimImporter{}
+	res := i.TryImport()
+	c.Assert(res, HasLen, 1)
 }

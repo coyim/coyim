@@ -6,13 +6,17 @@ import (
 	"unsafe"
 )
 
-func (s *GajimSuite) setAppDataDirOSDependent() {
+func (s *GajimImportSuite) setAppDataHome() {
 	s.origEnv1 = getWindowsCurrentAppDataPath()
 	setWindowsCurrentAppDataPath(s.tempPath)
 }
 
-func (s *GajimSuite) restoreAppDataDirOSDependent() {
+func (s *GajimImportSuite) restoreAppDataHome() {
 	setWindowsCurrentAppDataPath(s.origEnv1)
+}
+
+func (s *GajimImportSuite) appDirName() string {
+	return "Gajim"
 }
 
 const (

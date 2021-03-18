@@ -31,7 +31,7 @@
                 </child>
                 <child>
                   <object class="GtkButton" id="room-config-list-add-apply">
-                    <property name="label" translatable="yes">Apply</property>
+                    <property name="label" translatable="yes">Add</property>
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="receives_default">True</property>

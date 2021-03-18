@@ -134,7 +134,16 @@ func (la *mucRoomConfigListAddComponent) areAllFormsFilled() bool {
 
 func (la *mucRoomConfigListAddComponent) enableApplyIfConditionsAreMet() {
 	la.removeAllButton.SetSensitive(len(la.items) > 0)
-	la.applyButton.SetSensitive(la.areAllFormsFilled())
+
+	v := la.areAllFormsFilled()
+	la.applyButton.SetSensitive(v)
+	if v {
+		if la.hasMoreThanOneItem() {
+			la.applyButton.SetLabel("Add all")
+			return
+		}
+		la.applyButton.SetLabel("Add")
+	}
 }
 
 func (la *mucRoomConfigListAddComponent) onCancelClicked() {
@@ -204,6 +213,14 @@ func (la *mucRoomConfigListAddComponent) isFormValid(form mucRoomConfigListForm)
 	}
 
 	return form.isValid()
+}
+
+func (la *mucRoomConfigListAddComponent) hasMoreThanOneItem() bool {
+	count := len(la.items)
+	if la.form.isFilled() {
+		count = count + 1
+	}
+	return count > 1
 }
 
 func (la *mucRoomConfigListAddComponent) friendlyErrorMessage(form mucRoomConfigListForm, err error) string {

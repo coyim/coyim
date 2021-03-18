@@ -240,15 +240,13 @@ func (s *mucStylesProvider) setOverlayStyle(o gtki.Overlay, st style) {
 }
 
 func (s *mucStylesProvider) setEntryErrorStyle(e gtki.Entry) {
-	s.setEntryStyle(e, style{
-		"background-color": s.colors.entryErrorBackground,
-		"border-color":     s.colors.entryErrorBorder,
-		"box-shadow":       s.boxShadow("0 0 0 1px", s.colors.entryErrorBorderShadow),
+	s.setWidgetStyles(e, styles{
+		".entry-error": style{
+			"background-color": s.colors.entryErrorBackground,
+			"border-color":     s.colors.entryErrorBorder,
+			"box-shadow":       s.boxShadow("0 0 0 1px", s.colors.entryErrorBorderShadow),
+		},
 	})
-}
-
-func (s *mucStylesProvider) setEntryStyle(e gtki.Entry, st style) {
-	s.setWidgetStyle(e, "entry", st)
 }
 
 func (s *mucStylesProvider) setNotificationTimeLabelStyle(l gtki.Label) {
@@ -256,6 +254,12 @@ func (s *mucStylesProvider) setNotificationTimeLabelStyle(l gtki.Label) {
 		"font-style": "italic",
 		"font-size":  "12px",
 		"opacity":    "0.7",
+	})
+}
+
+func (s *mucStylesProvider) setErrorLabelStyle(l gtki.Label) {
+	s.setLabelStyle(l, style{
+		"color": s.colors.entryErrorBorder,
 	})
 }
 

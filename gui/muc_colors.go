@@ -32,6 +32,7 @@ type mucColorSet struct {
 	entryErrorBackground              string
 	entryErrorBorderShadow            string
 	entryErrorBorder                  string
+	entryErrorLabel                   string
 }
 
 func (u *gtkUI) currentMUCColorSet() mucColorSet {
@@ -71,6 +72,7 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		entryErrorBackground:              "#FFF5F6",
 		entryErrorBorderShadow:            "#FF7F50",
 		entryErrorBorder:                  "#E44635",
+		entryErrorLabel:                   "#E44635",
 	}
 }
 
@@ -104,6 +106,7 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		entryErrorBackground:              "#FFF5F6",
 		entryErrorBorderShadow:            "#FF7F50",
 		entryErrorBorder:                  "#E44635",
+		entryErrorLabel:                   "#E44635",
 	}
 }
 

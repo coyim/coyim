@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -27,6 +26,7 @@ func (c *mucRoomConfigComponent) newRoomConfigAccessPage() mucRoomConfigPage {
 func (p *roomConfigAccessPage) initPasswordComponent() {
 	p.roomPassword = p.u.createPasswordConfirmationComponent()
 	p.roomPasswordBox.Add(p.roomPassword.contentBox())
+	p.onRefresh.add(p.roomPassword.onShowConfirmPasswordBasedOnMatchError)
 }
 
 func (p *roomConfigAccessPage) initDefaultValues() {
@@ -47,10 +47,7 @@ func (p *roomConfigAccessPage) isNotValid() bool {
 }
 
 func (p *roomConfigAccessPage) showValidationErrors() {
-	p.clearErrors()
-
-	if !p.roomPassword.passwordsMatch() {
-		p.notifyError(i18n.Local("Password confirmation doesn't match with entered password"))
-		p.roomPassword.focusConfirm()
-	}
+	p.roomPassword.changeConfirmPasswordEntryStyle()
+	p.roomPassword.onShowConfirmPasswordBasedOnMatchError()
+	p.roomPassword.focusConfirm()
 }

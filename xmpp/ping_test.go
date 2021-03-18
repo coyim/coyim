@@ -41,11 +41,20 @@ func (s *PingSuite) Test_conn_SendPingReply(c *C) {
 	c.Assert(string(mockOut.write), Matches, "<iq xmlns='jabber:client' from='juliet@example.com/chamber' type='result' id='huff'></iq>")
 }
 
+const (
+	// On Windows, it could take up to 15.625ms to update the time.
+	// This means that if we call `time.Now()` more than once, it will return
+	// the same value for each call if the time of ~15.6ms hasn't elapsed.
+	timeUpdateOffset = 16
+)
+
 func (s *PingSuite) Test_conn_ReceivePong(c *C) {
 	t1 := time.Now()
 	conn := conn{
 		lastPongResponse: t1,
 	}
+
+	time.Sleep(time.Millisecond * timeUpdateOffset)
 
 	conn.ReceivePong()
 	c.Assert(t1, Not(Equals), conn.lastPongResponse)

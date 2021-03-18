@@ -9,7 +9,7 @@
         <child>
           <object class="GtkLabel">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">In this section you will find the configuration options for owners and administrators. A room administrator is a user empowered by the room owner to perform administrative functions such as banning users; however, a room administrator is not allowed to change the room configuration or to destroy the room.</property>
+            <property name="label" translatable="yes">Here you can define who the owners and administrators are. Owners will always be moderators in a room. They can give or take away any position or role and control any aspect of the room. A room administrator will automatically become a moderator when entering the room. They can grant or revoke memberships, and also ban or unban people from a room. An administrator can't change the room configuration or destroy the room.</property>
             <property name="wrap">True</property>
             <property name="xalign">0</property>
             <property name="yalign">0</property>

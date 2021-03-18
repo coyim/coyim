@@ -84,8 +84,8 @@ func (p *roomConfigOccupantsPage) initOwnersListController(parent gtki.Window) {
 		occupantsTreeView:        p.ownersList,
 		occupantsTreeViewColumns: ownersListColumns,
 		parentWindow:             parent,
-		addOccupantDialogTitle:   i18n.Local("Add room owner"),
-		addOccupantDescription:   i18n.Local("Please specify the information of the occupant you want to add as a room owner"),
+		addOccupantDialogTitle:   i18n.Local("Add owners"),
+		addOccupantDescription:   i18n.Local("Here you can add one or more new owners to the room. You will have to use the account address of the user in order to make them an owner. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
 		addOccupantForm:          newMUCRoomConfigListOwnersForm,
 	})
 }
@@ -102,8 +102,8 @@ func (p *roomConfigOccupantsPage) initAdminsListController(parent gtki.Window) {
 		occupantsTreeView:        p.adminList,
 		occupantsTreeViewColumns: adminsListColumns,
 		parentWindow:             parent,
-		addOccupantDialogTitle:   i18n.Local("Add room administrator"),
-		addOccupantDescription:   i18n.Local("Please specify the information of the occupant you want to add as a room administrator"),
+		addOccupantDialogTitle:   i18n.Local("Add administrators"),
+		addOccupantDescription:   i18n.Local("Here you can add one or more new administrators to the room. You will have to use the account address of the user in order to make them an administrator. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
 		addOccupantForm:          newMUCRoomConfigListAdminsForm,
 	})
 }

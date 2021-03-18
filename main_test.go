@@ -349,7 +349,7 @@ func (s *MainSuite) Test_startProfileIfNecessary_failsOnBadFile(c *C) {
 	c.Assert(len(hook.Entries), Equals, 1)
 	c.Assert(hook.LastEntry().Level, Equals, log.FatalLevel)
 	c.Assert(hook.LastEntry().Message, Matches, "could not create CPU profile")
-	c.Assert(hook.LastEntry().Data["error"], ErrorMatches, ".*no such file or directory")
+	c.Assert(hook.LastEntry().Data["error"], ErrorMatches, ".*(no such file or directory|cannot find the path specified).*")
 }
 
 func (s *MainSuite) Test_startProfileIfNecessary_failsOnStarting(c *C) {

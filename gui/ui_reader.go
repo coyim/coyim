@@ -9,7 +9,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
 	"sync"
 	"unsafe"
 
@@ -29,7 +28,8 @@ const (
 
 func getActualDefsFolder() string {
 	wd, _ := os.Getwd()
-	if strings.HasSuffix(filepath.ToSlash(wd), "/gui") {
+	_, p := filepath.Split(wd)
+	if p == "gui" {
 		return "./definitions"
 	}
 	return "./gui/definitions"

@@ -28,8 +28,7 @@ const (
 
 func getActualDefsFolder() string {
 	wd, _ := os.Getwd()
-	_, p := filepath.Split(wd)
-	if p == "gui" {
+	if _, p := filepath.Split(wd); p == "gui" {
 		return "./definitions"
 	}
 	return "./gui/definitions"

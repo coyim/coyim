@@ -162,9 +162,9 @@ func (o *Occupant) CanChangeRole(oc *Occupant) bool {
 // based on the occupant's role
 func (o *Occupant) CanKickOccupant(oc *Occupant) bool {
 	return o.Role.IsModerator() && (oc.Role.IsParticipant() || oc.Role.IsVisitor()) &&
-		oc.Affiliation.IsLowerAffiliationThan(o.Affiliation)
+		oc.Affiliation.IsLowerThan(o.Affiliation)
 }
 
 func (o *Occupant) isAllowedToChangeRoleOf(oc *Occupant) bool {
-	return (o.Affiliation.IsAdmin() || o.Affiliation.IsOwner()) && oc.Affiliation.IsLowerAffiliationThan(o.Affiliation)
+	return (o.Affiliation.IsAdmin() || o.Affiliation.IsOwner()) && oc.Affiliation.IsLowerThan(o.Affiliation)
 }

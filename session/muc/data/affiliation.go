@@ -61,8 +61,8 @@ type Affiliation interface {
 	IsNone() bool
 	// Name returns the string name of the affiliation type
 	Name() string
-	// IsLowerAffiliationThan returns true if the caller affiliation is lower than the affiliation passed as the argument.
-	IsLowerAffiliationThan(Affiliation) bool
+	// IsLowerThan returns true if the caller affiliation is lower than the affiliation given as argument
+	IsLowerThan(Affiliation) bool
 	// IsDifferentFrom returns true if the caller affiliation is different from the affiliation passed as argument
 	IsDifferentFrom(Affiliation) bool
 	// affiliationTypeAsNumber returns an int value indicating the affiliation number through a AffilitionNumberType
@@ -204,28 +204,28 @@ func (*AdminAffiliation) Name() string { return AffiliationAdmin }
 // Name implements Affiliation interface
 func (*OwnerAffiliation) Name() string { return AffiliationOwner }
 
-// IsLowerAffiliationThan implements Affiliation interface
-func (a *NoneAffiliation) IsLowerAffiliationThan(a1 Affiliation) bool {
+// IsLowerThan implements Affiliation interface
+func (a *NoneAffiliation) IsLowerThan(a1 Affiliation) bool {
 	return isAffiliationLowerThan(a, a1)
 }
 
-// IsLowerAffiliationThan implements Affiliation interface
-func (a *OutcastAffiliation) IsLowerAffiliationThan(a1 Affiliation) bool {
+// IsLowerThan implements Affiliation interface
+func (a *OutcastAffiliation) IsLowerThan(a1 Affiliation) bool {
 	return isAffiliationLowerThan(a, a1)
 }
 
-// IsLowerAffiliationThan implements Affiliation interface
-func (a *MemberAffiliation) IsLowerAffiliationThan(a1 Affiliation) bool {
+// IsLowerThan implements Affiliation interface
+func (a *MemberAffiliation) IsLowerThan(a1 Affiliation) bool {
 	return isAffiliationLowerThan(a, a1)
 }
 
-// IsLowerAffiliationThan implements Affiliation interface
-func (a *AdminAffiliation) IsLowerAffiliationThan(a1 Affiliation) bool {
+// IsLowerThan implements Affiliation interface
+func (a *AdminAffiliation) IsLowerThan(a1 Affiliation) bool {
 	return isAffiliationLowerThan(a, a1)
 }
 
-// IsLowerAffiliationThan implements Affiliation interface
-func (a *OwnerAffiliation) IsLowerAffiliationThan(a1 Affiliation) bool {
+// IsLowerThan implements Affiliation interface
+func (a *OwnerAffiliation) IsLowerThan(a1 Affiliation) bool {
 	return isAffiliationLowerThan(a, a1)
 }
 

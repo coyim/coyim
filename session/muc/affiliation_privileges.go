@@ -132,5 +132,5 @@ func (o *Occupant) CanChangeAffiliation(oc *Occupant) bool {
 	if o.Affiliation.IsOwner() {
 		return true
 	}
-	return o.Affiliation.IsAdmin() && oc.Affiliation.IsLowerAffiliationThan(o.Affiliation)
+	return o.Affiliation.IsAdmin() && oc.Affiliation.IsLowerThan(o.Affiliation)
 }

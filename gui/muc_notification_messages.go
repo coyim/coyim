@@ -109,7 +109,7 @@ func getAffiliationUpdateFailureMessage(nickname string, newAffiliation data.Aff
 }
 
 func getAffiliationFailureErrorMessage(nickname string, newAffiliation data.Affiliation, err error) string {
-	if err == session.ErrRemoveOwnerAffiliation {
+	if err == session.ErrOwnerAffiliationRevokeConflict {
 		return i18n.Local("You can't change your own position because you are the only owner for this room. Every room must have at least one owner.")
 	}
 	return getUpdateAffiliationFailureErrorMessage(nickname, newAffiliation)

@@ -14,8 +14,8 @@ var (
 	ErrUpdateOccupantRequest = errors.New("invalid occupant update request")
 	// ErrUpdateOccupantResponse represents an invalid response for an occupant update request
 	ErrUpdateOccupantResponse = errors.New("invalid response for room configuration request")
-	// ErrRemoveOwnerAffiliation represents an error occurred when attempting to remove the owner affiliation from an occupant
-	ErrRemoveOwnerAffiliation = errors.New("not allowed to remove the owner affiliation")
+	// ErrOwnerAffiliationRevokeConflict represents an owner affiliation revoke conflict error
+	ErrOwnerAffiliationRevokeConflict = errors.New("owner affiliation revoke conflict")
 )
 
 func (s *session) UpdateOccupantAffiliation(roomID jid.Bare, occupantNickname string, occupantID jid.Full, affiliation data.Affiliation, reason string) (<-chan bool, <-chan error) {

@@ -38,28 +38,19 @@ func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleModeratorAffiliationN
 		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
 
 		// Occupant: ParticipantRole
-		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
-		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
-		{&data.AdminAffiliation{}, &data.ParticipantRole{}, false},
-		{&data.OwnerAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, true},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, true},
 
 		// Occupant: VisitorRole
-		{&data.NoneAffiliation{}, &data.VisitorRole{}, false},
-		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
-		{&data.AdminAffiliation{}, &data.VisitorRole{}, false},
-		{&data.OwnerAffiliation{}, &data.VisitorRole{}, false},
-
-		// Occupant: NoneRole
-		{&data.NoneAffiliation{}, &data.NoneRole{}, false},
-		{&data.MemberAffiliation{}, &data.NoneRole{}, false},
-		{&data.AdminAffiliation{}, &data.NoneRole{}, false},
-		{&data.OwnerAffiliation{}, &data.NoneRole{}, false},
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, true},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, true},
 	}
 
 	// Actor: NoneAffiliation - ModeratorRole
 	actor := newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{})
 	for _, scenario := range testCases {
-		c.Assert(actor.CanKickOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole)), Equals, scenario.expected)
+		obtained := actor.CanKickOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole))
+		c.Assert(obtained, Equals, scenario.expected)
 	}
 }
 
@@ -73,15 +64,11 @@ func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleModeratorAffiliationM
 
 		// Occupant: ParticipantRole
 		{&data.NoneAffiliation{}, &data.ParticipantRole{}, true},
-		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
-		{&data.AdminAffiliation{}, &data.ParticipantRole{}, false},
-		{&data.OwnerAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, true},
 
 		// Occupant: VisitorRole
 		{&data.NoneAffiliation{}, &data.VisitorRole{}, true},
-		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
-		{&data.AdminAffiliation{}, &data.VisitorRole{}, false},
-		{&data.OwnerAffiliation{}, &data.VisitorRole{}, false},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, true},
 	}
 
 	// Actor: MemberAffiliation - ModeratorRole

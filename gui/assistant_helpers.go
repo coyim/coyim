@@ -31,3 +31,24 @@ func (list assistantButtons) updateButtonLabelByName(name string, label string) 
 		b.SetLabel(label)
 	}
 }
+
+func removeActionArea(a gtki.Assistant) {
+	actionArea, ok := findBoxWidgetByName(a.GetChildren(), "action_area")
+	if ok {
+		actionArea.SetVisible(false)
+	}
+}
+
+func findBoxWidgetByName(wl []gtki.Widget, wn string) (gtki.Box, bool) {
+	for _, c := range wl {
+		if b, ok := c.(gtki.Box); ok {
+			if name, _ := g.gtk.GetWidgetBuildableName(b); name == wn {
+				return b, true
+			}
+			if b, ok := findBoxWidgetByName(b.GetChildren(), wn); ok {
+				return b, ok
+			}
+		}
+	}
+	return nil, false
+}

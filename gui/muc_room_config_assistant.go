@@ -143,6 +143,7 @@ func (rc *roomConfigAssistant) onPageChanged(_ gtki.Assistant, _ gtki.Widget) {
 	rc.currentPageIndex = rc.assistant.GetCurrentPage()
 	rc.currentPage = rc.pageByIndex(rc.currentPageIndex)
 	rc.currentPage.refresh()
+	removeActionArea(rc.assistant)
 }
 
 func (rc *roomConfigAssistant) enable() {

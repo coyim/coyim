@@ -2,6 +2,7 @@ package gui
 
 import (
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -140,8 +141,10 @@ func (r *roomViewRosterInfo) refreshRoleSection() {
 	showChangeRoleButton := r.selfOccupant.CanChangeRole(r.occupant)
 	r.changeRoleButton.SetVisible(showChangeRoleButton)
 
-	v := r.selfOccupant.Affiliation.IsOwner() && (r.occupant.Affiliation.IsOwner() || r.occupant.Affiliation.IsAdmin())
-	r.roleDisableLabel.SetVisible(v)
+	showChangeRoleDisabledLabel := r.selfOccupant.Affiliation.IsOwner() && (r.occupant.Affiliation.IsOwner() || r.occupant.Affiliation.IsAdmin())
+	r.roleDisableLabel.SetText(i18n.Localf("By default, administrators and owners are also moderators in the room. "+
+		"For that reason, the role of %s can't be changed.", r.occupant.Nickname))
+	r.roleDisableLabel.SetVisible(showChangeRoleDisabledLabel)
 }
 
 // refreshKickSection MUST be called from the UI thread

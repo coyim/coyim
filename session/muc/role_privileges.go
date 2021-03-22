@@ -1,6 +1,8 @@
 package muc
 
-import "github.com/coyim/coyim/session/muc/data"
+import (
+	"github.com/coyim/coyim/session/muc/data"
+)
 
 type roleNumberType int
 
@@ -157,10 +159,29 @@ func (o *Occupant) CanChangeRole(oc *Occupant) bool {
 // CanKickOccupant returns a boolean indicating if the occupant can kick another occupant
 // based on the occupant's role
 func (o *Occupant) CanKickOccupant(oc *Occupant) bool {
-	return o.Role.IsModerator() && (oc.Role.IsParticipant() || oc.Role.IsVisitor()) &&
-		oc.Affiliation.IsLowerThan(o.Affiliation)
+	return o.roleCanKickOccupant(oc) && o.affiliationCanKickOccupant(oc)
 }
 
-func (o *Occupant) isAllowedToChangeRoleOf(oc *Occupant) bool {
-	return (o.Affiliation.IsAdmin() || o.Affiliation.IsOwner()) && oc.Affiliation.IsLowerThan(o.Affiliation)
+func (o *Occupant) roleCanKickOccupant(oc *Occupant) bool {
+	return o.roleHasPrivilege(kickParticipantsAndVisitors) && (oc.Role.IsParticipant() || oc.Role.IsVisitor())
+}
+
+func (o *Occupant) affiliationCanKickOccupant(oc *Occupant) bool {
+	switch {
+	case o.isOwner():
+		return oc.isNotOwner()
+
+	case o.isAdmin():
+		return oc.isNotAnOwnerNorAdmin()
+	}
+
+	return true
+}
+
+func (o *Occupant) isModerator() bool {
+	return o.Role.IsModerator()
+}
+
+func (o *Occupant) isNotModerator() bool {
+	return !o.isModerator()
 }

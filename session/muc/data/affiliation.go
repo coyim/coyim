@@ -61,8 +61,6 @@ type Affiliation interface {
 	IsNone() bool
 	// Name returns the string name of the affiliation type
 	Name() string
-	// IsLowerThan returns true if the caller affiliation is lower than the affiliation given as argument
-	IsLowerThan(Affiliation) bool
 	// IsDifferentFrom returns true if the caller affiliation is different from the affiliation passed as argument
 	IsDifferentFrom(Affiliation) bool
 	// affiliationTypeAsNumber returns an int value indicating the affiliation number through a AffilitionNumberType
@@ -204,31 +202,6 @@ func (*AdminAffiliation) Name() string { return AffiliationAdmin }
 // Name implements Affiliation interface
 func (*OwnerAffiliation) Name() string { return AffiliationOwner }
 
-// IsLowerThan implements Affiliation interface
-func (a *NoneAffiliation) IsLowerThan(a1 Affiliation) bool {
-	return isAffiliationLowerThan(a, a1)
-}
-
-// IsLowerThan implements Affiliation interface
-func (a *OutcastAffiliation) IsLowerThan(a1 Affiliation) bool {
-	return isAffiliationLowerThan(a, a1)
-}
-
-// IsLowerThan implements Affiliation interface
-func (a *MemberAffiliation) IsLowerThan(a1 Affiliation) bool {
-	return isAffiliationLowerThan(a, a1)
-}
-
-// IsLowerThan implements Affiliation interface
-func (a *AdminAffiliation) IsLowerThan(a1 Affiliation) bool {
-	return isAffiliationLowerThan(a, a1)
-}
-
-// IsLowerThan implements Affiliation interface
-func (a *OwnerAffiliation) IsLowerThan(a1 Affiliation) bool {
-	return isAffiliationLowerThan(a, a1)
-}
-
 // IsDifferentFrom implements Affiliation interface
 func (a *NoneAffiliation) IsDifferentFrom(a1 Affiliation) bool {
 	return areDifferentAffiliations(a, a1)
@@ -295,10 +268,6 @@ func AffiliationFromString(s string) (Affiliation, error) {
 	default:
 		return nil, fmt.Errorf("unknown affiliation string: '%s'", s)
 	}
-}
-
-func isAffiliationLowerThan(a, a1 Affiliation) bool {
-	return affiliationLowerThan[a.affiliationTypeAsNumber()][a1.affiliationTypeAsNumber()]
 }
 
 func areDifferentAffiliations(a, a1 Affiliation) bool {

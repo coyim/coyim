@@ -106,14 +106,6 @@ func (s *MucSuite) Test_Affiliation_Name(c *C) {
 	c.Assert((&OwnerAffiliation{}).Name(), Equals, "owner")
 }
 
-func (s *MucSuite) Test_Affiliation_IsLowerThan(c *C) {
-	c.Assert((&NoneAffiliation{}).IsLowerThan(&OwnerAffiliation{}), Equals, true)
-	c.Assert((&OutcastAffiliation{}).IsLowerThan(&OwnerAffiliation{}), Equals, true)
-	c.Assert((&MemberAffiliation{}).IsLowerThan(&OwnerAffiliation{}), Equals, true)
-	c.Assert((&AdminAffiliation{}).IsLowerThan(&OwnerAffiliation{}), Equals, true)
-	c.Assert((&OwnerAffiliation{}).IsLowerThan(&OwnerAffiliation{}), Equals, false)
-}
-
 func (s *MucSuite) Test_Affiliation_IsDifferentFrom(c *C) {
 	none := &NoneAffiliation{}
 	outcast := &OutcastAffiliation{}

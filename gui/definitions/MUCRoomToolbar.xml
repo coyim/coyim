@@ -6,6 +6,7 @@
     <child>
       <object class="GtkBox" id="toolbar">
         <property name="visible">True</property>
+        <property name="valign">start</property>
         <child>
           <object class="GtkBox" id="toolbar-top">
             <property name="visible">True</property>
@@ -14,15 +15,17 @@
               <object class="GtkBox" id="room-info-box">
                 <property name="visible">True</property>
                 <property name="valign">center</property>
-                <property name="spacing">6</property>
+                <property name="spacing">12</property>
                 <child>
                   <object class="GtkImage" id="room-status-icon">
                     <property name="visible">True</property>
-                    <property name="icon_size">4</property>
+                    <property name="valign">start</property>
+                    <property name="icon_name">gtk-missing-image</property>
+                    <property name="icon_size">6</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="fill">True</property>
+                    <property name="fill">False</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
@@ -31,6 +34,7 @@
                     <property name="visible">True</property>
                     <property name="valign">center</property>
                     <property name="orientation">vertical</property>
+                    <property name="spacing">6</property>
                     <child>
                       <object class="GtkLabel" id="room-name-label">
                         <property name="visible">True</property>
@@ -49,6 +53,9 @@
                       <object class="GtkLabel" id="room-subject-label">
                         <property name="visible">True</property>
                         <property name="halign">start</property>
+                        <property name="wrap">True</property>
+                        <property name="xalign">0</property>
+                        <property name="yalign">0</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -58,7 +65,7 @@
                     </child>
                   </object>
                   <packing>
-                    <property name="expand">False</property>
+                    <property name="expand">True</property>
                     <property name="fill">True</property>
                     <property name="position">2</property>
                   </packing>
@@ -73,30 +80,32 @@
             <child>
               <object class="GtkMenuToolButton" id="room-menu">
                 <property name="visible">True</property>
+                <property name="halign">start</property>
+                <property name="valign">start</property>
                 <child type="menu">
                   <object class="GtkMenu">
                     <child>
                       <object class="GtkMenuItem">
                         <property name="visible">True</property>
                         <property name="label" translatable="yes">Leave Room</property>
-                        <signal name="activate" handler="on_leave_room" swapped="no"/>
                         <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_leave_room" swapped="no"/>
                       </object>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="destroy-item">
                         <property name="visible">True</property>
                         <property name="label" translatable="yes">Destroy Room</property>
-                        <signal name="activate" handler="on_destroy_room" swapped="no"/>
                         <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_destroy_room" swapped="no"/>
                       </object>
                     </child>
                   </object>
                 </child>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
                 <property name="padding">12</property>
                 <property name="position">3</property>
               </packing>

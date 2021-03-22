@@ -148,6 +148,10 @@ func (o *Occupant) isNotAdmin() bool {
 	return !o.isAdmin()
 }
 
+func (o *Occupant) isOwnerOrAdmin() bool {
+	return o.isAdmin() || o.isOwner()
+}
+
 func (o *Occupant) isNotAnOwnerNorAdmin() bool {
 	return o.isNotOwner() && o.isNotAdmin()
 }

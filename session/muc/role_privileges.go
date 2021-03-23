@@ -1,8 +1,6 @@
 package muc
 
-import (
-	"github.com/coyim/coyim/session/muc/data"
-)
+import "github.com/coyim/coyim/session/muc/data"
 
 type roleNumberType int
 

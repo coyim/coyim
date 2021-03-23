@@ -14,8 +14,8 @@ var (
 	ErrUpdateOccupantRequest = errors.New("invalid occupant update request")
 	// ErrUpdateOccupantResponse represents an invalid response for an occupant update request
 	ErrUpdateOccupantResponse = errors.New("invalid response for room configuration request")
-	// ErrOwnerAffiliationRevokeConflict represents an error that occurs when trying to
-	// remove the owner affiliation from the only owner of the room
+	// ErrOwnerAffiliationRevokeConflict represents a revocation conflict that happens when the only
+	// owner of the room tries to change their affiliation
 	ErrOwnerAffiliationRevokeConflict = errors.New("owner affiliation revoke conflict")
 )
 

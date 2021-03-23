@@ -159,14 +159,14 @@ func (o *Occupant) CanChangeRole(oc *Occupant) bool {
 // CanKickOccupant returns a boolean indicating if the occupant can kick another occupant
 // based on the occupant's role
 func (o *Occupant) CanKickOccupant(oc *Occupant) bool {
-	return o.roleCanKickOccupant(oc) && o.affiliationCanKickOccupant(oc)
+	return o.canKickOccupantBasedOnRole(oc) && o.canKickOccupantBasedOnAffiliation(oc)
 }
 
-func (o *Occupant) roleCanKickOccupant(oc *Occupant) bool {
+func (o *Occupant) canKickOccupantBasedOnRole(oc *Occupant) bool {
 	return o.roleHasPrivilege(kickParticipantsAndVisitors) && (oc.Role.IsParticipant() || oc.Role.IsVisitor())
 }
 
-func (o *Occupant) affiliationCanKickOccupant(oc *Occupant) bool {
+func (o *Occupant) canKickOccupantBasedOnAffiliation(oc *Occupant) bool {
 	switch {
 	case o.isOwner():
 		return oc.isNotOwner()

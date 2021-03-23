@@ -324,3 +324,117 @@ func (*MucOccupantAffiliationPrivilegesSuite) Test_OccupantCanChangeAffiliation_
 	o.ChangeAffiliationToOwner()
 	c.Assert(o.CanChangeAffiliation(oc), Equals, true)
 }
+
+func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_isOwner(c *C) {
+	o := &Occupant{}
+
+	o.ChangeAffiliationToOwner()
+	c.Assert(o.isOwner(), Equals, true)
+
+	o.ChangeAffiliationToAdmin()
+	c.Assert(o.isOwner(), Equals, false)
+
+	o.ChangeAffiliationToMember()
+	c.Assert(o.isOwner(), Equals, false)
+
+	o.ChangeAffiliationToOutcast()
+	c.Assert(o.isOwner(), Equals, false)
+
+	o.ChangeAffiliationToNone()
+	c.Assert(o.isOwner(), Equals, false)
+}
+
+func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_notAnOwner(c *C) {
+	o := &Occupant{}
+
+	o.ChangeAffiliationToOwner()
+	c.Assert(o.notAnOwner(), Equals, false)
+
+	o.ChangeAffiliationToAdmin()
+	c.Assert(o.notAnOwner(), Equals, true)
+
+	o.ChangeAffiliationToMember()
+	c.Assert(o.notAnOwner(), Equals, true)
+
+	o.ChangeAffiliationToOutcast()
+	c.Assert(o.notAnOwner(), Equals, true)
+
+	o.ChangeAffiliationToNone()
+	c.Assert(o.notAnOwner(), Equals, true)
+}
+
+func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_isAdmin(c *C) {
+	o := &Occupant{}
+
+	o.ChangeAffiliationToOwner()
+	c.Assert(o.isAdmin(), Equals, false)
+
+	o.ChangeAffiliationToAdmin()
+	c.Assert(o.isAdmin(), Equals, true)
+
+	o.ChangeAffiliationToMember()
+	c.Assert(o.isAdmin(), Equals, false)
+
+	o.ChangeAffiliationToOutcast()
+	c.Assert(o.isAdmin(), Equals, false)
+
+	o.ChangeAffiliationToNone()
+	c.Assert(o.isAdmin(), Equals, false)
+}
+
+func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_notAnAdmin(c *C) {
+	o := &Occupant{}
+
+	o.ChangeAffiliationToOwner()
+	c.Assert(o.notAnAdmin(), Equals, true)
+
+	o.ChangeAffiliationToAdmin()
+	c.Assert(o.notAnAdmin(), Equals, false)
+
+	o.ChangeAffiliationToMember()
+	c.Assert(o.notAnAdmin(), Equals, true)
+
+	o.ChangeAffiliationToOutcast()
+	c.Assert(o.notAnAdmin(), Equals, true)
+
+	o.ChangeAffiliationToNone()
+	c.Assert(o.notAnAdmin(), Equals, true)
+}
+
+func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_isOwnerOrAdmin(c *C) {
+	o := &Occupant{}
+
+	o.ChangeAffiliationToOwner()
+	c.Assert(o.isOwnerOrAdmin(), Equals, true)
+
+	o.ChangeAffiliationToAdmin()
+	c.Assert(o.isOwnerOrAdmin(), Equals, true)
+
+	o.ChangeAffiliationToMember()
+	c.Assert(o.isOwnerOrAdmin(), Equals, false)
+
+	o.ChangeAffiliationToOutcast()
+	c.Assert(o.isOwnerOrAdmin(), Equals, false)
+
+	o.ChangeAffiliationToNone()
+	c.Assert(o.isOwnerOrAdmin(), Equals, false)
+}
+
+func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_notAnOwnerOrAdmin(c *C) {
+	o := &Occupant{}
+
+	o.ChangeAffiliationToOwner()
+	c.Assert(o.notAnOwnerOrAdmin(), Equals, false)
+
+	o.ChangeAffiliationToAdmin()
+	c.Assert(o.notAnOwnerOrAdmin(), Equals, false)
+
+	o.ChangeAffiliationToMember()
+	c.Assert(o.notAnOwnerOrAdmin(), Equals, true)
+
+	o.ChangeAffiliationToOutcast()
+	c.Assert(o.notAnOwnerOrAdmin(), Equals, true)
+
+	o.ChangeAffiliationToNone()
+	c.Assert(o.notAnOwnerOrAdmin(), Equals, true)
+}

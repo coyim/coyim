@@ -129,14 +129,14 @@ func (o *Occupant) CanDestroyRoom() bool {
 // CanChangeAffiliation returns a boolean indicating if the occupant can change the affiliation of the
 // given occupant based on the occupant's affiliation
 func (o *Occupant) CanChangeAffiliation(oc *Occupant) bool {
-	return o.isOwner() || (o.isAdmin() && oc.isNotAnOwnerNorAdmin())
+	return o.isOwner() || (o.isAdmin() && oc.notAnOwnerOrAdmin())
 }
 
 func (o *Occupant) isOwner() bool {
 	return o.Affiliation.IsOwner()
 }
 
-func (o *Occupant) isNotOwner() bool {
+func (o *Occupant) notAnOwner() bool {
 	return !o.isOwner()
 }
 
@@ -144,7 +144,7 @@ func (o *Occupant) isAdmin() bool {
 	return o.Affiliation.IsAdmin()
 }
 
-func (o *Occupant) isNotAdmin() bool {
+func (o *Occupant) notAnAdmin() bool {
 	return !o.isAdmin()
 }
 
@@ -152,6 +152,6 @@ func (o *Occupant) isOwnerOrAdmin() bool {
 	return o.isAdmin() || o.isOwner()
 }
 
-func (o *Occupant) isNotAnOwnerNorAdmin() bool {
-	return o.isNotOwner() && o.isNotAdmin()
+func (o *Occupant) notAnOwnerOrAdmin() bool {
+	return o.notAnOwner() && o.notAnAdmin()
 }

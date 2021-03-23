@@ -8,11 +8,11 @@ import (
 	"os/exec"
 )
 
-func makeDirectoryUnnaccesibleOSDependent(dir string) {
+func makeDirectoryInaccessible(dir string) {
 	denyWindowsUserDirPermissions(dir)
 }
 
-func makeDirectoryAccesibleOSDependent(dir string) {
+func makeDirectoryAccessible(dir string) {
 	grantWindowsUserDirPermissions(dir)
 }
 

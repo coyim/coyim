@@ -177,11 +177,3 @@ func (o *Occupant) canKickOccupantBasedOnAffiliation(oc *Occupant) bool {
 
 	return true
 }
-
-func (o *Occupant) isModerator() bool {
-	return o.Role.IsModerator()
-}
-
-func (o *Occupant) isNotModerator() bool {
-	return !o.isModerator()
-}

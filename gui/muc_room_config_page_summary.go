@@ -103,7 +103,7 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	setLabelText(p.includePublicList, getStringFromActiveValue(p.form.Public))
 	setLabelText(p.persistent, getStringFromActiveValue(p.form.Persistent))
 	// Access
-	setLabelText(p.password, getStringFromActiveValue(p.form.PasswordProtected))
+	setLabelText(p.password, passwordMaskBasedOn(p.form.PasswordProtected))
 	setLabelText(p.allowInviteUsers, getStringFromActiveValue(p.form.OccupantsCanInvite))
 	setLabelText(p.onlyMembers, getStringFromActiveValue(p.form.MembersOnly))
 	// Permissions
@@ -134,6 +134,13 @@ func summaryValueForConfigOption(v string) string {
 		v = muc.RoomConfigOptionNone
 	}
 	return configOptionToFriendlyMessage(v)
+}
+
+func passwordMaskBasedOn(value bool) string {
+	if value {
+		return "**********"
+	}
+	return i18n.Local("Not assigned")
 }
 
 func getStringFromActiveValue(value bool) string {

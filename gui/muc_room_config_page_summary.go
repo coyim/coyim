@@ -145,9 +145,9 @@ func passwordMaskBasedOn(value bool) string {
 
 func getStringFromActiveValue(value bool) string {
 	if value {
-		return i18n.Local("Enabled")
+		return i18n.Local("Yes")
 	}
-	return i18n.Local("Disabled")
+	return i18n.Local("No")
 }
 
 func setDefaultLabelText(label string) string {

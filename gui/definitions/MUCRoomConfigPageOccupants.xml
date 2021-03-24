@@ -1,6 +1,7 @@
 <interface>
   <object class="GtkBox" id="room-config-occupants-page">
     <property name="orientation">vertical</property>
+    <property name="border_width">24</property>
     <child>
       <object class="GtkBox" id="room-config-occupants-conten">
         <property name="visible">True</property>

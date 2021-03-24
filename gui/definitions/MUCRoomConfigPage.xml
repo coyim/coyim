@@ -22,7 +22,6 @@
             <child>
               <object class="GtkBox" id="room-config-page-content">
                 <property name="visible">True</property>
-                <property name="border-width">24</property>
                 <property name="orientation">vertical</property>
               </object>
               <packing>

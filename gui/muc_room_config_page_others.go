@@ -3,6 +3,8 @@ package gui
 import (
 	"strconv"
 
+	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -103,6 +105,9 @@ func (cc *roomConfigComboEntry) updateOptions(options []string) {
 
 	for _, o := range options {
 		label := configOptionToFriendlyMessage(o)
+		if o == muc.RoomConfigOptionNone {
+			label = i18n.Local("No maximum (default)")
+		}
 
 		iter := cc.model.Append()
 		cc.model.SetValue(iter, roomMaxHistoryFetchValueColumIndex, o)

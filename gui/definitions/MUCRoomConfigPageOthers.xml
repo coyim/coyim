@@ -9,7 +9,7 @@
         <child>
           <object class="GtkLabel">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">Here you can find other room configuration options that might be useful to you. Please note that if room archiving is enabled, all the room discussions will be logged and publicy accesible.</property>
+            <property name="label" translatable="yes">Here you can find other configuration options that might be useful to you. Note that if archiving is enabled, all the discussions in the room might be logged and potentially made publicly accessible.</property>
             <property name="wrap">True</property>
             <property name="xalign">0</property>
             <property name="yalign">0</property>
@@ -38,7 +38,7 @@
                     <property name="visible">True</property>
                     <property name="valign">center</property>
                     <property name="hexpand">True</property>
-                    <property name="label" translatable="yes">Maximum numbers of occupants</property>
+                    <property name="label" translatable="yes">Maximum number of people in the room</property>
                     <property name="justify">right</property>
                     <property name="xalign">0</property>
                     <property name="yalign">0</property>
@@ -52,6 +52,8 @@
                 <child>
                   <object class="GtkComboBoxText" id="room-maxoccupants">
                     <property name="visible">True</property>
+                    <property name="halign">start</property>
+                    <property name="resize_mode">immediate</property>
                     <property name="has_entry">True</property>
                     <child internal-child="entry">
                       <object class="GtkEntry" id="room-maxoccupants-entry">
@@ -82,7 +84,7 @@
                     <property name="visible">True</property>
                     <property name="valign">center</property>
                     <property name="hexpand">True</property>
-                    <property name="label" translatable="yes">Maximum number of history messages</property>
+                    <property name="label" translatable="yes">Maximum previous messages sent to people when joining the room</property>
                     <property name="justify">right</property>
                     <property name="xalign">0</property>
                     <property name="yalign">0</property>
@@ -96,6 +98,8 @@
                 <child>
                   <object class="GtkComboBoxText" id="room-maxhistoryfetch">
                     <property name="visible">True</property>
+                    <property name="halign">start</property>
+                    <property name="resize_mode">immediate</property>
                     <property name="has_entry">True</property>
                     <child internal-child="entry">
                       <object class="GtkEntry" id="room-maxhistoryfetch-entry">
@@ -150,14 +154,13 @@
                               <packing>
                                 <property name="left_attach">1</property>
                                 <property name="top_attach">0</property>
+                                <property name="height">2</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
-                                <property name="valign">center</property>
-                                <property name="hexpand">True</property>
-                                <property name="label" translatable="yes">Enable discussions archiving</property>
+                                <property name="label" translatable="yes">Enable archiving of discussions</property>
                                 <property name="justify">right</property>
                                 <property name="xalign">0</property>
                                 <property name="yalign">0</property>
@@ -165,6 +168,24 @@
                               <packing>
                                 <property name="left_attach">0</property>
                                 <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="width-request">300</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="label" translatable="yes">The conversation of this room will be stored in an archive that could be accessed publicly. CoyIM users will be notified about this when enter in the room, other client might not.</property>
+                                <property name="wrap">True</property>
+                                <property name="xalign">0</property>
+                                <property name="yalign">0</property>
+                                <style>
+                                  <class name="config-field-help"/>
+                                </style>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">1</property>
                               </packing>
                             </child>
                           </object>

@@ -215,7 +215,7 @@
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
-                                        <property name="label" translatable="yes">Language</property>
+                                        <property name="label" translatable="yes">Primary language of discussion</property>
                                         <property name="xalign">0</property>
                                         <property name="yalign">0</property>
                                         <style>
@@ -273,7 +273,7 @@
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
-                                        <property name="label" translatable="yes">Allow anyone to set the room subject</property>
+                                        <property name="label" translatable="yes">Include in public lists</property>
                                         <property name="xalign">0</property>
                                         <property name="yalign">0</property>
                                         <style>
@@ -287,7 +287,7 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="room-config-summary-changesubject-label">
+                                      <object class="GtkLabel" id="room-config-summary-public-label">
                                         <property name="visible">True</property>
                                         <property name="xalign">0</property>
                                         <property name="yalign">0</property>
@@ -345,63 +345,6 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="room-config-summary-persistent-label">
-                                        <property name="visible">True</property>
-                                        <property name="xalign">0</property>
-                                        <property name="yalign">0</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">2</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkListBoxRow">
-                                <property name="width_request">100</property>
-                                <property name="visible">True</property>
-                                <property name="valign">center</property>
-                                <property name="activatable">False</property>
-                                <property name="selectable">False</property>
-                                <child>
-                                  <object class="GtkSeparator">
-                                    <property name="visible">True</property>
-                                    <property name="valign">center</property>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkListBoxRow">
-                                <property name="width_request">100</property>
-                                <property name="visible">True</property>
-                                <property name="selectable">False</property>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="border_width">12</property>
-                                    <property name="spacing">12</property>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="label" translatable="yes">Include in public lists</property>
-                                        <property name="xalign">0</property>
-                                        <property name="yalign">0</property>
-                                        <style>
-                                          <class name="summary-field-name" />
-                                        </style>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">True</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="room-config-summary-public-label">
                                         <property name="visible">True</property>
                                         <property name="xalign">0</property>
                                         <property name="yalign">0</property>
@@ -526,6 +469,7 @@
                               <object class="GtkListBoxRow">
                                 <property name="width_request">100</property>
                                 <property name="visible">True</property>
+                                <property name="selectable">False</property>
                                 <child>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
@@ -534,7 +478,7 @@
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
-                                        <property name="label" translatable="yes">Allow members to invite other users</property>
+                                        <property name="label" translatable="yes">Only allow members to join</property>
                                         <property name="xalign">0</property>
                                         <property name="yalign">0</property>
                                         <style>
@@ -548,7 +492,7 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="room-config-summary-invite-label">
+                                      <object class="GtkLabel" id="room-config-summary-onlymembers-label">
                                         <property name="visible">True</property>
                                         <property name="xalign">0</property>
                                         <property name="yalign">0</property>
@@ -582,7 +526,6 @@
                               <object class="GtkListBoxRow">
                                 <property name="width_request">100</property>
                                 <property name="visible">True</property>
-                                <property name="selectable">False</property>
                                 <child>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
@@ -591,7 +534,7 @@
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
-                                        <property name="label" translatable="yes">Only allow members to join</property>
+                                        <property name="label" translatable="yes">Allow members to invite others</property>
                                         <property name="xalign">0</property>
                                         <property name="yalign">0</property>
                                         <style>
@@ -605,7 +548,7 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="room-config-summary-onlymembers-label">
+                                      <object class="GtkLabel" id="room-config-summary-invite-label">
                                         <property name="visible">True</property>
                                         <property name="xalign">0</property>
                                         <property name="yalign">0</property>
@@ -673,6 +616,63 @@
                               <object class="GtkListBoxRow">
                                 <property name="width_request">100</property>
                                 <property name="visible">True</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="border_width">12</property>
+                                    <property name="spacing">12</property>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="label" translatable="yes">Account address of occupants can be viewed by</property>
+                                        <property name="xalign">0</property>
+                                        <property name="yalign">0</property>
+                                        <style>
+                                          <class name="summary-field-name" />
+                                        </style>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="room-config-summary-whois">
+                                        <property name="visible">True</property>
+                                        <property name="halign">end</property>
+                                        <property name="xalign">0</property>
+                                        <property name="yalign">0</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkListBoxRow">
+                                <property name="width_request">100</property>
+                                <property name="visible">True</property>
+                                <property name="valign">center</property>
+                                <property name="activatable">False</property>
+                                <property name="selectable">False</property>
+                                <child>
+                                  <object class="GtkSeparator">
+                                    <property name="visible">True</property>
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkListBoxRow">
+                                <property name="width_request">100</property>
+                                <property name="visible">True</property>
                                 <property name="selectable">False</property>
                                 <child>
                                   <object class="GtkBox">
@@ -730,6 +730,7 @@
                               <object class="GtkListBoxRow">
                                 <property name="width_request">100</property>
                                 <property name="visible">True</property>
+                                <property name="selectable">False</property>
                                 <child>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
@@ -738,7 +739,7 @@
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
-                                        <property name="label" translatable="yes">Occupants JID might be viewed by</property>
+                                        <property name="label" translatable="yes">Allow anyone to set the room's subject</property>
                                         <property name="xalign">0</property>
                                         <property name="yalign">0</property>
                                         <style>
@@ -752,9 +753,8 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="room-config-summary-whois">
+                                      <object class="GtkLabel" id="room-config-summary-changesubject-label">
                                         <property name="visible">True</property>
-                                        <property name="halign">end</property>
                                         <property name="xalign">0</property>
                                         <property name="yalign">0</property>
                                       </object>
@@ -941,7 +941,7 @@
                     <property name="spacing">12</property>
                     <child>
                       <object class="GtkLinkButton" id="room-config-summary-others">
-                        <property name="label" translatable="yes">Others</property>
+                        <property name="label" translatable="yes">Other settings</property>
                         <property name="visible">True</property>
                         <property name="focus_on_click">False</property>
                         <property name="receives_default">False</property>
@@ -980,7 +980,7 @@
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
-                                        <property name="label" translatable="yes">Maximum number of history messages</property>
+                                        <property name="label" translatable="yes">Maximum previous messages sent to people when joining the room</property>
                                         <property name="xalign">0</property>
                                         <property name="yalign">0</property>
                                         <style>
@@ -1038,7 +1038,7 @@
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
-                                        <property name="label" translatable="yes">Maximum number of occupants</property>
+                                        <property name="label" translatable="yes">Maximum number of people in the room</property>
                                         <property name="xalign">0</property>
                                         <property name="yalign">0</property>
                                         <style>
@@ -1096,7 +1096,7 @@
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
-                                        <property name="label" translatable="yes">Enable archiving</property>
+                                        <property name="label" translatable="yes">Enable archiving of discussions</property>
                                         <property name="xalign">0</property>
                                         <property name="yalign">0</property>
                                         <style>

@@ -119,11 +119,9 @@ func (rc *roomConfigAssistant) initDefaults() {
 	rc.summaryPageBox.SetHExpand(true)
 
 	rc.assistant.SetTitle(i18n.Localf("Configuration for room [%s]", rc.roomID.String()))
-
-	rc.initButtonLabels()
 }
 
-func (rc *roomConfigAssistant) initButtonLabels() {
+func (rc *roomConfigAssistant) refreshButtonLabels() {
 	buttons := getButtonsForAssistantHeader(rc.assistant)
 
 	buttons.updateButtonLabelByName("last", i18n.Local("Summary"))
@@ -143,6 +141,7 @@ func (rc *roomConfigAssistant) onPageChanged(_ gtki.Assistant, _ gtki.Widget) {
 	rc.currentPageIndex = rc.assistant.GetCurrentPage()
 	rc.currentPage = rc.pageByIndex(rc.currentPageIndex)
 	rc.currentPage.refresh()
+	rc.refreshButtonLabels()
 	removeActionArea(rc.assistant)
 }
 

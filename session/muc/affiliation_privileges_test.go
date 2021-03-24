@@ -344,23 +344,23 @@ func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_isOwner(c *C) {
 	c.Assert(o.isOwner(), Equals, false)
 }
 
-func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_notAnOwner(c *C) {
+func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_notOwner(c *C) {
 	o := &Occupant{}
 
 	o.ChangeAffiliationToOwner()
-	c.Assert(o.notAnOwner(), Equals, false)
+	c.Assert(o.isNotOwner(), Equals, false)
 
 	o.ChangeAffiliationToAdmin()
-	c.Assert(o.notAnOwner(), Equals, true)
+	c.Assert(o.isNotOwner(), Equals, true)
 
 	o.ChangeAffiliationToMember()
-	c.Assert(o.notAnOwner(), Equals, true)
+	c.Assert(o.isNotOwner(), Equals, true)
 
 	o.ChangeAffiliationToOutcast()
-	c.Assert(o.notAnOwner(), Equals, true)
+	c.Assert(o.isNotOwner(), Equals, true)
 
 	o.ChangeAffiliationToNone()
-	c.Assert(o.notAnOwner(), Equals, true)
+	c.Assert(o.isNotOwner(), Equals, true)
 }
 
 func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_isAdmin(c *C) {
@@ -386,19 +386,19 @@ func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_notAnAdmin(c *C) {
 	o := &Occupant{}
 
 	o.ChangeAffiliationToOwner()
-	c.Assert(o.notAnAdmin(), Equals, true)
+	c.Assert(o.isNotAdmin(), Equals, true)
 
 	o.ChangeAffiliationToAdmin()
-	c.Assert(o.notAnAdmin(), Equals, false)
+	c.Assert(o.isNotAdmin(), Equals, false)
 
 	o.ChangeAffiliationToMember()
-	c.Assert(o.notAnAdmin(), Equals, true)
+	c.Assert(o.isNotAdmin(), Equals, true)
 
 	o.ChangeAffiliationToOutcast()
-	c.Assert(o.notAnAdmin(), Equals, true)
+	c.Assert(o.isNotAdmin(), Equals, true)
 
 	o.ChangeAffiliationToNone()
-	c.Assert(o.notAnAdmin(), Equals, true)
+	c.Assert(o.isNotAdmin(), Equals, true)
 }
 
 func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_isOwnerOrAdmin(c *C) {
@@ -420,21 +420,21 @@ func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_isOwnerOrAdmin(c *C)
 	c.Assert(o.isOwnerOrAdmin(), Equals, false)
 }
 
-func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_notAnOwnerOrAdmin(c *C) {
+func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_notOwnerOrAdmin(c *C) {
 	o := &Occupant{}
 
 	o.ChangeAffiliationToOwner()
-	c.Assert(o.notAnOwnerOrAdmin(), Equals, false)
+	c.Assert(o.isNotOwnerOrAdmin(), Equals, false)
 
 	o.ChangeAffiliationToAdmin()
-	c.Assert(o.notAnOwnerOrAdmin(), Equals, false)
+	c.Assert(o.isNotOwnerOrAdmin(), Equals, false)
 
 	o.ChangeAffiliationToMember()
-	c.Assert(o.notAnOwnerOrAdmin(), Equals, true)
+	c.Assert(o.isNotOwnerOrAdmin(), Equals, true)
 
 	o.ChangeAffiliationToOutcast()
-	c.Assert(o.notAnOwnerOrAdmin(), Equals, true)
+	c.Assert(o.isNotOwnerOrAdmin(), Equals, true)
 
 	o.ChangeAffiliationToNone()
-	c.Assert(o.notAnOwnerOrAdmin(), Equals, true)
+	c.Assert(o.isNotOwnerOrAdmin(), Equals, true)
 }

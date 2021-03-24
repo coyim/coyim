@@ -142,8 +142,8 @@ func (r *roomViewRosterInfo) refreshRoleSection() {
 	r.changeRoleButton.SetVisible(showChangeRoleButton)
 
 	showChangeRoleDisabledLabel := r.selfOccupant.Affiliation.IsOwner() && (r.occupant.Affiliation.IsOwner() || r.occupant.Affiliation.IsAdmin())
-	r.roleDisableLabel.SetText(i18n.Localf("By default, administrators and owners are also moderators in the room. "+
-		"For that reason, the role of %s can't be changed.", r.occupant.Nickname))
+	r.roleDisableLabel.SetText(i18n.Localf("Administrators and owners will automatically be moderators for a room. "+
+		"Therefore, the role of %s can't be changed.", r.occupant.Nickname))
 	r.roleDisableLabel.SetVisible(showChangeRoleDisabledLabel)
 }
 

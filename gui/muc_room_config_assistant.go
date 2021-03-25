@@ -71,6 +71,7 @@ func (u *gtkUI) newRoomConfigAssistant(ca *account, roomID jid.Bare, form *muc.R
 	rc.initRoomConfigComponent(form)
 	rc.initRoomConfigPages()
 	rc.initDefaults()
+	rc.initSidebar()
 
 	return rc
 }
@@ -119,6 +120,11 @@ func (rc *roomConfigAssistant) initDefaults() {
 	rc.summaryPageBox.SetHExpand(true)
 
 	rc.assistant.SetTitle(i18n.Localf("Configuration for room [%s]", rc.roomID.String()))
+}
+
+func (rc *roomConfigAssistant) initSidebar() {
+	sb := rc.newRoomConfigAssistantSidebar()
+	updateSidebarContent(rc.assistant, sb.getContent())
 }
 
 func (rc *roomConfigAssistant) refreshButtonLabels() {

@@ -32,6 +32,14 @@ func (list assistantButtons) updateButtonLabelByName(name string, label string) 
 	}
 }
 
+func updateSidebarContent(a gtki.Assistant, content gtki.Box) {
+	sb, _ := findBoxWidgetByName(a.GetChildren(), "sidebar")
+	for _, c := range sb.GetChildren() {
+		sb.Remove(c)
+	}
+	sb.Add(content)
+}
+
 func removeActionArea(a gtki.Assistant) {
 	actionArea, ok := findBoxWidgetByName(a.GetChildren(), "action_area")
 	if ok {

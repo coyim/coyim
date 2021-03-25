@@ -1,6 +1,8 @@
 package xmpp
 
 import (
+	"time"
+
 	"github.com/coyim/coyim/xmpp/data"
 	. "gopkg.in/check.v1"
 )
@@ -40,7 +42,7 @@ func (s *PingSuite) Test_conn_SendPingReply(c *C) {
 }
 
 func (s *PingSuite) Test_conn_ReceivePong(c *C) {
-	t1 := getTimeNowWithPrecission()
+	t1 := time.Now().Add(-time.Hour * 1)
 	conn := conn{
 		lastPongResponse: t1,
 	}

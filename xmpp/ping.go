@@ -29,17 +29,7 @@ func (c *conn) SendPingReply(id string) error {
 
 // ReceivePong update the timestamp for lastPongResponse,
 func (c *conn) ReceivePong() {
-	c.lastPongResponse = getTimeNowWithPrecission() //TODO: this seems should not belong to Conn
-}
-
-func getTimeNowWithPrecission() time.Time {
-	n1 := time.Now()
-	for {
-		n2 := time.Now()
-		if n2.After(n1) {
-			return n2
-		}
-	}
+	c.lastPongResponse = time.Now() //TODO: this seems should not belong to Conn
 }
 
 // ParsePong parse a reply of a Pong response.

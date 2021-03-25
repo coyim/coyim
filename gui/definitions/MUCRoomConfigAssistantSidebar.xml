@@ -1,9 +1,9 @@
 <interface>
-  <object class="GtkBox" id="assistant-options">
+  <object class="GtkBox" id="assistant-options-content">
     <property name="width_request">150</property>
     <property name="orientation">vertical</property>
     <child>
-      <object class="GtkListBox">
+      <object class="GtkListBox" id="assistant-options">
         <property name="visible">True</property>
         <property name="selection_mode">browse</property>
         <signal name="row_selected" handler="row_selected" swapped="no"/>

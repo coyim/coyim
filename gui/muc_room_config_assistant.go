@@ -16,6 +16,7 @@ type roomConfigAssistant struct {
 	account *account
 	roomID  jid.Bare
 
+	roomConfigSidebar   *roomConfigAssistantSidebar
 	roomConfigComponent *mucRoomConfigComponent
 
 	autoJoin  bool
@@ -123,8 +124,8 @@ func (rc *roomConfigAssistant) initDefaults() {
 }
 
 func (rc *roomConfigAssistant) initSidebar() {
-	sb := rc.newRoomConfigAssistantSidebar()
-	updateSidebarContent(rc.assistant, sb.getContent())
+	rc.roomConfigSidebar = rc.newRoomConfigAssistantSidebar()
+	updateSidebarContent(rc.assistant, rc.roomConfigSidebar.getContent())
 }
 
 func (rc *roomConfigAssistant) refreshButtonLabels() {
@@ -137,6 +138,7 @@ func (rc *roomConfigAssistant) refreshButtonLabels() {
 func (rc *roomConfigAssistant) onPageChanged() {
 	if rc.canChangeOfPage() {
 		rc.pageByIndex(rc.currentPageIndex).collectData()
+		rc.roomConfigSidebar.selectOption(rc.assistant.GetCurrentPage())
 		rc.updateContentPage(rc.assistant.GetCurrentPage())
 	}
 }
@@ -145,7 +147,9 @@ func (rc *roomConfigAssistant) updateAssistantPage(indexPage int) {
 	if rc.canChangeOfPage() {
 		rc.pageByIndex(rc.currentPageIndex).collectData()
 		rc.updateContentPage(indexPage)
+		return
 	}
+	rc.roomConfigSidebar.selectOption(rc.currentPageIndex)
 }
 
 func (rc *roomConfigAssistant) canChangeOfPage() bool {

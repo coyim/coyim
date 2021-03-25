@@ -6,7 +6,8 @@ import (
 
 type roomConfigAssistantSidebar struct {
 	assistant *roomConfigAssistant
-	content   gtki.Box `gtk-widget:"assistant-options"`
+	content   gtki.Box     `gtk-widget:"assistant-options-content"`
+	options   gtki.ListBox `gtk-widget:"assistant-options"`
 }
 
 func (rc *roomConfigAssistant) newRoomConfigAssistantSidebar() *roomConfigAssistantSidebar {
@@ -30,6 +31,10 @@ func (sb *roomConfigAssistantSidebar) initBuilder() {
 
 func (sb *roomConfigAssistantSidebar) onRowSelected(l gtki.ListBox, r gtki.ListBoxRow) {
 	sb.assistant.updateAssistantPage(r.GetIndex())
+}
+
+func (sb *roomConfigAssistantSidebar) selectOption(indexPage int) {
+	sb.options.SelectRow(sb.options.GetRowAtIndex(indexPage))
 }
 
 func (sb *roomConfigAssistantSidebar) getContent() gtki.Box {

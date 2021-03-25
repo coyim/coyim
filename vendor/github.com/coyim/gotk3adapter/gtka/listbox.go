@@ -27,3 +27,11 @@ func UnwrapListBox(v gtki.ListBox) *gtk.ListBox {
 	}
 	return v.(*listBox).internal
 }
+
+func (v *listBox) SelectRow(v1 gtki.ListBoxRow) {
+	v.internal.SelectRow(v1.(*listBoxRow).internal)
+}
+
+func (v *listBox) GetRowAtIndex(index int) gtki.ListBoxRow {
+	return WrapListBoxRowSimple(v.internal.GetRowAtIndex(index))
+}

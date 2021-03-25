@@ -134,18 +134,35 @@ func (rc *roomConfigAssistant) refreshButtonLabels() {
 	buttons.updateButtonLabelByName("apply", i18n.Local("Create Room"))
 }
 
-func (rc *roomConfigAssistant) onPageChanged(_ gtki.Assistant, _ gtki.Widget) {
+func (rc *roomConfigAssistant) onPageChanged() {
+	if rc.canChangeOfPage() {
+		rc.pageByIndex(rc.currentPageIndex).collectData()
+		rc.updateContentPage(rc.assistant.GetCurrentPage())
+	}
+}
+
+func (rc *roomConfigAssistant) updateAssistantPage(indexPage int) {
+	if rc.canChangeOfPage() {
+		rc.pageByIndex(rc.currentPageIndex).collectData()
+		rc.updateContentPage(indexPage)
+	}
+}
+
+func (rc *roomConfigAssistant) canChangeOfPage() bool {
 	previousPage := rc.pageByIndex(rc.currentPageIndex)
 	if previousPage.isNotValid() {
 		rc.assistant.SetCurrentPage(rc.currentPageIndex)
 		rc.currentPage.showValidationErrors()
-		return
+		return false
 	}
 
-	previousPage.collectData()
+	return true
+}
 
-	rc.currentPageIndex = rc.assistant.GetCurrentPage()
+func (rc *roomConfigAssistant) updateContentPage(indexPage int) {
+	rc.currentPageIndex = indexPage
 	rc.currentPage = rc.pageByIndex(rc.currentPageIndex)
+	rc.assistant.SetCurrentPage(rc.currentPageIndex)
 	rc.currentPage.refresh()
 	rc.refreshButtonLabels()
 	removeActionArea(rc.assistant)

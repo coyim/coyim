@@ -24,12 +24,12 @@ func (sb *roomConfigAssistantSidebar) initBuilder() {
 	panicOnDevError(b.bindObjects(sb))
 
 	b.ConnectSignals(map[string]interface{}{
-		"row_selected": sb.rowSelected,
+		"row_selected": sb.onRowSelected,
 	})
 }
 
-func (sb *roomConfigAssistantSidebar) rowSelected(l gtki.ListBox, r gtki.ListBoxRow) {
-	// TODO: update assistant page
+func (sb *roomConfigAssistantSidebar) onRowSelected(l gtki.ListBox, r gtki.ListBoxRow) {
+	sb.assistant.updateAssistantPage(r.GetIndex())
 }
 
 func (sb *roomConfigAssistantSidebar) getContent() gtki.Box {

@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"strings"
+
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -83,7 +85,12 @@ func (f *mucRoomFormComponent) setCurrentRoomName(n jid.Local) {
 }
 
 func (f *mucRoomFormComponent) currentRoomID() jid.Bare {
-	return jid.NewBareFromStrings(f.currentRoomNameValue(), f.currentServiceValue())
+	return jid.NewBareFromStrings(
+		// Some services may fail with capital letters.
+		// Maybe we should implement a "ToLower" method as a member of the "jid.Bare" struct
+		strings.ToLower(f.currentRoomNameValue()),
+		strings.ToLower(f.currentServiceValue()),
+	)
 }
 
 func (f *mucRoomFormComponent) currentRoomIDValue() string {

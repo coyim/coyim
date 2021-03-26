@@ -229,14 +229,6 @@ func (s *mucStylesProvider) setDisableRoomStyle(p gtki.Box) {
 	})
 }
 
-func (s *mucStylesProvider) assignStyleForLabelOnDisabledRole(l gtki.Label) {
-	s.setLabelStyle(l, style{
-		"font-style": "italic",
-		"opacity":    "0.7",
-		"font-size":  "small",
-	})
-}
-
 func (s *mucStylesProvider) setFormSectionLabelStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
 		"font-weight": "bold",

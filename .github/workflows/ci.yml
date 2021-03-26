@@ -72,9 +72,70 @@ jobs:
           DISPLAY: ':99.0'
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
 
+  test-win:
+    runs-on: windows-2019
+
+    env:
+      GOPATH: ${{ github.workspace }}
+      GO111MODULE: off
+    defaults:
+      run:
+        working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
+        shell: msys2 {0}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        go: [ '1.14' ]
+
+    name: Test go-${{ matrix.go }} (Windows)
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
+      - name: Setup msys2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          path-type: inherit
+          install: autoconf automake make sed zlib-devel
+      - name: Update msys2
+        run: pacman --noconfirm --needed -Syuu
+        continue-on-error: true
+      - name: Update msys2 again
+        run: pacman --noconfirm --needed -Syuu
+        continue-on-error: true
+      - name: Install dependencies
+        run: >
+          pacman --noconfirm --needed -Sy
+          mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-gdb
+          mingw-w64-x86_64-gtk3
+          mingw-w64-x86_64-libiconv
+          mingw-w64-x86_64-make
+          mingw-w64-x86_64-nsis
+          mingw-w64-x86_64-pango
+          mingw-w64-x86_64-pkg-config
+      - name: Install Windows deps
+        run: make win-ci-deps
+      - name: install project dependencies
+        run: make -C ci/ deps
+        env:
+          DISPLAY: ':99.0'
+      - name: run tests
+        run: make -C ci/
+        env:
+          DISPLAY: ':99.0'
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+
   notify-test:
     name: Notify on success or failure of test
-    needs: [test-linux, test-osx]
+    needs: [test-linux, test-osx, test-win]
     runs-on: ubuntu-20.04
     if: always()
     steps:
@@ -164,7 +225,7 @@ jobs:
 
   build-release-win:
     name: Build release (Windows)
-    needs: test-linux
+    needs: test-win
     runs-on: windows-2019
     if: startsWith( github.ref, 'refs/tags/')
 

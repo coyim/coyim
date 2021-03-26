@@ -31,12 +31,14 @@ func (dn *desktopNotifications) show(jid, from, message string) error {
 	return notification.Popup()
 }
 
+// Notification contains information for popping up a notification on Windows
 type Notification struct {
 	Title   string
 	Message string
 	Icon    string
 }
 
+// Popup will actually pop up the notification
 func (n *Notification) Popup() error {
 	cmd := exec.Command("toast.exe", "-t", n.Title, "-m", n.Message, "-p", n.Icon)
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}

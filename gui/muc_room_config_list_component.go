@@ -7,24 +7,26 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+const jidColumnIndex = 0
+
 type mucRoomConfigListComponent struct {
 	u                       *gtkUI
 	list                    gtki.TreeView
 	listModel               gtki.TreeStore
-	listModelColumns        []glibi.Type
 	addButton, removeButton gtki.Button
 	onAdd                   func()
-	items                   [][]string
+	onNoItems               func()
+	jidList                 []string
 }
 
-func (u *gtkUI) newMUCRoomConfigListComponent(list gtki.TreeView, listModelColumns []glibi.Type, addButton, removeButton gtki.Button, onAdd func()) *mucRoomConfigListComponent {
+func (u *gtkUI) newMUCRoomConfigListComponent(list gtki.TreeView, addButton, removeButton gtki.Button, onAdd, onNoItems func()) *mucRoomConfigListComponent {
 	cl := &mucRoomConfigListComponent{
-		u:                u,
-		list:             list,
-		listModelColumns: listModelColumns,
-		addButton:        addButton,
-		removeButton:     removeButton,
-		onAdd:            onAdd,
+		u:            u,
+		list:         list,
+		addButton:    addButton,
+		removeButton: removeButton,
+		onAdd:        onAdd,
+		onNoItems:    onNoItems,
 	}
 
 	cl.initListModel()
@@ -34,7 +36,10 @@ func (u *gtkUI) newMUCRoomConfigListComponent(list gtki.TreeView, listModelColum
 }
 
 func (cl *mucRoomConfigListComponent) initListModel() {
-	lm, _ := g.gtk.TreeStoreNew(cl.listModelColumns...)
+	lm, _ := g.gtk.TreeStoreNew(
+		// jid
+		glibi.TYPE_STRING,
+	)
 
 	cl.listModel = lm
 	cl.list.SetModel(cl.listModel)
@@ -60,8 +65,26 @@ func (cl *mucRoomConfigListComponent) onAddClicked() {
 }
 
 func (cl *mucRoomConfigListComponent) onRemoveClicked() {
-	if iter, err := cl.getSelectedRow(); err == nil {
-		cl.listModel.Remove(iter)
+	iter, err := cl.getSelectedRow()
+	if err != nil {
+		return
+	}
+
+	jidValue, _ := cl.listModel.GetValue(iter, jidColumnIndex)
+	selectedJid, _ := jidValue.GetString()
+
+	copy := []string{}
+	for _, jid := range cl.jidList {
+		if jid != selectedJid {
+			copy = append(copy, jid)
+		}
+	}
+
+	cl.jidList = copy
+	cl.redraw()
+
+	if len(cl.jidList) == 0 && cl.onNoItems != nil {
+		cl.onNoItems()
 	}
 }
 
@@ -87,22 +110,18 @@ func (cl *mucRoomConfigListComponent) getSelectedRow() (gtki.TreeIter, error) {
 	return iter, nil
 }
 
-func (cl *mucRoomConfigListComponent) addListItems(items [][]string) {
-	for _, it := range items {
-		if len(items) > 0 {
-			cl.addListItem(it...)
-		}
-	}
+func (cl *mucRoomConfigListComponent) addListItems(jids []string) {
+	cl.jidList = append(cl.jidList, jids...)
+	cl.redraw()
 }
 
-func (cl *mucRoomConfigListComponent) addListItem(cells ...string) {
-	li := cl.listModel.Append(nil)
+func (cl *mucRoomConfigListComponent) redraw() {
+	cl.listModel.Clear()
 
-	for i, c := range cells {
-		_ = cl.listModel.SetValue(li, i, c)
+	for _, jid := range cl.jidList {
+		li := cl.listModel.Append(nil)
+		_ = cl.listModel.SetValue(li, jidColumnIndex, jid)
 	}
-
-	cl.items = append(cl.items, cells)
 }
 
 func (cl *mucRoomConfigListComponent) iterForString(path string) (gtki.TreeIter, error) {

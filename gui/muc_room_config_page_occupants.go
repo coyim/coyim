@@ -3,7 +3,6 @@ package gui
 import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
-	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 	log "github.com/sirupsen/logrus"
 )
@@ -75,40 +74,28 @@ func (p *roomConfigOccupantsPage) initOccupantsLists(parent gtki.Window) {
 }
 
 func (p *roomConfigOccupantsPage) initOwnersListController(parent gtki.Window) {
-	ownersListColumns := []glibi.Type{
-		// jid
-		glibi.TYPE_STRING,
-	}
-
 	p.ownersListController = p.u.newMUCRoomConfigListController(&mucRoomConfigListControllerData{
-		addOccupantButton:        p.ownersAddButton,
-		removeOccupantButton:     p.ownersRemoveButton,
-		occupantsTreeView:        p.ownersList,
-		occupantsTreeViewColumns: ownersListColumns,
-		parentWindow:             parent,
-		addOccupantDialogTitle:   i18n.Local("Add owners"),
-		addOccupantDescription:   i18n.Local("Here you can add one or more new owners to the room. You will have to use the account address of the user in order to make them an owner. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
-		addOccupantForm:          newMUCRoomConfigListOwnersForm,
-		refreshView:              p.refreshContentLists,
+		addOccupantButton:      p.ownersAddButton,
+		removeOccupantButton:   p.ownersRemoveButton,
+		occupantsTreeView:      p.ownersList,
+		parentWindow:           parent,
+		addOccupantDialogTitle: i18n.Local("Add owners"),
+		addOccupantDescription: i18n.Local("Here you can add one or more new owners to the room. You will have to use the account address of the user in order to make them an owner. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
+		addOccupantForm:        newMUCRoomConfigListOwnersForm,
+		onUpdate:               p.refreshContentLists,
 	})
 }
 
 func (p *roomConfigOccupantsPage) initAdminsListController(parent gtki.Window) {
-	adminsListColumns := []glibi.Type{
-		// jid
-		glibi.TYPE_STRING,
-	}
-
 	p.adminsListController = p.u.newMUCRoomConfigListController(&mucRoomConfigListControllerData{
-		addOccupantButton:        p.adminAddButton,
-		removeOccupantButton:     p.adminRemoveButton,
-		occupantsTreeView:        p.adminList,
-		occupantsTreeViewColumns: adminsListColumns,
-		parentWindow:             parent,
-		addOccupantDialogTitle:   i18n.Local("Add administrators"),
-		addOccupantDescription:   i18n.Local("Here you can add one or more new administrators to the room. You will have to use the account address of the user in order to make them an administrator. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
-		addOccupantForm:          newMUCRoomConfigListAdminsForm,
-		refreshView:              p.refreshContentLists,
+		addOccupantButton:      p.adminAddButton,
+		removeOccupantButton:   p.adminRemoveButton,
+		occupantsTreeView:      p.adminList,
+		parentWindow:           parent,
+		addOccupantDialogTitle: i18n.Local("Add administrators"),
+		addOccupantDescription: i18n.Local("Here you can add one or more new administrators to the room. You will have to use the account address of the user in order to make them an administrator. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
+		addOccupantForm:        newMUCRoomConfigListAdminsForm,
+		onUpdate:               p.refreshContentLists,
 	})
 }
 
@@ -127,8 +114,8 @@ func (p *roomConfigOccupantsPage) collectData() {
 }
 
 func jidListFromConfigListController(l *mucRoomConfigListController) (result []jid.Any) {
-	for _, i := range l.listItems() {
-		result = append(result, jid.Parse(i[0]))
+	for _, li := range l.listItems() {
+		result = append(result, jid.Parse(li))
 	}
-	return result
+	return
 }

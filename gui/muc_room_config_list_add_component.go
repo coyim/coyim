@@ -29,10 +29,10 @@ type mucRoomConfigListAddComponent struct {
 	form                   mucRoomConfigListForm
 	items                  []*mucRoomConfigListFormItem
 	addOccupantFormCreator func(onFieldChanged, onFieldActivate func()) mucRoomConfigListForm
-	onApply                func([][]string)
+	onApply                func(jidList []string)
 }
 
-func (u *gtkUI) newMUCRoomConfigListAddComponent(dialogTitle, formTitle string, addOccupantForm func(onFieldChanged, onFieldActivate func()) mucRoomConfigListForm, onApply func([][]string), parent gtki.Window) *mucRoomConfigListAddComponent {
+func (u *gtkUI) newMUCRoomConfigListAddComponent(dialogTitle, formTitle string, addOccupantForm func(onFieldChanged, onFieldActivate func()) mucRoomConfigListForm, onApply func(jidList []string), parent gtki.Window) *mucRoomConfigListAddComponent {
 	la := &mucRoomConfigListAddComponent{
 		u:                      u,
 		dialogTitle:            dialogTitle,
@@ -86,7 +86,7 @@ func (la *mucRoomConfigListAddComponent) newAddOccupantForm() mucRoomConfigListF
 	)
 }
 
-func (la *mucRoomConfigListAddComponent) appendNewItem(values []string) {
+func (la *mucRoomConfigListAddComponent) appendNewItem(jid string) {
 	nextIndex := len(la.items)
 
 	onRemove := func() {
@@ -95,7 +95,7 @@ func (la *mucRoomConfigListAddComponent) appendNewItem(values []string) {
 	}
 
 	form := la.newAddOccupantForm()
-	form.setValues(values)
+	form.setValue(jid)
 
 	item := newMUCRoomConfigListFormItem(form, nil, onRemove)
 	la.items = append(la.items, item)
@@ -165,17 +165,17 @@ func (la *mucRoomConfigListAddComponent) onRemoveAllClicked() {
 
 func (la *mucRoomConfigListAddComponent) onApplyClicked() {
 	if la.isValid() {
-		entries := [][]string{}
+		jidList := []string{}
 
 		if la.form.isFilled() {
-			entries = append(entries, la.form.getValues())
+			jidList = append(jidList, la.form.jid())
 		}
 
 		la.forEachForm(func(form mucRoomConfigListForm) {
-			entries = append(entries, form.getValues())
+			jidList = append(jidList, form.jid())
 		})
 
-		la.onApply(entries)
+		la.onApply(jidList)
 		la.close()
 	}
 }
@@ -255,7 +255,7 @@ type mucRoomConfigListFormItem struct {
 	removeButton gtki.Button `gtk-widget:"room-config-list-remove-item-button"`
 }
 
-func newMUCRoomConfigListFormItem(form mucRoomConfigListForm, onAdd func([]string), onRemove func()) *mucRoomConfigListFormItem {
+func newMUCRoomConfigListFormItem(form mucRoomConfigListForm, onAdd func(jid string), onRemove func()) *mucRoomConfigListFormItem {
 	lfi := &mucRoomConfigListFormItem{
 		form: form,
 	}
@@ -273,7 +273,7 @@ func newMUCRoomConfigListFormItem(form mucRoomConfigListForm, onAdd func([]strin
 
 	if onAdd != nil {
 		lfi.addButton.Connect("clicked", func() {
-			onAdd(form.getValues())
+			onAdd(form.jid())
 			form.reset()
 			form.focus()
 		})

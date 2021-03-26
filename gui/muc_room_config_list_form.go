@@ -14,8 +14,7 @@ type mucRoomConfigListForm interface {
 	isValid() (bool, error)
 	isFilled() bool
 	focus()
-	setValues([]string)
-	getValues() []string
+	setValue(string)
 	reset()
 	friendlyErrorMessage(error) string
 	getFormView() gtki.Widget
@@ -98,17 +97,10 @@ func (f *roomConfigListForm) focus() {
 	f.jidEntry.GrabFocus()
 }
 
-func (f *roomConfigListForm) setValues(values []string) {
-	setters := f.setters()
-	for ix, v := range values {
-		if ix < len(setters) {
-			setters[ix](v)
-		}
+func (f *roomConfigListForm) setValue(jid string) {
+	for _, setter := range f.setters() {
+		setter(jid)
 	}
-}
-
-func (f *roomConfigListForm) getValues() []string {
-	return []string{f.jid()}
 }
 
 func (f *roomConfigListForm) reset() {

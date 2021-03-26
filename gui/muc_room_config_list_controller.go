@@ -6,16 +6,15 @@ import (
 )
 
 type mucRoomConfigListControllerData struct {
-	addOccupantButton        gtki.Button
-	removeOccupantButton     gtki.Button
-	occupantsTreeView        gtki.TreeView
-	occupantsTreeViewColumns []glibi.Type
-	parentWindow             gtki.Window
+	addOccupantButton    gtki.Button
+	removeOccupantButton gtki.Button
+	occupantsTreeView    gtki.TreeView
+	parentWindow         gtki.Window
 
 	addOccupantDialogTitle string
 	addOccupantDescription string
 	addOccupantForm        func(onFormFieldValueChanges, onFormFieldValueActivates func()) mucRoomConfigListForm
-	refreshView            func()
+	onUpdate               func()
 }
 
 type mucRoomConfigListController struct {
@@ -28,15 +27,16 @@ type mucRoomConfigListController struct {
 
 	listComponent        *mucRoomConfigListComponent
 	onAddOccupantsToList func()
+	onUpdate             func()
 }
 
 func (u *gtkUI) newMUCRoomConfigListController(d *mucRoomConfigListControllerData) *mucRoomConfigListController {
 	c := &mucRoomConfigListController{
-		u:                        u,
-		addOccupantButton:        d.addOccupantButton,
-		removeOccupantButton:     d.removeOccupantButton,
-		ocuppantsTreeView:        d.occupantsTreeView,
-		occupantsTreeViewColumns: d.occupantsTreeViewColumns,
+		u:                    u,
+		addOccupantButton:    d.addOccupantButton,
+		removeOccupantButton: d.removeOccupantButton,
+		ocuppantsTreeView:    d.occupantsTreeView,
+		onUpdate:             d.onUpdate,
 	}
 
 	c.initListAddComponent(d)
@@ -51,10 +51,7 @@ func (c *mucRoomConfigListController) initListAddComponent(d *mucRoomConfigListC
 			d.addOccupantDialogTitle,
 			d.addOccupantDescription,
 			d.addOccupantForm,
-			func(items [][]string) {
-				c.listComponent.addListItems(items)
-				d.refreshView()
-			},
+			c.onAddListItems,
 			d.parentWindow,
 		)
 
@@ -65,19 +62,30 @@ func (c *mucRoomConfigListController) initListAddComponent(d *mucRoomConfigListC
 func (c *mucRoomConfigListController) initListComponent() {
 	c.listComponent = c.u.newMUCRoomConfigListComponent(
 		c.ocuppantsTreeView,
-		c.occupantsTreeViewColumns,
 		c.addOccupantButton,
 		c.removeOccupantButton,
 		c.onAddOccupantsToList,
+		c.onUpdated,
 	)
 }
 
-func (c *mucRoomConfigListController) listItems() [][]string {
-	return c.listComponent.items
+func (c *mucRoomConfigListController) listItems() []string {
+	return c.listComponent.jidList
 }
 
 func (c *mucRoomConfigListController) hasItems() bool {
-	return len(c.listComponent.items) > 0
+	return len(c.listComponent.jidList) > 0
+}
+
+func (c *mucRoomConfigListController) onAddListItems(jidList []string) {
+	c.listComponent.addListItems(jidList)
+	c.onUpdated()
+}
+
+func (c *mucRoomConfigListController) onUpdated() {
+	if c.onUpdate != nil {
+		c.onUpdate()
+	}
 }
 
 func (c *mucRoomConfigListController) updateCellForString(column int, path string, newValue string) error {

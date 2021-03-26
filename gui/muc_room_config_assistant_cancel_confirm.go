@@ -10,9 +10,8 @@ type roomConfigAssistantCancelView struct {
 
 	rc *roomConfigAssistant
 
-	dialog  gtki.Dialog `gtk-widget:"confirmation-room-dialog"`
-	cancel  gtki.Button `gtk-widget:"cancel-button"`
-	confirm gtki.Button `gtk-widget:"destroy-room-button"`
+	dialog gtki.Dialog `gtk-widget:"confirmation-dialog"`
+	header gtki.Label  `gtk-widget:"confirmation-dialog-header"`
 
 	log coylog.Logger
 }
@@ -32,9 +31,11 @@ func (cv *roomConfigAssistantCancelView) initBuilder() {
 	panicOnDevError(cv.builder.bindObjects(cv))
 
 	cv.builder.ConnectSignals(map[string]interface{}{
-		"on_no_confirmation_button":  cv.onNoConfirmation,
-		"on_yes_confirmation_button": cv.onYesConfirmation,
+		"on_no_clicked":  cv.onNoConfirmation,
+		"on_yes_clicked": cv.onYesConfirmation,
 	})
+
+	mucStyles.setRoomDialogErrorComponentHeaderStyle(cv.header)
 }
 
 func (cv *roomConfigAssistantCancelView) onNoConfirmation() {

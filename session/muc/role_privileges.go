@@ -151,7 +151,7 @@ func (o *Occupant) CanRevokeVoice(oc *Occupant) bool {
 // CanChangeRole returns a boolean indicating if the occupant can change the role of the
 // given occupant based on the occupant's role and affiliation
 func (o *Occupant) CanChangeRole(oc *Occupant) bool {
-	return o.isOwnerOrAdmin() && oc.isNotOwnerOrAdmin()
+	return (o.isOwner() || o.isAdmin()) && (!oc.isOwner() && !oc.isAdmin())
 }
 
 // CanKickOccupant returns a boolean indicating if the occupant can kick another occupant
@@ -162,8 +162,8 @@ func (o *Occupant) CanKickOccupant(oc *Occupant) bool {
 	}
 
 	if o.isOwner() {
-		return oc.isNotOwner()
+		return !oc.isOwner()
 	}
 
-	return oc.isNotOwnerOrAdmin()
+	return !oc.isOwner() && !oc.isAdmin()
 }

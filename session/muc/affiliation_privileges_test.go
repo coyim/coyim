@@ -344,25 +344,6 @@ func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_isOwner(c *C) {
 	c.Assert(o.isOwner(), Equals, false)
 }
 
-func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_notOwner(c *C) {
-	o := &Occupant{}
-
-	o.ChangeAffiliationToOwner()
-	c.Assert(o.isNotOwner(), Equals, false)
-
-	o.ChangeAffiliationToAdmin()
-	c.Assert(o.isNotOwner(), Equals, true)
-
-	o.ChangeAffiliationToMember()
-	c.Assert(o.isNotOwner(), Equals, true)
-
-	o.ChangeAffiliationToOutcast()
-	c.Assert(o.isNotOwner(), Equals, true)
-
-	o.ChangeAffiliationToNone()
-	c.Assert(o.isNotOwner(), Equals, true)
-}
-
 func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_isAdmin(c *C) {
 	o := &Occupant{}
 
@@ -380,61 +361,4 @@ func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_isAdmin(c *C) {
 
 	o.ChangeAffiliationToNone()
 	c.Assert(o.isAdmin(), Equals, false)
-}
-
-func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_notAnAdmin(c *C) {
-	o := &Occupant{}
-
-	o.ChangeAffiliationToOwner()
-	c.Assert(o.isNotAdmin(), Equals, true)
-
-	o.ChangeAffiliationToAdmin()
-	c.Assert(o.isNotAdmin(), Equals, false)
-
-	o.ChangeAffiliationToMember()
-	c.Assert(o.isNotAdmin(), Equals, true)
-
-	o.ChangeAffiliationToOutcast()
-	c.Assert(o.isNotAdmin(), Equals, true)
-
-	o.ChangeAffiliationToNone()
-	c.Assert(o.isNotAdmin(), Equals, true)
-}
-
-func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_isOwnerOrAdmin(c *C) {
-	o := &Occupant{}
-
-	o.ChangeAffiliationToOwner()
-	c.Assert(o.isOwnerOrAdmin(), Equals, true)
-
-	o.ChangeAffiliationToAdmin()
-	c.Assert(o.isOwnerOrAdmin(), Equals, true)
-
-	o.ChangeAffiliationToMember()
-	c.Assert(o.isOwnerOrAdmin(), Equals, false)
-
-	o.ChangeAffiliationToOutcast()
-	c.Assert(o.isOwnerOrAdmin(), Equals, false)
-
-	o.ChangeAffiliationToNone()
-	c.Assert(o.isOwnerOrAdmin(), Equals, false)
-}
-
-func (*MucOccupantAffiliationPrivilegesSuite) Test_Occupant_notOwnerOrAdmin(c *C) {
-	o := &Occupant{}
-
-	o.ChangeAffiliationToOwner()
-	c.Assert(o.isNotOwnerOrAdmin(), Equals, false)
-
-	o.ChangeAffiliationToAdmin()
-	c.Assert(o.isNotOwnerOrAdmin(), Equals, false)
-
-	o.ChangeAffiliationToMember()
-	c.Assert(o.isNotOwnerOrAdmin(), Equals, true)
-
-	o.ChangeAffiliationToOutcast()
-	c.Assert(o.isNotOwnerOrAdmin(), Equals, true)
-
-	o.ChangeAffiliationToNone()
-	c.Assert(o.isNotOwnerOrAdmin(), Equals, true)
 }

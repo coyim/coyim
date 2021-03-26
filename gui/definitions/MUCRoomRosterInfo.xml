@@ -111,6 +111,9 @@
                           <object class="GtkLabel" id="occupant-nickname">
                             <property name="visible">True</property>
                             <property name="halign">center</property>
+                            <style>
+                              <class name="occupant-nickname"/>
+                            </style>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -123,6 +126,9 @@
                             <property name="visible">True</property>
                             <property name="halign">center</property>
                             <property name="ellipsize">end</property>
+                            <style>
+                              <class name="occupant-jid"/>
+                            </style>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -134,6 +140,9 @@
                           <object class="GtkLabel" id="status">
                             <property name="visible">True</property>
                             <property name="halign">center</property>
+                            <style>
+                              <class name="occupant-status"/>
+                            </style>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -393,6 +402,9 @@
                             <property name="wrap">True</property>
                             <property name="xalign">0</property>
                             <property name="yalign">0</property>
+                            <style>
+                              <class name="occupant-role-disabled-help"/>
+                            </style>
                           </object>
                           <packing>
                             <property name="expand">False</property>

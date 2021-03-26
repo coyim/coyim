@@ -44,9 +44,9 @@ func (cv *roomConfigAssistantCancelView) onNoConfirmation() {
 
 func (cv *roomConfigAssistantCancelView) onYesConfirmation() {
 	cv.close()
-	cv.rc.disable()
-	cv.rc.currentPage.onConfigurationCancel()
-	cv.rc.roomConfigComponent.cancelConfiguration(cv.rc.onCancelSuccess, cv.rc.onCancelError)
+	cv.rc.destroyAssistant()
+	cv.rc.onCancel()
+	cv.rc.roomConfigComponent.cancelConfiguration(cv.rc.onCancelError)
 }
 
 // show MUST be called from the UI thread

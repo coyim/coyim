@@ -185,15 +185,14 @@ func (rc *roomConfigAssistant) onCancelClicked() {
 	cv.show()
 }
 
-func (rc *roomConfigAssistant) onCancelSuccess() {
-	rc.onCancel()
-	doInUIThread(rc.assistant.Destroy)
-}
-
 func (rc *roomConfigAssistant) onCancelError(err error) {
-	rc.enable()
-	rc.currentPage.onConfigurationCancelError()
-	rc.currentPage.notifyError(rc.roomConfigComponent.friendlyConfigErrorMessage(err))
+	dr := createDialogErrorComponent(
+		"Cancel room settings",
+		"We were unable to cancel the room configuration",
+		"An error occurred while trying to cancel the configuration of the room.",
+	)
+
+	dr.show()
 }
 
 func (rc *roomConfigAssistant) onApplyClicked() {
@@ -208,6 +207,10 @@ func (rc *roomConfigAssistant) onApplyClicked() {
 
 func (rc *roomConfigAssistant) onApplySuccess() {
 	rc.onSuccess(rc.roomConfigComponent.autoJoin)
+	rc.destroyAssistant()
+}
+
+func (rc *roomConfigAssistant) destroyAssistant() {
 	doInUIThread(rc.assistant.Destroy)
 }
 

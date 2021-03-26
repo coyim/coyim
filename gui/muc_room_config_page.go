@@ -20,8 +20,6 @@ type mucRoomConfigPage interface {
 	notifyError(string)
 	onConfigurationApply()
 	onConfigurationApplyError()
-	onConfigurationCancel()
-	onConfigurationCancelError()
 }
 
 type roomConfigPageBase struct {
@@ -122,16 +120,6 @@ func (p *roomConfigPageBase) onConfigurationApply() {
 
 // onConfigurationApplyError MUST be called from the ui thread
 func (p *roomConfigPageBase) onConfigurationApplyError() {
-	p.hideLoadingOverlay()
-}
-
-// onConfigurationCancel MUST be called from the ui thread
-func (p *roomConfigPageBase) onConfigurationCancel() {
-	p.showLoadingOverlay(i18n.Local("Aborting room configuration"))
-}
-
-// onConfigurationCancelError MUST be called from the ui thread
-func (p *roomConfigPageBase) onConfigurationCancelError() {
 	p.hideLoadingOverlay()
 }
 

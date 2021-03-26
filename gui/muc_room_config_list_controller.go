@@ -15,6 +15,7 @@ type mucRoomConfigListControllerData struct {
 	addOccupantDialogTitle string
 	addOccupantDescription string
 	addOccupantForm        func(onFormFieldValueChanges, onFormFieldValueActivates func()) mucRoomConfigListForm
+	refreshView            func()
 }
 
 type mucRoomConfigListController struct {
@@ -39,7 +40,7 @@ func (u *gtkUI) newMUCRoomConfigListController(d *mucRoomConfigListControllerDat
 	}
 
 	c.initListAddComponent(d)
-	c.initListComponent(d)
+	c.initListComponent()
 
 	return c
 }
@@ -50,7 +51,10 @@ func (c *mucRoomConfigListController) initListAddComponent(d *mucRoomConfigListC
 			d.addOccupantDialogTitle,
 			d.addOccupantDescription,
 			d.addOccupantForm,
-			c.listComponent.addListItems,
+			func(items [][]string) {
+				c.listComponent.addListItems(items)
+				d.refreshView()
+			},
 			d.parentWindow,
 		)
 
@@ -58,7 +62,7 @@ func (c *mucRoomConfigListController) initListAddComponent(d *mucRoomConfigListC
 	}
 }
 
-func (c *mucRoomConfigListController) initListComponent(d *mucRoomConfigListControllerData) {
+func (c *mucRoomConfigListController) initListComponent() {
 	c.listComponent = c.u.newMUCRoomConfigListComponent(
 		c.ocuppantsTreeView,
 		c.occupantsTreeViewColumns,
@@ -70,6 +74,10 @@ func (c *mucRoomConfigListController) initListComponent(d *mucRoomConfigListCont
 
 func (c *mucRoomConfigListController) listItems() [][]string {
 	return c.listComponent.items
+}
+
+func (c *mucRoomConfigListController) hasItems() bool {
+	return len(c.listComponent.items) > 0
 }
 
 func (c *mucRoomConfigListController) updateCellForString(column int, path string, newValue string) error {

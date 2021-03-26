@@ -172,14 +172,15 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkScrolledWindow">
+                      <object class="GtkScrolledWindow" id="owners-list-content">
                         <property name="visible">True</property>
                         <property name="shadow_type">in</property>
-                        <property name="min_content_height">120</property>
+                        <property name="min_content_height">100</property>
                         <child>
                           <object class="GtkTreeView" id="room-config-owners-list">
                             <property name="visible">True</property>
                             <property name="search_column">0</property>
+                            <property name="headers-visible">False</property>
                             <property name="enable_grid_lines">horizontal</property>
                             <property name="activate_on_single_click">True</property>
                             <child internal-child="selection">
@@ -187,7 +188,6 @@
                             </child>
                             <child>
                               <object class="GtkTreeViewColumn" id="owner-jid-column">
-                                <property name="title" translatable="yes">Account address</property>
                                 <child>
                                   <object class="GtkCellRendererText" id="owner-jid-text-renderer">
                                     <signal name="edited" handler="on_owner_jid_edited" swapped="no"/>
@@ -214,6 +214,16 @@
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSeparator" id="top-separator">
+                <property name="visible">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -358,14 +368,15 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkScrolledWindow">
+                      <object class="GtkScrolledWindow" id="admins-list-content">
                         <property name="visible">True</property>
                         <property name="shadow_type">in</property>
-                        <property name="min_content_height">120</property>
+                        <property name="min_content_height">100</property>
                         <child>
                           <object class="GtkTreeView" id="room-config-admin-list">
                             <property name="visible">True</property>
                             <property name="search_column">0</property>
+                            <property name="headers-visible">False</property>
                             <property name="enable_grid_lines">horizontal</property>
                             <property name="activate_on_single_click">True</property>
                             <child internal-child="selection">
@@ -373,7 +384,6 @@
                             </child>
                             <child>
                               <object class="GtkTreeViewColumn" id="admin-jid-column">
-                                <property name="title" translatable="yes">Account address</property>
                                 <child>
                                   <object class="GtkCellRendererText" id="admin-jid-text-renderer">
                                     <signal name="edited" handler="on_admin_jid_edited" swapped="no"/>
@@ -399,7 +409,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
           </object>

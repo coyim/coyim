@@ -323,6 +323,23 @@ func roleDisplayName(role data.Role) string {
 	}
 }
 
+func getOccupantStatusClassName(status string) string {
+	switch status {
+	case "unavailable":
+		return "not-available"
+	case "away":
+		return "away"
+	case "dnd":
+		return "busy"
+	case "xa":
+		return "extended-away"
+	case "chat":
+		return "free-for-chat"
+	default:
+		return "available"
+	}
+}
+
 func statusDisplayMessage(s *coyroster.Status) string {
 	return s.StatusMsg
 }

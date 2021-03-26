@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"fmt"
+
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
@@ -74,10 +76,7 @@ func (r *roomViewRosterInfo) onKickOccupantClicked() {
 }
 
 func (r *roomViewRosterInfo) initCSSStyles() {
-	mucStyles.setRoomRosterInfoNicknameLabelStyle(r.nicknameLabel)
-	mucStyles.setRoomRosterInfoUserJIDLabelStyle(r.realJIDLabel)
-	mucStyles.setRoomRosterInfoStatusLabelStyle(r.status)
-	mucStyles.assignStyleForLabelOnDisabledRole(r.roleDisableLabel)
+	mucStyles.setRoomRosterInfoStyle(r.view)
 }
 
 func (r *roomViewRosterInfo) initDefaults() {
@@ -179,6 +178,9 @@ func (r *roomViewRosterInfo) refreshOccupantInfo() {
 	}
 
 	r.status.SetText(showForDisplay(status.Status, false))
+	sc, _ := r.status.GetStyleContext()
+	sc.AddClass(fmt.Sprintf("occupant-status-%s", getOccupantStatusClassName(status.Status)))
+
 	if status.StatusMsg != "" {
 		r.statusMessage.SetText(status.StatusMsg)
 		r.statusMessage.SetTooltipText(status.StatusMsg)

@@ -24,15 +24,35 @@ type mucColorSet struct {
 	roomOverlayBackground             string
 	roomOverlayContentForeground      string
 	roomNameDisabledForeground        string
-	roomRosterStatusForeground        string
-	roomSubjectForeground             string
-	roomWarningForeground             string
-	roomWarningBackground             string
-	roomWarningBorder                 string
-	entryErrorBackground              string
-	entryErrorBorderShadow            string
-	entryErrorBorder                  string
-	entryErrorLabel                   string
+
+	// Occupant statuses colors
+	occupantStatusAvailableForeground    string
+	occupantStatusAvailableBackground    string
+	occupantStatusAvailableBorder        string
+	occupantStatusNotAvailableForeground string
+	occupantStatusNotAvailableBackground string
+	occupantStatusNotAvailableBorder     string
+	occupantStatusAwayForeground         string
+	occupantStatusAwayBackground         string
+	occupantStatusAwayBorder             string
+	occupantStatusBusyForeground         string
+	occupantStatusBusyBackground         string
+	occupantStatusBusyBorder             string
+	occupantStatusFreeForChatForeground  string
+	occupantStatusFreeForChatBackground  string
+	occupantStatusFreeForChatBorder      string
+	occupantStatusExtendedAwayForeground string
+	occupantStatusExtendedAwayBackground string
+	occupantStatusExtendedAwayBorder     string
+
+	roomSubjectForeground  string
+	roomWarningForeground  string
+	roomWarningBackground  string
+	roomWarningBorder      string
+	entryErrorBackground   string
+	entryErrorBorderShadow string
+	entryErrorBorder       string
+	entryErrorLabel        string
 }
 
 func (u *gtkUI) currentMUCColorSet() mucColorSet {
@@ -64,15 +84,34 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		roomOverlayBackground:             "#000000",
 		roomOverlayContentForeground:      "#333333",
 		roomNameDisabledForeground:        "#A9A9A9",
-		roomRosterStatusForeground:        "#666666",
-		roomSubjectForeground:             "#666666",
-		roomWarningForeground:             "#744210",
-		roomWarningBackground:             "#FEFCBF",
-		roomWarningBorder:                 "#D69E2E",
-		entryErrorBackground:              "#FFF5F6",
-		entryErrorBorderShadow:            "#FF7F50",
-		entryErrorBorder:                  "#E44635",
-		entryErrorLabel:                   "#E44635",
+
+		occupantStatusAvailableForeground:    "#166534",
+		occupantStatusAvailableBackground:    "#F0FDF4",
+		occupantStatusAvailableBorder:        "#16A34A",
+		occupantStatusNotAvailableForeground: "#1E293B",
+		occupantStatusNotAvailableBackground: "#F8FAFC",
+		occupantStatusNotAvailableBorder:     "#475569",
+		occupantStatusAwayForeground:         "#9A3412",
+		occupantStatusAwayBackground:         "#FFF7ED",
+		occupantStatusAwayBorder:             "#EA580C",
+		occupantStatusBusyForeground:         "#9F1239",
+		occupantStatusBusyBackground:         "#FFF1F2",
+		occupantStatusBusyBorder:             "#BE123C",
+		occupantStatusFreeForChatForeground:  "#1E40AF",
+		occupantStatusFreeForChatBackground:  "#EFF6FF",
+		occupantStatusFreeForChatBorder:      "#1D4ED8",
+		occupantStatusExtendedAwayForeground: "#92400E",
+		occupantStatusExtendedAwayBackground: "#FFFBEB",
+		occupantStatusExtendedAwayBorder:     "#D97706",
+
+		roomSubjectForeground:  "#666666",
+		roomWarningForeground:  "#744210",
+		roomWarningBackground:  "#FEFCBF",
+		roomWarningBorder:      "#D69E2E",
+		entryErrorBackground:   "#FFF5F6",
+		entryErrorBorderShadow: "#FF7F50",
+		entryErrorBorder:       "#E44635",
+		entryErrorLabel:        "#E44635",
 	}
 }
 
@@ -98,15 +137,34 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		roomOverlayBackground:             "#000000",
 		roomOverlayContentForeground:      "#333333",
 		roomNameDisabledForeground:        "#A9A9A9",
-		roomRosterStatusForeground:        "#666666",
-		roomSubjectForeground:             "#666666",
-		roomWarningForeground:             "#744210",
-		roomWarningBackground:             "#FEFCBF",
-		roomWarningBorder:                 "#D69E2E",
-		entryErrorBackground:              "#FFF5F6",
-		entryErrorBorderShadow:            "#FF7F50",
-		entryErrorBorder:                  "#E44635",
-		entryErrorLabel:                   "#E44635",
+
+		occupantStatusAvailableForeground:    "#166534",
+		occupantStatusAvailableBackground:    "#F0FDF4",
+		occupantStatusAvailableBorder:        "#16A34A",
+		occupantStatusNotAvailableForeground: "#1E293B",
+		occupantStatusNotAvailableBackground: "#F8FAFC",
+		occupantStatusNotAvailableBorder:     "#475569",
+		occupantStatusAwayForeground:         "#9A3412",
+		occupantStatusAwayBackground:         "#FFF7ED",
+		occupantStatusAwayBorder:             "#EA580C",
+		occupantStatusBusyForeground:         "#9F1239",
+		occupantStatusBusyBackground:         "#FFF1F2",
+		occupantStatusBusyBorder:             "#BE123C",
+		occupantStatusFreeForChatForeground:  "#1E40AF",
+		occupantStatusFreeForChatBackground:  "#EFF6FF",
+		occupantStatusFreeForChatBorder:      "#1D4ED8",
+		occupantStatusExtendedAwayForeground: "#92400E",
+		occupantStatusExtendedAwayBackground: "#FFFBEB",
+		occupantStatusExtendedAwayBorder:     "#D97706",
+
+		roomSubjectForeground:  "#666666",
+		roomWarningForeground:  "#744210",
+		roomWarningBackground:  "#FEFCBF",
+		roomWarningBorder:      "#D69E2E",
+		entryErrorBackground:   "#FFF5F6",
+		entryErrorBorderShadow: "#FF7F50",
+		entryErrorBorder:       "#E44635",
+		entryErrorLabel:        "#E44635",
 	}
 }
 

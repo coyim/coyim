@@ -365,19 +365,3 @@ func (*MucOccupantRolePrivilegesSuite) Test_OccupantCanChangeRole_OfHigherAffili
 	oc.ChangeAffiliationToMember()
 	c.Assert(o.CanChangeRole(oc), Equals, true)
 }
-
-func (*MucOccupantRolePrivilegesSuite) Test_Occupant_isNeitherParticipantOrVisitor(c *C) {
-	o := &Occupant{}
-
-	o.ChangeRoleToModerator()
-	c.Assert(o.isNeitherParticipantOrVisitor(), Equals, true)
-
-	o.ChangeRoleToParticipant()
-	c.Assert(o.isNeitherParticipantOrVisitor(), Equals, false)
-
-	o.ChangeRoleToVisitor()
-	c.Assert(o.isNeitherParticipantOrVisitor(), Equals, false)
-
-	o.ChangeRoleToNone()
-	c.Assert(o.isNeitherParticipantOrVisitor(), Equals, true)
-}

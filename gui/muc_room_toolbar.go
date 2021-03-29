@@ -6,12 +6,14 @@ import (
 )
 
 type roomViewToolbar struct {
-	view             gtki.Box            `gtk-widget:"room-view-toolbar"`
-	roomNameLabel    gtki.Label          `gtk-widget:"room-name-label"`
-	roomSubjectLabel gtki.Label          `gtk-widget:"room-subject-label"`
-	roomStatusIcon   gtki.Image          `gtk-widget:"room-status-icon"`
-	menu             gtki.MenuToolButton `gtk-widget:"room-menu"`
-	destroyItem      gtki.MenuItem       `gtk-widget:"destroy-item"`
+	view                gtki.Box        `gtk-widget:"room-view-toolbar"`
+	roomNameLabel       gtki.Label      `gtk-widget:"room-name-label"`
+	roomSubjectLabel    gtki.Label      `gtk-widget:"room-subject-label"`
+	roomStatusIcon      gtki.Image      `gtk-widget:"room-status-icon"`
+	roomMenuButton      gtki.MenuButton `gtk-widget:"room-menu-button"`
+	roomMenu            gtki.Menu       `gtk-widget:"room-menu"`
+	leaveRoomMenuItem   gtki.MenuItem   `gtk-widget:"leave-room-menu-item"`
+	destroyRoomMenuItem gtki.MenuItem   `gtk-widget:"destroy-room-menu-item"`
 }
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
@@ -83,15 +85,15 @@ func (t *roomViewToolbar) selfOccupantRoleUpdatedEvent(role data.Role) {
 	}
 }
 
-func (t *roomViewToolbar) selfOccupantJoinedEvent(owner bool) {
-	t.destroyItem.SetVisible(owner)
+func (t *roomViewToolbar) selfOccupantJoinedEvent(isOwner bool) {
+	t.destroyRoomMenuItem.SetVisible(isOwner)
 }
 
 // disable MUST be called from UI Thread
 func (t *roomViewToolbar) disable() {
 	mucStyles.setRoomToolbarNameLabelDisabledStyle(t.roomNameLabel)
 	t.roomStatusIcon.SetFromPixbuf(getMUCIconPixbuf("room-offline"))
-	t.menu.Hide()
+	t.roomMenuButton.Hide()
 }
 
 // displayRoomSubject MUST be called from the UI thread

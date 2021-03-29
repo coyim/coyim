@@ -1,4 +1,22 @@
 <interface>
+  <object class="GtkMenu" id="room-menu">
+    <child>
+      <object class="GtkMenuItem" id="destroy-room-menu-item">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Destroy room</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="on_destroy_room" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="leave-room-menu-item">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Leave room</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="on_leave_room" swapped="no"/>
+      </object>
+    </child>
+  </object>
   <object class="GtkBox" id="room-view-toolbar">
     <property name="visible">True</property>
     <property name="hexpand">True</property>
@@ -82,36 +100,34 @@
               </packing>
             </child>
             <child>
-              <object class="GtkMenuToolButton" id="room-menu">
+              <object class="GtkBox" id="room-menu-box">
                 <property name="visible">True</property>
-                <property name="halign">start</property>
-                <property name="valign">start</property>
-                <child type="menu">
-                  <object class="GtkMenu">
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkMenuButton" id="room-menu-button">
+                    <property name="visible">True</property>
+                    
+                    <property name="receives_default">True</property>
+                    <property name="popup">room-menu</property>
+                    <property name="use_popover">False</property>
                     <child>
-                      <object class="GtkMenuItem">
+                      <object class="GtkImage">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Leave Room</property>
-                        <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_leave_room" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem" id="destroy-item">
-                        <property name="visible">True</property>
-                        <property name="label" translatable="yes">Destroy Room</property>
-                        <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_destroy_room" swapped="no"/>
+                        <property name="icon_name">open-menu-symbolic</property>
                       </object>
                     </child>
                   </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
                 </child>
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="padding">12</property>
-                <property name="position">3</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
               </packing>
             </child>
           </object>

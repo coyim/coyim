@@ -168,7 +168,8 @@ func (r *roomViewRosterInfo) refreshOccupantInfo() {
 	occupant := r.occupant
 	status := r.occupant.Status
 
-	r.avatar.SetFromPixbuf(getMUCIconPixbuf(getOccupantIconNameForStatus(status.Status)))
+	avatar := fmt.Sprintf("%s-large", getOccupantIconNameForStatus(status.Status))
+	r.avatar.SetFromPixbuf(getMUCIconPixbuf(avatar))
 	setLabelText(r.nicknameLabel, occupant.Nickname)
 
 	if occupant.RealJid != nil {

@@ -191,6 +191,7 @@ func (r *roomViewRosterInfo) refreshOccupantInfo() {
 	avatar := fmt.Sprintf("%s-large", getOccupantIconNameForStatus(status.Status))
 	r.avatar.SetFromPixbuf(getMUCIconPixbuf(avatar))
 	setLabelText(r.nicknameLabel, occupant.Nickname)
+	setLabelText(r.nicknamePopoverLabel, occupant.Nickname)
 
 	r.realJidPopoverLabel.SetVisible(false)
 	if occupant.RealJid != nil {

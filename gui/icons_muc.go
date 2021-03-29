@@ -361,9 +361,9 @@ var mucIcon = map[string]*icon{
 			"94c7a00000000049454e44ae426082",
 	},
 	"occupant-online-large": &icon{
-		size:   "128x128",
-		width:  128,
-		height: 128,
+		size:   "100x100",
+		width:  100,
+		height: 100,
 		encoded: "" +
 			"89504e470d0a1a0a0000000d4948445200000080000000800806000000c33e61cb00000009704859" +
 			"7300000b1300000b1301009a9c18000000017352474200aece1ce90000000467414d410000b18f0b" +
@@ -543,9 +543,9 @@ var mucIcon = map[string]*icon{
 			"77bab043f813672dc7f6fdc732030000000049454e44ae426082",
 	},
 	"occupant-busy-large": &icon{
-		size:   "128x128",
-		width:  128,
-		height: 128,
+		size:   "100x100",
+		width:  100,
+		height: 100,
 		encoded: "" +
 			"89504e470d0a1a0a0000000d4948445200000080000000800806000000c33e61cb00000009704859" +
 			"7300000b1300000b1301009a9c18000000017352474200aece1ce90000000467414d410000b18f0b" +
@@ -702,9 +702,9 @@ var mucIcon = map[string]*icon{
 			"0000000049454e44ae426082",
 	},
 	"occupant-extended-away-large": &icon{
-		size:   "128x128",
-		width:  128,
-		height: 128,
+		size:   "100x100",
+		width:  100,
+		height: 100,
 		encoded: "" +
 			"89504e470d0a1a0a0000000d4948445200000080000000800806000000c33e61cb00000009704859" +
 			"7300000b1300000b1301009a9c18000000017352474200aece1ce90000000467414d410000b18f0b" +
@@ -873,9 +873,9 @@ var mucIcon = map[string]*icon{
 			"21ce8a6d573d886ef1d0ecbc3733ecc40ee1f79afef9615374fdb80000000049454e44ae426082",
 	},
 	"occupant-away-large": &icon{
-		size:   "128x128",
-		width:  128,
-		height: 128,
+		size:   "100x100",
+		width:  100,
+		height: 100,
 		encoded: "" +
 			"89504e470d0a1a0a0000000d4948445200000080000000800806000000c33e61cb00000009704859" +
 			"7300000b1300000b1301009a9c18000000017352474200aece1ce90000000467414d410000b18f0b" +
@@ -1055,9 +1055,9 @@ var mucIcon = map[string]*icon{
 			"ed8c700b8e9d0000000049454e44ae426082",
 	},
 	"occupant-offline-large": &icon{
-		size:   "128x128",
-		width:  128,
-		height: 128,
+		size:   "100x100",
+		width:  100,
+		height: 100,
 		encoded: "" +
 			"89504e470d0a1a0a0000000d4948445200000080000000800806000000c33e61cb00000009704859" +
 			"7300000b1300000b1301009a9c18000000017352474200aece1ce90000000467414d410000b18f0b" +
@@ -1240,9 +1240,9 @@ var mucIcon = map[string]*icon{
 			"ae426082",
 	},
 	"occupant-chat-large": &icon{
-		size:   "128x128",
-		width:  128,
-		height: 128,
+		size:   "100x100",
+		width:  100,
+		height: 100,
 		encoded: "" +
 			"89504e470d0a1a0a0000000d4948445200000080000000800806000000c33e61cb00000009704859" +
 			"7300000b1300000b1301009a9c18000000017352474200aece1ce90000000467414d410000b18f0b" +

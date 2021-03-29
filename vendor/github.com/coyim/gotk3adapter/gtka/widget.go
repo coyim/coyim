@@ -100,6 +100,10 @@ func (v *widget) GetAllocatedWidth() int {
 	return v.internal.GetAllocatedWidth()
 }
 
+func (v *widget) GetName() (string, error) {
+	return v.internal.GetName()
+}
+
 func (v *widget) GetParent() (gtki.Widget, error) {
 	parent, err := v.internal.GetParent()
 	return WrapWidget(parent, err)

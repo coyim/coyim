@@ -51,6 +51,10 @@ func (*MockWidget) GetAllocatedHeight() int {
 	return 0
 }
 
+func (*MockWidget) GetName() (string, error) {
+	return "", nil
+}
+
 func (*MockWidget) GetAllocatedWidth() int {
 	return 0
 }

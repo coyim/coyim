@@ -1,7 +1,9 @@
 package gtki
 
-import "github.com/coyim/gotk3adapter/gdki"
-import "github.com/coyim/gotk3adapter/glibi"
+import (
+	"github.com/coyim/gotk3adapter/gdki"
+	"github.com/coyim/gotk3adapter/glibi"
+)
 
 type Widget interface {
 	glibi.Object
@@ -11,6 +13,7 @@ type Widget interface {
 	GrabFocus()
 	GetAllocatedHeight() int
 	GetAllocatedWidth() int
+	GetName() (string, error)
 	GetParent() (Widget, error)
 	GetParentX() (Widget, error)
 	GetStyleContext() (StyleContext, error)

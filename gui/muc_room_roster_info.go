@@ -39,6 +39,7 @@ type roomViewRosterInfo struct {
 	occupantActionsMenuButton gtki.MenuButton `gtk-widget:"occupant-actions-menu-button"`
 	kickOccupantMenuItem      gtki.MenuItem   `gtk-widget:"kick-occupant"`
 	nicknamePopoverLabel      gtki.Label      `gtk-widget:"nickname-popover-label"`
+	realJidPopoverBox         gtki.Box        `gtk-widget:"user-jid-popover-box"`
 	realJidPopoverLabel       gtki.Label      `gtk-widget:"user-jid-popover-label"`
 	statusPopoverLabel        gtki.Label      `gtk-widget:"status-popover-label"`
 	statusMessagePopoverLabel gtki.Label      `gtk-widget:"status-message-popover-label"`
@@ -193,10 +194,10 @@ func (r *roomViewRosterInfo) refreshOccupantInfo() {
 	setLabelText(r.nicknameLabel, occupant.Nickname)
 	setLabelText(r.nicknamePopoverLabel, occupant.Nickname)
 
-	r.realJidPopoverLabel.SetVisible(false)
+	r.realJidPopoverBox.SetVisible(false)
 	if occupant.RealJid != nil {
 		r.realJidPopoverLabel.SetText(occupant.RealJid.String())
-		r.realJidPopoverLabel.SetVisible(true)
+		r.realJidPopoverBox.SetVisible(true)
 	}
 
 	statusDisplay := showForDisplay(status.Status, false)

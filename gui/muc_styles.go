@@ -39,51 +39,6 @@ func (s *mucStylesProvider) setRoomRosterInfoStyle(b gtki.Box) {
 			"font-weight": "bold",
 			"font-size":   "large",
 		},
-		".occupant-jid": style{
-			"font-weight": "normal",
-		},
-		".occupant-status": {
-			"font-size":     "small",
-			"font-weight":   "bold",
-			"padding":       "2px 6px 2px 6px",
-			"border-width":  "1px",
-			"border-style":  "solid",
-			"border-radius": "200px",
-		},
-		".occupant-status-available": {
-			"color":            s.colors.occupantStatusAvailableForeground,
-			"background-color": s.colors.occupantStatusAvailableBackground,
-			"border-color":     s.colors.occupantStatusAvailableBorder,
-		},
-		".occupant-status-not-available": {
-			"color":            s.colors.occupantStatusNotAvailableForeground,
-			"background-color": s.colors.occupantStatusNotAvailableBackground,
-			"border-color":     s.colors.occupantStatusNotAvailableBorder,
-		},
-		".occupant-status-away": {
-			"color":            s.colors.occupantStatusAwayForeground,
-			"background-color": s.colors.occupantStatusAwayBackground,
-			"border-color":     s.colors.occupantStatusAwayBorder,
-		},
-		".occupant-status-busy": {
-			"color":            s.colors.occupantStatusBusyForeground,
-			"background-color": s.colors.occupantStatusBusyBackground,
-			"border-color":     s.colors.occupantStatusBusyBorder,
-		},
-		".occupant-status-free-for-chat": {
-			"color":            s.colors.occupantStatusFreeForChatForeground,
-			"background-color": s.colors.occupantStatusFreeForChatBackground,
-			"border-color":     s.colors.occupantStatusFreeForChatBorder,
-		},
-		".occupant-status-extended-away": {
-			"color":            s.colors.occupantStatusExtendedAwayForeground,
-			"background-color": s.colors.occupantStatusExtendedAwayBackground,
-			"border-color":     s.colors.occupantStatusExtendedAwayBorder,
-		},
-		".occupant-role-disabled-help": {
-			"opacity":    0.5,
-			"font-style": "italic",
-		},
 	})
 }
 

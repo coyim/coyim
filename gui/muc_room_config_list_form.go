@@ -9,18 +9,6 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-type mucRoomConfigListForm interface {
-	jid() string
-	isValid() (bool, error)
-	isFilled() bool
-	focus()
-	setValue(string)
-	reset()
-	friendlyErrorMessage(error) string
-	getFormView() gtki.Widget
-	onFieldChanged(func())
-}
-
 var (
 	errRoomConfigListFormInvalidJid = errors.New("invalid jid")
 	errRoomConfigListFormNotFilled  = errors.New("not filled form")

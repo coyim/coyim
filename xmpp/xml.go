@@ -42,7 +42,7 @@ func xmlEscape(s string) string {
 	return b.String()
 }
 
-// Scan XML token stream to finc next Element (start or end)
+// Scan XML token stream to find next Element (start or end)
 func nextElement(p *xml.Decoder, ll coylog.Logger) (xml.Token, error) {
 	for {
 		t, err := p.Token()

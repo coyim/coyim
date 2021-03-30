@@ -32,14 +32,11 @@ type roomConfigListForm struct {
 	doAfterFieldChanged []func()
 }
 
-func newRoomConfigListForm(ui string, ef interface{}, onFieldChanged, onFieldActivate func()) *roomConfigListForm {
+func newRoomConfigListForm(onFieldChanged, onFieldActivate func()) *roomConfigListForm {
 	f := &roomConfigListForm{}
 
-	builder := newBuilder(ui)
+	builder := newBuilder("MUCRoomConfigListAddForm")
 	panicOnDevError(builder.bindObjects(f))
-	if ef != nil {
-		panicOnDevError(builder.bindObjects(ef))
-	}
 
 	if onFieldChanged != nil {
 		f.onFieldChanged(onFieldChanged)

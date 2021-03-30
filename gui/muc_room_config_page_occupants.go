@@ -81,7 +81,7 @@ func (p *roomConfigOccupantsPage) initOwnersListController(parent gtki.Window) {
 		parentWindow:           parent,
 		addOccupantDialogTitle: i18n.Local("Add owners"),
 		addOccupantDescription: i18n.Local("Here you can add one or more new owners to the room. You will have to use the account address of the user in order to make them an owner. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
-		addOccupantForm:        newMUCRoomConfigListOwnersForm,
+		addOccupantForm:        newRoomConfigListForm,
 		onUpdate:               p.refreshContentLists,
 	})
 }
@@ -94,7 +94,7 @@ func (p *roomConfigOccupantsPage) initAdminsListController(parent gtki.Window) {
 		parentWindow:           parent,
 		addOccupantDialogTitle: i18n.Local("Add administrators"),
 		addOccupantDescription: i18n.Local("Here you can add one or more new administrators to the room. You will have to use the account address of the user in order to make them an administrator. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
-		addOccupantForm:        newMUCRoomConfigListAdminsForm,
+		addOccupantForm:        newRoomConfigListForm,
 		onUpdate:               p.refreshContentLists,
 	})
 }

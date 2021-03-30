@@ -52,7 +52,7 @@ func (la *mucRoomConfigListAddComponent) initBuilder() {
 	panicOnDevError(builder.bindObjects(la))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_cancel":     la.onCancelClicked,
+		"on_cancel":     la.close,
 		"on_remove_all": la.onRemoveAllClicked,
 		"on_apply":      la.onApplyClicked,
 	})
@@ -77,6 +77,7 @@ func (la *mucRoomConfigListAddComponent) initAddOccupantForm() {
 	la.content.PackStart(defaultItem.contentBox(), false, true, 0)
 }
 
+// newAddOccupantForm MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) newAddOccupantForm() *roomConfigListForm {
 	return newRoomConfigListForm(
 		la.enableApplyIfConditionsAreMet,
@@ -84,6 +85,7 @@ func (la *mucRoomConfigListAddComponent) newAddOccupantForm() *roomConfigListFor
 	)
 }
 
+// appendNewItem MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) appendNewItem(jid string) {
 	nextIndex := len(la.items)
 
@@ -102,6 +104,7 @@ func (la *mucRoomConfigListAddComponent) appendNewItem(jid string) {
 	la.enableApplyIfConditionsAreMet()
 }
 
+// removeItemByIndex MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) removeItemByIndex(index int) {
 	items := []*mucRoomConfigListFormItem{}
 	for ix, itm := range la.items {
@@ -114,12 +117,14 @@ func (la *mucRoomConfigListAddComponent) removeItemByIndex(index int) {
 	la.items = items
 }
 
+// forEachForm MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) forEachForm(fn func(*roomConfigListForm)) {
 	for _, itm := range la.items {
 		fn(itm.form)
 	}
 }
 
+// areAllFormsFilled MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) areAllFormsFilled() bool {
 	formsAreFilled := la.form.isFilled() || len(la.items) > 0
 
@@ -130,13 +135,14 @@ func (la *mucRoomConfigListAddComponent) areAllFormsFilled() bool {
 	return formsAreFilled
 }
 
+// enableApplyIfConditionsAreMet MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) enableApplyIfConditionsAreMet() {
 	la.removeAllButton.SetSensitive(len(la.items) > 0)
 
 	v := la.areAllFormsFilled()
 	la.applyButton.SetSensitive(v)
 	if v {
-		if la.hasMoreThanOneItem() {
+		if len(la.items) > 0 {
 			la.applyButton.SetLabel("Add all")
 			return
 		}
@@ -144,10 +150,7 @@ func (la *mucRoomConfigListAddComponent) enableApplyIfConditionsAreMet() {
 	}
 }
 
-func (la *mucRoomConfigListAddComponent) onCancelClicked() {
-	la.close()
-}
-
+// onRemoveAllClicked MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) onRemoveAllClicked() {
 	for _, itm := range la.items {
 		la.content.Remove(itm.contentBox())
@@ -161,6 +164,7 @@ func (la *mucRoomConfigListAddComponent) onRemoveAllClicked() {
 	la.enableApplyIfConditionsAreMet()
 }
 
+// onApplyClicked MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) onApplyClicked() {
 	if la.isValid() {
 		jidList := []string{}
@@ -178,6 +182,7 @@ func (la *mucRoomConfigListAddComponent) onApplyClicked() {
 	}
 }
 
+// isValid MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) isValid() bool {
 	var isValid bool
 	var err error
@@ -200,6 +205,7 @@ func (la *mucRoomConfigListAddComponent) isValid() bool {
 	return isValid
 }
 
+// isFormValid MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) isFormValid(form *roomConfigListForm) (bool, error) {
 	if form.jid() == "" {
 		return false, errEmptyMemberIdentifier
@@ -213,12 +219,19 @@ func (la *mucRoomConfigListAddComponent) isFormValid(form *roomConfigListForm) (
 	return form.isValid()
 }
 
-func (la *mucRoomConfigListAddComponent) hasMoreThanOneItem() bool {
-	count := len(la.items)
-	if la.form.isFilled() {
-		count = count + 1
-	}
-	return count > 1
+// notifyError MUST be called from the UI thread
+func (la *mucRoomConfigListAddComponent) notifyError(err string) {
+	la.notifications.notifyOnError(err)
+}
+
+// close MUST be called from the UI thread
+func (la *mucRoomConfigListAddComponent) close() {
+	la.dialog.Destroy()
+}
+
+// show MUST be called from the UI thread
+func (la *mucRoomConfigListAddComponent) show() {
+	la.dialog.Show()
 }
 
 func (la *mucRoomConfigListAddComponent) friendlyErrorMessage(form *roomConfigListForm, err error) string {
@@ -230,18 +243,6 @@ func (la *mucRoomConfigListAddComponent) friendlyErrorMessage(form *roomConfigLi
 	default:
 		return form.friendlyErrorMessage(err)
 	}
-}
-
-func (la *mucRoomConfigListAddComponent) notifyError(err string) {
-	la.notifications.notifyOnError(err)
-}
-
-func (la *mucRoomConfigListAddComponent) close() {
-	la.dialog.Destroy()
-}
-
-func (la *mucRoomConfigListAddComponent) show() {
-	la.dialog.Show()
 }
 
 type mucRoomConfigListFormItem struct {

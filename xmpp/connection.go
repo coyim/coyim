@@ -377,14 +377,10 @@ func (c *conn) Send(to, msg string, otr bool) error {
 	}
 
 	var outb bytes.Buffer
-	out := &outb
 
-	_, err := fmt.Fprintf(out, "<message to='%s' from='%s' type='chat'><body>%s</body>%s%s%s</message>", xmlEscape(to), xmlEscape(c.jid), xmlEscape(msg), archive, nocopy, otrMsg)
-	if err != nil {
-		return err
-	}
+	_, _ = fmt.Fprintf(&outb, "<message to='%s' from='%s' type='chat'><body>%s</body>%s%s%s</message>", xmlEscape(to), xmlEscape(c.jid), xmlEscape(msg), archive, nocopy, otrMsg)
 
-	_, err = c.safeWrite(outb.Bytes())
+	_, err := c.safeWrite(outb.Bytes())
 	return err
 }
 
@@ -394,25 +390,18 @@ func (c *conn) SendMessage(m *data.Message) error {
 		m.ID = strconv.FormatUint(uint64(c.getCookie()), 10)
 	}
 
-	mb, err := messageToByteArray(m)
-	if err != nil {
-		return err
-	}
+	mb := messageToByteArray(m)
 
-	_, err = c.safeWrite(mb)
+	_, err := c.safeWrite(mb)
 	return err
 }
 
-func messageToByteArray(m *data.Message) ([]byte, error) {
+func messageToByteArray(m *data.Message) []byte {
 	var outb bytes.Buffer
-	out := &outb
 
-	err := xml.NewEncoder(out).Encode(m)
-	if err != nil {
-		return []byte(""), err
-	}
+	_ = xml.NewEncoder(&outb).Encode(m)
 
-	return outb.Bytes(), nil
+	return outb.Bytes()
 }
 
 // ReadStanzas reads XMPP stanzas

@@ -1302,3 +1302,44 @@ func (s *ConnectionXMPPSuite) Test_conn_waitForStreamClosed_withoutTimeout(c *C)
 
 	c.Assert(len(hook.Entries), Equals, 0)
 }
+
+func (s *ConnectionXMPPSuite) Test_conn_SendMessage_withoutID(c *C) {
+	out := &mockConnIOReaderWriter{}
+	cc := &conn{out: out}
+
+	m := &data.Message{}
+
+	e := cc.SendMessage(m)
+
+	c.Assert(e, IsNil)
+	c.Assert(string(out.Written()), Matches, `<message xmlns="jabber:client" from="" id=".+" to="" type=""><body></body></message>`)
+}
+
+func (s *ConnectionXMPPSuite) Test_conn_SendMessage_withID(c *C) {
+	out := &mockConnIOReaderWriter{}
+	cc := &conn{out: out}
+
+	m := &data.Message{ID: "hello"}
+
+	e := cc.SendMessage(m)
+
+	c.Assert(e, IsNil)
+	c.Assert(string(out.Written()), Matches, `<message xmlns="jabber:client" from="" id="hello" to="" type=""><body></body></message>`)
+}
+
+func (s *ConnectionXMPPSuite) Test_conn_ReadStanzas_returnsOnStreamClose(c *C) {
+	mockIn := &mockConnIOReaderWriter{read: []byte(`<stream:stream xmlns:stream="http://etherx.jabber.org/streams" version="1.0"></stream:stream>`)}
+	dec := xml.NewDecoder(mockIn)
+	_, _ = dec.Token()
+	cc := conn{
+		log:                 testLogger(),
+		out:                 mockIn,
+		rawOut:              mockIn,
+		in:                  dec,
+		streamCloseReceived: make(chan bool),
+	}
+
+	ch := make(chan data.Stanza)
+	e := cc.ReadStanzas(ch)
+	c.Assert(e, IsNil)
+}

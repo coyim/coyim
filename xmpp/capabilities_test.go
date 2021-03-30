@@ -78,3 +78,8 @@ func (s *CapabilitiesXMPPSuite) Test_formField_xep0115Less_comparesVar(c *C) {
 	c.Assert(xep0115Less(left, right), Equals, false)
 	c.Assert(xep0115Less(right, left), Equals, true)
 }
+
+func (s *CapabilitiesXMPPSuite) Test_xep0115Less_returnsFalseOnUnknownType(c *C) {
+	v := xep0115Less("foo", "bar")
+	c.Assert(v, Equals, false)
+}

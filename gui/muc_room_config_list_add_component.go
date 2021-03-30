@@ -93,7 +93,7 @@ func (la *mucRoomConfigListAddComponent) appendNewItem(jid string) {
 	}
 
 	form := la.newAddOccupantForm()
-	form.setValue(jid)
+	form.setJid(jid)
 
 	item := newMUCRoomConfigListFormItem(form, nil, onRemove)
 	la.items = append(la.items, item)
@@ -261,7 +261,7 @@ func newMUCRoomConfigListFormItem(form *roomConfigListForm, onAdd func(jid strin
 	builder := newBuilder("MUCRoomConfigListAddFormItem")
 	panicOnDevError(builder.bindObjects(lfi))
 
-	lfi.formBox.Add(lfi.form.getFormView())
+	lfi.formBox.Add(lfi.form.formView)
 
 	lfi.addButton.SetSensitive(false)
 	lfi.removeButton.SetSensitive(false)

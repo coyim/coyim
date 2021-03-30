@@ -7,12 +7,17 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
+	"time"
 
 	goerr "errors"
 
+	"github.com/coyim/coyim/cache"
 	"github.com/coyim/coyim/digests"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/errors"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 
 	. "gopkg.in/check.v1"
 )
@@ -1206,4 +1211,94 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButSucceedsOn
 	c.Assert(err, Equals, io.EOF)
 	c.Assert(v.verifyCalled, Equals, 1)
 	c.Assert(v.originDomain, Equals, "www.olabini.se")
+}
+
+func (s *ConnectionXMPPSuite) Test_conn_Cache(c *C) {
+	one := cache.NewWithExpiry()
+	two := cache.NewWithExpiry()
+
+	cc := NewConn(nil, nil, "").(*conn)
+	cc.c = one
+
+	c.Assert(cc.Cache(), Equals, one)
+	c.Assert(cc.Cache(), Not(Equals), two)
+}
+
+func (s *ConnectionXMPPSuite) Test_conn_RawOut(c *C) {
+	one := &mockConnIOReaderWriter{}
+	cc := &conn{rawOut: one}
+	c.Assert(cc.RawOut(), Equals, one)
+}
+
+func (s *ConnectionXMPPSuite) Test_conn_ServerAddress(c *C) {
+	cc := &conn{serverAddress: "something"}
+	c.Assert(cc.ServerAddress(), Equals, "something")
+}
+
+func (s *ConnectionXMPPSuite) Test_conn_Resource(c *C) {
+	cc := &conn{}
+	cc.SetJIDResource("bla blu")
+
+	c.Assert(cc.GetJIDResource(), Equals, "bla blu")
+}
+
+func (s *ConnectionXMPPSuite) Test_conn_Close(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+	out := &mockConnIOReaderWriter{
+		err: goerr.New("haha"),
+	}
+	cc := &conn{
+		closed: false,
+		log:    l,
+		out:    out,
+		rawOut: out,
+	}
+
+	e := cc.Close()
+	c.Assert(e, IsNil)
+	c.Assert(len(hook.Entries), Equals, 2)
+	c.Assert(hook.Entries[0].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "xmpp: sending closing stream tag")
+	c.Assert(hook.Entries[1].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "xmpp: TCP closed")
+}
+
+func (s *ConnectionXMPPSuite) Test_conn_waitForStreamClosed_withTimeout(c *C) {
+	orgStreamClosedTimeout := streamClosedTimeout
+	defer func() {
+		streamClosedTimeout = orgStreamClosedTimeout
+	}()
+
+	streamClosedTimeout = 1 * time.Millisecond
+
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	cc := &conn{
+		log: l,
+	}
+	cc.streamCloseReceived = make(chan bool)
+
+	waitForStreamClosed(cc)
+
+	c.Assert(len(hook.Entries), Equals, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "xmpp: timed out waiting for closing stream")
+}
+
+func (s *ConnectionXMPPSuite) Test_conn_waitForStreamClosed_withoutTimeout(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	cc := &conn{
+		log: l,
+	}
+	ch := make(chan bool, 1)
+	cc.streamCloseReceived = ch
+	ch <- true
+
+	waitForStreamClosed(cc)
+
+	c.Assert(len(hook.Entries), Equals, 0)
 }

@@ -187,6 +187,22 @@ func newConn() *conn {
 	}
 }
 
+var streamClosedTimeout = 30 * time.Second
+
+var waitForStreamClosed = func(c *conn) {
+	// Wait for </stream:stream>
+	select {
+	// Since no-one ever writes to the streamCloseReceived
+	// channel, this select will wait not for a value, but for
+	// the channel to be closed. In golang, reading from a closed
+	// channel will immediately give you the zero-value for that
+	// channel...
+	case <-c.streamCloseReceived:
+	case <-time.After(streamClosedTimeout):
+		c.log.Info("xmpp: timed out waiting for closing stream")
+	}
+}
+
 // Close closes the underlying connection
 func (c *conn) Close() error {
 	if c.isClosed() {
@@ -211,17 +227,7 @@ func (c *conn) Close() error {
 		c.statusUpdates <- "waitingForClose"
 	}
 
-	// Wait for </stream:stream>
-	select {
-	// Since no-one ever writes to the streamCloseReceived
-	// channel, this select will wait not for a value, but for
-	// the channel to be closed. In golang, reading from a closed
-	// channel will immediately give you the zero-value for that
-	// channel...
-	case <-c.streamCloseReceived:
-	case <-time.After(30 * time.Second):
-		c.log.Info("xmpp: timed out waiting for closing stream")
-	}
+	waitForStreamClosed(c)
 
 	return c.closeTCP()
 }

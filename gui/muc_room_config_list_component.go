@@ -58,12 +58,14 @@ func (cl *mucRoomConfigListComponent) initDefaults() {
 	}
 }
 
+// onAddClicked MUST be called from the UI thread
 func (cl *mucRoomConfigListComponent) onAddClicked() {
 	if cl.onAdd != nil {
 		cl.onAdd()
 	}
 }
 
+// onRemoveClicked MUST be called from the UI thread
 func (cl *mucRoomConfigListComponent) onRemoveClicked() {
 	iter, err := cl.getSelectedRow()
 	if err != nil {
@@ -88,6 +90,7 @@ func (cl *mucRoomConfigListComponent) onRemoveClicked() {
 	}
 }
 
+// onSelectionChanged MUST be called from the UI thread
 func (cl *mucRoomConfigListComponent) onSelectionChanged() {
 	if _, err := cl.getSelectedRow(); err != nil {
 		disableListWidget(cl.removeButton)
@@ -96,6 +99,7 @@ func (cl *mucRoomConfigListComponent) onSelectionChanged() {
 	}
 }
 
+// getSelectedRow MUST be called from the UI thread
 func (cl *mucRoomConfigListComponent) getSelectedRow() (gtki.TreeIter, error) {
 	selection, err := cl.list.GetSelection()
 	if err != nil {
@@ -110,11 +114,13 @@ func (cl *mucRoomConfigListComponent) getSelectedRow() (gtki.TreeIter, error) {
 	return iter, nil
 }
 
+// addListItems MUST be called from the UI thread
 func (cl *mucRoomConfigListComponent) addListItems(jids []string) {
 	cl.jidList = append(cl.jidList, jids...)
 	cl.redraw()
 }
 
+// redraw MUST be called from the UI thread
 func (cl *mucRoomConfigListComponent) redraw() {
 	cl.listModel.Clear()
 
@@ -122,14 +128,6 @@ func (cl *mucRoomConfigListComponent) redraw() {
 		li := cl.listModel.Append(nil)
 		_ = cl.listModel.SetValue(li, jidColumnIndex, jid)
 	}
-}
-
-func (cl *mucRoomConfigListComponent) iterForString(path string) (gtki.TreeIter, error) {
-	return cl.listModel.GetIterFromString(path)
-}
-
-func (cl *mucRoomConfigListComponent) updateValueBasedOnIter(iter gtki.TreeIter, column int, newValue string) error {
-	return cl.listModel.SetValue(iter, column, newValue)
 }
 
 func enableListWidget(w gtki.Widget) {

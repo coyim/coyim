@@ -87,12 +87,12 @@ func (c *mucRoomConfigListController) onUpdated() {
 }
 
 func (c *mucRoomConfigListController) updateCellForString(column int, path string, newValue string) error {
-	iter, err := c.listComponent.iterForString(path)
+	iter, err := c.listComponent.listModel.GetIterFromString(path)
 	if err != nil {
 		return err
 	}
 
-	err = c.listComponent.updateValueBasedOnIter(iter, column, newValue)
+	err = c.listComponent.listModel.SetValue(iter, column, newValue)
 	if err != nil {
 		return err
 	}

@@ -218,7 +218,7 @@ func (r *roomViewRosterInfo) removeOccupantInfo() {
 	r.nicknameLabel.SetText("")
 
 	r.realJidPopoverLabel.SetText("")
-	r.realJidPopoverLabel.SetVisible(false)
+	r.realJidPopoverBox.SetVisible(false)
 
 	r.statusMessagePopoverLabel.SetText("")
 	r.statusMessagePopoverLabel.SetVisible(false)

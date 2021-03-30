@@ -13,8 +13,6 @@ var (
 	keepaliveTimeout  = 30 * time.Second
 )
 
-const logKeepAlives = false
-
 // Manage whitespace keepalives as specified in RFC 6120, section 4.6.1
 func (c *conn) watchKeepAlive() {
 	tick := time.NewTicker(keepaliveInterval)
@@ -27,9 +25,6 @@ func (c *conn) watchKeepAlive() {
 		}
 
 		if c.sendKeepalive() {
-			if logKeepAlives {
-				c.log.Info("xmpp: keepalive sent")
-			}
 			continue
 		}
 
@@ -51,10 +46,7 @@ func (c *conn) sendKeepalive() bool {
 }
 
 func (c *conn) sendStreamError(streamError data.StreamError) error {
-	enc, err := xml.Marshal(streamError)
-	if err != nil {
-		return err
-	}
+	enc, _ := xml.Marshal(streamError)
 
 	//This is expected to error since the connection may be unreliable at this moment
 	_, _ = c.safeWrite(enc)

@@ -27,6 +27,8 @@ type rosterQuery struct {
 	Delimiter rosterDelimiter `xml:"roster:delimiter roster"`
 }
 
+var rosterRequestTimeout = 5 * time.Second
+
 // GetRosterDelimiter blocks and waits for the roster delimiter to be delivered
 func (c *conn) GetRosterDelimiter() (string, error) {
 	rep, _, err := c.RequestRosterDelimiter()
@@ -44,10 +46,14 @@ func (c *conn) GetRosterDelimiter() (string, error) {
 			}
 			return rst.Delimiter.Delimiter, nil
 		}
-	case <-time.After(5000 * time.Millisecond):
+	case <-time.After(rosterRequestTimeout):
 	}
 
 	return "", nil
+}
+
+var createInflight = func(c *conn, cookie data.Cookie, to string) (<-chan data.Stanza, data.Cookie, error) {
+	return c.createInflight(cookie, to)
 }
 
 // RequestRosterDelimiter will request the roster delimiter
@@ -55,16 +61,12 @@ func (c *conn) RequestRosterDelimiter() (<-chan data.Stanza, data.Cookie, error)
 	cookie := c.getCookie()
 
 	var outb bytes.Buffer
-	out := &outb
-
-	if _, err := fmt.Fprintf(out, requestDelimiterXML, cookie); err != nil {
-		return nil, 0, err
-	}
+	_, _ = fmt.Fprintf(&outb, requestDelimiterXML, cookie)
 
 	_, err := c.safeWrite(outb.Bytes())
 	if err != nil {
 		return nil, 0, err
 	}
 
-	return c.createInflight(cookie, "")
+	return createInflight(c, cookie, "")
 }

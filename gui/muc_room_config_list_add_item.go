@@ -36,8 +36,7 @@ func (lfi *mucRoomConfigListFormItem) initListAdd(onAdd func(jid string)) {
 	if onAdd != nil {
 		lfi.addButton.Connect("clicked", func() {
 			onAdd(lfi.form.jid())
-			lfi.form.reset()
-			lfi.form.focus()
+			lfi.form.resetAndFocusJidEntry()
 		})
 
 		lfi.form.onFieldChanged(func() {

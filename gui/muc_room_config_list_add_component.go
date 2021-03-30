@@ -27,7 +27,7 @@ type mucRoomConfigListAddComponent struct {
 	dialogTitle   string
 	formTitle     string
 	form          *roomConfigListForm
-	items         []*mucRoomConfigListFormItem
+	formItems     []*mucRoomConfigListFormItem
 	onApply       func(jidList []string)
 	jidList       []string
 }
@@ -75,7 +75,7 @@ func (la *mucRoomConfigListAddComponent) initDefaults(parent gtki.Window) {
 
 func (la *mucRoomConfigListAddComponent) initAddOccupantForm() {
 	la.form = la.newAddOccupantForm()
-	defaultItem := newMUCRoomConfigListFormItem(la.form, la.appendNewItem, nil)
+	defaultItem := newMUCRoomConfigListFormItem(la.form, la.appendNewFormItem, nil)
 	la.content.PackStart(defaultItem.contentBox(), false, true, 0)
 }
 
@@ -87,9 +87,9 @@ func (la *mucRoomConfigListAddComponent) newAddOccupantForm() *roomConfigListFor
 	)
 }
 
-// appendNewItem MUST be called from the UI thread
-func (la *mucRoomConfigListAddComponent) appendNewItem(jid string) {
-	nextIndex := len(la.items)
+// appendNewFormItem MUST be called from the UI thread
+func (la *mucRoomConfigListAddComponent) appendNewFormItem(jid string) {
+	nextIndex := len(la.formItems)
 
 	if la.existJidInList(jid) || la.jidAlreadyInserted(jid) {
 		return
@@ -104,7 +104,7 @@ func (la *mucRoomConfigListAddComponent) appendNewItem(jid string) {
 	form.setJid(jid)
 
 	item := newMUCRoomConfigListFormItem(form, nil, onRemove)
-	la.items = append(la.items, item)
+	la.formItems = append(la.formItems, item)
 	la.content.PackStart(item.contentBox(), false, true, 0)
 
 	la.enableApplyIfConditionsAreMet()
@@ -131,26 +131,28 @@ func (la *mucRoomConfigListAddComponent) jidAlreadyInserted(jid string) bool {
 // removeItemByIndex MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) removeItemByIndex(index int) {
 	items := []*mucRoomConfigListFormItem{}
-	for ix, itm := range la.items {
+
+	for ix, itm := range la.formItems {
 		if ix == index {
 			la.content.Remove(itm.contentBox())
-			continue
+		} else {
+			items = append(items, itm)
 		}
-		items = append(items, itm)
 	}
-	la.items = items
+
+	la.formItems = items
 }
 
 // forEachForm MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) forEachForm(fn func(*roomConfigListForm)) {
-	for _, itm := range la.items {
+	for _, itm := range la.formItems {
 		fn(itm.form)
 	}
 }
 
 // areAllFormsFilled MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) areAllFormsFilled() bool {
-	formsAreFilled := la.form.isFilled() || len(la.items) > 0
+	formsAreFilled := la.form.isFilled() || la.hasItems()
 
 	la.forEachForm(func(form *roomConfigListForm) {
 		formsAreFilled = formsAreFilled && form.isFilled()
@@ -161,30 +163,28 @@ func (la *mucRoomConfigListAddComponent) areAllFormsFilled() bool {
 
 // enableApplyIfConditionsAreMet MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) enableApplyIfConditionsAreMet() {
-	la.removeAllButton.SetSensitive(len(la.items) > 0)
+	la.removeAllButton.SetSensitive(la.hasItems())
 
 	v := la.areAllFormsFilled()
 	la.applyButton.SetSensitive(v)
-	if v {
-		if len(la.items) > 0 {
-			la.applyButton.SetLabel("Add all")
-			return
-		}
+
+	if la.hasItems() {
+		la.applyButton.SetLabel("Add all")
+	} else {
 		la.applyButton.SetLabel("Add")
 	}
 }
 
 // onRemoveAllClicked MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) onRemoveAllClicked() {
-	for _, itm := range la.items {
+	itms := la.formItems
+	la.formItems = nil
+
+	for _, itm := range itms {
 		la.content.Remove(itm.contentBox())
 	}
 
-	la.items = nil
-
-	la.form.reset()
-	la.form.focus()
-
+	la.form.resetAndFocusJidEntry()
 	la.enableApplyIfConditionsAreMet()
 }
 
@@ -215,8 +215,7 @@ func (la *mucRoomConfigListAddComponent) isValid() bool {
 	var isValid bool
 	var err error
 
-	hasNoItems := len(la.items) == 0
-	if !hasNoItems && la.form.jid() != "" || hasNoItems {
+	if la.hasItems() && la.form.isFilled() || !la.hasItems() {
 		isValid, err = la.isFormValid(la.form)
 		if err != nil {
 			la.notifyError(la.friendlyErrorMessage(la.form, err))
@@ -239,8 +238,7 @@ func (la *mucRoomConfigListAddComponent) isFormValid(form *roomConfigListForm) (
 		return false, errEmptyMemberIdentifier
 	}
 
-	j := jid.Parse(form.jid())
-	if !j.Valid() {
+	if !jid.Parse(form.jid()).Valid() {
 		return false, errInvalidMemberIdentifier
 	}
 
@@ -260,6 +258,10 @@ func (la *mucRoomConfigListAddComponent) close() {
 // show MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) show() {
 	la.dialog.Show()
+}
+
+func (la *mucRoomConfigListAddComponent) hasItems() bool {
+	return len(la.formItems) > 0
 }
 
 func (la *mucRoomConfigListAddComponent) friendlyErrorMessage(form *roomConfigListForm, err error) string {

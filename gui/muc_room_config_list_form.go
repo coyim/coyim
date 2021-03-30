@@ -90,14 +90,10 @@ func (f *roomConfigListForm) isFilled() bool {
 	return f.jid() != ""
 }
 
-// focus MUST be called from the UI thread
-func (f *roomConfigListForm) focus() {
-	f.jidEntry.GrabFocus()
-}
-
-// reset MUST be called from the UI thread
-func (f *roomConfigListForm) reset() {
+// resetAndFocusJidEntry MUST be called from the UI thread
+func (f *roomConfigListForm) resetAndFocusJidEntry() {
 	f.setJid("")
+	f.jidEntry.GrabFocus()
 }
 
 func (f *roomConfigListForm) onFieldChanged(fn func()) {

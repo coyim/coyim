@@ -13,7 +13,6 @@ type mucRoomConfigListControllerData struct {
 
 	addOccupantDialogTitle string
 	addOccupantDescription string
-	addOccupantForm        func(onFormFieldValueChanges, onFormFieldValueActivates func()) *roomConfigListForm
 	onUpdate               func()
 }
 
@@ -50,7 +49,6 @@ func (c *mucRoomConfigListController) initListAddComponent(d *mucRoomConfigListC
 		addToList := c.u.newMUCRoomConfigListAddComponent(
 			d.addOccupantDialogTitle,
 			d.addOccupantDescription,
-			d.addOccupantForm,
 			c.onAddListItems,
 			d.parentWindow,
 		)

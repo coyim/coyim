@@ -23,22 +23,20 @@ type mucRoomConfigListAddComponent struct {
 	applyButton     gtki.Button `gtk-widget:"room-config-list-add-apply"`
 	notificationBox gtki.Box    `gtk-widget:"notification-box"`
 
-	notifications          *notificationsComponent
-	dialogTitle            string
-	formTitle              string
-	form                   *roomConfigListForm
-	items                  []*mucRoomConfigListFormItem
-	addOccupantFormCreator func(onFieldChanged, onFieldActivate func()) *roomConfigListForm
-	onApply                func(jidList []string)
+	notifications *notificationsComponent
+	dialogTitle   string
+	formTitle     string
+	form          *roomConfigListForm
+	items         []*mucRoomConfigListFormItem
+	onApply       func(jidList []string)
 }
 
-func (u *gtkUI) newMUCRoomConfigListAddComponent(dialogTitle, formTitle string, addOccupantForm func(onFieldChanged, onFieldActivate func()) *roomConfigListForm, onApply func(jidList []string), parent gtki.Window) *mucRoomConfigListAddComponent {
+func (u *gtkUI) newMUCRoomConfigListAddComponent(dialogTitle, formTitle string, onApply func(jidList []string), parent gtki.Window) *mucRoomConfigListAddComponent {
 	la := &mucRoomConfigListAddComponent{
-		u:                      u,
-		dialogTitle:            dialogTitle,
-		formTitle:              formTitle,
-		addOccupantFormCreator: addOccupantForm,
-		onApply:                onApply,
+		u:           u,
+		dialogTitle: dialogTitle,
+		formTitle:   formTitle,
+		onApply:     onApply,
 	}
 
 	la.initBuilder()
@@ -80,7 +78,7 @@ func (la *mucRoomConfigListAddComponent) initAddOccupantForm() {
 }
 
 func (la *mucRoomConfigListAddComponent) newAddOccupantForm() *roomConfigListForm {
-	return la.addOccupantFormCreator(
+	return newRoomConfigListForm(
 		la.enableApplyIfConditionsAreMet,
 		la.onApplyClicked,
 	)

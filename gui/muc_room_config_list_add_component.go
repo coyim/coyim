@@ -29,14 +29,16 @@ type mucRoomConfigListAddComponent struct {
 	form          *roomConfigListForm
 	items         []*mucRoomConfigListFormItem
 	onApply       func(jidList []string)
+	jidList       []string
 }
 
-func (u *gtkUI) newMUCRoomConfigListAddComponent(dialogTitle, formTitle string, onApply func(jidList []string), parent gtki.Window) *mucRoomConfigListAddComponent {
+func (u *gtkUI) newMUCRoomConfigListAddComponent(dialogTitle, formTitle string, onApply func(jidList []string), parent gtki.Window, jidList []string) *mucRoomConfigListAddComponent {
 	la := &mucRoomConfigListAddComponent{
 		u:           u,
 		dialogTitle: dialogTitle,
 		formTitle:   formTitle,
 		onApply:     onApply,
+		jidList:     jidList,
 	}
 
 	la.initBuilder()
@@ -89,6 +91,10 @@ func (la *mucRoomConfigListAddComponent) newAddOccupantForm() *roomConfigListFor
 func (la *mucRoomConfigListAddComponent) appendNewItem(jid string) {
 	nextIndex := len(la.items)
 
+	if la.existJidInList(jid) || la.jidAlreadyInserted(jid) {
+		return
+	}
+
 	onRemove := func() {
 		la.removeItemByIndex(nextIndex)
 		la.enableApplyIfConditionsAreMet()
@@ -102,6 +108,24 @@ func (la *mucRoomConfigListAddComponent) appendNewItem(jid string) {
 	la.content.PackStart(item.contentBox(), false, true, 0)
 
 	la.enableApplyIfConditionsAreMet()
+}
+
+func (la *mucRoomConfigListAddComponent) existJidInList(jid string) bool {
+	for _, item := range la.items {
+		if jid == item.form.jid() {
+			return true
+		}
+	}
+	return false
+}
+
+func (la *mucRoomConfigListAddComponent) jidAlreadyInserted(jid string) bool {
+	for _, l := range la.jidList {
+		if jid == l {
+			return true
+		}
+	}
+	return false
 }
 
 // removeItemByIndex MUST be called from the UI thread

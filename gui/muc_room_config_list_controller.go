@@ -51,6 +51,7 @@ func (c *mucRoomConfigListController) initListAddComponent(d *mucRoomConfigListC
 			d.addOccupantDescription,
 			c.onAddListItems,
 			d.parentWindow,
+			c.listItems(),
 		)
 
 		addToList.show()

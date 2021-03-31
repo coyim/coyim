@@ -187,7 +187,7 @@ func summaryConfigurationOptionText(v string) string {
 
 func summaryPasswordText(v bool) string {
 	if v {
-		return i18n.Localf("**********")
+		return i18n.Local("**********")
 	}
 	return i18n.Local("Not assigned")
 }

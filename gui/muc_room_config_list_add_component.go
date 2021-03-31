@@ -111,8 +111,8 @@ func (la *mucRoomConfigListAddComponent) appendNewFormItem(jid string) {
 }
 
 func (la *mucRoomConfigListAddComponent) existJidInList(jid string) bool {
-	for _, item := range la.items {
-		if jid == item.form.jid() {
+	for _, itm := range la.formItems {
+		if jid == itm.form.jid() {
 			return true
 		}
 	}

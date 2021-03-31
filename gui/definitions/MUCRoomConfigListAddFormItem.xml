@@ -17,7 +17,6 @@
       <object class="GtkButtonBox" id="room-config-list-add-item-buttons">
         <property name="visible">True</property>
         <property name="spacing">6</property>
-        <property name="layout_style">start</property>
         <child>
           <object class="GtkButton" id="room-config-list-add-item-button">
             <property name="sensitive">False</property>
@@ -25,14 +24,15 @@
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
-                <property name="stock">gtk-add</property>
+                <property name="icon_name">list-add-symbolic</property>
               </object>
             </child>
           </object>
           <packing>
-            <property name="expand">True</property>
+            <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">0</property>
+            <property name="non_homogeneous">True</property>
           </packing>
         </child>
         <child>
@@ -42,14 +42,15 @@
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
-                <property name="stock">gtk-remove</property>
+                <property name="icon_name">list-remove-symbolic</property>
               </object>
             </child>
           </object>
           <packing>
-            <property name="expand">True</property>
+            <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">1</property>
+            <property name="non_homogeneous">True</property>
           </packing>
         </child>
       </object>

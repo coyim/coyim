@@ -6,7 +6,6 @@
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="layout_style">end</property>
@@ -73,8 +72,10 @@
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="border_width">12</property>
             <property name="orientation">vertical</property>
+            <property name="margin_top">12</property>
+            <property name="margin_left">12</property>
+            <property name="margin_right">12</property>
             <property name="spacing">12</property>
             <child>
               <object class="GtkBox">
@@ -82,8 +83,8 @@
                 <child>
                   <object class="GtkLabel" id="room-config-list-add-title">
                     <property name="visible">True</property>
-                    <property name="max_width_chars">60</property>
                     <property name="wrap">True</property>
+                    <property name="max_width_chars">60</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -123,7 +124,7 @@
                             <child>
                               <object class="GtkImage">
                                 <property name="visible">True</property>
-                                <property name="stock">gtk-remove</property>
+                                <property name="icon_name">list-remove-all-symbolic</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -159,8 +160,11 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkViewport">
+                  <object class="GtkFrame">
                     <property name="visible">True</property>
+                    <property name="label_xalign">0</property>
+                    <property name="label_yalign">0</property>
+                    <property name="shadow_type">in</property>
                     <child>
                       <object class="GtkBox" id="room-config-list-add-body">
                         <property name="visible">True</property>

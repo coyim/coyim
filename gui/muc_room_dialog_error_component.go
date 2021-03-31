@@ -28,14 +28,6 @@ func createDialogErrorComponent(title, header, message string) *dialogErrorCompo
 	return d
 }
 
-func (d *dialogErrorComponent) initDefaults() {
-	mucStyles.setRoomDialogErrorComponentHeaderStyle(d.headerLabel)
-
-	d.dialog.SetTitle(d.title)
-	d.headerLabel.SetText(d.header)
-	d.messageLabel.SetText(d.message)
-}
-
 func (d *dialogErrorComponent) initBuilder() {
 	builder := newBuilder("MUCRoomDialogErrorComponent")
 	panicOnDevError(builder.bindObjects(d))
@@ -45,14 +37,25 @@ func (d *dialogErrorComponent) initBuilder() {
 	})
 }
 
+func (d *dialogErrorComponent) initDefaults() {
+	mucStyles.setRoomDialogErrorComponentHeaderStyle(d.headerLabel)
+
+	d.dialog.SetTitle(d.title)
+	d.headerLabel.SetText(d.header)
+	d.messageLabel.SetText(d.message)
+}
+
+// onOkClicked MUST be called from the UI thread
 func (d *dialogErrorComponent) onOkClicked() {
 	d.dialog.Destroy()
 }
 
-func (d *dialogErrorComponent) onRetry() {
-	d.dialog.Destroy()
+// setParent MUST be called from the UI thread
+func (d *dialogErrorComponent) setParent(p gtki.Window) {
+	d.dialog.SetTransientFor(p)
 }
 
+// show MUST be called from the UI thread
 func (d *dialogErrorComponent) show() {
 	d.dialog.Show()
 }

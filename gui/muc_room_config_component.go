@@ -88,25 +88,15 @@ func (c *mucRoomConfigComponent) cancelConfiguration(onError func(error)) {
 func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onError func(error)) {
 	rc, ec := c.account.session.SubmitRoomConfigurationForm(c.roomID, c.form)
 
-	onSuccessFinal := func() {
-		if onSuccess != nil {
-			onSuccess()
-		}
-	}
-
-	onErrorFinal := func(err error) {
-		if onError != nil {
-			onError(err)
-		}
-	}
-
 	go func() {
 		select {
 		case <-rc:
-			onSuccessFinal()
+			doInUIThread(onSuccess)
 		case err := <-ec:
 			c.log.WithError(err).Error("An error occurred when submitting the configuration form")
-			onErrorFinal(err)
+			doInUIThread(func() {
+				onError(err)
+			})
 		}
 	}()
 }

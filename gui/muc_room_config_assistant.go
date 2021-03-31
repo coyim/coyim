@@ -16,7 +16,7 @@ type roomConfigAssistant struct {
 	account *account
 	roomID  jid.Bare
 
-	roomConfigSidebar   *roomConfigAssistantSidebar
+	assistantSidebar    *roomConfigAssistantSidebar
 	roomConfigComponent *mucRoomConfigComponent
 
 	autoJoin  bool
@@ -124,8 +124,8 @@ func (rc *roomConfigAssistant) initDefaults() {
 }
 
 func (rc *roomConfigAssistant) initSidebar() {
-	rc.roomConfigSidebar = rc.newRoomConfigAssistantSidebar()
-	updateSidebarContent(rc.assistant, rc.roomConfigSidebar.getContent())
+	rc.assistantSidebar = rc.newRoomConfigAssistantSidebar()
+	updateSidebarContent(rc.assistant, rc.assistantSidebar.content)
 }
 
 func (rc *roomConfigAssistant) refreshButtonLabels() {
@@ -136,65 +136,74 @@ func (rc *roomConfigAssistant) refreshButtonLabels() {
 }
 
 func (rc *roomConfigAssistant) onPageChanged() {
-	if rc.canChangeOfPage() {
+	if rc.canChangePage() {
 		rc.pageByIndex(rc.currentPageIndex).collectData()
-		rc.roomConfigSidebar.selectOption(rc.assistant.GetCurrentPage())
+		rc.assistantSidebar.selectOption(rc.assistant.GetCurrentPage())
 		rc.updateContentPage(rc.assistant.GetCurrentPage())
 	}
 }
 
 func (rc *roomConfigAssistant) updateAssistantPage(indexPage int) {
-	if rc.canChangeOfPage() {
+	if rc.canChangePage() {
 		rc.pageByIndex(rc.currentPageIndex).collectData()
 		rc.updateContentPage(indexPage)
-		return
+	} else {
+		rc.assistantSidebar.selectOption(rc.currentPageIndex)
 	}
-	rc.roomConfigSidebar.selectOption(rc.currentPageIndex)
 }
 
-func (rc *roomConfigAssistant) canChangeOfPage() bool {
+// canChangePage MUST be called from the UI thread
+func (rc *roomConfigAssistant) canChangePage() bool {
 	previousPage := rc.pageByIndex(rc.currentPageIndex)
 	if previousPage.isNotValid() {
 		rc.assistant.SetCurrentPage(rc.currentPageIndex)
 		rc.currentPage.showValidationErrors()
 		return false
 	}
-
 	return true
 }
 
+// updateContentPage MUST be called from the UI thread
 func (rc *roomConfigAssistant) updateContentPage(indexPage int) {
 	rc.currentPageIndex = indexPage
 	rc.currentPage = rc.pageByIndex(rc.currentPageIndex)
+
 	rc.assistant.SetCurrentPage(rc.currentPageIndex)
 	rc.currentPage.refresh()
+
 	rc.refreshButtonLabels()
-	removeActionArea(rc.assistant)
+	hideActionArea(rc.assistant)
 }
 
+// enable MUST be called from the UI thread
 func (rc *roomConfigAssistant) enable() {
 	rc.assistant.SetSensitive(true)
 }
 
+// disable MUST be called from the UI thread
 func (rc *roomConfigAssistant) disable() {
 	rc.assistant.SetSensitive(false)
 }
 
+// onCancelClicked MUST be called from the UI thread
 func (rc *roomConfigAssistant) onCancelClicked() {
 	cv := newRoomConfigAssistantCancelView(rc)
 	cv.show()
 }
 
+// onCancelError MUST be called from the UI thread
 func (rc *roomConfigAssistant) onCancelError(err error) {
 	dr := createDialogErrorComponent(
-		"Cancel room settings",
-		"We were unable to cancel the room configuration",
-		"An error occurred while trying to cancel the configuration of the room.",
+		i18n.Local("Cancel room settings"),
+		i18n.Local("We were unable to cancel the room configuration"),
+		i18n.Local("An error occurred while trying to cancel the configuration of the room."),
 	)
 
+	dr.setParent(rc.assistant)
 	dr.show()
 }
 
+// onApplyClicked MUST be called from the UI thread
 func (rc *roomConfigAssistant) onApplyClicked() {
 	rc.disable()
 	rc.currentPage.onConfigurationApply()
@@ -205,19 +214,27 @@ func (rc *roomConfigAssistant) onApplyClicked() {
 	)
 }
 
+// onApplySuccess MUST be called from the UI thread
 func (rc *roomConfigAssistant) onApplySuccess() {
 	rc.onSuccess(rc.roomConfigComponent.autoJoin)
 	rc.destroyAssistant()
 }
 
+// destroyAssistant MUST be called from the UI thread
 func (rc *roomConfigAssistant) destroyAssistant() {
-	doInUIThread(rc.assistant.Destroy)
+	rc.assistant.Destroy()
 }
 
+// onApplyError MUST be called from the UI thread
 func (rc *roomConfigAssistant) onApplyError(err error) {
 	rc.enable()
 	rc.currentPage.onConfigurationApplyError()
 	rc.currentPage.notifyError(rc.roomConfigComponent.friendlyConfigErrorMessage(err))
+}
+
+// show MUST be called from the UI thread
+func (rc *roomConfigAssistant) show() {
+	rc.assistant.ShowAll()
 }
 
 func (rc *roomConfigAssistant) pageByIndex(p int) mucRoomConfigPage {
@@ -237,8 +254,4 @@ func (rc *roomConfigAssistant) pageByIndex(p int) mucRoomConfigPage {
 	default:
 		panic(fmt.Sprintf("developer error: unsupported room config assistant page \"%d\"", p))
 	}
-}
-
-func (rc *roomConfigAssistant) show() {
-	rc.assistant.ShowAll()
 }

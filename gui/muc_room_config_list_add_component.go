@@ -190,6 +190,10 @@ func (la *mucRoomConfigListAddComponent) onRemoveAllClicked() {
 
 // onApplyClicked MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) onApplyClicked() {
+	if la.existJidInList(la.form.jid()) || la.jidAlreadyInserted(la.form.jid()) {
+		return
+	}
+
 	if la.isValid() {
 		jidList := []string{}
 

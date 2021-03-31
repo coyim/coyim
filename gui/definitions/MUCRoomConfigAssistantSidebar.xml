@@ -155,7 +155,7 @@
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="halign">GTK_ALIGN_START</property>
-                    <property name="label" translatable="yes">Others settings</property>
+                    <property name="label" translatable="yes">Other settings</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

@@ -48,7 +48,7 @@
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="valign">center</property>
-                            <property name="label" translatable="yes">Owners</property>
+                            <property name="label" translatable="yes">Owners:</property>
                             <property name="xalign">0</property>
                             <property name="yalign">0</property>
                           </object>
@@ -254,7 +254,7 @@
                           <object class="GtkLabel" id="config-administrators-list">
                             <property name="visible">True</property>
                             <property name="valign">center</property>
-                            <property name="label" translatable="yes">Administrators</property>
+                            <property name="label" translatable="yes">Administrators:</property>
                             <property name="xalign">0</property>
                             <property name="yalign">0</property>
                           </object>

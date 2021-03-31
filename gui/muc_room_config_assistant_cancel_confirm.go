@@ -35,7 +35,7 @@ func (cv *roomConfigAssistantCancelView) initBuilder() {
 		"on_yes_clicked": cv.onYesConfirmation,
 	})
 
-	mucStyles.setRoomDialogErrorComponentHeaderStyle(cv.header)
+	mucStyles.setRoomCreationDialogErrorComponentHeaderStyle(cv.header)
 }
 
 func (cv *roomConfigAssistantCancelView) onNoConfirmation() {

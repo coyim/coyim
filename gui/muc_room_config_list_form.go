@@ -111,6 +111,6 @@ func (f *roomConfigListForm) friendlyErrorMessage(err error) string {
 	case errRoomConfigListFormNotFilled:
 		return i18n.Local("Please, fill in the form fields.")
 	default:
-		return i18n.Local("Invalid form values")
+		return i18n.Local("Invalid form values.")
 	}
 }

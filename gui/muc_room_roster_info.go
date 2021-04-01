@@ -115,9 +115,7 @@ func (r *roomViewRosterInfo) initDefaults() {
 }
 
 func (r *roomViewRosterInfo) occupantUpdated() {
-	if r.occupant != nil {
-		doInUIThread(r.refresh)
-	}
+	doInUIThread(r.refresh)
 }
 
 func (r *roomViewRosterInfo) updateSelfOccupant(occupant *muc.Occupant) {

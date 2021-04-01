@@ -200,8 +200,8 @@ func (r *roomViewRoster) onSelfOccupantJoined() {
 }
 
 func (r *roomViewRoster) occupantUpdateEvent() {
-	r.onUpdateRoster()
 	r.rosterInfo.occupantUpdated()
+	r.onUpdateRoster()
 }
 
 func (r *roomViewRoster) onUpdateRoster() {

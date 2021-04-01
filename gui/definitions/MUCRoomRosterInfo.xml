@@ -6,46 +6,19 @@
         <property name="visible">True</property>
         <property name="border_width">12</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">12</property>
+        <property name="spacing">4</property>
         <child>
-          <object class="GtkBox">
+          <object class="GtkBox" id="nickname-popover-box">
             <property name="visible">True</property>
-            <property name="orientation">vertical</property>
-            <property name="spacing">3</property>
+            <property name="spacing">6</property>
             <child>
-              <object class="GtkBox">
+              <object class="GtkImage">
                 <property name="visible">True</property>
-                <property name="spacing">6</property>
-                <child>
-                  <object class="GtkImage">
-                    <property name="visible">True</property>
-                    <property name="tooltip_text" translatable="yes">Nickname</property>
-                    <property name="valign">center</property>
-                    <property name="icon_name">avatar-default-symbolic</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="nickname-popover-label">
-                    <property name="visible">True</property>
-                    <property name="tooltip_text" translatable="yes">Nickname</property>
-                    <property name="xalign">0</property>
-                    <property name="yalign">0</property>
-                    <attributes>
-                      <attribute name="weight" value="bold"/>
-                      <attribute name="size" value="14000"/>
-                    </attributes>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
+                <property name="tooltip_text" translatable="yes">Nickname</property>
+                <property name="valign">center</property>
+                <property name="margin_top">2</property>
+                <property name="icon_name">avatar-default-symbolic</property>
+                <property name="use_fallback">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -54,43 +27,17 @@
               </packing>
             </child>
             <child>
-              <object class="GtkBox" id="user-jid-popover-box">
+              <object class="GtkLabel" id="nickname-popover-label">
                 <property name="visible">True</property>
-                <property name="spacing">6</property>
-                <child>
-                  <object class="GtkImage">
-                    <property name="visible">True</property>
-                    <property name="tooltip_text" translatable="yes">Account address</property>
-                    <property name="valign">center</property>
-                    <property name="icon_name">goa-panel-symbolic</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="user-jid-popover-label">
-                    <property name="visible">True</property>
-                    <property name="tooltip_text" translatable="yes">Account address</property>
-                    <property name="can-focus">False</property>
-                    <property name="wrap">True</property>
-                    <property name="wrap_mode">char</property>
-                    <property name="selectable">True</property>
-                    <property name="track_visited_links">False</property>
-                    <property name="xalign">0</property>
-                    <property name="yalign">0</property>
-                    <style>
-                      <class name="occupant-jid"/>
-                    </style>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
+                <property name="tooltip_text" translatable="yes">Nickname</property>
+                <property name="valign">center</property>
+                <property name="track_visited_links">False</property>
+                <property name="xalign">0</property>
+                <property name="yalign">0</property>
+                <attributes>
+                  <attribute name="weight" value="bold"/>
+                  <attribute name="size" value="14000"/>
+                </attributes>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -106,44 +53,17 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox">
+          <object class="GtkBox" id="user-jid-popover-box">
             <property name="visible">True</property>
-            <property name="orientation">vertical</property>
             <property name="spacing">6</property>
             <child>
-              <object class="GtkBox">
+              <object class="GtkImage">
                 <property name="visible">True</property>
-                <property name="spacing">6</property>
-                <child>
-                  <object class="GtkImage">
-                    <property name="visible">True</property>
-                    <property name="tooltip_text" translatable="yes">Status</property>
-                    <property name="valign">center</property>
-                    <property name="icon_name">emoji-flags-symbolic</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="status-popover-label">
-                    <property name="visible">True</property>
-                    <property name="tooltip_text" translatable="yes">Status</property>
-                    <property name="track_visited_links">False</property>
-                    <property name="xalign">0</property>
-                    <property name="yalign">0</property>
-                    <style>
-                      <class name="occupant-status"/>
-                    </style>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
+                <property name="tooltip_text" translatable="yes">Account address</property>
+                <property name="valign">center</property>
+                <property name="margin_top">2</property>
+                <property name="icon_name">goa-panel-symbolic</property>
+                <property name="use_fallback">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -152,14 +72,56 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="status-message-popover-label">
+              <object class="GtkLabel" id="user-jid-popover-label">
                 <property name="visible">True</property>
-                <property name="tooltip_text" translatable="yes">Status message</property>
+                <property name="tooltip_text" translatable="yes">Account address</property>
+                <property name="valign">center</property>
+                <property name="wrap">True</property>
+                <property name="wrap_mode">char</property>
+                <property name="track_visited_links">False</property>
                 <property name="xalign">0</property>
                 <property name="yalign">0</property>
-                <attributes>
-                  <attribute name="style" value="italic"/>
-                </attributes>
+                <style>
+                  <class name="occupant-jid"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="status-popover-box">
+            <property name="visible">True</property>
+            <property name="spacing">6</property>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="tooltip_text" translatable="yes">Status</property>
+                <property name="valign">center</property>
+                <property name="margin_top">2</property>
+                <property name="icon_name">emoji-flags-symbolic</property>
+                <property name="use_fallback">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="status-popover-label">
+                <property name="visible">True</property>
+                <property name="valign">center</property>
+                <property name="track_visited_links">False</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -172,6 +134,45 @@
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="status-message-popover-box">
+            <property name="visible">True</property>
+            <property name="spacing">6</property>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="tooltip_text" translatable="yes">Status</property>
+                <property name="opacity">0</property>
+                <property name="valign">center</property>
+                <property name="margin_top">2</property>
+                <property name="icon_name">emoji-flags-symbolic</property>
+                <property name="use_fallback">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="status-message-popover-label">
+                <property name="visible">True</property>
+                <property name="valign">center</property>
+                <property name="track_visited_links">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
           </packing>
         </child>
       </object>

@@ -42,6 +42,7 @@ type roomViewRosterInfo struct {
 	realJidPopoverBox         gtki.Box        `gtk-widget:"user-jid-popover-box"`
 	realJidPopoverLabel       gtki.Label      `gtk-widget:"user-jid-popover-label"`
 	statusPopoverLabel        gtki.Label      `gtk-widget:"status-popover-label"`
+	statusMessagePopoverBox   gtki.Box        `gtk-widget:"status-message-popover-box"`
 	statusMessagePopoverLabel gtki.Label      `gtk-widget:"status-message-popover-label"`
 
 	onReset   *callbacksSet
@@ -144,7 +145,7 @@ func (r *roomViewRosterInfo) showOccupantInfo(occupant *muc.Occupant) {
 func (r *roomViewRosterInfo) validateOccupantPrivileges() {
 	r.refreshAffiliationSection()
 	r.refreshRoleSection()
-	r.refreshKickSection()
+	r.refreshAdminToolsSection()
 }
 
 // refreshAffiliationSection MUST be called from the UI thread
@@ -166,11 +167,12 @@ func (r *roomViewRosterInfo) refreshRoleSection() {
 	r.roleDisableLabel.SetVisible(showChangeRoleDisabledLabel)
 }
 
-// refreshKickSection MUST be called from the UI thread
-func (r *roomViewRosterInfo) refreshKickSection() {
+// refreshAdminToolsSection MUST be called from the UI thread
+func (r *roomViewRosterInfo) refreshAdminToolsSection() {
 	canKick := r.selfOccupant.CanKickOccupant(r.occupant)
 	r.kickOccupantMenuItem.SetVisible(canKick)
-	r.occupantActionsMenuButton.SetVisible(canKick)
+
+	r.occupantActionsMenuButton.SetSensitive(canKick)
 }
 
 // refresh MUST be called from the UI thread
@@ -204,10 +206,10 @@ func (r *roomViewRosterInfo) refreshOccupantInfo() {
 	r.status.SetText(statusDisplay)
 	r.statusPopoverLabel.SetText(statusDisplay)
 
-	r.statusMessagePopoverLabel.SetVisible(false)
+	r.statusMessagePopoverBox.SetVisible(false)
 	if status.StatusMsg != "" {
 		r.statusMessagePopoverLabel.SetText(status.StatusMsg)
-		r.statusMessagePopoverLabel.SetVisible(true)
+		r.statusMessagePopoverBox.SetVisible(true)
 	}
 }
 

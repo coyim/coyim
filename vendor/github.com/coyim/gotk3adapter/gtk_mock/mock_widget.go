@@ -22,6 +22,10 @@ func (*MockWidget) SetVExpand(v1 bool) {
 func (*MockWidget) SetSensitive(v1 bool) {
 }
 
+func (*MockWidget) IsSensitive() bool {
+	return false
+}
+
 func (*MockWidget) SetTooltipText(v1 string) {
 }
 

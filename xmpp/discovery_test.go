@@ -104,15 +104,15 @@ func (s *DiscoveryXMPPSuite) Test_ReceiveDiscoveryResult(c *C) {
 	c.Assert(ok, Equals, false)
 }
 
-func waitForInflightTo(c *conn, to string) {
-	done := make(chan bool)
+func waitForInflightTo(c *conn, to string) *inflight {
+	done := make(chan *inflight)
 
 	go func() {
 		for {
 			time.Sleep(3 * time.Millisecond)
 			for _, v := range c.inflights {
 				if v.to == to {
-					done <- true
+					done <- &v
 					return
 				}
 			}
@@ -120,8 +120,10 @@ func waitForInflightTo(c *conn, to string) {
 	}()
 
 	select {
-	case <-done:
+	case val := <-done:
+		return val
 	case <-time.After(1 * time.Second):
+		return nil
 	}
 }
 

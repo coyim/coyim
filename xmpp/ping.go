@@ -49,61 +49,56 @@ func ParsePong(reply data.Stanza) error {
 }
 
 var (
-	pingIterval     = 10 * time.Second //should be 5 minutes at least, per spec
+	pingInterval    = 10 * time.Second //should be 5 minutes at least, per spec
 	pingTimeout     = 30 * time.Second
 	maxPingFailures = 2
 )
 
+var newTicker = time.NewTicker
+
 func (c *conn) watchPings() {
-	tick := time.NewTicker(pingIterval)
+	tick := newTicker(pingInterval)
 	defer tick.Stop()
 	failures := 0
 
 	for range tick.C {
 		if c.closed {
+			c.log.Info("xmpp: trying to send ping on closed connection")
 			return
 		}
 
 		pongReply, _, err := c.SendPing()
 		if err != nil {
+			c.log.WithError(err).Warn("xmpp: error when sending ping")
 			return
 		}
 
 		select {
 		case <-time.After(pingTimeout):
-			// ping timed out
 			failures = failures + 1
+
+			if failures >= maxPingFailures {
+				c.log.WithField("threshold", maxPingFailures).Warn("xmpp: ping failures reached threshold")
+
+				_ = c.sendStreamError(data.StreamError{
+					DefinedCondition: data.ConnectionTimeout,
+				})
+
+				return
+			}
 		case pongStanza, ok := <-pongReply:
 			if !ok {
-				// pong cancelled
+				c.log.Info("xmpp: ping result channel closed")
 				continue
 			}
 
 			failures = 0
 			iq, ok := pongStanza.Value.(*data.ClientIQ)
-			if !ok {
-				//not the expected IQ
-				return
-			}
-
-			//TODO: check for <service-unavailable/>
-			if iq.Type == "error" {
-				//server does not support Ping
+			if !ok || iq.Type == "error" {
+				c.log.WithField("value", pongStanza.Value).Info("xmpp: received invalid result to ping")
 				return
 			}
 		}
 
-		if failures < maxPingFailures {
-			continue
-		}
-
-		c.log.WithField("threshold", maxPingFailures).Warn("xmpp: ping failures reached threshold")
-		go func() {
-			_ = c.sendStreamError(data.StreamError{
-				DefinedCondition: data.ConnectionTimeout,
-			})
-		}()
-
-		return
 	}
 }

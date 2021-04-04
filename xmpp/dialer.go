@@ -2,7 +2,6 @@ package xmpp
 
 import (
 	"encoding/xml"
-	"fmt"
 	"io"
 	"net"
 	"strings"
@@ -159,7 +158,6 @@ func (d *dialer) Dial() (interfaces.Conn, error) {
 	// RFC 6120, section 3
 	conn, tls, err := d.newTCPConn()
 	if err != nil {
-		fmt.Printf("bla one\n")
 		return nil, err
 	}
 	d.outerTLS = tls

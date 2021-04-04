@@ -1,10 +1,13 @@
 package xmpp
 
 import (
+	gotls "crypto/tls"
+	"errors"
 	"net"
 	"time"
 
 	"github.com/coyim/coyim/servers"
+	"github.com/coyim/coyim/tls"
 	"github.com/coyim/coyim/xmpp/data"
 	log "github.com/sirupsen/logrus"
 	. "gopkg.in/check.v1"
@@ -114,4 +117,145 @@ func (s *DialerSuite) Test_dialer_Dial(c *C) {
 	c.Assert(cn, Not(IsNil))
 	cc := cn.(*conn)
 	c.Assert(cc.rawOut, Equals, expectedConn)
+}
+
+func (s *DialerSuite) Test_dialer_Dial_failsOnTCPConn(c *C) {
+	p := &mockProxy{}
+	d := &dialer{
+		JID: "foo@jabber.com",
+
+		proxy: p,
+		config: data.Config{
+			SkipSRVLookup: true,
+			SkipTLS:       true,
+		},
+		log: testLogger(),
+	}
+
+	p.Expects(func(network, addr string) (net.Conn, error) {
+		return nil, errors.New("marker interface")
+	})
+
+	cn, e := d.Dial()
+	c.Assert(e, ErrorMatches, ".*marker interface")
+	c.Assert(cn, IsNil)
+}
+
+func (s *DialerSuite) Test_dialer_RegisterAccount(c *C) {
+	p := &mockProxy{}
+	d := &dialer{
+		JID: "foo@jabber.com",
+
+		proxy: p,
+		config: data.Config{
+			SkipSRVLookup: true,
+			SkipTLS:       true,
+		},
+		log: testLogger(),
+	}
+
+	expectedConn := &fullMockedConn{
+		&mockConnIOReaderWriter{
+			read: []byte(`<stream xmlns="http://etherx.jabber.org/streams">
+  <features>
+    <mechanisms xmlns="urn:ietf:params:xml:ns:xmpp-sasl">
+      <mechanism>PLAIN</mechanism>
+    </mechanisms>
+  </features>
+  <success xmlns="urn:ietf:params:xml:ns:xmpp-sasl"></success>
+  <streams:stream xmlns:streams="http://etherx.jabber.org/streams" xmlns="jabber:client">
+  <streams:features>
+    <mechanisms xmlns="urn:ietf:params:xml:ns:xmpp-sasl">
+      <mechanism>PLAIN</mechanism>
+    </mechanisms>
+  </streams:features>
+  <iq type="result" id="bind_1"></iq>
+  <iq type="result" id="sess_1"></iq>
+`),
+		},
+	}
+	p.Expects(func(network, addr string) (net.Conn, error) {
+		return expectedConn, nil
+	})
+
+	called := false
+	ff := func(string, string, []interface{}) error {
+		called = true
+		return nil
+	}
+
+	cn, e := d.RegisterAccount(ff)
+	c.Assert(e, IsNil)
+	c.Assert(cn, Not(IsNil))
+	cc := cn.(*conn)
+	c.Assert(cc.rawOut, Equals, expectedConn)
+	_ = d.config.CreateCallback("", "", nil)
+	c.Assert(called, Equals, true)
+}
+
+type fullMockedTlsConn struct {
+	*fullMockedConn
+
+	e error
+}
+
+func (m *fullMockedTlsConn) Handshake() error {
+	return m.e
+}
+
+func (m *fullMockedTlsConn) ConnectionState() gotls.ConnectionState {
+	return gotls.ConnectionState{}
+}
+
+func (s *DialerSuite) Test_dialer_Dial_withOuterTLS(c *C) {
+	p := &mockProxy{}
+
+	mtls := &fullMockedTlsConn{
+		e: errors.New("another marker"),
+	}
+
+	d := &dialer{
+		JID: "foo@jabber.com",
+
+		proxy: p,
+		config: data.Config{
+			SkipSRVLookup: true,
+			SkipTLS:       true,
+		},
+		log: testLogger(),
+
+		connectTLS: true,
+
+		tlsConnFactory: func(net.Conn, *gotls.Config) tls.Conn {
+			return mtls
+		},
+	}
+
+	expectedConn := &fullMockedConn{
+		&mockConnIOReaderWriter{
+			read: []byte(`<stream xmlns="http://etherx.jabber.org/streams">
+  <features>
+    <mechanisms xmlns="urn:ietf:params:xml:ns:xmpp-sasl">
+      <mechanism>PLAIN</mechanism>
+    </mechanisms>
+  </features>
+  <success xmlns="urn:ietf:params:xml:ns:xmpp-sasl"></success>
+  <streams:stream xmlns:streams="http://etherx.jabber.org/streams" xmlns="jabber:client">
+  <streams:features>
+    <mechanisms xmlns="urn:ietf:params:xml:ns:xmpp-sasl">
+      <mechanism>PLAIN</mechanism>
+    </mechanisms>
+  </streams:features>
+  <iq type="result" id="bind_1"></iq>
+  <iq type="result" id="sess_1"></iq>
+`),
+		},
+	}
+	p.Expects(func(network, addr string) (net.Conn, error) {
+		return expectedConn, nil
+	})
+
+	cn, e := d.Dial()
+	c.Assert(e, ErrorMatches, "another marker")
+	c.Assert(cn, IsNil)
 }

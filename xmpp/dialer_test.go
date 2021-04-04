@@ -193,24 +193,24 @@ func (s *DialerSuite) Test_dialer_RegisterAccount(c *C) {
 	c.Assert(called, Equals, true)
 }
 
-type fullMockedTlsConn struct {
+type fullMockedTLSConn struct {
 	*fullMockedConn
 
 	e error
 }
 
-func (m *fullMockedTlsConn) Handshake() error {
+func (m *fullMockedTLSConn) Handshake() error {
 	return m.e
 }
 
-func (m *fullMockedTlsConn) ConnectionState() gotls.ConnectionState {
+func (m *fullMockedTLSConn) ConnectionState() gotls.ConnectionState {
 	return gotls.ConnectionState{}
 }
 
 func (s *DialerSuite) Test_dialer_Dial_withOuterTLS(c *C) {
 	p := &mockProxy{}
 
-	mtls := &fullMockedTlsConn{
+	mtls := &fullMockedTLSConn{
 		e: errors.New("another marker"),
 	}
 

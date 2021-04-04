@@ -2,6 +2,7 @@ package xmpp
 
 import (
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"time"
@@ -124,7 +125,7 @@ func waitForInflightTo(c *conn, to string) {
 	}
 }
 
-func (s *DiscoveryXMPPSuite) Test_HasSupportTo(c *C) {
+func (s *DiscoveryXMPPSuite) Test_conn_HasSupportTo(c *C) {
 	// See: XEP-0030, Section: 3.1 Basic Protocol, Example: 2
 	fromServer := `
 <iq xmlns='jabber:client' type='result'
@@ -158,6 +159,92 @@ func (s *DiscoveryXMPPSuite) Test_HasSupportTo(c *C) {
 	waitForInflightTo(&conn, "plays.shakespeare.lit")
 
 	c.Assert(string(mockOut.Written()), Matches, "<iq xmlns='jabber:client' to='plays.shakespeare.lit' from='romeo@montague.net/orchard' type='get' id='.+'><query xmlns=\"http://jabber.org/protocol/disco#info\"></query></iq>")
+
+	var iq data.ClientIQ
+	err := xml.Unmarshal(mockOut.Written(), &iq)
+	c.Assert(err, IsNil)
+
+	mockIn := &mockConnIOReaderWriter{read: []byte(fmt.Sprintf(fromServer, iq.ID))}
+	conn.in = xml.NewDecoder(mockIn)
+
+	_, err = conn.Next()
+	c.Assert(err, Equals, io.EOF)
+	<-done
+}
+
+func (s *DiscoveryXMPPSuite) Test_conn_HasSupportTo_fails(c *C) {
+	// See: XEP-0030, Section: 3.1 Basic Protocol, Example: 2
+	fromServer := `
+<iq xmlns='jabber:client' type='error'
+    from='plays.shakespeare.lit'
+    to='romeo@montague.net/orchard'
+    id='%s'>
+</iq>
+`
+	mockOut := &mockConnIOReaderWriter{}
+
+	conn := conn{
+		log:       testLogger(),
+		in:        xml.NewDecoder(nil),
+		out:       mockOut,
+		inflights: make(map[data.Cookie]inflight),
+
+		jid: "romeo@montague.net/orchard",
+	}
+
+	done := make(chan bool, 1)
+	go func() {
+		ok := conn.HasSupportTo("plays.shakespeare.lit", "jabber:iq:privacy")
+		c.Assert(ok, Equals, false)
+		done <- true
+	}()
+
+	waitForInflightTo(&conn, "plays.shakespeare.lit")
+
+	var iq data.ClientIQ
+	err := xml.Unmarshal(mockOut.Written(), &iq)
+	c.Assert(err, IsNil)
+
+	mockIn := &mockConnIOReaderWriter{read: []byte(fmt.Sprintf(fromServer, iq.ID))}
+	conn.in = xml.NewDecoder(mockIn)
+
+	_, err = conn.Next()
+	c.Assert(err, Equals, io.EOF)
+	<-done
+}
+
+func (s *DiscoveryXMPPSuite) Test_conn_HasSupportTo_doesntSupport(c *C) {
+	// See: XEP-0030, Section: 3.1 Basic Protocol, Example: 2
+	fromServer := `
+<iq xmlns='jabber:client' type='result'
+    from='plays.shakespeare.lit'
+    to='romeo@montague.net/orchard'
+    id='%s'>
+  <query xmlns='http://jabber.org/protocol/disco#info'>
+    <feature var='jabber:iq:privacy'/>
+    <feature var='http://jabber.org/protocol/disco#items'/>
+  </query>
+</iq>
+`
+	mockOut := &mockConnIOReaderWriter{}
+
+	conn := conn{
+		log:       testLogger(),
+		in:        xml.NewDecoder(nil),
+		out:       mockOut,
+		inflights: make(map[data.Cookie]inflight),
+
+		jid: "romeo@montague.net/orchard",
+	}
+
+	done := make(chan bool, 1)
+	go func() {
+		ok := conn.HasSupportTo("plays.shakespeare.lit", "jabber:iq:privacy", "jabber:iq:something:else")
+		c.Assert(ok, Equals, false)
+		done <- true
+	}()
+
+	waitForInflightTo(&conn, "plays.shakespeare.lit")
 
 	var iq data.ClientIQ
 	err := xml.Unmarshal(mockOut.Written(), &iq)
@@ -310,4 +397,499 @@ func (s *DiscoveryXMPPSuite) Test_DiscoveryReply_returnsSupportedValues(c *C) {
 				{Var: "http://jabber.org/protocol/muc"},
 			},
 			Forms: []data.Form(nil)})
+}
+
+func (s *DiscoveryXMPPSuite) Test_conn_QueryServiceItems(c *C) {
+	// See: XEP-0030, Section: 3.1 Basic Protocol, Example: 2
+	fromServer := `
+<iq xmlns='jabber:client' type='result'
+    from='plays.shakespeare.lit'
+    to='romeo@montague.net/orchard'
+    id='%s'>
+  <query xmlns='http://jabber.org/protocol/disco#items'>
+    <item jid="foo@somewhere.com/bla"/>
+    <item jid="bla@else.org" name="Something"/>
+  </query>
+</iq>
+`
+	mockOut := &mockConnIOReaderWriter{}
+
+	conn := conn{
+		log:       testLogger(),
+		in:        xml.NewDecoder(nil),
+		out:       mockOut,
+		inflights: make(map[data.Cookie]inflight),
+
+		jid: "romeo@montague.net/orchard",
+	}
+
+	done := make(chan bool, 1)
+	go func() {
+		q, e := conn.QueryServiceItems("plays.shakespeare.lit")
+		c.Assert(e, IsNil)
+		c.Assert(q, Not(IsNil))
+		c.Assert(q.DiscoveryItems, HasLen, 2)
+		done <- true
+	}()
+
+	waitForInflightTo(&conn, "plays.shakespeare.lit")
+
+	c.Assert(string(mockOut.Written()), Matches, "<iq xmlns='jabber:client' to='plays.shakespeare.lit' from='romeo@montague.net/orchard' type='get' id='.+'><query xmlns=\"http://jabber.org/protocol/disco#items\"></query></iq>")
+
+	var iq data.ClientIQ
+	err := xml.Unmarshal(mockOut.Written(), &iq)
+	c.Assert(err, IsNil)
+
+	mockIn := &mockConnIOReaderWriter{read: []byte(fmt.Sprintf(fromServer, iq.ID))}
+	conn.in = xml.NewDecoder(mockIn)
+
+	_, err = conn.Next()
+	c.Assert(err, Equals, io.EOF)
+	<-done
+}
+
+func (s *DiscoveryXMPPSuite) Test_conn_QueryServiceItems_failsWriting(c *C) {
+	mockOut := &mockConnIOReaderWriter{
+		err: errors.New("an IO marker"),
+	}
+
+	conn := conn{
+		log:       testLogger(),
+		in:        xml.NewDecoder(nil),
+		out:       mockOut,
+		inflights: make(map[data.Cookie]inflight),
+
+		jid: "romeo@montague.net/orchard",
+	}
+
+	q, e := conn.QueryServiceItems("plays.shakespeare.lit")
+	c.Assert(e, ErrorMatches, "an IO marker")
+	c.Assert(q, IsNil)
+}
+
+type resultData struct {
+	data interface{}
+	more *resultData
+}
+
+func (s *DiscoveryXMPPSuite) Test_conn_QueryServiceItems_noResponse(c *C) {
+	mockOut := &mockConnIOReaderWriter{}
+
+	conn := conn{
+		log:       testLogger(),
+		in:        xml.NewDecoder(nil),
+		out:       mockOut,
+		inflights: make(map[data.Cookie]inflight),
+
+		jid: "romeo@montague.net/orchard",
+	}
+
+	done := make(chan *resultData, 1)
+	go func() {
+		q, e := conn.QueryServiceItems("plays.shakespeare.lit")
+		done <- &resultData{q, &resultData{e, nil}}
+	}()
+
+	waitForInflightTo(&conn, "plays.shakespeare.lit")
+
+	for _, inf := range conn.inflights {
+		close(inf.replyChan)
+	}
+
+	rd := <-done
+
+	q := rd.data.(*data.DiscoveryItemsQuery)
+	e := rd.more.data.(error)
+
+	c.Assert(e, ErrorMatches, "xmpp: failed to receive response")
+	c.Assert(q, IsNil)
+}
+
+func (s *DiscoveryXMPPSuite) Test_conn_QueryServiceItems_badResponse(c *C) {
+	mockOut := &mockConnIOReaderWriter{}
+
+	conn := conn{
+		log:       testLogger(),
+		in:        xml.NewDecoder(nil),
+		out:       mockOut,
+		inflights: make(map[data.Cookie]inflight),
+
+		jid: "romeo@montague.net/orchard",
+	}
+
+	done := make(chan *resultData, 1)
+	go func() {
+		q, e := conn.QueryServiceItems("plays.shakespeare.lit")
+		done <- &resultData{q, &resultData{e, nil}}
+	}()
+
+	waitForInflightTo(&conn, "plays.shakespeare.lit")
+
+	for _, inf := range conn.inflights {
+		inf.replyChan <- data.Stanza{
+			Value: "hello",
+		}
+	}
+
+	rd := <-done
+
+	q := rd.data.(*data.DiscoveryItemsQuery)
+	e := rd.more.data.(error)
+
+	c.Assert(e, ErrorMatches, "xmpp: failed to parse response")
+	c.Assert(q, IsNil)
+}
+
+func (s *DiscoveryXMPPSuite) Test_conn_QueryServiceInformation_failsWriting(c *C) {
+	mockOut := &mockConnIOReaderWriter{
+		err: errors.New("an IO marker"),
+	}
+
+	conn := conn{
+		log:       testLogger(),
+		in:        xml.NewDecoder(nil),
+		out:       mockOut,
+		inflights: make(map[data.Cookie]inflight),
+
+		jid: "romeo@montague.net/orchard",
+	}
+
+	q, e := conn.QueryServiceInformation("plays.shakespeare.lit")
+	c.Assert(e, ErrorMatches, "an IO marker")
+	c.Assert(q, IsNil)
+}
+
+func (s *DiscoveryXMPPSuite) Test_conn_QueryServiceInformation_noResponse(c *C) {
+	mockOut := &mockConnIOReaderWriter{}
+
+	conn := conn{
+		log:       testLogger(),
+		in:        xml.NewDecoder(nil),
+		out:       mockOut,
+		inflights: make(map[data.Cookie]inflight),
+
+		jid: "romeo@montague.net/orchard",
+	}
+
+	done := make(chan *resultData, 1)
+	go func() {
+		q, e := conn.QueryServiceInformation("plays.shakespeare.lit")
+		done <- &resultData{q, &resultData{e, nil}}
+	}()
+
+	waitForInflightTo(&conn, "plays.shakespeare.lit")
+
+	for _, inf := range conn.inflights {
+		close(inf.replyChan)
+	}
+
+	rd := <-done
+
+	q := rd.data.(*data.DiscoveryInfoQuery)
+	e := rd.more.data.(error)
+
+	c.Assert(e, ErrorMatches, "xmpp: failed to receive response")
+	c.Assert(q, IsNil)
+}
+
+func (s *DiscoveryXMPPSuite) Test_conn_QueryServiceInformation_badResponse(c *C) {
+	mockOut := &mockConnIOReaderWriter{}
+
+	conn := conn{
+		log:       testLogger(),
+		in:        xml.NewDecoder(nil),
+		out:       mockOut,
+		inflights: make(map[data.Cookie]inflight),
+
+		jid: "romeo@montague.net/orchard",
+	}
+
+	done := make(chan *resultData, 1)
+	go func() {
+		q, e := conn.QueryServiceInformation("plays.shakespeare.lit")
+		done <- &resultData{q, &resultData{e, nil}}
+	}()
+
+	waitForInflightTo(&conn, "plays.shakespeare.lit")
+
+	for _, inf := range conn.inflights {
+		inf.replyChan <- data.Stanza{
+			Value: "hello",
+		}
+	}
+
+	rd := <-done
+
+	q := rd.data.(*data.DiscoveryInfoQuery)
+	e := rd.more.data.(error)
+
+	c.Assert(e, ErrorMatches, "xmpp: failed to parse response")
+	c.Assert(q, IsNil)
+}
+
+func (s *DiscoveryXMPPSuite) Test_conn_EntityExists(c *C) {
+	fromServer := `
+<iq xmlns='jabber:client' type='result'
+    from='plays.shakespeare.lit'
+    to='romeo@montague.net/orchard'
+    id='%s'>
+  <query xmlns='http://jabber.org/protocol/disco#info'>
+    <feature var='jabber:iq:privacy'/>
+    <feature var='http://jabber.org/protocol/disco#items'/>
+  </query>
+</iq>
+`
+	mockOut := &mockConnIOReaderWriter{}
+
+	conn := conn{
+		log:       testLogger(),
+		in:        xml.NewDecoder(nil),
+		out:       mockOut,
+		inflights: make(map[data.Cookie]inflight),
+
+		jid: "romeo@montague.net/orchard",
+	}
+
+	done := make(chan *resultData, 1)
+	go func() {
+		q, e := conn.EntityExists("plays.shakespeare.lit")
+		done <- &resultData{q, &resultData{e, nil}}
+	}()
+
+	waitForInflightTo(&conn, "plays.shakespeare.lit")
+
+	c.Assert(string(mockOut.Written()), Matches, "<iq xmlns='jabber:client' to='plays.shakespeare.lit' from='romeo@montague.net/orchard' type='get' id='.+'><query xmlns=\"http://jabber.org/protocol/disco#info\"></query></iq>")
+
+	var iq data.ClientIQ
+	err := xml.Unmarshal(mockOut.Written(), &iq)
+	c.Assert(err, IsNil)
+
+	mockIn := &mockConnIOReaderWriter{read: []byte(fmt.Sprintf(fromServer, iq.ID))}
+	conn.in = xml.NewDecoder(mockIn)
+
+	_, err = conn.Next()
+	c.Assert(err, Equals, io.EOF)
+	rd := <-done
+
+	ok := rd.data.(bool)
+	e := rd.more.data
+
+	c.Assert(e, IsNil)
+	c.Assert(ok, Equals, true)
+}
+
+func (s *DiscoveryXMPPSuite) Test_conn_EntityExists_fails(c *C) {
+	mockOut := &mockConnIOReaderWriter{
+		err: errors.New("an IO marker"),
+	}
+
+	conn := conn{
+		log:       testLogger(),
+		in:        xml.NewDecoder(nil),
+		out:       mockOut,
+		inflights: make(map[data.Cookie]inflight),
+
+		jid: "romeo@montague.net/orchard",
+	}
+
+	ok, e := conn.EntityExists("plays.shakespeare.lit")
+
+	c.Assert(e, ErrorMatches, "an IO marker")
+	c.Assert(ok, Equals, false)
+}
+
+func (s *DiscoveryXMPPSuite) Test_conn_EntityExists_mucItemDoesntExist(c *C) {
+	fromServer := `
+<iq xmlns='jabber:client' type='error'
+    from='plays.shakespeare.lit'
+    to='romeo@montague.net/orchard'
+    id='%s'>
+  <error>
+    <item-not-found xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/>
+  </error>
+</iq>
+`
+	mockOut := &mockConnIOReaderWriter{}
+
+	conn := conn{
+		log:       testLogger(),
+		in:        xml.NewDecoder(nil),
+		out:       mockOut,
+		inflights: make(map[data.Cookie]inflight),
+
+		jid: "romeo@montague.net/orchard",
+	}
+
+	done := make(chan *resultData, 1)
+	go func() {
+		q, e := conn.EntityExists("plays.shakespeare.lit")
+		done <- &resultData{q, &resultData{e, nil}}
+	}()
+
+	waitForInflightTo(&conn, "plays.shakespeare.lit")
+
+	c.Assert(string(mockOut.Written()), Matches, "<iq xmlns='jabber:client' to='plays.shakespeare.lit' from='romeo@montague.net/orchard' type='get' id='.+'><query xmlns=\"http://jabber.org/protocol/disco#info\"></query></iq>")
+
+	var iq data.ClientIQ
+	err := xml.Unmarshal(mockOut.Written(), &iq)
+	c.Assert(err, IsNil)
+
+	mockIn := &mockConnIOReaderWriter{read: []byte(fmt.Sprintf(fromServer, iq.ID))}
+	conn.in = xml.NewDecoder(mockIn)
+
+	_, err = conn.Next()
+	c.Assert(err, Equals, io.EOF)
+	rd := <-done
+
+	ok := rd.data.(bool)
+	e := rd.more.data
+
+	c.Assert(e, IsNil)
+	c.Assert(ok, Equals, false)
+}
+
+func (s *DiscoveryXMPPSuite) Test_conn_DiscoveryFeaturesAndIdentities(c *C) {
+	fromServer := `
+<iq xmlns='jabber:client' type='result'
+    from='plays.shakespeare.lit'
+    to='romeo@montague.net/orchard'
+    id='%s'>
+  <query xmlns='http://jabber.org/protocol/disco#info'>
+    <identity
+        category='conference'
+        type='text'
+        name='Play-Specific Chatrooms'/>
+    <identity
+        category='directory'
+        type='chatroom'
+        name='Play-Specific Chatrooms'/>
+    <feature var='http://jabber.org/protocol/disco#info'/>
+    <feature var='http://jabber.org/protocol/disco#items'/>
+    <feature var='http://jabber.org/protocol/muc'/>
+    <feature var='jabber:iq:register'/>
+    <feature var='jabber:iq:search'/>
+    <feature var='jabber:iq:time'/>
+    <feature var='jabber:iq:version'/>
+  </query>
+</iq>
+`
+	mockOut := &mockConnIOReaderWriter{}
+
+	conn := conn{
+		log:       testLogger(),
+		in:        xml.NewDecoder(nil),
+		out:       mockOut,
+		inflights: make(map[data.Cookie]inflight),
+
+		jid: "romeo@montague.net/orchard",
+	}
+
+	done := make(chan *resultData, 1)
+	go func() {
+		ids, feats, ok := conn.DiscoveryFeaturesAndIdentities("plays.shakespeare.lit")
+		done <- &resultData{ids, &resultData{feats, &resultData{ok, nil}}}
+	}()
+
+	waitForInflightTo(&conn, "plays.shakespeare.lit")
+
+	c.Assert(string(mockOut.Written()), Matches, "<iq xmlns='jabber:client' to='plays.shakespeare.lit' from='romeo@montague.net/orchard' type='get' id='.+'><query xmlns=\"http://jabber.org/protocol/disco#info\"></query></iq>")
+
+	var iq data.ClientIQ
+	err := xml.Unmarshal(mockOut.Written(), &iq)
+	c.Assert(err, IsNil)
+
+	mockIn := &mockConnIOReaderWriter{read: []byte(fmt.Sprintf(fromServer, iq.ID))}
+	conn.in = xml.NewDecoder(mockIn)
+
+	_, err = conn.Next()
+	c.Assert(err, Equals, io.EOF)
+	rd := <-done
+
+	ids := rd.data.([]data.DiscoveryIdentity)
+	feats := rd.more.data.([]string)
+	ok := rd.more.more.data.(bool)
+
+	c.Assert(ok, Equals, true)
+	c.Assert(ids, HasLen, 2)
+	c.Assert(feats, HasLen, 7)
+}
+
+func (s *DiscoveryXMPPSuite) Test_conn_DiscoveryFeaturesAndIdentities_fails(c *C) {
+	mockOut := &mockConnIOReaderWriter{
+		err: errors.New("an IO marker"),
+	}
+
+	conn := conn{
+		log:       testLogger(),
+		in:        xml.NewDecoder(nil),
+		out:       mockOut,
+		inflights: make(map[data.Cookie]inflight),
+
+		jid: "romeo@montague.net/orchard",
+	}
+
+	_, _, ok := conn.DiscoveryFeaturesAndIdentities("plays.shakespeare.lit")
+
+	c.Assert(ok, Equals, false)
+}
+
+func (s *DiscoveryXMPPSuite) Test_DiscoveryReply_forCustomNode(c *C) {
+	res := DiscoveryReply("some@foo.bar", "chat")
+	c.Assert(res, DeepEquals, data.ErrorReply{
+		Type:  "cancel",
+		Error: data.ErrorServiceUnavailable{},
+	})
+}
+
+func (s *DiscoveryXMPPSuite) Test_conn_ServerHasFeature(c *C) {
+	fromServer := `
+<iq xmlns='jabber:client' type='result'
+    from='montague.net'
+    to='romeo@montague.net/orchard'
+    id='%s'>
+  <query xmlns='http://jabber.org/protocol/disco#info'>
+    <feature var='http://jabber.org/protocol/disco#info'/>
+    <feature var='http://jabber.org/protocol/disco#items'/>
+    <feature var='http://jabber.org/protocol/muc'/>
+    <feature var='jabber:iq:register'/>
+    <feature var='jabber:iq:search'/>
+    <feature var='jabber:iq:time'/>
+    <feature var='jabber:iq:version'/>
+  </query>
+</iq>
+`
+	mockOut := &mockConnIOReaderWriter{}
+
+	conn := conn{
+		log:       testLogger(),
+		in:        xml.NewDecoder(nil),
+		out:       mockOut,
+		inflights: make(map[data.Cookie]inflight),
+
+		jid: "romeo@montague.net/orchard",
+	}
+
+	done := make(chan bool, 1)
+	go func() {
+		res := conn.ServerHasFeature("trombones")
+		done <- res
+	}()
+
+	waitForInflightTo(&conn, "plays.shakespeare.lit")
+
+	c.Assert(string(mockOut.Written()), Matches, "<iq xmlns='jabber:client' from='romeo@montague.net/orchard' type='get' id='.+'><query xmlns=\"http://jabber.org/protocol/disco#info\"></query></iq>")
+
+	var iq data.ClientIQ
+	err := xml.Unmarshal(mockOut.Written(), &iq)
+	c.Assert(err, IsNil)
+
+	mockIn := &mockConnIOReaderWriter{read: []byte(fmt.Sprintf(fromServer, iq.ID))}
+	conn.in = xml.NewDecoder(mockIn)
+
+	_, err = conn.Next()
+	c.Assert(err, Equals, io.EOF)
+	res := <-done
+
+	c.Assert(res, Equals, false)
+	c.Assert(conn.ServerHasFeature("jabber:iq:time"), Equals, true)
 }

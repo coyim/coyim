@@ -119,25 +119,22 @@ func (c *conn) createAccount(user, password string) error {
 	}
 
 	if iq2.Type == "error" {
-		switch iq2.Error.Condition.XMLName.Local {
-		case "conflict":
-			// <conflict xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+		switch {
+		case iq2.Error.MUCConflict != nil:
 			return ErrUsernameConflict
-		case "not-acceptable":
-			// <not-acceptable xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+		case iq2.Error.MUCNotAcceptable != nil:
 			return ErrMissingRequiredRegistrationInfo
-		// TODO: this case shouldn't happen
-		case "bad-request":
-			//<bad-request xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
-			return ErrRegistrationFailed
-		case "not-allowed":
-			//<not-allowed xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+		case iq2.Error.MUCNotAllowed != nil:
 			return ErrWrongCaptcha
-		case "resource-constraint":
-			//<resource-constraint xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
-			return ErrResourceConstraint
 		default:
-			return ErrRegistrationFailed
+			switch iq2.Error.Condition.XMLName.Local {
+			case "bad-request":
+				return ErrRegistrationFailed
+			case "resource-constraint":
+				return ErrResourceConstraint
+			default:
+				return ErrRegistrationFailed
+			}
 		}
 	}
 
@@ -190,18 +187,16 @@ func (c *conn) ChangePassword(username, server, password string) error {
 
 	// TODO: server can also return a form requiring more information from the user. This should be rendered.
 	if iq.Type == "error" {
+		if iq.Error.MUCNotAllowed != nil {
+			return ErrNotAllowed
+		} else if iq.Error.MUCNotAuthorized != nil {
+			return ErrNotAuthorized
+		}
+
 		switch iq.Error.Condition.XMLName.Local {
 		case "bad-request":
-			//<bad-request xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
 			return ErrBadRequest
-		case "not-authorized":
-			//<not-authorized xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
-			return ErrNotAuthorized
-		case "not-allowed":
-			//<not-allowed xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
-			return ErrNotAllowed
 		case "unexpected-request":
-			//<unexpected-request xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
 			return ErrUnexpectedRequest
 		default:
 			return ErrChangePasswordFailed

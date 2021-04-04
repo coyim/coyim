@@ -43,9 +43,17 @@ func (e *Extension) GoString() string {
 	return fmt.Sprintf("<Extension %v body=%q>", e.XMLName, e.Body)
 }
 
+// StanzaErrorCondition represents an error condition inside StanzaError
+type StanzaErrorCondition struct {
+	XMLName xml.Name
+	Body    string `xml:",innerxml"`
+}
+
 // StanzaError implements RFC 3920, section 9.3.
 //TODO RFC 6120 obsoletes RFC 3920, section "8.3.2. Syntax"
 type StanzaError struct {
+	XMLName xml.Name `xml:"jabber:client error"`
+
 	By   string `xml:"by,attr"`
 	Code string `xml:"code,attr"` // NOTE: I could not find this in the spec
 
@@ -57,13 +65,9 @@ type StanzaError struct {
 	Type string `xml:"type,attr"`
 	Text string `xml:"urn:ietf:params:xml:ns:xmpp-stanzas text"`
 
-	//TODO: Replace references by a function call
-	Condition struct {
-		XMLName xml.Name
-		Body    string `xml:",innerxml"`
-	} `xml:",any"`
+	Condition StanzaErrorCondition `xml:",any"`
 
-	ApplicationCondition *Any `xml:",any,omitempty"`
+	//	ApplicationCondition *Any `xml:",any,omitempty"`
 
 	MUCNotAuthorized        *MUCNotAuthorized
 	MUCForbidden            *MUCForbidden

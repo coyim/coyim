@@ -1,6 +1,7 @@
 package data
 
 import (
+	"bytes"
 	"encoding/xml"
 
 	. "gopkg.in/check.v1"
@@ -55,4 +56,16 @@ func (s *ClientSuite) Test_StanzaError_AnyMUCError(c *C) {
 
 	c.Assert(se.AnyMUCError(), Equals, mec)
 	c.Assert((&StanzaError{}).AnyMUCError(), IsNil)
+}
+
+func (s *ClientSuite) Test_StanzaError_parsesConditionCorrectly(c *C) {
+	data := `<error xmlns="jabber:client" code='409' type='cancel'>
+  <bad-request xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+</error>
+`
+	v := &StanzaError{}
+	err := xml.NewDecoder(bytes.NewBuffer([]byte(data))).DecodeElement(v, nil)
+	c.Assert(err, IsNil)
+	c.Assert(v.Condition.XMLName.Space, Equals, "urn:ietf:params:xml:ns:xmpp-stanzas")
+	c.Assert(v.Condition.XMLName.Local, Equals, "bad-request")
 }

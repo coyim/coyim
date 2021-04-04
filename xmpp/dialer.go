@@ -2,6 +2,7 @@ package xmpp
 
 import (
 	"encoding/xml"
+	"fmt"
 	"io"
 	"net"
 	"strings"
@@ -111,6 +112,7 @@ func (d *dialer) hasCustomServer() bool {
 }
 
 func (d *dialer) getJIDLocalpart() string {
+	// TODO: this should use the `jid` package
 	parts := strings.SplitN(d.JID, "@", 2)
 	return parts[0]
 }
@@ -157,6 +159,7 @@ func (d *dialer) Dial() (interfaces.Conn, error) {
 	// RFC 6120, section 3
 	conn, tls, err := d.newTCPConn()
 	if err != nil {
+		fmt.Printf("bla one\n")
 		return nil, err
 	}
 	d.outerTLS = tls

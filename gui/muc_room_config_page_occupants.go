@@ -91,13 +91,12 @@ func (p *roomConfigOccupantsPage) onAdminJidEdited(_ gtki.CellRendererText, path
 }
 
 func (p *roomConfigOccupantsPage) updateOccupantListCellForString(list string, controller *mucRoomConfigListController, column int, path string, newValue string) {
-	err := controller.updateCellForString(column, path, newValue)
-	if err != nil {
-		p.log.WithError(err).WithFields(log.Fields{
+	if controller.updateCellForString(column, path, newValue) {
+		p.log.WithFields(log.Fields{
 			"path":    path,
 			"newText": newValue,
 			"list":    list,
-		}).Error("The occupant's jid can't be updated")
+		}).Debug("The occupant's jid can't be updated")
 	}
 }
 

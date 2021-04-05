@@ -67,18 +67,24 @@ func (c *mucRoomConfigListController) onListUpdated() {
 }
 
 // updateCellForString MUST be called from the UI thread
-func (c *mucRoomConfigListController) updateCellForString(column int, path string, newValue string) error {
+func (c *mucRoomConfigListController) updateCellForString(column int, path string, newValue string) bool {
 	iter, err := c.listComponent.listModel.GetIterFromString(path)
 	if err != nil {
-		return err
+		return false
+	}
+
+	for _, v := range c.listItems() {
+		if v == newValue {
+			return false
+		}
 	}
 
 	err = c.listComponent.listModel.SetValue(iter, column, newValue)
 	if err != nil {
-		return err
+		return false
 	}
 
-	return nil
+	return true
 }
 
 func (c *mucRoomConfigListController) listItems() []string {

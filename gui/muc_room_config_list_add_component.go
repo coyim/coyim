@@ -171,7 +171,7 @@ func (la *mucRoomConfigListAddComponent) refresh() {
 
 	la.enableApplyIfConditionsAreMet()
 
-	if len(la.formItems) > 1 {
+	if len(la.formItems) > 1 || (len(la.formItems) == 1 && la.form.isFilled()) {
 		la.applyButton.SetLabel(i18n.Local("Add all"))
 	} else {
 		la.applyButton.SetLabel(i18n.Local("Add"))

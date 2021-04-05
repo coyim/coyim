@@ -91,10 +91,6 @@ func (c *conn) authenticateWithPreferedMethod(user, password string) error {
 	c.log.WithField("mechanisms", c.features.Mechanisms.Mechanism).Info("sasl: server supports mechanisms")
 
 	for _, prefered := range pm {
-		if !sasl.ClientSupport(prefered) {
-			continue
-		}
-
 		for _, m := range c.features.Mechanisms.Mechanism {
 			if prefered == m {
 				c.log.WithField("mechanism", m).Info("sasl: authenticating via")

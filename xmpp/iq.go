@@ -29,9 +29,7 @@ func (c *conn) SendIQ(to, typ string, value interface{}) (reply <-chan data.Stan
 		toAttr = "to='" + xmlEscape(to) + "' "
 	}
 
-	if _, err = fmt.Fprintf(out, "<iq xmlns='jabber:client' %sfrom='%s' type='%s' id='%x'>", toAttr, xmlEscape(c.jid), xmlEscape(typ), nextCookie); err != nil {
-		return
-	}
+	_, _ = fmt.Fprintf(out, "<iq xmlns='jabber:client' %sfrom='%s' type='%s' id='%x'>", toAttr, xmlEscape(c.jid), xmlEscape(typ), nextCookie)
 
 	switch v := value.(type) {
 	case data.EmptyReply:
@@ -46,9 +44,7 @@ func (c *conn) SendIQ(to, typ string, value interface{}) (reply <-chan data.Stan
 		return
 	}
 
-	if _, err = fmt.Fprintf(out, "</iq>"); err != nil {
-		return
-	}
+	_, _ = fmt.Fprintf(out, "</iq>")
 
 	_, err = c.safeWrite(outb.Bytes())
 	if err != nil {
@@ -68,19 +64,15 @@ func (c *conn) SendIQReply(to, typ, id string, value interface{}) error {
 		toAttr = "to='" + xmlEscape(to) + "' "
 	}
 
-	if _, err := fmt.Fprintf(out, "<iq xmlns='jabber:client' %sfrom='%s' type='%s' id='%s'>", toAttr, xmlEscape(c.jid), xmlEscape(typ), xmlEscape(id)); err != nil {
-		return err
-	}
+	_, _ = fmt.Fprintf(out, "<iq xmlns='jabber:client' %sfrom='%s' type='%s' id='%s'>", toAttr, xmlEscape(c.jid), xmlEscape(typ), xmlEscape(id))
+
 	if _, ok := value.(data.EmptyReply); !ok {
 		if err := xml.NewEncoder(out).Encode(value); err != nil {
 			return err
 		}
 	}
-	_, err := fmt.Fprintf(out, "</iq>")
-	if err != nil {
-		return err
-	}
+	_, _ = fmt.Fprintf(out, "</iq>")
 
-	_, err = c.safeWrite(outb.Bytes())
+	_, err := c.safeWrite(outb.Bytes())
 	return err
 }

@@ -20,11 +20,8 @@ func (c *conn) RequestRoster() (<-chan data.Stanza, data.Cookie, error) {
 	cookie := c.getCookie()
 
 	var outb bytes.Buffer
-	out := &outb
 
-	if _, err := fmt.Fprintf(out, "<iq type='get' id='%x'><query xmlns='jabber:iq:roster'/></iq>", cookie); err != nil {
-		return nil, 0, err
-	}
+	_, _ = fmt.Fprintf(&outb, "<iq type='get' id='%x'><query xmlns='jabber:iq:roster'/></iq>", cookie)
 
 	_, err := c.safeWrite(outb.Bytes())
 	if err != nil {

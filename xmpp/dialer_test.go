@@ -222,7 +222,8 @@ func (s *DialerSuite) Test_dialer_Dial_withOuterTLS(c *C) {
 			SkipSRVLookup: true,
 			SkipTLS:       true,
 		},
-		log: testLogger(),
+		log:      testLogger(),
+		sendALPN: true,
 
 		connectTLS: true,
 

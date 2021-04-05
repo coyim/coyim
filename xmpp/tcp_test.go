@@ -5,11 +5,14 @@ import (
 	"io"
 	"io/ioutil"
 	"net"
+	"time"
 
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/net/proxy"
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
+	ourNet "github.com/coyim/coyim/net"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/errors"
 	"github.com/coyim/gotk3adapter/glib_mock"
@@ -101,6 +104,25 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsIfServiceIsNotAvailable(c *C) {
 	c.Check(err, Equals, ErrServiceNotAvailable)
 
 	c.Check(p, MatchesExpectations)
+}
+
+func (s *TCPSuite) Test_newTCPConn_usesDirectProxyIfNoneGiven(c *C) {
+	orgsrvLookupAndFallback := srvLookupAndFallback
+	defer func() {
+		srvLookupAndFallback = orgsrvLookupAndFallback
+	}()
+
+	srvLookupAndFallback = func(*dialer) (net.Conn, bool, error) {
+		return nil, false, nil
+	}
+
+	d := &dialer{
+		proxy: nil,
+	}
+
+	_, _, _ = d.newTCPConn()
+
+	c.Assert(d.proxy, Equals, proxy.Direct)
 }
 
 func testLogger() coylog.Logger {
@@ -225,4 +247,40 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingSucceedsButConnectionFail
 	c.Check(p.called, Equals, 3)
 	c.Check(err, Equals, errors.ErrConnectionFailed)
 	c.Check(p, MatchesExpectations)
+}
+
+type funcDialer struct {
+	f func(string, string) (net.Conn, error)
+}
+
+func (fd *funcDialer) Dial(network, addr string) (net.Conn, error) {
+	return fd.f(network, addr)
+}
+
+func (s *TCPSuite) Test_dialer_connectWithProxy_timesOut(c *C) {
+	orgDefaultDialTimeout := defaultDialTimeout
+	defer func() {
+		defaultDialTimeout = orgDefaultDialTimeout
+	}()
+
+	defaultDialTimeout = 1 * time.Millisecond
+
+	done := make(chan bool, 1)
+	p := &funcDialer{
+		f: func(string, string) (net.Conn, error) {
+			<-done
+			return nil, nil
+		},
+	}
+	d := &dialer{
+		JID:           "foo@jabber.com",
+		serverAddress: "jabber.im:5333",
+
+		proxy: p,
+		log:   testLogger(),
+	}
+
+	_, _, e := d.connectWithProxy(&connectEntry{}, p)
+	done <- true
+	c.Assert(e, Equals, ourNet.ErrTimeout)
 }

@@ -11,7 +11,7 @@ import (
 	"golang.org/x/net/proxy"
 )
 
-const defaultDialTimeout = 60 * time.Second
+var defaultDialTimeout = 60 * time.Second
 
 func (d *dialer) newTCPConn() (net.Conn, bool, error) {
 	if d.proxy == nil {
@@ -37,10 +37,14 @@ func (d *dialer) newTCPConn() (net.Conn, bool, error) {
 		return d.connectWithProxy(ce, d.proxy)
 	}
 
-	return d.srvLookupAndFallback()
+	return srvLookupAndFallback(d)
 }
 
-func (d *dialer) srvLookupAndFallback() (net.Conn, bool, error) {
+var srvLookupAndFallback = func(d *dialer) (net.Conn, bool, error) {
+	return d.defaultLookupAndFallback()
+}
+
+func (d *dialer) defaultLookupAndFallback() (net.Conn, bool, error) {
 	host := d.getJIDDomainpart()
 
 	d.log.WithFields(log.Fields{

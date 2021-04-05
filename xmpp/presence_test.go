@@ -3,6 +3,7 @@ package xmpp
 import (
 	"errors"
 
+	"github.com/coyim/coyim/xmpp/data"
 	. "gopkg.in/check.v1"
 )
 
@@ -83,4 +84,18 @@ func (s *PresenceXMPPSuite) Test_SendPresence_addsStatusToSubscribeMessage(c *C)
 	err := conn.SendPresence("someone<strange>@foo.com", "subscribe", "123", "do you want <to>?")
 	c.Assert(err, IsNil)
 	c.Assert(string(mockOut.write), Equals, expectedPresence)
+}
+
+func (s *PresenceXMPPSuite) Test_conn_SendMUCPresence_works(c *C) {
+	mockOut := &mockConnIOReaderWriter{}
+	cn := conn{
+		log: testLogger(),
+		out: mockOut,
+	}
+
+	err := cn.SendMUCPresence("fo'o", &data.MUC{
+		Password: "bla",
+	})
+	c.Assert(err, IsNil)
+	c.Assert(string(mockOut.write), Matches, "<presence xmlns=\"jabber:client\" id=\".+\" to=\"fo&#39;o\"><x xmlns=\"http://jabber.org/protocol/muc\"><password>bla</password></x></presence>")
 }

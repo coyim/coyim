@@ -2,9 +2,14 @@ package xmpp
 
 import (
 	"encoding/xml"
+	"errors"
 
+	"github.com/coyim/coyim/sasl"
+	"github.com/coyim/coyim/servers"
 	"github.com/coyim/coyim/xmpp/data"
-	"github.com/coyim/coyim/xmpp/errors"
+	xe "github.com/coyim/coyim/xmpp/errors"
+	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 
 	. "gopkg.in/check.v1"
 )
@@ -72,7 +77,7 @@ func (s *SaslXMPPSuite) Test_authenticate_handlesWrongResponses(c *C) {
 	}
 
 	e := conn.Authenticate("foo", "bar")
-	c.Assert(e, Equals, errors.ErrAuthenticationFailed)
+	c.Assert(e, Equals, xe.ErrAuthenticationFailed)
 }
 
 func (s *SaslXMPPSuite) Test_digestMD5_authenticatesWithUsernameAndPassword(c *C) {
@@ -168,4 +173,141 @@ func (s *SaslXMPPSuite) Test_scramSHA1Auth_authenticatesWithUsernameAndPassword(
 	e := conn.Authenticate("user", "pencil")
 	c.Assert(e, IsNil)
 	c.Assert(string(out.write), Equals, expectedOut)
+}
+
+func (s *SaslXMPPSuite) Test_conn_AuthenticationFailure(c *C) {
+	cn := &conn{}
+	c.Assert(cn.AuthenticationFailure(), Equals, xe.ErrAuthenticationFailed)
+
+	cn.features = data.StreamFeatures{
+		Mechanisms: data.SaslMechanisms{
+			Mechanism: []string{
+				"X-GOOGLE-TOKEN",
+			},
+		},
+	}
+	c.Assert(cn.AuthenticationFailure(), Equals, xe.ErrGoogleAuthenticationFailed)
+}
+
+func (s *SaslXMPPSuite) Test_conn_authenticateWithPreferedMethod_handlesBrokenServer(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	brokenRand := &mockConnIOReaderWriter{
+		err: errors.New("io rand error"),
+	}
+
+	cn := &conn{
+		log:  l,
+		rand: brokenRand,
+	}
+	cn.known = &servers.Server{BrokenSCRAM: true}
+	cn.features = data.StreamFeatures{
+		Mechanisms: data.SaslMechanisms{
+			Mechanism: []string{
+				"SCRAM-SHA-512-PLUS",
+				"SCRAM-SHA-512",
+				"SCRAM-SHA-256-PLUS",
+				"SCRAM-SHA-256",
+				"SCRAM-SHA-1-PLUS",
+				"SCRAM-SHA-1",
+				"DIGEST-MD5",
+			},
+		},
+	}
+
+	e := cn.authenticateWithPreferedMethod("foo", "bar")
+
+	c.Assert(e, ErrorMatches, "EOF")
+	c.Assert(len(hook.Entries), Equals, 2)
+	c.Assert(hook.Entries[0].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "sasl: server supports mechanisms")
+	c.Assert(hook.Entries[0].Data, HasLen, 1)
+	c.Assert(hook.Entries[1].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "sasl: authenticating via")
+	c.Assert(hook.Entries[1].Data, HasLen, 1)
+	c.Assert(hook.Entries[1].Data["mechanism"], Equals, "DIGEST-MD5")
+}
+
+func (s *SaslXMPPSuite) Test_conn_BindResource(c *C) {
+	mockOut := &mockConnIOReaderWriter{}
+	mockIn := &mockConnIOReaderWriter{
+		read: []byte(`<iq xmlns="jabber:client">
+<bind xmlns="urn:ietf:params:xml:ns:xmpp-bind">
+  <jid>hello@bar.com/foo</jid>
+  <resource>foobar</resource>
+</bind>
+</iq>`),
+	}
+	cn := &conn{
+		resource: "hello",
+		out:      mockOut,
+		in:       xml.NewDecoder(mockIn),
+	}
+
+	e := cn.BindResource()
+	c.Assert(e, IsNil)
+	c.Assert(cn.resource, Equals, "foo")
+	c.Assert(string(mockOut.write), Equals, "<iq type='set' id='bind_1'><bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'><resource>hello</resource></bind></iq>")
+}
+
+type testSaslMechanism struct {
+	setPropertyReturn error
+	stepReturn        error
+}
+
+func (m *testSaslMechanism) NewClient() sasl.Session {
+	return m
+}
+
+func (m *testSaslMechanism) SetProperty(sasl.Property, string) error {
+	return m.setPropertyReturn
+}
+
+func (m *testSaslMechanism) Step(sasl.Token) (sasl.Token, error) {
+	return sasl.Token{}, m.stepReturn
+}
+
+func (m *testSaslMechanism) NeedsMore() bool {
+	return false
+}
+
+func (m *testSaslMechanism) SetChannelBinding([]byte) {
+}
+
+func (s *SaslXMPPSuite) Test_conn_authenticateWith_unknownMechanism(c *C) {
+	cn := &conn{}
+
+	e := cn.authenticateWith("something unknown", "hello", "foo")
+	c.Assert(e, ErrorMatches, "the requested mechanism is not supported")
+}
+
+func (s *SaslXMPPSuite) Test_conn_authenticateWith_mechanismThatFailsOnFirstStep(c *C) {
+	ms := &testSaslMechanism{
+		stepReturn: errors.New("marker marker"),
+	}
+	sasl.RegisterMechanism("mechanism: Test_conn_authenticateWith_mechanismThatFailsOnFirstStep", ms)
+
+	cn := &conn{}
+	e := cn.authenticateWith("mechanism: Test_conn_authenticateWith_mechanismThatFailsOnFirstStep", "hello", "foo")
+	c.Assert(e, ErrorMatches, "marker marker")
+}
+
+func (s *SaslXMPPSuite) Test_conn_challengeLoop_failsIfStepFails(c *C) {
+	ms := &testSaslMechanism{
+		stepReturn: errors.New("marker marker"),
+	}
+
+	mockIn := &mockConnIOReaderWriter{
+		read: []byte(`
+<challenge xmlns="urn:ietf:params:xml:ns:xmpp-sasl">Zm9vIGJhcg==</challenge>
+`),
+	}
+
+	cn := &conn{
+		log: testLogger(),
+		in:  xml.NewDecoder(mockIn),
+	}
+	e := cn.challengeLoop(ms)
+	c.Assert(e, ErrorMatches, "marker marker")
 }

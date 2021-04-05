@@ -29,16 +29,14 @@ type mucRoomConfigListAddComponent struct {
 	form          *roomConfigListForm
 	formItems     []*mucRoomConfigListFormItem
 	onApply       func(jidList []string)
-	addedJidList  []string
 }
 
-func (u *gtkUI) newMUCRoomConfigListAddComponent(dialogTitle, formTitle string, onApply func(jidList []string), parent gtki.Window, addedJidList []string) *mucRoomConfigListAddComponent {
+func (u *gtkUI) newMUCRoomConfigListAddComponent(dialogTitle, formTitle string, onApply func(jidList []string), parent gtki.Window) *mucRoomConfigListAddComponent {
 	la := &mucRoomConfigListAddComponent{
-		u:            u,
-		dialogTitle:  dialogTitle,
-		formTitle:    formTitle,
-		onApply:      onApply,
-		addedJidList: addedJidList,
+		u:           u,
+		dialogTitle: dialogTitle,
+		formTitle:   formTitle,
+		onApply:     onApply,
 	}
 
 	la.initBuilder()
@@ -111,15 +109,8 @@ func (la *mucRoomConfigListAddComponent) appendNewFormItem(jid string) {
 }
 
 func (la *mucRoomConfigListAddComponent) jidCanBeAdded(jid string) bool {
-	jidList := la.addedJidList
-
-	la.forEachForm(func(form *roomConfigListForm) bool {
-		jidList = append(jidList, form.jid())
-		return true
-	})
-
-	for _, l := range jidList {
-		if l == jid {
+	for _, l := range la.formItems {
+		if l.form.jid() == jid {
 			return false
 		}
 	}

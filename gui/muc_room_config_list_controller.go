@@ -47,7 +47,6 @@ func (c *mucRoomConfigListController) onAddOccupantsToList(d *mucRoomConfigListC
 			d.addOccupantDescription,
 			c.onAddListItems,
 			d.parentWindow,
-			c.listItems(),
 		)
 
 		addToList.show()

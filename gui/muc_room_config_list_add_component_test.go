@@ -22,31 +22,18 @@ func (e *jidEntryMock) GetText() (string, error) {
 
 func (s *MUCRoomConfigListAddComponentSuite) Test_mucRoomConfigListAddComponent_jidCanBeAdded(c *C) {
 	la := &mucRoomConfigListAddComponent{
-		addedJidList: []string{"bla", "foo", "baz"},
+		formItems: []*mucRoomConfigListFormItem{
+			{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla"}}},
+			{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "foo"}}},
+			{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}}},
+		},
 	}
 
 	c.Assert(la.jidCanBeAdded("bla"), Equals, false)
 	c.Assert(la.jidCanBeAdded("foo"), Equals, false)
 	c.Assert(la.jidCanBeAdded("baz"), Equals, false)
 	c.Assert(la.jidCanBeAdded("hi"), Equals, true)
-
-	la.formItems = []*mucRoomConfigListFormItem{
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla1"}},
-		},
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "foo1"}},
-		},
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz1"}},
-		},
 	}
-
-	c.Assert(la.jidCanBeAdded("bla1"), Equals, false)
-	c.Assert(la.jidCanBeAdded("foo1"), Equals, false)
-	c.Assert(la.jidCanBeAdded("baz1"), Equals, false)
-	c.Assert(la.jidCanBeAdded("hi1"), Equals, true)
-}
 
 func (s *MUCRoomConfigListAddComponentSuite) Test_mucRoomConfigListAddComponent_removeItemByIndex(c *C) {
 	la := &mucRoomConfigListAddComponent{

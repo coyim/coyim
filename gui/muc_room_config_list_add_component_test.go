@@ -33,21 +33,21 @@ func (s *MUCRoomConfigListAddComponentSuite) Test_mucRoomConfigListAddComponent_
 	c.Assert(la.jidCanBeAdded("foo"), Equals, false)
 	c.Assert(la.jidCanBeAdded("baz"), Equals, false)
 	c.Assert(la.jidCanBeAdded("hi"), Equals, true)
-	}
+}
 
 func (s *MUCRoomConfigListAddComponentSuite) Test_mucRoomConfigListAddComponent_removeItemByIndex(c *C) {
 	la := &mucRoomConfigListAddComponent{
 		contentBox: &gtk_mock.MockBox{},
 		formItems: []*mucRoomConfigListFormItem{
-			&mucRoomConfigListFormItem{
+			{
 				form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla"}},
 				box:  &gtk_mock.MockBox{},
 			},
-			&mucRoomConfigListFormItem{
+			{
 				form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "foo"}},
 				box:  &gtk_mock.MockBox{},
 			},
-			&mucRoomConfigListFormItem{
+			{
 				form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}},
 				box:  &gtk_mock.MockBox{},
 			},
@@ -57,11 +57,11 @@ func (s *MUCRoomConfigListAddComponentSuite) Test_mucRoomConfigListAddComponent_
 	la.removeItemByIndex(0)
 	c.Assert(la.formItems, HasLen, 2)
 	c.Assert(la.formItems, DeepEquals, []*mucRoomConfigListFormItem{
-		&mucRoomConfigListFormItem{
+		{
 			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "foo"}},
 			box:  &gtk_mock.MockBox{},
 		},
-		&mucRoomConfigListFormItem{
+		{
 			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}},
 			box:  &gtk_mock.MockBox{},
 		},
@@ -70,7 +70,7 @@ func (s *MUCRoomConfigListAddComponentSuite) Test_mucRoomConfigListAddComponent_
 	la.removeItemByIndex(1)
 	c.Assert(la.formItems, HasLen, 1)
 	c.Assert(la.formItems, DeepEquals, []*mucRoomConfigListFormItem{
-		&mucRoomConfigListFormItem{
+		{
 			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "foo"}},
 			box:  &gtk_mock.MockBox{},
 		},
@@ -80,15 +80,9 @@ func (s *MUCRoomConfigListAddComponentSuite) Test_mucRoomConfigListAddComponent_
 func (s *MUCRoomConfigListAddComponentSuite) Test_mucRoomConfigListAddComponent_forEachForm(c *C) {
 	la := &mucRoomConfigListAddComponent{
 		formItems: []*mucRoomConfigListFormItem{
-			&mucRoomConfigListFormItem{
-				form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla"}},
-			},
-			&mucRoomConfigListFormItem{
-				form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "foo"}},
-			},
-			&mucRoomConfigListFormItem{
-				form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}},
-			},
+			{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla"}}},
+			{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "foo"}}},
+			{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}}},
 		},
 	}
 
@@ -128,43 +122,25 @@ func (s *MUCRoomConfigListAddComponentSuite) Test_mucRoomConfigListAddComponent_
 
 	la.form = &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: ""}}
 	la.formItems = []*mucRoomConfigListFormItem{
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla"}},
-		},
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "foo"}},
-		},
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}},
-		},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla"}}},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "foo"}}},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}}},
 	}
 	c.Assert(la.areAllFormsFilled(), Equals, true)
 
 	la.form = &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: ""}}
 	la.formItems = []*mucRoomConfigListFormItem{
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla"}},
-		},
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: ""}},
-		},
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}},
-		},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla"}}},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: ""}}},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}}},
 	}
 	c.Assert(la.areAllFormsFilled(), Equals, false)
 
 	la.form = &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla@domain.org"}}
 	la.formItems = []*mucRoomConfigListFormItem{
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla"}},
-		},
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: ""}},
-		},
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}},
-		},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla"}}},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: ""}}},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}}},
 	}
 	c.Assert(la.areAllFormsFilled(), Equals, false)
 }
@@ -214,15 +190,9 @@ func (s *MUCRoomConfigListAddComponentSuite) Test_mucRoomConfigListAddComponent_
 
 	la.form = &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: ""}}
 	la.formItems = []*mucRoomConfigListFormItem{
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla"}},
-		},
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "foo"}},
-		},
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}},
-		},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla"}}},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "foo"}}},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}}},
 	}
 	la.refresh()
 	c.Assert(la.removeAllButton.IsSensitive(), Equals, true)
@@ -245,29 +215,17 @@ func (s *MUCRoomConfigListAddComponentSuite) Test_mucRoomConfigListAddComponent_
 	c.Assert(la.applyButton.IsSensitive(), Equals, true)
 
 	la.formItems = []*mucRoomConfigListFormItem{
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla"}},
-		},
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "foo"}},
-		},
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}},
-		},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla"}}},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "foo"}}},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}}},
 	}
 	la.enableApplyIfConditionsAreMet()
 	c.Assert(la.applyButton.IsSensitive(), Equals, true)
 
 	la.formItems = []*mucRoomConfigListFormItem{
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla"}},
-		},
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: ""}},
-		},
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}},
-		},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla"}}},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: ""}}},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}}},
 	}
 	la.enableApplyIfConditionsAreMet()
 	c.Assert(la.applyButton.IsSensitive(), Equals, false)
@@ -339,15 +297,9 @@ func (s *MUCRoomConfigListAddComponentSuite) Test_mucRoomConfigListAddComponent_
 	c.Assert(la.hasItems(), Equals, false)
 
 	la.formItems = []*mucRoomConfigListFormItem{
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla"}},
-		},
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "foo"}},
-		},
-		&mucRoomConfigListFormItem{
-			form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}},
-		},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "bla"}}},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "foo"}}},
+		{form: &roomConfigListForm{jidEntry: &jidEntryMock{defaultText: "baz"}}},
 	}
 
 	c.Assert(la.hasItems(), Equals, true)

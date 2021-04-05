@@ -21,14 +21,9 @@ func (c *conn) sendPresence(presence *data.ClientPresence) error {
 	}
 
 	var outb bytes.Buffer
-	out := &outb
 
-	e := xml.NewEncoder(out).Encode(presence)
-	if e != nil {
-		return e
-	}
-
-	_, e = c.safeWrite(outb.Bytes())
+	_ = xml.NewEncoder(&outb).Encode(presence)
+	_, e := c.safeWrite(outb.Bytes())
 	return e
 }
 
@@ -61,14 +56,9 @@ func (c *conn) SendMUCPresence(to string, m *data.MUC) error {
 // SignalPresence will signal the current presence
 func (c *conn) SignalPresence(state string) error {
 	var outb bytes.Buffer
-	out := &outb
 
 	//We dont use c.sendPresence() because this presence does not have `id` (why?)
-	_, err := fmt.Fprintf(out, "<presence><show>%s</show></presence>", xmlEscape(state))
-	if err != nil {
-		return err
-	}
-
-	_, err = c.safeWrite(outb.Bytes())
+	_, _ = fmt.Fprintf(&outb, "<presence><show>%s</show></presence>", xmlEscape(state))
+	_, err := c.safeWrite(outb.Bytes())
 	return err
 }

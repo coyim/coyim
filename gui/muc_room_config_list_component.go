@@ -116,8 +116,21 @@ func (cl *mucRoomConfigListComponent) getSelectedRow() (gtki.TreeIter, error) {
 
 // addListItems MUST be called from the UI thread
 func (cl *mucRoomConfigListComponent) addListItems(jids []string) {
-	cl.jidList = append(cl.jidList, jids...)
+	for _, v := range jids {
+		if cl.canBeAdded(v) {
+			cl.jidList = append(cl.jidList, v)
+		}
+	}
 	cl.redraw()
+}
+
+func (cl *mucRoomConfigListComponent) canBeAdded(jid string) bool {
+	for _, cj := range cl.jidList {
+		if cj == jid {
+			return false
+		}
+	}
+	return true
 }
 
 // redraw MUST be called from the UI thread

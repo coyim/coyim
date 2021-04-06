@@ -76,7 +76,7 @@ func (r *roomViewRosterInfo) initBuilder() {
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_hide":            r.hide,
-		"on_occupant_action": r.onOccupantAction,
+		"on_occupant_action": r.onOccupantActionClicked,
 		"on_kick":            r.onKickOccupantClicked,
 	})
 }
@@ -115,12 +115,20 @@ func (r *roomViewRosterInfo) initDefaults() {
 	)
 }
 
-func (r *roomViewRosterInfo) occupantUpdated() {
-	doInUIThread(r.refresh)
+// onOccupantAction MUST be called from the UI thread
+func (r *roomViewRosterInfo) onOccupantActionClicked(_ gtki.ListBox, row gtki.ListBoxRow) {
+	switch name, _ := row.GetName(); name {
+	case changeAffiliationActionName:
+		r.onChangeAffiliation()
+	case changeRoleActionName:
+		r.onChangeRole()
+	}
 }
 
-func (r *roomViewRosterInfo) updateSelfOccupant(occupant *muc.Occupant) {
-	r.selfOccupant = occupant
+// onKickOccupantClicked MUST be called from the UI thread
+func (r *roomViewRosterInfo) onKickOccupantClicked() {
+	kd := r.rosterView.newKickOccupantView(r.occupant)
+	kd.show()
 }
 
 // onOccupantUpdated MUST NOT be called from the UI thread
@@ -128,11 +136,13 @@ func (r *roomViewRosterInfo) onOccupantUpdated() {
 	doInUIThread(r.refresh)
 }
 
+// updateOccupantAffiliation MUST NOT be called from the UI thread
 func (r *roomViewRosterInfo) updateOccupantAffiliation(occupant *muc.Occupant, previousAffiliation data.Affiliation, reason string) {
 	r.rosterView.updateOccupantAffiliation(occupant, previousAffiliation, reason)
 	r.onOccupantUpdated()
 }
 
+// updateOccupantRole MUST NOT be called from the UI thread
 func (r *roomViewRosterInfo) updateOccupantRole(occupant *muc.Occupant, role data.Role, reason string) {
 	r.rosterView.updateOccupantRole(occupant, role, reason)
 	r.onOccupantUpdated()
@@ -280,8 +290,4 @@ func (r *roomViewRosterInfo) hide() {
 // parentWindow MUST be called from the UI threads
 func (r *roomViewRosterInfo) parentWindow() gtki.Window {
 	return r.rosterView.parentWindow()
-}
-
-func (r *roomViewRosterInfo) contentBox() gtki.Box {
-	return r.view
 }

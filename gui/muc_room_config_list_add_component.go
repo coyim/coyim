@@ -91,10 +91,8 @@ func (la *mucRoomConfigListAddComponent) appendNewFormItem(jid string) {
 		return
 	}
 
-	nextIndex := len(la.formItems)
-
-	onRemove := func() {
-		la.removeItemByIndex(nextIndex)
+	onRemove := func(index int) {
+		la.removeItemAndUpdateIndexes(index)
 		la.refresh()
 	}
 
@@ -102,6 +100,7 @@ func (la *mucRoomConfigListAddComponent) appendNewFormItem(jid string) {
 	form.setJid(jid)
 
 	item := newMUCRoomConfigListFormItem(form, nil, onRemove)
+	item.updateIndex(len(la.formItems))
 	la.formItems = append(la.formItems, item)
 	la.contentBox.PackStart(item.contentBox(), false, true, 0)
 
@@ -119,11 +118,15 @@ func (la *mucRoomConfigListAddComponent) jidCanBeAdded(jid string) bool {
 }
 
 // removeItemByIndex MUST be called from the UI thread
+func (la *mucRoomConfigListAddComponent) removeItemAndUpdateIndexes(index int) {
+	la.removeItemByIndex(index)
+	la.updateItemIndexes()
+}
+
 func (la *mucRoomConfigListAddComponent) removeItemByIndex(index int) {
 	items := []*mucRoomConfigListFormItem{}
-
-	for ix, itm := range la.formItems {
-		if ix == index {
+	for i, itm := range la.formItems {
+		if i == index {
 			la.contentBox.Remove(itm.contentBox())
 		} else {
 			items = append(items, itm)
@@ -131,6 +134,14 @@ func (la *mucRoomConfigListAddComponent) removeItemByIndex(index int) {
 	}
 
 	la.formItems = items
+}
+
+func (la *mucRoomConfigListAddComponent) updateItemIndexes() {
+	for i, itm := range la.formItems {
+		if i != itm.index {
+			itm.updateIndex(itm.index - 1)
+		}
+	}
 }
 
 // forEachForm MUST be called from the UI thread

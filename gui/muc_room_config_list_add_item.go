@@ -3,7 +3,8 @@ package gui
 import "github.com/coyim/gotk3adapter/gtki"
 
 type mucRoomConfigListFormItem struct {
-	form *roomConfigListForm
+	index int
+	form  *roomConfigListForm
 
 	box          gtki.Box    `gtk-widget:"room-config-list-add-item-box"`
 	formBox      gtki.Box    `gtk-widget:"room-config-list-add-item-form-box"`
@@ -11,7 +12,7 @@ type mucRoomConfigListFormItem struct {
 	removeButton gtki.Button `gtk-widget:"room-config-list-remove-item-button"`
 }
 
-func newMUCRoomConfigListFormItem(form *roomConfigListForm, onAdd func(jid string), onRemove func()) *mucRoomConfigListFormItem {
+func newMUCRoomConfigListFormItem(form *roomConfigListForm, onAdd func(jid string), onRemove func(index int)) *mucRoomConfigListFormItem {
 	lfi := &mucRoomConfigListFormItem{
 		form: form,
 	}
@@ -47,12 +48,14 @@ func (lfi *mucRoomConfigListFormItem) initListAdd(onAdd func(jid string)) {
 	}
 }
 
-func (lfi *mucRoomConfigListFormItem) initListRemove(onRemove func()) {
+func (lfi *mucRoomConfigListFormItem) initListRemove(onRemove func(index int)) {
 	lfi.removeButton.SetSensitive(false)
 	lfi.removeButton.SetVisible(false)
 
 	if onRemove != nil {
-		lfi.removeButton.Connect("clicked", onRemove)
+		lfi.removeButton.Connect("clicked", func() {
+			onRemove(lfi.index)
+		})
 		lfi.removeButton.SetSensitive(true)
 		lfi.removeButton.SetVisible(true)
 	}
@@ -60,6 +63,10 @@ func (lfi *mucRoomConfigListFormItem) initListRemove(onRemove func()) {
 
 func (lfi *mucRoomConfigListFormItem) initDefaults() {
 	lfi.formBox.Add(lfi.form.formView)
+}
+
+func (lfi *mucRoomConfigListFormItem) updateIndex(i int) {
+	lfi.index = i
 }
 
 func (lfi *mucRoomConfigListFormItem) contentBox() gtki.Box {

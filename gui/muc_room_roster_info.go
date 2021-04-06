@@ -63,6 +63,7 @@ func (r *roomViewRoster) newRoomViewRosterInfo() *roomViewRosterInfo {
 	}
 
 	ri.initBuilder()
+	ri.initSubscribers()
 	ri.initCSSStyles()
 	ri.initDefaults()
 
@@ -80,18 +81,17 @@ func (r *roomViewRosterInfo) initBuilder() {
 	})
 }
 
-func (r *roomViewRosterInfo) onOccupantAction(_ gtki.ListBox, row gtki.ListBoxRow) {
-	switch name, _ := row.GetName(); name {
-	case changeAffiliationActionName:
-		r.onChangeAffiliation()
-	case changeRoleActionName:
-		r.onChangeRole()
-	}
-}
-
-func (r *roomViewRosterInfo) onKickOccupantClicked() {
-	kd := r.rosterView.newKickOccupantView(r.occupant)
-	kd.show()
+func (r *roomViewRosterInfo) initSubscribers() {
+	r.rosterView.roomView.subscribe("roster-info", func(ev roomViewEvent) {
+		switch e := ev.(type) {
+		case occupantSelfJoinedEvent:
+			r.selfOccupant = r.rosterView.roomSelfOccupant()
+		case occupantUpdatedEvent:
+			if e.nickname == r.occupant.Nickname {
+				r.onOccupantUpdated()
+			}
+		}
+	})
 }
 
 func (r *roomViewRosterInfo) initCSSStyles() {
@@ -107,6 +107,7 @@ func (r *roomViewRosterInfo) initDefaults() {
 	)
 
 	r.onReset.add(
+		r.removeOccupantEvents,
 		r.removeOccupantInfo,
 		r.removeOccupantAffiliationInfo,
 		r.removeOccupantRoleInfo,
@@ -122,21 +123,41 @@ func (r *roomViewRosterInfo) updateSelfOccupant(occupant *muc.Occupant) {
 	r.selfOccupant = occupant
 }
 
+// onOccupantUpdated MUST NOT be called from the UI thread
+func (r *roomViewRosterInfo) onOccupantUpdated() {
+	doInUIThread(r.refresh)
+}
+
 func (r *roomViewRosterInfo) updateOccupantAffiliation(occupant *muc.Occupant, previousAffiliation data.Affiliation, reason string) {
 	r.rosterView.updateOccupantAffiliation(occupant, previousAffiliation, reason)
-	doInUIThread(r.refresh)
+	r.onOccupantUpdated()
 }
 
 func (r *roomViewRosterInfo) updateOccupantRole(occupant *muc.Occupant, role data.Role, reason string) {
 	r.rosterView.updateOccupantRole(occupant, role, reason)
-	doInUIThread(r.refresh)
+	r.onOccupantUpdated()
 }
 
 // showOccupantInfo MUST be called from the UI thread
 func (r *roomViewRosterInfo) showOccupantInfo(occupant *muc.Occupant) {
 	r.occupant = occupant
+
+	r.rosterView.roomView.subscribe("roster-occupant-info", func(ev roomViewEvent) {
+		switch e := ev.(type) {
+		case occupantUpdatedEvent:
+			if e.nickname == r.occupant.Nickname {
+				r.onOccupantUpdated()
+			}
+		}
+	})
+
 	r.refresh()
 	r.show()
+}
+
+// removeOccupantEvents MUST be called from the UI thread
+func (r *roomViewRosterInfo) removeOccupantEvents() {
+	r.rosterView.roomView.unsubscribe("roster-occupant-info")
 }
 
 // validateOccupantPrivileges MUST be called from the UI thread

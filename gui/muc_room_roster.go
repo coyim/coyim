@@ -195,17 +195,19 @@ func (r *roomViewRoster) selfOccupantUpdated(role data.Role) {
 }
 
 func (r *roomViewRoster) onSelfOccupantJoined() {
-	r.rosterInfo.updateSelfOccupant(r.roomView.room.SelfOccupant())
 	r.onUpdateRoster()
 }
 
 func (r *roomViewRoster) occupantUpdateEvent() {
-	r.rosterInfo.occupantUpdated()
 	r.onUpdateRoster()
 }
 
 func (r *roomViewRoster) onUpdateRoster() {
 	doInUIThread(r.redraw)
+}
+
+func (r *roomViewRoster) roomSelfOccupant() *muc.Occupant {
+	return r.roomView.room.SelfOccupant()
 }
 
 func (r *roomViewRoster) draw() {

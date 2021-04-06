@@ -93,6 +93,11 @@ func (f *roomConfigListForm) isFilled() bool {
 // resetAndFocusJidEntry MUST be called from the UI thread
 func (f *roomConfigListForm) resetAndFocusJidEntry() {
 	f.setJid("")
+	f.focusJidEntry()
+}
+
+// focusJidEntry MUST be called from the UI thread
+func (f *roomConfigListForm) focusJidEntry() {
 	f.jidEntry.GrabFocus()
 }
 

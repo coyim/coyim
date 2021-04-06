@@ -93,6 +93,7 @@ func (la *mucRoomConfigListAddComponent) appendNewFormItem(jid string) {
 
 	onRemove := func(index int) {
 		la.removeItemAndUpdateIndexes(index)
+		la.form.focusJidEntry()
 		la.refresh()
 	}
 

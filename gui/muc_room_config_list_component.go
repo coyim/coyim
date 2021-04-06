@@ -12,11 +12,10 @@ const jidColumnIndex = 0
 type mucRoomConfigListComponent struct {
 	u                       *gtkUI
 	list                    gtki.TreeView
-	listModel               gtki.TreeStore
+	listModel               gtki.ListStore
 	addButton, removeButton gtki.Button
 	onAdd                   func()
 	onNoItems               func()
-	jidList                 []string
 }
 
 func (u *gtkUI) newMUCRoomConfigListComponent(list gtki.TreeView, addButton, removeButton gtki.Button, onAdd, onNoItems func()) *mucRoomConfigListComponent {
@@ -36,7 +35,7 @@ func (u *gtkUI) newMUCRoomConfigListComponent(list gtki.TreeView, addButton, rem
 }
 
 func (cl *mucRoomConfigListComponent) initListModel() {
-	lm, _ := g.gtk.TreeStoreNew(
+	lm, _ := g.gtk.ListStoreNew(
 		// jid
 		glibi.TYPE_STRING,
 	)
@@ -72,22 +71,7 @@ func (cl *mucRoomConfigListComponent) onRemoveClicked() {
 		return
 	}
 
-	jidValue, _ := cl.listModel.GetValue(iter, jidColumnIndex)
-	selectedJid, _ := jidValue.GetString()
-
-	copy := []string{}
-	for _, jid := range cl.jidList {
-		if jid != selectedJid {
-			copy = append(copy, jid)
-		}
-	}
-
-	cl.jidList = copy
-	cl.redraw()
-
-	if len(cl.jidList) == 0 && cl.onNoItems != nil {
-		cl.onNoItems()
-	}
+	cl.listModel.Remove(iter)
 }
 
 // onSelectionChanged MUST be called from the UI thread
@@ -118,29 +102,27 @@ func (cl *mucRoomConfigListComponent) getSelectedRow() (gtki.TreeIter, error) {
 func (cl *mucRoomConfigListComponent) addListItems(jids []string) {
 	for _, v := range jids {
 		if cl.canBeAdded(v) {
-			cl.jidList = append(cl.jidList, v)
+			li := cl.listModel.Append()
+			_ = cl.listModel.SetValue(li, jidColumnIndex, v)
 		}
 	}
-	cl.redraw()
 }
 
 func (cl *mucRoomConfigListComponent) canBeAdded(jid string) bool {
-	for _, cj := range cl.jidList {
-		if cj == jid {
+	iter, ok := cl.listModel.GetIterFirst()
+
+	for ok {
+		v, _ := cl.listModel.GetValue(iter, jidColumnIndex)
+		s, _ := v.GetString()
+
+		if s == jid {
 			return false
 		}
+
+		ok = cl.listModel.IterNext(iter)
 	}
+
 	return true
-}
-
-// redraw MUST be called from the UI thread
-func (cl *mucRoomConfigListComponent) redraw() {
-	cl.listModel.Clear()
-
-	for _, jid := range cl.jidList {
-		li := cl.listModel.Append(nil)
-		_ = cl.listModel.SetValue(li, jidColumnIndex, jid)
-	}
 }
 
 func enableListWidget(w gtki.Widget) {

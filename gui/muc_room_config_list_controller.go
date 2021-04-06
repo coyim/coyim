@@ -88,9 +88,10 @@ func (c *mucRoomConfigListController) updateCellForString(column int, path strin
 }
 
 func (c *mucRoomConfigListController) listItems() []string {
-	return c.listComponent.jidList
+	return toArray(c.listComponent.listModel)
 }
 
 func (c *mucRoomConfigListController) hasItems() bool {
-	return len(c.listItems()) > 0
+	_, ok := c.listComponent.listModel.GetIterFirst()
+	return ok
 }

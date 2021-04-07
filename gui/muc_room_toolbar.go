@@ -6,14 +6,17 @@ import (
 )
 
 type roomViewToolbar struct {
-	view                gtki.Box        `gtk-widget:"room-view-toolbar"`
-	roomNameLabel       gtki.Label      `gtk-widget:"room-name-label"`
-	roomSubjectLabel    gtki.Label      `gtk-widget:"room-subject-label"`
-	roomStatusIcon      gtki.Image      `gtk-widget:"room-status-icon"`
-	roomMenuButton      gtki.MenuButton `gtk-widget:"room-menu-button"`
-	roomMenu            gtki.Menu       `gtk-widget:"room-menu"`
-	leaveRoomMenuItem   gtki.MenuItem   `gtk-widget:"leave-room-menu-item"`
-	destroyRoomMenuItem gtki.MenuItem   `gtk-widget:"destroy-room-menu-item"`
+	view                  gtki.Box        `gtk-widget:"room-view-toolbar"`
+	roomNameLabel         gtki.Label      `gtk-widget:"room-name-label"`
+	roomStatusIcon        gtki.Image      `gtk-widget:"room-status-icon"`
+	roomMenuButton        gtki.MenuButton `gtk-widget:"room-menu-button"`
+	roomSubjectBox        gtki.Box        `gtk-widget:"room-subject-box"`
+	roomSubjectLabel      gtki.Label      `gtk-widget:"room-subject-label"`
+	roomSubjectHideButton gtki.Button     `gtk-widget:"room-subject-hide-button"`
+	roomSubjectShowButton gtki.Button     `gtk-widget:"room-subject-show-button"`
+	roomMenu              gtki.Menu       `gtk-widget:"room-menu"`
+	leaveRoomMenuItem     gtki.MenuItem   `gtk-widget:"leave-room-menu-item"`
+	destroyRoomMenuItem   gtki.MenuItem   `gtk-widget:"destroy-room-menu-item"`
 }
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
@@ -31,8 +34,10 @@ func (t *roomViewToolbar) initBuilder(v *roomView) {
 	panicOnDevError(builder.bindObjects(t))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_leave_room":   v.onLeaveRoom,
-		"on_destroy_room": v.onDestroyRoom,
+		"on_leave_room":        v.onLeaveRoom,
+		"on_destroy_room":      v.onDestroyRoom,
+		"on_show_room_subject": t.onShowRoomSubject,
+		"on_hide_room_subject": t.onHideRoomSubject,
 	})
 }
 
@@ -98,10 +103,22 @@ func (t *roomViewToolbar) disable() {
 
 // displayRoomSubject MUST be called from the UI thread
 func (t *roomViewToolbar) displayRoomSubject(subject string) {
+	t.roomSubjectShowButton.Hide()
 	t.roomSubjectLabel.SetText(subject)
+
 	if subject == "" {
-		t.roomSubjectLabel.Hide()
+		t.roomSubjectBox.Hide()
 	} else {
-		t.roomSubjectLabel.Show()
+		t.roomSubjectBox.Show()
 	}
+}
+
+func (t *roomViewToolbar) onShowRoomSubject() {
+	t.roomSubjectShowButton.Hide()
+	t.roomSubjectBox.Show()
+}
+
+func (t *roomViewToolbar) onHideRoomSubject() {
+	t.roomSubjectShowButton.Show()
+	t.roomSubjectBox.Hide()
 }

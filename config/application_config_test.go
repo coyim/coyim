@@ -527,7 +527,9 @@ func (s *AccountsSuite) Test_LoadOrCreate(c *C) {
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_removeOldFileOnNextSave_removesFileIfIsNotCurrentFilename(c *C) {
-	tmpFileName := generateTempFileName()
+	tmpfile, _ := ioutil.TempFile("", "")
+	tmpFileName := tmpfile.Name()
+	defer os.Remove(tmpFileName)
 
 	a := &ApplicationConfig{filename: tmpFileName}
 

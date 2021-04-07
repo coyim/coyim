@@ -3,6 +3,8 @@ package gtki
 type TreeView interface {
 	Container
 
+	RowExpanded(TreePath) bool
+	ExpandRow(TreePath, bool) bool
 	CollapseRow(TreePath) bool
 	ExpandAll()
 	GetCursor() (TreePath, TreeViewColumn)

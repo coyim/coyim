@@ -28,6 +28,14 @@ func UnwrapTreeView(v gtki.TreeView) *gtk.TreeView {
 	return v.(*treeView).internal
 }
 
+func (v *treeView) RowExpanded(v1 gtki.TreePath) bool {
+	return v.internal.RowExpanded(UnwrapTreePath(v1))
+}
+
+func (v *treeView) ExpandRow(v1 gtki.TreePath, v2 bool) bool {
+	return v.internal.ExpandRow(UnwrapTreePath(v1), v2)
+}
+
 func (v *treeView) CollapseRow(v1 gtki.TreePath) bool {
 	return v.internal.CollapseRow(UnwrapTreePath(v1))
 }

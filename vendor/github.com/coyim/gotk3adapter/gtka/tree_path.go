@@ -26,3 +26,7 @@ func UnwrapTreePath(v gtki.TreePath) *gtk.TreePath {
 	}
 	return v.(*treePath).TreePath
 }
+
+func (v *treePath) GetDepth() int {
+	return v.TreePath.GetDepth()
+}

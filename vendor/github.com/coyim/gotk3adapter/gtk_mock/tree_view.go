@@ -6,6 +6,14 @@ type MockTreeView struct {
 	MockContainer
 }
 
+func (*MockTreeView) RowExpanded(v1 gtki.TreePath) bool {
+	return false
+}
+
+func (*MockTreeView) ExpandRow(v1 gtki.TreePath, v2 bool) bool {
+	return false
+}
+
 func (*MockTreeView) CollapseRow(v1 gtki.TreePath) bool {
 	return false
 }

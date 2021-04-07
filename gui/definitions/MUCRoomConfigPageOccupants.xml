@@ -126,7 +126,7 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="room-config-owner-remove-label">
                                         <property name="visible">True</property>
                                         <property name="label" translatable="yes">Remove</property>
                                       </object>
@@ -334,7 +334,7 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="room-config-admin-remove-label">
                                         <property name="visible">True</property>
                                         <property name="label" translatable="yes">Remove</property>
                                       </object>

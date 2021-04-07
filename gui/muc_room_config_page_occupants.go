@@ -19,11 +19,13 @@ type roomConfigOccupantsPage struct {
 	ownersList            gtki.TreeView         `gtk-widget:"room-config-owners-list"`
 	ownersAddButton       gtki.Button           `gtk-widget:"room-config-owner-add"`
 	ownersRemoveButton    gtki.Button           `gtk-widget:"room-config-owner-remove"`
+	ownersRemoveLabel     gtki.Label            `gtk-widget:"room-config-owner-remove-label"`
 	ownersListJidRenderer gtki.CellRendererText `gtk-widget:"room-config-owner-jid-text-renderer"`
 	adminsListContent     gtki.Box              `gtk-widget:"room-config-admins-list-content"`
 	adminsList            gtki.TreeView         `gtk-widget:"room-config-admin-list"`
 	adminsAddButton       gtki.Button           `gtk-widget:"room-config-admin-add"`
 	adminsRemoveButton    gtki.Button           `gtk-widget:"room-config-admin-remove"`
+	adminsRemoveLabel     gtki.Label            `gtk-widget:"room-config-admin-remove-label"`
 	adminsListJidRenderer gtki.CellRendererText `gtk-widget:"room-config-admin-jid-text-renderer"`
 
 	ownersListController *mucRoomConfigListController
@@ -62,6 +64,7 @@ func (p *roomConfigOccupantsPage) initOwnersListController(parent gtki.Window) {
 	p.ownersListController = p.u.newMUCRoomConfigListController(&mucRoomConfigListControllerData{
 		addOccupantButton:      p.ownersAddButton,
 		removeOccupantButton:   p.ownersRemoveButton,
+		removeOccupantLabel:    p.ownersRemoveLabel,
 		occupantsTreeView:      p.ownersList,
 		parentWindow:           parent,
 		addOccupantDialogTitle: i18n.Local("Add owners"),
@@ -74,6 +77,7 @@ func (p *roomConfigOccupantsPage) initAdminsListController(parent gtki.Window) {
 	p.adminsListController = p.u.newMUCRoomConfigListController(&mucRoomConfigListControllerData{
 		addOccupantButton:      p.adminsAddButton,
 		removeOccupantButton:   p.adminsRemoveButton,
+		removeOccupantLabel:    p.adminsRemoveLabel,
 		occupantsTreeView:      p.adminsList,
 		parentWindow:           parent,
 		addOccupantDialogTitle: i18n.Local("Add administrators"),

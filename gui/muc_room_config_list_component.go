@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -12,16 +13,18 @@ type mucRoomConfigListComponent struct {
 	list                    gtki.TreeView
 	listModel               gtki.ListStore
 	addButton, removeButton gtki.Button
+	removeLabel             gtki.Label
 	onAdd                   func()
 	onNoItems               func()
 }
 
-func (u *gtkUI) newMUCRoomConfigListComponent(list gtki.TreeView, addButton, removeButton gtki.Button, onAdd, onNoItems func()) *mucRoomConfigListComponent {
+func (u *gtkUI) newMUCRoomConfigListComponent(list gtki.TreeView, addButton, removeButton gtki.Button, removeLabel gtki.Label, onAdd, onNoItems func()) *mucRoomConfigListComponent {
 	cl := &mucRoomConfigListComponent{
 		u:            u,
 		list:         list,
 		addButton:    addButton,
 		removeButton: removeButton,
+		removeLabel:  removeLabel,
 		onAdd:        onAdd,
 		onNoItems:    onNoItems,
 	}
@@ -43,8 +46,8 @@ func (cl *mucRoomConfigListComponent) initListModel() {
 }
 
 func (cl *mucRoomConfigListComponent) initDefaults() {
-	enableListWidget(cl.addButton)
-	disableListWidget(cl.removeButton)
+	cl.addButton.SetSensitive(true)
+	cl.removeButton.SetSensitive(false)
 
 	cl.addButton.Connect("clicked", cl.onAddClicked)
 	cl.removeButton.Connect("clicked", cl.onRemoveClicked)
@@ -78,11 +81,14 @@ func (cl *mucRoomConfigListComponent) onSelectionChanged() {
 	selection, _ := cl.list.GetSelection()
 	selectedRows := selection.GetSelectedRows(cl.listModel)
 
-	if len(selectedRows) > 0 {
-		enableListWidget(cl.removeButton)
-		return
+	totalItems := len(selectedRows)
+	cl.removeButton.SetSensitive(totalItems > 0)
+
+	l := i18n.Local("Remove")
+	if totalItems > 1 {
+		l = i18n.Local("Remove all")
 	}
-	disableListWidget(cl.removeButton)
+	cl.removeButton.SetLabel(l)
 }
 
 // addListItems MUST be called from the UI thread
@@ -110,16 +116,4 @@ func (cl *mucRoomConfigListComponent) canBeAdded(jid string) bool {
 	}
 
 	return true
-}
-
-func enableListWidget(w gtki.Widget) {
-	setListWidgetSensitive(w, true)
-}
-
-func disableListWidget(w gtki.Widget) {
-	setListWidgetSensitive(w, false)
-}
-
-func setListWidgetSensitive(w gtki.Widget, v bool) {
-	w.SetSensitive(v)
 }

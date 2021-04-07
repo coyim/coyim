@@ -5,6 +5,7 @@ import "github.com/coyim/gotk3adapter/gtki"
 type mucRoomConfigListControllerData struct {
 	addOccupantButton      gtki.Button
 	removeOccupantButton   gtki.Button
+	removeOccupantLabel    gtki.Label
 	occupantsTreeView      gtki.TreeView
 	parentWindow           gtki.Window
 	addOccupantDialogTitle string
@@ -34,6 +35,7 @@ func (c *mucRoomConfigListController) initListComponent(d *mucRoomConfigListCont
 		d.occupantsTreeView,
 		d.addOccupantButton,
 		d.removeOccupantButton,
+		d.removeOccupantLabel,
 		c.onAddOccupantsToList(d),
 		c.doAfterListUpdated,
 	)

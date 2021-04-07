@@ -489,3 +489,86 @@ func (s *FormsXMPPSuite) Test_processForm_dealsWithMediaCorrectly(c *C) {
 				Var: "hello2",
 			}}})
 }
+
+func (s *FormsXMPPSuite) Test_toFormField_handlesBoolean(c *C) {
+	f := data.FormFieldX{
+		Type: "boolean",
+	}
+
+	res := toFormField(f, nil)
+	resb := res.(*data.BooleanFormField)
+	c.Assert(resb.Result, Equals, false)
+
+	f = data.FormFieldX{
+		Type:   "boolean",
+		Values: []string{"true"},
+	}
+
+	res = toFormField(f, nil)
+	resb = res.(*data.BooleanFormField)
+	c.Assert(resb.Result, Equals, true)
+
+	f = data.FormFieldX{
+		Type:   "boolean",
+		Values: []string{"false"},
+	}
+
+	res = toFormField(f, nil)
+	resb = res.(*data.BooleanFormField)
+	c.Assert(resb.Result, Equals, false)
+
+	f = data.FormFieldX{
+		Type:   "boolean",
+		Values: []string{"1"},
+	}
+
+	res = toFormField(f, nil)
+	resb = res.(*data.BooleanFormField)
+	c.Assert(resb.Result, Equals, true)
+}
+
+func (s *FormsXMPPSuite) Test_toFormField_hidden(c *C) {
+	f := data.FormFieldX{
+		Type: "hidden",
+	}
+
+	res := toFormField(f, nil)
+	c.Assert(res, IsNil)
+}
+
+func (s *FormsXMPPSuite) Test_toFormField_ocr_var(c *C) {
+	f := data.FormFieldX{
+		Type: "bla",
+		Var:  "ocr",
+	}
+
+	res := toFormField(f, [][]data.Media{
+		[]data.Media{
+			data.Media{
+				MIMEType: "foo",
+				Data:     []byte("bar"),
+			},
+		},
+	})
+
+	resb := res.(*data.CaptchaFormField)
+	c.Assert(resb.MediaForm.MIMEType, Equals, "foo")
+	c.Assert(resb.MediaForm.Data, DeepEquals, []byte("bar"))
+}
+
+func (s *FormsXMPPSuite) Test_toFormFieldX_CaptchaFormField(c *C) {
+	ff := &data.CaptchaFormField{
+		TextForm: &data.TextFormField{
+			FormField: data.FormField{
+				Name: "hello",
+			},
+			Result: "foo",
+		},
+	}
+
+	res := toFormFieldX(ff)
+	c.Assert(*res, DeepEquals, data.FormFieldX{
+		Var:    "hello",
+		Values: []string{"foo"},
+	})
+}

@@ -1,8 +1,6 @@
 package gui
 
 import (
-	"errors"
-
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -66,36 +64,25 @@ func (cl *mucRoomConfigListComponent) onAddClicked() {
 
 // onRemoveClicked MUST be called from the UI thread
 func (cl *mucRoomConfigListComponent) onRemoveClicked() {
-	iter, err := cl.getSelectedRow()
-	if err != nil {
-		return
-	}
+	selection, _ := cl.list.GetSelection()
+	selectedRows := selection.GetSelectedRows(cl.listModel)
 
-	cl.listModel.Remove(iter)
+	for i := len(selectedRows) - 1; i >= 0; i-- {
+		iter, _ := cl.listModel.GetIter(selectedRows[i])
+		cl.listModel.Remove(iter)
+	}
 }
 
 // onSelectionChanged MUST be called from the UI thread
 func (cl *mucRoomConfigListComponent) onSelectionChanged() {
-	if _, err := cl.getSelectedRow(); err != nil {
-		disableListWidget(cl.removeButton)
-	} else {
+	selection, _ := cl.list.GetSelection()
+	selectedRows := selection.GetSelectedRows(cl.listModel)
+
+	if len(selectedRows) > 0 {
 		enableListWidget(cl.removeButton)
+		return
 	}
-}
-
-// getSelectedRow MUST be called from the UI thread
-func (cl *mucRoomConfigListComponent) getSelectedRow() (gtki.TreeIter, error) {
-	selection, err := cl.list.GetSelection()
-	if err != nil {
-		return nil, err
-	}
-
-	_, iter, ok := selection.GetSelected()
-	if !ok {
-		return nil, errors.New("no row selected")
-	}
-
-	return iter, nil
+	disableListWidget(cl.removeButton)
 }
 
 // addListItems MUST be called from the UI thread

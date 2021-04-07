@@ -185,7 +185,9 @@
                             <property name="show_expanders">False</property>
                             <property name="enable_grid_lines">horizontal</property>
                             <child internal-child="selection">
-                              <object class="GtkTreeSelection"/>
+                              <object class="GtkTreeSelection">
+                                <property name="mode">GTK_SELECTION_MULTIPLE</property>
+                              </object>
                             </child>
                             <child>
                               <object class="GtkTreeViewColumn" id="room-config-owner-jid-column">

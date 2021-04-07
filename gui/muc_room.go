@@ -130,6 +130,8 @@ func (v *roomView) initSubscribers() {
 
 func (v *roomView) onEventReceived(ev roomViewEvent) {
 	switch t := ev.(type) {
+	case selfOccupantRemovedEvent:
+		v.selfOccupantRemovedEvent()
 	case roomDiscoInfoReceivedEvent:
 		v.roomDiscoInfoReceivedEvent(t.info)
 	case roomConfigRequestTimeoutEvent:
@@ -187,6 +189,15 @@ func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleUpdate) 
 			v.warningsInfoBar.hide()
 		})
 	}
+}
+
+// selfOccupantRemovedEvent MUST be called from the UI thread
+func (v *roomView) selfOccupantRemovedEvent() {
+	v.notifications.info(i18n.Local("You have been removed from this room because it's now a members only room."))
+	doInUIThread(func() {
+		v.account.removeRoomView(v.roomID())
+		v.warningsInfoBar.hide()
+	})
 }
 
 func (v *roomView) showRoomWarnings(info data.RoomDiscoInfo) {

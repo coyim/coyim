@@ -125,7 +125,7 @@ func (r *roomViewRoster) initSubscribers() {
 		case occupantLeftEvent:
 			r.onUpdateRoster()
 		case selfOccupantRemovedEvent:
-			r.onUpdateRoster()
+			r.selfOccupantRemovedEvent()
 		case occupantRemovedEvent:
 			r.onUpdateRoster()
 		case selfOccupantRoleUpdatedEvent:
@@ -258,6 +258,11 @@ func (r *roomViewRoster) onSelfOccupantJoined() {
 }
 
 func (r *roomViewRoster) occupantUpdateEvent() {
+	r.onUpdateRoster()
+}
+
+func (r *roomViewRoster) selfOccupantRemovedEvent() {
+	mucStyles.setDisableRoomStyle(r.view)
 	r.onUpdateRoster()
 }
 

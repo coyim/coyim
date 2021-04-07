@@ -11,49 +11,84 @@
         <child>
           <object class="GtkScrolledWindow" id="roster-scrolled-window">
             <property name="visible">True</property>
+            <property name="hscrollbar_policy">never</property>
             <property name="kinetic_scrolling">False</property>
-            <property name="overlay_scrolling">False</property>
             <child>
               <object class="GtkTreeView" id="roster-tree-view">
                 <property name="visible">True</property>
                 <property name="border_width">1</property>
                 <property name="headers_visible">False</property>
                 <property name="headers_clickable">False</property>
+                <property name="expander_column">expander-column</property>
                 <property name="search_column">1</property>
+                <property name="enable_grid_lines">vertical</property>
                 <property name="tooltip_column">3</property>
-                <property name="activate-on-single-click">True</property>
-                <signal name="row-activated" handler="on_occupant_selected" swapped="no"/>
+                <property name="activate_on_single_click">True</property>
+                <signal name="row-activated" handler="on_occupant_tree_view_row_activated" swapped="no"/>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection">
-                    <property name="mode">GTK_SELECTION_NONE</property>
+                    <property name="mode">none</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="expander-column">
+                    <property name="visible">False</property>
+                    <property name="title" translatable="yes">Expander</property>
+                    <property name="alignment">0.5</property>
+                    <child>
+                      <object class="GtkCellRendererPixbuf" id="hidden-expander-renderer">
+                        <property name="visible">False</property>
+                      </object>
+                    </child>
                   </object>
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="occupant-column">
-                    <property name="spacing">6</property>
                     <property name="title" translatable="yes">Occupant</property>
+                    <property name="expand">True</property>
                     <child>
-                      <object class="GtkCellRendererPixbuf" id="status-icon-renderer"/>
+                      <object class="GtkCellRendererPixbuf" id="expander-renderer">
+                        <property name="width">32</property>
+                        <property name="xpad">12</property>
+                        <property name="xalign">1</property>
+                      </object>
                       <attributes>
+                        <attribute name="cell-background">6</attribute>
+                        <attribute name="visible">10</attribute>
+                        <attribute name="icon-name">9</attribute>
+                      </attributes>
+                    </child>
+                    <child>
+                      <object class="GtkCellRendererPixbuf" id="image-renderer">
+                        <property name="width">58</property>
+                        <property name="xpad">6</property>
+                        <property name="xalign">1</property>
+                      </object>
+                      <attributes>
+                        <attribute name="cell-background">6</attribute>
+                        <attribute name="visible">8</attribute>
                         <attribute name="pixbuf">0</attribute>
                       </attributes>
                     </child>
                     <child>
-                      <object class="GtkCellRendererText" id="nickname-renderer"/>
-                      <attributes>
-                        <attribute name="text">1</attribute>
-                      </attributes>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn" id="role-column">
-                    <property name="title">Role</property>
-                    <child>
-                      <object class="GtkCellRendererText" id="role-renderer">
-                        <property name="foreground_rgba">rgb(136,138,133)</property>
+                      <object class="GtkCellRendererText" id="nickname-renderer">
+                        <property name="ypad">3</property>
                       </object>
                       <attributes>
+                        <attribute name="background">6</attribute>
+                        <attribute name="foreground">5</attribute>
+                        <attribute name="text">1</attribute>
+                        <attribute name="weight">4</attribute>
+                      </attributes>
+                    </child>
+                    <child>
+                      <object class="GtkCellRendererText" id="role-renderer">
+                        <property name="xpad">12</property>
+                        <property name="xalign">1</property>
+                      </object>
+                      <attributes>
+                        <attribute name="background">6</attribute>
+                        <attribute name="foreground">7</attribute>
                         <attribute name="text">2</attribute>
                       </attributes>
                     </child>

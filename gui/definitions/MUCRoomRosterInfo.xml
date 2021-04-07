@@ -178,17 +178,6 @@
       </object>
     </child>
   </object>
-  <object class="GtkMenu" id="roster-info-occupant-menu">
-    <property name="visible">True</property>
-    <property name="menu_type_hint">menu</property>
-    <child>
-      <object class="GtkMenuItem" id="kick-occupant">
-        <property name="visible">True</property>
-        <property name="label" translatable="yes">Expel</property>
-        <signal name="activate" handler="on_kick" swapped="no"/>
-      </object>
-    </child>
-  </object>
   <object class="GtkBox" id="roster-info-box">
     <property name="visible">True</property>
     <property name="orientation">vertical</property>
@@ -198,53 +187,121 @@
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkBox">
+            <property name="height_request">61</property>
             <property name="visible">True</property>
-            <property name="border_width">12</property>
-            <property name="spacing">12</property>
+            <property name="orientation">vertical</property>
             <child>
-              <object class="GtkButtonBox" id="roster-info-actions-box">
+              <object class="GtkBox">
                 <property name="visible">True</property>
-                <property name="layout_style">start</property>
+                <property name="border_width">12</property>
+                <property name="spacing">12</property>
                 <child>
-                  <object class="GtkButton">
+                  <object class="GtkButtonBox" id="roster-info-actions-box">
                     <property name="visible">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="halign">start</property>
-                    <signal name="clicked" handler="on_hide" swapped="no"/>
+                    <property name="layout_style">start</property>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkButton">
                         <property name="visible">True</property>
-                        <property name="spacing">3</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="halign">start</property>
+                        <signal name="clicked" handler="on_hide" swapped="no"/>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="visible">True</property>
+                            <property name="spacing">3</property>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="visible">True</property>
+                                <property name="icon_name">go-previous-symbolic</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="label" translatable="yes">Back</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                        <property name="non_homogeneous">True</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="occupant-info-actions-box">
+                    <property name="visible">True</property>
+                    <property name="valign">center</property>
+                    <property name="spacing">6</property>
+                    <child>
+                      <object class="GtkMenuButton" id="occupant-info-menu-button">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="focus_on_click">False</property>
+                        <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Information</property>
+                        <property name="popover">occupant-info-popover</property>
                         <child>
                           <object class="GtkImage">
                             <property name="visible">True</property>
-                            <property name="icon_name">go-previous-symbolic</property>
+                            <property name="icon_name">dialog-information-symbolic</property>
                           </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="label" translatable="yes">Back</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
                         </child>
                       </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkMenuButton" id="occupant-actions-menu-button">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="focus_on_click">False</property>
+                        <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Administration tools</property>
+                        <property name="popup">roster-info-occupant-menu</property>
+                        <property name="use_popover">False</property>
+                        <child>
+                          <object class="GtkImage">
+                            <property name="visible">True</property>
+                            <property name="icon_name">open-menu-symbolic</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">0</property>
-                    <property name="non_homogeneous">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
                   </packing>
                 </child>
               </object>
@@ -255,50 +312,8 @@
               </packing>
             </child>
             <child>
-              <object class="GtkBox" id="occupant-info-actions-box">
+              <object class="GtkSeparator">
                 <property name="visible">True</property>
-                <property name="spacing">6</property>
-                <child>
-                  <object class="GtkMenuButton" id="occupant-info-menu-button">
-                    <property name="visible">True</property>
-                    <property name="focus_on_click">False</property>
-                    <property name="receives_default">True</property>
-                    <property name="tooltip_text" translatable="yes">Information</property>
-                    <property name="popover">occupant-info-popover</property>
-                    <child>
-                      <object class="GtkImage">
-                        <property name="visible">True</property>
-                        <property name="icon_name">dialog-information-symbolic</property>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="occupant-actions-menu-button">
-                    <property name="visible">True</property>
-                    <property name="focus_on_click">False</property>
-                    <property name="receives_default">True</property>
-                    <property name="tooltip_text" translatable="yes">Administration tools</property>
-                    <property name="popup">roster-info-occupant-menu</property>
-                    <property name="use_popover">False</property>
-                    <child>
-                      <object class="GtkImage">
-                        <property name="visible">True</property>
-                        <property name="icon_name">open-menu-symbolic</property>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -311,16 +326,6 @@
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkSeparator">
-            <property name="visible">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
           </packing>
         </child>
         <child>
@@ -671,6 +676,17 @@
         <property name="fill">True</property>
         <property name="position">2</property>
       </packing>
+    </child>
+  </object>
+  <object class="GtkMenu" id="roster-info-occupant-menu">
+    <property name="visible">True</property>
+    <property name="menu_type_hint">menu</property>
+    <child>
+      <object class="GtkMenuItem" id="kick-occupant">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Expel</property>
+        <signal name="activate" handler="on_kick" swapped="no"/>
+      </object>
     </child>
   </object>
 </interface>

@@ -73,6 +73,8 @@
                     <child>
                       <object class="GtkCellRendererText" id="nickname-renderer">
                         <property name="ypad">3</property>
+                        <property name="ellipsize">end</property>
+                        <property name="single_paragraph_mode">True</property>
                       </object>
                       <attributes>
                         <attribute name="background">6</attribute>

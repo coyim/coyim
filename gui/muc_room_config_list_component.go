@@ -71,8 +71,13 @@ func (cl *mucRoomConfigListComponent) onRemoveClicked() {
 	selectedRows := selection.GetSelectedRows(cl.listModel)
 
 	for i := len(selectedRows) - 1; i >= 0; i-- {
-		iter, _ := cl.listModel.GetIter(selectedRows[i])
-		cl.listModel.Remove(iter)
+		if iter, err := cl.listModel.GetIter(selectedRows[i]); err == nil {
+			cl.listModel.Remove(iter)
+		}
+	}
+
+	if _, ok := cl.listModel.GetIterFirst(); !ok {
+		cl.onNoItems()
 	}
 }
 

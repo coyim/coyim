@@ -703,6 +703,8 @@ func getSelfRoleUpdateMessageForOwnerActor(selfRoleUpdate data.RoleUpdate) strin
 	case selfRoleUpdate.Previous.IsModerator() && selfRoleUpdate.New.IsParticipant():
 		return i18n.Localf("The owner %s changed your role from moderator to participant.",
 			selfRoleUpdate.Actor.Nickname)
+	case selfRoleUpdate.New.IsNone():
+		return i18n.Local("You has been temporarily expelled.")
 	}
 	return i18n.Localf("The owner %s changed your role.",
 		selfRoleUpdate.Actor.Nickname)

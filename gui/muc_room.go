@@ -180,15 +180,13 @@ func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUp
 
 // selfOccupantRoleUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleUpdate) {
+	v.notifications.info(getSelfRoleUpdateMessage(selfRoleUpdate))
 	if selfRoleUpdate.New.IsNone() {
 		doInUIThread(func() {
 			v.account.removeRoomView(v.roomID())
 			v.warningsInfoBar.hide()
 		})
-		return
 	}
-	m := getSelfRoleUpdateMessage(selfRoleUpdate)
-	v.notifications.info(m)
 }
 
 func (v *roomView) showRoomWarnings(info data.RoomDiscoInfo) {

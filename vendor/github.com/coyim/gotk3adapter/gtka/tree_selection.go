@@ -41,3 +41,14 @@ func (v *treeSelection) GetSelected() (gtki.TreeModel, gtki.TreeIter, bool) {
 	v1, v2, v3 := v.internal.GetSelected()
 	return WrapTreeModelSimple(v1), WrapTreeIterSimple(v2), v3
 }
+
+func (v *treeSelection) GetSelectedRows(m gtki.TreeModel) []gtki.TreePath {
+	ll := v.internal.GetSelectedRows(UnwrapTreeModel(m))
+
+	result := []gtki.TreePath{}
+	for cc := ll; cc != nil; cc = cc.Next() {
+		result = append(result, Wrap(cc.Data()).(gtki.TreePath))
+	}
+
+	return result
+}

@@ -18,3 +18,7 @@ func (*MockTreeSelection) UnselectPath(v1 gtki.TreePath) {
 func (*MockTreeSelection) GetSelected() (gtki.TreeModel, gtki.TreeIter, bool) {
 	return nil, nil, false
 }
+
+func (*MockTreeSelection) GetSelectedRows(gtki.TreeModel) []gtki.TreePath {
+	return nil
+}

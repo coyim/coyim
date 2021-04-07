@@ -177,6 +177,7 @@ func (r *roomViewRosterInfo) validateOccupantPrivileges() {
 func (r *roomViewRosterInfo) refreshAffiliationSection() {
 	canChangeAffiliation := r.selfOccupant.CanChangeAffiliation(r.occupant)
 	r.affiliationListBoxRow.SetProperty("activatable", canChangeAffiliation)
+	r.affiliationListBoxRow.SetCanFocus(canChangeAffiliation)
 	r.affiliationActionImage.SetVisible(canChangeAffiliation)
 }
 
@@ -184,6 +185,7 @@ func (r *roomViewRosterInfo) refreshAffiliationSection() {
 func (r *roomViewRosterInfo) refreshRoleSection() {
 	canChangeRole := r.selfOccupant.CanChangeRole(r.occupant)
 	r.roleListBoxRow.SetProperty("activatable", canChangeRole)
+	r.roleListBoxRow.SetCanFocus(canChangeRole)
 	r.roleActionImage.SetVisible(canChangeRole)
 
 	showChangeRoleDisabledLabel := r.selfOccupant.Affiliation.IsOwner() && (r.occupant.Affiliation.IsOwner() || r.occupant.Affiliation.IsAdmin())

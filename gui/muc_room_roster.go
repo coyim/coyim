@@ -104,7 +104,7 @@ func (r *roomViewRoster) initDefaults() {
 		glibi.TYPE_STRING,
 		// occupant image visibility
 		glibi.TYPE_BOOLEAN,
-		// occupant role visibility
+		// occupant affiliation visibility
 		glibi.TYPE_BOOLEAN,
 		// expander icon name
 		glibi.TYPE_STRING,

@@ -31,6 +31,8 @@
         <property name="visible">True</property>
         <property name="hexpand">True</property>
         <property name="vexpand">True</property>
+        <property name="position_set">True</property>
+        <property name="wide_handle">True</property>
         <child>
           <object class="GtkBox" id="room-view-content">
             <property name="width_request">500</property>
@@ -60,7 +62,7 @@
           </object>
           <packing>
             <property name="resize">False</property>
-            <property name="shrink">False</property>
+            <property name="shrink">True</property>
           </packing>
         </child>
       </object>

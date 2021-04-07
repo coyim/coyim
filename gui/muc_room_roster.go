@@ -33,6 +33,7 @@ const (
 	roomViewRosterBackgroundIndex
 	roomViewRosterOccupantRoleForegroundIndex
 	roomViewRosterOccupantImageVisibilityIndex
+	roomViewRosterOccupantAffiliationVisibilityIndex
 	roomViewRosterExpanderIconIndex
 	roomViewRosterExpanderVisibilityIndex
 )
@@ -102,6 +103,8 @@ func (r *roomViewRoster) initDefaults() {
 		// occupant role foreground color
 		glibi.TYPE_STRING,
 		// occupant image visibility
+		glibi.TYPE_BOOLEAN,
+		// occupant role visibility
 		glibi.TYPE_BOOLEAN,
 		// expander icon name
 		glibi.TYPE_STRING,
@@ -303,13 +306,14 @@ func (r *roomViewRoster) drawOccupantsByRole(role string, occupants []*muc.Occup
 	cs := r.u.unifiedCached.ui.currentMUCColorSet()
 
 	modelSetValues(r.model, iter, map[int]interface{}{
-		roomViewRosterNicknameIndex:                roleHeader,
-		roomViewRosterFontWeightIndex:              700,
-		roomViewRosterBackgroundIndex:              cs.rosterGroupBackground,
-		roomViewRosterForegroundIndex:              cs.rosterGroupForeground,
-		roomViewRosterExpanderIconIndex:            roomViewRosterGroupCollapseIconName,
-		roomViewRosterExpanderVisibilityIndex:      true,
-		roomViewRosterOccupantImageVisibilityIndex: false,
+		roomViewRosterNicknameIndex:                      roleHeader,
+		roomViewRosterFontWeightIndex:                    700,
+		roomViewRosterBackgroundIndex:                    cs.rosterGroupBackground,
+		roomViewRosterForegroundIndex:                    cs.rosterGroupForeground,
+		roomViewRosterExpanderIconIndex:                  roomViewRosterGroupCollapseIconName,
+		roomViewRosterExpanderVisibilityIndex:            true,
+		roomViewRosterOccupantImageVisibilityIndex:       false,
+		roomViewRosterOccupantAffiliationVisibilityIndex: false,
 	})
 
 	for _, o := range occupants {
@@ -322,15 +326,18 @@ func (r *roomViewRoster) addOccupantToRoster(o *muc.Occupant, parentIter gtki.Tr
 
 	cs := r.u.unifiedCached.ui.currentMUCColorSet()
 
+	displayAffiliation := affiliationDisplayName(o.Affiliation)
+
 	modelSetValues(r.model, iter, map[int]interface{}{
-		roomViewRosterImageIndex:                   getOccupantIconForStatus(o.Status),
-		roomViewRosterNicknameIndex:                o.Nickname,
-		roomViewRosterAffiliationIndex:             affiliationDisplayName(o.Affiliation),
-		roomViewRosterInfoIndex:                    occupantDisplayTooltip(o),
-		roomViewRosterFontWeightIndex:              400,
-		roomViewRosterOccupantRoleForegroundIndex:  cs.rosterOccupantRoleForeground,
-		roomViewRosterExpanderVisibilityIndex:      false,
-		roomViewRosterOccupantImageVisibilityIndex: true,
+		roomViewRosterImageIndex:                         getOccupantIconForStatus(o.Status),
+		roomViewRosterNicknameIndex:                      o.Nickname,
+		roomViewRosterAffiliationIndex:                   displayAffiliation,
+		roomViewRosterInfoIndex:                          occupantDisplayTooltip(o),
+		roomViewRosterFontWeightIndex:                    400,
+		roomViewRosterOccupantRoleForegroundIndex:        cs.rosterOccupantRoleForeground,
+		roomViewRosterExpanderVisibilityIndex:            false,
+		roomViewRosterOccupantImageVisibilityIndex:       true,
+		roomViewRosterOccupantAffiliationVisibilityIndex: displayAffiliation != "",
 	})
 }
 

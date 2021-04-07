@@ -54,8 +54,8 @@
                       </object>
                       <attributes>
                         <attribute name="cell-background">6</attribute>
-                        <attribute name="visible">10</attribute>
-                        <attribute name="icon-name">9</attribute>
+                        <attribute name="visible">11</attribute>
+                        <attribute name="icon-name">10</attribute>
                       </attributes>
                     </child>
                     <child>
@@ -89,6 +89,7 @@
                         <property name="xalign">1</property>
                       </object>
                       <attributes>
+                        <attribute name="visible">9</attribute>
                         <attribute name="background">6</attribute>
                         <attribute name="foreground">7</attribute>
                         <attribute name="text">2</attribute>

@@ -25,6 +25,11 @@ type mucColorSet struct {
 	roomOverlayContentForeground      string
 	roomNameDisabledForeground        string
 
+	// Room roster
+	rosterGroupBackground        string
+	rosterGroupForeground        string
+	rosterOccupantRoleForeground string
+
 	// Occupant statuses colors
 	occupantStatusAvailableForeground    string
 	occupantStatusAvailableBackground    string
@@ -85,6 +90,10 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		roomOverlayContentForeground:      "#333333",
 		roomNameDisabledForeground:        "#A9A9A9",
 
+		rosterGroupBackground:        "#F5F5F4",
+		rosterGroupForeground:        "#1C1917",
+		rosterOccupantRoleForeground: "#A8A29E",
+
 		occupantStatusAvailableForeground:    "#166534",
 		occupantStatusAvailableBackground:    "#F0FDF4",
 		occupantStatusAvailableBorder:        "#16A34A",
@@ -137,6 +146,10 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		roomOverlayBackground:             "#000000",
 		roomOverlayContentForeground:      "#333333",
 		roomNameDisabledForeground:        "#A9A9A9",
+
+		rosterGroupBackground:        "#1C1917",
+		rosterGroupForeground:        "#FAFAF9",
+		rosterOccupantRoleForeground: "#E7E5E4",
 
 		occupantStatusAvailableForeground:    "#166534",
 		occupantStatusAvailableBackground:    "#F0FDF4",

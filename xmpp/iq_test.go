@@ -87,6 +87,21 @@ func (s *IqXMPPSuite) TestConnSendIQReplyAndTyp(c *C) {
 	c.Assert(err, IsNil)
 }
 
+func (s *IqXMPPSuite) Test_conn_SendIQ_SendsEmptyReply(c *C) {
+	mockOut := mockConnIOReaderWriter{}
+	conn := conn{
+		log: testLogger(),
+		out: &mockOut,
+		jid: "jid",
+	}
+	conn.inflights = make(map[data.Cookie]inflight)
+	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", data.EmptyReply{})
+	c.Assert(string(mockOut.write), Matches, "<iq xmlns='jabber:client' to='example@xmpp.com' from='jid' type='typ' id='.+'></iq>")
+	c.Assert(reply, NotNil)
+	c.Assert(cookie, NotNil)
+	c.Assert(err, IsNil)
+}
+
 func (s *IqXMPPSuite) TestConnSendIQRaw(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := conn{

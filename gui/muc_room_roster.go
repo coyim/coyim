@@ -19,10 +19,22 @@ import (
 )
 
 const (
-	roomViewRosterStatusIconIndex int = iota
+	roomViewRosterGroupCollapseIconName = "pan-down-symbolic"
+	roomViewRosterGroupExpandIconName   = "pan-end-symbolic"
+)
+
+const (
+	roomViewRosterImageIndex int = iota
 	roomViewRosterNicknameIndex
 	roomViewRosterAffiliationIndex
 	roomViewRosterInfoIndex
+	roomViewRosterFontWeightIndex
+	roomViewRosterForegroundIndex
+	roomViewRosterBackgroundIndex
+	roomViewRosterOccupantRoleForegroundIndex
+	roomViewRosterOccupantImageVisibilityIndex
+	roomViewRosterExpanderIconIndex
+	roomViewRosterExpanderVisibilityIndex
 )
 
 type roomViewRoster struct {
@@ -63,7 +75,7 @@ func (v *roomView) newRoomViewRoster() *roomViewRoster {
 func (r *roomViewRoster) initBuilder() {
 	builder := newBuilder("MUCRoomRoster")
 	builder.ConnectSignals(map[string]interface{}{
-		"on_occupant_selected": r.onOccupantSelected,
+		"on_occupant_tree_view_row_activated": r.onOccupantRowActivated,
 	})
 
 	panicOnDevError(builder.bindObjects(r))
@@ -73,7 +85,7 @@ func (r *roomViewRoster) initDefaults() {
 	r.rosterInfo = r.newRoomViewRosterInfo()
 
 	r.model, _ = g.gtk.TreeStoreNew(
-		// icon
+		// status icon or opened/closed image
 		pixbufType(),
 		// display nickname
 		glibi.TYPE_STRING,
@@ -81,6 +93,20 @@ func (r *roomViewRoster) initDefaults() {
 		glibi.TYPE_STRING,
 		// info tooltip
 		glibi.TYPE_STRING,
+		// font weight
+		glibi.TYPE_INT,
+		// foreground color
+		glibi.TYPE_STRING,
+		// background color
+		glibi.TYPE_STRING,
+		// occupant role foreground color
+		glibi.TYPE_STRING,
+		// occupant image visibility
+		glibi.TYPE_BOOLEAN,
+		// expander icon name
+		glibi.TYPE_STRING,
+		// expander icon visibility
+		glibi.TYPE_BOOLEAN,
 	)
 
 	r.tree.SetModel(r.model)
@@ -110,6 +136,7 @@ func (r *roomViewRoster) initSubscribers() {
 	})
 }
 
+// onOccupantSelected MUST be called from the UI thread
 func (r *roomViewRoster) onOccupantSelected(_ gtki.TreeView, path gtki.TreePath) {
 	nickname, err := r.getNicknameFromTreeModel(path)
 	if err != nil {
@@ -124,6 +151,38 @@ func (r *roomViewRoster) onOccupantSelected(_ gtki.TreeView, path gtki.TreePath)
 	}
 
 	r.showOccupantInfo(o)
+}
+
+// onGroupActivated MUST be called from the UI thread
+func (r *roomViewRoster) onGroupActivated(_ gtki.TreeView, path gtki.TreePath) {
+	var icon string
+
+	if r.tree.RowExpanded(path) {
+		r.tree.CollapseRow(path)
+		icon = roomViewRosterGroupExpandIconName
+	} else {
+		r.tree.ExpandRow(path, true)
+		icon = roomViewRosterGroupCollapseIconName
+	}
+
+	if iter, err := r.model.GetIter(path); err == nil {
+		_ = r.model.SetValue(iter, roomViewRosterExpanderIconIndex, icon)
+	}
+}
+
+const (
+	roomViewRosterGroupDepth    = 1
+	roomViewRosterOccupantDepth = 2
+)
+
+// onOccupantRowActivated MUST be called from the UI thread
+func (r *roomViewRoster) onOccupantRowActivated(tree gtki.TreeView, path gtki.TreePath) {
+	switch path.GetDepth() {
+	case roomViewRosterGroupDepth:
+		r.onGroupActivated(tree, path)
+	case roomViewRosterOccupantDepth:
+		r.onOccupantSelected(tree, path)
+	}
 }
 
 // updateOccupantAffiliation MUST NOT be called from the UI thread
@@ -235,7 +294,18 @@ func (r *roomViewRoster) drawOccupantsByRole(role string, occupants []*muc.Occup
 	roleHeader = i18n.Localf("%s (%v)", roleHeader, len(occupants))
 
 	iter := r.model.Append(nil)
-	_ = r.model.SetValue(iter, roomViewRosterNicknameIndex, roleHeader)
+
+	cs := r.u.unifiedCached.ui.currentMUCColorSet()
+
+	modelSetValues(r.model, iter, map[int]interface{}{
+		roomViewRosterNicknameIndex:                roleHeader,
+		roomViewRosterFontWeightIndex:              700,
+		roomViewRosterBackgroundIndex:              cs.rosterGroupBackground,
+		roomViewRosterForegroundIndex:              cs.rosterGroupForeground,
+		roomViewRosterExpanderIconIndex:            roomViewRosterGroupCollapseIconName,
+		roomViewRosterExpanderVisibilityIndex:      true,
+		roomViewRosterOccupantImageVisibilityIndex: false,
+	})
 
 	for _, o := range occupants {
 		r.addOccupantToRoster(o, iter)
@@ -245,10 +315,18 @@ func (r *roomViewRoster) drawOccupantsByRole(role string, occupants []*muc.Occup
 func (r *roomViewRoster) addOccupantToRoster(o *muc.Occupant, parentIter gtki.TreeIter) {
 	iter := r.model.Append(parentIter)
 
-	_ = r.model.SetValue(iter, roomViewRosterStatusIconIndex, getOccupantIconForStatus(o.Status))
-	_ = r.model.SetValue(iter, roomViewRosterNicknameIndex, o.Nickname)
-	_ = r.model.SetValue(iter, roomViewRosterAffiliationIndex, affiliationDisplayName(o.Affiliation))
-	_ = r.model.SetValue(iter, roomViewRosterInfoIndex, occupantDisplayTooltip(o))
+	cs := r.u.unifiedCached.ui.currentMUCColorSet()
+
+	modelSetValues(r.model, iter, map[int]interface{}{
+		roomViewRosterImageIndex:                   getOccupantIconForStatus(o.Status),
+		roomViewRosterNicknameIndex:                o.Nickname,
+		roomViewRosterAffiliationIndex:             affiliationDisplayName(o.Affiliation),
+		roomViewRosterInfoIndex:                    occupantDisplayTooltip(o),
+		roomViewRosterFontWeightIndex:              400,
+		roomViewRosterOccupantRoleForegroundIndex:  cs.rosterOccupantRoleForeground,
+		roomViewRosterExpanderVisibilityIndex:      false,
+		roomViewRosterOccupantImageVisibilityIndex: true,
+	})
 }
 
 // parentWindow MUST be called from the UI threads
@@ -362,4 +440,10 @@ func occupantDisplayTooltip(o *muc.Occupant) string {
 	}
 
 	return strings.Join(ms, "\n")
+}
+
+func modelSetValues(model gtki.TreeStore, iter gtki.TreeIter, values map[int]interface{}) {
+	for idx, v := range values {
+		_ = model.SetValue(iter, idx, v)
+	}
 }

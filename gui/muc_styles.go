@@ -44,16 +44,15 @@ func (s *mucStylesProvider) setRoomRosterInfoStyle(b gtki.Box) {
 
 func (s *mucStylesProvider) setRoomToolbarNameLabelStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
-		"font-size":   "22px",
+		"font-size":   "large",
 		"font-weight": "bold",
 	})
 }
 
 func (s *mucStylesProvider) setRoomToolbarSubjectLabelStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
-		"font-size":  "14px",
-		"font-style": "italic",
-		"color":      s.colors.roomSubjectForeground,
+		"font-size": "smaller",
+		"color":     s.colors.roomSubjectForeground,
 	})
 }
 

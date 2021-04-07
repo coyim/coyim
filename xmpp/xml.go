@@ -10,13 +10,12 @@ import (
 	"bytes"
 	"encoding/xml"
 	"errors"
-	"fmt"
 	"reflect"
 	"strings"
+	"sync"
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/xmpp/data"
-	"github.com/coyim/coyim/xmpp/interfaces"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -26,6 +25,14 @@ var xmlSpecial = map[byte]string{
 	'"':  "&quot;",
 	'\'': "&apos;",
 	'&':  "&amp;",
+}
+
+// xmlConn is a simplified subset of the Conn interface
+// that only exposes the functionality that XML needs
+type xmlConn interface {
+	In() *xml.Decoder
+	Lock() *sync.Mutex
+	CustomStorage() map[xml.Name]reflect.Type
 }
 
 func xmlEscape(s string) string {
@@ -88,28 +95,23 @@ func nextStart(p *xml.Decoder, log coylog.Logger) (xml.StartElement, error) {
 // Scan XML token stream for next element and save into val.
 // If val == nil, allocate new element based on proto map.
 // Either way, return val.
-func next(c interfaces.Conn, log coylog.Logger) (xml.Name, interface{}, error) {
+func next(c xmlConn, log coylog.Logger) (xml.Name, interface{}, error) {
 	elem, err := nextElement(c.In(), log)
 	if err != nil {
 		return xml.Name{}, nil, err
 	}
 
-	//FIXME: Why? It does not seem to do anything on a critical section
 	c.Lock().Lock()
 	defer c.Lock().Unlock()
 
-	switch el := elem.(type) {
-	case xml.StartElement:
+	if el, ok := elem.(xml.StartElement); ok {
 		return decodeStartElement(c, el)
-	case xml.EndElement:
-		return decodeEndElement(el)
 	}
 
-	return xml.Name{}, nil, fmt.Errorf("unexpected element %s", elem)
+	return decodeEndElement(elem.(xml.EndElement))
 }
 
-func decodeStartElement(c interfaces.Conn, se xml.StartElement) (xml.Name, interface{}, error) {
-
+func decodeStartElement(c xmlConn, se xml.StartElement) (xml.Name, interface{}, error) {
 	// Put it in an interface and allocate one.
 	var nv interface{}
 	if t, e := c.CustomStorage()[se.Name]; e {

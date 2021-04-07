@@ -1,10 +1,14 @@
 package xmpp
 
 import (
+	"bytes"
 	"encoding/xml"
 	"reflect"
+	"sync"
 
 	"github.com/coyim/coyim/xmpp/data"
+	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 
 	. "gopkg.in/check.v1"
 )
@@ -87,4 +91,75 @@ func (s *XMLXMPPSuite) Test_ClientMesage_unmarshalsXMPPExtensions(c *C) {
 			Body:    "\n\t    <offline/>\n\t\t\t<delivered/>\n\t\t\t<composing/>\n\t\t",
 		},
 	})
+}
+
+func (s *XMLXMPPSuite) Test_decodeEndElement_returnsStreamEnd(c *C) {
+	name, val, err := decodeEndElement(xml.EndElement{Name: xml.Name{Space: "http://etherx.jabber.org/streams", Local: "stream"}})
+	c.Assert(err, IsNil)
+	c.Assert(val, DeepEquals, &data.StreamClose{})
+	c.Assert(name, Equals, xml.Name{Space: "http://etherx.jabber.org/streams", Local: "stream"})
+}
+
+func (s *XMLXMPPSuite) Test_decodeEndElement_returnsOtherElement(c *C) {
+	name, val, err := decodeEndElement(xml.EndElement{Name: xml.Name{Space: "foo", Local: "bar"}})
+	c.Assert(err, IsNil)
+	c.Assert(val, IsNil)
+	c.Assert(name, Equals, xml.Name{Space: "foo", Local: "bar"})
+}
+
+type xmlMockConn struct {
+	sync.Mutex
+
+	dec *xml.Decoder
+}
+
+func (m *xmlMockConn) In() *xml.Decoder {
+	return m.dec
+}
+
+func (m *xmlMockConn) Lock() *sync.Mutex {
+	return &m.Mutex
+}
+
+func (m *xmlMockConn) CustomStorage() map[xml.Name]reflect.Type {
+	return nil
+}
+
+func (s *XMLXMPPSuite) Test_next_ignoresOtherElements(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	np := []byte(`<?xml version="1.0"?><?xml something?><?foo hello?><!-- a comment -->
+<foobarium>
+</foobarium>
+`)
+	m := &xmlMockConn{
+		dec: xml.NewDecoder(bytes.NewBuffer(np)),
+	}
+
+	name, val, err := next(m, l)
+	c.Assert(name, DeepEquals, xml.Name{})
+	c.Assert(val, IsNil)
+	c.Assert(err, ErrorMatches, "unexpected XMPP message  <foobarium/>")
+
+	c.Assert(len(hook.Entries), Equals, 4)
+	c.Assert(hook.Entries[0].Level, Equals, log.WarnLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "xmpp: received unhandled ProcInst element")
+	c.Assert(hook.Entries[0].Data, HasLen, 2)
+	c.Assert(string(hook.Entries[0].Data["inst"].([]byte)), Equals, "foobarium")
+	c.Assert(hook.Entries[0].Data["target"], Equals, "xml")
+
+	c.Assert(hook.Entries[1].Level, Equals, log.WarnLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "xmpp: received unhandled ProcInst element")
+	c.Assert(hook.Entries[1].Data, HasLen, 2)
+	c.Assert(string(hook.Entries[1].Data["inst"].([]byte)), Equals, "fooba")
+	c.Assert(hook.Entries[1].Data["target"], Equals, "foo")
+
+	c.Assert(hook.Entries[2].Level, Equals, log.WarnLevel)
+	c.Assert(hook.Entries[2].Message, Equals, "xmpp: received unhandled element")
+	c.Assert(hook.Entries[2].Data, HasLen, 1)
+
+	c.Assert(hook.Entries[3].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[3].Message, Equals, "xmpp: received whitespace ping")
+	c.Assert(hook.Entries[3].Data, HasLen, 0)
 }

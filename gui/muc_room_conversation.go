@@ -157,16 +157,14 @@ func (c *roomViewConversation) occupantRoleEvent(roleUpdate data.RoleUpdate) {
 }
 
 func (c *roomViewConversation) selfOccupantRoleEvent(roleUpdate data.RoleUpdate) {
+	c.occupantRoleEvent(roleUpdate)
 	if roleUpdate.New.IsNone() {
 		doInUIThread(func() {
 			c.updateNotificationMessage(i18n.Local("You can't send messages because you were expelled from the room."))
 			c.disableSendCapabilities()
 			mucStyles.setDisableRoomStyle(c.view)
 		})
-		return
 	}
-
-	c.occupantRoleEvent(roleUpdate)
 }
 
 func (c *roomViewConversation) occupantSelfJoinedEvent(nickname string, r data.Role) {

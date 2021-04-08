@@ -113,21 +113,19 @@ func (rc *roomConfigAssistant) initRoomConfigPages() {
 }
 
 func (rc *roomConfigAssistant) initDefaults() {
-	rc.infoPageBox.SetHExpand(true)
-	rc.accessPageBox.SetHExpand(true)
-	rc.permissionsPageBox.SetHExpand(true)
-	rc.occupantsPageBox.SetHExpand(true)
-	rc.othersPageBox.SetHExpand(true)
-	rc.summaryPageBox.SetHExpand(true)
-
 	rc.assistant.SetTitle(i18n.Localf("Configuration for room [%s]", rc.roomID.String()))
+
+	for _, b := range rc.allPagesBoxes() {
+		b.SetHExpand(true)
+	}
 }
 
 func (rc *roomConfigAssistant) initSidebar() {
 	rc.assistantSidebar = rc.newRoomConfigAssistantSidebar()
-	updateSidebarContent(rc.assistant, rc.assistantSidebar.content)
+	setAssistantSidebarContent(rc.assistant, rc.assistantSidebar.box)
 }
 
+// refreshButtonLabels MUST be called from the UI thread
 func (rc *roomConfigAssistant) refreshButtonLabels() {
 	buttons := getButtonsForAssistantHeader(rc.assistant)
 
@@ -135,20 +133,26 @@ func (rc *roomConfigAssistant) refreshButtonLabels() {
 	buttons.updateButtonLabelByName("apply", i18n.Local("Create Room"))
 }
 
-func (rc *roomConfigAssistant) onPageChanged() {
-	if rc.canChangePage() {
-		rc.pageByIndex(rc.currentPageIndex).collectData()
-		rc.assistantSidebar.selectOption(rc.assistant.GetCurrentPage())
-		rc.updateContentPage(rc.assistant.GetCurrentPage())
+// hideBottomActionArea MUST be called from the UI thread
+func (rc *roomConfigAssistant) hideBottomActionArea() {
+	if actionArea, ok := getBottomActionAreaFromAssistant(rc.assistant); ok {
+		actionArea.Hide()
 	}
 }
 
+// onPageChanged MUST be called from the UI thread
+func (rc *roomConfigAssistant) onPageChanged() {
+	rc.updateAssistantPage(rc.assistant.GetCurrentPage())
+}
+
+// updateAssistantPage MUST be called from the UI thread
 func (rc *roomConfigAssistant) updateAssistantPage(indexPage int) {
 	if rc.canChangePage() {
 		rc.pageByIndex(rc.currentPageIndex).collectData()
 		rc.updateContentPage(indexPage)
+		rc.assistantSidebar.selectOptionByIndex(indexPage)
 	} else {
-		rc.assistantSidebar.selectOption(rc.currentPageIndex)
+		rc.assistantSidebar.selectOptionByIndex(rc.currentPageIndex)
 	}
 }
 
@@ -172,23 +176,30 @@ func (rc *roomConfigAssistant) updateContentPage(indexPage int) {
 	rc.currentPage.refresh()
 
 	rc.refreshButtonLabels()
-	hideActionArea(rc.assistant)
+	rc.hideBottomActionArea()
 }
 
-// enable MUST be called from the UI thread
-func (rc *roomConfigAssistant) enable() {
+// enableAssistant MUST be called from the UI thread
+func (rc *roomConfigAssistant) enableAssistant() {
 	rc.assistant.SetSensitive(true)
 }
 
-// disable MUST be called from the UI thread
-func (rc *roomConfigAssistant) disable() {
+// disableAssistant MUST be called from the UI thread
+func (rc *roomConfigAssistant) disableAssistant() {
 	rc.assistant.SetSensitive(false)
 }
 
 // onCancelClicked MUST be called from the UI thread
 func (rc *roomConfigAssistant) onCancelClicked() {
-	cv := newRoomConfigAssistantCancelView(rc)
+	cv := rc.newRoomConfigAssistantCancelView()
 	cv.show()
+}
+
+// cancelConfiguration MUST be called from the UI thread
+func (rc *roomConfigAssistant) cancelConfiguration() {
+	rc.destroyAssistant()
+	rc.onCancel()
+	rc.roomConfigComponent.cancelConfiguration(rc.onCancelError)
 }
 
 // onCancelError MUST be called from the UI thread
@@ -205,7 +216,7 @@ func (rc *roomConfigAssistant) onCancelError(err error) {
 
 // onApplyClicked MUST be called from the UI thread
 func (rc *roomConfigAssistant) onApplyClicked() {
-	rc.disable()
+	rc.disableAssistant()
 	rc.currentPage.onConfigurationApply()
 
 	rc.roomConfigComponent.submitConfigurationForm(
@@ -227,14 +238,25 @@ func (rc *roomConfigAssistant) destroyAssistant() {
 
 // onApplyError MUST be called from the UI thread
 func (rc *roomConfigAssistant) onApplyError(err error) {
-	rc.enable()
+	rc.enableAssistant()
 	rc.currentPage.onConfigurationApplyError()
 	rc.currentPage.notifyError(rc.roomConfigComponent.friendlyConfigErrorMessage(err))
 }
 
 // show MUST be called from the UI thread
-func (rc *roomConfigAssistant) show() {
+func (rc *roomConfigAssistant) showAssistant() {
 	rc.assistant.ShowAll()
+}
+
+func (rc *roomConfigAssistant) allPagesBoxes() []gtki.Box {
+	return []gtki.Box{
+		rc.infoPageBox,
+		rc.accessPageBox,
+		rc.permissionsPageBox,
+		rc.occupantsPageBox,
+		rc.othersPageBox,
+		rc.summaryPageBox,
+	}
 }
 
 func (rc *roomConfigAssistant) pageByIndex(p int) mucRoomConfigPage {

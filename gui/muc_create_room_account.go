@@ -123,7 +123,7 @@ func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, 
 	}
 
 	rca := v.u.newRoomConfigAssistant(ca, roomID, cf, v.autoJoin, onSuccess, onCancel)
-	rca.show()
+	rca.showAssistant()
 }
 
 // onCreateRoomFinished MUST NOT be called from the UI thread

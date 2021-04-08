@@ -104,7 +104,6 @@ func (r *roomViewRosterInfo) initDefaults() {
 	)
 
 	r.onReset.add(
-		r.removeOccupantEvents,
 		r.removeOccupantInfo,
 		r.removeOccupantAffiliationInfo,
 		r.removeOccupantRoleInfo,
@@ -295,8 +294,8 @@ func (r *roomViewRosterInfo) show() {
 
 // show MUST be called from the UI thread
 func (r *roomViewRosterInfo) hide() {
-	r.view.Hide()
 	r.rosterView.hideRosterInfoPanel()
+	r.removeOccupantEvents()
 	r.reset()
 }
 

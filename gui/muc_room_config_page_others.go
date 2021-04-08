@@ -35,16 +35,17 @@ func (c *mucRoomConfigComponent) newRoomConfigOthersPage() mucRoomConfigPage {
 }
 
 func (p *roomConfigOthersPage) initDefaultValues() {
-	setSwitchActive(p.roomEnableLoggin, p.form.Logged)
-
 	p.roomMaxHistoryFetch.updateOptions(p.form.MaxHistoryFetch.Options())
 	p.roomMaxOccupants.updateOptions(p.form.MaxOccupantsNumber.Options())
+	p.roomEnableLoggin.SetActive(p.form.Logged)
 }
 
+// isNotValid MUST be called from the UI thread
 func (p *roomConfigOthersPage) isNotValid() bool {
 	return p.roomMaxHistoryFetch.isNotValid() || p.roomMaxOccupants.isNotValid()
 }
 
+// showValidationErrors MUST be called from the UI thread
 func (p *roomConfigOthersPage) showValidationErrors() {
 	p.clearErrors()
 
@@ -59,10 +60,11 @@ func (p *roomConfigOthersPage) showValidationErrors() {
 	}
 }
 
+// collectData MUST be called from the UI thread
 func (p *roomConfigOthersPage) collectData() {
 	p.form.MaxHistoryFetch.UpdateValue(p.roomMaxHistoryFetch.currentValue())
 	p.form.MaxOccupantsNumber.UpdateValue(p.roomMaxOccupants.currentValue())
-	p.form.Logged = getSwitchActive(p.roomEnableLoggin)
+	p.form.Logged = p.roomEnableLoggin.GetActive()
 }
 
 const (
@@ -99,6 +101,7 @@ func newRoomConfigCombo(cb gtki.ComboBoxText, e gtki.Entry) *roomConfigComboEntr
 	return cc
 }
 
+// updateOptions MUST be called from the UI thread
 func (cc *roomConfigComboEntry) updateOptions(options []string) {
 	cc.model.Clear()
 	cc.options = make(map[string]string)
@@ -117,6 +120,7 @@ func (cc *roomConfigComboEntry) updateOptions(options []string) {
 	}
 }
 
+// isNotValid MUST be called from the UI thread
 func (cc *roomConfigComboEntry) isNotValid() bool {
 	ct := getEntryText(cc.entry)
 	if ct != "" {
@@ -128,6 +132,7 @@ func (cc *roomConfigComboEntry) isNotValid() bool {
 	return false
 }
 
+// currentValue MUST be called from the UI thread
 func (cc *roomConfigComboEntry) currentValue() string {
 	selected := cc.comboBox.GetActiveID()
 	if selected != "" {
@@ -150,6 +155,7 @@ func (cc *roomConfigComboEntry) currentValue() string {
 	return entryText
 }
 
+// focus MUST be called from the UI thread
 func (cc *roomConfigComboEntry) focus() {
 	cc.entry.GrabFocus()
 }

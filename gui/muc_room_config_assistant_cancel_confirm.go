@@ -1,50 +1,38 @@
 package gui
 
 import (
-	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type roomConfigAssistantCancelView struct {
-	builder *builder
-
-	rc *roomConfigAssistant
+	assistant *roomConfigAssistant
 
 	dialog gtki.Dialog `gtk-widget:"confirmation-dialog"`
 	header gtki.Label  `gtk-widget:"confirmation-dialog-header"`
-
-	log coylog.Logger
 }
 
-func newRoomConfigAssistantCancelView(rc *roomConfigAssistant) *roomConfigAssistantCancelView {
-	d := &roomConfigAssistantCancelView{
-		rc: rc,
+func (rc *roomConfigAssistant) newRoomConfigAssistantCancelView() *roomConfigAssistantCancelView {
+	cv := &roomConfigAssistantCancelView{
+		assistant: rc,
 	}
 
-	d.initBuilder()
+	builder := newBuilder("MUCRoomConfirmationRoomDialog")
+	panicOnDevError(builder.bindObjects(cv))
 
-	return d
-}
-
-func (cv *roomConfigAssistantCancelView) initBuilder() {
-	cv.builder = newBuilder("MUCRoomConfirmationRoomDialog")
-	panicOnDevError(cv.builder.bindObjects(cv))
-
-	cv.builder.ConnectSignals(map[string]interface{}{
-		"on_no_clicked":  cv.onNoConfirmation,
-		"on_yes_clicked": cv.onYesConfirmation,
+	builder.ConnectSignals(map[string]interface{}{
+		"on_no_clicked":  cv.close,
+		"on_yes_clicked": cv.onYesClicked,
 	})
+
+	cv.dialog.SetTransientFor(rc.assistant)
+
+	return cv
 }
 
-func (cv *roomConfigAssistantCancelView) onNoConfirmation() {
+// onYesClicked MUST be called from the UI thread
+func (cv *roomConfigAssistantCancelView) onYesClicked() {
 	cv.close()
-}
-
-func (cv *roomConfigAssistantCancelView) onYesConfirmation() {
-	cv.close()
-	cv.rc.destroyAssistant()
-	cv.rc.onCancel()
-	cv.rc.roomConfigComponent.cancelConfiguration(cv.rc.onCancelError)
+	cv.assistant.cancelConfiguration()
 }
 
 // show MUST be called from the UI thread

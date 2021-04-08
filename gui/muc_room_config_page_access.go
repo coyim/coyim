@@ -26,7 +26,7 @@ func (c *mucRoomConfigComponent) newRoomConfigAccessPage() mucRoomConfigPage {
 func (p *roomConfigAccessPage) initPasswordComponent() {
 	p.roomPassword = p.u.createPasswordConfirmationComponent()
 	p.roomPasswordBox.Add(p.roomPassword.contentBox())
-	p.onRefresh.add(p.roomPassword.onShowConfirmPasswordBasedOnMatchError)
+	p.doAfterRefresh.add(p.roomPassword.onShowConfirmPasswordBasedOnMatchError)
 }
 
 func (p *roomConfigAccessPage) initDefaultValues() {

@@ -32,7 +32,7 @@ type roomConfigPageBase struct {
 
 	notifications  *notificationsComponent
 	loadingOverlay *loadingOverlayComponent
-	onRefresh      *callbacksSet
+	doAfterRefresh *callbacksSet
 
 	log coylog.Logger
 }
@@ -41,7 +41,7 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page
 	p := &roomConfigPageBase{
 		u:              c.u,
 		loadingOverlay: c.u.newLoadingOverlayComponent(),
-		onRefresh:      newCallbacksSet(),
+		doAfterRefresh: newCallbacksSet(),
 		form:           c.form,
 		log: c.log.WithFields(log.Fields{
 			"page":     pageID,
@@ -100,7 +100,7 @@ func (p *roomConfigPageBase) refresh() {
 	p.page.ShowAll()
 	p.hideLoadingOverlay()
 	p.clearErrors()
-	p.onRefresh.invokeAll()
+	p.doAfterRefresh.invokeAll()
 }
 
 // clearErrors MUST be called from the ui thread

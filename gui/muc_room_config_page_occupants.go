@@ -47,7 +47,7 @@ func (c *mucRoomConfigComponent) newRoomConfigOccupantsPage(parent gtki.Window) 
 }
 
 func (p *roomConfigOccupantsPage) initDefaults() {
-	p.onRefresh.add(p.refreshContentLists)
+	p.doAfterRefresh.add(p.refreshContentLists)
 }
 
 func (p *roomConfigOccupantsPage) initOccupantsEditableCells() {

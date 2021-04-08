@@ -75,7 +75,7 @@ func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
 		"on_show_admins_list": p.onShowAdminList,
 	})
 
-	p.onRefresh.add(p.onSummaryPageRefresh)
+	p.doAfterRefresh.add(p.onSummaryPageRefresh)
 
 	mucStyles.setRoomConfigSummarySectionLinkButtonStyle(p.basicInformation)
 	mucStyles.setRoomConfigSummarySectionLinkButtonStyle(p.access)

@@ -19,7 +19,7 @@ func (c *mucRoomConfigComponent) newRoomConfigPermissionsPage() mucRoomConfigPag
 	p := &roomConfigPermissionsPage{}
 	p.roomConfigPageBase = c.newConfigPage("permissions", "MUCRoomConfigPagePermissions", p, nil)
 
-	p.onRefresh.add(p.refreshWhoisField)
+	p.doAfterRefresh.add(p.refreshWhoisField)
 
 	// These two values are the option name and the friendly label for it
 	p.roomWhoisModel, _ = g.gtk.ListStoreNew(glibi.TYPE_STRING, glibi.TYPE_STRING)

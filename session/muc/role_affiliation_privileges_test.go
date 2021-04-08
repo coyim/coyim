@@ -357,3 +357,278 @@ func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleVisitorAffiliationOwn
 		c.Assert(actor.CanKickOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole)), Equals, scenario.expected)
 	}
 }
+
+func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleModeratorAffiliationNone_CanChangeOccupantVoice(c *C) {
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, true},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, true},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
+
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, true},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, true},
+
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, true},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, true},
+	}
+
+	// Actor: NoneAffiliation - ModeratorRole
+	actor := newTestOccupant(&data.NoneAffiliation{}, &data.ModeratorRole{})
+	for _, scenario := range testCases {
+		obtained := actor.CanChangeOccupantVoice(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole))
+		c.Assert(obtained, Equals, scenario.expected)
+	}
+}
+
+func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleModeratorAffiliationMember_CanChangeOccupantVoice(c *C) {
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, true},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, true},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
+
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, true},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, true},
+
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, true},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, true},
+	}
+
+	// Actor: NoneAffiliation - ModeratorRole
+	actor := newTestOccupant(&data.MemberAffiliation{}, &data.ModeratorRole{})
+	for _, scenario := range testCases {
+		obtained := actor.CanChangeOccupantVoice(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole))
+		c.Assert(obtained, Equals, scenario.expected)
+	}
+}
+
+func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleModeratorAffiliationAdmin_CanChangeOccupantVoice(c *C) {
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, true},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, true},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
+
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, true},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, true},
+
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, true},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, true},
+	}
+
+	// Actor: NoneAffiliation - ModeratorRole
+	actor := newTestOccupant(&data.AdminAffiliation{}, &data.ModeratorRole{})
+	for _, scenario := range testCases {
+		obtained := actor.CanChangeOccupantVoice(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole))
+		c.Assert(obtained, Equals, scenario.expected)
+	}
+}
+
+func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleParticipantAffiliationNone_CanChangeOccupantVoice(c *C) {
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
+
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, false},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
+	}
+
+	// Actor: NoneAffiliation - ModeratorRole
+	actor := newTestOccupant(&data.NoneAffiliation{}, &data.ParticipantRole{})
+	for _, scenario := range testCases {
+		obtained := actor.CanChangeOccupantVoice(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole))
+		c.Assert(obtained, Equals, scenario.expected)
+	}
+}
+
+func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleParticipantAffiliationMember_CanChangeOccupantVoice(c *C) {
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
+
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, false},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
+	}
+
+	// Actor: NoneAffiliation - ModeratorRole
+	actor := newTestOccupant(&data.MemberAffiliation{}, &data.ParticipantRole{})
+	for _, scenario := range testCases {
+		obtained := actor.CanChangeOccupantVoice(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole))
+		c.Assert(obtained, Equals, scenario.expected)
+	}
+}
+
+func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleParticipantAffiliationAdmin_CanChangeOccupantVoice(c *C) {
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
+
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, false},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
+	}
+
+	// Actor: NoneAffiliation - ModeratorRole
+	actor := newTestOccupant(&data.AdminAffiliation{}, &data.ParticipantRole{})
+	for _, scenario := range testCases {
+		obtained := actor.CanChangeOccupantVoice(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole))
+		c.Assert(obtained, Equals, scenario.expected)
+	}
+}
+
+func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleParticipantAffiliationOwner_CanChangeOccupantVoice(c *C) {
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
+
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, false},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
+	}
+
+	// Actor: NoneAffiliation - ModeratorRole
+	actor := newTestOccupant(&data.OwnerAffiliation{}, &data.ParticipantRole{})
+	for _, scenario := range testCases {
+		obtained := actor.CanChangeOccupantVoice(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole))
+		c.Assert(obtained, Equals, scenario.expected)
+	}
+}
+
+func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleVisitorAffiliationNone_CanChangeOccupantVoice(c *C) {
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
+
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, false},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
+	}
+
+	// Actor: NoneAffiliation - ModeratorRole
+	actor := newTestOccupant(&data.NoneAffiliation{}, &data.VisitorRole{})
+	for _, scenario := range testCases {
+		obtained := actor.CanChangeOccupantVoice(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole))
+		c.Assert(obtained, Equals, scenario.expected)
+	}
+}
+
+func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleVisitorAffiliationMember_CanChangeOccupantVoice(c *C) {
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
+
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, false},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
+	}
+
+	// Actor: NoneAffiliation - ModeratorRole
+	actor := newTestOccupant(&data.MemberAffiliation{}, &data.VisitorRole{})
+	for _, scenario := range testCases {
+		obtained := actor.CanChangeOccupantVoice(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole))
+		c.Assert(obtained, Equals, scenario.expected)
+	}
+}
+
+func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleVisitorAffiliationAdmin_CanChangeOccupantVoice(c *C) {
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
+
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, false},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
+	}
+
+	// Actor: NoneAffiliation - ModeratorRole
+	actor := newTestOccupant(&data.AdminAffiliation{}, &data.VisitorRole{})
+	for _, scenario := range testCases {
+		obtained := actor.CanChangeOccupantVoice(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole))
+		c.Assert(obtained, Equals, scenario.expected)
+	}
+}
+
+func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleVisitorAffiliationOwner_CanChangeOccupantVoice(c *C) {
+	testCases := []canKickOccupantTest{
+		// Occupant: ModeratorRole
+		{&data.NoneAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.MemberAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
+
+		// Occupant: ParticipantRole
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+
+		// Occupant: VisitorRole
+		{&data.NoneAffiliation{}, &data.VisitorRole{}, false},
+		{&data.MemberAffiliation{}, &data.VisitorRole{}, false},
+	}
+
+	// Actor: NoneAffiliation - ModeratorRole
+	actor := newTestOccupant(&data.OwnerAffiliation{}, &data.VisitorRole{})
+	for _, scenario := range testCases {
+		obtained := actor.CanChangeOccupantVoice(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole))
+		c.Assert(obtained, Equals, scenario.expected)
+	}
+}

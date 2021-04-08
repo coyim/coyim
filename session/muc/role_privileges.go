@@ -167,3 +167,13 @@ func (o *Occupant) CanKickOccupant(oc *Occupant) bool {
 
 	return !oc.isOwnerOrAdmin()
 }
+
+// CanChangeOccupantVoice returns a boolean indicating if the occupant can kick another occupant
+// based on the occupant's role
+func (o *Occupant) CanChangeOccupantVoice(oc *Occupant) bool {
+	if oc.HasVoice() {
+		return o.roleHasPrivilege(grantVoice) && !oc.isOwnerOrAdmin()
+	}
+
+	return o.roleHasPrivilege(grantVoice)
+}

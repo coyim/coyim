@@ -200,7 +200,20 @@ func (r *roomViewRosterInfo) refreshAdminToolsSection() {
 	canKick := r.selfOccupant.CanKickOccupant(r.occupant)
 	r.kickOccupantMenuItem.SetVisible(canKick)
 
-	r.occupantActionsMenuButton.SetSensitive(canKick)
+	canChangeOccupantVoice := r.selfOccupant.CanChangeOccupantVoice(r.occupant)
+	r.changeOccupantVoiceMenuItem.SetVisible(canChangeOccupantVoice)
+	r.updateLabelForOccupantVoiceItem()
+
+	r.occupantActionsMenuButton.SetSensitive(canKick && canChangeOccupantVoice)
+}
+
+// refreshAdminToolsSection MUST be called from the UI thread
+func (r *roomViewRosterInfo) updateLabelForOccupantVoiceItem() {
+	l := i18n.Local("Grant voice")
+	if r.occupant.HasVoice() {
+		l = i18n.Local("Revoke voice")
+	}
+	r.changeOccupantVoiceMenuItem.SetLabel(l)
 }
 
 // refresh MUST be called from the UI thread

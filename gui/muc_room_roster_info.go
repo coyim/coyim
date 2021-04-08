@@ -236,6 +236,7 @@ func (r *roomViewRosterInfo) refreshOccupantInfo() {
 	r.statusMessagePopoverBox.SetVisible(false)
 	if status.StatusMsg != "" {
 		r.statusMessagePopoverLabel.SetText(status.StatusMsg)
+		r.statusMessagePopoverLabel.SetVisible(true)
 		r.statusMessagePopoverBox.SetVisible(true)
 	}
 }

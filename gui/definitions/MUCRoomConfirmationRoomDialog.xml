@@ -68,7 +68,7 @@
                     <property name="halign">start</property>
                     <property name="valign">start</property>
                     <property name="icon_name">dialog-warning</property>
-                    <property name="icon_size">6</property>
+                    <property name="icon_size">5</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

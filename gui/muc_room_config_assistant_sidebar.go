@@ -4,11 +4,13 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+const noRowIndex = -1
+
 type roomConfigAssistantSidebar struct {
 	assistant *roomConfigAssistant
 
-	content gtki.Box     `gtk-widget:"assistant-options-content"`
-	options gtki.ListBox `gtk-widget:"assistant-options"`
+	box     gtki.Box     `gtk-widget:"assistant-options-content"`
+	listBox gtki.ListBox `gtk-widget:"assistant-options"`
 }
 
 func (rc *roomConfigAssistant) newRoomConfigAssistantSidebar() *roomConfigAssistantSidebar {
@@ -30,10 +32,25 @@ func (sb *roomConfigAssistantSidebar) initBuilder() {
 	})
 }
 
+// onRowSelected MUST be called from the UI thread
 func (sb *roomConfigAssistantSidebar) onRowSelected(_ gtki.ListBox, r gtki.ListBoxRow) {
 	sb.assistant.updateAssistantPage(r.GetIndex())
 }
 
-func (sb *roomConfigAssistantSidebar) selectOption(indexPage int) {
-	sb.options.SelectRow(sb.options.GetRowAtIndex(indexPage))
+// selectOptionByIndex MUST be called from the UI thread
+func (sb *roomConfigAssistantSidebar) selectOptionByIndex(idx int) {
+	row := sb.listBox.GetRowAtIndex(idx)
+	rowIndex := getListBoxRowIndex(row)
+	currentRowIndex := getListBoxRowIndex(sb.listBox.GetSelectedRow())
+
+	if rowIndex != noRowIndex && rowIndex != currentRowIndex {
+		sb.listBox.SelectRow(row)
+	}
+}
+
+func getListBoxRowIndex(r gtki.ListBoxRow) int {
+	if r != nil {
+		return r.GetIndex()
+	}
+	return noRowIndex
 }

@@ -25,25 +25,26 @@ type roomViewRosterInfo struct {
 	selfOccupant *muc.Occupant
 	rosterView   *roomViewRoster
 
-	view                      gtki.Box        `gtk-widget:"roster-info-box"`
-	avatar                    gtki.Image      `gtk-widget:"avatar-image"`
-	nicknameLabel             gtki.Label      `gtk-widget:"nickname-label"`
-	status                    gtki.Label      `gtk-widget:"status-label"`
-	currentAffiliationLabel   gtki.Label      `gtk-widget:"current-affiliation"`
-	currentRoleLabel          gtki.Label      `gtk-widget:"current-role"`
-	affiliationListBoxRow     gtki.ListBoxRow `gtk-widget:"change-affiliation-listbox-row"`
-	affiliationActionImage    gtki.Image      `gtk-widget:"change-affiliation-action-image"`
-	roleListBoxRow            gtki.ListBoxRow `gtk-widget:"change-role-listbox-row"`
-	roleActionImage           gtki.Image      `gtk-widget:"change-role-action-image"`
-	roleDisableLabel          gtki.Label      `gtk-widget:"change-role-disabled"`
-	occupantActionsMenuButton gtki.MenuButton `gtk-widget:"occupant-actions-menu-button"`
-	kickOccupantMenuItem      gtki.MenuItem   `gtk-widget:"kick-occupant"`
-	nicknamePopoverLabel      gtki.Label      `gtk-widget:"nickname-popover-label"`
-	realJidPopoverBox         gtki.Box        `gtk-widget:"user-jid-popover-box"`
-	realJidPopoverLabel       gtki.Label      `gtk-widget:"user-jid-popover-label"`
-	statusPopoverLabel        gtki.Label      `gtk-widget:"status-popover-label"`
-	statusMessagePopoverBox   gtki.Box        `gtk-widget:"status-message-popover-box"`
-	statusMessagePopoverLabel gtki.Label      `gtk-widget:"status-message-popover-label"`
+	view                        gtki.Box        `gtk-widget:"roster-info-box"`
+	avatar                      gtki.Image      `gtk-widget:"avatar-image"`
+	nicknameLabel               gtki.Label      `gtk-widget:"nickname-label"`
+	status                      gtki.Label      `gtk-widget:"status-label"`
+	currentAffiliationLabel     gtki.Label      `gtk-widget:"current-affiliation"`
+	currentRoleLabel            gtki.Label      `gtk-widget:"current-role"`
+	affiliationListBoxRow       gtki.ListBoxRow `gtk-widget:"change-affiliation-listbox-row"`
+	affiliationActionImage      gtki.Image      `gtk-widget:"change-affiliation-action-image"`
+	roleListBoxRow              gtki.ListBoxRow `gtk-widget:"change-role-listbox-row"`
+	roleActionImage             gtki.Image      `gtk-widget:"change-role-action-image"`
+	roleDisableLabel            gtki.Label      `gtk-widget:"change-role-disabled"`
+	occupantActionsMenuButton   gtki.MenuButton `gtk-widget:"occupant-actions-menu-button"`
+	kickOccupantMenuItem        gtki.MenuItem   `gtk-widget:"kick-occupant"`
+	changeOccupantVoiceMenuItem gtki.MenuItem   `gtk-widget:"change-occupant-voice"`
+	nicknamePopoverLabel        gtki.Label      `gtk-widget:"nickname-popover-label"`
+	realJidPopoverBox           gtki.Box        `gtk-widget:"user-jid-popover-box"`
+	realJidPopoverLabel         gtki.Label      `gtk-widget:"user-jid-popover-label"`
+	statusPopoverLabel          gtki.Label      `gtk-widget:"status-popover-label"`
+	statusMessagePopoverBox     gtki.Box        `gtk-widget:"status-message-popover-box"`
+	statusMessagePopoverLabel   gtki.Label      `gtk-widget:"status-message-popover-label"`
 
 	onReset   *callbacksSet
 	onRefresh *callbacksSet

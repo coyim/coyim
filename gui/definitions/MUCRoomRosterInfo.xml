@@ -688,5 +688,12 @@
         <signal name="activate" handler="on_kick" swapped="no"/>
       </object>
     </child>
+    <child>
+      <object class="GtkMenuItem" id="change-occupant-voice">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Grant voice</property>
+        <signal name="activate" handler="change_occupant_voice" swapped="no"/>
+      </object>
+    </child>
   </object>
 </interface>

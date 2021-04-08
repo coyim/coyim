@@ -5,15 +5,19 @@ import (
 	"encoding/xml"
 	"errors"
 
-	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/data"
+	xi "github.com/coyim/coyim/xmpp/interfaces"
 )
 
 var errChannelClosed = errors.New("channel closed")
 var errNotResultIQ = errors.New("expected result IQ")
 var errNotClientIQ = errors.New("expected Client IQ")
 
-func basicIQ(s access.Session, to, tp string, toSend, unpackInto interface{}, onSuccess func(*data.ClientIQ)) error {
+type hasConnection interface {
+	Conn() xi.Conn
+}
+
+func basicIQ(s hasConnection, to, tp string, toSend, unpackInto interface{}, onSuccess func(*data.ClientIQ)) error {
 	done := make(chan error)
 
 	nonblockIQ(s, to, tp, toSend, unpackInto, func(ciq *data.ClientIQ) {
@@ -26,7 +30,7 @@ func basicIQ(s access.Session, to, tp string, toSend, unpackInto interface{}, on
 	return <-done
 }
 
-func nonblockIQ(s access.Session, to, tp string, toSend, unpackInto interface{}, onSuccess func(*data.ClientIQ), onError func(*data.ClientIQ, error)) {
+func nonblockIQ(s hasConnection, to, tp string, toSend, unpackInto interface{}, onSuccess func(*data.ClientIQ), onError func(*data.ClientIQ, error)) {
 	rp, _, err := s.Conn().SendIQ(to, tp, toSend)
 	if err != nil {
 		onError(nil, err)

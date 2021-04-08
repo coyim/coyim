@@ -35,3 +35,7 @@ func (v *listBox) SelectRow(v1 gtki.ListBoxRow) {
 func (v *listBox) GetRowAtIndex(index int) gtki.ListBoxRow {
 	return WrapListBoxRowSimple(v.internal.GetRowAtIndex(index))
 }
+
+func (v *listBox) GetSelectedRow() gtki.ListBoxRow {
+	return WrapListBoxRowSimple(v.internal.GetSelectedRow())
+}

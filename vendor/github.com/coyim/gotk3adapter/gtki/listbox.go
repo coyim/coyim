@@ -5,6 +5,7 @@ type ListBox interface {
 
 	SelectRow(ListBoxRow)
 	GetRowAtIndex(int) ListBoxRow
+	GetSelectedRow() ListBoxRow
 }
 
 func AssertListBox(_ ListBox) {}

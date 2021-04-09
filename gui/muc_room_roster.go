@@ -24,6 +24,11 @@ const (
 )
 
 const (
+	roomViewRosterFontWeightNormal = 400
+	roomViewRosterFontWeightBold   = 700
+)
+
+const (
 	roomViewRosterImageIndex int = iota
 	roomViewRosterNicknameIndex
 	roomViewRosterAffiliationIndex
@@ -34,6 +39,7 @@ const (
 	roomViewRosterOccupantRoleForegroundIndex
 	roomViewRosterOccupantImageVisibilityIndex
 	roomViewRosterOccupantAffiliationVisibilityIndex
+	roomViewRosterTextDisplayIndex
 	roomViewRosterExpanderIconIndex
 	roomViewRosterExpanderVisibilityIndex
 )
@@ -106,6 +112,8 @@ func (r *roomViewRoster) initDefaults() {
 		glibi.TYPE_BOOLEAN,
 		// occupant affiliation visibility
 		glibi.TYPE_BOOLEAN,
+		// text display
+		glibi.TYPE_STRING,
 		// expander icon name
 		glibi.TYPE_STRING,
 		// expander icon visibility
@@ -302,8 +310,8 @@ func (r *roomViewRoster) drawOccupantsByRole(role string, occupants []*muc.Occup
 	cs := r.u.unifiedCached.ui.currentMUCColorSet()
 
 	modelSetValues(r.model, iter, map[int]interface{}{
-		roomViewRosterNicknameIndex:                      roleHeader,
-		roomViewRosterFontWeightIndex:                    700,
+		roomViewRosterTextDisplayIndex:                   roleHeader,
+		roomViewRosterFontWeightIndex:                    roomViewRosterFontWeightBold,
 		roomViewRosterBackgroundIndex:                    cs.rosterGroupBackground,
 		roomViewRosterForegroundIndex:                    cs.rosterGroupForeground,
 		roomViewRosterExpanderIconIndex:                  roomViewRosterGroupCollapseIconName,
@@ -324,16 +332,26 @@ func (r *roomViewRoster) addOccupantToRoster(o *muc.Occupant, parentIter gtki.Tr
 
 	displayAffiliation := affiliationDisplayName(o.Affiliation)
 
+	nickname := o.Nickname
+	displayNickname := nickname
+	nicknameFontWeight := roomViewRosterFontWeightNormal
+
+	if o.Nickname == r.roomView.room.SelfOccupantNickname() {
+		displayNickname = i18n.Localf("%s (You)", nickname)
+		nicknameFontWeight = roomViewRosterFontWeightBold
+	}
+
 	modelSetValues(r.model, iter, map[int]interface{}{
 		roomViewRosterImageIndex:                         getOccupantIconForStatus(o.Status),
-		roomViewRosterNicknameIndex:                      o.Nickname,
+		roomViewRosterNicknameIndex:                      nickname,
+		roomViewRosterTextDisplayIndex:                   displayNickname,
 		roomViewRosterAffiliationIndex:                   displayAffiliation,
 		roomViewRosterInfoIndex:                          occupantDisplayTooltip(o),
-		roomViewRosterFontWeightIndex:                    400,
+		roomViewRosterFontWeightIndex:                    nicknameFontWeight,
 		roomViewRosterOccupantRoleForegroundIndex:        cs.rosterOccupantRoleForeground,
-		roomViewRosterExpanderVisibilityIndex:            false,
 		roomViewRosterOccupantImageVisibilityIndex:       true,
 		roomViewRosterOccupantAffiliationVisibilityIndex: displayAffiliation != "",
+		roomViewRosterExpanderVisibilityIndex:            false,
 	})
 }
 

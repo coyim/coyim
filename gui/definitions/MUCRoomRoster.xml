@@ -54,8 +54,8 @@
                       </object>
                       <attributes>
                         <attribute name="cell-background">6</attribute>
-                        <attribute name="visible">11</attribute>
-                        <attribute name="icon-name">10</attribute>
+                        <attribute name="visible">12</attribute>
+                        <attribute name="icon-name">11</attribute>
                       </attributes>
                     </child>
                     <child>
@@ -71,7 +71,7 @@
                       </attributes>
                     </child>
                     <child>
-                      <object class="GtkCellRendererText" id="nickname-renderer">
+                      <object class="GtkCellRendererText" id="text-renderer">
                         <property name="ypad">3</property>
                         <property name="ellipsize">end</property>
                         <property name="single_paragraph_mode">True</property>
@@ -79,7 +79,7 @@
                       <attributes>
                         <attribute name="background">6</attribute>
                         <attribute name="foreground">5</attribute>
-                        <attribute name="text">1</attribute>
+                        <attribute name="text">10</attribute>
                         <attribute name="weight">4</attribute>
                       </attributes>
                     </child>

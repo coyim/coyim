@@ -10864,7 +10864,7 @@ ICAgIDwvY2hpbGQ+CiAgPC9vYmplY3Q+CjwvaW50ZXJmYWNlPgo=
 
 	"/definitions/MUCRoomWindow.xml": {
 		local:   "definitions/MUCRoomWindow.xml",
-		size:    8936,
+		size:    8935,
 		modtime: 1489449600,
 		compressed: `
 PGludGVyZmFjZT4KICA8b2JqZWN0IGNsYXNzPSJHdGtXaW5kb3ciIGlkPSJyb29tLXdpbmRvdyI+CiAg
@@ -11015,7 +11015,7 @@ aGlsZD4KICAgICAgICAgIDwvb2JqZWN0PgogICAgICAgICAgPHBhY2tpbmc+CiAgICAgICAgICAgIDxw
 cm9wZXJ0eSBuYW1lPSJwYXNzX3Rocm91Z2giPlRydWU8L3Byb3BlcnR5PgogICAgICAgICAgICA8cHJv
 cGVydHkgbmFtZT0iaW5kZXgiPjM8L3Byb3BlcnR5PgogICAgICAgICAgPC9wYWNraW5nPgogICAgICAg
 IDwvY2hpbGQ+CiAgICAgIDwvb2JqZWN0PgogICAgPC9jaGlsZD4KICAgIDxzdHlsZT4KICAgICAgPGNs
-YXNzIG5hbWU9Im11YyIvPgogICAgPC9zdHlsZT4KICA8L29iamVjdD4KPC9pbnRlcmZhY2U+Cgo=
+YXNzIG5hbWU9Im11YyIvPgogICAgPC9zdHlsZT4KICA8L29iamVjdD4KPC9pbnRlcmZhY2U+Cg==
 `,
 	},
 

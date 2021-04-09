@@ -22,24 +22,24 @@
     <property name="hexpand">True</property>
     <property name="orientation">vertical</property>
     <child>
-      <object class="GtkBox" id="toolbar">
+      <object class="GtkBox" id="room-view-toolbar-content">
         <property name="visible">True</property>
-        <property name="valign">start</property>
+        <property name="orientation">vertical</property>
         <child>
-          <object class="GtkBox" id="toolbar-top">
+          <object class="GtkBox" id="toolbar">
+            <property name="height_request">60</property>
             <property name="visible">True</property>
+            <property name="valign">start</property>
             <property name="border_width">12</property>
-            <property name="orientation">vertical</property>
-            <property name="spacing">12</property>
             <child>
-              <object class="GtkBox">
-                <property name="height_request">36</property>
+              <object class="GtkBox" id="toolbar-top">
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
                     <property name="valign">center</property>
+                    <property name="spacing">12</property>
                     <child>
                       <object class="GtkBox" id="room-info-box">
                         <property name="visible">True</property>
@@ -73,12 +73,13 @@
                           <object class="GtkBox" id="room-details-box">
                             <property name="visible">True</property>
                             <property name="valign">center</property>
-                            <property name="spacing">6</property>
+                            <property name="spacing">12</property>
                             <child>
                               <object class="GtkLabel" id="room-name-label">
                                 <property name="visible">True</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
+                                <property name="label" translatable="yes">avengers@testjabber.autonomia.digital</property>
                                 <property name="selectable">True</property>
                                 <property name="ellipsize">end</property>
                                 <property name="track_visited_links">False</property>
@@ -92,15 +93,19 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="room-subject-show-button">
+                              <object class="GtkButton" id="room-subject-button">
                                 <property name="visible">True</property>
+                                <property name="focus_on_click">False</property>
                                 <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Show room subject</property>
+                                <property name="halign">center</property>
+                                <property name="valign">center</property>
                                 <property name="relief">none</property>
-                                <signal name="clicked" handler="on_show_room_subject" swapped="no"/>
+                                <property name="tooltip_text" translatable="yes">Show room subject</property>
+                                <signal name="clicked" handler="on_toggle_room_subject" swapped="no"/>
                                 <child>
-                                  <object class="GtkImage">
+                                  <object class="GtkImage" id="room-subject-button-image">
                                     <property name="visible">True</property>
+                                    <property name="valign">center</property>
                                     <property name="icon_name">go-down-symbolic</property>
                                   </object>
                                 </child>
@@ -165,19 +170,55 @@
                 </child>
               </object>
               <packing>
-                <property name="expand">False</property>
+                <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="position">0</property>
               </packing>
             </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkRevealer" id="room-subject-revealer">
+        <property name="visible">True</property>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="orientation">vertical</property>
             <child>
-              <object class="GtkBox" id="room-subject-box">
+              <object class="GtkBox">
                 <property name="visible">True</property>
+                <property name="border_width">12</property>
                 <property name="orientation">vertical</property>
-                <property name="spacing">12</property>
                 <child>
-                  <object class="GtkSeparator">
+                  <object class="GtkLabel" id="room-subject-label">
                     <property name="visible">True</property>
+                    <property name="wrap">True</property>
+                    <property name="selectable">True</property>
+                    <property name="track_visited_links">False</property>
+                    <property name="xalign">0</property>
+                    <property name="yalign">0</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -185,52 +226,16 @@
                     <property name="position">0</property>
                   </packing>
                 </child>
-                <child>
-                  <object class="GtkBox">
-                    <property name="visible">True</property>
-                    <child>
-                      <object class="GtkLabel" id="room-subject-label">
-                        <property name="visible">True</property>
-                        <property name="valign">center</property>
-                        <property name="wrap">True</property>
-                        <property name="selectable">True</property>
-                        <property name="track_visited_links">False</property>
-                        <property name="xalign">0</property>
-                        <property name="yalign">0</property>
-                      </object>
-                      <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="room-subject-hide-button">
-                        <property name="visible">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Hide room subject</property>
-                        <property name="relief">none</property>
-                        <signal name="clicked" handler="on_hide_room_subject" swapped="no"/>
-                        <child>
-                          <object class="GtkImage">
-                            <property name="visible">True</property>
-                            <property name="icon_name">go-up-symbolic</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSeparator">
+                <property name="visible">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -239,17 +244,12 @@
               </packing>
             </child>
           </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
         </child>
       </object>
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
-        <property name="position">0</property>
+        <property name="position">1</property>
       </packing>
     </child>
   </object>

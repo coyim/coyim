@@ -80,6 +80,8 @@ func (l *roomViewLobby) initDefaults(v *roomView) {
 
 	setFieldVisibility(l.passwordLabel, false)
 	setFieldVisibility(l.passwordEntry, false)
+
+	mucStyles.setRoomToolbarLobyStyle(l.content)
 }
 
 func (l *roomViewLobby) initSubscribers(v *roomView) {

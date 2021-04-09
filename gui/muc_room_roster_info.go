@@ -133,9 +133,16 @@ func (r *roomViewRosterInfo) onKickOccupantClicked() {
 // changeOccupantVoice MUST be called from the UI thread
 func (r *roomViewRosterInfo) changeOccupantVoice() {
 	oa := r.rosterView.newChangeOccupantVoiceView(r.occupant, func(reason string) {
-		r.rosterView.updateOccupantRole(r.occupant, &data.ParticipantRole{}, reason)
+		r.rosterView.updateOccupantRole(r.occupant, r.roleToUpdate(), reason)
 	})
 	oa.show()
+}
+
+func (r *roomViewRosterInfo) roleToUpdate() data.Role {
+	if r.occupant.HasVoice() {
+		return &data.VisitorRole{}
+	}
+	return &data.ParticipantRole{}
 }
 
 // onOccupantUpdated MUST NOT be called from the UI thread

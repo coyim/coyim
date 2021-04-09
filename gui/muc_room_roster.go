@@ -320,7 +320,7 @@ func (r *roomViewRoster) drawOccupantsByRole(role string, occupants []*muc.Occup
 func (r *roomViewRoster) addOccupantToRoster(o *muc.Occupant, parentIter gtki.TreeIter) {
 	iter := r.model.Append(parentIter)
 
-	cs := r.u.unifiedCached.ui.currentMUCColorSet()
+	cs := r.u.currentMUCColorSet()
 
 	displayAffiliation := affiliationDisplayName(o.Affiliation)
 

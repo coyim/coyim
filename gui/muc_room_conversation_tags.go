@@ -61,6 +61,7 @@ func (c *roomViewConversation) createNicknameTag(cs mucColorSet) gtki.TextTag {
 	return c.createConversationTag("nickname", map[string]interface{}{
 		"foreground": cs.nicknameForeground,
 		"style":      pangoi.STYLE_NORMAL,
+		"weight":     pangoi.WEIGHT_BOLD,
 	})
 }
 

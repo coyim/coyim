@@ -20,6 +20,7 @@ type roomViewConversation struct {
 	selfOccupantNickname func() string
 
 	view                  gtki.Box            `gtk-widget:"room-conversation"`
+	chatScrolledWindow    gtki.ScrolledWindow `gtk-widget:"chat-scrolled-window"`
 	chatTextView          gtki.TextView       `gtk-widget:"chat-text-view"`
 	messageView           gtki.Box            `gtk-widget:"message-view"`
 	messageScrolledWindow gtki.ScrolledWindow `gtk-widget:"message-scrolled-window"`
@@ -62,7 +63,9 @@ func (c *roomViewConversation) initBuilder() {
 		"on_key_press":    c.onKeyPress,
 	})
 
-	mucStyles.setMessageScrolledWindowStyle(c.messageScrolledWindow)
+	mucStyles.setScrolledWindowStyle(c.chatScrolledWindow)
+	mucStyles.setScrolledWindowStyle(c.messageScrolledWindow)
+	mucStyles.setMessageViewBoxStyle(c.messageView)
 }
 
 func (c *roomViewConversation) initDefaults(v *roomView) {

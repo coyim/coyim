@@ -118,6 +118,8 @@ func (v *roomView) initBuilderAndSignals() {
 
 func (v *roomView) initDefaults() {
 	v.setTitle(i18n.Localf("%s [%s]", v.roomID(), v.account.Account()))
+
+	mucStyles.setRoomWindowStyle(v.window)
 }
 
 func (v *roomView) initSubscribers() {

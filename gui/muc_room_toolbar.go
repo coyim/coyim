@@ -1,22 +1,28 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+const (
+	roomSubjectShownIconName  = "go-up-symbolic"
+	roomSubjectHiddenIconName = "go-down-symbolic"
+)
+
 type roomViewToolbar struct {
-	view                  gtki.Box        `gtk-widget:"room-view-toolbar"`
-	roomNameLabel         gtki.Label      `gtk-widget:"room-name-label"`
-	roomStatusIcon        gtki.Image      `gtk-widget:"room-status-icon"`
-	roomMenuButton        gtki.MenuButton `gtk-widget:"room-menu-button"`
-	roomSubjectBox        gtki.Box        `gtk-widget:"room-subject-box"`
-	roomSubjectLabel      gtki.Label      `gtk-widget:"room-subject-label"`
-	roomSubjectHideButton gtki.Button     `gtk-widget:"room-subject-hide-button"`
-	roomSubjectShowButton gtki.Button     `gtk-widget:"room-subject-show-button"`
-	roomMenu              gtki.Menu       `gtk-widget:"room-menu"`
-	leaveRoomMenuItem     gtki.MenuItem   `gtk-widget:"leave-room-menu-item"`
-	destroyRoomMenuItem   gtki.MenuItem   `gtk-widget:"destroy-room-menu-item"`
+	view                   gtki.Box        `gtk-widget:"room-view-toolbar"`
+	roomNameLabel          gtki.Label      `gtk-widget:"room-name-label"`
+	roomStatusIcon         gtki.Image      `gtk-widget:"room-status-icon"`
+	roomMenuButton         gtki.MenuButton `gtk-widget:"room-menu-button"`
+	roomSubjectButton      gtki.Button     `gtk-widget:"room-subject-button"`
+	roomSubjectButtonImage gtki.Image      `gtk-widget:"room-subject-button-image"`
+	roomSubjectRevealer    gtki.Revealer   `gtk-widget:"room-subject-revealer"`
+	roomSubjectLabel       gtki.Label      `gtk-widget:"room-subject-label"`
+	roomMenu               gtki.Menu       `gtk-widget:"room-menu"`
+	leaveRoomMenuItem      gtki.MenuItem   `gtk-widget:"leave-room-menu-item"`
+	destroyRoomMenuItem    gtki.MenuItem   `gtk-widget:"destroy-room-menu-item"`
 }
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
@@ -34,10 +40,9 @@ func (t *roomViewToolbar) initBuilder(v *roomView) {
 	panicOnDevError(builder.bindObjects(t))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_leave_room":        v.onLeaveRoom,
-		"on_destroy_room":      v.onDestroyRoom,
-		"on_show_room_subject": t.onShowRoomSubject,
-		"on_hide_room_subject": t.onHideRoomSubject,
+		"on_leave_room":          v.onLeaveRoom,
+		"on_destroy_room":        v.onDestroyRoom,
+		"on_toggle_room_subject": t.onToggleRoomSubject,
 	})
 }
 
@@ -103,22 +108,34 @@ func (t *roomViewToolbar) disable() {
 
 // displayRoomSubject MUST be called from the UI thread
 func (t *roomViewToolbar) displayRoomSubject(subject string) {
-	t.roomSubjectShowButton.Hide()
 	t.roomSubjectLabel.SetText(subject)
+	t.roomSubjectRevealer.SetRevealChild(false)
 
-	if subject == "" {
-		t.roomSubjectBox.Hide()
-	} else {
-		t.roomSubjectBox.Show()
+	t.roomSubjectButton.Hide()
+	if subject != "" {
+		t.roomSubjectButton.Show()
 	}
 }
 
-func (t *roomViewToolbar) onShowRoomSubject() {
-	t.roomSubjectShowButton.Hide()
-	t.roomSubjectBox.Show()
+// onToggleRoomSubject MUST be called from the UI thread
+func (t *roomViewToolbar) onToggleRoomSubject() {
+	if t.roomSubjectRevealer.GetRevealChild() {
+		t.onHideRoomSubject()
+	} else {
+		t.onShowRoomSubject()
+	}
 }
 
+// onShowRoomSubject MUST be called from the UI thread
+func (t *roomViewToolbar) onShowRoomSubject() {
+	t.roomSubjectRevealer.SetRevealChild(true)
+	t.roomSubjectButton.SetTooltipText(i18n.Local("Hide room subject"))
+	t.roomSubjectButtonImage.SetFromIconName(roomSubjectShownIconName, gtki.ICON_SIZE_BUTTON)
+}
+
+// onHideRoomSubject MUST be called from the UI thread
 func (t *roomViewToolbar) onHideRoomSubject() {
-	t.roomSubjectShowButton.Show()
-	t.roomSubjectBox.Hide()
+	t.roomSubjectRevealer.SetRevealChild(false)
+	t.roomSubjectButton.SetTooltipText(i18n.Local("Show room subject"))
+	t.roomSubjectButtonImage.SetFromIconName(roomSubjectHiddenIconName, gtki.ICON_SIZE_BUTTON)
 }

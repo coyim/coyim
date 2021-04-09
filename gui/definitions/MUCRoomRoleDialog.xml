@@ -167,6 +167,7 @@
                             <child>
                               <object class="GtkListBoxRow">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <child>
                                   <object class="GtkSeparator">
                                     <property name="visible">True</property>
@@ -197,6 +198,7 @@
                                         <property name="valign">center</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
+                                        <property name="group">role-participant</property>
                                         <signal name="toggled" handler="on_role_option_changed" swapped="no"/>
                                       </object>
                                       <packing>
@@ -209,6 +211,72 @@
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="label" translatable="yes">In a moderated room, only participants and moderators can send messages to the room. In non-moderated rooms, there's no difference between a participant and a visitor.</property>
+                                        <property name="wrap">True</property>
+                                        <property name="width_chars">0</property>
+                                        <property name="max_width_chars">40</property>
+                                        <property name="lines">2</property>
+                                        <property name="xalign">0</property>
+                                        <property name="yalign">0</property>
+                                        <style>
+                                          <class name="help-text"/>
+                                        </style>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkListBoxRow">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <child>
+                                  <object class="GtkSeparator">
+                                    <property name="visible">True</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkListBoxRow">
+                                <property name="width_request">100</property>
+                                <property name="height_request">80</property>
+                                <property name="visible">True</property>
+                                <property name="activatable">False</property>
+                                <property name="selectable">False</property>
+                                <property name="can_focus">False</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="border_width">12</property>
+                                    <property name="orientation">vertical</property>
+                                    <property name="spacing">6</property>
+                                    <child>
+                                      <object class="GtkRadioButton" id="role-visitor">
+                                        <property name="label" translatable="yes">Visitor</property>
+                                        <property name="visible">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="draw_indicator">True</property>
+                                        <property name="group">role-participant</property>
+                                        <signal name="toggled" handler="on_role_option_changed" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="label" translatable="yes">In a moderated room, a moderator might assign the visitor role to participants, it revokes the sending messages permission.</property>
                                         <property name="wrap">True</property>
                                         <property name="width_chars">0</property>
                                         <property name="max_width_chars">40</property>

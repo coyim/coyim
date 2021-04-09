@@ -25,6 +25,7 @@ type occupantRoleUpdateView struct {
 	roleLabel        gtki.Label       `gtk-widget:"role-type-label"`
 	moderatorRadio   gtki.RadioButton `gtk-widget:"role-moderator"`
 	participantRadio gtki.RadioButton `gtk-widget:"role-participant"`
+	visitorRadio     gtki.RadioButton `gtk-widget:"role-visitor"`
 	reasonLabel      gtki.Label       `gtk-widget:"role-reason-label"`
 	reasonEntry      gtki.TextView    `gtk-widget:"role-reason-entry"`
 	applyButton      gtki.Button      `gtk-widget:"role-apply-button"`
@@ -98,6 +99,8 @@ func (rv *occupantRoleUpdateView) initRadioButtonsValues() {
 		rv.moderatorRadio.SetActive(true)
 	case *data.ParticipantRole:
 		rv.participantRadio.SetActive(true)
+	case *data.VisitorRole:
+		rv.visitorRadio.SetActive(true)
 	}
 }
 
@@ -113,9 +116,10 @@ func (rv *occupantRoleUpdateView) getRoleBasedOnRadioSelected() data.Role {
 		return &data.ModeratorRole{}
 	case rv.participantRadio.GetActive():
 		return &data.ParticipantRole{}
-	default:
-		return &data.NoneRole{}
+	case rv.visitorRadio.GetActive():
+		return &data.VisitorRole{}
 	}
+	return &data.NoneRole{}
 }
 
 // close MUST be called from the UI thread

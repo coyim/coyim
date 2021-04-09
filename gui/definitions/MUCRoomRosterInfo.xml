@@ -560,6 +560,7 @@
                                 <property name="width_request">100</property>
                                 <property name="visible">True</property>
                                 <property name="selectable">False</property>
+                                <property name="tooltip_text" translatable="yes">A role represents a privilege level within the room, distinct from the user's long-lived position with the room. A role lasts only for the duration of the user's visit to the room.</property>
                                 <child>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>

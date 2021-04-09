@@ -15,27 +15,30 @@ type occupantActionView struct {
 	message     gtki.Label    `gtk-widget:"occupant-action-message"`
 	reason      gtki.TextView `gtk-widget:"occupant-action-reason-entry"`
 	reasonLabel gtki.Label    `gtk-widget:"occupant-action-reason-label"`
+
+	confirmationAction func(occupant *muc.Occupant, reason string)
 }
 
-func (r *roomViewRoster) newOccupantActionView(o *muc.Occupant) *occupantActionView {
+func (r *roomViewRoster) newOccupantActionView(o *muc.Occupant, confirmationAction func(occupant *muc.Occupant, reason string)) *occupantActionView {
 	oa := &occupantActionView{
-		occupant:       o,
-		roomViewRoster: r,
+		occupant:           o,
+		roomViewRoster:     r,
+		confirmationAction: confirmationAction,
 	}
 
 	oa.initBuilder()
 	return oa
 }
 
-func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant) *occupantActionView {
-	k := r.newOccupantActionView(o)
+func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant, confirmationAction func(occupant *muc.Occupant, reason string)) *occupantActionView {
+	k := r.newOccupantActionView(o, confirmationAction)
 	k.initKickOccupantDefaults()
 
 	return k
 }
 
-func (r *roomViewRoster) newChangeOccupantVoiceView(o *muc.Occupant) *occupantActionView {
-	k := r.newOccupantActionView(o)
+func (r *roomViewRoster) newChangeOccupantVoiceView(o *muc.Occupant, confirmationAction func(occupant *muc.Occupant, reason string)) *occupantActionView {
+	k := r.newOccupantActionView(o, confirmationAction)
 	k.initChangeOccupantVoiceDefaults()
 
 	return k
@@ -46,7 +49,7 @@ func (oa *occupantActionView) initBuilder() {
 	panicOnDevError(b.bindObjects(oa))
 
 	b.ConnectSignals(map[string]interface{}{
-		"on_ok":     oa.onKickClicked,
+		"on_ok":     oa.onConfirmClicked,
 		"on_cancel": oa.onCancelClicked,
 	})
 }
@@ -81,9 +84,9 @@ func (oa *occupantActionView) initChangeOccupantVoiceDefaults() {
 	mucStyles.setRoomDialogErrorComponentHeaderStyle(oa.header)
 }
 
-// onKickClicked MUST be called from the UI thread
-func (oa *occupantActionView) onKickClicked() {
-	go oa.roomViewRoster.kickOccupant(oa.occupant, getTextViewText(oa.reason))
+// onConfirmClicked MUST be called from the UI thread
+func (oa *occupantActionView) onConfirmClicked() {
+	go oa.confirmationAction(oa.occupant, getTextViewText(oa.reason))
 	oa.close()
 }
 

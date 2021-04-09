@@ -60,3 +60,10 @@ func (lo *roomViewLoadingOverlay) onKickOccupant(nickname string) {
 	lo.setTransparent()
 	lo.show()
 }
+
+// onGrantOccupantVoice MUST be called from the UI thread
+func (lo *roomViewLoadingOverlay) onGrantOccupantVoice(nickname string) {
+	lo.setTitle(i18n.Localf("Granting voice to %s", nickname))
+	lo.setTransparent()
+	lo.show()
+}

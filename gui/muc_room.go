@@ -475,6 +475,32 @@ func (v *roomView) onKickOccupantError(occupant *muc.Occupant, err error) {
 	})
 }
 
+func (v *roomView) tryGrantOccupantVoice(occupant *muc.Occupant, reason string) {
+	l := v.log.WithField("occupant", occupant.Nickname)
+
+	doInUIThread(func() {
+		v.loadingViewOverlay.onGrantOccupantVoice(occupant.Nickname)
+	})
+
+	sc, ec := v.account.session.UpdateOccupantRole(v.roomID(), occupant.Nickname, &data.ParticipantRole{}, reason)
+
+	select {
+	case <-sc:
+		l.Info("The occupant was role was updated to participant")
+		v.onGrantOccupantVoiceSuccess(occupant.Nickname)
+	case err := <-ec:
+		l.WithError(err).Error("An error occurred while trying to update the occupant role to participant")
+	}
+}
+
+func (v *roomView) onGrantOccupantVoiceSuccess(occupantNickname string) {
+	doInUIThread(func() {
+		v.loadingViewOverlay.hide()
+		v.notifications.info(i18n.Localf("%s now is able to send messages in this room.", occupantNickname))
+		v.roster.hideRosterInfoPanel()
+	})
+}
+
 func (v *roomView) switchToLobbyView() {
 	v.initRoomLobby()
 

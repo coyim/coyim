@@ -161,6 +161,9 @@
                 <property name="visible">True</property>
                 <property name="valign">center</property>
                 <property name="track_visited_links">False</property>
+                <style>
+                  <class name="status-message"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -676,23 +679,23 @@
     <style>
       <class name="roster-info-panel"/>
     </style>
-    <object class="GtkMenu" id="roster-info-occupant-menu">
-      <property name="visible">True</property>
-      <property name="menu_type_hint">menu</property>
-      <child>
-        <object class="GtkMenuItem" id="kick-occupant">
-          <property name="visible">True</property>
-          <property name="label" translatable="yes">Expel</property>
-          <signal name="activate" handler="on_kick" swapped="no"/>
-        </object>
-      </child>
-      <child>
-        <object class="GtkMenuItem" id="change-occupant-voice">
-          <property name="visible">True</property>
-          <property name="label" translatable="yes">Grant voice</property>
-          <signal name="activate" handler="change_occupant_voice" swapped="no"/>
-        </object>
-      </child>
-    </object>
+  </object>
+  <object class="GtkMenu" id="roster-info-occupant-menu">
+    <property name="visible">True</property>
+    <property name="menu_type_hint">menu</property>
+    <child>
+      <object class="GtkMenuItem" id="kick-occupant">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Expel</property>
+        <signal name="activate" handler="on_kick" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="change-occupant-voice">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Grant voice</property>
+        <signal name="activate" handler="change_occupant_voice" swapped="no"/>
+      </object>
+    </child>
   </object>
 </interface>

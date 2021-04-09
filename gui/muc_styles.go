@@ -61,6 +61,10 @@ func (s *mucStylesProvider) setRoomRosterInfoStyle(b gtki.Box) {
 			"font-weight": "bold",
 			"font-size":   "large",
 		},
+		".status-message": style{
+			"font-style": "italic",
+			"color":      "@insensitive_fg_color",
+		},
 	})
 }
 

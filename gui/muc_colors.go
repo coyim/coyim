@@ -6,24 +6,28 @@ import (
 )
 
 type mucColorSet struct {
-	warningForeground                 string
-	warningBackground                 string
-	someoneJoinedForeground           string
-	someoneLeftForeground             string
-	timestampForeground               string
-	nicknameForeground                string
-	subjectForeground                 string
-	infoMessageForeground             string
-	messageForeground                 string
-	errorForeground                   string
-	configurationForeground           string
-	roomMessagesBackground            string
+	warningForeground       string
+	warningBackground       string
+	someoneJoinedForeground string
+	someoneLeftForeground   string
+	timestampForeground     string
+	nicknameForeground      string
+	subjectForeground       string
+	infoMessageForeground   string
+	messageForeground       string
+	errorForeground         string
+	configurationForeground string
+	roomMessagesBackground  string
+
+	// Room specifics
+	roomNameDisabledForeground string
+
+	// Room overlay
 	roomOverlaySolidBackground        string
 	roomOverlayContentSolidBackground string
 	roomOverlayContentBackground      string
 	roomOverlayBackground             string
 	roomOverlayContentForeground      string
-	roomNameDisabledForeground        string
 
 	// Room roster
 	rosterGroupBackground        string
@@ -71,24 +75,26 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 	cs := u.defaultLightColorSet()
 
 	return mucColorSet{
-		warningForeground:                 cs.warningForeground,
-		warningBackground:                 cs.warningBackground,
-		errorForeground:                   cs.errorForeground,
-		someoneJoinedForeground:           "#297316",
-		someoneLeftForeground:             "#731629",
-		timestampForeground:               "#AAB7B8",
-		nicknameForeground:                "#395BA3",
-		subjectForeground:                 "#000080",
-		infoMessageForeground:             "#395BA3",
-		messageForeground:                 "#000000",
-		configurationForeground:           "#9a04bf",
-		roomMessagesBackground:            "#FFFFFF",
-		roomOverlaySolidBackground:        "#FFFFFF",
+		warningForeground:       cs.warningForeground,
+		warningBackground:       cs.warningBackground,
+		errorForeground:         cs.errorForeground,
+		someoneJoinedForeground: "#297316",
+		someoneLeftForeground:   "#731629",
+		timestampForeground:     "#AAB7B8",
+		nicknameForeground:      "#395BA3",
+		subjectForeground:       "#000080",
+		infoMessageForeground:   "#395BA3",
+		messageForeground:       "#000000",
+		configurationForeground: "#9a04bf",
+		roomMessagesBackground:  "#FFFFFF",
+
+		roomNameDisabledForeground: "@insensitive_fg_color",
+
+		roomOverlaySolidBackground:        "@theme_bg_color",
 		roomOverlayContentSolidBackground: "transparent",
-		roomOverlayContentBackground:      "#FFFFFF",
+		roomOverlayContentBackground:      "@theme_bg_color",
 		roomOverlayBackground:             "#000000",
-		roomOverlayContentForeground:      "#333333",
-		roomNameDisabledForeground:        "#A9A9A9",
+		roomOverlayContentForeground:      "@theme_fg_color",
 
 		rosterGroupBackground:        "#F5F5F4",
 		rosterGroupForeground:        "#1C1917",
@@ -128,24 +134,26 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 	cs := u.defaultDarkColorSet()
 
 	return mucColorSet{
-		warningForeground:                 cs.warningForeground,
-		warningBackground:                 cs.warningBackground,
-		errorForeground:                   cs.errorForeground,
-		someoneJoinedForeground:           "#297316",
-		someoneLeftForeground:             "#731629",
-		timestampForeground:               "#AAB7B8",
-		nicknameForeground:                "#395BA3",
-		subjectForeground:                 "#000080",
-		infoMessageForeground:             "#E34267",
-		messageForeground:                 "#000000",
-		configurationForeground:           "#9a04bf",
-		roomMessagesBackground:            "#FFFFFF",
-		roomOverlaySolidBackground:        "#FFFFFF",
+		warningForeground:       cs.warningForeground,
+		warningBackground:       cs.warningBackground,
+		errorForeground:         cs.errorForeground,
+		someoneJoinedForeground: "#297316",
+		someoneLeftForeground:   "#731629",
+		timestampForeground:     "@insensitive_fg_color",
+		nicknameForeground:      "#395BA3",
+		subjectForeground:       "#000080",
+		infoMessageForeground:   "#E34267",
+		messageForeground:       "#000000",
+		configurationForeground: "#9a04bf",
+		roomMessagesBackground:  "@theme_base_color",
+
+		roomNameDisabledForeground: "#A9A9A9",
+
+		roomOverlaySolidBackground:        "@theme_base_color",
 		roomOverlayContentSolidBackground: "transparent",
-		roomOverlayContentBackground:      "#FFFFFF",
+		roomOverlayContentBackground:      "@theme_base_color",
 		roomOverlayBackground:             "#000000",
 		roomOverlayContentForeground:      "#333333",
-		roomNameDisabledForeground:        "#A9A9A9",
 
 		rosterGroupBackground:        "#1C1917",
 		rosterGroupForeground:        "#FAFAF9",

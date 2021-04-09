@@ -681,7 +681,7 @@
       <class name="roster-info-panel"/>
     </style>
   </object>
-    <object class="GtkMenu" id="roster-info-occupant-menu">
+  <object class="GtkMenu" id="roster-info-occupant-menu">
     <property name="visible">True</property>
     <property name="menu_type_hint">menu</property>
     <child>

@@ -7,7 +7,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
@@ -18,15 +17,15 @@ import (
 const fileTransferProfile = "http://jabber.org/protocol/si/profile/file-transfer"
 const encryptedTransferProfile = "http://jabber.org/protocol/si/profile/encrypted-data-transfer"
 
-func registerSendFileTransferMethod(name string, dispatch func(*sendContext), isCurrentlyValid func(string, access.Session) bool) {
+func registerSendFileTransferMethod(name string, dispatch func(*sendContext), isCurrentlyValid func(string, hasConnectionAndConfig) bool) {
 	supportedSendingMechanisms[name] = dispatch
 	isSendingMechanismCurrentlyValid[name] = isCurrentlyValid
 }
 
 var supportedSendingMechanisms = map[string]func(*sendContext){}
-var isSendingMechanismCurrentlyValid = map[string]func(string, access.Session) bool{}
+var isSendingMechanismCurrentlyValid = map[string]func(string, hasConnectionAndConfig) bool{}
 
-func discoverSupport(s access.Session, p string) (profiles map[string]bool, err error) {
+func discoverSupport(s hasConnection, p string) (profiles map[string]bool, err error) {
 	profiles = make(map[string]bool)
 	if res, ok := s.Conn().DiscoveryFeatures(p); ok {
 		foundSI := false
@@ -59,7 +58,7 @@ func genSid(c interfaces.Conn) string {
 	return fmt.Sprintf("sid%d", binary.LittleEndian.Uint64(buf[:]))
 }
 
-func calculateAvailableSendOptions(s access.Session) []data.FormFieldOptionX {
+func calculateAvailableSendOptions(s hasConnectionAndConfig) []data.FormFieldOptionX {
 	res := []data.FormFieldOptionX{}
 	for k := range supportedSendingMechanisms {
 		if isSendingMechanismCurrentlyValid[k](k, s) {
@@ -105,7 +104,7 @@ func (ctx *sendContext) offerSend() error {
 }
 
 type sendContext struct {
-	s                access.Session
+	s                hasConnectionAndConfigAndLog
 	peer             string
 	file             string
 	sid              string
@@ -152,7 +151,7 @@ func (ctx *sendContext) onDecline() {
 	}
 }
 
-func notifyUserThatSendStarted(method string, s access.Session, file, peer string) {
+func notifyUserThatSendStarted(method string, s hasLog, file, peer string) {
 	s.Log().WithFields(log.Fields{
 		"file":   file,
 		"peer":   peer,
@@ -198,7 +197,7 @@ func (ctx *sendContext) initSend() {
 }
 
 // InitSend starts the process of sending a file to a peer
-func InitSend(s access.Session, peer jid.Any, file string, onNoEnc func() bool, encDecision func(bool)) *sdata.FileTransferControl {
+func InitSend(s hasConnectionAndConfigAndLogAndHasSymmetricKey, peer jid.Any, file string, onNoEnc func() bool, encDecision func(bool)) *sdata.FileTransferControl {
 	ctx := &sendContext{
 		peer:    peer.String(),
 		file:    file,

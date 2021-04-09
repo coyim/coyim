@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/digests"
-	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 )
@@ -23,13 +22,13 @@ func init() {
 	registerSendFileTransferMethod(BytestreamMethod, bytestreamsSendDo, bytestreamsSendCurrentlyValid)
 }
 
-func bytestreamsSendCurrentlyValid(_ string, s access.Session) bool {
+func bytestreamsSendCurrentlyValid(_ string, s hasConnectionAndConfig) bool {
 	return len(bytestreamsGetCurrentValidProxies(s)) > 0
 }
 
 var defaultBytestreamProxyTimeout = 2 * time.Hour
 
-func bytestreamsGetStreamhostDataFor(s access.Session, jid string) (result *data.BytestreamStreamhost) {
+func bytestreamsGetStreamhostDataFor(s hasConnection, jid string) (result *data.BytestreamStreamhost) {
 	var q data.BytestreamQuery
 	_ = basicIQ(s, jid, "get", &data.BytestreamQuery{}, &q, func(*data.ClientIQ) {
 		for _, sh := range q.Streamhosts {
@@ -41,7 +40,7 @@ func bytestreamsGetStreamhostDataFor(s access.Session, jid string) (result *data
 	return
 }
 
-func bytestreamsCalculateValidProxies(s access.Session) func(key string) interface{} {
+func bytestreamsCalculateValidProxies(s hasConnectionAndConfig) func(key string) interface{} {
 	return func(key string) interface{} {
 		var ditems data.DiscoveryItemsQuery
 		possibleProxies := []string{}
@@ -86,7 +85,7 @@ func bytestreamsCalculateValidProxies(s access.Session) func(key string) interfa
 	}
 }
 
-func bytestreamsGetCurrentValidProxies(s access.Session) []*data.BytestreamStreamhost {
+func bytestreamsGetCurrentValidProxies(s hasConnectionAndConfig) []*data.BytestreamStreamhost {
 	proxies, _ := s.Conn().Cache().GetOrComputeTimed("http://jabber.org/protocol/bytestreams . proxies", defaultBytestreamProxyTimeout, bytestreamsCalculateValidProxies(s))
 	return proxies.([]*data.BytestreamStreamhost)
 

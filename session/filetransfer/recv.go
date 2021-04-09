@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -26,7 +25,7 @@ func registerRecieveFileTransferMethod(name string, prio int, cancelListener fun
 }
 
 type recvContext struct {
-	s           access.Session
+	s           canSendIQAndHasLogAndConnection
 	sid         string
 	peer        string
 	mime        string
@@ -144,7 +143,7 @@ func waitForFileTransferUserAcceptance(stanza *data.ClientIQ, si data.SI, accept
 	ctx.s.SendIQError(stanza, *error)
 }
 
-func registerNewFileTransfer(s access.Session, si data.SI, options []string, stanza *data.ClientIQ, ctl *sdata.FileTransferControl, isDir bool, encrypted bool) *recvContext {
+func registerNewFileTransfer(s hasLogConnectionIQSymmetricKeyAndIsPublisher, si data.SI, options []string, stanza *data.ClientIQ, ctl *sdata.FileTransferControl, isDir bool, encrypted bool) *recvContext {
 	ctx := &recvContext{
 		s:         s,
 		sid:       si.ID,

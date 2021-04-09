@@ -13,10 +13,14 @@ func init() {
 	registerKnownIQ("set", "http://jabber.org/protocol/si si", streamInitIQ)
 }
 
+func wrappedFileTransferInitIQ(s access.Session, ciq *data.ClientIQ, si data.SI) (interface{}, string, bool) {
+	return filetransfer.InitIQ(s, ciq, si)
+}
+
 var supportedSIProfiles = map[string]func(access.Session, *data.ClientIQ, data.SI) (interface{}, string, bool){
-	"http://jabber.org/protocol/si/profile/file-transfer":           filetransfer.InitIQ,
-	"http://jabber.org/protocol/si/profile/directory-transfer":      filetransfer.InitIQ,
-	"http://jabber.org/protocol/si/profile/encrypted-data-transfer": filetransfer.InitIQ,
+	"http://jabber.org/protocol/si/profile/file-transfer":           wrappedFileTransferInitIQ,
+	"http://jabber.org/protocol/si/profile/directory-transfer":      wrappedFileTransferInitIQ,
+	"http://jabber.org/protocol/si/profile/encrypted-data-transfer": wrappedFileTransferInitIQ,
 }
 
 func streamInitIQ(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {

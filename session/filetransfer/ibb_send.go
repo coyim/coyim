@@ -6,7 +6,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/data"
 )
 
@@ -17,7 +16,7 @@ func init() {
 	registerSendFileTransferMethod(IBBMethod, ibbSendDo, ibbSendCurrentlyValid)
 }
 
-func ibbSendCurrentlyValid(string, access.Session) bool {
+func ibbSendCurrentlyValid(string, hasConnectionAndConfig) bool {
 	return true
 }
 

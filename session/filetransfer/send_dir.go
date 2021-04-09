@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -163,7 +162,7 @@ func (ctx *dirSendContext) offerSend(file string, availableProfiles map[string]b
 }
 
 // InitSendDir starts the process of sending a directory to a peer
-func InitSendDir(s access.Session, peer jid.Any, dir string, onNoEnc func() bool, encDecision func(bool)) *sdata.FileTransferControl {
+func InitSendDir(s hasConnectionAndConfigAndLogAndHasSymmetricKey, peer jid.Any, dir string, onNoEnc func() bool, encDecision func(bool)) *sdata.FileTransferControl {
 	ctx := &dirSendContext{
 		sc: &sendContext{
 			s:       s,

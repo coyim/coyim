@@ -4,13 +4,12 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/socks5"
 	"golang.org/x/net/proxy"
 )
 
-func tryStreamhost(s access.Session, sh data.BytestreamStreamhost, dstAddr string, k func(net.Conn)) bool {
+func tryStreamhost(s hasConfigAndLog, sh data.BytestreamStreamhost, dstAddr string, k func(net.Conn)) bool {
 	port := sh.Port
 	if port == 0 {
 		port = 1080

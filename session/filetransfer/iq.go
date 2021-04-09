@@ -1,7 +1,6 @@
 package filetransfer
 
 import (
-	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/data"
@@ -9,7 +8,7 @@ import (
 )
 
 // InitIQ is the hook function that will be called when we receive a file or directory transfer stream initiation IQ
-func InitIQ(s access.Session, stanza *data.ClientIQ, si data.SI) (ret interface{}, iqtype string, ignore bool) {
+func InitIQ(s hasLogConnectionIQSymmetricKeyAndIsPublisher, stanza *data.ClientIQ, si data.SI) (ret interface{}, iqtype string, ignore bool) {
 	peer, ok := jid.Parse(stanza.From).(jid.WithResource)
 	if !ok {
 		s.Log().WithField("from", stanza.From).Warn("Stanza sender doesn't contain resource - this shouldn't happen")

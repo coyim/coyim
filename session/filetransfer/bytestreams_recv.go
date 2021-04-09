@@ -10,7 +10,6 @@ import (
 	"os"
 
 	"github.com/coyim/coyim/digests"
-	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/data"
 )
 
@@ -28,7 +27,7 @@ func bytestreamWaitForCancel(ctx *recvContext) {
 	})
 }
 
-func bytestreamInitialSetup(s access.Session, stanza *data.ClientIQ) (tag data.BytestreamQuery, ctx *recvContext, earlyReturn bool) {
+func bytestreamInitialSetup(s canSendIQErrorAndHasLog, stanza *data.ClientIQ) (tag data.BytestreamQuery, ctx *recvContext, earlyReturn bool) {
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&tag); err != nil || tag.Sid == "" {
 		s.Log().WithError(err).Warn("Failed to parse bytestream open")
 		s.SendIQError(stanza, iqErrorIBBBadRequest)
@@ -100,7 +99,7 @@ func (ctx *recvContext) bytestreamDoReceive(conn net.Conn) {
 }
 
 // BytestreamQuery is the hook function that will be called when we receive a bytestream query IQ
-func BytestreamQuery(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
+func BytestreamQuery(s canSendIQErrorHasConfigAndHasLog, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
 	tag, ctx, earlyReturn := bytestreamInitialSetup(s, stanza)
 	if earlyReturn {
 		return nil, "", true

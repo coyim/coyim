@@ -9,7 +9,6 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/data"
 )
 
@@ -39,7 +38,7 @@ func ibbWaitForCancel(ctx *recvContext) {
 }
 
 // IbbOpen is the hook function that will be called when we receive an ibb open IQ
-func IbbOpen(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
+func IbbOpen(s hasLog, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
 	var tag data.IBBOpen
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&tag); err != nil {
 		s.Log().WithError(err).Warn("Failed to parse IBB open")
@@ -61,7 +60,7 @@ func IbbOpen(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype s
 	return data.EmptyReply{}, "", false
 }
 
-func ibbParseXMLData(s access.Session, dt []byte) (tag data.IBBData, ctx *recvContext, ictx *ibbContext, ret interface{}, iqtype string, ignore bool) {
+func ibbParseXMLData(s hasLog, dt []byte) (tag data.IBBData, ctx *recvContext, ictx *ibbContext, ret interface{}, iqtype string, ignore bool) {
 	if err := xml.NewDecoder(bytes.NewBuffer(dt)).Decode(&tag); err != nil {
 		s.Log().WithError(err).Warn("Failed to parse IBB data")
 		return tag, nil, nil, iqErrorNotAcceptable, "error", false
@@ -88,7 +87,7 @@ func ibbParseXMLData(s access.Session, dt []byte) (tag data.IBBData, ctx *recvCo
 	return tag, ctx, ictx, nil, "", false
 }
 
-func ibbOnData(s access.Session, body []byte) (ret interface{}, iqtype string, ignore bool) {
+func ibbOnData(s hasLog, body []byte) (ret interface{}, iqtype string, ignore bool) {
 	tag, ctx, ictx, ret, iqtype, ignore := ibbParseXMLData(s, body)
 	if ret != nil {
 		return ret, iqtype, ignore
@@ -132,17 +131,17 @@ func ibbOnData(s access.Session, body []byte) (ret interface{}, iqtype string, i
 }
 
 // IbbData is the hook function that will be called when we receive an ibb data IQ
-func IbbData(s access.Session, stanza *data.ClientIQ) (interface{}, string, bool) {
+func IbbData(s hasLog, stanza *data.ClientIQ) (interface{}, string, bool) {
 	return ibbOnData(s, stanza.Query)
 }
 
 // IbbMessageData is the hook function that will be called when we receive a message containing an ibb data
-func IbbMessageData(s access.Session, stanza *data.ClientMessage, ext *data.Extension) {
+func IbbMessageData(s hasLog, stanza *data.ClientMessage, ext *data.Extension) {
 	_, _, _ = ibbOnData(s, []byte(ext.Body))
 }
 
 // IbbClose is the hook function that will be called when we receive an ibb close IQ
-func IbbClose(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
+func IbbClose(s hasLog, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
 	var tag data.IBBClose
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&tag); err != nil {
 		s.Log().WithError(err).Warn("Failed to parse IBB close")

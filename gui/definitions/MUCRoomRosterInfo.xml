@@ -202,7 +202,6 @@
                     <child>
                       <object class="GtkButton">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="halign">start</property>
                         <signal name="clicked" handler="on_hide" swapped="no"/>
@@ -257,7 +256,6 @@
                     <child>
                       <object class="GtkMenuButton" id="occupant-info-menu-button">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
                         <property name="focus_on_click">False</property>
                         <property name="receives_default">True</property>
                         <property name="tooltip_text" translatable="yes">Information</property>
@@ -278,10 +276,8 @@
                     <child>
                       <object class="GtkMenuButton" id="occupant-actions-menu-button">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
                         <property name="focus_on_click">False</property>
                         <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Administration tools</property>
                         <property name="popup">roster-info-occupant-menu</property>
                         <property name="use_popover">False</property>
                         <child>
@@ -677,23 +673,26 @@
         <property name="position">2</property>
       </packing>
     </child>
-  </object>
-  <object class="GtkMenu" id="roster-info-occupant-menu">
-    <property name="visible">True</property>
-    <property name="menu_type_hint">menu</property>
-    <child>
-      <object class="GtkMenuItem" id="kick-occupant">
-        <property name="visible">True</property>
-        <property name="label" translatable="yes">Expel</property>
-        <signal name="activate" handler="on_kick" swapped="no"/>
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="change-occupant-voice">
-        <property name="visible">True</property>
-        <property name="label" translatable="yes">Grant voice</property>
-        <signal name="activate" handler="change_occupant_voice" swapped="no"/>
-      </object>
-    </child>
+    <style>
+      <class name="roster-info-panel"/>
+    </style>
+    <object class="GtkMenu" id="roster-info-occupant-menu">
+      <property name="visible">True</property>
+      <property name="menu_type_hint">menu</property>
+      <child>
+        <object class="GtkMenuItem" id="kick-occupant">
+          <property name="visible">True</property>
+          <property name="label" translatable="yes">Expel</property>
+          <signal name="activate" handler="on_kick" swapped="no"/>
+        </object>
+      </child>
+      <child>
+        <object class="GtkMenuItem" id="change-occupant-voice">
+          <property name="visible">True</property>
+          <property name="label" translatable="yes">Grant voice</property>
+          <signal name="activate" handler="change_occupant_voice" swapped="no"/>
+        </object>
+      </child>
+    </object>
   </object>
 </interface>

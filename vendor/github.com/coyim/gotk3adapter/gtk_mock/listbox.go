@@ -14,5 +14,5 @@ func (*MockListBox) GetRowAtIndex(int) gtki.ListBoxRow {
 }
 
 func (*MockListBox) GetSelectedRow() gtki.ListBoxRow {
-	return nul
+	return nil
 }

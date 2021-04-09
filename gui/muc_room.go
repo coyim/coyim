@@ -404,7 +404,7 @@ func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, newRole data.Role, rea
 		v.onOccupantRoleUpdateSuccess(o.Nickname, previousRole, newRole)
 	case err := <-ec:
 		l.WithError(err).Error("An error occurred while updating the occupant role")
-		v.onOccupantRoleUpdateError(o.Nickname, newRole)
+		v.onOccupantRoleUpdateError(o.Nickname, previousRole, newRole)
 	}
 }
 
@@ -415,8 +415,8 @@ func (v *roomView) onOccupantRoleUpdateSuccess(nickname string, previousRole, ne
 	})
 }
 
-func (v *roomView) onOccupantRoleUpdateError(nickname string, newRole data.Role) {
-	messages := getRoleUpdateFailureMessage(nickname, newRole)
+func (v *roomView) onOccupantRoleUpdateError(nickname string, previousRole, newRole data.Role) {
+	messages := getRoleUpdateFailureMessage(nickname, previousRole, newRole)
 
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
@@ -492,6 +492,7 @@ func (v *roomView) tryGrantOccupantVoice(occupant *muc.Occupant, reason string) 
 		v.onGrantOccupantVoiceSuccess(occupant.Nickname)
 	case err := <-ec:
 		l.WithError(err).Error("An error occurred while trying to update the occupant role to participant")
+		v.onGrantOccupantVoiceError(occupant.Nickname, &data.VisitorRole{}, &data.ParticipantRole{})
 	}
 }
 
@@ -500,6 +501,23 @@ func (v *roomView) onGrantOccupantVoiceSuccess(occupantNickname string) {
 		v.loadingViewOverlay.hide()
 		v.notifications.info(i18n.Localf("%s now is able to send messages in this room.", occupantNickname))
 		v.roster.hideRosterInfoPanel()
+	})
+}
+
+func (v *roomView) onGrantOccupantVoiceError(nickname string, previousRole, newRole data.Role) {
+	messages := getRoleUpdateFailureMessage(nickname, previousRole, newRole)
+
+	doInUIThread(func() {
+		v.loadingViewOverlay.hide()
+		v.notifications.info(messages.notificationMessage)
+
+		dr := createDialogErrorComponent(
+			messages.errorDialogTitle,
+			messages.errorDialogHeader,
+			messages.errorDialogMessage,
+		)
+
+		dr.show()
 	})
 }
 

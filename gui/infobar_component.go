@@ -72,6 +72,7 @@ func (ib *infoBarComponent) view() gtki.InfoBar {
 
 func (ib *infoBarComponent) setTickerTime(t time.Time) {
 	ticker := time.NewTicker(1 * time.Second)
+
 	go func() {
 		for {
 			<-ticker.C
@@ -80,7 +81,7 @@ func (ib *infoBarComponent) setTickerTime(t time.Time) {
 			})
 		}
 	}()
+
 	ib.timeLabel.SetText(elapsedFriendlyTime(t))
-	ib.iconTime.SetFromPixbuf(getMUCIconPixbuf("time-notification"))
 	ib.timeBox.Show()
 }

@@ -47,21 +47,11 @@ func getAffiliationChangedSuccessMessage(nickname string, affiliation data.Affil
 func getRoleUpdateSuccessMessage(nickname string, previousRole, newRole data.Role) string {
 	switch {
 	case newRole.IsNone():
-		return getRoleRemovedSuccessMessage(nickname, previousRole)
+		return i18n.Localf("%s was temporarily removed from the room.", nickname)
 	case previousRole.IsNone():
 		return getRoleAddedSuccessMessage(nickname, newRole)
 	}
 	return getRoleChangedSuccessMessage(nickname, previousRole, newRole)
-}
-
-func getRoleRemovedSuccessMessage(nickname string, previousRole data.Role) string {
-	switch {
-	case previousRole.IsModerator():
-		return i18n.Localf("%s is not a moderator anymore.", nickname)
-	case previousRole.IsParticipant():
-		return i18n.Localf("%s is not a participant anymore.", nickname)
-	}
-	return i18n.Localf("%s is not a visitor anymore.", nickname)
 }
 
 func getRoleAddedSuccessMessage(nickname string, newRole data.Role) string {
@@ -127,10 +117,10 @@ func getUpdateAffiliationFailureErrorMessage(nickname string, newAffiliation dat
 	return i18n.Localf("An error occurred trying to change the position of %s.", nickname)
 }
 
-func getRoleUpdateFailureMessage(nickname string, previousRole, newRole data.Role) *updateFailureMessages {
+func getRoleUpdateFailureMessage(nickname string, previousRole, newRole data.Role, actorAffiliation data.Affiliation, err error) *updateFailureMessages {
 	switch {
 	case newRole.IsNone():
-		return getRoleRemoveFailureMessage(nickname, nil, nil)
+		return getRoleRemoveFailureMessage(nickname, actorAffiliation, err)
 	case previousRole.IsVisitor():
 		return getRemoveVisitorRoleFailureMessage(nickname, newRole)
 	}

@@ -16,10 +16,10 @@ type occupantActionView struct {
 	reason      gtki.TextView `gtk-widget:"occupant-action-reason-entry"`
 	reasonLabel gtki.Label    `gtk-widget:"occupant-action-reason-label"`
 
-	confirmationAction func(occupant *muc.Occupant, reason string)
+	confirmationAction func(reason string)
 }
 
-func (r *roomViewRoster) newOccupantActionView(o *muc.Occupant, confirmationAction func(occupant *muc.Occupant, reason string)) *occupantActionView {
+func (r *roomViewRoster) newOccupantActionView(o *muc.Occupant, confirmationAction func(reason string)) *occupantActionView {
 	oa := &occupantActionView{
 		occupant:           o,
 		roomViewRoster:     r,
@@ -30,14 +30,14 @@ func (r *roomViewRoster) newOccupantActionView(o *muc.Occupant, confirmationActi
 	return oa
 }
 
-func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant, confirmationAction func(occupant *muc.Occupant, reason string)) *occupantActionView {
+func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant, confirmationAction func(reason string)) *occupantActionView {
 	k := r.newOccupantActionView(o, confirmationAction)
 	k.initKickOccupantDefaults()
 
 	return k
 }
 
-func (r *roomViewRoster) newChangeOccupantVoiceView(o *muc.Occupant, confirmationAction func(occupant *muc.Occupant, reason string)) *occupantActionView {
+func (r *roomViewRoster) newChangeOccupantVoiceView(o *muc.Occupant, confirmationAction func(reason string)) *occupantActionView {
 	k := r.newOccupantActionView(o, confirmationAction)
 	k.initChangeOccupantVoiceDefaults()
 
@@ -86,7 +86,7 @@ func (oa *occupantActionView) initChangeOccupantVoiceDefaults() {
 
 // onConfirmClicked MUST be called from the UI thread
 func (oa *occupantActionView) onConfirmClicked() {
-	go oa.confirmationAction(oa.occupant, getTextViewText(oa.reason))
+	go oa.confirmationAction(getTextViewText(oa.reason))
 	oa.close()
 }
 

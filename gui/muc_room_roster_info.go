@@ -124,13 +124,17 @@ func (r *roomViewRosterInfo) onOccupantActionClicked(_ gtki.ListBox, row gtki.Li
 
 // onKickOccupantClicked MUST be called from the UI thread
 func (r *roomViewRosterInfo) onKickOccupantClicked() {
-	kd := r.rosterView.newKickOccupantView(r.occupant, r.rosterView.kickOccupant)
+	kd := r.rosterView.newKickOccupantView(r.occupant, func(reason string) {
+		r.rosterView.updateOccupantRole(r.occupant, &data.NoneRole{}, reason)
+	})
 	kd.show()
 }
 
 // changeOccupantVoice MUST be called from the UI thread
 func (r *roomViewRosterInfo) changeOccupantVoice() {
-	oa := r.rosterView.newChangeOccupantVoiceView(r.occupant, r.rosterView.grantOccupantVoice)
+	oa := r.rosterView.newChangeOccupantVoiceView(r.occupant, func(reason string) {
+		r.rosterView.updateOccupantRole(r.occupant, &data.ParticipantRole{}, reason)
+	})
 	oa.show()
 }
 

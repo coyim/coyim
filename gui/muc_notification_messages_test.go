@@ -506,9 +506,9 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateSuccessMessage(c *C) {
 	visitor := newTestRoleFromString(data.RoleVisitor)
 	none := newTestRoleFromString(data.RoleNone)
 
-	c.Assert(getRoleUpdateSuccessMessage("Maria", moderator, none), Equals, "[localized] Maria is not a moderator anymore.")
-	c.Assert(getRoleUpdateSuccessMessage("Carlos", participant, none), Equals, "[localized] Carlos is not a participant anymore.")
-	c.Assert(getRoleUpdateSuccessMessage("Mauricio", visitor, none), Equals, "[localized] Mauricio is not a visitor anymore.")
+	c.Assert(getRoleUpdateSuccessMessage("Maria", moderator, none), Equals, "[localized] Maria was temporarily removed from the room.")
+	c.Assert(getRoleUpdateSuccessMessage("Carlos", participant, none), Equals, "[localized] Carlos was temporarily removed from the room.")
+	c.Assert(getRoleUpdateSuccessMessage("Mauricio", visitor, none), Equals, "[localized] Mauricio was temporarily removed from the room.")
 
 	c.Assert(getRoleUpdateSuccessMessage("Jose", none, moderator), Equals, "[localized] The role of Jose was changed to moderator.")
 	c.Assert(getRoleUpdateSuccessMessage("Alberto", none, participant), Equals, "[localized] The role of Alberto was changed to participant.")
@@ -564,25 +564,27 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateFailureMessage(c *C) {
 	visitor := newTestRoleFromString(data.RoleVisitor)
 	none := newTestRoleFromString(data.RoleNone)
 
-	messages := getRoleUpdateFailureMessage("Mauricio", none, moderator)
+	actorAffiliation := newTestAffiliationFromString("owner")
+
+	messages := getRoleUpdateFailureMessage("Mauricio", none, moderator, actorAffiliation, nil)
 	c.Assert(messages.notificationMessage, Equals, "[localized] The role of Mauricio couldn't be changed.")
 	c.Assert(messages.errorDialogTitle, Equals, "[localized] Changing the role failed")
 	c.Assert(messages.errorDialogHeader, Equals, "[localized] The role of Mauricio couldn't be changed")
 	c.Assert(messages.errorDialogMessage, Equals, "[localized] An error occurred trying to change the role of Mauricio to moderator.")
 
-	messages = getRoleUpdateFailureMessage("Juan", none, participant)
+	messages = getRoleUpdateFailureMessage("Juan", none, participant, actorAffiliation, nil)
 	c.Assert(messages.notificationMessage, Equals, "[localized] The role of Juan couldn't be changed.")
 	c.Assert(messages.errorDialogTitle, Equals, "[localized] Changing the role failed")
 	c.Assert(messages.errorDialogHeader, Equals, "[localized] The role of Juan couldn't be changed")
 	c.Assert(messages.errorDialogMessage, Equals, "[localized] An error occurred trying to change the role of Juan to participant.")
 
-	messages = getRoleUpdateFailureMessage("Pepe", none, visitor)
+	messages = getRoleUpdateFailureMessage("Pepe", none, visitor, actorAffiliation, nil)
 	c.Assert(messages.notificationMessage, Equals, "[localized] The role of Pepe couldn't be changed.")
 	c.Assert(messages.errorDialogTitle, Equals, "[localized] Changing the role failed")
 	c.Assert(messages.errorDialogHeader, Equals, "[localized] The role of Pepe couldn't be changed")
 	c.Assert(messages.errorDialogMessage, Equals, "[localized] An error occurred trying to change the role of Pepe to visitor.")
 
-	messages = getRoleUpdateFailureMessage("Juana", none, none)
+	messages = getRoleUpdateFailureMessage("Juana", none, none, actorAffiliation, nil)
 	c.Assert(messages.notificationMessage, Equals, "[localized] Juana couldn't be expelled.")
 	c.Assert(messages.errorDialogTitle, Equals, "[localized] Expelling failed")
 	c.Assert(messages.errorDialogHeader, Equals, "[localized] Juana couldn't be expelled")
@@ -597,25 +599,27 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateFailureMessageWithVisitor
 	visitor := newTestRoleFromString(data.RoleVisitor)
 	none := newTestRoleFromString(data.RoleNone)
 
-	messages := getRoleUpdateFailureMessage("Pepe", visitor, moderator)
+	actorAffiliation := newTestAffiliationFromString("owner")
+
+	messages := getRoleUpdateFailureMessage("Pepe", visitor, moderator, actorAffiliation, nil)
 	c.Assert(messages.notificationMessage, Equals, "[localized] Couldn't grant voice to Pepe.")
 	c.Assert(messages.errorDialogTitle, Equals, "[localized] Granting voice failed")
 	c.Assert(messages.errorDialogHeader, Equals, "[localized] Pepe couldn't be enabled to send messages")
 	c.Assert(messages.errorDialogMessage, Equals, "[localized] An error occurred trying to change the role of Pepe to moderator.")
 
-	messages = getRoleUpdateFailureMessage("Antonio", visitor, participant)
+	messages = getRoleUpdateFailureMessage("Antonio", visitor, participant, actorAffiliation, nil)
 	c.Assert(messages.notificationMessage, Equals, "[localized] Couldn't grant voice to Antonio.")
 	c.Assert(messages.errorDialogTitle, Equals, "[localized] Granting voice failed")
 	c.Assert(messages.errorDialogHeader, Equals, "[localized] Antonio couldn't be enabled to send messages")
 	c.Assert(messages.errorDialogMessage, Equals, "[localized] An error occurred trying to change the role of Antonio to participant.")
 
-	messages = getRoleUpdateFailureMessage("Juana", visitor, visitor)
+	messages = getRoleUpdateFailureMessage("Juana", visitor, visitor, actorAffiliation, nil)
 	c.Assert(messages.notificationMessage, Equals, "[localized] Couldn't grant voice to Juana.")
 	c.Assert(messages.errorDialogTitle, Equals, "[localized] Granting voice failed")
 	c.Assert(messages.errorDialogHeader, Equals, "[localized] Juana couldn't be enabled to send messages")
 	c.Assert(messages.errorDialogMessage, Equals, "[localized] An error occurred trying to change the role of Juana to visitor.")
 
-	messages = getRoleUpdateFailureMessage("Estanislao", visitor, none)
+	messages = getRoleUpdateFailureMessage("Estanislao", visitor, none, actorAffiliation, nil)
 	c.Assert(messages.notificationMessage, Equals, "[localized] Estanislao couldn't be expelled.")
 	c.Assert(messages.errorDialogTitle, Equals, "[localized] Expelling failed")
 	c.Assert(messages.errorDialogHeader, Equals, "[localized] Estanislao couldn't be expelled")

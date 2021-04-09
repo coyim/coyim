@@ -76,9 +76,10 @@ func (r *roomViewRosterInfo) initBuilder() {
 	panicOnDevError(builder.bindObjects(r))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_hide":            r.hide,
-		"on_occupant_action": r.onOccupantActionClicked,
-		"on_kick":            r.onKickOccupantClicked,
+		"on_hide":               r.hide,
+		"on_occupant_action":    r.onOccupantActionClicked,
+		"on_kick":               r.onKickOccupantClicked,
+		"change_occupant_voice": r.changeOccupantVoice,
 	})
 }
 
@@ -125,6 +126,12 @@ func (r *roomViewRosterInfo) onOccupantActionClicked(_ gtki.ListBox, row gtki.Li
 func (r *roomViewRosterInfo) onKickOccupantClicked() {
 	kd := r.rosterView.newKickOccupantView(r.occupant)
 	kd.show()
+}
+
+// changeOccupantVoice MUST be called from the UI thread
+func (r *roomViewRosterInfo) changeOccupantVoice() {
+	oa := r.rosterView.newChangeOccupantVoiceView(r.occupant)
+	oa.show()
 }
 
 // onOccupantUpdated MUST NOT be called from the UI thread

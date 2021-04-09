@@ -20,10 +20,29 @@ func initMUCStyles(c mucColorSet) {
 	}
 }
 
-func (s *mucStylesProvider) setMessageScrolledWindowStyle(msw gtki.ScrolledWindow) {
+func (s *mucStylesProvider) setScrolledWindowStyle(msw gtki.ScrolledWindow) {
 	updateWithStyle(msw, providerWithStyle("scrolledwindow", style{
-		"border": "none",
+		"border":           "none",
+		"background-color": "@theme_base_color",
 	}))
+}
+
+func (s *mucStylesProvider) setMessageViewBoxStyle(b gtki.Box) {
+	s.setBoxStyle(b, style{
+		"background-color": "@theme_base_color",
+	})
+}
+
+func (s *mucStylesProvider) setRoomWindowStyle(w gtki.Window) {
+	s.setWidgetStyle(w, "window", style{
+		"background-color": "@theme_base_color",
+	})
+}
+
+func (s *mucStylesProvider) setRoomToolbarLobyStyle(b gtki.Box) {
+	s.setBoxStyle(b, style{
+		"background-color": "@theme_bg_color",
+	})
 }
 
 func (s *mucStylesProvider) setRoomLoadingInfoBarLabelStyle(l gtki.Label) {
@@ -35,6 +54,9 @@ func (s *mucStylesProvider) setRoomLoadingInfoBarLabelStyle(l gtki.Label) {
 
 func (s *mucStylesProvider) setRoomRosterInfoStyle(b gtki.Box) {
 	s.setWidgetStyles(b, styles{
+		".roster-info-panel": style{
+			"background-color": "@theme_bg_color",
+		},
 		".occupant-nickname": style{
 			"font-weight": "bold",
 			"font-size":   "large",
@@ -51,8 +73,7 @@ func (s *mucStylesProvider) setRoomToolbarNameLabelStyle(l gtki.Label) {
 
 func (s *mucStylesProvider) setRoomToolbarSubjectLabelStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
-		"font-size": "smaller",
-		"color":     s.colors.roomSubjectForeground,
+		"color": s.colors.roomSubjectForeground,
 	})
 }
 
@@ -202,6 +223,10 @@ func (s *mucStylesProvider) setWidgetStyles(w gtki.Widget, st styles) {
 
 func (s *mucStylesProvider) setWidgetStyle(w gtki.Widget, se string, st style) {
 	updateWithStyle(w, providerWithStyle(se, st))
+}
+
+func (s *mucStylesProvider) setButtonStyle(b gtki.Button, st style) {
+	s.setWidgetStyle(b, "button", st)
 }
 
 func (s *mucStylesProvider) setLabelStyle(l gtki.Label, st style) {

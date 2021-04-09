@@ -23,4 +23,17 @@ func init() {
 	pangoi.JUSTIFY_RIGHT = int(gtk.JUSTIFY_RIGHT)
 	pangoi.JUSTIFY_CENTER = int(gtk.JUSTIFY_CENTER)
 	pangoi.JUSTIFY_FILL = int(gtk.JUSTIFY_FILL)
+
+	pangoi.WEIGHT_THIN = int(pango.WEIGHT_THIN)
+	pangoi.WEIGHT_ULTRALIGHT = int(pango.WEIGHT_ULTRALIGHT)
+	pangoi.WEIGHT_LIGHT = int(pango.WEIGHT_LIGHT)
+	pangoi.WEIGHT_SEMILIGHT = int(pango.WEIGHT_SEMILIGHT)
+	pangoi.WEIGHT_BOOK = int(pango.WEIGHT_BOOK)
+	pangoi.WEIGHT_NORMAL = int(pango.WEIGHT_NORMAL)
+	pangoi.WEIGHT_MEDIUM = int(pango.WEIGHT_MEDIUM)
+	pangoi.WEIGHT_SEMIBOLD = int(pango.WEIGHT_SEMIBOLD)
+	pangoi.WEIGHT_BOLD = int(pango.WEIGHT_BOLD)
+	pangoi.WEIGHT_ULTRABOLD = int(pango.WEIGHT_ULTRABOLD)
+	pangoi.WEIGHT_HEAVY = int(pango.WEIGHT_HEAVY)
+	pangoi.WEIGHT_ULTRAHEAVY = int(pango.WEIGHT_ULTRAHEAVY)
 }

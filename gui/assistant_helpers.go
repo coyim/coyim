@@ -37,12 +37,12 @@ func (list assistantButtons) updateButtonLabelByName(name string, label string) 
 
 // getBottomActionAreaFromAssistant MUST be called from the UI thread
 func getBottomActionAreaFromAssistant(a gtki.Assistant) (gtki.Box, bool) {
-	return findGtkBoxWithId(a.GetChildren(), "action_area")
+	return findGtkBoxWithID(a.GetChildren(), "action_area")
 }
 
 // getSidebarFromAssistant MUST be called from the UI thread
 func getSidebarFromAssistant(a gtki.Assistant) (gtki.Box, bool) {
-	return findGtkBoxWithId(a.GetChildren(), "sidebar")
+	return findGtkBoxWithID(a.GetChildren(), "sidebar")
 }
 
 // setAssistantSidebar MUST be called from the UI thread
@@ -55,13 +55,13 @@ func setAssistantSidebarContent(a gtki.Assistant, content gtki.Widget) {
 	}
 }
 
-func findGtkBoxWithId(list []gtki.Widget, boxName string) (gtki.Box, bool) {
+func findGtkBoxWithID(list []gtki.Widget, boxName string) (gtki.Box, bool) {
 	for _, widget := range list {
 		if box, ok := widget.(gtki.Box); ok {
 			if name, _ := g.gtk.GetWidgetBuildableName(box); name == boxName {
 				return box, true
 			}
-			if box, ok = findGtkBoxWithId(box.GetChildren(), boxName); ok {
+			if box, ok = findGtkBoxWithID(box.GetChildren(), boxName); ok {
 				return box, true
 			}
 		}

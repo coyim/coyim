@@ -10,6 +10,11 @@ import (
 	"github.com/coyim/otr3"
 )
 
+// Has represents any object that has an account config and can give access to it
+type Has interface {
+	GetConfig() *Account
+}
+
 // Account contains the configuration for one account
 type Account struct {
 	id string

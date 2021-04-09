@@ -12,6 +12,7 @@ import (
 
 	"github.com/coyim/coyim/digests"
 	"github.com/coyim/coyim/xmpp/data"
+	xi "github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
@@ -28,7 +29,7 @@ func bytestreamsSendCurrentlyValid(_ string, s hasConnectionAndConfig) bool {
 
 var defaultBytestreamProxyTimeout = 2 * time.Hour
 
-func bytestreamsGetStreamhostDataFor(s hasConnection, jid string) (result *data.BytestreamStreamhost) {
+func bytestreamsGetStreamhostDataFor(s xi.Has, jid string) (result *data.BytestreamStreamhost) {
 	var q data.BytestreamQuery
 	_ = basicIQ(s, jid, "get", &data.BytestreamQuery{}, &q, func(*data.ClientIQ) {
 		for _, sh := range q.Streamhosts {

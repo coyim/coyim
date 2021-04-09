@@ -7,96 +7,62 @@ import (
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/data"
 	xi "github.com/coyim/coyim/xmpp/interfaces"
-	"github.com/coyim/coyim/xmpp/jid"
 )
 
 var errChannelClosed = errors.New("channel closed")
 var errNotResultIQ = errors.New("expected result IQ")
 var errNotClientIQ = errors.New("expected Client IQ")
 
-type hasConnection interface {
-	Conn() xi.Conn
-}
-
-type hasConfig interface {
-	GetConfig() *config.Account
-}
-
 type hasConnectionAndConfig interface {
-	hasConnection
-	hasConfig
-}
-
-type hasLog interface {
-	Log() coylog.Logger
+	xi.Has
+	config.Has
 }
 
 type hasConnectionAndConfigAndLog interface {
 	hasConnectionAndConfig
-	hasLog
+	coylog.Has
 }
 
 type hasConfigAndLog interface {
-	hasConfig
-	hasLog
-}
-
-type canSendIQError interface {
-	SendIQError(*data.ClientIQ, interface{})
-}
-
-type canSendIQResult interface {
-	SendIQResult(*data.ClientIQ, interface{})
-}
-
-type canSendIQ interface {
-	canSendIQError
-	canSendIQResult
+	config.Has
+	coylog.Has
 }
 
 type canSendIQAndHasLog interface {
-	canSendIQ
-	hasLog
+	access.CanSendIQ
+	coylog.Has
 }
 
 type canSendIQAndHasLogAndConnection interface {
 	canSendIQAndHasLog
-	hasConnection
+	xi.Has
 }
 
 type canSendIQErrorAndHasLog interface {
-	hasLog
-	canSendIQError
+	coylog.Has
+	access.CanSendIQ
 }
 
 type canSendIQErrorHasConfigAndHasLog interface {
 	hasConfigAndLog
-	canSendIQError
-}
-
-type hasSymmetricKey interface {
-	CreateSymmetricKeyFor(jid.Any) []byte
-	GetAndWipeSymmetricKeyFor(jid.Any) []byte
+	access.CanSendIQ
 }
 
 type hasConnectionAndConfigAndLogAndHasSymmetricKey interface {
 	hasConnectionAndConfigAndLog
-	hasSymmetricKey
-}
-
-type publisher interface {
-	PublishEvent(interface{})
+	access.HasSymmetricKey
 }
 
 type hasLogConnectionIQSymmetricKeyAndIsPublisher interface {
 	canSendIQAndHasLogAndConnection
-	hasSymmetricKey
-	publisher
+	access.HasSymmetricKey
+	access.Publisher
 }
 
-func basicIQ(s hasConnection, to, tp string, toSend, unpackInto interface{}, onSuccess func(*data.ClientIQ)) error {
+func basicIQ(s xi.Has, to, tp string, toSend, unpackInto interface{}, onSuccess func(*data.ClientIQ)) error {
 	done := make(chan error, 1)
 
 	nonblockIQ(s, to, tp, toSend, unpackInto, func(ciq *data.ClientIQ) {
@@ -109,7 +75,7 @@ func basicIQ(s hasConnection, to, tp string, toSend, unpackInto interface{}, onS
 	return <-done
 }
 
-func nonblockIQ(s hasConnection, to, tp string, toSend, unpackInto interface{}, onSuccess func(*data.ClientIQ), onError func(*data.ClientIQ, error)) {
+func nonblockIQ(s xi.Has, to, tp string, toSend, unpackInto interface{}, onSuccess func(*data.ClientIQ), onError func(*data.ClientIQ, error)) {
 	rp, _, err := s.Conn().SendIQ(to, tp, toSend)
 	if err != nil {
 		onError(nil, err)

@@ -8,6 +8,11 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Has represents any object that has a logger and can give access to it
+type Has interface {
+	Log() Logger
+}
+
 // Logger represents any of the *logrus.Logger and *logrus.Entry types
 type Logger interface {
 	Debug(args ...interface{})

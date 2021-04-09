@@ -10,6 +10,11 @@ import (
 	"github.com/coyim/coyim/xmpp/data"
 )
 
+// Has represents any object that has a connection and can give access to it
+type Has interface {
+	Conn() Conn
+}
+
 // Conn represents a connection to an XMPP server.
 type Conn interface {
 	Authenticate(string, string) error

@@ -30,22 +30,43 @@ type Connector interface {
 	Connect()
 }
 
+// CanSendIQ represents anything that can send IQ results or errors
+type CanSendIQ interface {
+	SendIQResult(*data.ClientIQ, interface{})
+	SendIQError(*data.ClientIQ, interface{})
+}
+
+// HasSymmetricKey represents anything that can manage symmetric OTR keys
+type HasSymmetricKey interface {
+	CreateSymmetricKeyFor(jid.Any) []byte
+	GetAndWipeSymmetricKeyFor(jid.Any) []byte
+}
+
+// Publisher is anything that can publish events
+type Publisher interface {
+	PublishEvent(interface{})
+}
+
 // Session is an interface that defines the functionality of a Session
 type Session interface {
+	CanSendIQ
+	HasSymmetricKey
+	Publisher
+	coylog.Has
+	config.Has
+	xi.Has
+
 	ApprovePresenceSubscription(jid.WithoutResource, string) error
 	AutoApprove(string)
 	AwaitVersionReply(<-chan data.Stanza, string)
 	Close()
 	CommandManager() otrclient.CommandManager
 	Config() *config.ApplicationConfig
-	Conn() xi.Conn
 	Connect(string, tls.Verifier) error
 	ConversationManager() otrclient.ConversationManager
-	CreateSymmetricKeyFor(jid.Any) []byte
 	DenyPresenceSubscription(jid.WithoutResource, string) error
 	DisplayName() string
 	EncryptAndSendTo(jid.Any, string) (int, bool, error)
-	GetConfig() *config.Account
 	GetInMemoryLog() *bytes.Buffer
 	GroupDelimiter() string
 	HandleConfirmOrDeny(jid.WithoutResource, bool)
@@ -66,15 +87,11 @@ type Session interface {
 	SetWantToBeOnline(bool)
 	Subscribe(chan<- interface{})
 	Timeout(data.Cookie, time.Time)
-	SendIQError(*data.ClientIQ, interface{})
-	SendIQResult(*data.ClientIQ, interface{})
-	PublishEvent(interface{})
 	SendFileTo(jid.Any, string, func() bool, func(bool)) *sdata.FileTransferControl
 	SendDirTo(jid.Any, string, func() bool, func(bool)) *sdata.FileTransferControl
 	StartSMP(jid.WithResource, string, string)
 	FinishSMP(jid.WithResource, string)
 	AbortSMP(jid.WithResource)
-	GetAndWipeSymmetricKeyFor(jid.Any) []byte
 
 	HasRoom(jid.Bare, chan<- *muc.RoomListing) (<-chan bool, <-chan error)
 	GetRooms(jid.Domain, string) (<-chan *muc.RoomListing, <-chan *muc.ServiceListing, <-chan error)
@@ -90,8 +107,6 @@ type Session interface {
 	DestroyRoom(room jid.Bare, reason string, alternativeRoom jid.Bare, password string) (<-chan bool, <-chan error)
 	UpdateOccupantAffiliation(roomID jid.Bare, occupantNickname string, occupantRealJID jid.Full, affiliation mdata.Affiliation, reason string) (<-chan bool, <-chan error)
 	UpdateOccupantRole(roomID jid.Bare, occupantNickname string, role mdata.Role, reason string) (<-chan bool, <-chan error)
-
-	Log() coylog.Logger
 
 	NewRoom(jid.Bare) *muc.Room
 }

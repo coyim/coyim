@@ -7,9 +7,11 @@ import (
 	"os"
 	"strings"
 
+	"github.com/coyim/coyim/coylog"
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
+	xi "github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
 )
@@ -25,7 +27,7 @@ func registerSendFileTransferMethod(name string, dispatch func(*sendContext), is
 var supportedSendingMechanisms = map[string]func(*sendContext){}
 var isSendingMechanismCurrentlyValid = map[string]func(string, hasConnectionAndConfig) bool{}
 
-func discoverSupport(s hasConnection, p string) (profiles map[string]bool, err error) {
+func discoverSupport(s xi.Has, p string) (profiles map[string]bool, err error) {
 	profiles = make(map[string]bool)
 	if res, ok := s.Conn().DiscoveryFeatures(p); ok {
 		foundSI := false
@@ -151,7 +153,7 @@ func (ctx *sendContext) onDecline() {
 	}
 }
 
-func notifyUserThatSendStarted(method string, s hasLog, file, peer string) {
+func notifyUserThatSendStarted(method string, s coylog.Has, file, peer string) {
 	s.Log().WithFields(log.Fields{
 		"file":   file,
 		"peer":   peer,

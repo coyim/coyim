@@ -151,13 +151,13 @@ func (r *roomViewRoster) initSubscribers() {
 func (r *roomViewRoster) onOccupantSelected(_ gtki.TreeView, path gtki.TreePath) {
 	nickname, err := r.getNicknameFromTreeModel(path)
 	if err != nil {
-		r.log.Warn("Nickname not found")
+		r.log.Debug("Occupant nickname not found in the roster model")
 		return
 	}
 
 	o, ok := r.roster.GetOccupant(nickname)
 	if !ok {
-		r.log.WithField("nickname", nickname).Debug("Occupant was not found")
+		r.log.WithField("nickname", nickname).Debug("The occupant was not found in the roster")
 		return
 	}
 
@@ -243,8 +243,8 @@ func (r *roomViewRoster) getNicknameFromTreeModel(path gtki.TreePath) (string, e
 		return "", err
 	}
 
-	iterValue, e1 := r.model.GetValue(iter, roomViewRosterNicknameIndex)
-	if e1 != nil {
+	iterValue, err := r.model.GetValue(iter, roomViewRosterNicknameIndex)
+	if err != nil {
 		return "", errors.New("error trying to get iter value")
 	}
 

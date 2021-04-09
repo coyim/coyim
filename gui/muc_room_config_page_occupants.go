@@ -114,9 +114,10 @@ func (p *roomConfigOccupantsPage) collectData() {
 	p.form.Admins = jidListFromConfigListController(p.adminsListController)
 }
 
-func jidListFromConfigListController(l *mucRoomConfigListController) (result []jid.Any) {
+func jidListFromConfigListController(l *mucRoomConfigListController) []jid.Any {
+	result := []jid.Any{}
 	for _, li := range l.listItems() {
 		result = append(result, jid.Parse(li))
 	}
-	return
+	return result
 }

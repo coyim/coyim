@@ -9,24 +9,25 @@ import (
 const jidColumnIndex = 0
 
 type mucRoomConfigListComponent struct {
-	u                       *gtkUI
-	list                    gtki.TreeView
-	listModel               gtki.ListStore
-	addButton, removeButton gtki.Button
-	removeLabel             gtki.Label
-	onAdd                   func()
-	onNoItems               func()
+	u                 *gtkUI
+	list              gtki.TreeView
+	listModel         gtki.ListStore
+	addButton         gtki.Button
+	removeButton      gtki.Button
+	removeButtonLabel gtki.Label
+	onAdd             func()
+	onNoItems         func()
 }
 
-func (u *gtkUI) newMUCRoomConfigListComponent(list gtki.TreeView, addButton, removeButton gtki.Button, removeLabel gtki.Label, onAdd, onNoItems func()) *mucRoomConfigListComponent {
+func (u *gtkUI) newMUCRoomConfigListComponent(list gtki.TreeView, addButton, removeButton gtki.Button, removeButtonLabel gtki.Label, onAdd, onNoItems func()) *mucRoomConfigListComponent {
 	cl := &mucRoomConfigListComponent{
-		u:            u,
-		list:         list,
-		addButton:    addButton,
-		removeButton: removeButton,
-		removeLabel:  removeLabel,
-		onAdd:        onAdd,
-		onNoItems:    onNoItems,
+		u:                 u,
+		list:              list,
+		addButton:         addButton,
+		removeButton:      removeButton,
+		removeButtonLabel: removeButtonLabel,
+		onAdd:             onAdd,
+		onNoItems:         onNoItems,
 	}
 
 	cl.initListModel()
@@ -93,7 +94,7 @@ func (cl *mucRoomConfigListComponent) onSelectionChanged() {
 	if totalItems > 1 {
 		l = i18n.Local("Remove all")
 	}
-	cl.removeButton.SetLabel(l)
+	cl.removeButtonLabel.SetText(l)
 }
 
 // addListItems MUST be called from the UI thread

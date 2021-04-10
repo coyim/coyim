@@ -47,52 +47,15 @@ type Publisher interface {
 	PublishEvent(interface{})
 }
 
-// Session is an interface that defines the functionality of a Session
-type Session interface {
-	CanSendIQ
-	HasSymmetricKey
-	Publisher
-	coylog.Has
-	config.Has
-	xi.Has
-
-	ApprovePresenceSubscription(jid.WithoutResource, string) error
-	AutoApprove(string)
-	AwaitVersionReply(<-chan data.Stanza, string)
-	Close()
-	CommandManager() otrclient.CommandManager
-	Config() *config.ApplicationConfig
-	Connect(string, tls.Verifier) error
-	ConversationManager() otrclient.ConversationManager
-	DenyPresenceSubscription(jid.WithoutResource, string) error
-	DisplayName() string
-	EncryptAndSendTo(jid.Any, string) (int, bool, error)
-	GetInMemoryLog() *bytes.Buffer
-	GroupDelimiter() string
-	HandleConfirmOrDeny(jid.WithoutResource, bool)
-	IsConnected() bool
-	IsDisconnected() bool
-	ManuallyEndEncryptedChat(jid.Any) error
-	PrivateKeys() []otr3.PrivateKey
-	R() *roster.List
-	ReloadKeys()
-	RemoveContact(string)
-	RequestPresenceSubscription(jid.WithoutResource, string) error
-	Send(jid.Any, string, bool) error
-	SendMUCMessage(to, from, body string) error
-	SendPing()
-	SetCommandManager(otrclient.CommandManager)
-	SetConnector(Connector)
-	SetLastActionTime(time.Time)
-	SetWantToBeOnline(bool)
-	Subscribe(chan<- interface{})
-	Timeout(data.Cookie, time.Time)
-	SendFileTo(jid.Any, string, func() bool, func(bool)) *sdata.FileTransferControl
-	SendDirTo(jid.Any, string, func() bool, func(bool)) *sdata.FileTransferControl
+// SMP contains functionality related to SMP
+type SMP interface {
 	StartSMP(jid.WithResource, string, string)
 	FinishSMP(jid.WithResource, string)
 	AbortSMP(jid.WithResource)
+}
 
+// Rooms contains all the functionality for MUC
+type Rooms interface {
 	HasRoom(jid.Bare, chan<- *muc.RoomListing) (<-chan bool, <-chan error)
 	GetRooms(jid.Domain, string) (<-chan *muc.RoomListing, <-chan *muc.ServiceListing, <-chan error)
 	JoinRoom(jid.Bare, string, string) error
@@ -107,8 +70,102 @@ type Session interface {
 	DestroyRoom(room jid.Bare, reason string, alternativeRoom jid.Bare, password string) (<-chan bool, <-chan error)
 	UpdateOccupantAffiliation(roomID jid.Bare, occupantNickname string, occupantRealJID jid.Full, affiliation mdata.Affiliation, reason string) (<-chan bool, <-chan error)
 	UpdateOccupantRole(roomID jid.Bare, occupantNickname string, role mdata.Role, reason string) (<-chan bool, <-chan error)
-
 	NewRoom(jid.Bare) *muc.Room
+	SendMUCMessage(to, from, body string) error
+}
+
+// Connection contains the connection related functionality
+type Connection interface {
+	Close()
+	IsConnected() bool
+	IsDisconnected() bool
+	Connect(string, tls.Verifier) error
+	SetConnector(Connector)
+}
+
+// Subscription contains functionality related to subscriptions
+type Subscription interface {
+	ApprovePresenceSubscription(jid.WithoutResource, string) error
+	AutoApprove(string)
+	DenyPresenceSubscription(jid.WithoutResource, string) error
+	HandleConfirmOrDeny(jid.WithoutResource, bool)
+	RequestPresenceSubscription(jid.WithoutResource, string) error
+	RemoveContact(string)
+}
+
+// Transfer gives access to file and directory transfer functionality
+type Transfer interface {
+	SendFileTo(jid.Any, string, func() bool, func(bool)) *sdata.FileTransferControl
+	SendDirTo(jid.Any, string, func() bool, func(bool)) *sdata.FileTransferControl
+}
+
+// EncryptedChat allows control over OTR functionality
+type EncryptedChat interface {
+	CommandManager() otrclient.CommandManager
+	ConversationManager() otrclient.ConversationManager
+	PrivateKeys() []otr3.PrivateKey
+	SetCommandManager(otrclient.CommandManager)
+	ManuallyEndEncryptedChat(jid.Any) error
+	ReloadKeys()
+}
+
+// Roster exposes roster functionality
+type Roster interface {
+	GroupDelimiter() string
+	R() *roster.List
+}
+
+// Sending gives access to sending functionality
+type Sending interface {
+	EncryptAndSendTo(jid.Any, string) (int, bool, error)
+	Send(jid.Any, string, bool) error
+	SendPing()
+}
+
+// ConnectionData gives access to information about the connection and session
+type ConnectionData interface {
+	DisplayName() string
+	SetLastActionTime(time.Time)
+	SetWantToBeOnline(bool)
+	Timeout(data.Cookie, time.Time)
+}
+
+// Logging gives access to the in memory log
+type Logging interface {
+	GetInMemoryLog() *bytes.Buffer
+}
+
+// Events allow you to subscribe to events
+type Events interface {
+	Subscribe(chan<- interface{})
+}
+
+// Version gives access to version functionality
+type Version interface {
+	AwaitVersionReply(<-chan data.Stanza, string)
+}
+
+// Session is an interface that defines the functionality of a Session
+type Session interface {
+	CanSendIQ
+	HasSymmetricKey
+	Publisher
+	coylog.Has
+	config.Has
+	config.HasApplication
+	xi.Has
+	SMP
+	Rooms
+	Connection
+	Subscription
+	Transfer
+	EncryptedChat
+	Roster
+	Sending
+	ConnectionData
+	Logging
+	Events
+	Version
 }
 
 // Factory is a function that can create new Sessions

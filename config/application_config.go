@@ -9,6 +9,11 @@ import (
 	"sync"
 )
 
+// HasApplication represents any object that has application config and can give access to it
+type HasApplication interface {
+	Config() *ApplicationConfig
+}
+
 // ApplicationConfig contains the configuration for the application, including
 // account information.
 type ApplicationConfig struct {

@@ -1,6 +1,8 @@
 package data
 
-import "sync"
+import (
+	"sync"
+)
 
 type transferUpdate struct {
 	current, total int64

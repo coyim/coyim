@@ -293,7 +293,7 @@ func (s *SendSuite) Test_sendContext_offerSend_failsIfNoFileExists(c *C) {
 	}
 
 	res := ctx.offerSend()
-	c.Assert(res, ErrorMatches, ".*(no such file or directory|cannot find the path specified).*")
+	c.Assert(res, ErrorMatches, ".*(no such file or directory|cannot find the (file|path) specified).*")
 }
 
 func (s *SendSuite) Test_sendContext_offerSend_failsOnIncorrectSendingMechanism(c *C) {

@@ -102,7 +102,7 @@ func (s *RecvSuite) Test_recvContext_finalizeFileTransfer_forFile_failsOnRename(
 	}
 
 	e := ctx.finalizeFileTransfer("file that hopefully doesn't exist")
-	c.Assert(e, ErrorMatches, ".*(no such file or directory|cannot find the path specified).*")
+	c.Assert(e, ErrorMatches, ".*(no such file or directory|cannot find the (file|path) specified).*")
 	e2 := <-ee
 	c.Assert(e2, ErrorMatches, "Couldn't save final file")
 }

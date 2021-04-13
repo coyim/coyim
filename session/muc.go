@@ -263,7 +263,7 @@ func roleFromString(r string) data.Role {
 }
 
 func getRealJidBasedOnItem(item *xmppData.MUCUserItem) jid.Full {
-	if item == nil || len(item.Jid) == 0 {
+	if item == nil || item.Jid != "" {
 		return nil
 	}
 

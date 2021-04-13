@@ -207,13 +207,18 @@ func isMUCUserPresence(stanza *xmppData.ClientPresence) bool {
 func getOccupantPresenceBasedOnStanza(nickname jid.Resource, stanza *xmppData.ClientPresence) *muc.OccupantPresenceInfo {
 	item := stanza.MUCUser.Item
 
-	return &muc.OccupantPresenceInfo{
+	opi := &muc.OccupantPresenceInfo{
 		Nickname:        nickname.String(),
-		RealJid:         getRealJidBasedOnItem(item),
 		AffiliationRole: getAffiliationRoleBasedOnItem(item),
 		Status:          stanza.Show,
 		StatusMessage:   stanza.Status,
 	}
+
+	if realJid, ok := getRealJidBasedOnItem(item); ok {
+		opi.RealJid = realJid
+	}
+
+	return opi
 }
 
 func getAffiliationRoleBasedOnItem(item *xmppData.MUCUserItem) *muc.OccupantAffiliationRole {
@@ -262,12 +267,11 @@ func roleFromString(r string) data.Role {
 	return role
 }
 
-func getRealJidBasedOnItem(item *xmppData.MUCUserItem) jid.Full {
-	if item == nil || item.Jid != "" {
-		return nil
+func getRealJidBasedOnItem(item *xmppData.MUCUserItem) (jid.Full, bool) {
+	if item != nil {
+		return jid.TryParseFull(item.Jid)
 	}
-
-	return jid.ParseFull(item.Jid)
+	return nil, false
 }
 
 func (m *mucManager) sendMessage(to, from, body string) error {

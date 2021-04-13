@@ -178,7 +178,7 @@ func (r *RoomRoster) UpdateNickname(nickname, newNickname string) error {
 // indications on whether the presence update means the person joined the room, or left the room.
 // Notice that updating of nick names is done separately and should not be done by calling this method.
 func (r *RoomRoster) UpdatePresence(op *OccupantPresenceInfo, tp string) (joined, left bool, err error) {
-	if len(op.Nickname) == 0 {
+	if op.Nickname == "" {
 		return false, false, errors.New("nickname was not provided")
 	}
 

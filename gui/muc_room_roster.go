@@ -441,9 +441,8 @@ func getOccupantStatusClassName(status string) string {
 		return "extended-away"
 	case "chat":
 		return "free-for-chat"
-	default:
-		return "available"
 	}
+	return "available"
 }
 
 func statusDisplayMessage(s *coyroster.Status) string {

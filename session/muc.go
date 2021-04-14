@@ -25,8 +25,6 @@ type mucManager struct {
 
 	dhManager *discussionHistoryManager
 	dhLock    sync.Mutex
-
-	sync.Mutex
 }
 
 func newMUCManager(log coylog.Logger, conn func() xi.Conn, publishEvent func(ev interface{})) *mucManager {

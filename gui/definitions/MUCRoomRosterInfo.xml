@@ -465,7 +465,7 @@
                               <object class="GtkListBoxRow" id="change-affiliation-listbox-row">
                                 <property name="width_request">100</property>
                                 <property name="visible">True</property>
-                                <property name="tooltip_text" translatable="yes">The position is long-lived association or connection with the room. This means that a position lasts across a user's visits.</property>
+                                <property name="tooltip_text" translatable="yes">A position is a long-lived association with the room. The position of the person is maintained between visits.</property>
                                 <property name="selectable">False</property>
                                 <child>
                                   <object class="GtkBox">

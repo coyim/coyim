@@ -17,24 +17,23 @@ type mucColorSet struct {
 	messageForeground       string
 	errorForeground         string
 	configurationForeground string
-	roomMessagesBackground  string
 
-	// Room specifics
-	roomNameDisabledForeground string
-
-	// Room overlay
+	roomMessagesBackground            string
+	roomNameDisabledForeground        string
+	roomSubjectForeground             string
+	roomWarningForeground             string
+	roomWarningBackground             string
+	roomWarningBorder                 string
 	roomOverlaySolidBackground        string
 	roomOverlayContentSolidBackground string
 	roomOverlayContentBackground      string
 	roomOverlayBackground             string
 	roomOverlayContentForeground      string
 
-	// Room roster
 	rosterGroupBackground        string
 	rosterGroupForeground        string
 	rosterOccupantRoleForeground string
 
-	// Occupant statuses colors
 	occupantStatusAvailableForeground    string
 	occupantStatusAvailableBackground    string
 	occupantStatusAvailableBorder        string
@@ -54,10 +53,6 @@ type mucColorSet struct {
 	occupantStatusExtendedAwayBackground string
 	occupantStatusExtendedAwayBorder     string
 
-	roomSubjectForeground  string
-	roomWarningForeground  string
-	roomWarningBackground  string
-	roomWarningBorder      string
 	entryErrorBackground   string
 	entryErrorBorderShadow string
 	entryErrorBorder       string
@@ -77,7 +72,6 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 	return mucColorSet{
 		warningForeground:       cs.warningForeground,
 		warningBackground:       cs.warningBackground,
-		errorForeground:         cs.errorForeground,
 		someoneJoinedForeground: "#297316",
 		someoneLeftForeground:   "#731629",
 		timestampForeground:     "#AAB7B8",
@@ -85,11 +79,15 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		subjectForeground:       "#000080",
 		infoMessageForeground:   "#395BA3",
 		messageForeground:       "#000000",
+		errorForeground:         cs.errorForeground,
 		configurationForeground: "#9a04bf",
-		roomMessagesBackground:  "#FFFFFF",
 
-		roomNameDisabledForeground: "@insensitive_fg_color",
-
+		roomMessagesBackground:            "#FFFFFF",
+		roomNameDisabledForeground:        "@insensitive_fg_color",
+		roomSubjectForeground:             "#666666",
+		roomWarningForeground:             "#744210",
+		roomWarningBackground:             "#FEFCBF",
+		roomWarningBorder:                 "#D69E2E",
 		roomOverlaySolidBackground:        "@theme_bg_color",
 		roomOverlayContentSolidBackground: "transparent",
 		roomOverlayContentBackground:      "@theme_bg_color",
@@ -119,10 +117,6 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		occupantStatusExtendedAwayBackground: "#FFFBEB",
 		occupantStatusExtendedAwayBorder:     "#D97706",
 
-		roomSubjectForeground:  "#666666",
-		roomWarningForeground:  "#744210",
-		roomWarningBackground:  "#FEFCBF",
-		roomWarningBorder:      "#D69E2E",
 		entryErrorBackground:   "#FFF5F6",
 		entryErrorBorderShadow: "#FF7F50",
 		entryErrorBorder:       "#E44635",

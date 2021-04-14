@@ -20,7 +20,7 @@ func (s *session) hasSomeChatService(di data.DiscoveryItem) bool {
 		s.log.WithField("jid", di.Jid).WithError(err).Error("Error getting the information query for the service")
 		return false
 	}
-	return hasAnyConferenceService(iq.Identities)
+	return hasConferenceService(iq.Identities)
 }
 
 type chatServicesReceiver struct {
@@ -76,7 +76,7 @@ func (r *chatServicesReceiver) finish() {
 	}
 }
 
-func hasAnyConferenceService(identities []data.DiscoveryIdentity) bool {
+func hasConferenceService(identities []data.DiscoveryIdentity) bool {
 	for _, identity := range identities {
 		if identity.Category == "conference" && identity.Type == "text" {
 			return true

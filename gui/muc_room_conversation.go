@@ -318,7 +318,7 @@ func (c *roomViewConversation) selfOccupantRemovedEvent(nickname string) {
 
 func (c *roomViewConversation) occupantRemovedEvent(nickname string) {
 	doInUIThread(func() {
-		c.displayWarningMessage(i18n.Localf("\"%s\" was removed from this room because it's now a members only room.", nickname))
+		c.displayNewInfoMessage(i18n.Localf("%s was removed from this room because it's now a members only room.", nickname))
 	})
 }
 

@@ -168,7 +168,7 @@ func getRoleRemoveFailureMessageBasedOnError(nickname string, actorAffiliation d
 	case session.ErrNotAllowedKickOccupant:
 		return getRoleRemoveFailureMessageWithActor(nickname, actorAffiliation)
 	}
-	return i18n.Localf("An error occurred expelling to %s.", nickname)
+	return i18n.Localf("An error occurred expelling %s.", nickname)
 }
 
 func getRoleRemoveFailureMessageWithActor(nickname string, actorAffiliation data.Affiliation) string {

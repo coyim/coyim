@@ -588,7 +588,7 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateFailureMessage(c *C) {
 	c.Assert(messages.notificationMessage, Equals, "[localized] Juana couldn't be expelled.")
 	c.Assert(messages.errorDialogTitle, Equals, "[localized] Expelling failed")
 	c.Assert(messages.errorDialogHeader, Equals, "[localized] Juana couldn't be expelled")
-	c.Assert(messages.errorDialogMessage, Equals, "[localized] An error occurred expelling to Juana.")
+	c.Assert(messages.errorDialogMessage, Equals, "[localized] An error occurred expelling Juana.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getRoleUpdateFailureMessageWithVisitorPreviousRole(c *C) {
@@ -623,7 +623,7 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateFailureMessageWithVisitor
 	c.Assert(messages.notificationMessage, Equals, "[localized] Estanislao couldn't be expelled.")
 	c.Assert(messages.errorDialogTitle, Equals, "[localized] Expelling failed")
 	c.Assert(messages.errorDialogHeader, Equals, "[localized] Estanislao couldn't be expelled")
-	c.Assert(messages.errorDialogMessage, Equals, "[localized] An error occurred expelling to Estanislao.")
+	c.Assert(messages.errorDialogMessage, Equals, "[localized] An error occurred expelling Estanislao.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getRoleRemoveFailureMessage(c *C) {
@@ -633,7 +633,7 @@ func (*MUCNotificationMessagesSuite) Test_getRoleRemoveFailureMessage(c *C) {
 	c.Assert(messages.notificationMessage, Equals, "[localized] foo couldn't be expelled.")
 	c.Assert(messages.errorDialogTitle, Equals, "[localized] Expelling failed")
 	c.Assert(messages.errorDialogHeader, Equals, "[localized] foo couldn't be expelled")
-	c.Assert(messages.errorDialogMessage, Equals, "[localized] An error occurred expelling to foo.")
+	c.Assert(messages.errorDialogMessage, Equals, "[localized] An error occurred expelling foo.")
 
 	messages = getRoleRemoveFailureMessage("nil", nil, session.ErrNotAllowedKickOccupant)
 	c.Assert(messages.notificationMessage, Equals, "[localized] nil couldn't be expelled.")

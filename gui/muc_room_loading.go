@@ -42,28 +42,14 @@ func (lo *roomViewLoadingOverlay) onRoomDestroy() {
 
 // onRoomAffiliationConfirmation MUST be called from the UI thread
 func (lo *roomViewLoadingOverlay) onOccupantAffiliationUpdate() {
-	lo.setTitle(i18n.Local("Updating occupant affiliation..."))
+	lo.setTitle(i18n.Local("Updating affiliation..."))
 	lo.setTransparent()
 	lo.show()
 }
 
 // onOccupantRoleUpdate MUST be called from the UI thread
 func (lo *roomViewLoadingOverlay) onOccupantRoleUpdate() {
-	lo.setTitle(i18n.Local("Updating occupant role..."))
-	lo.setTransparent()
-	lo.show()
-}
-
-// onKickOccupant MUST be called from the UI thread
-func (lo *roomViewLoadingOverlay) onKickOccupant(nickname string) {
-	lo.setTitle(i18n.Localf("Removing %s from the room", nickname))
-	lo.setTransparent()
-	lo.show()
-}
-
-// onGrantOccupantVoice MUST be called from the UI thread
-func (lo *roomViewLoadingOverlay) onGrantOccupantVoice(nickname string) {
-	lo.setTitle(i18n.Localf("Granting voice to %s", nickname))
+	lo.setTitle(i18n.Local("Updating role..."))
 	lo.setTransparent()
 	lo.show()
 }

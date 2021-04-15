@@ -2,6 +2,7 @@ package gui
 
 import (
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/muc/data"
 )
 
 type roomViewLoadingOverlay struct {
@@ -48,8 +49,12 @@ func (lo *roomViewLoadingOverlay) onOccupantAffiliationUpdate() {
 }
 
 // onOccupantRoleUpdate MUST be called from the UI thread
-func (lo *roomViewLoadingOverlay) onOccupantRoleUpdate() {
-	lo.setTitle(i18n.Local("Updating role..."))
+func (lo *roomViewLoadingOverlay) onOccupantRoleUpdate(role data.Role) {
+	m := i18n.Local("Updating role...")
+	if role.IsNone() {
+		m = i18n.Local("Expelling person from the room...")
+	}
+	lo.setTitle(m)
 	lo.setTransparent()
 	lo.show()
 }

@@ -392,7 +392,7 @@ func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, newRole data.Role, rea
 	l := v.log.WithField("occupant", o.Nickname)
 
 	doInUIThread(func() {
-		v.loadingViewOverlay.onOccupantRoleUpdate()
+		v.loadingViewOverlay.onOccupantRoleUpdate(newRole)
 	})
 
 	previousRole := o.Role

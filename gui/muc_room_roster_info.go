@@ -25,26 +25,25 @@ type roomViewRosterInfo struct {
 	selfOccupant *muc.Occupant
 	rosterView   *roomViewRoster
 
-	view                        gtki.Box        `gtk-widget:"roster-info-box"`
-	avatar                      gtki.Image      `gtk-widget:"avatar-image"`
-	nicknameLabel               gtki.Label      `gtk-widget:"nickname-label"`
-	status                      gtki.Label      `gtk-widget:"status-label"`
-	currentAffiliationLabel     gtki.Label      `gtk-widget:"current-affiliation"`
-	currentRoleLabel            gtki.Label      `gtk-widget:"current-role"`
-	affiliationListBoxRow       gtki.ListBoxRow `gtk-widget:"change-affiliation-listbox-row"`
-	affiliationActionImage      gtki.Image      `gtk-widget:"change-affiliation-action-image"`
-	roleListBoxRow              gtki.ListBoxRow `gtk-widget:"change-role-listbox-row"`
-	roleActionImage             gtki.Image      `gtk-widget:"change-role-action-image"`
-	roleDisableLabel            gtki.Label      `gtk-widget:"change-role-disabled"`
-	occupantActionsMenuButton   gtki.MenuButton `gtk-widget:"occupant-actions-menu-button"`
-	kickOccupantMenuItem        gtki.MenuItem   `gtk-widget:"kick-occupant"`
-	changeOccupantVoiceMenuItem gtki.MenuItem   `gtk-widget:"change-occupant-voice"`
-	nicknamePopoverLabel        gtki.Label      `gtk-widget:"nickname-popover-label"`
-	realJidPopoverBox           gtki.Box        `gtk-widget:"user-jid-popover-box"`
-	realJidPopoverLabel         gtki.Label      `gtk-widget:"user-jid-popover-label"`
-	statusPopoverLabel          gtki.Label      `gtk-widget:"status-popover-label"`
-	statusMessagePopoverBox     gtki.Box        `gtk-widget:"status-message-popover-box"`
-	statusMessagePopoverLabel   gtki.Label      `gtk-widget:"status-message-popover-label"`
+	view                      gtki.Box        `gtk-widget:"roster-info-box"`
+	avatar                    gtki.Image      `gtk-widget:"avatar-image"`
+	nicknameLabel             gtki.Label      `gtk-widget:"nickname-label"`
+	status                    gtki.Label      `gtk-widget:"status-label"`
+	currentAffiliationLabel   gtki.Label      `gtk-widget:"current-affiliation"`
+	currentRoleLabel          gtki.Label      `gtk-widget:"current-role"`
+	affiliationListBoxRow     gtki.ListBoxRow `gtk-widget:"change-affiliation-listbox-row"`
+	affiliationActionImage    gtki.Image      `gtk-widget:"change-affiliation-action-image"`
+	roleListBoxRow            gtki.ListBoxRow `gtk-widget:"change-role-listbox-row"`
+	roleActionImage           gtki.Image      `gtk-widget:"change-role-action-image"`
+	roleDisableLabel          gtki.Label      `gtk-widget:"change-role-disabled"`
+	occupantActionsMenuButton gtki.MenuButton `gtk-widget:"occupant-actions-menu-button"`
+	kickOccupantMenuItem      gtki.MenuItem   `gtk-widget:"kick-occupant"`
+	nicknamePopoverLabel      gtki.Label      `gtk-widget:"nickname-popover-label"`
+	realJidPopoverBox         gtki.Box        `gtk-widget:"user-jid-popover-box"`
+	realJidPopoverLabel       gtki.Label      `gtk-widget:"user-jid-popover-label"`
+	statusPopoverLabel        gtki.Label      `gtk-widget:"status-popover-label"`
+	statusMessagePopoverBox   gtki.Box        `gtk-widget:"status-message-popover-box"`
+	statusMessagePopoverLabel gtki.Label      `gtk-widget:"status-message-popover-label"`
 
 	onReset   *callbacksSet
 	onRefresh *callbacksSet
@@ -76,10 +75,9 @@ func (r *roomViewRosterInfo) initBuilder() {
 	panicOnDevError(builder.bindObjects(r))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_hide":               r.hide,
-		"on_occupant_action":    r.onOccupantActionClicked,
-		"on_kick":               r.onKickOccupantClicked,
-		"change_occupant_voice": r.changeOccupantVoice,
+		"on_hide":            r.hide,
+		"on_occupant_action": r.onOccupantActionClicked,
+		"on_kick":            r.onKickOccupantClicked,
 	})
 }
 
@@ -124,18 +122,8 @@ func (r *roomViewRosterInfo) onOccupantActionClicked(_ gtki.ListBox, row gtki.Li
 
 // onKickOccupantClicked MUST be called from the UI thread
 func (r *roomViewRosterInfo) onKickOccupantClicked() {
-	kd := r.rosterView.newKickOccupantView(r.occupant, func(reason string) {
-		r.rosterView.updateOccupantRole(r.occupant, &data.NoneRole{}, reason)
-	})
+	kd := r.rosterView.newKickOccupantView(r.occupant)
 	kd.show()
-}
-
-// changeOccupantVoice MUST be called from the UI thread
-func (r *roomViewRosterInfo) changeOccupantVoice() {
-	oa := r.rosterView.newChangeOccupantVoiceView(r.occupant, func(reason string) {
-		r.rosterView.updateOccupantRole(r.occupant, r.roleToUpdate(), reason)
-	})
-	oa.show()
 }
 
 func (r *roomViewRosterInfo) roleToUpdate() data.Role {
@@ -217,20 +205,7 @@ func (r *roomViewRosterInfo) refreshAdminToolsSection() {
 	canKick := r.selfOccupant.CanKickOccupant(r.occupant)
 	r.kickOccupantMenuItem.SetVisible(canKick)
 
-	canChangeOccupantVoice := r.selfOccupant.CanChangeOccupantVoice(r.occupant)
-	r.changeOccupantVoiceMenuItem.SetVisible(canChangeOccupantVoice)
-	r.updateLabelForOccupantVoiceItem()
-
-	r.occupantActionsMenuButton.SetSensitive(canKick && canChangeOccupantVoice)
-}
-
-// refreshAdminToolsSection MUST be called from the UI thread
-func (r *roomViewRosterInfo) updateLabelForOccupantVoiceItem() {
-	l := i18n.Local("Grant voice")
-	if r.occupant.HasVoice() {
-		l = i18n.Local("Revoke voice")
-	}
-	r.changeOccupantVoiceMenuItem.SetLabel(l)
+	r.occupantActionsMenuButton.SetSensitive(canKick)
 }
 
 // refresh MUST be called from the UI thread

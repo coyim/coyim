@@ -276,7 +276,7 @@
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
-                                        <property name="label" translatable="yes">In a moderated room, a moderator might assign the visitor role to participants, it revokes the sending messages permission.</property>
+                                        <property name="label" translatable="yes">In a moderated room, a visitor will not be able to send messages, but can still read the conversation. In an unmoderated room there is no difference between a participant and a visitor.</property>
                                         <property name="wrap">True</property>
                                         <property name="width_chars">0</property>
                                         <property name="max_width_chars">40</property>

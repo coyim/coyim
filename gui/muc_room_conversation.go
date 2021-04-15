@@ -161,13 +161,26 @@ func (c *roomViewConversation) occupantRoleEvent(roleUpdate data.RoleUpdate) {
 
 func (c *roomViewConversation) selfOccupantRoleEvent(roleUpdate data.RoleUpdate) {
 	c.occupantRoleEvent(roleUpdate)
-	if roleUpdate.New.IsNone() {
-		doInUIThread(func() {
-			c.updateNotificationMessage(i18n.Local("You can't send messages because you were expelled from the room."))
-			c.disableSendCapabilities()
-			mucStyles.setDisableRoomStyle(c.view)
-		})
+
+	switch {
+	case roleUpdate.New.IsNone():
+		doInUIThread(c.onSelfOccupantKicked)
+	case roleUpdate.New.IsVisitor():
+		doInUIThread(c.onSelfOccupantVoiceRevoked)
 	}
+}
+
+// onSelfOccupantKicked MUST be called from the UI thread
+func (c *roomViewConversation) onSelfOccupantKicked() {
+	c.updateNotificationMessage(i18n.Local("You can't send messages because you were expelled from the room."))
+	c.disableSendCapabilities()
+	mucStyles.setDisableRoomStyle(c.view)
+}
+
+// onSelfOccupantVoiceRevoked MUST be called from the UI thread
+func (c *roomViewConversation) onSelfOccupantVoiceRevoked() {
+	c.updateNotificationMessage(i18n.Local("As a visitor, you can't send messages in a moderated room."))
+	c.disableSendCapabilities()
 }
 
 func (c *roomViewConversation) occupantSelfJoinedEvent(nickname string, r data.Role) {

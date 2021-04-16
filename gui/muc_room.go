@@ -404,7 +404,7 @@ func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, newRole data.Role, rea
 		v.onOccupantRoleUpdateSuccess(o.Nickname, previousRole, newRole)
 	case err := <-ec:
 		l.WithError(err).Error("An error occurred while updating the occupant role")
-		v.onOccupantRoleUpdateError(o.Nickname, previousRole, newRole, err)
+		v.onOccupantRoleUpdateError(o.Nickname, newRole)
 	}
 }
 
@@ -415,8 +415,8 @@ func (v *roomView) onOccupantRoleUpdateSuccess(nickname string, previousRole, ne
 	})
 }
 
-func (v *roomView) onOccupantRoleUpdateError(nickname string, previousRole, newRole data.Role, err error) {
-	messages := getRoleUpdateFailureMessage(nickname, previousRole, newRole, v.room.SelfOccupant().Affiliation, err)
+func (v *roomView) onOccupantRoleUpdateError(nickname string, newRole data.Role) {
+	messages := getRoleUpdateFailureMessage(nickname, newRole)
 
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()

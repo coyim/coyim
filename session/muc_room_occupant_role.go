@@ -29,6 +29,8 @@ func (m *mucManager) updateOccupantRole(roomID jid.Bare, occupantNickname string
 	ec := make(chan error)
 
 	go func() {
+		ec <- errors.New("asdasd")
+		return
 		reply, _, err := m.conn().SendIQ(roomID.String(), "set", &xmppData.MUCAdmin{
 			Item: &xmppData.MUCItem{
 				Nick:   occupantNickname,

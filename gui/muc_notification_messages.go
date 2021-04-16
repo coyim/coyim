@@ -117,27 +117,15 @@ func getUpdateAffiliationFailureErrorMessage(nickname string, newAffiliation dat
 	return i18n.Localf("An error occurred trying to change the position of %s.", nickname)
 }
 
-func getRoleUpdateFailureMessage(nickname string, previousRole, newRole data.Role, actorAffiliation data.Affiliation, err error) *updateFailureMessages {
-	switch {
-	case newRole.IsNone():
-		return getRoleRemoveFailureMessage(nickname, actorAffiliation, err)
-	case previousRole.IsVisitor():
-		return getRemoveVisitorRoleFailureMessage(nickname, newRole)
+func getRoleUpdateFailureMessage(nickname string, newRole data.Role) *updateFailureMessages {
+	if newRole.IsNone() {
+		return getRoleRemoveFailureMessage(nickname, nil, nil)
 	}
 
 	return &updateFailureMessages{
 		notificationMessage: i18n.Localf("The role of %s couldn't be changed.", nickname),
 		errorDialogTitle:    i18n.Local("Changing the role failed"),
 		errorDialogHeader:   i18n.Localf("The role of %s couldn't be changed", nickname),
-		errorDialogMessage:  getUpdateRoleFailureErrorMessage(nickname, newRole),
-	}
-}
-
-func getRemoveVisitorRoleFailureMessage(nickname string, newRole data.Role) *updateFailureMessages {
-	return &updateFailureMessages{
-		notificationMessage: i18n.Localf("Couldn't grant voice to %s.", nickname),
-		errorDialogTitle:    i18n.Local("Granting voice failed"),
-		errorDialogHeader:   i18n.Localf("%s couldn't be enabled to send messages", nickname),
 		errorDialogMessage:  getUpdateRoleFailureErrorMessage(nickname, newRole),
 	}
 }

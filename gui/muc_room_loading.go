@@ -43,7 +43,7 @@ func (lo *roomViewLoadingOverlay) onRoomDestroy() {
 
 // onRoomAffiliationConfirmation MUST be called from the UI thread
 func (lo *roomViewLoadingOverlay) onOccupantAffiliationUpdate() {
-	lo.setTitle(i18n.Local("Updating affiliation..."))
+	lo.setTitle(i18n.Local("Updating position..."))
 	lo.setTransparent()
 	lo.show()
 }

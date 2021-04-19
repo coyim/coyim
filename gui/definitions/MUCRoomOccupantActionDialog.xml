@@ -1,5 +1,5 @@
 <interface>
-  <object class="GtkDialog" id="kick-room-dialog">
+  <object class="GtkDialog" id="occupant-action-dialog">
     <property name="width_request">400</property>
     <property name="title" translatable="yes">Remove person from the room</property>
     <property name="resizable">False</property>
@@ -117,7 +117,7 @@
                         <property name="orientation">vertical</property>
                         <property name="spacing">12</property>
                         <child>
-                          <object class="GtkLabel" id="title-kick-occupant">
+                          <object class="GtkLabel" id="occupant-action-header">
                             <property name="visible">True</property>
                             <property name="valign">start</property>
                             <property name="label" translatable="yes">You are about to temporarily remove the person from the room.</property>
@@ -133,7 +133,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel">
+                          <object class="GtkLabel" id="occupant-action-message">
                             <property name="visible">True</property>
                             <property name="label" translatable="yes">They will be able to join the room again. Are you sure you want to continue?</property>
                             <property name="wrap">True</property>
@@ -166,7 +166,7 @@
                     <property name="orientation">vertical</property>
                     <property name="spacing">12</property>
                     <child>
-                      <object class="GtkLabel" id="kick-occupant-reason-label">
+                      <object class="GtkLabel" id="occupant-action-reason-label">
                         <property name="visible">True</property>
                         <property name="label" translatable="yes">Here you can provide an optional reason for removing the person. Everyone in the room will see this reason.</property>
                         <property name="wrap">True</property>
@@ -185,7 +185,7 @@
                         <property name="visible">True</property>
                         <property name="shadow_type">in</property>
                         <child>
-                          <object class="GtkTextView" id="kick-occupant-reason-entry">
+                          <object class="GtkTextView" id="occupant-action-reason-entry">
                             <property name="visible">True</property>
                             <property name="pixels_inside_wrap">3</property>
                             <property name="top_margin">3</property>

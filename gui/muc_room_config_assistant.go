@@ -113,7 +113,7 @@ func (rc *roomConfigAssistant) initRoomConfigPages() {
 }
 
 func (rc *roomConfigAssistant) initDefaults() {
-	rc.assistant.SetTitle(i18n.Localf("Configuration for room [%s]", rc.roomID.String()))
+	rc.assistant.SetTitle(i18n.Localf("Configuration for room [%s]", rc.roomID))
 
 	for _, b := range rc.allPagesBoxes() {
 		b.SetHExpand(true)

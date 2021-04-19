@@ -77,6 +77,7 @@ func (r *roomViewRosterInfo) initBuilder() {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_hide":            r.hide,
 		"on_occupant_action": r.onOccupantActionClicked,
+		"on_ban":             r.onBanOccupantClicked,
 		"on_kick":            r.onKickOccupantClicked,
 	})
 }
@@ -118,6 +119,12 @@ func (r *roomViewRosterInfo) onOccupantActionClicked(_ gtki.ListBox, row gtki.Li
 	case changeRoleActionName:
 		r.onChangeRole()
 	}
+}
+
+// onBanOccupantClicked MUST be called from the UI thread
+func (r *roomViewRosterInfo) onBanOccupantClicked() {
+	kd := r.rosterView.newBanOccupantView(r.occupant)
+	kd.show()
 }
 
 // onKickOccupantClicked MUST be called from the UI thread

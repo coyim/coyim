@@ -35,6 +35,8 @@ func getAffiliationChangedSuccessMessage(nickname string, affiliation data.Affil
 		return i18n.Localf("The position of %s was changed to administrator.", nickname)
 	case affiliation.IsMember():
 		return i18n.Localf("The position of %s was changed to member.", nickname)
+	case affiliation.IsBanned():
+		return i18n.Localf("%s has been banned from the room.", nickname)
 	}
 	return i18n.Localf("The position of %s was changed.", nickname)
 }

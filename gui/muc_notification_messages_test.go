@@ -477,6 +477,7 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateSuccessMessage(c *
 	owner := newTestAffiliationFromString(data.AffiliationOwner)
 	admin := newTestAffiliationFromString(data.AffiliationAdmin)
 	member := newTestAffiliationFromString(data.AffiliationMember)
+	outcast := newTestAffiliationFromString(data.AffiliationOutcast)
 	none := newTestAffiliationFromString(data.AffiliationNone)
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, member, none), Equals,
@@ -496,6 +497,18 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateSuccessMessage(c *
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, none, owner), Equals,
 		"[localized] The position of Juan was changed to owner.")
+
+	c.Assert(getAffiliationUpdateSuccessMessage(nickname, none, outcast), Equals,
+		"[localized] Juan has been banned from the room.")
+
+	c.Assert(getAffiliationUpdateSuccessMessage(nickname, member, outcast), Equals,
+		"[localized] Juan has been banned from the room.")
+
+	c.Assert(getAffiliationUpdateSuccessMessage(nickname, admin, outcast), Equals,
+		"[localized] Juan has been banned from the room.")
+
+	c.Assert(getAffiliationUpdateSuccessMessage(nickname, owner, outcast), Equals,
+		"[localized] Juan has been banned from the room.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getRoleUpdateSuccessMessage(c *C) {

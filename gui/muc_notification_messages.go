@@ -92,10 +92,23 @@ type updateFailureMessages struct {
 }
 
 func getAffiliationUpdateFailureMessage(nickname string, newAffiliation data.Affiliation, err error) *updateFailureMessages {
+	if newAffiliation.IsBanned() {
+		return getBannedFailureMessage(nickname, newAffiliation, err)
+	}
+
 	return &updateFailureMessages{
 		notificationMessage: i18n.Localf("The position of %s couldn't be changed.", nickname),
 		errorDialogTitle:    i18n.Local("Changing the position failed"),
 		errorDialogHeader:   i18n.Localf("The position of %s couldn't be changed", nickname),
+		errorDialogMessage:  getAffiliationFailureErrorMessage(nickname, newAffiliation, err),
+	}
+}
+
+func getBannedFailureMessage(nickname string, newAffiliation data.Affiliation, err error) *updateFailureMessages {
+	return &updateFailureMessages{
+		notificationMessage: i18n.Localf("%s couldn't be banned.", nickname),
+		errorDialogTitle:    i18n.Local("Banning failed"),
+		errorDialogHeader:   i18n.Localf("%s couldn't be banned", nickname),
 		errorDialogMessage:  getAffiliationFailureErrorMessage(nickname, newAffiliation, err),
 	}
 }
@@ -115,6 +128,8 @@ func getUpdateAffiliationFailureErrorMessage(nickname string, newAffiliation dat
 		return i18n.Localf("An error occurred trying to change the position of %s to administrator.", nickname)
 	case newAffiliation.IsMember():
 		return i18n.Localf("An error occurred trying to change the position of %s to member.", nickname)
+	case newAffiliation.IsBanned():
+		return i18n.Localf("An error occurred trying to ban %s.", nickname)
 	}
 	return i18n.Localf("An error occurred trying to change the position of %s.", nickname)
 }

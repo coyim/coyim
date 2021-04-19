@@ -541,6 +541,7 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateFailureMessage(c *
 	owner := newTestAffiliationFromString(data.AffiliationOwner)
 	admin := newTestAffiliationFromString(data.AffiliationAdmin)
 	member := newTestAffiliationFromString(data.AffiliationMember)
+	outcast := newTestAffiliationFromString(data.AffiliationOutcast)
 	none := newTestAffiliationFromString(data.AffiliationNone)
 
 	messages := getAffiliationUpdateFailureMessage("Luisa", owner, nil)
@@ -560,6 +561,12 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateFailureMessage(c *
 	c.Assert(messages.errorDialogTitle, Equals, "[localized] Changing the position failed")
 	c.Assert(messages.errorDialogHeader, Equals, "[localized] The position of Pedro couldn't be changed")
 	c.Assert(messages.errorDialogMessage, Equals, "[localized] An error occurred trying to change the position of Pedro to member.")
+
+	messages = getAffiliationUpdateFailureMessage("Luisa", outcast, nil)
+	c.Assert(messages.notificationMessage, Equals, "[localized] Luisa couldn't be banned.")
+	c.Assert(messages.errorDialogTitle, Equals, "[localized] Banning failed")
+	c.Assert(messages.errorDialogHeader, Equals, "[localized] Luisa couldn't be banned")
+	c.Assert(messages.errorDialogMessage, Equals, "[localized] An error occurred trying to ban Luisa.")
 
 	messages = getAffiliationUpdateFailureMessage("José", none, nil)
 	c.Assert(messages.notificationMessage, Equals, "[localized] The position of José couldn't be changed.")

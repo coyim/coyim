@@ -115,9 +115,8 @@ func (c *mucRoomConfigComponent) getConfigPage(p int) mucRoomConfigPage {
 		return c.othersPage
 	case roomConfigSummaryPageIndex:
 		return c.summaryPage
-	default:
-		return nil
 	}
+	return nil
 }
 
 func (c *mucRoomConfigComponent) friendlyConfigErrorMessage(err error) string {

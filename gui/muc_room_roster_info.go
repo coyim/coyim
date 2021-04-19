@@ -37,6 +37,7 @@ type roomViewRosterInfo struct {
 	roleActionImage           gtki.Image      `gtk-widget:"change-role-action-image"`
 	roleDisableLabel          gtki.Label      `gtk-widget:"change-role-disabled"`
 	occupantActionsMenuButton gtki.MenuButton `gtk-widget:"occupant-actions-menu-button"`
+	banOccupantMenuItem       gtki.MenuItem   `gtk-widget:"ban-occupant"`
 	kickOccupantMenuItem      gtki.MenuItem   `gtk-widget:"kick-occupant"`
 	nicknamePopoverLabel      gtki.Label      `gtk-widget:"nickname-popover-label"`
 	realJidPopoverBox         gtki.Box        `gtk-widget:"user-jid-popover-box"`
@@ -212,7 +213,10 @@ func (r *roomViewRosterInfo) refreshAdminToolsSection() {
 	canKick := r.selfOccupant.CanKickOccupant(r.occupant)
 	r.kickOccupantMenuItem.SetVisible(canKick)
 
-	r.occupantActionsMenuButton.SetSensitive(canKick)
+	canBan := r.selfOccupant.CanBanMembersAndUnaffiliatedUsers()
+	r.banOccupantMenuItem.SetVisible(canBan)
+
+	r.occupantActionsMenuButton.SetSensitive(canKick || canBan)
 }
 
 // refresh MUST be called from the UI thread

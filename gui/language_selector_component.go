@@ -107,11 +107,7 @@ func (e *languageSelectorEntry) contains(t string) bool {
 }
 
 func (e *languageSelectorEntry) add(t ...string) {
-	values := e.values
-	for _, vv := range t {
-		values = append(values, vv)
-	}
-	e.values = values
+	e.values = append(e.values, t...)
 }
 
 type languageSelectorValues struct {

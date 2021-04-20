@@ -30,9 +30,9 @@ const (
 // ConfigListSingleField description
 type ConfigListSingleField interface {
 	// UpdateField will update the list fields with the given "value" and "options"
-	UpdateField(string, []string)
+	UpdateField(value string, options []string)
 	// UpdateValue updates the current field value
-	UpdateValue(string)
+	UpdateValue(value string)
 	// Value returns the current list value
 	CurrentValue() string
 	// Options returns the field options
@@ -72,7 +72,7 @@ func (cf *configListSingleField) Options() []string {
 // ConfigListMultiField description
 type ConfigListMultiField interface {
 	// UpdateField will update the list fields with the given "values" and "options"
-	UpdateField([]string, []string)
+	UpdateField(values, options []string)
 }
 
 type configListMultiField struct {

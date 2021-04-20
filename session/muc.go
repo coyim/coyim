@@ -160,7 +160,7 @@ func (m *mucManager) handleUnavailablePresence(roomID jid.Bare, op *muc.Occupant
 
 	case status.contains(MUCStatusBanned):
 		// We got banned
-		m.log.Debug("handleMUCPresence(): MUCStatusBanned")
+		m.handleOccupantBanned(roomID, op)
 
 	case status.contains(MUCStatusNewNickname):
 		// Someone has changed its nickname

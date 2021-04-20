@@ -124,7 +124,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case occupantAffiliationUpdatedEvent:
 			c.occupantAffiliationEvent(t.affiliationUpdate)
 		case selfOccupantAffiliationUpdatedEvent:
-			c.occupantAffiliationEvent(t.selfAffiliationUpdate.AffiliationUpdate)
+			c.selfOccupantAffiliationEvent(t.selfAffiliationUpdate.AffiliationUpdate)
 		case occupantRoleUpdatedEvent:
 			c.occupantRoleEvent(t.roleUpdate)
 		case selfOccupantRoleUpdatedEvent:
@@ -151,6 +151,22 @@ func (c *roomViewConversation) occupantAffiliationEvent(affiliationUpdate data.A
 	doInUIThread(func() {
 		c.displayNewInfoMessage(getMUCNotificationMessageFrom(affiliationUpdate))
 	})
+}
+
+// selfOccupantAffiliationEvent MUST be called from the UI thread
+func (c *roomViewConversation) selfOccupantAffiliationEvent(affiliationUpdate data.AffiliationUpdate) {
+	c.occupantAffiliationEvent(affiliationUpdate)
+
+	if affiliationUpdate.New.IsBanned() {
+		doInUIThread(c.onSelfOccupantBanned)
+	}
+}
+
+// onSelfOccupantBanned MUST be called from the UI thread
+func (c *roomViewConversation) onSelfOccupantBanned() {
+	c.updateNotificationMessage(i18n.Local("You can't send messages because you have been banned."))
+	mucStyles.setDisableRoomStyle(c.view)
+	c.disableSendCapabilities()
 }
 
 func (c *roomViewConversation) occupantRoleEvent(roleUpdate data.RoleUpdate) {

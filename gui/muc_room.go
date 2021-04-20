@@ -174,6 +174,10 @@ func (v *roomView) roomConfigRequestTimeoutEvent() {
 func (v *roomView) selfOccupantAffiliationUpdatedEvent(selfAffiliationUpdate data.SelfAffiliationUpdate) {
 	m := getMUCNotificationMessageFrom(selfAffiliationUpdate)
 	v.notifications.info(m)
+
+	if selfAffiliationUpdate.New.IsBanned() {
+		mucStyles.setDisableRoomStyle(v.content)
+	}
 }
 
 // selfOccupantAffiliationRoleUpdatedEvent MUST be called from the UI thread

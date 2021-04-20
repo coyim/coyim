@@ -18,9 +18,9 @@ const (
 	discoInfoFieldRoomName             = configFieldRoomName
 	discoInfoFieldDescription          = "muc#roominfo_description"
 	discoInfoFieldOccupants            = "muc#roominfo_occupants"
-	discoInfoFieldAllowMemberInvites   = "{http://prosody.im/protocol/muc}roomconfig_allowmemberinvites"
+	discoInfoFieldAllowMemberInvites   = configFieldAllowMemberInvites
 	discoInfoFieldAllowInvites         = configFieldAllowInvites
-	discoInfoFieldAllowPrivateMessages = configFieldAllowPrivateMessages
+	discoInfoFieldAllowPrivateMessages = configFieldAllowPM
 	discoInfoFieldContactJid           = "muc#roominfo_contactjid"
 	discoInfoFieldMaxHistoryFetch      = configFieldMaxHistoryFetch
 )

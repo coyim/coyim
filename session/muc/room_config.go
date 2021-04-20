@@ -13,12 +13,15 @@ const (
 	configFieldRoomName             = "muc#roomconfig_roomname"
 	configFieldRoomDescription      = "muc#roomconfig_roomdesc"
 	configFieldEnableLogging        = "muc#roomconfig_enablelogging"
+	configFieldEnableArchiving      = "muc#roomconfig_enablearchiving"
 	configFieldMemberList           = "muc#roomconfig_getmemberlist"
 	configFieldLanguage             = "muc#roomconfig_lang"
 	configFieldPubsub               = "muc#roomconfig_pubsub"
 	configFieldCanChangeSubject     = "muc#roomconfig_changesubject"
 	configFieldAllowInvites         = "muc#roomconfig_allowinvites"
-	configFieldAllowPrivateMessages = "muc#roomconfig_allowpm"
+	configFieldAllowMemberInvites   = "{http://prosody.im/protocol/muc}roomconfig_allowmemberinvites"
+	configFieldAllowPM              = "muc#roomconfig_allowpm"
+	configFieldAllowPrivateMessages = "allow_private_messages"
 	configFieldMaxOccupantsNumber   = "muc#roomconfig_maxusers"
 	configFieldIsPublic             = "muc#roomconfig_publicroom"
 	configFieldIsPersistent         = "muc#roomconfig_persistentroom"
@@ -30,6 +33,7 @@ const (
 	configFieldOwners               = "muc#roomconfig_roomowners"
 	configFieldWhoIs                = "muc#roomconfig_whois"
 	configFieldMaxHistoryFetch      = "muc#maxhistoryfetch"
+	configFieldMaxHistoryLength     = "muc#roomconfig_historylength"
 	configFieldRoomAdmins           = "muc#roomconfig_roomadmins"
 )
 
@@ -116,23 +120,27 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 // https://xmpp.org/extensions/xep-0045.html#example-163
 func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 	fields := map[string][]string{
-		"FORM_TYPE":                     []string{confiFieldFormType},
-		configFieldRoomName:             []string{rcf.Title},
-		configFieldRoomDescription:      []string{rcf.Description},
-		configFieldEnableLogging:        []string{strconv.FormatBool(rcf.Logged)},
-		configFieldCanChangeSubject:     []string{strconv.FormatBool(rcf.OccupantsCanChangeSubject)},
-		configFieldAllowInvites:         []string{strconv.FormatBool(rcf.OccupantsCanInvite)},
-		configFieldAllowPrivateMessages: []string{rcf.AllowPrivateMessages.CurrentValue()},
-		configFieldMaxOccupantsNumber:   []string{rcf.MaxOccupantsNumber.CurrentValue()},
-		configFieldIsPublic:             []string{strconv.FormatBool(rcf.Public)},
-		configFieldIsPersistent:         []string{strconv.FormatBool(rcf.Persistent)},
-		configFieldModerated:            []string{strconv.FormatBool(rcf.Moderated)},
-		configFieldMembersOnly:          []string{strconv.FormatBool(rcf.MembersOnly)},
-		configFieldPasswordProtected:    []string{strconv.FormatBool(rcf.PasswordProtected)},
-		configFieldPassword:             []string{rcf.Password},
-		configFieldWhoIs:                []string{rcf.Whois.CurrentValue()},
-		configFieldMaxHistoryFetch:      []string{rcf.MaxHistoryFetch.CurrentValue()},
-		configFieldLanguage:             []string{rcf.Language},
+		"FORM_TYPE":                     {confiFieldFormType},
+		configFieldRoomName:             {rcf.Title},
+		configFieldRoomDescription:      {rcf.Description},
+		configFieldEnableLogging:        {strconv.FormatBool(rcf.Logged)},
+		configFieldEnableArchiving:      {strconv.FormatBool(rcf.Logged)},
+		configFieldCanChangeSubject:     {strconv.FormatBool(rcf.OccupantsCanChangeSubject)},
+		configFieldAllowInvites:         {strconv.FormatBool(rcf.OccupantsCanInvite)},
+		configFieldAllowMemberInvites:   {strconv.FormatBool(rcf.OccupantsCanInvite)},
+		configFieldAllowPM:              {rcf.AllowPrivateMessages.CurrentValue()},
+		configFieldAllowPrivateMessages: {rcf.AllowPrivateMessages.CurrentValue()},
+		configFieldMaxOccupantsNumber:   {rcf.MaxOccupantsNumber.CurrentValue()},
+		configFieldIsPublic:             {strconv.FormatBool(rcf.Public)},
+		configFieldIsPersistent:         {strconv.FormatBool(rcf.Persistent)},
+		configFieldModerated:            {strconv.FormatBool(rcf.Moderated)},
+		configFieldMembersOnly:          {strconv.FormatBool(rcf.MembersOnly)},
+		configFieldPasswordProtected:    {strconv.FormatBool(rcf.PasswordProtected)},
+		configFieldPassword:             {rcf.Password},
+		configFieldWhoIs:                {rcf.Whois.CurrentValue()},
+		configFieldMaxHistoryFetch:      {rcf.MaxHistoryFetch.CurrentValue()},
+		configFieldMaxHistoryLength:     {rcf.MaxHistoryFetch.CurrentValue()},
+		configFieldLanguage:             {rcf.Language},
 		configFieldRoomAdmins:           jidListToStringList(rcf.Admins),
 	}
 
@@ -159,19 +167,19 @@ func (rcf *RoomConfigForm) SetFormFields(form *xmppData.Form) {
 
 func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 	switch field.Var {
-	case configFieldMaxHistoryFetch:
+	case configFieldMaxHistoryFetch, configFieldMaxHistoryLength:
 		rcf.MaxHistoryFetch.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 
-	case configFieldAllowPrivateMessages:
+	case configFieldAllowPM, configFieldAllowPrivateMessages:
 		rcf.AllowPrivateMessages.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 
-	case configFieldAllowInvites:
+	case configFieldAllowInvites, configFieldAllowMemberInvites:
 		rcf.OccupantsCanInvite = formFieldBool(field.Values)
 
 	case configFieldCanChangeSubject:
 		rcf.OccupantsCanChangeSubject = formFieldBool(field.Values)
 
-	case configFieldEnableLogging:
+	case configFieldEnableLogging, configFieldEnableArchiving:
 		rcf.Logged = formFieldBool(field.Values)
 
 	case configFieldMemberList:

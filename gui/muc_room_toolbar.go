@@ -71,6 +71,8 @@ func (t *roomViewToolbar) initSubscribers(v *roomView) {
 			t.selfOccupantJoinedEvent(v.isSelfOccupantAnOwner())
 		case selfOccupantRoleUpdatedEvent:
 			t.selfOccupantRoleUpdatedEvent(e.selfRoleUpdate.New)
+		case selfOccupantAffiliationUpdatedEvent:
+			t.selfOccupantAffiliationUpdatedEvent(e.selfAffiliationUpdate.New)
 		}
 	})
 }
@@ -91,6 +93,12 @@ func (t *roomViewToolbar) selfOccupantRemovedEvent() {
 
 func (t *roomViewToolbar) selfOccupantRoleUpdatedEvent(role data.Role) {
 	if role.IsNone() {
+		doInUIThread(t.disable)
+	}
+}
+
+func (t *roomViewToolbar) selfOccupantAffiliationUpdatedEvent(affiliation data.Affiliation) {
+	if affiliation.IsBanned() {
 		doInUIThread(t.disable)
 	}
 }

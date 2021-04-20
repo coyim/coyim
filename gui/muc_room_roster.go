@@ -143,6 +143,10 @@ func (r *roomViewRoster) initSubscribers() {
 			r.onUpdateRoster()
 		case occupantRoleUpdatedEvent:
 			r.onUpdateRoster()
+		case selfOccupantAffiliationUpdatedEvent:
+			r.onUpdateRoster()
+		case occupantAffiliationUpdatedEvent:
+			r.onUpdateRoster()
 		}
 	})
 }

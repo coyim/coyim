@@ -13,31 +13,38 @@ var _ = Suite(&MucRoomConfigSuite{})
 func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	rcf := NewRoomConfigForm(&xmppData.Form{
 		Fields: []xmppData.FormFieldX{
-			xmppData.FormFieldX{Var: "FORM_TYPE", Values: []string{"stuff"}},
-			xmppData.FormFieldX{Var: configFieldMaxHistoryFetch, Values: []string{"43"}, Options: []xmppData.FormFieldOptionX{
-				xmppData.FormFieldOptionX{Value: "one"},
-				xmppData.FormFieldOptionX{Value: "two"},
+			{Var: "FORM_TYPE", Values: []string{"stuff"}},
+			{Var: configFieldMaxHistoryFetch, Values: []string{"43"}, Options: []xmppData.FormFieldOptionX{
+				{Value: "one"},
+				{Value: "two"},
 			}},
-			xmppData.FormFieldX{Var: configFieldAllowPrivateMessages, Values: []string{"allow private messages"}},
-			xmppData.FormFieldX{Var: configFieldAllowInvites, Values: []string{"true"}},
-			xmppData.FormFieldX{Var: configFieldCanChangeSubject, Values: []string{"true"}},
-			xmppData.FormFieldX{Var: configFieldEnableLogging, Values: []string{"true"}},
-			xmppData.FormFieldX{Var: configFieldMemberList, Values: []string{}},
-			xmppData.FormFieldX{Var: configFieldLanguage, Values: []string{"eng"}},
-			xmppData.FormFieldX{Var: configFieldPubsub, Values: []string{}},
-			xmppData.FormFieldX{Var: configFieldMaxOccupantsNumber, Values: []string{"42"}},
-			xmppData.FormFieldX{Var: configFieldMembersOnly, Values: []string{"true"}},
-			xmppData.FormFieldX{Var: configFieldModerated, Values: []string{"true"}},
-			xmppData.FormFieldX{Var: configFieldPasswordProtected, Values: []string{"true"}},
-			xmppData.FormFieldX{Var: configFieldIsPersistent, Values: []string{"true"}},
-			xmppData.FormFieldX{Var: configFieldPresenceBroadcast, Values: []string{}},
-			xmppData.FormFieldX{Var: configFieldIsPublic, Values: []string{"true"}},
-			xmppData.FormFieldX{Var: configFieldRoomAdmins, Values: []string{"one@foobar.com", "two@example.org"}},
-			xmppData.FormFieldX{Var: configFieldRoomDescription, Values: []string{"a description"}},
-			xmppData.FormFieldX{Var: configFieldRoomName, Values: []string{"a title"}},
-			xmppData.FormFieldX{Var: configFieldOwners, Values: []string{}},
-			xmppData.FormFieldX{Var: configFieldPassword, Values: []string{"a password"}},
-			xmppData.FormFieldX{Var: configFieldWhoIs, Values: []string{"a whois"}},
+			{Var: configFieldMaxHistoryLength, Values: []string{"43"}, Options: []xmppData.FormFieldOptionX{
+				{Value: "one"},
+				{Value: "two"},
+			}},
+			{Var: configFieldAllowPM, Values: []string{"allow private messages"}},
+			{Var: configFieldAllowPrivateMessages, Values: []string{"allow private messages"}},
+			{Var: configFieldAllowMemberInvites, Values: []string{"true"}},
+			{Var: configFieldAllowInvites, Values: []string{"true"}},
+			{Var: configFieldCanChangeSubject, Values: []string{"true"}},
+			{Var: configFieldEnableArchiving, Values: []string{"true"}},
+			{Var: configFieldEnableLogging, Values: []string{"true"}},
+			{Var: configFieldMemberList, Values: []string{}},
+			{Var: configFieldLanguage, Values: []string{"eng"}},
+			{Var: configFieldPubsub, Values: []string{}},
+			{Var: configFieldMaxOccupantsNumber, Values: []string{"42"}},
+			{Var: configFieldMembersOnly, Values: []string{"true"}},
+			{Var: configFieldModerated, Values: []string{"true"}},
+			{Var: configFieldPasswordProtected, Values: []string{"true"}},
+			{Var: configFieldIsPersistent, Values: []string{"true"}},
+			{Var: configFieldPresenceBroadcast, Values: []string{}},
+			{Var: configFieldIsPublic, Values: []string{"true"}},
+			{Var: configFieldRoomAdmins, Values: []string{"one@foobar.com", "two@example.org"}},
+			{Var: configFieldRoomDescription, Values: []string{"a description"}},
+			{Var: configFieldRoomName, Values: []string{"a title"}},
+			{Var: configFieldOwners, Values: []string{}},
+			{Var: configFieldPassword, Values: []string{"a password"}},
+			{Var: configFieldWhoIs, Values: []string{"a whois"}},
 		},
 	})
 
@@ -62,7 +69,7 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	res := rcf.GetFormData()
 
 	c.Assert(res.Type, Equals, "submit")
-	c.Assert(res.Fields, HasLen, 18)
+	c.Assert(res.Fields, HasLen, 22)
 
 	vals := map[string][]string{}
 	for _, ff := range res.Fields {
@@ -70,23 +77,28 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	}
 
 	c.Assert(vals, DeepEquals, map[string][]string{
-		"muc#roomconfig_enablelogging":         []string{"true"},
-		"muc#roomconfig_changesubject":         []string{"true"},
-		"muc#roomconfig_persistentroom":        []string{"true"},
-		"muc#roomconfig_passwordprotectedroom": []string{"true"},
-		"muc#roomconfig_lang":                  []string{"eng"},
-		"muc#roomconfig_roomname":              []string{"a title"},
-		"muc#roomconfig_allowinvites":          []string{"true"},
-		"muc#roomconfig_allowpm":               []string{"allow private messages"},
-		"muc#roomconfig_roomsecret":            []string{"a password"},
-		"muc#roomconfig_whois":                 []string{"a whois"},
-		"muc#roomconfig_publicroom":            []string{"true"},
-		"muc#roomconfig_moderatedroom":         []string{"true"},
-		"muc#maxhistoryfetch":                  []string{"43"},
-		"muc#roomconfig_roomadmins":            []string{"one@foobar.com", "two@example.org"},
-		"FORM_TYPE":                            []string{"http://jabber.org/protocol/muc#roomconfig"},
-		"muc#roomconfig_roomdesc":              []string{"a description"},
-		"muc#roomconfig_maxusers":              []string{"42"},
-		"muc#roomconfig_membersonly":           []string{"true"},
+		"muc#roomconfig_enablelogging":                                  {"true"},
+		"muc#roomconfig_enablearchiving":                                {"true"},
+		"muc#roomconfig_changesubject":                                  {"true"},
+		"muc#roomconfig_persistentroom":                                 {"true"},
+		"muc#roomconfig_passwordprotectedroom":                          {"true"},
+		"muc#roomconfig_lang":                                           {"eng"},
+		"muc#roomconfig_roomname":                                       {"a title"},
+		"muc#roomconfig_allowinvites":                                   {"true"},
+		"{http://prosody.im/protocol/muc}roomconfig_allowmemberinvites": {"true"},
+		"muc#roomconfig_allowpm":                                        {"allow private messages"},
+		"allow_private_messages":                                        {"allow private messages"},
+		"muc#roomconfig_roomsecret":                                     {"a password"},
+		"muc#roomconfig_whois":                                          {"a whois"},
+		"muc#roomconfig_publicroom":                                     {"true"},
+		"muc#roomconfig_moderatedroom":                                  {"true"},
+		"muc#maxhistoryfetch":                                           {"43"},
+		"muc#roomconfig_historylength":                                  {"43"},
+		"muc#roomconfig_roomadmins":                                     {"one@foobar.com", "two@example.org"},
+		"FORM_TYPE":                                                     {"http://jabber.org/protocol/muc#roomconfig"},
+		"muc#roomconfig_roomdesc":                                       {"a description"},
+		"muc#roomconfig_maxusers":                                       {"42"},
+		"muc#roomconfig_membersonly":                                    {"true"},
 	})
+}
 }

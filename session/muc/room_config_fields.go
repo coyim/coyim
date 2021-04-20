@@ -1,6 +1,37 @@
 package muc
 
 const (
+	// RoomConfigFieldText represents a "text-single" config field type
+	RoomConfigFieldText = "text-single"
+	// RoomConfigFieldTextPrivate represents a "text-private" config field type
+	RoomConfigFieldTextPrivate = "text-private"
+	// RoomConfigFieldTextMulti represents a "text-multi" config field type
+	RoomConfigFieldTextMulti = "text-multi"
+	// RoomConfigFieldBoolean represents a "boolean" config field type
+	RoomConfigFieldBoolean = "boolean"
+	// RoomConfigFieldList represents a "list-single" config field type
+	RoomConfigFieldList = "list-single"
+	// RoomConfigFieldListMulti represents a "list-multi" config field type
+	RoomConfigFieldListMulti = "list-multi"
+	// RoomConfigFieldJidMulti represents a "jid-multi" config field type
+	RoomConfigFieldJidMulti = "jid-multi"
+	// RoomConfigFieldFixed represents a "fixed" config field type
+	RoomConfigFieldFixed = "fixed"
+	// RoomConfigFieldHidden represents a "hidden" config field type
+	RoomConfigFieldHidden = "hidden"
+)
+
+// RoomConfigFormField contains information about a room config form field
+type RoomConfigFormField struct {
+	Name, Type, Label string
+	Value             interface{}
+}
+
+func (f *RoomConfigFormField) SetValue(v interface{}) {
+	f.Value = v
+}
+
+const (
 	// RoomConfigOptionModerators represents the field option for "moderators"
 	RoomConfigOptionModerators = "moderators"
 	// RoomConfigOptionParticipants represents the field option for "participants"

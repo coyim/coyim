@@ -36,3 +36,16 @@ func (*MucRoomConfigFieldsSuite) Test_configListMultiField_UpdateField(c *C) {
 	c.Assert(vv.values, DeepEquals, []string{"hello"})
 	c.Assert(vv.options, DeepEquals, []string{"something", "else"})
 }
+
+func (*MucRoomConfigFieldsSuite) Test_RoomConfigFormField(c *C) {
+	field := &RoomConfigFormField{}
+
+	field.SetValue(true)
+	c.Assert(field.Value, Equals, true)
+
+	field.SetValue("bla")
+	c.Assert(field.Value, Equals, "bla")
+
+	field.SetValue([]string{"foo"})
+	c.Assert(field.Value, DeepEquals, []string{"foo"})
+}

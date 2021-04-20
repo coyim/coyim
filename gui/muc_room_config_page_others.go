@@ -17,9 +17,12 @@ type roomConfigOthersPage struct {
 	roomMaxOccupantsCombo    gtki.ComboBoxText `gtk-widget:"room-maxoccupants"`
 	roomMaxOccupantsEntry    gtki.Entry        `gtk-widget:"room-maxoccupants-entry"`
 	roomEnableLoggin         gtki.Switch       `gtk-widget:"room-enablelogging"`
+	roomUnknowFieldsBox      gtki.Box          `gtk-widget:"room-config-unknow-fields-box"`
 
 	roomMaxHistoryFetch *roomConfigComboEntry
 	roomMaxOccupants    *roomConfigComboEntry
+
+	fields []hasRoomConfigFormField
 }
 
 func (c *mucRoomConfigComponent) newRoomConfigOthersPage() mucRoomConfigPage {
@@ -38,6 +41,16 @@ func (p *roomConfigOthersPage) initDefaultValues() {
 	p.roomMaxHistoryFetch.updateOptions(p.form.MaxHistoryFetch.Options())
 	p.roomMaxOccupants.updateOptions(p.form.MaxOccupantsNumber.Options())
 	p.roomEnableLoggin.SetActive(p.form.Logged)
+
+	for _, f := range p.form.UnknowFields {
+		field, err := roomConfigFormFieldFactory(f)
+		if err != nil {
+			p.log.WithField("field", f.Name).WithError(err).Error("Room configuration form field not supported")
+			continue
+		}
+
+		p.addField(field)
+	}
 }
 
 // isNotValid MUST be called from the UI thread
@@ -65,6 +78,16 @@ func (p *roomConfigOthersPage) collectData() {
 	p.form.MaxHistoryFetch.UpdateValue(p.roomMaxHistoryFetch.currentValue())
 	p.form.MaxOccupantsNumber.UpdateValue(p.roomMaxOccupants.currentValue())
 	p.form.Logged = p.roomEnableLoggin.GetActive()
+
+	for idx, f := range p.fields {
+		p.form.UnknowFields[idx].SetValue(f.fieldValue())
+	}
+}
+
+// addField MUST BE called from the UI thread
+func (p *roomConfigOthersPage) addField(f hasRoomConfigFormField) {
+	p.fields = append(p.fields, f)
+	p.roomUnknowFieldsBox.PackStart(f.fieldWidget(), true, false, 0)
 }
 
 const (

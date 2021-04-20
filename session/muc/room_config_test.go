@@ -10,8 +10,8 @@ type MucRoomConfigSuite struct{}
 
 var _ = Suite(&MucRoomConfigSuite{})
 
-func (*MucRoomConfigSuite) Test_NewRoomConfigRom(c *C) {
-	rcf := NewRoomConfigRom(&xmppData.Form{
+func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
+	rcf := NewRoomConfigForm(&xmppData.Form{
 		Fields: []xmppData.FormFieldX{
 			xmppData.FormFieldX{Var: "FORM_TYPE", Values: []string{"stuff"}},
 			xmppData.FormFieldX{Var: configFieldMaxHistoryFetch, Values: []string{"43"}, Options: []xmppData.FormFieldOptionX{

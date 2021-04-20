@@ -2,6 +2,7 @@ package muc
 
 import (
 	"strconv"
+	"strings"
 
 	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -57,8 +58,8 @@ type RoomConfigForm struct {
 	Whois                          ConfigListSingleField
 }
 
-// NewRoomConfigRom creates a new room configuration form instance
-func NewRoomConfigRom(form *xmppData.Form) *RoomConfigForm {
+// NewRoomConfigForm creates a new room configuration form instance
+func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 	cf := &RoomConfigForm{}
 
 	cf.MaxHistoryFetch = newConfigListSingleField([]string{
@@ -224,7 +225,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 }
 
 func formFieldBool(values []string) bool {
-	return len(values) > 0 && (values[0] == "true" || values[0] == "1")
+	return len(values) > 0 && (strings.ToLower(values[0]) == "true" || values[0] == "1")
 }
 
 func formFieldSingleString(values []string) string {

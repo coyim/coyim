@@ -107,7 +107,7 @@ func (c *createMUCReservedRoomContext) getConfigFormFromStanza(stanza data.Stanz
 		return nil, err
 	}
 
-	return muc.NewRoomConfigRom(cf.Form), nil
+	return muc.NewRoomConfigForm(cf.Form), nil
 }
 
 func (c *createMUCReservedRoomContext) getConfigFormFromIQResponse(iq *data.ClientIQ) (cf *data.MUCRoomConfiguration, err error) {

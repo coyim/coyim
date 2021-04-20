@@ -14,6 +14,19 @@ type hasRoomConfigFormField interface {
 	fieldValue() interface{}
 }
 
+var (
+	errRoomConfigFieldNotSupported = errors.New("room configuration form field not supported")
+)
+
+func roomConfigFormFieldFactory(field *muc.RoomConfigFormField) (hasRoomConfigFormField, error) {
+	switch field.Type {
+	case muc.RoomConfigFieldText:
+		return newRoomConfigFormTextField(field), nil
+	}
+
+	return nil, errRoomConfigFieldNotSupported
+}
+
 type roomConfigFormField struct {
 	field *muc.RoomConfigFormField
 

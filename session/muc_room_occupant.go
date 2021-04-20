@@ -272,6 +272,9 @@ func (m *mucManager) handleOccupantBanned(roomID jid.Bare, op *muc.OccupantPrese
 	}
 
 	m.handleOccupantAffiliationUpdated(occupantBanned)
+	if occupantBanned.isOwnPresence() {
+		m.deleteRoomFromManager(roomID)
+	}
 }
 
 func (m *mucManager) handleOccupantUnavailable(roomID jid.Bare, op *muc.OccupantPresenceInfo, u *xmppData.MUCUser) {

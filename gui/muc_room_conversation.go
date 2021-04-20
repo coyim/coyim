@@ -165,7 +165,6 @@ func (c *roomViewConversation) selfOccupantAffiliationEvent(affiliationUpdate da
 // onSelfOccupantBanned MUST be called from the UI thread
 func (c *roomViewConversation) onSelfOccupantBanned() {
 	c.updateNotificationMessage(i18n.Local("You can't send messages because you have been banned."))
-	mucStyles.setDisableRoomStyle(c.view)
 	c.disableSendCapabilities()
 }
 
@@ -190,7 +189,6 @@ func (c *roomViewConversation) selfOccupantRoleEvent(roleUpdate data.RoleUpdate)
 func (c *roomViewConversation) onSelfOccupantKicked() {
 	c.updateNotificationMessage(i18n.Local("You can't send messages because you were expelled from the room."))
 	c.disableSendCapabilities()
-	mucStyles.setDisableRoomStyle(c.view)
 }
 
 // onSelfOccupantVoiceRevoked MUST be called from the UI thread
@@ -327,7 +325,6 @@ func (c *roomViewConversation) selfOccupantRemovedEvent(nickname string) {
 	c.occupantRemovedEvent(nickname)
 	doInUIThread(func() {
 		c.updateNotificationMessage(i18n.Local("You can't send messages because the room configuration has been changed."))
-		mucStyles.setDisableRoomStyle(c.view)
 		c.disableSendCapabilities()
 	})
 }

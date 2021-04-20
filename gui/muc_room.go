@@ -176,7 +176,7 @@ func (v *roomView) selfOccupantAffiliationUpdatedEvent(selfAffiliationUpdate dat
 	v.notifications.info(m)
 
 	if selfAffiliationUpdate.New.IsBanned() {
-		mucStyles.setDisableRoomStyle(v.content)
+		v.disableRoomView()
 	}
 }
 
@@ -190,17 +190,19 @@ func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUp
 func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleUpdate) {
 	v.notifications.info(getSelfRoleUpdateMessage(selfRoleUpdate))
 	if selfRoleUpdate.New.IsNone() {
-		doInUIThread(func() {
-			v.account.removeRoomView(v.roomID())
-			v.warningsInfoBar.hide()
-		})
+		v.disableRoomView()
 	}
 }
 
 // selfOccupantRemovedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantRemovedEvent() {
 	v.notifications.info(i18n.Local("You have been removed from this room because it's now a members only room."))
+	v.disableRoomView()
+}
+
+func (v *roomView) disableRoomView() {
 	doInUIThread(func() {
+		mucStyles.setDisableRoomStyle(v.content)
 		v.account.removeRoomView(v.roomID())
 		v.warningsInfoBar.hide()
 	})

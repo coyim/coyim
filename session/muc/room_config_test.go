@@ -250,3 +250,44 @@ func (*MucRoomConfigSuite) Test_roomConfigFormFieldFactory(c *C) {
 		c.Assert(field.Value, DeepEquals, chk.expectedValue)
 	}
 }
+
+func (*MucRoomConfigSuite) Test_formFieldBool(c *C) {
+	c.Assert(formFieldBool(nil), Equals, false)
+	c.Assert(formFieldBool([]string(nil)), Equals, false)
+	c.Assert(formFieldBool([]string{"true"}), Equals, true)
+	c.Assert(formFieldBool([]string{"false"}), Equals, false)
+	c.Assert(formFieldBool([]string{"true", "false"}), Equals, true)
+}
+
+func (*MucRoomConfigSuite) Test_formFieldSingleString(c *C) {
+	c.Assert(formFieldSingleString(nil), Equals, "")
+	c.Assert(formFieldSingleString([]string(nil)), Equals, "")
+	c.Assert(formFieldSingleString([]string{"bla"}), Equals, "bla")
+	c.Assert(formFieldSingleString([]string{"bla", "foo"}), Equals, "bla")
+	c.Assert(formFieldSingleString([]string{""}), Equals, "")
+}
+
+func (*MucRoomConfigSuite) Test_formFieldOptionsValues(c *C) {
+	c.Assert(formFieldOptionsValues(nil), IsNil)
+	c.Assert(formFieldOptionsValues([]xmppData.FormFieldOptionX{}), DeepEquals, []string(nil))
+	c.Assert(formFieldOptionsValues([]xmppData.FormFieldOptionX{
+		{Label: "bla", Value: "bla"},
+		{Label: "whatever", Value: "foo"},
+		{Label: "whatever2", Value: "bla2"},
+		{Label: "whatever3", Value: "foo2"},
+	}), DeepEquals, []string{"bla", "foo", "bla2", "foo2"})
+}
+
+func (*MucRoomConfigSuite) Test_formFieldJidList(c *C) {
+	c.Assert(formFieldJidList(nil), IsNil)
+	c.Assert(formFieldJidList([]string{}), DeepEquals, []jid.Any(nil))
+	c.Assert(formFieldJidList([]string{"bla"}), DeepEquals, []jid.Any{jid.Parse("bla")})
+	c.Assert(formFieldJidList([]string{"bla", "foo@domain.org"}), DeepEquals, []jid.Any{jid.Parse("bla"), jid.Parse("foo@domain.org")})
+}
+
+func (*MucRoomConfigSuite) Test_jidListToStringList(c *C) {
+	c.Assert(jidListToStringList(nil), IsNil)
+	c.Assert(jidListToStringList([]jid.Any{}), DeepEquals, []string(nil))
+	c.Assert(jidListToStringList([]jid.Any{jid.Parse("bla")}), DeepEquals, []string{"bla"})
+	c.Assert(jidListToStringList([]jid.Any{jid.Parse("foo@domain.org"), jid.Parse("foo"), jid.Parse("bla@domain.org")}), DeepEquals, []string{"foo@domain.org", "foo", "bla@domain.org"})
+}

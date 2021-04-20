@@ -101,4 +101,152 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 		"muc#roomconfig_membersonly":                                    {"true"},
 	})
 }
+
+func (*MucRoomConfigSuite) Test_RoomConfigForm_setUnknowField(c *C) {
+	cf := &RoomConfigForm{}
+	unknowFields := []*RoomConfigFormField{}
+
+	checks := []struct {
+		name          string
+		tp            string
+		label         string
+		value         []string
+		expectedValue interface{}
+	}{
+		{
+			"RoomConfigFieldText",
+			RoomConfigFieldText,
+			"field label",
+			[]string{"bla"},
+			"bla",
+		},
+		{
+			"RoomConfigFieldTextPrivate",
+			RoomConfigFieldTextPrivate,
+			"field label",
+			[]string{"foo"},
+			"foo",
+		},
+		{
+			"RoomConfigFieldTextMulti",
+			RoomConfigFieldTextMulti,
+			"field label",
+			[]string{"bla foo"},
+			"bla foo",
+		},
+		{
+			"RoomConfigFieldBoolean",
+			RoomConfigFieldBoolean,
+			"field label",
+			[]string{"true"},
+			true,
+		},
+		{
+			"RoomConfigFieldList",
+			RoomConfigFieldList,
+			"field label",
+			[]string{"bla"},
+			&configListSingleField{value: "bla"},
+		},
+		{
+			"RoomConfigFieldListMulti",
+			RoomConfigFieldListMulti,
+			"field label",
+			[]string{"bla", "foo", "bla1", "foo1"},
+			&configListMultiField{values: []string{"bla", "foo", "bla1", "foo1"}},
+		},
+		{
+			"RoomConfigFieldJidMulti",
+			RoomConfigFieldJidMulti,
+			"field label",
+			[]string{"bla", "foo", "bla@domain.org", "foo@domain.org"},
+			[]jid.Any{jid.Parse("bla"), jid.Parse("foo"), jid.Parse("bla@domain.org"), jid.Parse("foo@domain.org")},
+		},
+	}
+
+	for _, chk := range checks {
+		fieldX := xmppData.FormFieldX{
+			Var:    chk.name,
+			Type:   chk.tp,
+			Label:  chk.label,
+			Values: chk.value,
+		}
+		cf.setUnknowField(fieldX)
+		unknowFields = append(unknowFields, roomConfigFormFieldFactory(fieldX))
+		c.Assert(cf.UnknowFields, DeepEquals, unknowFields)
+	}
+}
+
+func (*MucRoomConfigSuite) Test_roomConfigFormFieldFactory(c *C) {
+	checks := []struct {
+		name          string
+		tp            string
+		label         string
+		value         []string
+		expectedValue interface{}
+	}{
+		{
+			"RoomConfigFieldText",
+			RoomConfigFieldText,
+			"field label",
+			[]string{"bla"},
+			"bla",
+		},
+		{
+			"RoomConfigFieldTextPrivate",
+			RoomConfigFieldTextPrivate,
+			"field label",
+			[]string{"foo"},
+			"foo",
+		},
+		{
+			"RoomConfigFieldTextMulti",
+			RoomConfigFieldTextMulti,
+			"field label",
+			[]string{"bla foo"},
+			"bla foo",
+		},
+		{
+			"RoomConfigFieldBoolean",
+			RoomConfigFieldBoolean,
+			"field label",
+			[]string{"true"},
+			true,
+		},
+		{
+			"RoomConfigFieldList",
+			RoomConfigFieldList,
+			"field label",
+			[]string{"bla"},
+			&configListSingleField{value: "bla"},
+		},
+		{
+			"RoomConfigFieldListMulti",
+			RoomConfigFieldListMulti,
+			"field label",
+			[]string{"bla", "foo", "bla1", "foo1"},
+			&configListMultiField{values: []string{"bla", "foo", "bla1", "foo1"}},
+		},
+		{
+			"RoomConfigFieldJidMulti",
+			RoomConfigFieldJidMulti,
+			"field label",
+			[]string{"bla", "foo", "bla@domain.org", "foo@domain.org"},
+			[]jid.Any{jid.Parse("bla"), jid.Parse("foo"), jid.Parse("bla@domain.org"), jid.Parse("foo@domain.org")},
+		},
+	}
+
+	for _, chk := range checks {
+		field := roomConfigFormFieldFactory(xmppData.FormFieldX{
+			Var:    chk.name,
+			Type:   chk.tp,
+			Label:  chk.label,
+			Values: chk.value,
+		})
+
+		c.Assert(field.Name, Equals, chk.name)
+		c.Assert(field.Type, Equals, chk.tp)
+		c.Assert(field.Label, Equals, chk.label)
+		c.Assert(field.Value, DeepEquals, chk.expectedValue)
+	}
 }

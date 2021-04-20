@@ -60,6 +60,8 @@ type RoomConfigForm struct {
 	Owners                         []jid.Any
 	Password                       string
 	Whois                          ConfigListSingleField
+
+	UnknowFields []*RoomConfigFormField
 }
 
 // NewRoomConfigForm creates a new room configuration form instance
@@ -229,7 +231,51 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 
 	case configFieldWhoIs:
 		rcf.Whois.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
+
+	default:
+		rcf.setUnknowField(field)
 	}
+}
+
+func (rcf *RoomConfigForm) setUnknowField(field xmppData.FormFieldX) {
+	rcf.UnknowFields = append(rcf.UnknowFields, roomConfigFormFieldFactory(field))
+}
+
+func roomConfigFormFieldFactory(field xmppData.FormFieldX) *RoomConfigFormField {
+	f := &RoomConfigFormField{
+		Name:  field.Var,
+		Type:  field.Type,
+		Label: field.Label,
+	}
+
+	switch field.Type {
+	case RoomConfigFieldText, RoomConfigFieldTextPrivate:
+		f.Value = formFieldSingleString(field.Values)
+
+	case RoomConfigFieldTextMulti:
+		f.Value = strings.Join(field.Values, "\n")
+
+	case RoomConfigFieldBoolean:
+		f.Value = formFieldBool(field.Values)
+
+	case RoomConfigFieldList:
+		ls := newConfigListSingleField(nil)
+		ls.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
+		f.Value = ls
+
+	case RoomConfigFieldListMulti:
+		lm := newConfigListMultiField(nil)
+		lm.UpdateField(field.Values, formFieldOptionsValues(field.Options))
+		f.Value = lm
+
+	case RoomConfigFieldJidMulti:
+		f.Value = formFieldJidList(field.Values)
+
+	default:
+		f.Value = field.Values
+	}
+
+	return f
 }
 
 func formFieldBool(values []string) bool {

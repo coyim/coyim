@@ -27,6 +27,7 @@ type RoomConfigFormField struct {
 	Value             interface{}
 }
 
+// SetValue sets the room configuration form field value from the given parameter
 func (f *RoomConfigFormField) SetValue(v interface{}) {
 	f.Value = v
 }

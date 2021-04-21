@@ -127,25 +127,16 @@ func (r *roomViewRoster) initDefaults() {
 func (r *roomViewRoster) initSubscribers() {
 	r.roomView.subscribe("roster", func(ev roomViewEvent) {
 		switch ev.(type) {
-		case occupantSelfJoinedEvent:
-			r.onSelfOccupantJoined()
-		case occupantJoinedEvent:
-			r.onUpdateRoster()
-		case occupantUpdatedEvent:
-			r.occupantUpdateEvent()
-		case occupantLeftEvent:
-			r.onUpdateRoster()
-		case selfOccupantRemovedEvent:
-			r.onUpdateRoster()
-		case occupantRemovedEvent:
-			r.onUpdateRoster()
-		case selfOccupantRoleUpdatedEvent:
-			r.onUpdateRoster()
-		case occupantRoleUpdatedEvent:
-			r.onUpdateRoster()
-		case selfOccupantAffiliationUpdatedEvent:
-			r.onUpdateRoster()
-		case occupantAffiliationUpdatedEvent:
+		case occupantSelfJoinedEvent,
+			occupantJoinedEvent,
+			occupantUpdatedEvent,
+			occupantLeftEvent,
+			selfOccupantRemovedEvent,
+			occupantRemovedEvent,
+			selfOccupantRoleUpdatedEvent,
+			occupantRoleUpdatedEvent,
+			selfOccupantAffiliationUpdatedEvent,
+			occupantAffiliationUpdatedEvent:
 			r.onUpdateRoster()
 		}
 	})
@@ -253,14 +244,6 @@ func (r *roomViewRoster) getNicknameFromTreeModel(path gtki.TreePath) (string, e
 	}
 
 	return iterValue.GetString()
-}
-
-func (r *roomViewRoster) onSelfOccupantJoined() {
-	r.onUpdateRoster()
-}
-
-func (r *roomViewRoster) occupantUpdateEvent() {
-	r.onUpdateRoster()
 }
 
 func (r *roomViewRoster) onUpdateRoster() {

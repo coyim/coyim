@@ -4,10 +4,17 @@ import (
 	"net"
 	"strconv"
 
+	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/socks5"
 	"golang.org/x/net/proxy"
 )
+
+var createTorProxy = func(a *config.Account) (proxy.Dialer, error) {
+	return a.CreateTorProxy()
+}
+
+var socks5XMPP = socks5.XMPP
 
 func tryStreamhost(s hasConfigAndLog, sh data.BytestreamStreamhost, dstAddr string, k func(net.Conn)) bool {
 	port := sh.Port
@@ -15,7 +22,7 @@ func tryStreamhost(s hasConfigAndLog, sh data.BytestreamStreamhost, dstAddr stri
 		port = 1080
 	}
 
-	p, err := s.GetConfig().CreateTorProxy()
+	p, err := createTorProxy(s.GetConfig())
 	if err != nil {
 		s.Log().WithError(err).Warn("Had error when trying to connect")
 		return false
@@ -25,7 +32,7 @@ func tryStreamhost(s hasConfigAndLog, sh data.BytestreamStreamhost, dstAddr stri
 		p = proxy.Direct
 	}
 
-	dialer, e := socks5.XMPP("tcp", net.JoinHostPort(sh.Host, strconv.Itoa(port)), nil, p)
+	dialer, e := socks5XMPP("tcp", net.JoinHostPort(sh.Host, strconv.Itoa(port)), nil, p)
 	if e != nil {
 		s.Log().WithError(e).WithField("streamhost", sh).Info("Error setting up socks5")
 		return false

@@ -6,16 +6,44 @@ import (
 )
 
 type roomConfigFormTextField struct {
-	*roomConfigFormField
+	field *muc.RoomConfigFormField
 
-	entry gtki.Entry `gtk-widget:"room-config-text-field-entry"`
+	widget      gtki.Box   `gtk-widget:"room-config-field-box"`
+	label       gtki.Label `gtk-widget:"room-config-field-label"`
+	entry       gtki.Entry `gtk-widget:"room-config-text-field-entry"`
+	description gtki.Label `gtk-widget:"room-config-field-description"`
 }
 
 func newRoomConfigFormTextField(field *muc.RoomConfigFormField) *roomConfigFormTextField {
-	f := &roomConfigFormTextField{}
-	f.roomConfigFormField = newRoomConfigFormField(field, "MUCRoomConfigFormTextField")
+	f := &roomConfigFormTextField{field: field}
 
-	panicOnDevError(f.builder.bindObjects(f))
-
+	f.initBuilder()
+	f.initDefaults()
 	return f
+}
+
+func (f *roomConfigFormTextField) initBuilder() {
+	builder := newBuilder("MUCRoomConfigFormTextField")
+	panicOnDevError(builder.bindObjects(f))
+}
+
+func (f *roomConfigFormTextField) initDefaults() {
+	f.label.SetText(f.field.Label)
+	f.entry.SetText(f.field.Value.(string))
+}
+
+func (f *roomConfigFormTextField) fieldWidget() gtki.Widget {
+	return f.widget
+}
+
+func (f *roomConfigFormTextField) fieldName() string {
+	return f.field.Name
+}
+
+func (f *roomConfigFormTextField) fieldLabel() string {
+	return f.field.Label
+}
+
+func (f *roomConfigFormTextField) fieldValue() interface{} {
+	return f.field.Value
 }

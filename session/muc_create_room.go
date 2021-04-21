@@ -28,31 +28,33 @@ var (
 
 // CreateInstantRoom will create a room "instantly" accepting the default configuration of the room
 // For more information see XEP-0045 v1.32.0, section: 10.1.2
-func (s *session) CreateInstantRoom(roomID jid.Bare) <-chan error {
+func (s *session) CreateInstantRoom(roomID jid.Bare) (<-chan bool, <-chan error) {
 	c := s.newCreateMUCInstantRoomContext(roomID)
 	return c.createInstantRoom()
 }
 
 type createMUCInstantRoomContext struct {
 	*createMUCRoomContext
+	resultChannel chan bool
 }
 
 func (s *session) newCreateMUCInstantRoomContext(roomID jid.Bare) *createMUCInstantRoomContext {
 	return &createMUCInstantRoomContext{
-		s.newCreateMUCRoomContext(roomID),
+		createMUCRoomContext: s.newCreateMUCRoomContext(roomID),
 	}
 }
 
-func (c *createMUCInstantRoomContext) createInstantRoom() <-chan error {
+func (c *createMUCInstantRoomContext) createInstantRoom() (<-chan bool, <-chan error) {
+	c.resultChannel = make(chan bool)
 	go c.createRoom(c.sendIQForInstantRoom, func(stanza data.Stanza) error {
 		err := c.validateStanzaReceived(stanza)
 		if err != nil {
 			return newCreateRoomError("Invalid information query response", err)
 		}
+		c.resultChannel <- true
 		return nil
 	})
-
-	return c.errorChannel
+	return c.resultChannel, c.errorChannel
 }
 
 func (c *createMUCInstantRoomContext) sendIQForInstantRoom() (<-chan data.Stanza, error) {
@@ -169,10 +171,7 @@ func (c *createMUCRoomContext) createRoom(sendIQ func() (<-chan data.Stanza, err
 		default:
 			c.error(err, "An error occurred when the stanza was received")
 		}
-		return
 	}
-
-	close(c.errorChannel)
 }
 
 func (c *createMUCRoomContext) error(err error, m string) {

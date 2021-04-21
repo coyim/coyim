@@ -59,7 +59,7 @@ type Rooms interface {
 	HasRoom(jid.Bare, chan<- *muc.RoomListing) (<-chan bool, <-chan error)
 	GetRooms(jid.Domain, string) (<-chan *muc.RoomListing, <-chan *muc.ServiceListing, <-chan error)
 	JoinRoom(jid.Bare, string, string) error
-	CreateInstantRoom(jid.Bare) <-chan error
+	CreateInstantRoom(jid.Bare) (<-chan bool, <-chan error)
 	CreateReservedRoom(jid.Bare) (<-chan *muc.RoomConfigForm, <-chan error)
 	SubmitRoomConfigurationForm(jid.Bare, *muc.RoomConfigForm) (<-chan bool, <-chan error)
 	CancelRoomConfiguration(jid.Bare) <-chan error

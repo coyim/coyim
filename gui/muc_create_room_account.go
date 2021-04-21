@@ -7,14 +7,14 @@ import (
 
 // createInstantRoom IS SAFE to be called from the UI thread
 func (a *account) createInstantRoom(roomID jid.Bare, onSuccess func(), onError func(error)) {
-	result := a.session.CreateInstantRoom(roomID)
+	rc, ec := a.session.CreateInstantRoom(roomID)
 	go func() {
-		err := <-result
-		if err != nil {
+		select {
+		case err := <-ec:
 			onError(err)
-			return
+		case <-rc:
+			onSuccess()
 		}
-		onSuccess()
 	}()
 }
 
@@ -24,10 +24,7 @@ func (a *account) createReservedRoom(roomID jid.Bare, onSuccess func(jid.Bare, *
 	go func() {
 		select {
 		case err := <-ec:
-			if err != nil {
-				onError(err)
-				return
-			}
+			onError(err)
 		case form := <-fc:
 			onSuccess(roomID, form)
 		}

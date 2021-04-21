@@ -75,7 +75,9 @@ func (s *MockSuite) Test_SessionMock(c *C) {
 	_, _, _ = sm.GetRooms(jid.NewDomain(""), "")
 
 	c.Assert(sm.JoinRoom(nil, "", ""), IsNil)
-	c.Assert(sm.CreateInstantRoom(nil), IsNil)
+	rc, ec := sm.CreateInstantRoom(nil)
+	c.Assert(rc, IsNil)
+	c.Assert(ec, IsNil)
 
 	_, _ = sm.CreateReservedRoom(nil)
 	_, _ = sm.SubmitRoomConfigurationForm(nil, nil)

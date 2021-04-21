@@ -1,11 +1,20 @@
 package gui
 
-import "github.com/coyim/gotk3adapter/gtki"
+import (
+	"github.com/coyim/gotk3adapter/glibi"
+	"github.com/coyim/gotk3adapter/gtki"
+)
 
 func (v *roomView) onModifyBanList() {
 	bl := v.newRoomBanListView()
 	bl.show()
 }
+
+const (
+	roomBanListAccountIndex int = iota
+	roomBanListAffiliationIndex
+	roomBanListReasonIndex
+)
 
 type roomBanListView struct {
 	roomView *roomView
@@ -14,10 +23,13 @@ type roomBanListView struct {
 	addEntryButton         gtki.Button         `gtk-widget:"ban-list-add-entry-button"`
 	removeEntryButton      gtki.Button         `gtk-widget:"ban-list-remove-entry-button"`
 	removeEntryButtonLabel gtki.Label          `gtk-widget:"ban-list-remove-entry-label"`
+	list                   gtki.TreeView       `gtk-widget:"ban-list-treeview"`
 	listScrolledWindow     gtki.ScrolledWindow `gtk-widget:"ban-list-scrolled-window"`
 	listLoadingView        gtki.Box            `gtk-widget:"ban-list-loading-view"`
 	noEntriesView          gtki.Box            `gtk-widget:"ban-list-no-entries-view"`
 	applyButton            gtki.Button         `gtk-widget:"ban-list-apply-changes-button"`
+
+	listModel gtki.TreeStore
 }
 
 func (v *roomView) newRoomBanListView() *roomBanListView {
@@ -27,6 +39,7 @@ func (v *roomView) newRoomBanListView() *roomBanListView {
 
 	bl.initBuilder()
 	bl.initDefaults()
+	bl.initBanListModel()
 
 	return bl
 }
@@ -42,6 +55,20 @@ func (bl *roomBanListView) initDefaults() {
 	bl.addEntryButton.SetSensitive(false)
 	bl.removeEntryButton.SetSensitive(false)
 	bl.applyButton.SetSensitive(false)
+}
+
+func (bl *roomBanListView) initBanListModel() {
+	model, _ := g.gtk.TreeStoreNew(
+		// the user's jid
+		glibi.TYPE_STRING,
+		// the user's affiliation
+		glibi.TYPE_STRING,
+		// the reason
+		glibi.TYPE_STRING,
+	)
+
+	bl.listModel = model
+	bl.list.SetModel(bl.listModel)
 }
 
 // show MUST be called from the UI thread

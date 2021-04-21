@@ -32,6 +32,7 @@ func newOccupantActionView(d *occupantActionViewData) *occupantActionView {
 	}
 
 	oa.initBuilder()
+	oa.initDefaults()
 
 	return oa
 }
@@ -44,6 +45,11 @@ func (oa *occupantActionView) initBuilder() {
 		"on_ok":     oa.onConfirmClicked,
 		"on_cancel": oa.onCancelClicked,
 	})
+}
+
+func (oa *occupantActionView) initDefaults() {
+	oa.dialog.SetTransientFor(oa.rosterView.roomView.window)
+	mucStyles.setRoomDialogErrorComponentHeaderStyle(oa.header)
 }
 
 func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant) *occupantActionView {
@@ -63,9 +69,6 @@ func (oa *occupantActionView) initKickOccupantDefaults() {
 	oa.header.SetText(i18n.Localf("You are about to temporarily remove %s from the room.", oa.occupant.Nickname))
 	oa.message.SetText(i18n.Localf("They will be able to join the room again. Are you sure you want to continue?"))
 	oa.reasonLabel.SetText(i18n.Localf("Here you can provide an optional reason for removing the person. Everyone in the room will see this reason."))
-
-	oa.dialog.SetTransientFor(oa.rosterView.roomView.window)
-	mucStyles.setRoomDialogErrorComponentHeaderStyle(oa.header)
 
 	oa.confirmationAction = func() {
 		oa.rosterView.updateOccupantRole(oa.occupant, &data.NoneRole{}, getTextViewText(oa.reason))
@@ -89,9 +92,6 @@ func (oa *occupantActionView) initBanOccupantDefaults() {
 	oa.header.SetText(i18n.Localf("You are about to ban %s from the room", oa.occupant.Nickname))
 	oa.message.SetText(i18n.Local("They won't be able to join the room again. Are you sure you want to continue?"))
 	oa.reasonLabel.SetText(i18n.Local("Here you can provide an optional reason for banning the person. Everyone in the room will see this reason."))
-
-	oa.dialog.SetTransientFor(oa.rosterView.roomView.window)
-	mucStyles.setRoomDialogErrorComponentHeaderStyle(oa.header)
 
 	oa.confirmationAction = func() {
 		oa.rosterView.updateOccupantAffiliation(oa.occupant, &data.OutcastAffiliation{}, getTextViewText(oa.reason))

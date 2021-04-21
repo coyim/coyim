@@ -8,7 +8,7 @@ import (
 )
 
 type occupantActionViewData struct {
-	rosterView *roomViewRoster
+	parentWindow gtki.Window
 
 	dialogTitle string
 	headerText  string
@@ -19,8 +19,6 @@ type occupantActionViewData struct {
 }
 
 type occupantActionView struct {
-	rosterView *roomViewRoster
-
 	dialog      gtki.Dialog   `gtk-widget:"occupant-action-dialog"`
 	header      gtki.Label    `gtk-widget:"occupant-action-header"`
 	message     gtki.Label    `gtk-widget:"occupant-action-message"`
@@ -32,12 +30,11 @@ type occupantActionView struct {
 
 func newOccupantActionView(d *occupantActionViewData) *occupantActionView {
 	oa := &occupantActionView{
-		rosterView:         d.rosterView,
 		confirmationAction: d.confirmationAction,
 	}
 
 	oa.initBuilder()
-	oa.initDefaults()
+	oa.initDefaults(d)
 	oa.initDialogTitleAndTexts(d)
 
 	return oa
@@ -53,8 +50,8 @@ func (oa *occupantActionView) initBuilder() {
 	})
 }
 
-func (oa *occupantActionView) initDefaults() {
-	oa.dialog.SetTransientFor(oa.rosterView.parentWindow())
+func (oa *occupantActionView) initDefaults(d *occupantActionViewData) {
+	oa.dialog.SetTransientFor(d.parentWindow)
 	mucStyles.setRoomDialogErrorComponentHeaderStyle(oa.header)
 }
 
@@ -89,7 +86,7 @@ func (oa *occupantActionView) close() {
 
 func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant) *occupantActionView {
 	k := newOccupantActionView(&occupantActionViewData{
-		rosterView: r,
+		parentWindow: r.parentWindow(),
 
 		dialogTitle: i18n.Localf("Expel %s from the room", o.Nickname),
 		headerText:  i18n.Localf("You are about to temporarily remove %s from the room.", o.Nickname),
@@ -106,7 +103,7 @@ func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant) *occupantActionVie
 
 func (r *roomViewRoster) newBanOccupantView(o *muc.Occupant) *occupantActionView {
 	k := newOccupantActionView(&occupantActionViewData{
-		rosterView: r,
+		parentWindow: r.parentWindow(),
 
 		dialogTitle: i18n.Localf("Ban %s from the room", o.Nickname),
 		headerText:  i18n.Localf("You are about to ban %s from the room", o.Nickname),

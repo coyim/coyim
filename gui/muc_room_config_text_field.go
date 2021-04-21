@@ -48,5 +48,5 @@ func (f *roomConfigFormTextField) fieldLabel() string {
 }
 
 func (f *roomConfigFormTextField) fieldValue() interface{} {
-	return f.field.Value
+	return getEntryText(f.entry)
 }

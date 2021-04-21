@@ -8,7 +8,6 @@ import (
 )
 
 type occupantActionViewData struct {
-	occupant   *muc.Occupant
 	rosterView *roomViewRoster
 
 	dialogTitle string
@@ -20,7 +19,6 @@ type occupantActionViewData struct {
 }
 
 type occupantActionView struct {
-	occupant   *muc.Occupant
 	rosterView *roomViewRoster
 
 	dialog      gtki.Dialog   `gtk-widget:"occupant-action-dialog"`
@@ -34,7 +32,6 @@ type occupantActionView struct {
 
 func newOccupantActionView(d *occupantActionViewData) *occupantActionView {
 	oa := &occupantActionView{
-		occupant:           d.occupant,
 		rosterView:         d.rosterView,
 		confirmationAction: d.confirmationAction,
 	}
@@ -92,7 +89,6 @@ func (oa *occupantActionView) close() {
 
 func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant) *occupantActionView {
 	k := newOccupantActionView(&occupantActionViewData{
-		occupant:   o,
 		rosterView: r,
 
 		dialogTitle: i18n.Localf("Expel %s from the room", o.Nickname),
@@ -110,7 +106,6 @@ func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant) *occupantActionVie
 
 func (r *roomViewRoster) newBanOccupantView(o *muc.Occupant) *occupantActionView {
 	k := newOccupantActionView(&occupantActionViewData{
-		occupant:   o,
 		rosterView: r,
 
 		dialogTitle: i18n.Localf("Ban %s from the room", o.Nickname),

@@ -79,7 +79,6 @@
                                 <property name="visible">True</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="label" translatable="yes">avengers@testjabber.autonomia.digital</property>
                                 <property name="selectable">True</property>
                                 <property name="ellipsize">end</property>
                                 <property name="track_visited_links">False</property>

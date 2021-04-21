@@ -23,8 +23,8 @@ const (
 
 // RoomConfigFormField contains information about a room config form field
 type RoomConfigFormField struct {
-	Name, Type, Label string
-	Value             interface{}
+	Name, Type, Label, Description string
+	Value                          interface{}
 }
 
 // SetValue sets the room configuration form field value from the given parameter

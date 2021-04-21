@@ -243,9 +243,10 @@ func (rcf *RoomConfigForm) setUnknowField(field xmppData.FormFieldX) {
 
 func roomConfigFormFieldFactory(field xmppData.FormFieldX) *RoomConfigFormField {
 	f := &RoomConfigFormField{
-		Name:  field.Var,
-		Type:  field.Type,
-		Label: field.Label,
+		Name:        field.Var,
+		Type:        field.Type,
+		Label:       field.Label,
+		Description: field.Desc,
 	}
 
 	switch field.Type {

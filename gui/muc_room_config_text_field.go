@@ -30,6 +30,9 @@ func (f *roomConfigFormTextField) initBuilder() {
 func (f *roomConfigFormTextField) initDefaults() {
 	f.label.SetText(f.field.Label)
 	f.entry.SetText(f.field.Value.(string))
+	if f.field.Description != "" {
+		f.description.SetText(f.field.Description)
+	}
 }
 
 func (f *roomConfigFormTextField) fieldWidget() gtki.Widget {

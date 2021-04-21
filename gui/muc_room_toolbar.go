@@ -42,6 +42,7 @@ func (t *roomViewToolbar) initBuilder(v *roomView) {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_leave_room":          v.onLeaveRoom,
 		"on_destroy_room":        v.onDestroyRoom,
+		"on_modify_ban_list":     v.onModifyBanList,
 		"on_toggle_room_subject": t.onToggleRoomSubject,
 	})
 }

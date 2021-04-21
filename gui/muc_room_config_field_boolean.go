@@ -52,7 +52,7 @@ func (f *roomConfigFormFieldBoolean) fieldValue() interface{} {
 	return f.entry.GetActive()
 }
 
-func (f *roomConfigFormFieldBoolean) refreshFields() {
+func (f *roomConfigFormFieldBoolean) refreshContent() {
 	doInUIThread(func() {
 		f.contentGrid.SetVAlign(gtki.ALIGN_CENTER)
 		f.description.SetVisible(f.field.Description != "")

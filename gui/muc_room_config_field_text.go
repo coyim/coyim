@@ -50,3 +50,5 @@ func (f *roomConfigFormFieldText) fieldLabel() string {
 func (f *roomConfigFormFieldText) fieldValue() interface{} {
 	return getEntryText(f.entry)
 }
+
+func (f *roomConfigFormFieldText) refreshContent() {}

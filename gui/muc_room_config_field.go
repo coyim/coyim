@@ -12,6 +12,7 @@ type hasRoomConfigFormField interface {
 	fieldName() string
 	fieldLabel() string
 	fieldValue() interface{}
+	refreshContent()
 }
 
 var (
@@ -22,6 +23,8 @@ func roomConfigFormFieldFactory(field *muc.RoomConfigFormField) (hasRoomConfigFo
 	switch field.Type {
 	case muc.RoomConfigFieldText:
 		return newRoomConfigFormTextField(field), nil
+	case muc.RoomConfigFieldBoolean:
+		return newRoomConfigFormFieldBoolean(field), nil
 	}
 
 	return nil, errRoomConfigFieldNotSupported

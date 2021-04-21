@@ -50,6 +50,7 @@ func (p *roomConfigOthersPage) initDefaultValues() {
 		}
 
 		p.addField(field)
+		p.doAfterRefresh.add(field.refreshContent)
 	}
 }
 

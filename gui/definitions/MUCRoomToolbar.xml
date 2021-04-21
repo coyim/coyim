@@ -1,6 +1,18 @@
 <interface>
   <object class="GtkMenu" id="room-menu">
     <child>
+      <object class="GtkMenuItem" id="modify-ban-list-menu-item">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Modify ban list</property>
+        <signal name="activate" handler="on_modify_ban_list" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem">
+        <property name="visible">True</property>
+      </object>
+    </child>
+    <child>
       <object class="GtkMenuItem" id="destroy-room-menu-item">
         <property name="visible">True</property>
         <property name="label" translatable="yes">Destroy room</property>

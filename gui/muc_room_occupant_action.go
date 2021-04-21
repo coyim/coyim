@@ -48,7 +48,7 @@ func (oa *occupantActionView) initBuilder() {
 }
 
 func (oa *occupantActionView) initDefaults() {
-	oa.dialog.SetTransientFor(oa.rosterView.roomView.window)
+	oa.dialog.SetTransientFor(oa.rosterView.parentWindow())
 	mucStyles.setRoomDialogErrorComponentHeaderStyle(oa.header)
 }
 

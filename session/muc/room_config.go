@@ -154,6 +154,13 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 		})
 	}
 
+	for _, f := range rcf.UnknowFields {
+		formFields = append(formFields, xmppData.FormFieldX{
+			Var:    f.Name,
+			Values: f.GetValue(),
+		})
+	}
+
 	return &xmppData.Form{
 		Type:   "submit",
 		Fields: formFields,

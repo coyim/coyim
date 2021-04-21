@@ -32,6 +32,15 @@ func (f *RoomConfigFormField) SetValue(v interface{}) {
 	f.Value = v
 }
 
+// GetValue returns value based on the field type
+func (f *RoomConfigFormField) GetValue() (values []string) {
+	switch f.Type {
+	case RoomConfigFieldText, RoomConfigFieldTextPrivate:
+		values = append(values, f.Value.(string))
+	}
+	return
+}
+
 const (
 	// RoomConfigOptionModerators represents the field option for "moderators"
 	RoomConfigOptionModerators = "moderators"

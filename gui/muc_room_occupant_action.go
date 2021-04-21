@@ -7,9 +7,14 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+type occupantActionViewData struct {
+	occupant   *muc.Occupant
+	rosterView *roomViewRoster
+}
+
 type occupantActionView struct {
-	occupant       *muc.Occupant
-	roomViewRoster *roomViewRoster
+	occupant   *muc.Occupant
+	rosterView *roomViewRoster
 
 	dialog      gtki.Dialog   `gtk-widget:"occupant-action-dialog"`
 	header      gtki.Label    `gtk-widget:"occupant-action-header"`
@@ -17,16 +22,17 @@ type occupantActionView struct {
 	reason      gtki.TextView `gtk-widget:"occupant-action-reason-entry"`
 	reasonLabel gtki.Label    `gtk-widget:"occupant-action-reason-label"`
 
-	confirmationAction func()
+	confirmationAction func() // confirmationAction will not be called from the UI thread
 }
 
-func newOccupantActionView(r *roomViewRoster, o *muc.Occupant) *occupantActionView {
+func newOccupantActionView(d *occupantActionViewData) *occupantActionView {
 	oa := &occupantActionView{
-		occupant:       o,
-		roomViewRoster: r,
+		occupant:   d.occupant,
+		rosterView: d.rosterView,
 	}
 
 	oa.initBuilder()
+
 	return oa
 }
 
@@ -41,7 +47,11 @@ func (oa *occupantActionView) initBuilder() {
 }
 
 func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant) *occupantActionView {
-	k := newOccupantActionView(r, o)
+	k := newOccupantActionView(&occupantActionViewData{
+		occupant:   o,
+		rosterView: r,
+	})
+
 	k.initKickOccupantDefaults()
 
 	return k
@@ -54,16 +64,20 @@ func (oa *occupantActionView) initKickOccupantDefaults() {
 	oa.message.SetText(i18n.Localf("They will be able to join the room again. Are you sure you want to continue?"))
 	oa.reasonLabel.SetText(i18n.Localf("Here you can provide an optional reason for removing the person. Everyone in the room will see this reason."))
 
-	oa.dialog.SetTransientFor(oa.roomViewRoster.roomView.window)
+	oa.dialog.SetTransientFor(oa.rosterView.roomView.window)
 	mucStyles.setRoomDialogErrorComponentHeaderStyle(oa.header)
 
 	oa.confirmationAction = func() {
-		oa.roomViewRoster.updateOccupantRole(oa.occupant, &data.NoneRole{}, getTextViewText(oa.reason))
+		oa.rosterView.updateOccupantRole(oa.occupant, &data.NoneRole{}, getTextViewText(oa.reason))
 	}
 }
 
 func (r *roomViewRoster) newBanOccupantView(o *muc.Occupant) *occupantActionView {
-	k := newOccupantActionView(r, o)
+	k := newOccupantActionView(&occupantActionViewData{
+		occupant:   o,
+		rosterView: r,
+	})
+
 	k.initBanOccupantDefaults()
 
 	return k
@@ -76,11 +90,11 @@ func (oa *occupantActionView) initBanOccupantDefaults() {
 	oa.message.SetText(i18n.Local("They won't be able to join the room again. Are you sure you want to continue?"))
 	oa.reasonLabel.SetText(i18n.Local("Here you can provide an optional reason for banning the person. Everyone in the room will see this reason."))
 
-	oa.dialog.SetTransientFor(oa.roomViewRoster.roomView.window)
+	oa.dialog.SetTransientFor(oa.rosterView.roomView.window)
 	mucStyles.setRoomDialogErrorComponentHeaderStyle(oa.header)
 
 	oa.confirmationAction = func() {
-		oa.roomViewRoster.updateOccupantAffiliation(oa.occupant, &data.OutcastAffiliation{}, getTextViewText(oa.reason))
+		oa.rosterView.updateOccupantAffiliation(oa.occupant, &data.OutcastAffiliation{}, getTextViewText(oa.reason))
 	}
 }
 

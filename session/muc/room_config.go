@@ -238,7 +238,9 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 }
 
 func (rcf *RoomConfigForm) setUnknowField(field xmppData.FormFieldX) {
-	rcf.UnknowFields = append(rcf.UnknowFields, roomConfigFormFieldFactory(field))
+	if field.Type != RoomConfigFieldHidden && field.Type != RoomConfigFieldFixed {
+		rcf.UnknowFields = append(rcf.UnknowFields, roomConfigFormFieldFactory(field))
+	}
 }
 
 func roomConfigFormFieldFactory(field xmppData.FormFieldX) *RoomConfigFormField {

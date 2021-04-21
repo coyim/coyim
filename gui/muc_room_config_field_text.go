@@ -5,7 +5,7 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-type roomConfigFormTextField struct {
+type roomConfigFormFieldText struct {
 	field *muc.RoomConfigFormField
 
 	widget      gtki.Box   `gtk-widget:"room-config-field-box"`
@@ -14,20 +14,20 @@ type roomConfigFormTextField struct {
 	description gtki.Label `gtk-widget:"room-config-field-description"`
 }
 
-func newRoomConfigFormTextField(field *muc.RoomConfigFormField) *roomConfigFormTextField {
-	f := &roomConfigFormTextField{field: field}
+func newRoomConfigFormTextField(field *muc.RoomConfigFormField) *roomConfigFormFieldText {
+	f := &roomConfigFormFieldText{field: field}
 
 	f.initBuilder()
 	f.initDefaults()
 	return f
 }
 
-func (f *roomConfigFormTextField) initBuilder() {
-	builder := newBuilder("MUCRoomConfigFormTextField")
+func (f *roomConfigFormFieldText) initBuilder() {
+	builder := newBuilder("MUCRoomConfigFormFieldText")
 	panicOnDevError(builder.bindObjects(f))
 }
 
-func (f *roomConfigFormTextField) initDefaults() {
+func (f *roomConfigFormFieldText) initDefaults() {
 	f.label.SetText(f.field.Label)
 	f.entry.SetText(f.field.Value.(string))
 	if f.field.Description != "" {
@@ -35,18 +35,18 @@ func (f *roomConfigFormTextField) initDefaults() {
 	}
 }
 
-func (f *roomConfigFormTextField) fieldWidget() gtki.Widget {
+func (f *roomConfigFormFieldText) fieldWidget() gtki.Widget {
 	return f.widget
 }
 
-func (f *roomConfigFormTextField) fieldName() string {
+func (f *roomConfigFormFieldText) fieldName() string {
 	return f.field.Name
 }
 
-func (f *roomConfigFormTextField) fieldLabel() string {
+func (f *roomConfigFormFieldText) fieldLabel() string {
 	return f.field.Label
 }
 
-func (f *roomConfigFormTextField) fieldValue() interface{} {
+func (f *roomConfigFormFieldText) fieldValue() interface{} {
 	return getEntryText(f.entry)
 }

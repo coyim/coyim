@@ -5691,8 +5691,8 @@ ZXJmYWNlPgo=
 `,
 	},
 
-	"/definitions/MUCRoomConfigFormTextField.xml": {
-		local:   "definitions/MUCRoomConfigFormTextField.xml",
+	"/definitions/MUCRoomConfigFormFieldText.xml": {
+		local:   "definitions/MUCRoomConfigFormFieldText.xml",
 		size:    1775,
 		modtime: 1489449600,
 		compressed: `

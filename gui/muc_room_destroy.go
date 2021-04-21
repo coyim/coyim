@@ -8,6 +8,7 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+// onDestroyRoom MUST be called from the UI thread
 func (v *roomView) onDestroyRoom() {
 	d := v.newRoomDestroyView()
 	d.show()
@@ -91,6 +92,7 @@ func (d *roomDestroyView) onDestroyRoom() {
 	d.close()
 }
 
+// alternativeRoomInformation MUST be called from the UI thread
 func (d *roomDestroyView) alternativeRoomInformation() (jid.Bare, string, error) {
 	if !d.alternativeRoomCheck.GetActive() {
 		return nil, "", nil
@@ -113,6 +115,7 @@ func (d *roomDestroyView) onAlternativeRoomToggled() {
 	d.resetAlternativeRoomFields()
 }
 
+// resetAlternativeRoomFields MUST be called from the UI thread
 func (d *roomDestroyView) resetAlternativeRoomFields() {
 	d.alternativeRoomEntry.SetText("")
 	d.passwordEntry.SetText("")
@@ -158,6 +161,7 @@ func (d *roomDestroyView) tryParseAlternativeRoomID() (jid.Bare, error) {
 	return r, nil
 }
 
+// alternativeRoomID MUST be called from the UI thread
 func (d *roomDestroyView) alternativeRoomID() (r jid.Bare, err error) {
 	l, err := d.validateRoomName()
 	if err != nil {
@@ -173,6 +177,7 @@ func (d *roomDestroyView) alternativeRoomID() (r jid.Bare, err error) {
 	return
 }
 
+// validateRoomName MUST be called from the UI thread
 func (d *roomDestroyView) validateRoomName() (l jid.Local, err error) {
 	rn, _ := d.alternativeRoomEntry.GetText()
 
@@ -189,6 +194,7 @@ func (d *roomDestroyView) validateRoomName() (l jid.Local, err error) {
 	return
 }
 
+// validateServiceName MUST be called from the UI thread
 func (d *roomDestroyView) validateServiceName() (s jid.Domain, err error) {
 	if !d.chatServicesComponent.hasServiceValue() {
 		err = errEmptyServiceName

@@ -10,6 +10,11 @@ import (
 type occupantActionViewData struct {
 	occupant   *muc.Occupant
 	rosterView *roomViewRoster
+
+	dialogTitle string
+	headerText  string
+	messageText string
+	reasonText  string
 }
 
 type occupantActionView struct {
@@ -33,6 +38,7 @@ func newOccupantActionView(d *occupantActionViewData) *occupantActionView {
 
 	oa.initBuilder()
 	oa.initDefaults()
+	oa.initDialogTitleAndTexts(d)
 
 	return oa
 }
@@ -52,10 +58,22 @@ func (oa *occupantActionView) initDefaults() {
 	mucStyles.setRoomDialogErrorComponentHeaderStyle(oa.header)
 }
 
+func (oa *occupantActionView) initDialogTitleAndTexts(d *occupantActionViewData) {
+	oa.dialog.SetTitle(d.dialogTitle)
+	oa.header.SetText(d.headerText)
+	oa.message.SetText(d.messageText)
+	oa.reasonLabel.SetText(d.reasonText)
+}
+
 func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant) *occupantActionView {
 	k := newOccupantActionView(&occupantActionViewData{
 		occupant:   o,
 		rosterView: r,
+
+		dialogTitle: i18n.Localf("Expel %s from the room", o.Nickname),
+		headerText:  i18n.Localf("You are about to temporarily remove %s from the room.", o.Nickname),
+		messageText: i18n.Local("They will be able to join the room again. Are you sure you want to continue?"),
+		reasonText:  i18n.Local("Here you can provide an optional reason for removing the person. Everyone in the room will see this reason."),
 	})
 
 	k.initKickOccupantDefaults()
@@ -65,11 +83,6 @@ func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant) *occupantActionVie
 
 // initKickOccupantDefaults MUST be called from the UI thread
 func (oa *occupantActionView) initKickOccupantDefaults() {
-	oa.dialog.SetTitle(i18n.Localf("Expel %s from the room", oa.occupant.Nickname))
-	oa.header.SetText(i18n.Localf("You are about to temporarily remove %s from the room.", oa.occupant.Nickname))
-	oa.message.SetText(i18n.Localf("They will be able to join the room again. Are you sure you want to continue?"))
-	oa.reasonLabel.SetText(i18n.Localf("Here you can provide an optional reason for removing the person. Everyone in the room will see this reason."))
-
 	oa.confirmationAction = func() {
 		oa.rosterView.updateOccupantRole(oa.occupant, &data.NoneRole{}, getTextViewText(oa.reason))
 	}
@@ -79,6 +92,11 @@ func (r *roomViewRoster) newBanOccupantView(o *muc.Occupant) *occupantActionView
 	k := newOccupantActionView(&occupantActionViewData{
 		occupant:   o,
 		rosterView: r,
+
+		dialogTitle: i18n.Localf("Ban %s from the room", o.Nickname),
+		headerText:  i18n.Localf("You are about to ban %s from the room", o.Nickname),
+		messageText: i18n.Local("They won't be able to join the room again. Are you sure you want to continue?"),
+		reasonText:  i18n.Local("Here you can provide an optional reason for banning the person. Everyone in the room will see this reason."),
 	})
 
 	k.initBanOccupantDefaults()
@@ -88,11 +106,6 @@ func (r *roomViewRoster) newBanOccupantView(o *muc.Occupant) *occupantActionView
 
 // initBanOccupantDefaults MUST be called from the UI thread
 func (oa *occupantActionView) initBanOccupantDefaults() {
-	oa.dialog.SetTitle(i18n.Localf("Ban %s from the room", oa.occupant.Nickname))
-	oa.header.SetText(i18n.Localf("You are about to ban %s from the room", oa.occupant.Nickname))
-	oa.message.SetText(i18n.Local("They won't be able to join the room again. Are you sure you want to continue?"))
-	oa.reasonLabel.SetText(i18n.Local("Here you can provide an optional reason for banning the person. Everyone in the room will see this reason."))
-
 	oa.confirmationAction = func() {
 		oa.rosterView.updateOccupantAffiliation(oa.occupant, &data.OutcastAffiliation{}, getTextViewText(oa.reason))
 	}

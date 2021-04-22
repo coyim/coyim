@@ -19,15 +19,16 @@ const (
 type roomBanListView struct {
 	roomView *roomView
 
-	dialog                 gtki.Window         `gtk-widget:"ban-list-window"`
-	addEntryButton         gtki.Button         `gtk-widget:"ban-list-add-entry-button"`
-	removeEntryButton      gtki.Button         `gtk-widget:"ban-list-remove-entry-button"`
-	removeEntryButtonLabel gtki.Label          `gtk-widget:"ban-list-remove-entry-label"`
-	list                   gtki.TreeView       `gtk-widget:"ban-list-treeview"`
-	listScrolledWindow     gtki.ScrolledWindow `gtk-widget:"ban-list-scrolled-window"`
-	listLoadingView        gtki.Box            `gtk-widget:"ban-list-loading-view"`
-	noEntriesView          gtki.Box            `gtk-widget:"ban-list-no-entries-view"`
-	applyButton            gtki.Button         `gtk-widget:"ban-list-apply-changes-button"`
+	dialog                 gtki.Window   `gtk-widget:"ban-list-window"`
+	addEntryButton         gtki.Button   `gtk-widget:"ban-list-add-entry-button"`
+	removeEntryButton      gtki.Button   `gtk-widget:"ban-list-remove-entry-button"`
+	removeEntryButtonLabel gtki.Label    `gtk-widget:"ban-list-remove-entry-label"`
+	list                   gtki.TreeView `gtk-widget:"ban-list-treeview"`
+	listContent            gtki.Overlay  `gtk-widget:"ban-list-content-overlay"`
+	listView               gtki.Overlay  `gtk-widget:"ban-list-overlay-view"`
+	listLoadingView        gtki.Box      `gtk-widget:"ban-list-loading-view"`
+	noEntriesView          gtki.Box      `gtk-widget:"ban-list-no-entries-view"`
+	applyButton            gtki.Button   `gtk-widget:"ban-list-apply-changes-button"`
 
 	listModel gtki.TreeStore
 }

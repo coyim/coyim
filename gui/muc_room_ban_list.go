@@ -119,6 +119,11 @@ func (bl *roomBanListView) show() {
 // refreshBanList MUST be called from the UI thread
 func (bl *roomBanListView) refreshBanList() {
 	bl.listModel.Clear()
+
+	bl.applyButton.SetSensitive(false)
+	bl.addEntryButton.SetSensitive(false)
+	bl.removeEntryButton.SetSensitive(false)
+
 	bl.showLoadingView()
 
 	go bl.requestBanList()
@@ -161,11 +166,8 @@ func (bl *roomBanListView) requestBanList() {
 			if !ok {
 				doInUIThread(func() {
 					bl.hideLoadingView()
-
-					if !bl.hasItems() {
-						bl.listView.Hide()
-						bl.noEntriesView.Show()
-					}
+					bl.listView.Hide()
+					bl.noEntriesView.Show()
 				})
 				return
 			}

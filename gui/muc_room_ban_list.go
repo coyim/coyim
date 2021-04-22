@@ -39,8 +39,9 @@ type roomBanListView struct {
 	noEntriesErrorView gtki.Box           `gtk-widget:"ban-list-error-view"`
 	applyButton        gtki.Button        `gtk-widget:"ban-list-apply-changes-button"`
 
-	listModel     gtki.ListStore
-	cancelChannel chan bool
+	listModel       gtki.ListStore
+	originalBanList []*muc.RoomBanListItem
+	cancelChannel   chan bool
 
 	log coylog.Logger
 }
@@ -193,6 +194,7 @@ func (bl *roomBanListView) onRequestFinish(items []*muc.RoomBanListItem) {
 	}
 
 	bl.addEntryButton.SetSensitive(true)
+	bl.originalBanList = items
 }
 
 // onRequestError MUST NOT be called from the UI thread
@@ -216,8 +218,7 @@ func (bl *roomBanListView) onUserJidEdited(_ gtki.CellRendererText, path string,
 		return
 	}
 
-	newJidValue := jid.Parse(newValue)
-	if !newJidValue.Valid() {
+	if newValue != "" && !jid.Parse(newValue).Valid() {
 		bl.log.WithFields(log.Fields{
 			"path":        path,
 			"newJidValue": newValue,
@@ -231,6 +232,8 @@ func (bl *roomBanListView) onUserJidEdited(_ gtki.CellRendererText, path string,
 			"newJidValue": newValue,
 		}).WithError(err).Error("Can't set the new value for the jid of the banned user")
 	}
+
+	bl.enableApplyIfConditionsAreMet()
 }
 
 // onReasonEdited MUST be called from the UI thread
@@ -250,6 +253,8 @@ func (bl *roomBanListView) onReasonEdited(_ gtki.CellRendererText, path string, 
 			"newReasonValue": newValue,
 		}).WithError(err).Error("Can't set the new value for the reason of the banned user")
 	}
+
+	bl.enableApplyIfConditionsAreMet()
 }
 
 // onAddNewItem MUST be called from the UI thread
@@ -263,6 +268,8 @@ func (bl *roomBanListView) onAddNewItem() {
 
 	bl.unselectSelectedRows()
 	bl.listSelection.SelectIter(iter)
+
+	bl.enableApplyIfConditionsAreMet()
 }
 
 // onSelectionChanged MUST be called from the UI thread
@@ -281,6 +288,8 @@ func (bl *roomBanListView) onRemoveItem() {
 		iter, _ := bl.listModel.GetIter(path)
 		bl.listModel.Remove(iter)
 	}
+
+	bl.enableApplyIfConditionsAreMet()
 }
 
 // unselectSelectedRows MUST be called from the UI thread
@@ -313,6 +322,71 @@ func (bl *roomBanListView) cancelActiveRequestListening() {
 	if bl.cancelChannel != nil {
 		bl.cancelChannel <- true
 	}
+}
+
+// enableApplyIfConditionsAreMet MUST be called from the UI thread
+func (bl *roomBanListView) enableApplyIfConditionsAreMet() {
+	listHasChanged := bl.isTheListUpdated()
+
+	listValuesAreValid := true
+	for _, itm := range bl.listFromModel() {
+		if itm.Jid.String() == "" {
+			listValuesAreValid = false
+			break
+		}
+	}
+
+	bl.applyButton.SetSensitive(listHasChanged && listValuesAreValid)
+}
+
+// isTheListUpdated MUST be called from the UI thread
+func (bl *roomBanListView) isTheListUpdated() bool {
+	currentList := bl.listFromModel()
+
+	if len(currentList) != len(bl.originalBanList) {
+		return true
+	}
+
+	for idx, itm := range bl.originalBanList {
+		currentItm := currentList[idx]
+		if currentItm.Jid.String() != itm.Jid.String() ||
+			currentItm.Affiliation.IsDifferentFrom(itm.Affiliation) ||
+			currentItm.Reason != itm.Reason {
+			return true
+		}
+	}
+
+	return false
+}
+
+// listFromModel MUST be called from the UI thread
+func (bl *roomBanListView) listFromModel() []*muc.RoomBanListItem {
+	list := []*muc.RoomBanListItem{}
+
+	iter, ok := bl.listModel.GetIterFirst()
+	for ok {
+		account := bl.columnStringValueFromListModelIter(iter, roomBanListAccountIndex)
+		affiliation := bl.columnStringValueFromListModelIter(iter, roomBanListAccountIndex)
+		reason := bl.columnStringValueFromListModelIter(iter, roomBanListAccountIndex)
+
+		list = append(list, &muc.RoomBanListItem{
+			Jid:         jid.Parse(account),
+			Affiliation: affiliationFromKnowString(affiliation),
+			Reason:      reason,
+		})
+
+		ok = bl.listModel.IterNext(iter)
+	}
+
+	return list
+}
+
+// columnValueFromListModelIter MUST be called from the UI thread
+func (bl *roomBanListView) columnStringValueFromListModelIter(iter gtki.TreeIter, column int) string {
+	v, _ := bl.listModel.GetValue(iter, column)
+	s, _ := v.GetString()
+
+	return s
 }
 
 func affiliationFromKnowString(a string) data.Affiliation {

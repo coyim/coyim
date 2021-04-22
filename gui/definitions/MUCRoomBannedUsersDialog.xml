@@ -414,6 +414,7 @@
                     <property name="sensitive">False</property>
                     <property name="receives_default">True</property>
                     <property name="use_underline">True</property>
+                    <signal name="clicked" handler="on_add_item" swapped="no"/>
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>

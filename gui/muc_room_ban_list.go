@@ -65,6 +65,7 @@ func (bl *roomBanListView) initBuilder() {
 		"on_error_try_again_clicked":    bl.requestBanListAgain,
 		"on_jid_edited":                 bl.onUserJidEdited,
 		"on_reason_edited":              bl.onReasonEdited,
+		"on_add_item":                   bl.onAddNewItem,
 		"on_cancel_clicked":             bl.onCancel,
 	})
 }
@@ -89,7 +90,7 @@ func (bl *roomBanListView) initBanListModel() {
 }
 
 // addListItem MUST be called from the UI thread
-func (bl *roomBanListView) addListItem(itm *muc.RoomBanListItem) {
+func (bl *roomBanListView) addListItem(itm *muc.RoomBanListItem) gtki.TreeIter {
 	iter := bl.listModel.Append()
 
 	jid := ""
@@ -105,6 +106,8 @@ func (bl *roomBanListView) addListItem(itm *muc.RoomBanListItem) {
 	bl.listModel.SetValue(iter, roomBanListAccountIndex, jid)
 	bl.listModel.SetValue(iter, roomBanListAffiliationIndex, affiliation)
 	bl.listModel.SetValue(iter, roomBanListReasonIndex, itm.Reason)
+
+	return iter
 }
 
 // show MUST be called from the UI thread
@@ -175,7 +178,7 @@ func (bl *roomBanListView) onRequestFinish(items []*muc.RoomBanListItem) {
 	if len(items) > 0 {
 		doInUIThread(func() {
 			for _, itm := range items {
-				bl.addListItem(itm)
+				_ = bl.addListItem(itm)
 			}
 		})
 	} else {
@@ -243,6 +246,22 @@ func (bl *roomBanListView) onReasonEdited(_ gtki.CellRendererText, path string, 
 			"newReasonValue": newValue,
 		}).WithError(err).Error("Can't set the new value for the reason of the banned user")
 	}
+}
+
+// onAddNewItem MUST be called from the UI thread
+func (bl *roomBanListView) onAddNewItem() {
+	bl.listView.Show()
+	bl.noEntriesView.Hide()
+
+	iter := bl.addListItem(&muc.RoomBanListItem{
+		Affiliation: affiliationFromKnowString(data.AffiliationOutcast),
+	})
+
+	selection, _ := bl.list.GetSelection()
+	for _, path := range selection.GetSelectedRows(bl.listModel) {
+		selection.UnselectPath(path)
+	}
+	selection.SelectIter(iter)
 }
 
 // onCancel MUST be called from the UI thread

@@ -32,7 +32,8 @@ type roomBanListView struct {
 	noEntriesErrorView     gtki.Box      `gtk-widget:"ban-list-error-view"`
 	applyButton            gtki.Button   `gtk-widget:"ban-list-apply-changes-button"`
 
-	listModel gtki.TreeStore
+	listModel     gtki.TreeStore
+	cancelChannel chan bool
 }
 
 func (v *roomView) newRoomBanListView() *roomBanListView {
@@ -54,6 +55,7 @@ func (bl *roomBanListView) initBuilder() {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_no_items_try_again_clicked": bl.requestBanListAgain,
 		"on_error_try_again_clicked":    bl.requestBanListAgain,
+		"on_cancel_clicked":             bl.onCancel,
 	})
 }
 
@@ -123,6 +125,8 @@ func (bl *roomBanListView) hideLoadingView() {
 
 // requestBanList MUST NOT be called from the UI thread
 func (bl *roomBanListView) requestBanList() {
+	bl.cancelChannel = make(chan bool)
+
 	blc, ec := bl.roomView.account.session.GetRoomBanList(bl.roomView.roomID())
 
 	go func() {
@@ -153,7 +157,21 @@ func (bl *roomBanListView) requestBanList() {
 					bl.noEntriesErrorView.Show()
 				})
 				return
+
+			case <-bl.cancelChannel:
+				return
 			}
 		}
 	}()
+}
+
+// onCancel MUST be called from the UI thread
+func (bl *roomBanListView) onCancel() {
+	go func() {
+		if bl.cancelChannel != nil {
+			bl.cancelChannel <- true
+		}
+	}()
+
+	bl.dialog.Destroy()
 }

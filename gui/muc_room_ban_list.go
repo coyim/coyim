@@ -76,3 +76,13 @@ func (bl *roomBanListView) initBanListModel() {
 func (bl *roomBanListView) show() {
 	bl.dialog.Show()
 }
+
+// showLoadingView MUST be called from the UI thread
+func (bl *roomBanListView) showLoadingView() {
+	bl.listLoadingView.Show()
+}
+
+// hideLoadingView MUST be called from the UI thread
+func (bl *roomBanListView) hideLoadingView() {
+	bl.listLoadingView.Hide()
+}

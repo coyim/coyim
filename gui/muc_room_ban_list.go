@@ -1,8 +1,11 @@
 package gui
 
 import (
+	"fmt"
+
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -153,37 +156,36 @@ func (bl *roomBanListView) requestBanList() {
 	blc, ec := bl.roomView.account.session.GetRoomBanList(bl.roomView.roomID())
 
 	go func() {
-		for {
-			select {
-			case itm, ok := <-blc:
-				if !ok {
-					doInUIThread(func() {
-						bl.hideLoadingView()
-
-						if !bl.hasItems() {
-							bl.listView.Hide()
-							bl.noEntriesView.Show()
-						}
-					})
-					return
-				}
-
-				doInUIThread(func() {
-					bl.addListItem(itm)
-				})
-
-			case err := <-ec:
-				bl.roomView.log.WithError(err).Error("Something happened when requesting the banned users list")
+		select {
+		case list, ok := <-blc:
+			if !ok {
 				doInUIThread(func() {
 					bl.hideLoadingView()
-					bl.listView.Hide()
-					bl.noEntriesErrorView.Show()
+
+					if !bl.hasItems() {
+						bl.listView.Hide()
+						bl.noEntriesView.Show()
+					}
 				})
 				return
-
-			case <-bl.cancelChannel:
-				return
 			}
+
+			doInUIThread(func() {
+				for _, itm := range list {
+					bl.addListItem(itm)
+				}
+			})
+
+		case err := <-ec:
+			bl.roomView.log.WithError(err).Error("Something happened when requesting the banned users list")
+
+			doInUIThread(func() {
+				bl.hideLoadingView()
+				bl.listView.Hide()
+				bl.noEntriesErrorView.Show()
+			})
+
+		case <-bl.cancelChannel:
 		}
 	}()
 }

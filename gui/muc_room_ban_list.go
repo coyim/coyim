@@ -92,8 +92,18 @@ func (bl *roomBanListView) initBanListModel() {
 func (bl *roomBanListView) addListItem(itm *muc.RoomBanListItem) {
 	iter := bl.listModel.Append()
 
-	bl.listModel.SetValue(iter, roomBanListAccountIndex, itm.Jid.String())
-	bl.listModel.SetValue(iter, roomBanListAffiliationIndex, affiliationDisplayName(itm.Affiliation))
+	jid := ""
+	if itm.Jid != nil {
+		jid = fmt.Sprintf("%s", itm.Jid)
+	}
+
+	affiliation := ""
+	if itm.Affiliation != nil {
+		affiliation = affiliationDisplayName(itm.Affiliation)
+	}
+
+	bl.listModel.SetValue(iter, roomBanListAccountIndex, jid)
+	bl.listModel.SetValue(iter, roomBanListAffiliationIndex, affiliation)
 	bl.listModel.SetValue(iter, roomBanListReasonIndex, itm.Reason)
 }
 
@@ -228,4 +238,9 @@ func (bl *roomBanListView) onCancel() {
 	}()
 
 	bl.dialog.Destroy()
+}
+
+func affiliationFromKnowString(a string) data.Affiliation {
+	affiliation, _ := data.AffiliationFromString(a)
+	return affiliation
 }

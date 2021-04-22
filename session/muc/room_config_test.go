@@ -291,3 +291,98 @@ func (*MucRoomConfigSuite) Test_jidListToStringList(c *C) {
 	c.Assert(jidListToStringList([]jid.Any{jid.Parse("bla")}), DeepEquals, []string{"bla"})
 	c.Assert(jidListToStringList([]jid.Any{jid.Parse("foo@domain.org"), jid.Parse("foo"), jid.Parse("bla@domain.org")}), DeepEquals, []string{"foo@domain.org", "foo", "bla@domain.org"})
 }
+
+func (*MucRoomConfigSuite) Test_RoomConfigForm_updateFieldValueByName(c *C) {
+	cf := &RoomConfigForm{}
+	unknowFields := []*RoomConfigFormField{}
+
+	checks := []struct {
+		name          string
+		tp            string
+		label         string
+		value         []string
+		expectedValue interface{}
+	}{
+		{
+			"RoomConfigFieldText",
+			RoomConfigFieldText,
+			"field label",
+			[]string{"bla"},
+			"bla",
+		},
+		{
+			"RoomConfigFieldTextPrivate",
+			RoomConfigFieldTextPrivate,
+			"field label",
+			[]string{"foo"},
+			"foo",
+		},
+		{
+			"RoomConfigFieldTextMulti",
+			RoomConfigFieldTextMulti,
+			"field label",
+			[]string{"bla foo"},
+			"bla foo",
+		},
+		{
+			"RoomConfigFieldBoolean",
+			RoomConfigFieldBoolean,
+			"field label",
+			[]string{"true"},
+			true,
+		},
+		{
+			"RoomConfigFieldList",
+			RoomConfigFieldList,
+			"field label",
+			[]string{"bla"},
+			&configListSingleField{value: "bla"},
+		},
+		{
+			"RoomConfigFieldListMulti",
+			RoomConfigFieldListMulti,
+			"field label",
+			[]string{"bla", "foo", "bla1", "foo1"},
+			&configListMultiField{values: []string{"bla", "foo", "bla1", "foo1"}},
+		},
+		{
+			"RoomConfigFieldJidMulti",
+			RoomConfigFieldJidMulti,
+			"field label",
+			[]string{"bla", "foo", "bla@domain.org", "foo@domain.org"},
+			[]jid.Any{jid.Parse("bla"), jid.Parse("foo"), jid.Parse("bla@domain.org"), jid.Parse("foo@domain.org")},
+		},
+	}
+
+	for _, chk := range checks {
+		fieldX := xmppData.FormFieldX{
+			Var:    chk.name,
+			Type:   chk.tp,
+			Label:  chk.label,
+			Values: chk.value,
+		}
+		cf.setUnknowField(fieldX)
+		unknowFields = append(unknowFields, roomConfigFormFieldFactory(fieldX))
+	}
+
+	cf.UpdateFieldValueByName("foo", "something")
+	c.Assert(cf.UnknowFields, DeepEquals, unknowFields)
+
+	for _, f := range unknowFields {
+		if f.Name == "RoomConfigFieldText" {
+			f.Value = "bla1"
+		}
+	}
+
+	cf.UpdateFieldValueByName("RoomConfigFieldText", "bla1")
+	c.Assert(cf.UnknowFields, DeepEquals, unknowFields)
+
+	for _, f := range unknowFields {
+		if f.Name == "RoomConfigFieldText" {
+			f.Value = nil
+		}
+	}
+
+	cf.UpdateFieldValueByName("RoomConfigFieldText", nil)
+	c.Assert(cf.UnknowFields, DeepEquals, unknowFields)
+}

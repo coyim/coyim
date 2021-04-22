@@ -80,8 +80,8 @@ func (p *roomConfigOthersPage) collectData() {
 	p.form.MaxOccupantsNumber.UpdateValue(p.roomMaxOccupants.currentValue())
 	p.form.Logged = p.roomEnableLoggin.GetActive()
 
-	for idx, f := range p.fields {
-		p.form.UnknowFields[idx].SetValue(f.fieldValue())
+	for _, f := range p.fields {
+		p.form.UpdateFieldValueByName(f.fieldName(), f.fieldValue())
 	}
 }
 

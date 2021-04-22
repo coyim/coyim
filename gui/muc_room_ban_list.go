@@ -96,3 +96,36 @@ func (bl *roomBanListView) showLoadingView() {
 func (bl *roomBanListView) hideLoadingView() {
 	bl.listLoadingView.Hide()
 }
+
+// requestBanList MUST NOT be called from the UI thread
+func (bl *roomBanListView) requestBanList() {
+	blc, ec := bl.roomView.account.session.GetRoomBanList(bl.roomView.roomID())
+
+	go func() {
+		for {
+			select {
+			case itm, ok := <-blc:
+				if !ok {
+					doInUIThread(func() {
+						bl.hideLoadingView()
+
+						if _, ok := bl.listModel.GetIterFirst(); !ok {
+							bl.listView.Hide()
+							bl.noEntriesView.Show()
+						}
+					})
+					return
+				}
+
+				doInUIThread(func() {
+					bl.addListItem(itm)
+				})
+
+			case err := <-ec:
+				bl.roomView.log.WithError(err).Error("Something happened when requesting the banned users list")
+				doInUIThread(bl.hideLoadingView)
+				return
+			}
+		}
+	}()
+}

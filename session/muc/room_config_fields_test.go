@@ -46,6 +46,9 @@ func (*MucRoomConfigFieldsSuite) Test_RoomConfigFormField(c *C) {
 	field.SetValue("bla")
 	c.Assert(field.Value, Equals, "bla")
 
+	field.Type = RoomConfigFieldText
+	c.Assert(field.GetValue(), DeepEquals, []string{"bla"})
+
 	field.SetValue([]string{"foo"})
 	c.Assert(field.Value, DeepEquals, []string{"foo"})
 }

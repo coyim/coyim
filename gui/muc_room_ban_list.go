@@ -20,17 +20,16 @@ const (
 type roomBanListView struct {
 	roomView *roomView
 
-	dialog                 gtki.Window   `gtk-widget:"ban-list-window"`
-	addEntryButton         gtki.Button   `gtk-widget:"ban-list-add-entry-button"`
-	removeEntryButton      gtki.Button   `gtk-widget:"ban-list-remove-entry-button"`
-	removeEntryButtonLabel gtki.Label    `gtk-widget:"ban-list-remove-entry-label"`
-	list                   gtki.TreeView `gtk-widget:"ban-list-treeview"`
-	listContent            gtki.Overlay  `gtk-widget:"ban-list-content-overlay"`
-	listView               gtki.Overlay  `gtk-widget:"ban-list-overlay-view"`
-	listLoadingView        gtki.Box      `gtk-widget:"ban-list-loading-view"`
-	noEntriesView          gtki.Box      `gtk-widget:"ban-list-no-entries-view"`
-	noEntriesErrorView     gtki.Box      `gtk-widget:"ban-list-error-view"`
-	applyButton            gtki.Button   `gtk-widget:"ban-list-apply-changes-button"`
+	dialog             gtki.Window   `gtk-widget:"ban-list-window"`
+	addEntryButton     gtki.Button   `gtk-widget:"ban-list-add-entry-button"`
+	removeEntryButton  gtki.Button   `gtk-widget:"ban-list-remove-entry-button"`
+	list               gtki.TreeView `gtk-widget:"ban-list-treeview"`
+	listContent        gtki.Overlay  `gtk-widget:"ban-list-content-overlay"`
+	listView           gtki.Overlay  `gtk-widget:"ban-list-overlay-view"`
+	listLoadingView    gtki.Box      `gtk-widget:"ban-list-loading-view"`
+	noEntriesView      gtki.Box      `gtk-widget:"ban-list-no-entries-view"`
+	noEntriesErrorView gtki.Box      `gtk-widget:"ban-list-error-view"`
+	applyButton        gtki.Button   `gtk-widget:"ban-list-apply-changes-button"`
 
 	listModel     gtki.TreeStore
 	cancelChannel chan bool
@@ -85,8 +84,8 @@ func (bl *roomBanListView) initBanListModel() {
 func (bl *roomBanListView) addListItem(itm *muc.RoomBanListEntry) {
 	iter := bl.listModel.Append(nil)
 
-	bl.listModel.SetValue(iter, roomBanListAccountIndex, itm.Jid)
-	bl.listModel.SetValue(iter, roomBanListAffiliationIndex, itm.Affiliation)
+	bl.listModel.SetValue(iter, roomBanListAccountIndex, itm.Jid.String())
+	bl.listModel.SetValue(iter, roomBanListAffiliationIndex, affiliationDisplayName(itm.Affiliation))
 	bl.listModel.SetValue(iter, roomBanListReasonIndex, itm.Reason)
 }
 

@@ -27,6 +27,7 @@ const (
 type RoomConfigFormField struct {
 	Name, Type, Label, Description string
 	Value                          interface{}
+	Options                        []string
 }
 
 // SetValue sets the room configuration form field value from the given parameter

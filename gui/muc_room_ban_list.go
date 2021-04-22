@@ -140,6 +140,12 @@ func (bl *roomBanListView) hideLoadingView() {
 	bl.listLoadingView.Hide()
 }
 
+// hasItems MUST be called from the UI thread
+func (bl *roomBanListView) hasItems() bool {
+	_, ok := bl.listModel.GetIterFirst()
+	return ok
+}
+
 // requestBanList MUST NOT be called from the UI thread
 func (bl *roomBanListView) requestBanList() {
 	bl.cancelChannel = make(chan bool)
@@ -154,7 +160,7 @@ func (bl *roomBanListView) requestBanList() {
 					doInUIThread(func() {
 						bl.hideLoadingView()
 
-						if _, ok := bl.listModel.GetIterFirst(); !ok {
+						if !bl.hasItems() {
 							bl.listView.Hide()
 							bl.noEntriesView.Show()
 						}

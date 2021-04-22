@@ -1,7 +1,6 @@
 package session
 
 import (
-	"bytes"
 	"encoding/xml"
 	"errors"
 
@@ -63,9 +62,8 @@ func (m *mucManager) requestRoomBanList(roomID jid.Bare) ([]xmppData.MUCItem, er
 		return nil, errors.New("the client iq reply is not the expected")
 	}
 
-	buf := bytes.NewBuffer(reply.Query)
 	var list xmppData.MUCRoomBanListItems
-	if err := xml.NewDecoder(buf).Decode(&list); err != nil {
+	if err := xml.Unmarshal(reply.Query, &list); err != nil {
 		return nil, errors.New("failed to parse room's ban list response")
 	}
 

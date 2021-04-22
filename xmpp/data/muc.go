@@ -129,6 +129,6 @@ type MUCRoomBanListRequestQuery struct {
 
 // MUCRoomBanListItems contains information about the room's ban list items
 type MUCRoomBanListItems struct {
-	XMLName xml.Name `xml:"http://jabber.org/protocol/muc#admin query"`
-	Items   []MUCItem
+	XMLName xml.Name  `xml:"http://jabber.org/protocol/muc#admin query"`
+	Items   []MUCItem `xml:"item,omitempty"`
 }

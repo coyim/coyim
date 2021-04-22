@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -70,6 +71,15 @@ func (bl *roomBanListView) initBanListModel() {
 
 	bl.listModel = model
 	bl.list.SetModel(bl.listModel)
+}
+
+// addListItem MUST be called from the UI thread
+func (bl *roomBanListView) addListItem(itm *muc.RoomBanListEntry) {
+	iter := bl.listModel.Append(nil)
+
+	bl.listModel.SetValue(iter, roomBanListAccountIndex, itm.Jid)
+	bl.listModel.SetValue(iter, roomBanListAffiliationIndex, itm.Affiliation)
+	bl.listModel.SetValue(iter, roomBanListReasonIndex, itm.Reason)
 }
 
 // show MUST be called from the UI thread

@@ -71,10 +71,7 @@ func (bl *roomBanListView) initBuilder() {
 
 func (bl *roomBanListView) initDefaults() {
 	bl.dialog.SetTransientFor(bl.roomView.mainWindow())
-
-	bl.addEntryButton.SetSensitive(false)
-	bl.removeEntryButton.SetSensitive(false)
-	bl.applyButton.SetSensitive(false)
+	bl.disableButtonsAndInteractions()
 }
 
 func (bl *roomBanListView) initBanListModel() {
@@ -119,33 +116,31 @@ func (bl *roomBanListView) show() {
 // refreshBanList MUST be called from the UI thread
 func (bl *roomBanListView) refreshBanList() {
 	bl.listModel.Clear()
-
-	bl.applyButton.SetSensitive(false)
-	bl.addEntryButton.SetSensitive(false)
-	bl.removeEntryButton.SetSensitive(false)
-
-	bl.showLoadingView()
+	bl.disableButtonsAndInteractions()
+	bl.showLoadingAndListViews()
 
 	go bl.requestBanList()
 }
 
 // requestBanListAgain MUST be called from the UI thread
 func (bl *roomBanListView) requestBanListAgain() {
-	bl.listView.Show()
-	bl.noEntriesView.Hide()
-	bl.noEntriesErrorView.Hide()
-
+	bl.showLoadingAndListViews()
 	bl.refreshBanList()
 }
 
-// showLoadingView MUST be called from the UI thread
-func (bl *roomBanListView) showLoadingView() {
+// showLoadingAndListViews MUST be called from the UI thread
+func (bl *roomBanListView) showLoadingAndListViews() {
+	bl.noEntriesView.Hide()
+	bl.noEntriesErrorView.Hide()
+
 	bl.listLoadingView.Show()
+	bl.listView.Show()
 }
 
-// hideLoadingView MUST be called from the UI thread
-func (bl *roomBanListView) hideLoadingView() {
+// hideLoadingAndListViews MUST be called from the UI thread
+func (bl *roomBanListView) hideLoadingAndListViews() {
 	bl.listLoadingView.Hide()
+	bl.listView.Hide()
 }
 
 // hasItems MUST be called from the UI thread
@@ -165,8 +160,7 @@ func (bl *roomBanListView) requestBanList() {
 		case list, ok := <-blc:
 			if !ok {
 				doInUIThread(func() {
-					bl.hideLoadingView()
-					bl.listView.Hide()
+					bl.hideLoadingAndListViews()
 					bl.noEntriesView.Show()
 				})
 				return
@@ -182,8 +176,7 @@ func (bl *roomBanListView) requestBanList() {
 			bl.roomView.log.WithError(err).Error("Something happened when requesting the banned users list")
 
 			doInUIThread(func() {
-				bl.hideLoadingView()
-				bl.listView.Hide()
+				bl.hideLoadingAndListViews()
 				bl.noEntriesErrorView.Show()
 			})
 
@@ -248,6 +241,13 @@ func (bl *roomBanListView) onCancel() {
 	}()
 
 	bl.dialog.Destroy()
+}
+
+// disableButtonsAndInteractions MUST be called from the UI thread
+func (bl *roomBanListView) disableButtonsAndInteractions() {
+	bl.addEntryButton.SetSensitive(false)
+	bl.removeEntryButton.SetSensitive(false)
+	bl.applyButton.SetSensitive(false)
 }
 
 func affiliationFromKnowString(a string) data.Affiliation {

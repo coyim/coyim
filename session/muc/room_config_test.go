@@ -13,7 +13,7 @@ var _ = Suite(&MucRoomConfigSuite{})
 func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	rcf := NewRoomConfigForm(&xmppData.Form{
 		Fields: []xmppData.FormFieldX{
-			{Var: "FORM_TYPE", Values: []string{"stuff"}},
+			{Var: "FORM_TYPE", Type: RoomConfigFieldHidden, Values: []string{"stuff"}},
 			{Var: configFieldMaxHistoryFetch, Values: []string{"43"}, Options: []xmppData.FormFieldOptionX{
 				{Value: "one"},
 				{Value: "two"},

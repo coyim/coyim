@@ -84,7 +84,16 @@ func (bl *roomBanListView) addListItem(itm *muc.RoomBanListEntry) {
 
 // show MUST be called from the UI thread
 func (bl *roomBanListView) show() {
+	bl.refreshBanList()
 	bl.dialog.Show()
+}
+
+// refreshBanList MUST be called from the UI thread
+func (bl *roomBanListView) refreshBanList() {
+	bl.listModel.Clear()
+	bl.showLoadingView()
+
+	go bl.requestBanList()
 }
 
 // showLoadingView MUST be called from the UI thread

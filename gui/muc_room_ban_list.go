@@ -184,6 +184,8 @@ func (bl *roomBanListView) onRequestFinish(items []*muc.RoomBanListItem) {
 			bl.noEntriesView.Show()
 		})
 	}
+
+	bl.addEntryButton.SetSensitive(true)
 }
 
 // onRequestError MUST NOT be called from the UI thread

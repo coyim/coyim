@@ -26,12 +26,8 @@ func (s *session) GetRoomBanList(roomID jid.Bare) (<-chan []*muc.RoomBanListItem
 			return
 		}
 
-		if len(items) == 0 {
-			close(lc)
-			return
-		}
-
 		list := []*muc.RoomBanListItem{}
+
 		for _, itm := range items {
 			affiliation, err := data.AffiliationFromString(itm.Affiliation)
 			if err != nil {

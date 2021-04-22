@@ -161,32 +161,39 @@ func (bl *roomBanListView) requestBanList() {
 		}()
 
 		select {
-		case list, ok := <-blc:
-			if !ok {
-				doInUIThread(func() {
-					bl.hideLoadingAndListViews()
-					bl.noEntriesView.Show()
-				})
-				return
-			}
-
-			doInUIThread(func() {
-				for _, itm := range list {
-					bl.addListItem(itm)
-				}
-			})
-
+		case items := <-blc:
+			bl.onRequestFinish(items)
 		case err := <-ec:
-			bl.roomView.log.WithError(err).Error("Something happened when requesting the banned users list")
-
-			doInUIThread(func() {
-				bl.hideLoadingAndListViews()
-				bl.noEntriesErrorView.Show()
-			})
-
+			bl.onRequestError(err)
 		case <-bl.cancelChannel:
 		}
 	}()
+}
+
+// onRequestFinish MUST NOT be called from the UI thread
+func (bl *roomBanListView) onRequestFinish(items []*muc.RoomBanListItem) {
+	if len(items) > 0 {
+		doInUIThread(func() {
+			for _, itm := range items {
+				bl.addListItem(itm)
+			}
+		})
+	} else {
+		doInUIThread(func() {
+			bl.hideLoadingAndListViews()
+			bl.noEntriesView.Show()
+		})
+	}
+}
+
+// onRequestError MUST NOT be called from the UI thread
+func (bl *roomBanListView) onRequestError(err error) {
+	bl.roomView.log.WithError(err).Error("Something happened when requesting the banned users list")
+
+	doInUIThread(func() {
+		bl.hideLoadingAndListViews()
+		bl.noEntriesErrorView.Show()
+	})
 }
 
 // onUserJidEdited MUST be called from the UI thread

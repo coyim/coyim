@@ -8,7 +8,6 @@ import (
 	"github.com/coyim/coyim/session/muc/data"
 	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
-	log "github.com/sirupsen/logrus"
 )
 
 // GetRoomBanList can be used to request the banned users list from the given room.
@@ -51,10 +50,6 @@ func (s *session) GetRoomBanList(roomID jid.Bare) (<-chan []*muc.RoomBanListItem
 func (m *mucManager) requestRoomBanList(roomID jid.Bare) ([]xmppData.MUCItem, error) {
 	stanza, _, err := m.conn().SendIQ(roomID.String(), "get", newRoomBanListRequestQuery())
 	if err != nil {
-		m.log.WithFields(log.Fields{
-			"room":  roomID,
-			"where": "requestRoomBanList",
-		}).WithError(err).Error("Invalid information query response for the room ban list request")
 		return nil, err
 	}
 

@@ -1,5 +1,7 @@
 package muc
 
+import "strconv"
+
 const (
 	// RoomConfigFieldText represents a "text-single" config field type
 	RoomConfigFieldText = "text-single"
@@ -37,6 +39,8 @@ func (f *RoomConfigFormField) GetValue() (values []string) {
 	switch f.Type {
 	case RoomConfigFieldText, RoomConfigFieldTextPrivate:
 		values = append(values, f.Value.(string))
+	case RoomConfigFieldBoolean:
+		values = append(values, strconv.FormatBool(f.Value.(bool)))
 	}
 	return
 }

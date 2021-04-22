@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -33,11 +34,14 @@ type roomBanListView struct {
 
 	listModel     gtki.ListStore
 	cancelChannel chan bool
+
+	log coylog.Logger
 }
 
 func (v *roomView) newRoomBanListView() *roomBanListView {
 	bl := &roomBanListView{
 		roomView: v,
+		log: v.log.WithField("where", "roomBanListView"),
 	}
 
 	bl.initBuilder()

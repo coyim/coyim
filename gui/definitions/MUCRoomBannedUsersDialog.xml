@@ -48,7 +48,7 @@
                                 <property name="enable_tree_lines">True</property>
                                 <property name="tooltip_column">2</property>
                                 <child internal-child="selection">
-                                  <object class="GtkTreeSelection">
+                                  <object class="GtkTreeSelection" id="ban-list-treeview-selection">
                                     <property name="mode">multiple</property>
                                   </object>
                                 </child>

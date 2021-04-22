@@ -26,19 +26,19 @@ const (
 type roomBanListView struct {
 	roomView *roomView
 
-	dialog             gtki.Window   `gtk-widget:"ban-list-window"`
-	addEntryButton     gtki.Button   `gtk-widget:"ban-list-add-entry-button"`
-	removeEntryButton  gtki.Button   `gtk-widget:"ban-list-remove-entry-button"`
-	list               gtki.TreeView `gtk-widget:"ban-list-treeview"`
-	listContent        gtki.Overlay  `gtk-widget:"ban-list-content-overlay"`
-	listView           gtki.Overlay  `gtk-widget:"ban-list-overlay-view"`
-	listLoadingView    gtki.Box      `gtk-widget:"ban-list-loading-view"`
-	noEntriesView      gtki.Box      `gtk-widget:"ban-list-no-entries-view"`
-	noEntriesErrorView gtki.Box      `gtk-widget:"ban-list-error-view"`
-	applyButton        gtki.Button   `gtk-widget:"ban-list-apply-changes-button"`
+	dialog             gtki.Window        `gtk-widget:"ban-list-window"`
+	addEntryButton     gtki.Button        `gtk-widget:"ban-list-add-entry-button"`
+	removeEntryButton  gtki.Button        `gtk-widget:"ban-list-remove-entry-button"`
+	list               gtki.TreeView      `gtk-widget:"ban-list-treeview"`
+	listSelection      gtki.TreeSelection `gtk-widget:"ban-list-treeview-selection"`
+	listContent        gtki.Overlay       `gtk-widget:"ban-list-content-overlay"`
+	listView           gtki.Overlay       `gtk-widget:"ban-list-overlay-view"`
+	listLoadingView    gtki.Box           `gtk-widget:"ban-list-loading-view"`
+	noEntriesView      gtki.Box           `gtk-widget:"ban-list-no-entries-view"`
+	noEntriesErrorView gtki.Box           `gtk-widget:"ban-list-error-view"`
+	applyButton        gtki.Button        `gtk-widget:"ban-list-apply-changes-button"`
 
 	listModel     gtki.ListStore
-	listSelection gtki.TreeSelection
 	cancelChannel chan bool
 
 	log coylog.Logger
@@ -74,8 +74,6 @@ func (bl *roomBanListView) initBuilder() {
 func (bl *roomBanListView) initDefaults() {
 	bl.dialog.SetTransientFor(bl.roomView.mainWindow())
 	bl.disableButtonsAndInteractions()
-
-	bl.listSelection, _ = bl.list.GetSelection()
 }
 
 func (bl *roomBanListView) initBanListModel() {

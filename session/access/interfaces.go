@@ -72,6 +72,7 @@ type Rooms interface {
 	UpdateOccupantRole(roomID jid.Bare, occupantNickname string, role mdata.Role, reason string) (<-chan bool, <-chan error)
 	NewRoom(jid.Bare) *muc.Room
 	SendMUCMessage(to, from, body string) error
+	GetRoomBanList(jid.Bare) (<-chan *muc.RoomBanListEntry, <-chan error)
 }
 
 // Connection contains the connection related functionality

@@ -141,6 +141,10 @@ func (*SessionMock) SendMUCMessage(to, from, body string) error {
 	return nil
 }
 
+func (*SessionMock) GetRoomBanList(jid.Bare) (<-chan *muc.RoomBanListEntry, <-chan error) {
+	return nil, nil
+}
+
 // SendPing is the implementation for Session interface
 func (*SessionMock) SendPing() {}
 

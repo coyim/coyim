@@ -156,6 +156,10 @@ func (bl *roomBanListView) requestBanList() {
 	blc, ec := bl.roomView.account.session.GetRoomBanList(bl.roomView.roomID())
 
 	go func() {
+		defer func() {
+			bl.cancelChannel = nil
+		}()
+
 		select {
 		case list, ok := <-blc:
 			if !ok {
@@ -234,12 +238,7 @@ func (bl *roomBanListView) onReasonEdited(_ gtki.CellRendererText, path string, 
 
 // onCancel MUST be called from the UI thread
 func (bl *roomBanListView) onCancel() {
-	go func() {
-		if bl.cancelChannel != nil {
-			bl.cancelChannel <- true
-		}
-	}()
-
+	go bl.cancelActiveRequestListening()
 	bl.dialog.Destroy()
 }
 
@@ -248,6 +247,13 @@ func (bl *roomBanListView) disableButtonsAndInteractions() {
 	bl.addEntryButton.SetSensitive(false)
 	bl.removeEntryButton.SetSensitive(false)
 	bl.applyButton.SetSensitive(false)
+}
+
+// cancelActiveRequestListening MUST NOT be called from the UI thread
+func (bl *roomBanListView) cancelActiveRequestListening() {
+	if bl.cancelChannel != nil {
+		bl.cancelChannel <- true
+	}
 }
 
 func affiliationFromKnowString(a string) data.Affiliation {

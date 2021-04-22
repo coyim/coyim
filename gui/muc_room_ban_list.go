@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -67,6 +68,8 @@ func (bl *roomBanListView) initBuilder() {
 		"on_jid_edited":                 bl.onUserJidEdited,
 		"on_reason_edited":              bl.onReasonEdited,
 		"on_add_item":                   bl.onAddNewItem,
+		"on_selection_changed":          bl.onSelectionChanged,
+		"on_remove_item":                bl.onRemoveItem,
 		"on_cancel_clicked":             bl.onCancel,
 	})
 }
@@ -260,6 +263,24 @@ func (bl *roomBanListView) onAddNewItem() {
 
 	bl.unselectSelectedRows()
 	bl.listSelection.SelectIter(iter)
+}
+
+// onSelectionChanged MUST be called from the UI thread
+func (bl *roomBanListView) onSelectionChanged() {
+	totalSelected := len(bl.getSeledtedRows())
+	bl.removeEntryButton.SetSensitive(totalSelected > 0)
+	bl.removeEntryButton.SetTooltipText(i18n.Local("Remove selected item"))
+	if totalSelected > 1 {
+		bl.removeEntryButton.SetTooltipText(i18n.Local("Remove selected items"))
+	}
+}
+
+// onRemoveItem MUST be called from the UI thread
+func (bl *roomBanListView) onRemoveItem() {
+	for _, path := range bl.getSeledtedRows() {
+		iter, _ := bl.listModel.GetIter(path)
+		bl.listModel.Remove(iter)
+	}
 }
 
 // unselectSelectedRows MUST be called from the UI thread

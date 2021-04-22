@@ -366,8 +366,8 @@ func (bl *roomBanListView) listFromModel() []*muc.RoomBanListItem {
 	iter, ok := bl.listModel.GetIterFirst()
 	for ok {
 		account := bl.columnStringValueFromListModelIter(iter, roomBanListAccountIndex)
-		affiliation := bl.columnStringValueFromListModelIter(iter, roomBanListAccountIndex)
-		reason := bl.columnStringValueFromListModelIter(iter, roomBanListAccountIndex)
+		affiliation := bl.columnStringValueFromListModelIter(iter, roomBanListAffiliationIndex)
+		reason := bl.columnStringValueFromListModelIter(iter, roomBanListReasonIndex)
 
 		list = append(list, &muc.RoomBanListItem{
 			Jid:         jid.Parse(account),

@@ -38,6 +38,7 @@ type roomBanListView struct {
 	applyButton        gtki.Button   `gtk-widget:"ban-list-apply-changes-button"`
 
 	listModel     gtki.ListStore
+	listSelection gtki.TreeSelection
 	cancelChannel chan bool
 
 	log coylog.Logger
@@ -73,6 +74,8 @@ func (bl *roomBanListView) initBuilder() {
 func (bl *roomBanListView) initDefaults() {
 	bl.dialog.SetTransientFor(bl.roomView.mainWindow())
 	bl.disableButtonsAndInteractions()
+
+	bl.listSelection, _ = bl.list.GetSelection()
 }
 
 func (bl *roomBanListView) initBanListModel() {
@@ -257,11 +260,20 @@ func (bl *roomBanListView) onAddNewItem() {
 		Affiliation: affiliationFromKnowString(data.AffiliationOutcast),
 	})
 
-	selection, _ := bl.list.GetSelection()
-	for _, path := range selection.GetSelectedRows(bl.listModel) {
-		selection.UnselectPath(path)
+	bl.unselectSelectedRows()
+	bl.listSelection.SelectIter(iter)
+}
+
+// unselectSelectedRows MUST be called from the UI thread
+func (bl *roomBanListView) unselectSelectedRows() {
+	for _, path := range bl.getSeledtedRows() {
+		bl.listSelection.UnselectPath(path)
 	}
-	selection.SelectIter(iter)
+}
+
+// getSeledtedRows MUST be called from the UI thread
+func (bl *roomBanListView) getSeledtedRows() []gtki.TreePath {
+	return bl.listSelection.GetSelectedRows(bl.listModel)
 }
 
 // onCancel MUST be called from the UI thread

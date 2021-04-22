@@ -29,6 +29,7 @@ type roomBanListView struct {
 	listView               gtki.Overlay  `gtk-widget:"ban-list-overlay-view"`
 	listLoadingView        gtki.Box      `gtk-widget:"ban-list-loading-view"`
 	noEntriesView          gtki.Box      `gtk-widget:"ban-list-no-entries-view"`
+	noEntriesErrorView     gtki.Box      `gtk-widget:"ban-list-error-view"`
 	applyButton            gtki.Button   `gtk-widget:"ban-list-apply-changes-button"`
 
 	listModel gtki.TreeStore
@@ -49,6 +50,11 @@ func (v *roomView) newRoomBanListView() *roomBanListView {
 func (bl *roomBanListView) initBuilder() {
 	builder := newBuilder("MUCRoomBannedUsersDialog")
 	panicOnDevError(builder.bindObjects(bl))
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_no_items_try_again_clicked": bl.requestBanListAgain,
+		"on_error_try_again_clicked":    bl.requestBanListAgain,
+	})
 }
 
 func (bl *roomBanListView) initDefaults() {
@@ -94,6 +100,15 @@ func (bl *roomBanListView) refreshBanList() {
 	bl.showLoadingView()
 
 	go bl.requestBanList()
+}
+
+// requestBanListAgain MUST be called from the UI thread
+func (bl *roomBanListView) requestBanListAgain() {
+	bl.listView.Show()
+	bl.noEntriesView.Hide()
+	bl.noEntriesErrorView.Hide()
+
+	bl.refreshBanList()
 }
 
 // showLoadingView MUST be called from the UI thread

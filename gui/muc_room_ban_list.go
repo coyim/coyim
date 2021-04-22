@@ -3,8 +3,10 @@ package gui
 import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
+	log "github.com/sirupsen/logrus"
 )
 
 func (v *roomView) onModifyBanList() {
@@ -41,7 +43,7 @@ type roomBanListView struct {
 func (v *roomView) newRoomBanListView() *roomBanListView {
 	bl := &roomBanListView{
 		roomView: v,
-		log: v.log.WithField("where", "roomBanListView"),
+		log:      v.log.WithField("where", "roomBanListView"),
 	}
 
 	bl.initBuilder()
@@ -58,6 +60,8 @@ func (bl *roomBanListView) initBuilder() {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_no_items_try_again_clicked": bl.requestBanListAgain,
 		"on_error_try_again_clicked":    bl.requestBanListAgain,
+		"on_jid_edited":                 bl.onUserJidEdited,
+		"on_reason_edited":              bl.onReasonEdited,
 		"on_cancel_clicked":             bl.onCancel,
 	})
 }
@@ -166,6 +170,53 @@ func (bl *roomBanListView) requestBanList() {
 			}
 		}
 	}()
+}
+
+// onUserJidEdited MUST be called from the UI thread
+func (bl *roomBanListView) onUserJidEdited(_ gtki.CellRendererText, path string, newValue string) {
+	iter, err := bl.listModel.GetIterFromString(path)
+	if err != nil {
+		bl.log.WithFields(log.Fields{
+			"path":     path,
+			"newValue": newValue,
+		}).WithError(err).Error("Can't get the iter to update the jid of the banned user")
+		return
+	}
+
+	newJidValue := jid.Parse(newValue)
+	if !newJidValue.Valid() {
+		bl.log.WithFields(log.Fields{
+			"path":        path,
+			"newJidValue": newValue,
+		}).Error("Can't update the jid of the banned user to an invalid value")
+		return
+	}
+
+	if err = bl.listModel.SetValue(iter, roomBanListAccountIndex, newValue); err != nil {
+		bl.log.WithFields(log.Fields{
+			"path":        path,
+			"newJidValue": newValue,
+		}).WithError(err).Error("Can't set the new value for the jid of the banned user")
+	}
+}
+
+// onReasonEdited MUST be called from the UI thread
+func (bl *roomBanListView) onReasonEdited(_ gtki.CellRendererText, path string, newValue string) {
+	iter, err := bl.listModel.GetIterFromString(path)
+	if err != nil {
+		bl.log.WithFields(log.Fields{
+			"path":           path,
+			"newReasonValue": newValue,
+		}).WithError(err).Error("Can't get the iter to update the reason for the banned user")
+		return
+	}
+
+	if err = bl.listModel.SetValue(iter, roomBanListReasonIndex, newValue); err != nil {
+		bl.log.WithFields(log.Fields{
+			"path":           path,
+			"newReasonValue": newValue,
+		}).WithError(err).Error("Can't set the new value for the reason of the banned user")
+	}
 }
 
 // onCancel MUST be called from the UI thread

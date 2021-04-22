@@ -236,6 +236,13 @@ func (*MucRoomConfigSuite) Test_roomConfigFormFieldFactory(c *C) {
 			[]string{"bla", "foo", "bla@domain.org", "foo@domain.org"},
 			[]jid.Any{jid.Parse("bla"), jid.Parse("foo"), jid.Parse("bla@domain.org"), jid.Parse("foo@domain.org")},
 		},
+		{
+			"unknown_field_value",
+			"foo",
+			"field label",
+			[]string{"bla"},
+			[]string{"bla"},
+		},
 	}
 
 	for _, chk := range checks {

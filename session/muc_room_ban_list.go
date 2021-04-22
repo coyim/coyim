@@ -12,8 +12,8 @@ import (
 )
 
 // GetRoomBanList can be used to request the banned users list from the given room.
-func (s *session) GetRoomBanList(roomID jid.Bare) (<-chan *muc.RoomBanListEntry, <-chan error) {
-	lc := make(chan *muc.RoomBanListEntry)
+func (s *session) GetRoomBanList(roomID jid.Bare) (<-chan *muc.RoomBanListItem, <-chan error) {
+	lc := make(chan *muc.RoomBanListItem)
 	ec := make(chan error)
 
 	l := s.muc.log.WithField("room", roomID)
@@ -33,7 +33,7 @@ func (s *session) GetRoomBanList(roomID jid.Bare) (<-chan *muc.RoomBanListEntry,
 				continue
 			}
 
-			lc <- &muc.RoomBanListEntry{
+			lc <- &muc.RoomBanListItem{
 				Jid:         jid.Parse(itm.Jid),
 				Affiliation: affiliation,
 				Reason:      itm.Reason,

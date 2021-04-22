@@ -5,7 +5,8 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-type RoomBanListEntry struct {
+// RoomBanListItem contains information about an item of the room's list of banned users
+type RoomBanListItem struct {
 	Jid         jid.Any
 	Affiliation data.Affiliation
 	Reason      string

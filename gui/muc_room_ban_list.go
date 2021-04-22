@@ -81,7 +81,7 @@ func (bl *roomBanListView) initBanListModel() {
 }
 
 // addListItem MUST be called from the UI thread
-func (bl *roomBanListView) addListItem(itm *muc.RoomBanListEntry) {
+func (bl *roomBanListView) addListItem(itm *muc.RoomBanListItem) {
 	iter := bl.listModel.Append()
 
 	bl.listModel.SetValue(iter, roomBanListAccountIndex, itm.Jid.String())

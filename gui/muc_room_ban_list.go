@@ -147,7 +147,11 @@ func (bl *roomBanListView) requestBanList() {
 
 			case err := <-ec:
 				bl.roomView.log.WithError(err).Error("Something happened when requesting the banned users list")
-				doInUIThread(bl.hideLoadingView)
+				doInUIThread(func() {
+					bl.hideLoadingView()
+					bl.listView.Hide()
+					bl.noEntriesErrorView.Show()
+				})
 				return
 			}
 		}

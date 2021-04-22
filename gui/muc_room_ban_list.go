@@ -31,7 +31,7 @@ type roomBanListView struct {
 	noEntriesErrorView gtki.Box      `gtk-widget:"ban-list-error-view"`
 	applyButton        gtki.Button   `gtk-widget:"ban-list-apply-changes-button"`
 
-	listModel     gtki.TreeStore
+	listModel     gtki.ListStore
 	cancelChannel chan bool
 }
 
@@ -67,7 +67,7 @@ func (bl *roomBanListView) initDefaults() {
 }
 
 func (bl *roomBanListView) initBanListModel() {
-	model, _ := g.gtk.TreeStoreNew(
+	model, _ := g.gtk.ListStoreNew(
 		// the user's jid
 		glibi.TYPE_STRING,
 		// the user's affiliation
@@ -82,7 +82,7 @@ func (bl *roomBanListView) initBanListModel() {
 
 // addListItem MUST be called from the UI thread
 func (bl *roomBanListView) addListItem(itm *muc.RoomBanListEntry) {
-	iter := bl.listModel.Append(nil)
+	iter := bl.listModel.Append()
 
 	bl.listModel.SetValue(iter, roomBanListAccountIndex, itm.Jid.String())
 	bl.listModel.SetValue(iter, roomBanListAffiliationIndex, affiliationDisplayName(itm.Affiliation))

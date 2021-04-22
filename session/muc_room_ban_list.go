@@ -11,6 +11,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// GetRoomBanList can be used to request the banned users list from the given room.
 func (s *session) GetRoomBanList(roomID jid.Bare) (<-chan *muc.RoomBanListEntry, <-chan error) {
 	lc := make(chan *muc.RoomBanListEntry)
 	ec := make(chan error)

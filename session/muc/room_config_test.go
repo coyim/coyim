@@ -45,6 +45,7 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 			{Var: configFieldOwners, Values: []string{}},
 			{Var: configFieldPassword, Values: []string{"a password"}},
 			{Var: configFieldWhoIs, Values: []string{"a whois"}},
+			{Var: "unknown_field_name", Type: RoomConfigFieldText, Values: []string{"foo"}},
 		},
 	})
 
@@ -69,7 +70,7 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	res := rcf.GetFormData()
 
 	c.Assert(res.Type, Equals, "submit")
-	c.Assert(res.Fields, HasLen, 22)
+	c.Assert(res.Fields, HasLen, 23)
 
 	vals := map[string][]string{}
 	for _, ff := range res.Fields {
@@ -99,6 +100,7 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 		"muc#roomconfig_roomdesc":                                       {"a description"},
 		"muc#roomconfig_maxusers":                                       {"42"},
 		"muc#roomconfig_membersonly":                                    {"true"},
+		"unknown_field_name":                                            {"foo"},
 	})
 }
 

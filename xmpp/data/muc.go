@@ -120,3 +120,15 @@ type MUCItem struct {
 	Nick        string `xml:"nick,attr,omitempty"`
 	Reason      string `xml:"reason,omitempty"`
 }
+
+// MUCRoomBanListRequestQuery contains query information to request the room's ban list
+type MUCRoomBanListRequestQuery struct {
+	XMLName xml.Name `xml:"http://jabber.org/protocol/muc#admin query"`
+	Item    MUCItem
+}
+
+// MUCRoomBanListItems contains information about the room's ban list items
+type MUCRoomBanListItems struct {
+	XMLName xml.Name `xml:"http://jabber.org/protocol/muc#admin query"`
+	Items   []MUCItem
+}

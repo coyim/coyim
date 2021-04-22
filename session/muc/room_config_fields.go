@@ -38,7 +38,7 @@ func (f *RoomConfigFormField) SetValue(v interface{}) {
 // GetValue returns value based on the field type
 func (f *RoomConfigFormField) GetValue() (values []string) {
 	switch f.Type {
-	case RoomConfigFieldText, RoomConfigFieldTextPrivate:
+	case RoomConfigFieldText, RoomConfigFieldTextPrivate, RoomConfigFieldList:
 		values = append(values, f.Value.(string))
 	case RoomConfigFieldBoolean:
 		values = append(values, strconv.FormatBool(f.Value.(bool)))

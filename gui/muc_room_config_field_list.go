@@ -68,7 +68,12 @@ func (f *roomConfigFormFieldList) fieldLabel() string {
 }
 
 func (f *roomConfigFormFieldList) fieldValue() interface{} {
-	return f.list.GetActive()
+	for o, index := range f.options {
+		if index == f.list.GetActive() {
+			return o
+		}
+	}
+	return nil
 }
 
 func (f *roomConfigFormFieldList) refreshContent() {}

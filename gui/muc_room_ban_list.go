@@ -38,9 +38,13 @@ type roomBanListView struct {
 	noEntriesView      gtki.Box           `gtk-widget:"ban-list-no-entries-view"`
 	noEntriesErrorView gtki.Box           `gtk-widget:"ban-list-error-view"`
 	applyButton        gtki.Button        `gtk-widget:"ban-list-apply-changes-button"`
+	notificationsBox   gtki.Box           `gtk-widget:"notifications-box"`
+	spinnerBox         gtki.Box           `gtk-widget:"spinner-box"`
 
 	listModel       gtki.ListStore
 	originalBanList []*muc.RoomBanListItem
+	notifications   *notificationsComponent
+	spinner         *spinner
 	cancelChannel   chan bool
 
 	log coylog.Logger
@@ -77,6 +81,13 @@ func (bl *roomBanListView) initBuilder() {
 
 func (bl *roomBanListView) initDefaults() {
 	bl.dialog.SetTransientFor(bl.roomView.mainWindow())
+
+	bl.notifications = bl.roomView.u.newNotificationsComponent()
+	bl.notificationsBox.Add(bl.notifications.box)
+
+	bl.spinner = bl.roomView.u.newSpinnerComponent()
+	bl.spinnerBox.Add(bl.spinner.spinner())
+
 	bl.disableButtonsAndInteractions()
 }
 

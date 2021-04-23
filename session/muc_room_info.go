@@ -7,6 +7,8 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
+const maxTimeForRoomDiscoInfoRequest = time.Second * 10
+
 func (m *mucManager) requestRoomDiscoInfo(roomID jid.Bare) {
 	result := make(chan *muc.RoomListing)
 	go m.getRoomListing(roomID, result)
@@ -14,7 +16,7 @@ func (m *mucManager) requestRoomDiscoInfo(roomID jid.Bare) {
 	select {
 	case rl := <-result:
 		m.onRoomDiscoInfoReceived(roomID, rl)
-	case <-time.After(time.Second * 10):
+	case <-time.After(maxTimeForRoomDiscoInfoRequest):
 		m.roomDiscoInfoRequestTimeout(roomID)
 	}
 }

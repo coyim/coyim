@@ -158,8 +158,19 @@ func (bl *roomBanListView) showLoadingAndListViews() {
 
 // hideLoadingAndListViews MUST be called from the UI thread
 func (bl *roomBanListView) hideLoadingAndListViews() {
-	bl.listLoadingView.Hide()
+	bl.hideLoading()
 	bl.listView.Hide()
+}
+
+// hideLoadingAndShowListView MUST be called from the UI thread
+func (bl *roomBanListView) hideLoadingAndShowListView() {
+	bl.hideLoading()
+	bl.listView.Show()
+}
+
+// hideLoading MUST be called from the UI thread
+func (bl *roomBanListView) hideLoading() {
+	bl.listLoadingView.Hide()
 }
 
 // hasItems MUST be called from the UI thread
@@ -198,14 +209,13 @@ func (bl *roomBanListView) onRequestFinish(items []*muc.RoomBanListItem) {
 			}
 		})
 	} else {
-		doInUIThread(func() {
-			bl.hideLoadingAndListViews()
-			bl.noEntriesView.Show()
-		})
+		doInUIThread(bl.noEntriesView.Show)
 	}
 
-	bl.addEntryButton.SetSensitive(true)
 	bl.originalBanList = items
+
+	bl.hideLoadingAndShowListView()
+	bl.enableButtonsAndInteractions()
 }
 
 // onRequestError MUST NOT be called from the UI thread
@@ -323,9 +333,19 @@ func (bl *roomBanListView) onCancel() {
 
 // disableButtonsAndInteractions MUST be called from the UI thread
 func (bl *roomBanListView) disableButtonsAndInteractions() {
+	bl.listView.SetSensitive(false)
+
 	bl.addEntryButton.SetSensitive(false)
 	bl.removeEntryButton.SetSensitive(false)
 	bl.applyButton.SetSensitive(false)
+}
+
+// enableButtonsAndInteractions MUST be called from the UI thread
+func (bl *roomBanListView) enableButtonsAndInteractions() {
+	bl.listView.SetSensitive(true)
+	bl.addEntryButton.SetSensitive(true)
+
+	bl.enableApplyIfConditionsAreMet()
 }
 
 // cancelActiveRequestListening MUST NOT be called from the UI thread
@@ -337,17 +357,7 @@ func (bl *roomBanListView) cancelActiveRequestListening() {
 
 // enableApplyIfConditionsAreMet MUST be called from the UI thread
 func (bl *roomBanListView) enableApplyIfConditionsAreMet() {
-	listHasChanged := bl.isTheListUpdated()
-
-	listValuesAreValid := true
-	for _, itm := range bl.listFromModel() {
-		if itm.Jid.String() == "" {
-			listValuesAreValid = false
-			break
-		}
-	}
-
-	bl.applyButton.SetSensitive(listHasChanged && listValuesAreValid)
+	bl.applyButton.SetSensitive(bl.isTheListUpdated() && bl.isTheListValid())
 }
 
 // isTheListUpdated MUST be called from the UI thread
@@ -368,6 +378,16 @@ func (bl *roomBanListView) isTheListUpdated() bool {
 	}
 
 	return false
+}
+
+// isTheListValid MUST be called from the UI thread
+func (bl *roomBanListView) isTheListValid() bool {
+	for _, itm := range bl.listFromModel() {
+		if itm.Jid.String() == "" {
+			return false
+		}
+	}
+	return true
 }
 
 // listFromModel MUST be called from the UI thread

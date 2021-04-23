@@ -16,7 +16,7 @@ type roomConfigOthersPage struct {
 	roomMaxHistoryFetchEntry gtki.Entry        `gtk-widget:"room-maxhistoryfetch-entry"`
 	roomMaxOccupantsCombo    gtki.ComboBoxText `gtk-widget:"room-maxoccupants"`
 	roomMaxOccupantsEntry    gtki.Entry        `gtk-widget:"room-maxoccupants-entry"`
-	roomEnableLoggin         gtki.Switch       `gtk-widget:"room-enablelogging"`
+	roomEnableLogging        gtki.Switch       `gtk-widget:"room-enablelogging"`
 	roomUnknowFieldsBox      gtki.Box          `gtk-widget:"room-config-unknow-fields-box"`
 
 	roomMaxHistoryFetch *roomConfigComboEntry
@@ -40,7 +40,7 @@ func (c *mucRoomConfigComponent) newRoomConfigOthersPage() mucRoomConfigPage {
 func (p *roomConfigOthersPage) initDefaultValues() {
 	p.roomMaxHistoryFetch.updateOptions(p.form.MaxHistoryFetch.Options())
 	p.roomMaxOccupants.updateOptions(p.form.MaxOccupantsNumber.Options())
-	p.roomEnableLoggin.SetActive(p.form.Logged)
+	p.roomEnableLogging.SetActive(p.form.Logged)
 
 	for _, f := range p.form.UnknowFields {
 		field, err := roomConfigFormFieldFactory(f)
@@ -78,7 +78,7 @@ func (p *roomConfigOthersPage) showValidationErrors() {
 func (p *roomConfigOthersPage) collectData() {
 	p.form.MaxHistoryFetch.UpdateValue(p.roomMaxHistoryFetch.currentValue())
 	p.form.MaxOccupantsNumber.UpdateValue(p.roomMaxOccupants.currentValue())
-	p.form.Logged = p.roomEnableLoggin.GetActive()
+	p.form.Logged = p.roomEnableLogging.GetActive()
 
 	for _, f := range p.fields {
 		p.form.UpdateFieldValueByName(f.fieldName(), f.fieldValue())

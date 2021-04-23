@@ -54,21 +54,21 @@ func (p *roomConfigOthersPage) initDefaultValues() {
 	}
 }
 
-// isNotValid MUST be called from the UI thread
-func (p *roomConfigOthersPage) isNotValid() bool {
-	return p.roomMaxHistoryFetch.isNotValid() || p.roomMaxOccupants.isNotValid()
+// isInvalid MUST be called from the UI thread
+func (p *roomConfigOthersPage) isInvalid() bool {
+	return p.roomMaxHistoryFetch.isInvalid() || p.roomMaxOccupants.isInvalid()
 }
 
 // showValidationErrors MUST be called from the UI thread
 func (p *roomConfigOthersPage) showValidationErrors() {
 	p.clearErrors()
 
-	if p.roomMaxHistoryFetch.isNotValid() {
+	if p.roomMaxHistoryFetch.isInvalid() {
 		p.roomMaxHistoryFetch.focus()
 		return
 	}
 
-	if p.roomMaxOccupants.isNotValid() {
+	if p.roomMaxOccupants.isInvalid() {
 		p.roomMaxOccupants.focus()
 		return
 	}
@@ -144,8 +144,8 @@ func (cc *roomConfigComboEntry) updateOptions(options []string) {
 	}
 }
 
-// isNotValid MUST be called from the UI thread
-func (cc *roomConfigComboEntry) isNotValid() bool {
+// isInvalid MUST be called from the UI thread
+func (cc *roomConfigComboEntry) isInvalid() bool {
 	ct := getEntryText(cc.entry)
 	if ct != "" {
 		_, err := strconv.Atoi(cc.currentValue())

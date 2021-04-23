@@ -42,7 +42,7 @@ func (p *roomConfigAccessPage) collectData() {
 	p.form.OccupantsCanInvite = getSwitchActive(p.roomAllowInvites)
 }
 
-func (p *roomConfigAccessPage) isNotValid() bool {
+func (p *roomConfigAccessPage) isInvalid() bool {
 	return !p.roomPassword.passwordsMatch()
 }
 

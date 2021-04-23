@@ -159,7 +159,7 @@ func (rc *roomConfigAssistant) updateAssistantPage(indexPage int) {
 // canChangePage MUST be called from the UI thread
 func (rc *roomConfigAssistant) canChangePage() bool {
 	previousPage := rc.pageByIndex(rc.currentPageIndex)
-	if previousPage.isNotValid() {
+	if previousPage.isInvalid() {
 		rc.assistant.SetCurrentPage(rc.currentPageIndex)
 		rc.currentPage.showValidationErrors()
 		return false

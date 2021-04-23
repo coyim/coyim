@@ -250,7 +250,7 @@ func (la *mucRoomConfigListAddComponent) isFormValid(form *roomConfigListForm) (
 		return false, errEmptyMemberIdentifier
 	}
 
-	if !jid.Parse(form.jid()).Valid() {
+	if !jid.ValidJID(form.jid()) {
 		return false, errInvalidMemberIdentifier
 	}
 

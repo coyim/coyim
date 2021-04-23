@@ -16,13 +16,14 @@
             <property name="visible">True</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkSeparator">
+              <object class="GtkBox" id="notifications-box">
                 <property name="visible">True</property>
+                <property name="orientation">vertical</property>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">0</property>
               </packing>
             </child>
             <child>
@@ -45,6 +46,7 @@
                                 <property name="visible">True</property>
                                 <property name="search_column">0</property>
                                 <property name="show_expanders">False</property>
+                                <property name="enable_grid_lines">horizontal</property>
                                 <property name="enable_tree_lines">True</property>
                                 <property name="tooltip_column">2</property>
                                 <child internal-child="selection">
@@ -448,7 +450,6 @@
                     <property name="sensitive">False</property>
                     <property name="receives_default">True</property>
                     <property name="tooltip_text" translatable="yes">Remove</property>
-                    <signal name="clicked" handler="on_remove_item" swapped="no"/>
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
@@ -484,36 +485,59 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButtonBox">
+              <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="spacing">12</property>
-                <property name="layout_style">start</property>
                 <child>
-                  <object class="GtkButton">
-                    <property name="label" translatable="yes">Cancel</property>
+                  <object class="GtkButtonBox">
                     <property name="visible">True</property>
-                    <property name="receives_default">True</property>
-                    <signal name="clicked" handler="on_cancel_clicked" swapped="no"/>
+                    <property name="spacing">12</property>
+                    <property name="layout_style">start</property>
+                    <child>
+                      <object class="GtkButton">
+                        <property name="label" translatable="yes">Cancel</property>
+                        <property name="visible">True</property>
+                        <property name="receives_default">True</property>
+                        <signal name="clicked" handler="on_cancel_clicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="ban-list-apply-changes-button">
+                        <property name="label" translatable="yes">Apply changes</property>
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="receives_default">True</property>
+                        <property name="use_underline">True</property>
+                        <signal name="clicked" handler="on_apply_clicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">1</property>
+                        <property name="non_homogeneous">True</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
+                    <property name="expand">False</property>
                     <property name="fill">True</property>
+                    <property name="pack_type">end</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="ban-list-apply-changes-button">
-                    <property name="label" translatable="yes">Save changes</property>
+                  <object class="GtkBox" id="spinner-box">
                     <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_underline">True</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="fill">False</property>
+                    <property name="fill">True</property>
                     <property name="position">1</property>
-                    <property name="non_homogeneous">True</property>
                   </packing>
                 </child>
               </object>

@@ -123,8 +123,8 @@ func (s *session) HasRoom(roomID jid.Bare, wantRoomInfo chan<- *muc.RoomListing)
 	return c.resultChannel, c.errorChannel
 }
 
-// RequestRoomDiscoInfo will load the given room configuration (RoomListing)
-func (s *session) RequestRoomDiscoInfo(roomID jid.Bare) {
+// GetRoomInformation will load the given room configuration (RoomListing)
+func (s *session) GetRoomInformation(roomID jid.Bare) {
 	s.muc.requestRoomDiscoInfo(roomID)
 }
 

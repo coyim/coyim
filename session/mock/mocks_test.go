@@ -71,7 +71,7 @@ func (s *MockSuite) Test_SessionMock(c *C) {
 
 	_, _ = sm.HasRoom(nil, nil)
 	sm.GetRoomListing(nil, nil)
-	sm.RequestRoomDiscoInfo(nil)
+	sm.GetRoomInformation(nil)
 	_, _, _ = sm.GetRooms(jid.NewDomain(""), "")
 
 	c.Assert(sm.JoinRoom(nil, "", ""), IsNil)

@@ -65,7 +65,7 @@ type Rooms interface {
 	CancelRoomConfiguration(jid.Bare) <-chan error
 	GetChatServices(jid.Domain) (<-chan jid.Domain, <-chan error, func())
 	GetRoomListing(jid.Bare, chan<- *muc.RoomListing)
-	RequestRoomDiscoInfo(jid.Bare)
+	GetRoomInformation(jid.Bare)
 	LeaveRoom(room jid.Bare, nickname string) (<-chan bool, <-chan error)
 	DestroyRoom(room jid.Bare, reason string, alternativeRoom jid.Bare, password string) (<-chan bool, <-chan error)
 	UpdateOccupantAffiliation(roomID jid.Bare, occupantNickname string, occupantRealJID jid.Full, affiliation mdata.Affiliation, reason string) (<-chan bool, <-chan error)

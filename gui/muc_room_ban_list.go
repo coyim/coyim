@@ -132,12 +132,6 @@ func (bl *roomBanListView) addListItem(itm *muc.RoomBanListItem) gtki.TreeIter {
 	return iter
 }
 
-// show MUST be called from the UI thread
-func (bl *roomBanListView) show() {
-	bl.refreshBanList()
-	bl.dialog.Show()
-}
-
 // refreshBanList MUST be called from the UI thread
 func (bl *roomBanListView) refreshBanList() {
 	bl.listModel.Clear()
@@ -324,7 +318,7 @@ func (bl *roomBanListView) getSeledtedRows() []gtki.TreePath {
 // onCancel MUST be called from the UI thread
 func (bl *roomBanListView) onCancel() {
 	go bl.cancelActiveRequestListening()
-	bl.dialog.Destroy()
+	bl.close()
 }
 
 // disableButtonsAndInteractions MUST be called from the UI thread
@@ -404,6 +398,17 @@ func (bl *roomBanListView) columnStringValueFromListModelIter(iter gtki.TreeIter
 	s, _ := v.GetString()
 
 	return s
+}
+
+// show MUST be called from the UI thread
+func (bl *roomBanListView) show() {
+	bl.refreshBanList()
+	bl.dialog.Show()
+}
+
+// close MUST be called from the UI thread
+func (bl *roomBanListView) close() {
+	bl.dialog.Destroy()
 }
 
 func affiliationFromKnowString(a string) data.Affiliation {

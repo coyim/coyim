@@ -362,17 +362,14 @@ func (bl *roomBanListView) enableApplyIfConditionsAreMet() {
 
 // isTheListUpdated MUST be called from the UI thread
 func (bl *roomBanListView) isTheListUpdated() bool {
-	currentList := bl.listFromModel()
+	currentList := bl.currentListFromModel()
 
 	if len(currentList) != len(bl.originalBanList) {
 		return true
 	}
 
 	for idx, itm := range bl.originalBanList {
-		currentItm := currentList[idx]
-		if currentItm.Jid.String() != itm.Jid.String() ||
-			currentItm.Affiliation.IsDifferentFrom(itm.Affiliation) ||
-			currentItm.Reason != itm.Reason {
+		if banListItemsAreDifferent(currentList[idx], itm) {
 			return true
 		}
 	}
@@ -382,7 +379,7 @@ func (bl *roomBanListView) isTheListUpdated() bool {
 
 // isTheListValid MUST be called from the UI thread
 func (bl *roomBanListView) isTheListValid() bool {
-	for _, itm := range bl.listFromModel() {
+	for _, itm := range bl.currentListFromModel() {
 		if itm.Jid.String() == "" {
 			return false
 		}
@@ -390,8 +387,8 @@ func (bl *roomBanListView) isTheListValid() bool {
 	return true
 }
 
-// listFromModel MUST be called from the UI thread
-func (bl *roomBanListView) listFromModel() []*muc.RoomBanListItem {
+// currentListFromModel MUST be called from the UI thread
+func (bl *roomBanListView) currentListFromModel() []*muc.RoomBanListItem {
 	list := []*muc.RoomBanListItem{}
 
 	iter, ok := bl.listModel.GetIterFirst()
@@ -434,4 +431,10 @@ func (bl *roomBanListView) close() {
 func affiliationFromKnowString(a string) data.Affiliation {
 	affiliation, _ := data.AffiliationFromString(a)
 	return affiliation
+}
+
+func banListItemsAreDifferent(itm1, itm2 *muc.RoomBanListItem) bool {
+	return itm1.Jid.String() != itm2.Jid.String() ||
+		itm1.Affiliation.IsDifferentFrom(itm2.Affiliation) ||
+		itm1.Reason != itm2.Reason
 }

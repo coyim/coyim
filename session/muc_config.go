@@ -6,11 +6,12 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-var roomConfigUpdateCallers map[int]func(jid.Bare)
+func (m *mucManager) handlersForRoomConfigurationChanges() map[int]func(jid.Bare) {
+	m.roomConfigChangesHandlersLock.Lock()
+	defer m.roomConfigChangesHandlersLock.Unlock()
 
-func (m *mucManager) roomConfigUpdateCallers() map[int]func(jid.Bare) {
-	if len(roomConfigUpdateCallers) == 0 {
-		roomConfigUpdateCallers = map[int]func(jid.Bare){
+	if len(m.roomConfigChangesHandlers) == 0 {
+		m.roomConfigChangesHandlers = map[int]func(jid.Bare){
 			MUCStatusRoomLoggingEnabled:  m.handleLoggingEnabled,
 			MUCStatusRoomLoggingDisabled: m.handleLoggingDisabled,
 			MUCStatusRoomNonAnonymous:    m.nonAnonymousRoom,
@@ -19,7 +20,7 @@ func (m *mucManager) roomConfigUpdateCallers() map[int]func(jid.Bare) {
 		}
 	}
 
-	return roomConfigUpdateCallers
+	return m.roomConfigChangesHandlers
 }
 
 func (m *mucManager) handleRoomConfigUpdate(stanza *xmppData.ClientMessage) {
@@ -27,7 +28,7 @@ func (m *mucManager) handleRoomConfigUpdate(stanza *xmppData.ClientMessage) {
 
 	status := mucUserStatuses(stanza.MUCUser.Status)
 
-	for s, f := range m.roomConfigUpdateCallers() {
+	for s, f := range m.handlersForRoomConfigurationChanges() {
 		if status.contains(s) {
 			f(roomID)
 		}

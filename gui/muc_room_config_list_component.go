@@ -76,7 +76,7 @@ func (cl *mucRoomConfigListComponent) onRemoveClicked() {
 		if iter, err := cl.listModel.GetIter(selectedRows[currentIndex]); err == nil {
 			cl.listModel.Remove(iter)
 		}
-		currentIndex -= 1
+		currentIndex--
 	}
 
 	if _, ok := cl.listModel.GetIterFirst(); !ok {

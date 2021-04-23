@@ -450,6 +450,7 @@
                     <property name="sensitive">False</property>
                     <property name="receives_default">True</property>
                     <property name="tooltip_text" translatable="yes">Remove</property>
+                    <signal name="clicked" handler="on_remove_item" swapped="no"/>
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>

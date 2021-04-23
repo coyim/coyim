@@ -112,9 +112,13 @@ func (c *createMUCReservedRoomContext) getConfigFormFromStanza(stanza data.Stanz
 	return muc.NewRoomConfigForm(cf.Form), nil
 }
 
-func (c *createMUCReservedRoomContext) getConfigFormFromIQResponse(iq *data.ClientIQ) (cf *data.MUCRoomConfiguration, err error) {
-	err = xml.Unmarshal(iq.Query, &cf)
-	return
+func (c *createMUCReservedRoomContext) getConfigFormFromIQResponse(iq *data.ClientIQ) (*data.MUCRoomConfiguration, error) {
+	cf := &data.MUCRoomConfiguration{}
+	err := xml.Unmarshal(iq.Query, cf)
+	if err != nil {
+		return nil, err
+	}
+	return cf, nil
 }
 
 type createMUCRoomContext struct {

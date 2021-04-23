@@ -75,3 +75,52 @@ func newRoomBanListRequestQuery() xmppData.MUCRoomBanListRequestQuery {
 		},
 	}
 }
+
+// ModifyRoomBanList modifies the ban list for the given room with the changed items
+func (s *session) ModifyRoomBanList(roomID jid.Bare, changedItems []*muc.RoomBanListItem) (<-chan bool, <-chan error) {
+	rc := make(chan bool)
+	ec := make(chan error)
+
+	go func() {
+		err := s.muc.modifyRoomBanList(roomID, changedItems)
+		if err != nil {
+			s.muc.log.WithField("room", roomID).WithError(err).Error("The ban list of the room, can't be updated")
+			ec <- err
+		} else {
+			rc <- true
+		}
+	}()
+
+	return rc, ec
+}
+
+func (m *mucManager) modifyRoomBanList(roomID jid.Bare, items []*muc.RoomBanListItem) error {
+	stanza, _, err := m.conn().SendIQ(roomID.String(), "set", newRoomBanListSaveQuery(items))
+	if err != nil {
+		return err
+	}
+
+	iq := <-stanza
+
+	reply, ok := iq.Value.(*xmppData.ClientIQ)
+	if !ok || reply.Type != "result" {
+		return errors.New("the client iq reply is not the expected")
+	}
+
+	return nil
+}
+
+func newRoomBanListSaveQuery(items []*muc.RoomBanListItem) xmppData.MUCRoomBanListItems {
+	list := []xmppData.MUCItem{}
+	for _, itm := range items {
+		list = append(list, xmppData.MUCItem{
+			Jid:         itm.Jid.String(),
+			Affiliation: itm.Affiliation.Name(),
+			Reason:      itm.Reason,
+		})
+	}
+
+	return xmppData.MUCRoomBanListItems{
+		Items: list,
+	}
+}

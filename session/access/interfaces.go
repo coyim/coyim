@@ -73,6 +73,7 @@ type Rooms interface {
 	NewRoom(jid.Bare) *muc.Room
 	SendMUCMessage(to, from, body string) error
 	GetRoomBanList(jid.Bare) (<-chan []*muc.RoomBanListItem, <-chan error)
+	ModifyRoomBanList(jid.Bare, []*muc.RoomBanListItem) (<-chan bool, <-chan error)
 }
 
 // Connection contains the connection related functionality

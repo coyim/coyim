@@ -146,6 +146,11 @@ func (*SessionMock) GetRoomBanList(jid.Bare) (<-chan []*muc.RoomBanListItem, <-c
 	return nil, nil
 }
 
+// ModifyRoomBanList is the implementation for Session interface
+func (*SessionMock) ModifyRoomBanList(jid.Bare, []*muc.RoomBanListItem) (<-chan bool, <-chan error) {
+	return nil, nil
+}
+
 // SendPing is the implementation for Session interface
 func (*SessionMock) SendPing() {}
 

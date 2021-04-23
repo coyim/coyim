@@ -166,10 +166,7 @@ func (v *languageSelectorValues) add(langCode string, langDesc string, values ..
 }
 
 func (v *languageSelectorValues) sort() []*languageSelectorEntry {
-	copy := make([]*languageSelectorEntry, len(v.list))
-	for ix, e := range v.list {
-		copy[ix] = e
-	}
+	copy := append([]*languageSelectorEntry{}, v.list...)
 
 	sort.SliceStable(copy, func(i, j int) bool {
 		return v.collator.CompareString(copy[i].description, copy[j].description) == -1

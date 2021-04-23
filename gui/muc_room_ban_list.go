@@ -76,6 +76,7 @@ func (bl *roomBanListView) initBuilder() {
 		"on_add_item":                   bl.onAddNewItem,
 		"on_selection_changed":          bl.onSelectionChanged,
 		"on_remove_item":                bl.onRemoveItem,
+		"on_apply_clicked":              bl.onApplyChanges,
 		"on_cancel_clicked":             bl.onCancel,
 	})
 }
@@ -323,6 +324,41 @@ func (bl *roomBanListView) unselectSelectedRows() {
 // getSeledtedRows MUST be called from the UI thread
 func (bl *roomBanListView) getSeledtedRows() []gtki.TreePath {
 	return bl.listSelection.GetSelectedRows(bl.listModel)
+}
+
+// onApplyChanges MUST be called from the UI thread
+func (bl *roomBanListView) onApplyChanges() {
+	if !bl.isTheListUpdated() || !bl.isTheListValid() {
+		return
+	}
+
+	go bl.modifyBanList(bl.currentListFromModel())
+}
+
+// modifyBanList MUST NOT be called from the UI thread
+func (bl *roomBanListView) modifyBanList(changedItems []*muc.RoomBanListItem) {
+	bl.cancelChannel = make(chan bool)
+
+	doInUIThread(func() {
+		bl.disableButtonsAndInteractions()
+		bl.unselectSelectedRows()
+		bl.spinner.show()
+	})
+
+	rc, ec := bl.roomView.account.session.ModifyRoomBanList(bl.roomView.roomID(), changedItems)
+
+	select {
+	case <-rc:
+		doInUIThread(bl.close)
+	case err := <-ec:
+		bl.log.WithError(err).Error("Something happened when saving the room's ban list")
+		doInUIThread(func() {
+			bl.notifications.notifyOnError(i18n.Local("The ban list can't be updated. Please, try again."))
+			bl.enableButtonsAndInteractions()
+			bl.spinner.hide()
+		})
+	case <-bl.cancelChannel:
+	}
 }
 
 // onCancel MUST be called from the UI thread

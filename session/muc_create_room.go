@@ -3,7 +3,6 @@ package session
 import (
 	"encoding/xml"
 	"errors"
-	"fmt"
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc"
@@ -49,7 +48,7 @@ func (c *createMUCInstantRoomContext) createInstantRoom() (<-chan bool, <-chan e
 	go c.createRoom(c.sendIQForInstantRoom, func(stanza data.Stanza) error {
 		err := c.validateStanzaReceived(stanza)
 		if err != nil {
-			return newCreateRoomError("Invalid information query response", err)
+			return err
 		}
 		c.resultChannel <- true
 		return nil
@@ -85,7 +84,7 @@ func (c *createMUCReservedRoomContext) createReservedRoom() (<-chan *muc.RoomCon
 	go c.createRoom(c.sendIQForReservedRoom, func(stanza data.Stanza) error {
 		form, err := c.getConfigFormFromStanza(stanza)
 		if err != nil {
-			return newCreateRoomError("Invalid information query response", err)
+			return err
 		}
 		c.configFormChannel <- form
 		return nil
@@ -169,12 +168,7 @@ func (c *createMUCRoomContext) createRoom(sendIQ func() (<-chan data.Stanza, err
 
 	err = onStanzaReceived(stanza)
 	if err != nil {
-		switch e := err.(type) {
-		case *createRoomError:
-			c.error(e.err, e.message)
-		default:
-			c.error(err, "An error occurred when the stanza was received")
-		}
+		c.error(err, "An error occurred when the stanza was received")
 	}
 }
 
@@ -235,17 +229,4 @@ func (c *createMUCRoomContext) newRoomConfigurationFormSubmit() data.MUCRoomConf
 
 func (c *createMUCRoomContext) newRoomConfigurationFormRequest() data.MUCRoomConfiguration {
 	return data.MUCRoomConfiguration{}
-}
-
-type createRoomError struct {
-	message string
-	err     error
-}
-
-func newCreateRoomError(message string, err error) error {
-	return &createRoomError{message, err}
-}
-
-func (e *createRoomError) Error() string {
-	return fmt.Sprintf("%s: %s", e.message, e.err)
 }

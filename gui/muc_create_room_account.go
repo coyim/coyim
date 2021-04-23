@@ -31,23 +31,22 @@ func (a *account) createReservedRoom(roomID jid.Bare, onSuccess func(jid.Bare, *
 	}()
 }
 
-func (v *mucCreateRoomView) createReservedRoom(ca *account, roomID jid.Bare, onError func(error)) {
+func (v *mucCreateRoomView) createReservedRoom(ca *account, roomID jid.Bare, errHandler func(error)) {
 	onSuccess := func(roomID jid.Bare, cf *muc.RoomConfigForm) {
 		doInUIThread(func() {
 			v.onReserveRoomFinished(ca, roomID, cf)
 		})
 	}
 
-	onErrorFinal := onError
-	onError = func(err error) {
+	onError := func(err error) {
 		v.log(ca, roomID).WithError(err).Error("Something went wrong when trying to reserve the room")
-		onErrorFinal(errCreateRoomFailed)
+		errHandler(errCreateRoomFailed)
 	}
 
 	ca.createReservedRoom(roomID, onSuccess, onError)
 }
 
-func (v *mucCreateRoomView) createInstantRoom(ca *account, roomID jid.Bare, onError func(error)) {
+func (v *mucCreateRoomView) createInstantRoom(ca *account, roomID jid.Bare, errHandler func(error)) {
 	d := newCreateRoomData()
 	d.autoJoin = v.autoJoin
 
@@ -58,10 +57,9 @@ func (v *mucCreateRoomView) createInstantRoom(ca *account, roomID jid.Bare, onEr
 		})
 	}
 
-	onErrorFinal := onError
-	onError = func(err error) {
+	onError := func(err error) {
 		v.log(ca, roomID).WithError(err).Error("Something went wrong when trying to create the instant room")
-		onErrorFinal(errCreateRoomFailed)
+		errHandler(errCreateRoomFailed)
 	}
 
 	ca.createInstantRoom(roomID, onSuccess, onError)

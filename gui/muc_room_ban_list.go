@@ -22,6 +22,7 @@ const (
 	roomBanListAccountIndex int = iota
 	roomBanListAffiliationIndex
 	roomBanListReasonIndex
+	roomBanListAffiliationNameIndex
 )
 
 type roomBanListView struct {
@@ -99,6 +100,8 @@ func (bl *roomBanListView) initBanListModel() {
 		glibi.TYPE_STRING,
 		// the reason
 		glibi.TYPE_STRING,
+		// the affiliation name
+		glibi.TYPE_STRING,
 	)
 
 	bl.listModel = model
@@ -115,13 +118,16 @@ func (bl *roomBanListView) addListItem(itm *muc.RoomBanListItem) gtki.TreeIter {
 	}
 
 	affiliation := ""
+	affiliationName := data.AffiliationOutcast
 	if itm.Affiliation != nil {
 		affiliation = affiliationDisplayName(itm.Affiliation)
+		affiliationName = itm.Affiliation.Name()
 	}
 
 	bl.listModel.SetValue(iter, roomBanListAccountIndex, jid)
 	bl.listModel.SetValue(iter, roomBanListAffiliationIndex, affiliation)
 	bl.listModel.SetValue(iter, roomBanListReasonIndex, itm.Reason)
+	bl.listModel.SetValue(iter, roomBanListAffiliationNameIndex, affiliationName)
 
 	return iter
 }
@@ -377,7 +383,7 @@ func (bl *roomBanListView) listFromModel() []*muc.RoomBanListItem {
 	iter, ok := bl.listModel.GetIterFirst()
 	for ok {
 		account := bl.columnStringValueFromListModelIter(iter, roomBanListAccountIndex)
-		affiliation := bl.columnStringValueFromListModelIter(iter, roomBanListAffiliationIndex)
+		affiliation := bl.columnStringValueFromListModelIter(iter, roomBanListAffiliationNameIndex)
 		reason := bl.columnStringValueFromListModelIter(iter, roomBanListReasonIndex)
 
 		list = append(list, &muc.RoomBanListItem{

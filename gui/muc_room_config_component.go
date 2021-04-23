@@ -160,7 +160,6 @@ func configOptionToFriendlyMessage(o string) string {
 		return i18n.Local("50")
 	case muc.RoomConfigOption100:
 		return i18n.Local("100")
-	default:
-		return i18n.Localf("Unsupported \"%s\" option", o)
 	}
+	return i18n.Localf("Unsupported \"%s\" option", o)
 }

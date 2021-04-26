@@ -221,6 +221,22 @@ func (s *mucStylesProvider) setRoomDialogErrorComponentHeaderStyle(l gtki.Label)
 	})
 }
 
+func (s *mucStylesProvider) setRoomBanListViewStyles(b gtki.Box) {
+	s.setWidgetStyles(b, styles{
+		".state": style{
+			"background-color": "@theme_base_color",
+		},
+		".state-title": style{
+			"font-weight": "bold",
+			"font-size":   "large",
+		},
+		".state-description": style{
+			"font-style": "italic",
+			"color":      "@insensitive_fg_color",
+		},
+	})
+}
+
 func (s *mucStylesProvider) setWidgetStyles(w gtki.Widget, st styles) {
 	updateWithStyles(w, providerWithStyles(st))
 }

@@ -193,40 +193,34 @@ func (bl *roomBanListView) requestBanList() {
 
 		select {
 		case items := <-blc:
-			bl.onRequestFinish(items)
+			bl.originalBanList = items
+			doInUIThread(bl.onRequestFinish)
 		case err := <-ec:
-			bl.onRequestError(err)
+			bl.roomView.log.WithError(err).Error("Something happened when requesting the banned users list")
+			doInUIThread(bl.onRequestError)
 		case <-bl.cancelChannel:
 		}
 	}()
 }
 
-// onRequestFinish MUST NOT be called from the UI thread
-func (bl *roomBanListView) onRequestFinish(items []*muc.RoomBanListItem) {
-	if len(items) > 0 {
-		doInUIThread(func() {
-			for _, itm := range items {
-				_ = bl.addListItem(itm)
-			}
-		})
-	} else {
-		doInUIThread(bl.noEntriesView.Show)
+// onRequestFinish MUST be called from the UI thread
+func (bl *roomBanListView) onRequestFinish() {
+	if len(bl.originalBanList) == 0 {
+		bl.noEntriesView.Show()
 	}
 
-	bl.originalBanList = items
+	for _, itm := range bl.originalBanList {
+		_ = bl.addListItem(itm)
+	}
 
 	bl.hideLoadingAndShowListView()
 	bl.enableButtonsAndInteractions()
 }
 
-// onRequestError MUST NOT be called from the UI thread
-func (bl *roomBanListView) onRequestError(err error) {
-	bl.roomView.log.WithError(err).Error("Something happened when requesting the banned users list")
-
-	doInUIThread(func() {
-		bl.hideLoadingAndListViews()
-		bl.noEntriesErrorView.Show()
-	})
+// onRequestError MUST be called from the UI thread
+func (bl *roomBanListView) onRequestError() {
+	bl.hideLoadingAndListViews()
+	bl.noEntriesErrorView.Show()
 }
 
 // onUserJidEdited MUST be called from the UI thread
@@ -482,6 +476,8 @@ func affiliationFromKnowString(a string) data.Affiliation {
 }
 
 func banListItemsAreDifferent(itm1, itm2 *muc.RoomBanListItem) bool {
+	fmt.Println("ITEM 1:", itm1)
+	fmt.Println("ITEM 2:", itm2)
 	return itm1.Jid.String() != itm2.Jid.String() ||
 		itm1.Affiliation.IsDifferentFrom(itm2.Affiliation) ||
 		itm1.Reason != itm2.Reason

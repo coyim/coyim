@@ -28,10 +28,10 @@ func getDefaultJoinRoomData() roomViewDataProvider {
 // will be called from the lobby only when the user wants to "cancel" or "return"
 // might be useful in some scenarios like "returning to previous step".
 //
-// Please note that "returnTo" will be called from the UI thread too
-func (u *gtkUI) joinRoom(a *account, roomID jid.Bare, returnTo func()) {
+// Please note that "backToPreviousStep" will be called from the UI thread too
+func (u *gtkUI) joinRoom(a *account, roomID jid.Bare, backToPreviousStepProvider func()) {
 	rvd := newRoomViewData()
-	rvd.onReturn = returnTo
+	rvd.backToPreviousStep = backToPreviousStepProvider
 	u.joinRoomWithData(a, roomID, rvd)
 }
 
@@ -50,7 +50,7 @@ func (u *gtkUI) joinRoomWithData(a *account, roomID jid.Bare, d roomViewDataProv
 	if v.isSelfOccupantInTheRoom() {
 		v.switchToMainView()
 	} else {
-		v.returnTo = d.returnTo()
+		v.backToPreviousStep = d.backToPreviousStepProvider()
 		v.passwordProvider = d.passwordProvider
 		v.switchToLobbyView()
 	}

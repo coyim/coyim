@@ -134,14 +134,6 @@ func (l *roomViewLobby) finishJoinRequestWithError(err error) {
 	})
 }
 
-func (l *roomViewLobby) switchToReturnOnCancel() {
-	setFieldLabel(l.cancelButton, i18n.Local("Return"))
-}
-
-func (l *roomViewLobby) switchToCancel() {
-	setFieldLabel(l.cancelButton, i18n.Local("Cancel"))
-}
-
 func (l *roomViewLobby) show() {
 	l.content.Show()
 }

@@ -68,9 +68,9 @@ func (m *mucManager) requestRoomBanList(roomID jid.Bare) ([]xmppData.MUCItem, er
 	return list.Items, nil
 }
 
-func newRoomBanListRequestQuery() xmppData.MUCRoomBanListRequestQuery {
-	return xmppData.MUCRoomBanListRequestQuery{
-		Item: xmppData.MUCItem{
+func newRoomBanListRequestQuery() xmppData.MUCAdmin {
+	return xmppData.MUCAdmin{
+		Item: &xmppData.MUCItem{
 			Affiliation: data.AffiliationOutcast,
 		},
 	}

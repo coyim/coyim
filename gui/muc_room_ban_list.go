@@ -476,8 +476,6 @@ func affiliationFromKnowString(a string) data.Affiliation {
 }
 
 func banListItemsAreDifferent(itm1, itm2 *muc.RoomBanListItem) bool {
-	fmt.Println("ITEM 1:", itm1)
-	fmt.Println("ITEM 2:", itm2)
 	return itm1.Jid.String() != itm2.Jid.String() ||
 		itm1.Affiliation.IsDifferentFrom(itm2.Affiliation) ||
 		itm1.Reason != itm2.Reason

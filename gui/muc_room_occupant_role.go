@@ -41,6 +41,7 @@ func (r *roomViewRosterInfo) newOccupantRoleUpdateView(a *account, roomID jid.Ba
 
 	rv.initBuilder()
 	rv.initDefaults()
+	rv.initRadioButtonsValues()
 
 	return rv
 }
@@ -57,39 +58,13 @@ func (rv *occupantRoleUpdateView) initBuilder() {
 	})
 }
 
-// onRoleOptionChanged MUST be called from the UI thread
-func (rv *occupantRoleUpdateView) onRoleOptionChanged() {
-	rv.applyButton.SetSensitive(rv.occupant.Role.IsDifferentFrom(rv.getRoleBasedOnRadioSelected()))
-}
-
-func (rv *occupantRoleUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event) {
-	if isNormalEnter(g.gdk.EventKeyFrom(ev)) {
-		rv.onApply()
-	}
-}
-
 func (rv *occupantRoleUpdateView) initDefaults() {
 	rv.dialog.SetTransientFor(rv.rosterInfoView.parentWindow())
 
-	rv.roleLabel.SetText(rv.titleLabelText())
+	rv.roleLabel.SetText(rv.roleChangingLabelText())
 
 	mucStyles.setFormSectionLabelStyle(rv.roleLabel)
 	mucStyles.setHelpTextStyle(rv.contentBox)
-
-	rv.initRadioButtonsValues()
-}
-
-func (rv *occupantRoleUpdateView) titleLabelText() string {
-	switch {
-	case rv.occupant.Role.IsModerator():
-		return i18n.Localf("You are changing the role of %[1]s from moderator to:", rv.occupant.Nickname)
-	case rv.occupant.Role.IsParticipant():
-		return i18n.Localf("You are changing the role of %[1]s from participant to:", rv.occupant.Nickname)
-	case rv.occupant.Role.IsVisitor():
-		return i18n.Localf("You are changing the role of %[1]s from visitor to:", rv.occupant.Nickname)
-	default:
-		return i18n.Localf("You are changing the role of %[1]s to:", rv.occupant.Nickname)
-	}
 }
 
 // initRadioButtonsValues MUST be called from de UI thread
@@ -106,11 +81,28 @@ func (rv *occupantRoleUpdateView) initRadioButtonsValues() {
 
 // onApply MUST be called from the UI thread
 func (rv *occupantRoleUpdateView) onApply() {
-	go rv.rosterInfoView.updateOccupantRole(rv.occupant, rv.getRoleBasedOnRadioSelected(), getTextViewText(rv.reasonEntry))
+	role := rv.roleBasedOnSelectedRadio()
+	reason := getTextViewText(rv.reasonEntry)
+
+	go rv.rosterInfoView.updateOccupantRole(rv.occupant, role, reason)
+
 	rv.closeDialog()
 }
 
-func (rv *occupantRoleUpdateView) getRoleBasedOnRadioSelected() data.Role {
+// onKeyPress MUST be called from the UI thread
+func (rv *occupantRoleUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event) {
+	if isNormalEnter(g.gdk.EventKeyFrom(ev)) {
+		rv.onApply()
+	}
+}
+
+// onRoleOptionChanged MUST be called from the UI thread
+func (rv *occupantRoleUpdateView) onRoleOptionChanged() {
+	rv.applyButton.SetSensitive(rv.occupant.Role.IsDifferentFrom(rv.roleBasedOnSelectedRadio()))
+}
+
+// roleBasedOnSelectedRadio MUST be called from the UI thread
+func (rv *occupantRoleUpdateView) roleBasedOnSelectedRadio() data.Role {
 	switch {
 	case rv.moderatorRadio.GetActive():
 		return &data.ModeratorRole{}
@@ -122,12 +114,28 @@ func (rv *occupantRoleUpdateView) getRoleBasedOnRadioSelected() data.Role {
 	return &data.NoneRole{}
 }
 
-// close MUST be called from the UI thread
+// closeDialog MUST be called from the UI thread
 func (rv *occupantRoleUpdateView) closeDialog() {
 	rv.dialog.Destroy()
 }
 
-// show MUST be called from the UI thread
+// showDialog MUST be called from the UI thread
 func (rv *occupantRoleUpdateView) showDialog() {
 	rv.dialog.Show()
+}
+
+func (rv *occupantRoleUpdateView) roleChangingLabelText() string {
+	role := rv.occupant.Role
+	nickname := rv.occupant.Nickname
+
+	switch {
+	case role.IsModerator():
+		return i18n.Localf("You are changing the role of %s from moderator to:", nickname)
+	case role.IsParticipant():
+		return i18n.Localf("You are changing the role of %s from participant to:", nickname)
+	case role.IsVisitor():
+		return i18n.Localf("You are changing the role of %s from visitor to:", nickname)
+	}
+
+	return i18n.Localf("You are changing the role of %s to:", nickname)
 }

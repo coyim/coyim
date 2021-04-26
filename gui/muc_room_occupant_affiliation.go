@@ -45,6 +45,7 @@ func (r *roomViewRosterInfo) newOccupantAffiliationUpdateView(a *account, roomID
 
 	av.initBuilder()
 	av.initDefaults()
+	av.initRadioButtonsValues()
 
 	return av
 }
@@ -61,40 +62,13 @@ func (av *occupantAffiliationUpdateView) initBuilder() {
 	})
 }
 
-// onRadioButtonToggled MUST be called from the UI thread
-func (av *occupantAffiliationUpdateView) onRadioButtonToggled() {
-	s := av.occupant.Affiliation.IsDifferentFrom(av.getAffiliationBasedOnRadioSelected())
-	av.applyButton.SetSensitive(s)
-}
-
-func (av *occupantAffiliationUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event) {
-	if isNormalEnter(g.gdk.EventKeyFrom(ev)) {
-		av.onApply()
-	}
-}
-
 func (av *occupantAffiliationUpdateView) initDefaults() {
 	av.dialog.SetTransientFor(av.rosterInfoView.parentWindow())
 
-	av.titleLabel.SetText(av.titleLabelText())
+	av.titleLabel.SetText(av.affiliationChangingLabelText())
 
 	mucStyles.setFormSectionLabelStyle(av.titleLabel)
 	mucStyles.setHelpTextStyle(av.contentBox)
-
-	av.initRadioButtonsValues()
-}
-
-func (av *occupantAffiliationUpdateView) titleLabelText() string {
-	switch {
-	case av.occupant.Affiliation.IsOwner():
-		return i18n.Localf("You are changing the position of %s from owner to:", av.occupant.Nickname)
-	case av.occupant.Affiliation.IsAdmin():
-		return i18n.Localf("You are changing the position of %s from administrator to:", av.occupant.Nickname)
-	case av.occupant.Affiliation.IsMember():
-		return i18n.Localf("You are changing the position of %s from member to:", av.occupant.Nickname)
-	default:
-		return i18n.Localf("You are changing the position of %s to:", av.occupant.Nickname)
-	}
 }
 
 // initRadioButtonsValues MUST be called from UI thread
@@ -117,13 +91,31 @@ func (av *occupantAffiliationUpdateView) initRadioButtonsValues() {
 	}
 }
 
+// onKeyPress MUST be called from the UI thread
+func (av *occupantAffiliationUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event) {
+	if isNormalEnter(g.gdk.EventKeyFrom(ev)) {
+		av.onApply()
+	}
+}
+
+// onRadioButtonToggled MUST be called from the UI thread
+func (av *occupantAffiliationUpdateView) onRadioButtonToggled() {
+	s := av.occupant.Affiliation.IsDifferentFrom(av.affiliationBasedOnSelectedRadio())
+	av.applyButton.SetSensitive(s)
+}
+
 // onApply MUST be called from the UI thread
 func (av *occupantAffiliationUpdateView) onApply() {
-	go av.rosterInfoView.updateOccupantAffiliation(av.occupant, av.getAffiliationBasedOnRadioSelected(), getTextViewText(av.reasonEntry))
+	affiliation := av.affiliationBasedOnSelectedRadio()
+	reason := getTextViewText(av.reasonEntry)
+
+	go av.rosterInfoView.updateOccupantAffiliation(av.occupant, affiliation, reason)
+
 	av.closeDialog()
 }
 
-func (av *occupantAffiliationUpdateView) getAffiliationBasedOnRadioSelected() data.Affiliation {
+// affiliationBasedOnSelectedRadio MUST be called from the UI thread
+func (av *occupantAffiliationUpdateView) affiliationBasedOnSelectedRadio() data.Affiliation {
 	switch {
 	case av.ownerOption.GetActive():
 		return &data.OwnerAffiliation{}
@@ -131,19 +123,34 @@ func (av *occupantAffiliationUpdateView) getAffiliationBasedOnRadioSelected() da
 		return &data.AdminAffiliation{}
 	case av.memberOption.GetActive():
 		return &data.MemberAffiliation{}
-	default:
-		return &data.NoneAffiliation{}
 	}
+	return &data.NoneAffiliation{}
 }
 
-// show MUST be called from the UI thread
+// closeDialog MUST be called from the UI thread
+func (av *occupantAffiliationUpdateView) closeDialog() {
+	av.dialog.Destroy()
+}
+
+// showDialog MUST be called from the UI thread
 func (av *occupantAffiliationUpdateView) showDialog() {
 	av.dialog.Show()
 }
 
-// close MUST be called from the UI thread
-func (av *occupantAffiliationUpdateView) closeDialog() {
-	av.dialog.Destroy()
+func (av *occupantAffiliationUpdateView) affiliationChangingLabelText() string {
+	affiliation := av.occupant.Affiliation
+	nickname := av.occupant.Nickname
+
+	switch {
+	case affiliation.IsOwner():
+		return i18n.Localf("You are changing the position of %s from owner to:", nickname)
+	case affiliation.IsAdmin():
+		return i18n.Localf("You are changing the position of %s from administrator to:", nickname)
+	case affiliation.IsMember():
+		return i18n.Localf("You are changing the position of %s from member to:", nickname)
+	}
+
+	return i18n.Localf("You are changing the position of %s to:", nickname)
 }
 
 func occupantAffiliationName(a data.Affiliation) string {
@@ -158,10 +165,8 @@ func occupantAffiliationName(a data.Affiliation) string {
 		return i18n.Local("Outcast")
 	case *data.NoneAffiliation:
 		return i18n.Local("None")
-	default:
-		// This should not be possible but we need it to not complain with golang
-		return ""
 	}
+	return ""
 }
 
 func occupantRoleName(a data.Role) string {
@@ -174,16 +179,13 @@ func occupantRoleName(a data.Role) string {
 		return i18n.Local("Visitor")
 	case *data.NoneRole:
 		return i18n.Local("None")
-	default:
-		return ""
 	}
+	return ""
 }
 
 func affiliationUpdateErrorMessage(err error) string {
-	switch err {
-	case session.ErrUpdateOccupantResponse:
+	if err == session.ErrUpdateOccupantResponse {
 		return i18n.Local("We couldn't update the occupant affiliation because, either you don't have permission to do it or the server is busy. Please try again.")
-	default:
-		return i18n.Local("An error occurred when updating the occupant affiliation. Please try again.")
 	}
+	return i18n.Local("An error occurred when updating the occupant affiliation. Please try again.")
 }

@@ -29,6 +29,7 @@ type roomBanListView struct {
 	roomView *roomView
 
 	dialog             gtki.Window        `gtk-widget:"ban-list-window"`
+	view gtki.Box `gtk-widget:"ban-list-main"`
 	addEntryButton     gtki.Button        `gtk-widget:"ban-list-add-entry-button"`
 	removeEntryButton  gtki.Button        `gtk-widget:"ban-list-remove-entry-button"`
 	list               gtki.TreeView      `gtk-widget:"ban-list-treeview"`
@@ -83,6 +84,8 @@ func (bl *roomBanListView) initBuilder() {
 
 func (bl *roomBanListView) initDefaults() {
 	bl.dialog.SetTransientFor(bl.roomView.mainWindow())
+
+	mucStyles.setRoomBanListViewStyles(bl.view)
 
 	bl.notifications = bl.roomView.u.newNotificationsComponent()
 	bl.notificationsBox.Add(bl.notifications.box)

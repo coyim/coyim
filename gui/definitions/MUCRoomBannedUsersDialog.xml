@@ -8,7 +8,7 @@
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
     <child>
-      <object class="GtkBox">
+      <object class="GtkBox" id="ban-list-main">
         <property name="visible">True</property>
         <property name="orientation">vertical</property>
         <child>
@@ -32,7 +32,10 @@
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkOverlay" id="ban-list-content-overlay">
+                    <property name="width_request">600</property>
                     <property name="visible">True</property>
+                    <property name="hexpand">True</property>
+                    <property name="vexpand">True</property>
                     <child>
                       <object class="GtkOverlay" id="ban-list-overlay-view">
                         <property name="visible">True</property>
@@ -171,12 +174,13 @@
                         <property name="orientation">vertical</property>
                         <child>
                           <object class="GtkBox">
+                            <property name="width_request">450</property>
                             <property name="visible">True</property>
                             <property name="halign">center</property>
                             <property name="valign">center</property>
                             <property name="hexpand">True</property>
                             <property name="vexpand">True</property>
-                            <property name="border_width">12</property>
+                            <property name="border_width">32</property>
                             <property name="orientation">vertical</property>
                             <property name="spacing">12</property>
                             <child>
@@ -201,6 +205,9 @@
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="label" translatable="yes">There are no banned people in this room</property>
+                                    <style>
+                                      <class name="state-title"/>
+                                    </style>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -217,6 +224,9 @@
                                     <property name="track_visited_links">False</property>
                                     <property name="xalign">0.5</property>
                                     <property name="yalign">0.5</property>
+                                    <style>
+                                      <class name="state-description"/>
+                                    </style>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -263,6 +273,10 @@
                             <property name="position">0</property>
                           </packing>
                         </child>
+                        <style>
+                          <class name="state"/>
+                          <class name="state-empty"/>
+                        </style>
                       </object>
                       <packing>
                         <property name="index">1</property>
@@ -273,12 +287,13 @@
                         <property name="orientation">vertical</property>
                         <child>
                           <object class="GtkBox">
+                            <property name="width_request">450</property>
                             <property name="visible">True</property>
                             <property name="halign">center</property>
                             <property name="valign">center</property>
                             <property name="hexpand">True</property>
                             <property name="vexpand">True</property>
-                            <property name="border_width">12</property>
+                            <property name="border_width">32</property>
                             <property name="orientation">vertical</property>
                             <property name="spacing">12</property>
                             <child>
@@ -303,6 +318,9 @@
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="label" translatable="yes">Something happened when requesting the ban list</property>
+                                    <style>
+                                      <class name="state-title"/>
+                                    </style>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -319,6 +337,9 @@
                                     <property name="track_visited_links">False</property>
                                     <property name="xalign">0.5</property>
                                     <property name="yalign">0.5</property>
+                                    <style>
+                                      <class name="state-description"/>
+                                    </style>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -365,6 +386,10 @@
                             <property name="position">0</property>
                           </packing>
                         </child>
+                        <style>
+                          <class name="state"/>
+                          <class name="state-error"/>
+                        </style>
                       </object>
                       <packing>
                         <property name="index">2</property>

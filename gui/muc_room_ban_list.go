@@ -342,7 +342,16 @@ func (bl *roomBanListView) onApplyChanges() {
 		return
 	}
 
-	go bl.modifyBanList(bl.currentListFromModel())
+	currentModelList := bl.currentListFromModel()
+	modifiedList := currentModelList
+	for _, ci := range bl.originalBanList {
+		if !currentModelList.IncludesJid(ci.Jid.String()) {
+			ci.Affiliation = &data.NoneAffiliation{}
+			modifiedList = append(modifiedList, ci)
+		}
+	}
+
+	go bl.modifyBanList(modifiedList)
 }
 
 // modifyBanList MUST NOT be called from the UI thread
@@ -434,7 +443,7 @@ func (bl *roomBanListView) isTheListValid() bool {
 }
 
 // currentListFromModel MUST be called from the UI thread
-func (bl *roomBanListView) currentListFromModel() []*muc.RoomBanListItem {
+func (bl *roomBanListView) currentListFromModel() muc.RoomBanList {
 	list := []*muc.RoomBanListItem{}
 
 	iter, ok := bl.listModel.GetIterFirst()

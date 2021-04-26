@@ -43,7 +43,7 @@ type roomBanListView struct {
 	spinnerBox         gtki.Box           `gtk-widget:"spinner-box"`
 
 	listModel       gtki.ListStore
-	originalBanList []*muc.RoomBanListItem
+	originalBanList muc.RoomBanList
 	notifications   *notificationsComponent
 	spinner         *spinner
 	cancelChannel   chan bool
@@ -415,7 +415,7 @@ func (bl *roomBanListView) isTheListUpdated() bool {
 	}
 
 	for idx, itm := range bl.originalBanList {
-		if banListItemsAreDifferent(currentList[idx], itm) {
+		if itm.IsDifferentFrom(currentList[idx]) {
 			return true
 		}
 	}
@@ -477,10 +477,4 @@ func (bl *roomBanListView) close() {
 func affiliationFromKnowString(a string) data.Affiliation {
 	affiliation, _ := data.AffiliationFromString(a)
 	return affiliation
-}
-
-func banListItemsAreDifferent(itm1, itm2 *muc.RoomBanListItem) bool {
-	return itm1.Jid.String() != itm2.Jid.String() ||
-		itm1.Affiliation.IsDifferentFrom(itm2.Affiliation) ||
-		itm1.Reason != itm2.Reason
 }

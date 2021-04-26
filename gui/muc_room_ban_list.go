@@ -312,9 +312,13 @@ func (bl *roomBanListView) onSelectionChanged() {
 
 // onRemoveItem MUST be called from the UI thread
 func (bl *roomBanListView) onRemoveItem() {
-	for _, path := range bl.getSeledtedRows() {
-		iter, _ := bl.listModel.GetIter(path)
+	selectedRows := bl.getSeledtedRows()
+	idx := len(selectedRows) - 1
+
+	for idx >= 0 {
+		iter, _ := bl.listModel.GetIter(selectedRows[idx])
 		bl.listModel.Remove(iter)
+		idx--
 	}
 
 	bl.enableApplyIfConditionsAreMet()

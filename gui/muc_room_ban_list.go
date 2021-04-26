@@ -284,14 +284,26 @@ func (bl *roomBanListView) onAddNewItem() {
 	bl.listView.Show()
 	bl.noEntriesView.Hide()
 
-	iter := bl.addListItem(&muc.RoomBanListItem{
+	bl.unselectSelectedRows()
+	bl.listSelection.SelectIter(bl.getEmptyRowIter())
+	bl.enableApplyIfConditionsAreMet()
+}
+
+// getEmptyRowIter MUST be called from the UI thread
+func (bl *roomBanListView) getEmptyRowIter() gtki.TreeIter {
+	iter, ok := bl.listModel.GetIterFirst()
+	for ok {
+		account := bl.columnStringValueFromListModelIter(iter, roomBanListAccountIndex)
+		if account == "" {
+			return iter
+		}
+
+		ok = bl.listModel.IterNext(iter)
+	}
+
+	return bl.addListItem(&muc.RoomBanListItem{
 		Affiliation: affiliationFromKnowString(data.AffiliationOutcast),
 	})
-
-	bl.unselectSelectedRows()
-	bl.listSelection.SelectIter(iter)
-
-	bl.enableApplyIfConditionsAreMet()
 }
 
 // onSelectionChanged MUST be called from the UI thread

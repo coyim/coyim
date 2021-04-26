@@ -13,15 +13,6 @@ func (u *gtkUI) getOrCreateRoomView(a *account, roomID jid.Bare) *roomView {
 	return v
 }
 
-var defaultJoinRoomData roomViewDataProvider
-
-func getDefaultJoinRoomData() roomViewDataProvider {
-	if defaultJoinRoomData == nil {
-		defaultJoinRoomData = newRoomViewData()
-	}
-	return defaultJoinRoomData
-}
-
 // joinRoom MUST always be called from the UI thread
 //
 // Also, when we want to show a chat room, having a "return to" function that
@@ -37,7 +28,7 @@ func (u *gtkUI) joinRoom(a *account, roomID jid.Bare, backToPreviousStepProvider
 
 func (u *gtkUI) joinRoomWithData(a *account, roomID jid.Bare, d roomViewDataProvider) {
 	if d == nil {
-		d = getDefaultJoinRoomData()
+		d = newRoomViewData()
 	}
 
 	v := u.getOrCreateRoomView(a, roomID)

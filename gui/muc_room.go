@@ -12,20 +12,20 @@ import (
 
 type roomViewDataProvider interface {
 	passwordProvider() string
-	returnTo() func()
+	backToPreviousStepProvider() func()
 }
 
 type roomViewData struct {
-	passsword string
-	onReturn  func()
+	passsword          string
+	backToPreviousStep func()
 }
 
 func (rvd *roomViewData) passwordProvider() string {
 	return rvd.passsword
 }
 
-func (rvd *roomViewData) returnTo() func() {
-	return rvd.onReturn
+func (rvd *roomViewData) backToPreviousStepProvider() func() {
+	return rvd.backToPreviousStep
 }
 
 func newRoomViewData() *roomViewData {
@@ -41,9 +41,9 @@ type roomView struct {
 
 	cancel chan bool
 
-	opened           bool
-	passwordProvider func() string
-	returnTo         func()
+	opened             bool
+	passwordProvider   func() string
+	backToPreviousStep func()
 
 	window                 gtki.Window   `gtk-widget:"room-window"`
 	overlay                gtki.Overlay  `gtk-widget:"room-overlay"`
@@ -441,11 +441,11 @@ func (v *roomView) onOccupantRoleUpdateError(nickname string, newRole data.Role)
 func (v *roomView) switchToLobbyView() {
 	v.initRoomLobby()
 
-	if v.shouldReturnOnCancel() {
-		v.lobby.switchToReturnOnCancel()
-	} else {
-		v.lobby.switchToCancel()
+	l := i18n.Local("Cancel")
+	if v.backToPreviousStep != nil {
+		l = i18n.Local("Return")
 	}
+	setFieldLabel(v.lobby.cancelButton, l)
 
 	v.lobby.show()
 }
@@ -463,15 +463,11 @@ func (v *roomView) onJoined() {
 	})
 }
 
-func (v *roomView) shouldReturnOnCancel() bool {
-	return v.returnTo != nil
-}
-
 func (v *roomView) onJoinCancel() {
 	v.window.Destroy()
 
-	if v.shouldReturnOnCancel() {
-		v.returnTo()
+	if v.backToPreviousStep != nil {
+		v.backToPreviousStep()
 	}
 }
 

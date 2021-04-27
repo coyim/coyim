@@ -87,7 +87,7 @@ type RoomConfigForm struct {
 	Password                       string
 	Whois                          ConfigListSingleField
 
-	Fields []*RoomConfigFormField
+	Fields []HasRoomConfigFormField
 }
 
 // NewRoomConfigForm creates a new room configuration form instance
@@ -182,8 +182,8 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 
 	for _, f := range rcf.Fields {
 		formFields = append(formFields, xmppData.FormFieldX{
-			Var:    f.Name,
-			Values: f.GetValue(),
+			Var:    f.Name(),
+			Values: f.Value(),
 		})
 	}
 
@@ -273,7 +273,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 // UpdateFieldValueByName finds a field from the unknown fields list by their name and updates their value
 func (rcf *RoomConfigForm) UpdateFieldValueByName(name string, value interface{}) {
 	for _, field := range rcf.Fields {
-		if field.Name == name {
+		if field.Name() == name {
 			field.SetValue(value)
 			return
 		}
@@ -286,39 +286,34 @@ func (rcf *RoomConfigForm) setFieldX(field xmppData.FormFieldX) {
 	}
 }
 
-func roomConfigFormFieldFactory(field xmppData.FormFieldX) *RoomConfigFormField {
-	f := &RoomConfigFormField{
-		Name:        field.Var,
-		Type:        field.Type,
-		Label:       field.Label,
-		Description: field.Desc,
-	}
+func roomConfigFormFieldFactory(field xmppData.FormFieldX) HasRoomConfigFormField {
+	f := newRoomConfigFormField(field.Var, field.Type, field.Label, field.Desc)
 
 	switch field.Type {
 	case RoomConfigFieldText, RoomConfigFieldTextPrivate:
-		f.Value = formFieldSingleString(field.Values)
+		f.SetValue(formFieldSingleString(field.Values))
 
 	case RoomConfigFieldTextMulti:
-		f.Value = strings.Join(field.Values, "\n")
+		f.SetValue(strings.Join(field.Values, "\n"))
 
 	case RoomConfigFieldBoolean:
-		f.Value = formFieldBool(field.Values)
+		f.SetValue(formFieldBool(field.Values))
 
 	case RoomConfigFieldList:
 		ls := newConfigListSingleField(nil)
 		ls.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
-		f.Value = ls
+		f.SetValue(ls)
 
 	case RoomConfigFieldListMulti:
 		lm := newConfigListMultiField(nil)
 		lm.UpdateField(field.Values, formFieldOptionsValues(field.Options))
-		f.Value = lm
+		f.SetValue(lm)
 
 	case RoomConfigFieldJidMulti:
-		f.Value = formFieldJidList(field.Values)
+		f.SetValue(formFieldJidList(field.Values))
 
 	default:
-		f.Value = field.Values
+		f.SetValue(field.Values)
 	}
 
 	return f

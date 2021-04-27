@@ -6,48 +6,58 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-type roomConfigFormFieldList struct {
-	field *muc.RoomConfigFormField
+const (
+	roomConfigFieldListOptionValueIndex int = iota
+	roomConfigFieldListOptionLabelIndex
+)
 
-	widget       gtki.Box      `gtk-widget:"room-config-field-box"`
-	label        gtki.Label    `gtk-widget:"room-config-field-label"`
-	list         gtki.ComboBox `gtk-widget:"room-config-field-list"`
+type roomConfigFormFieldList struct {
+	*roomConfigFormField
+
+	list gtki.ComboBox `gtk-widget:"room-config-field-list"`
+
 	optionsModel gtki.ListStore
 	options      map[string]int
 }
 
-func newRoomConfigFormFieldList(field *muc.RoomConfigFormField) *roomConfigFormFieldList {
-	f := &roomConfigFormFieldList{field: field}
+func newRoomConfigFormFieldList(f muc.HasRoomConfigFormField) hasRoomConfigFormField {
+	field := &roomConfigFormFieldList{}
+	field.roomConfigFormField = newRoomConfigFormField(f, "MUCRoomConfigFormFieldList")
 
-	f.initBuilder()
-	f.initDefaults()
-	return f
+	panicOnDevError(field.builder.bindObjects(field))
+
+	field.optionsModel, _ = g.gtk.ListStoreNew(
+		// the option value
+		glibi.TYPE_STRING,
+		// the option display label
+		glibi.TYPE_STRING,
+	)
+
+	field.list.SetModel(field.optionsModel)
+
+	field.initOptions()
+
+	return field
 }
 
-func (f *roomConfigFormFieldList) initBuilder() {
-	builder := newBuilder("MUCRoomConfigFormFieldList")
-	panicOnDevError(builder.bindObjects(f))
+func (f *roomConfigFormFieldList) initOptions() {
+	f.options = map[string]int{}
 
-	f.optionsModel, _ = g.gtk.ListStoreNew(glibi.TYPE_STRING, glibi.TYPE_STRING)
-	f.list.SetModel(f.optionsModel)
-}
+	if list, ok := f.fieldValue().(muc.ConfigListSingleField); ok {
+		for index, o := range list.Options() {
+			iter := f.optionsModel.Append()
 
-func (f *roomConfigFormFieldList) initDefaults() {
-	f.optionsModel.Clear()
-	f.label.SetText(f.field.Label)
+			_ = f.optionsModel.SetValue(iter, roomConfigFieldListOptionValueIndex, o)
+			_ = f.optionsModel.SetValue(iter, roomConfigFieldListOptionLabelIndex, configOptionToFriendlyMessage(o))
 
-	f.options = make(map[string]int)
-	sf := f.field.Value.(muc.ConfigListSingleField)
-	for index, o := range sf.Options() {
-		iter := f.optionsModel.Append()
-		_ = f.optionsModel.SetValue(iter, configWhoisOptionValueIndex, o)
-		_ = f.optionsModel.SetValue(iter, configWhoisOptionLabelIndex, configOptionToFriendlyMessage(o))
-		f.options[o] = index
+			f.options[o] = index
+		}
+
+		f.activateOption(list.CurrentValue())
 	}
-
-	f.activateOption(sf.CurrentValue())
 }
 
+// activateOption MUST be called from the UI thread
 func (f *roomConfigFormFieldList) activateOption(o string) {
 	if index, ok := f.options[o]; ok {
 		f.list.SetActive(index)
@@ -55,18 +65,7 @@ func (f *roomConfigFormFieldList) activateOption(o string) {
 	}
 }
 
-func (f *roomConfigFormFieldList) fieldWidget() gtki.Widget {
-	return f.widget
-}
-
-func (f *roomConfigFormFieldList) fieldName() string {
-	return f.field.Name
-}
-
-func (f *roomConfigFormFieldList) fieldLabel() string {
-	return f.field.Label
-}
-
+// fieldValue MUST be called from the UI thread
 func (f *roomConfigFormFieldList) fieldValue() interface{} {
 	for o, index := range f.options {
 		if index == f.list.GetActive() {
@@ -75,5 +74,3 @@ func (f *roomConfigFormFieldList) fieldValue() interface{} {
 	}
 	return nil
 }
-
-func (f *roomConfigFormFieldList) refreshContent() {}

@@ -76,3 +76,7 @@ func (rn *roomNotifications) remove(nb *notificationBar) {
 func (rn *roomNotifications) notificationsBox() gtki.Widget {
 	return rn.notifications.contentBox()
 }
+
+func (rn *roomNotifications) clearAll() {
+	rn.notifications.clearAll()
+}

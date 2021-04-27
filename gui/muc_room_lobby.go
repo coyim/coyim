@@ -26,7 +26,7 @@ type roomViewLobby struct {
 	cancelButton     gtki.Button `gtk-widget:"cancel-button"`
 	notificationArea gtki.Box    `gtk-widget:"notifications-box"`
 
-	notifications  *notificationsComponent
+	notifications  *roomNotifications
 	loadingOverlay *roomViewLoadingOverlay
 
 	// These two methods WILL BE called from the UI thread
@@ -72,8 +72,7 @@ func (l *roomViewLobby) initBuilder() {
 }
 
 func (l *roomViewLobby) initDefaults(v *roomView) {
-	l.notifications = v.u.newNotificationsComponent()
-	l.notificationArea.Add(l.notifications.contentBox())
+	l.notifications = v.notifications
 
 	l.roomNameLabel.SetText(l.roomID.String())
 	l.content.SetHExpand(true)
@@ -160,7 +159,7 @@ func (l *roomViewLobby) isNotNicknameInConflictList() bool {
 }
 
 func (l *roomViewLobby) enableJoinIfConditionsAreMet() {
-	l.notifications.clearErrors()
+	l.notifications.clearAll()
 	setFieldSensitive(l.joinButton, l.checkJoinConditions())
 }
 
@@ -182,6 +181,7 @@ func (l *roomViewLobby) enableFieldsAndHideSpinner() {
 }
 
 func (l *roomViewLobby) onJoinRoom(done func()) {
+	l.notifications.clearAll()
 	nickname := getEntryText(l.nicknameEntry)
 	password := getEntryText(l.passwordEntry)
 

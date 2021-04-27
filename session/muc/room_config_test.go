@@ -253,10 +253,10 @@ func (*MucRoomConfigSuite) Test_roomConfigFormFieldFactory(c *C) {
 			Values: chk.value,
 		})
 
-		c.Assert(field.Name, Equals, chk.name)
-		c.Assert(field.Type, Equals, chk.tp)
-		c.Assert(field.Label, Equals, chk.label)
-		c.Assert(field.Value, DeepEquals, chk.expectedValue)
+		c.Assert(field.Name(), Equals, chk.name)
+		c.Assert(field.Type(), Equals, chk.tp)
+		c.Assert(field.Label(), Equals, chk.label)
+		c.Assert(field.Value(), DeepEquals, chk.expectedValue)
 	}
 }
 

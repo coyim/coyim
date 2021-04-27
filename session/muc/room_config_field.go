@@ -1,5 +1,11 @@
 package muc
 
+import (
+	"fmt"
+	"reflect"
+	"strconv"
+)
+
 // HasRoomConfigFormField represents a configuration form field
 type HasRoomConfigFormField interface {
 	Name() string
@@ -61,7 +67,31 @@ func (f *roomConfigFormField) Value() interface{} {
 
 // ValueX implements the HasRoomConfigFormField interface
 func (f *roomConfigFormField) ValueX() []string {
-	return []string{f.Value().(string)}
+	v := reflect.ValueOf(f.Value())
+
+	switch t := v.Kind(); t {
+	case reflect.String:
+		return []string{v.String()}
+	case reflect.Bool:
+		return []string{strconv.FormatBool(v.Bool())}
+	case reflect.Int, reflect.Int8, reflect.Int32, reflect.Int64:
+		return []string{strconv.FormatInt(v.Int(), 10)}
+	case reflect.Uint, reflect.Uint8, reflect.Uint32, reflect.Uint64:
+		return []string{strconv.FormatUint(v.Uint(), 10)}
+	case reflect.Slice:
+		values := []string{}
+		if list, ok := v.Interface().([]string); ok {
+			for _, itm := range list {
+				values = append(values, string(itm))
+			}
+		}
+		return values
+	default:
+		fmt.Printf("DON'T KNOW ABOUT TYPE: %d\n", t)
+
+	}
+
+	return []string{}
 }
 
 // SetValue implements the HasRoomConfigFormField interface

@@ -42,7 +42,7 @@ func (p *roomConfigOthersPage) initDefaultValues() {
 	p.roomMaxOccupants.updateOptions(p.form.MaxOccupantsNumber.Options())
 	p.roomEnableLogging.SetActive(p.form.Logged)
 
-	for _, f := range p.form.UnknowFields {
+	for _, f := range p.form.Fields {
 		field, err := roomConfigFormFieldFactory(f)
 		if err != nil {
 			p.log.WithField("field", f.Name).WithError(err).Error("Room configuration form field not supported")

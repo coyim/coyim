@@ -61,7 +61,7 @@ type RoomConfigForm struct {
 	Password                       string
 	Whois                          ConfigListSingleField
 
-	UnknowFields []*RoomConfigFormField
+	Fields []*RoomConfigFormField
 }
 
 // NewRoomConfigForm creates a new room configuration form instance
@@ -154,7 +154,7 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 		})
 	}
 
-	for _, f := range rcf.UnknowFields {
+	for _, f := range rcf.Fields {
 		formFields = append(formFields, xmppData.FormFieldX{
 			Var:    f.Name,
 			Values: f.GetValue(),
@@ -240,13 +240,13 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.Whois.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 
 	default:
-		rcf.setUnknowField(field)
+		rcf.setFieldX(field)
 	}
 }
 
 // UpdateFieldValueByName finds a field from the unknown fields list by their name and updates their value
 func (rcf *RoomConfigForm) UpdateFieldValueByName(name string, value interface{}) {
-	for _, field := range rcf.UnknowFields {
+	for _, field := range rcf.Fields {
 		if field.Name == name {
 			field.SetValue(value)
 			return
@@ -254,9 +254,9 @@ func (rcf *RoomConfigForm) UpdateFieldValueByName(name string, value interface{}
 	}
 }
 
-func (rcf *RoomConfigForm) setUnknowField(field xmppData.FormFieldX) {
+func (rcf *RoomConfigForm) setFieldX(field xmppData.FormFieldX) {
 	if field.Type != RoomConfigFieldHidden && field.Type != RoomConfigFieldFixed {
-		rcf.UnknowFields = append(rcf.UnknowFields, roomConfigFormFieldFactory(field))
+		rcf.Fields = append(rcf.Fields, roomConfigFormFieldFactory(field))
 	}
 }
 

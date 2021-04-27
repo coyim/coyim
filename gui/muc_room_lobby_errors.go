@@ -43,7 +43,7 @@ func (l *roomViewLobby) joinRequestErrorEvent(err error) {
 }
 
 func (l *roomViewLobby) nicknameConflictEvent(nickname string) {
-	l.joinRequestErrorEvent(newMUCRoomLobbyErr(nickname, errJoinNicknameConflict))
+	l.joinRequestErrorEvent(errJoinNicknameConflict)
 }
 
 func (l *roomViewLobby) registrationRequiredEvent() {

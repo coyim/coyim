@@ -4,6 +4,7 @@
     <property name="orientation">vertical</property>
     <child>
       <object class="GtkBox" id="notifications-box">
+        <property name="visible">True</property>
         <property name="orientation">vertical</property>
         <style>
           <class name="notifications"/>

@@ -6,8 +6,9 @@ type HasRoomConfigFormField interface {
 	Type() string
 	Label() string
 	Description() string
-	Value() []string
+	Value() interface{}
 	SetValue(interface{})
+	ValueX() []string
 }
 
 // HasRoomConfigFormFieldOptions represents a configuration form field that has options
@@ -54,8 +55,13 @@ func (f *roomConfigFormField) Description() string {
 }
 
 // Value implements the HasRoomConfigFormField interface
-func (f *roomConfigFormField) Value() []string {
-	return []string{f.value.(string)}
+func (f *roomConfigFormField) Value() interface{} {
+	return f.value
+}
+
+// ValueX implements the HasRoomConfigFormField interface
+func (f *roomConfigFormField) ValueX() []string {
+	return []string{f.Value().(string)}
 }
 
 // SetValue implements the HasRoomConfigFormField interface

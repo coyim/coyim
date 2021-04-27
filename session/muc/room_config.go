@@ -183,7 +183,7 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 	for _, f := range rcf.Fields {
 		formFields = append(formFields, xmppData.FormFieldX{
 			Var:    f.Name(),
-			Values: f.Value(),
+			Values: f.ValueX(),
 		})
 	}
 

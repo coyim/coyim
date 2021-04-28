@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	// ConfiFieldFormType represents the configuration form type field
-	ConfiFieldFormType = "http://jabber.org/protocol/muc#roomconfig"
+	// ConfigFieldFormType represents the configuration form type field
+	ConfigFieldFormType = "http://jabber.org/protocol/muc#roomconfig"
 	// ConfigFieldRoomName represents the room name form field
 	ConfigFieldRoomName = "muc#roomconfig_roomname"
 	// ConfigFieldRoomDescription represents the room description form field
@@ -148,7 +148,7 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 // https://xmpp.org/extensions/xep-0045.html#example-163
 func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 	fields := map[string][]string{
-		"FORM_TYPE":                     {ConfiFieldFormType},
+		"FORM_TYPE":                     {ConfigFieldFormType},
 		ConfigFieldRoomName:             {rcf.Title},
 		ConfigFieldRoomDescription:      {rcf.Description},
 		ConfigFieldEnableLogging:        {strconv.FormatBool(rcf.Logged)},

@@ -259,6 +259,17 @@ func (rc *roomConfigAssistant) allPagesBoxes() []gtki.Box {
 	}
 }
 
+func (rc *roomConfigAssistant) allPages() []mucRoomConfigPage {
+	return []mucRoomConfigPage{
+		rc.infoPage,
+		rc.accessPage,
+		rc.permissionsPage,
+		rc.occupantsPage,
+		rc.othersPage,
+		rc.summaryPage,
+	}
+}
+
 func (rc *roomConfigAssistant) pageByIndex(p int) mucRoomConfigPage {
 	switch p {
 	case roomConfigInformationPageIndex:

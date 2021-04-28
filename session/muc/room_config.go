@@ -192,6 +192,7 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 // SetFormFields extract the form fields and updates the room config form properties based on each data
 func (rcf *RoomConfigForm) SetFormFields(form *xmppData.Form) {
 	for _, field := range form.Fields {
+		rcf.fieldNames = append(rcf.fieldNames, field.Var)
 		rcf.setField(field)
 	}
 }

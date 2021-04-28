@@ -191,17 +191,22 @@ func getKnownLanguages() *languageSelectorValues {
 }
 
 func supportedLanguageDescription(langCode string) string {
-	systemLangNamer := systemLanguageNamer()
 	langTag := language.Make(langCode)
 
-	friendlyName := systemLangNamer.Name(langTag)
-	langName := display.Self.Name(langTag)
+	systemLangNamer := systemLanguageNamer()
+	systemLangName := systemLangNamer.Name(langTag)
+	systemLangTag := systemDefaultLanguage()
 
-	if langName != "" && !strings.Contains(friendlyName, langName) {
-		return i18n.Localf("%s (%s)", friendlyName, langName)
+	if languageCodeBasedOnTag(langTag) == languageCodeBasedOnTag(systemLangTag) {
+		return systemLangName
 	}
 
-	return friendlyName
+	return i18n.Localf("%s (%s)", systemLangName, display.Self.Name(langTag))
+}
+
+func languageCodeBasedOnTag(t language.Tag) string {
+	b, _ := t.Base()
+	return b.String()
 }
 
 func systemLanguageNamer() display.Namer {

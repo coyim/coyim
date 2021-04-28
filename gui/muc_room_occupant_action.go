@@ -95,7 +95,7 @@ func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant) *occupantActionVie
 
 		confirmationAction: func(reason string) {
 			r.updateOccupantRole(o, &data.NoneRole{}, reason)
-			r.hideRosterInfoPanel()
+			doInUIThread(r.hideRosterInfoPanel)
 		},
 	})
 
@@ -113,7 +113,7 @@ func (r *roomViewRoster) newBanOccupantView(o *muc.Occupant) *occupantActionView
 
 		confirmationAction: func(reason string) {
 			r.updateOccupantAffiliation(o, &data.OutcastAffiliation{}, reason)
-			r.hideRosterInfoPanel()
+			doInUIThread(r.hideRosterInfoPanel)
 		},
 	})
 

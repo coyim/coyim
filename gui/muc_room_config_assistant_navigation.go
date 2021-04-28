@@ -24,7 +24,7 @@ func (rc *roomConfigAssistant) newRoomConfigAssistantNavigation() *roomConfigAss
 }
 
 func (rcn *roomConfigAssistantNavigation) initBuilder() {
-	b := newBuilder("MUCRoomConfigAssistantSidebar")
+	b := newBuilder("MUCRoomConfigAssistantNavigation")
 	panicOnDevError(b.bindObjects(rcn))
 
 	b.ConnectSignals(map[string]interface{}{

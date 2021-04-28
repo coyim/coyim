@@ -632,3 +632,69 @@ func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_RoleVisitorAffiliationOwn
 		c.Assert(obtained, Equals, scenario.expected)
 	}
 }
+
+type canBanOccupantTest struct {
+	occupantAffiliation data.Affiliation
+	occupantRole        data.Role
+	expected            bool
+}
+
+func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_AffiliationOwner_CanBanOccupant(c *C) {
+	testCases := []canBanOccupantTest{
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, true},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, true},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, true},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, true},
+	}
+
+	actor := newTestOccupant(&data.OwnerAffiliation{}, &data.ModeratorRole{})
+	for _, scenario := range testCases {
+		obtained := actor.CanBanOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole))
+		c.Assert(obtained, Equals, scenario.expected)
+	}
+}
+
+func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_AffiliationAdmin_CanBanOccupant(c *C) {
+	testCases := []canBanOccupantTest{
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, true},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, true},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
+	}
+
+	actor := newTestOccupant(&data.AdminAffiliation{}, &data.ModeratorRole{})
+	for _, scenario := range testCases {
+		obtained := actor.CanBanOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole))
+		c.Assert(obtained, Equals, scenario.expected)
+	}
+}
+
+func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_AffiliationMember_CanBanOccupant(c *C) {
+	testCases := []canBanOccupantTest{
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
+	}
+
+	actor := newTestOccupant(&data.MemberAffiliation{}, &data.ModeratorRole{})
+	for _, scenario := range testCases {
+		obtained := actor.CanBanOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole))
+		c.Assert(obtained, Equals, scenario.expected)
+	}
+}
+
+func (*MucOccupantRoleAffiliationPrivilegesSuite) Test_AffiliationNone_CanBanOccupant(c *C) {
+	testCases := []canBanOccupantTest{
+		{&data.NoneAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.MemberAffiliation{}, &data.ParticipantRole{}, false},
+		{&data.AdminAffiliation{}, &data.ModeratorRole{}, false},
+		{&data.OwnerAffiliation{}, &data.ModeratorRole{}, false},
+	}
+
+	actor := newTestOccupant(&data.MemberAffiliation{}, &data.ModeratorRole{})
+	for _, scenario := range testCases {
+		obtained := actor.CanBanOccupant(newTestOccupant(scenario.occupantAffiliation, scenario.occupantRole))
+		c.Assert(obtained, Equals, scenario.expected)
+	}
+}

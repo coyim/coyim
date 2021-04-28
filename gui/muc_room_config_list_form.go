@@ -78,7 +78,7 @@ func (f *roomConfigListForm) isValid() (bool, error) {
 		return false, errRoomConfigListFormNotFilled
 	}
 
-	if !jid.Parse(f.jid()).Valid() {
+	if !jid.ValidJID(f.jid()) {
 		return false, errRoomConfigListFormInvalidJid
 	}
 

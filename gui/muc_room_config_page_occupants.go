@@ -7,11 +7,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const (
-	ownersListColumnJidIndex = 0
-	adminsListColumnJidIndex = 0
-)
-
 type roomConfigOccupantsPage struct {
 	*roomConfigPageBase
 
@@ -86,12 +81,14 @@ func (p *roomConfigOccupantsPage) initAdminsListController(parent gtki.Window) {
 	})
 }
 
+const occupantListJidColumnIndex = 0
+
 func (p *roomConfigOccupantsPage) onOwnerJidEdited(_ gtki.CellRendererText, path string, newValue string) {
-	p.updateOccupantListCellForString("owners", p.ownersListController, ownersListColumnJidIndex, path, newValue)
+	p.updateOccupantListCellForString("owners", p.ownersListController, occupantListJidColumnIndex, path, newValue)
 }
 
 func (p *roomConfigOccupantsPage) onAdminJidEdited(_ gtki.CellRendererText, path string, newValue string) {
-	p.updateOccupantListCellForString("admins", p.adminsListController, adminsListColumnJidIndex, path, newValue)
+	p.updateOccupantListCellForString("admins", p.adminsListController, occupantListJidColumnIndex, path, newValue)
 }
 
 func (p *roomConfigOccupantsPage) updateOccupantListCellForString(list string, controller *mucRoomConfigListController, column int, path string, newValue string) {

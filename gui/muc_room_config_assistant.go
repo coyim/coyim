@@ -16,8 +16,8 @@ type roomConfigAssistant struct {
 	account *account
 	roomID  jid.Bare
 
-	assistantSidebar    *roomConfigAssistantSidebar
 	roomConfigComponent *mucRoomConfigComponent
+	navigation          *roomConfigAssistantNavigation
 
 	autoJoin  bool
 	onSuccess func(autoJoin bool)
@@ -72,7 +72,7 @@ func (u *gtkUI) newRoomConfigAssistant(ca *account, roomID jid.Bare, form *muc.R
 	rc.initRoomConfigComponent(form)
 	rc.initRoomConfigPages()
 	rc.initDefaults()
-	rc.initSidebar()
+	rc.initSidebarNavigation()
 
 	return rc
 }
@@ -120,9 +120,9 @@ func (rc *roomConfigAssistant) initDefaults() {
 	}
 }
 
-func (rc *roomConfigAssistant) initSidebar() {
-	rc.assistantSidebar = rc.newRoomConfigAssistantSidebar()
-	setAssistantSidebarContent(rc.assistant, rc.assistantSidebar.box)
+func (rc *roomConfigAssistant) initSidebarNavigation() {
+	rc.navigation = rc.newRoomConfigAssistantNavigation()
+	setAssistantSidebarContent(rc.assistant, rc.navigation.content)
 }
 
 // refreshButtonLabels MUST be called from the UI thread
@@ -150,9 +150,9 @@ func (rc *roomConfigAssistant) updateAssistantPage(indexPage int) {
 	if rc.canChangePage() {
 		rc.pageByIndex(rc.currentPageIndex).collectData()
 		rc.updateContentPage(indexPage)
-		rc.assistantSidebar.selectOptionByIndex(indexPage)
+		rc.navigation.selectOptionByIndex(indexPage)
 	} else {
-		rc.assistantSidebar.selectOptionByIndex(rc.currentPageIndex)
+		rc.navigation.selectOptionByIndex(rc.currentPageIndex)
 	}
 }
 

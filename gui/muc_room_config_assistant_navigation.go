@@ -6,45 +6,45 @@ import (
 
 const noRowIndex = -1
 
-type roomConfigAssistantSidebar struct {
+type roomConfigAssistantNavigation struct {
 	assistant *roomConfigAssistant
 
-	box     gtki.Box     `gtk-widget:"assistant-options-content"`
-	listBox gtki.ListBox `gtk-widget:"assistant-options"`
+	content    gtki.Box     `gtk-widget:"room-config-assistant-navigation-content"`
+	navigation gtki.ListBox `gtk-widget:"room-config-assistant-navigation-list"`
 }
 
-func (rc *roomConfigAssistant) newRoomConfigAssistantSidebar() *roomConfigAssistantSidebar {
-	sb := &roomConfigAssistantSidebar{
+func (rc *roomConfigAssistant) newRoomConfigAssistantNavigation() *roomConfigAssistantNavigation {
+	rcn := &roomConfigAssistantNavigation{
 		assistant: rc,
 	}
 
-	sb.initBuilder()
+	rcn.initBuilder()
 
-	return sb
+	return rcn
 }
 
-func (sb *roomConfigAssistantSidebar) initBuilder() {
+func (rcn *roomConfigAssistantNavigation) initBuilder() {
 	b := newBuilder("MUCRoomConfigAssistantSidebar")
-	panicOnDevError(b.bindObjects(sb))
+	panicOnDevError(b.bindObjects(rcn))
 
 	b.ConnectSignals(map[string]interface{}{
-		"row_selected": sb.onRowSelected,
+		"row_selected": rcn.onRowSelected,
 	})
 }
 
 // onRowSelected MUST be called from the UI thread
-func (sb *roomConfigAssistantSidebar) onRowSelected(_ gtki.ListBox, r gtki.ListBoxRow) {
-	sb.assistant.updateAssistantPage(r.GetIndex())
+func (rcn *roomConfigAssistantNavigation) onRowSelected(_ gtki.ListBox, r gtki.ListBoxRow) {
+	rcn.assistant.updateAssistantPage(r.GetIndex())
 }
 
 // selectOptionByIndex MUST be called from the UI thread
-func (sb *roomConfigAssistantSidebar) selectOptionByIndex(idx int) {
-	row := sb.listBox.GetRowAtIndex(idx)
+func (rcn *roomConfigAssistantNavigation) selectOptionByIndex(idx int) {
+	row := rcn.navigation.GetRowAtIndex(idx)
 	rowIndex := getListBoxRowIndex(row)
-	currentRowIndex := getListBoxRowIndex(sb.listBox.GetSelectedRow())
+	currentRowIndex := getListBoxRowIndex(rcn.navigation.GetSelectedRow())
 
 	if rowIndex != noRowIndex && rowIndex != currentRowIndex {
-		sb.listBox.SelectRow(row)
+		rcn.navigation.SelectRow(row)
 	}
 }
 

@@ -1,0 +1,18 @@
+<interface>
+  <object class="GtkBox" id="room-config-assistant-navigation-content">
+    <property name="width_request">150</property>
+    <property name="orientation">vertical</property>
+    <child>
+      <object class="GtkListBox" id="room-config-assistant-navigation-list">
+        <property name="visible">True</property>
+        <property name="selection_mode">browse</property>
+        <signal name="row-selected" handler="row_selected" swapped="no"/>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+  </object>
+</interface>

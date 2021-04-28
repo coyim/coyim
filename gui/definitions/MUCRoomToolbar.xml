@@ -8,7 +8,7 @@
       </object>
     </child>
     <child>
-      <object class="GtkSeparatorMenuItem">
+      <object class="GtkSeparatorMenuItem" id="admin-action-separator">
         <property name="visible">True</property>
       </object>
     </child>

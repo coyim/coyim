@@ -12,17 +12,19 @@ const (
 )
 
 type roomViewToolbar struct {
-	view                   gtki.Box        `gtk-widget:"room-view-toolbar"`
-	roomNameLabel          gtki.Label      `gtk-widget:"room-name-label"`
-	roomStatusIcon         gtki.Image      `gtk-widget:"room-status-icon"`
-	roomMenuButton         gtki.MenuButton `gtk-widget:"room-menu-button"`
-	roomSubjectButton      gtki.Button     `gtk-widget:"room-subject-button"`
-	roomSubjectButtonImage gtki.Image      `gtk-widget:"room-subject-button-image"`
-	roomSubjectRevealer    gtki.Revealer   `gtk-widget:"room-subject-revealer"`
-	roomSubjectLabel       gtki.Label      `gtk-widget:"room-subject-label"`
-	roomMenu               gtki.Menu       `gtk-widget:"room-menu"`
-	leaveRoomMenuItem      gtki.MenuItem   `gtk-widget:"leave-room-menu-item"`
-	destroyRoomMenuItem    gtki.MenuItem   `gtk-widget:"destroy-room-menu-item"`
+	view                   gtki.Box               `gtk-widget:"room-view-toolbar"`
+	roomNameLabel          gtki.Label             `gtk-widget:"room-name-label"`
+	roomStatusIcon         gtki.Image             `gtk-widget:"room-status-icon"`
+	roomMenuButton         gtki.MenuButton        `gtk-widget:"room-menu-button"`
+	roomSubjectButton      gtki.Button            `gtk-widget:"room-subject-button"`
+	roomSubjectButtonImage gtki.Image             `gtk-widget:"room-subject-button-image"`
+	roomSubjectRevealer    gtki.Revealer          `gtk-widget:"room-subject-revealer"`
+	roomSubjectLabel       gtki.Label             `gtk-widget:"room-subject-label"`
+	roomMenu               gtki.Menu              `gtk-widget:"room-menu"`
+	modifyBanMenuItem      gtki.MenuItem          `gtk-widget:"modify-ban-list-menu-item"`
+	adminActionsSeparator  gtki.SeparatorMenuItem `gtk-widget:"admin-action-separator"`
+	leaveRoomMenuItem      gtki.MenuItem          `gtk-widget:"leave-room-menu-item"`
+	destroyRoomMenuItem    gtki.MenuItem          `gtk-widget:"destroy-room-menu-item"`
 }
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
@@ -69,11 +71,14 @@ func (t *roomViewToolbar) initSubscribers(v *roomView) {
 		case selfOccupantRemovedEvent:
 			t.selfOccupantRemovedEvent()
 		case occupantSelfJoinedEvent:
-			t.selfOccupantJoinedEvent(v.isSelfOccupantAnOwner())
+			t.selfOccupantJoinedEvent(v.room.SelfOccupant().Affiliation)
 		case selfOccupantRoleUpdatedEvent:
 			t.selfOccupantRoleUpdatedEvent(e.selfRoleUpdate.New)
 		case selfOccupantAffiliationUpdatedEvent:
 			t.selfOccupantAffiliationUpdatedEvent(e.selfAffiliationUpdate.New)
+		case selfOccupantAffiliationRoleUpdatedEvent:
+			t.selfOccupantRoleUpdatedEvent(e.selfAffiliationRoleUpdate.NewRole)
+			t.selfOccupantAffiliationUpdatedEvent(e.selfAffiliationRoleUpdate.NewAffiliation)
 		}
 	})
 }
@@ -99,13 +104,27 @@ func (t *roomViewToolbar) selfOccupantRoleUpdatedEvent(role data.Role) {
 }
 
 func (t *roomViewToolbar) selfOccupantAffiliationUpdatedEvent(affiliation data.Affiliation) {
+	doInUIThread(func() {
+		t.updateMenuActionsBasedOn(affiliation)
+	})
+
 	if affiliation.IsBanned() {
 		doInUIThread(t.disable)
 	}
 }
 
-func (t *roomViewToolbar) selfOccupantJoinedEvent(isOwner bool) {
-	t.destroyRoomMenuItem.SetVisible(isOwner)
+func (t *roomViewToolbar) selfOccupantJoinedEvent(affiliation data.Affiliation) {
+	doInUIThread(func() {
+		t.updateMenuActionsBasedOn(affiliation)
+	})
+}
+
+func (t *roomViewToolbar) updateMenuActionsBasedOn(affiliation data.Affiliation) {
+	t.destroyRoomMenuItem.SetVisible(affiliation.IsOwner())
+
+	showAdminActions := affiliation.IsOwner() || affiliation.IsAdmin()
+	t.modifyBanMenuItem.SetVisible(showAdminActions)
+	t.adminActionsSeparator.SetVisible(showAdminActions)
 }
 
 // disable MUST be called from UI Thread

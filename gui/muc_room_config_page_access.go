@@ -15,7 +15,7 @@ type roomConfigAccessPage struct {
 
 func (c *mucRoomConfigComponent) newRoomConfigAccessPage() mucRoomConfigPage {
 	p := &roomConfigAccessPage{}
-	p.roomConfigPageBase = c.newConfigPage("access", "MUCRoomConfigPageAccess", p, nil)
+	p.roomConfigPageBase = c.newConfigPage(pageConfigAccess, "MUCRoomConfigPageAccess", p, nil)
 
 	p.initPasswordComponent()
 	p.initDefaultValues()

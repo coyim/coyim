@@ -27,7 +27,7 @@ type roomConfigOthersPage struct {
 
 func (c *mucRoomConfigComponent) newRoomConfigOthersPage() mucRoomConfigPage {
 	p := &roomConfigOthersPage{}
-	p.roomConfigPageBase = c.newConfigPage("others", "MUCRoomConfigPageOthers", p, nil)
+	p.roomConfigPageBase = c.newConfigPage(pageConfigOthers, "MUCRoomConfigPageOthers", p, nil)
 
 	p.roomMaxHistoryFetch = newRoomConfigCombo(p.roomMaxHistoryFetchCombo, p.roomMaxHistoryFetchEntry)
 	p.roomMaxOccupants = newRoomConfigCombo(p.roomMaxOccupantsCombo, p.roomMaxOccupantsEntry)

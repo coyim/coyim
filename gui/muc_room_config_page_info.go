@@ -19,7 +19,7 @@ type roomConfigInfoPage struct {
 
 func (c *mucRoomConfigComponent) newRoomConfigInfoPage() mucRoomConfigPage {
 	p := &roomConfigInfoPage{}
-	p.roomConfigPageBase = c.newConfigPage("info", "MUCRoomConfigPageInfo", p, nil)
+	p.roomConfigPageBase = c.newConfigPage(pageConfigInfo, "MUCRoomConfigPageInfo", p, nil)
 
 	p.roomDescriptionBuffer, _ = g.gtk.TextBufferNew(nil)
 	p.roomDescription.SetBuffer(p.roomDescriptionBuffer)

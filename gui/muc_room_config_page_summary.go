@@ -52,7 +52,7 @@ type roomConfigSummaryPage struct {
 func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
 	p := &roomConfigSummaryPage{autoJoin: c.autoJoin}
 
-	p.roomConfigPageBase = c.newConfigPage("summary", "MUCRoomConfigPageSummary", p, map[string]interface{}{
+	p.roomConfigPageBase = c.newConfigPage(pageConfigSummary, "MUCRoomConfigPageSummary", p, map[string]interface{}{
 		"on_autojoin_toggled": func() {
 			c.updateAutoJoin(p.autojoinCheckButton.GetActive())
 		},

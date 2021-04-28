@@ -34,7 +34,7 @@ type roomConfigOccupantsPage struct {
 
 func (c *mucRoomConfigComponent) newRoomConfigOccupantsPage(parent gtki.Window) mucRoomConfigPage {
 	p := &roomConfigOccupantsPage{}
-	p.roomConfigPageBase = c.newConfigPage("occupants", "MUCRoomConfigPageOccupants", p, map[string]interface{}{
+	p.roomConfigPageBase = c.newConfigPage(pageConfigOccupants, "MUCRoomConfigPageOccupants", p, map[string]interface{}{
 		"on_owner_jid_edited": p.onOwnerJidEdited,
 		"on_admin_jid_edited": p.onAdminJidEdited,
 	})

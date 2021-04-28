@@ -22,6 +22,7 @@ const (
 
 type mucRoomConfigPage interface {
 	pageView() gtki.Overlay
+	pageTitle() string
 	isInvalid() bool
 	showValidationErrors()
 	collectData()
@@ -34,6 +35,8 @@ type mucRoomConfigPage interface {
 type roomConfigPageBase struct {
 	u    *gtkUI
 	form *muc.RoomConfigForm
+
+	title string
 
 	page              gtki.Overlay `gtk-widget:"room-config-page-overlay"`
 	content           gtki.Box     `gtk-widget:"room-config-page-content"`
@@ -49,6 +52,7 @@ type roomConfigPageBase struct {
 func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page interface{}, signals map[string]interface{}) *roomConfigPageBase {
 	p := &roomConfigPageBase{
 		u:              c.u,
+		title:          configPageDisplayTitle(pageID),
 		loadingOverlay: c.u.newLoadingOverlayComponent(),
 		doAfterRefresh: newCallbacksSet(),
 		form:           c.form,
@@ -85,6 +89,11 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page
 	mucStyles.setRoomConfigPageStyle(pageContent)
 
 	return p
+}
+
+// pageTitle implements the "mucRoomConfigPage" interface
+func (p *roomConfigPageBase) pageTitle() string {
+	return p.title
 }
 
 // pageView implements the "mucRoomConfigPage" interface

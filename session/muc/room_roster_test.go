@@ -353,3 +353,33 @@ func (s *MucSuite) Test_RoomRoster_GetOccupant(c *C) {
 	c.Assert(ok, Equals, true)
 	c.Assert(o, Equals, oo)
 }
+
+func (s *MucSuite) Test_RoomRoster_GetActorInformation(c *C) {
+	room := NewRoom(jid.ParseBare("testroom@foo.org"))
+
+	op := &OccupantPresenceInfo{
+		Nickname: "juan",
+		AffiliationRole: &OccupantAffiliationRole{
+			Actor:       "Alberto",
+			Affiliation: &data.MemberAffiliation{},
+			Role:        &data.ParticipantRole{},
+		},
+	}
+
+	c.Assert(op.GetActorInformation(room), IsNil)
+
+	actor := &OccupantPresenceInfo{
+		Nickname: "Alberto",
+		AffiliationRole: &OccupantAffiliationRole{
+			Affiliation: &data.MemberAffiliation{},
+			Role:        &data.ParticipantRole{},
+		},
+	}
+	c.Assert(room.Roster().UpdateOrAddOccupant(actor), Equals, false)
+
+	c.Assert(op.GetActorInformation(room), DeepEquals, &data.Actor{
+		Nickname:    "Alberto",
+		Affiliation: &data.MemberAffiliation{},
+		Role:        &data.ParticipantRole{},
+	})
+}

@@ -21,6 +21,18 @@ type OccupantPresenceInfo struct {
 	StatusMessage   string
 }
 
+// GetActorInformation obtains information related with actor who did some action
+func (op *OccupantPresenceInfo) GetActorInformation(room *Room) *data.Actor {
+	if actor, ok := room.Roster().GetOccupant(op.AffiliationRole.Actor); ok {
+		return &data.Actor{
+			Nickname:    op.AffiliationRole.Actor,
+			Affiliation: actor.Affiliation,
+			Role:        actor.Role,
+		}
+	}
+	return nil
+}
+
 // OccupantAffiliationRole contains information for the Presence Info received
 // when the occupant affialiation or role was updated
 type OccupantAffiliationRole struct {

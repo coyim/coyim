@@ -72,24 +72,12 @@ func (m *mucManager) occupantPresenceCurrentInfo(room *muc.Room, nickname string
 func (m *mucManager) newOccupantPresenceUpdateData(room *muc.Room, newOccupantInfo *muc.OccupantPresenceInfo) *occupantPresenceUpdateData {
 	currentOccupantInfo, _ := m.occupantPresenceCurrentInfo(room, newOccupantInfo.Nickname)
 
-	// Getting the actor affiliation and role
-	actorOccupant := &data.Actor{
-		Nickname: newOccupantInfo.AffiliationRole.Actor,
-	}
-
-	if actor, ok := room.Roster().GetOccupant(actorOccupant.Nickname); ok {
-		actorOccupant.Affiliation = actor.Affiliation
-		actorOccupant.Role = actor.Role
-	}
-
-	occupantUpdateInfo := &occupantPresenceUpdateData{
+	return &occupantPresenceUpdateData{
 		room,
 		currentOccupantInfo,
 		newOccupantInfo,
-		actorOccupant,
+		newOccupantInfo.GetActorInformation(room),
 	}
-
-	return occupantUpdateInfo
 }
 
 func (od *occupantPresenceUpdateData) previousAffiliation() data.Affiliation {

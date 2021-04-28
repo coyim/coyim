@@ -1,5 +1,5 @@
 <interface>
-  <object class="GtkListBoxRow" id="room-config-assistant-navigation-item-box">
+  <object class="GtkListBoxRow" id="room-config-assistant-navigation-item-row">
     <property name="visible">True</property>
     <property name="activatable">False</property>
     <child>

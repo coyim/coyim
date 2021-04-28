@@ -11,6 +11,8 @@ type roomConfigAssistantNavigation struct {
 
 	content    gtki.Box     `gtk-widget:"room-config-assistant-navigation-content"`
 	navigation gtki.ListBox `gtk-widget:"room-config-assistant-navigation-list"`
+
+	items []*roomConfigAssistantNavigationItem
 }
 
 func (rc *roomConfigAssistant) newRoomConfigAssistantNavigation() *roomConfigAssistantNavigation {
@@ -19,6 +21,7 @@ func (rc *roomConfigAssistant) newRoomConfigAssistantNavigation() *roomConfigAss
 	}
 
 	rcn.initBuilder()
+	rcn.initNavigationItems()
 
 	return rcn
 }
@@ -30,6 +33,14 @@ func (rcn *roomConfigAssistantNavigation) initBuilder() {
 	b.ConnectSignals(map[string]interface{}{
 		"row_selected": rcn.onRowSelected,
 	})
+}
+
+func (rcn *roomConfigAssistantNavigation) initNavigationItems() {
+	for _, p := range rcn.assistant.allPages() {
+		itm := newRoomConfigAssistantNavigationItem(p.pageTitle())
+		rcn.items = append(rcn.items, itm)
+		rcn.navigation.Add(itm.boxRow)
+	}
 }
 
 // onRowSelected MUST be called from the UI thread

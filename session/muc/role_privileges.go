@@ -177,3 +177,13 @@ func (o *Occupant) CanChangeOccupantVoice(oc *Occupant) bool {
 
 	return o.roleHasPrivilege(grantVoice)
 }
+
+// CanBanOccupant returns a boolean indicating if the occupant can ban another occupant
+// based on the occupant's affiliation
+func (o *Occupant) CanBanOccupant(oc *Occupant) bool {
+	if o.isOwner() {
+		return true
+	}
+
+	return o.CanBanMembersAndUnaffiliatedUsers() && !oc.isOwnerOrAdmin()
+}

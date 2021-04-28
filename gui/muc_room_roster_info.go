@@ -213,7 +213,7 @@ func (r *roomViewRosterInfo) refreshAdminToolsSection() {
 	canKick := r.selfOccupant.CanKickOccupant(r.occupant)
 	r.kickOccupantMenuItem.SetVisible(canKick)
 
-	canBan := r.selfOccupant.CanBanMembersAndUnaffiliatedUsers()
+	canBan := r.selfOccupant.CanBanOccupant(r.occupant)
 	r.banOccupantMenuItem.SetVisible(canBan)
 
 	r.occupantActionsMenuButton.SetSensitive(canKick || canBan)

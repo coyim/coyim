@@ -11,6 +11,15 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+const (
+	pageConfigAccess      = "access"
+	pageConfigInfo        = "info"
+	pageConfigOccupants   = "occupants"
+	pageConfigOthers      = "others"
+	pageConfigPermissions = "permissions"
+	pageConfigSummary     = "summary"
+)
+
 type mucRoomConfigPage interface {
 	pageView() gtki.Overlay
 	isInvalid() bool
@@ -132,4 +141,22 @@ func (p *roomConfigPageBase) showLoadingOverlay(m string) {
 // hideLoadingOverlay MUST be called from the ui thread
 func (p *roomConfigPageBase) hideLoadingOverlay() {
 	p.loadingOverlay.hide()
+}
+
+func configPageDisplayTitle(pageID string) string {
+	switch pageID {
+	case pageConfigAccess:
+		return i18n.Local("Access")
+	case pageConfigInfo:
+		return i18n.Local("Basic information")
+	case pageConfigOccupants:
+		return i18n.Local("Occupants")
+	case pageConfigOthers:
+		return i18n.Local("Other settings")
+	case pageConfigPermissions:
+		return i18n.Local("Permissions")
+	case pageConfigSummary:
+		return i18n.Local("Summary")
+	}
+	return fmt.Sprintf("UNSUPPORTED PAGE: %s", pageID)
 }

@@ -2,6 +2,7 @@ package gui
 
 import (
 	"errors"
+	"sync"
 
 	"github.com/coyim/coyim/i18n"
 
@@ -16,8 +17,11 @@ type roomConfigListForm struct {
 	formView gtki.Box   `gtk-widget:"room-config-list-form"`
 	jidEntry gtki.Entry `gtk-widget:"room-config-list-jid"`
 
-	doAfterFieldChanged  []func() // Each function will be called from the UI thread
+	doAfterFieldChanged []func() // Each function will be called from the UI thread
+	fieldChandedLock    sync.Mutex
+
 	doAfterFieldActivate []func() // Each function will be called from the UI thread
+	fieldActivateLock    sync.Mutex
 }
 
 func newRoomConfigListForm(onFieldChanged, onFieldActivate func()) *roomConfigListForm {
@@ -87,10 +91,16 @@ func (f *roomConfigListForm) focusJidEntry() {
 }
 
 func (f *roomConfigListForm) onFieldChanged(fn func()) {
+	f.fieldChandedLock.Lock()
+	defer f.fieldChandedLock.Unlock()
+
 	f.doAfterFieldChanged = append(f.doAfterFieldChanged, fn)
 }
 
 func (f *roomConfigListForm) onFieldActivate(fn func()) {
+	f.fieldActivateLock.Lock()
+	defer f.fieldActivateLock.Unlock()
+
 	f.doAfterFieldActivate = append(f.doAfterFieldActivate, fn)
 }
 

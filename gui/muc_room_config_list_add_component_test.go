@@ -313,6 +313,5 @@ func (s *MUCRoomConfigListAddComponentSuite) Test_mucRoomConfigListAddComponent_
 	c.Assert(la.friendlyErrorMessage(form, errors.New("bla")), Equals, "[localized] Invalid form values.")
 	c.Assert(la.friendlyErrorMessage(form, errEmptyMemberIdentifier), Equals, "[localized] You must enter the account address.")
 	c.Assert(la.friendlyErrorMessage(form, errInvalidMemberIdentifier), Equals, "[localized] You must provide a valid account address.")
-	c.Assert(la.friendlyErrorMessage(form, errRoomConfigListFormInvalidJid), Equals, "[localized] The account address is not valid.")
 	c.Assert(la.friendlyErrorMessage(form, errRoomConfigListFormNotFilled), Equals, "[localized] Please, fill in the form fields.")
 }

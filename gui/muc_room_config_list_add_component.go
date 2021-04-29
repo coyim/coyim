@@ -250,7 +250,11 @@ func (la *mucRoomConfigListAddComponent) isFormValid(form *roomConfigListForm) (
 		return false, errInvalidMemberIdentifier
 	}
 
-	return form.isValid()
+	if !form.isFilled() {
+		return false, errRoomConfigListFormNotFilled
+	}
+
+	return true, nil
 }
 
 // notifyError MUST be called from the UI thread

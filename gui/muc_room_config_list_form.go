@@ -4,14 +4,12 @@ import (
 	"errors"
 
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/xmpp/jid"
 
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
 var (
-	errRoomConfigListFormInvalidJid = errors.New("invalid jid")
-	errRoomConfigListFormNotFilled  = errors.New("not filled form")
+	errRoomConfigListFormNotFilled = errors.New("not filled form")
 )
 
 type roomConfigListForm struct {
@@ -72,19 +70,6 @@ func (f *roomConfigListForm) setJid(v string) {
 	setEntryText(f.jidEntry, v)
 }
 
-// isValid MUST be called from the UI thread
-func (f *roomConfigListForm) isValid() (bool, error) {
-	if !f.isFilled() {
-		return false, errRoomConfigListFormNotFilled
-	}
-
-	if !jid.ValidJID(f.jid()) {
-		return false, errRoomConfigListFormInvalidJid
-	}
-
-	return true, nil
-}
-
 // isFilled MUST be called from the UI thread
 func (f *roomConfigListForm) isFilled() bool {
 	return f.jid() != ""
@@ -111,7 +96,7 @@ func (f *roomConfigListForm) onFieldActivate(fn func()) {
 
 func (f *roomConfigListForm) friendlyErrorMessage(err error) string {
 	switch err {
-	case errRoomConfigListFormInvalidJid:
+	case errInvalidMemberIdentifier:
 		return i18n.Local("The account address is not valid.")
 	case errRoomConfigListFormNotFilled:
 		return i18n.Local("Please, fill in the form fields.")

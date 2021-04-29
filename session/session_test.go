@@ -1354,6 +1354,32 @@ func (s *SessionSuite) Test_session_receivedClientMessage_processesExtensions(c 
 	c.Assert(fmt.Sprintf("%s", hook.Entries[1].Data["extension"]), Equals, "<un-unknown xmlns='urn:test:namespace'/>")
 }
 
+func (s *SessionSuite) Test_session_receivedClientMessage_MUCUserExtension(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	sess := &session{
+		log: l,
+	}
+
+	cm := &data.ClientMessage{
+		Body:    "",
+		From:    "testroom@foo.org",
+		MUCUser: &data.MUCUser{},
+	}
+
+	res := sess.receivedClientMessage(cm)
+
+	c.Assert(res, Equals, true)
+	c.Assert(hook.Entries, HasLen, 2)
+	c.Assert(hook.Entries[0].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "receivedClientMessage()")
+	c.Assert(hook.Entries[0].Data["stanza"], Not(Equals), "")
+	c.Assert(hook.Entries[1].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[1].Message, Equals, "A MUC message has been received")
+	c.Assert(fmt.Sprintf("%s", hook.Entries[1].Data["room"]), Equals, "testroom@foo.org")
+}
+
 func (s *SessionSuite) Test_session_receivedClientMessage_works(c *C) {
 	mcm := &mockConvManager{}
 	l, hook := test.NewNullLogger()

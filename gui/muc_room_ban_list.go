@@ -29,7 +29,7 @@ type roomBanListView struct {
 	roomView *roomView
 
 	dialog             gtki.Window        `gtk-widget:"ban-list-window"`
-	view gtki.Box `gtk-widget:"ban-list-main"`
+	view               gtki.Box           `gtk-widget:"ban-list-main"`
 	addEntryButton     gtki.Button        `gtk-widget:"ban-list-add-entry-button"`
 	removeEntryButton  gtki.Button        `gtk-widget:"ban-list-remove-entry-button"`
 	list               gtki.TreeView      `gtk-widget:"ban-list-treeview"`
@@ -372,6 +372,7 @@ func (bl *roomBanListView) modifyBanList(changedItems []*muc.RoomBanListItem) {
 	select {
 	case <-rc:
 		doInUIThread(bl.close)
+		bl.roomView.onBannedListUpdated()
 	case err := <-ec:
 		bl.log.WithError(err).Error("Something happened when saving the room's ban list")
 		doInUIThread(func() {

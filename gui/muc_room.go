@@ -377,6 +377,12 @@ func (v *roomView) onOccupantAffiliationUpdateSuccess(o *muc.Occupant, previousA
 	})
 }
 
+func (v *roomView) onBannedListUpdated() {
+	doInUIThread(func() {
+		v.notifications.info(i18n.Local("The banned list has been updated"))
+	})
+}
+
 func (v *roomView) onOccupantAffiliationUpdateError(nickname string, newAffiliation data.Affiliation, err error) {
 	messages := getAffiliationUpdateFailureMessage(nickname, newAffiliation, err)
 

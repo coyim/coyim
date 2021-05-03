@@ -75,7 +75,6 @@ type RoomConfigForm struct {
 	MembersOnly               bool
 	Moderated                 bool
 	PasswordProtected         bool
-	Persistent                bool
 	PresenceBroadcast         ConfigListMultiField
 	Admins                    []jid.Any
 	Owners                    []jid.Any
@@ -153,7 +152,6 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 		ConfigFieldAllowPM:              {rcf.AllowPrivateMessages.CurrentValue()},
 		ConfigFieldAllowPrivateMessages: {rcf.AllowPrivateMessages.CurrentValue()},
 		ConfigFieldMaxOccupantsNumber:   {rcf.MaxOccupantsNumber.CurrentValue()},
-		ConfigFieldIsPersistent:         {strconv.FormatBool(rcf.Persistent)},
 		ConfigFieldModerated:            {strconv.FormatBool(rcf.Moderated)},
 		ConfigFieldMembersOnly:          {strconv.FormatBool(rcf.MembersOnly)},
 		ConfigFieldPasswordProtected:    {strconv.FormatBool(rcf.PasswordProtected)},
@@ -229,7 +227,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.PasswordProtected = formFieldBool(field.Values)
 
 	case ConfigFieldIsPersistent:
-		rcf.Persistent = formFieldBool(field.Values)
+		rcf.setFieldX(ConfigFieldIsPersistent, field)
 
 	case ConfigFieldPresenceBroadcast:
 		rcf.PresenceBroadcast.UpdateField(field.Values, formFieldOptionsValues(field.Options))

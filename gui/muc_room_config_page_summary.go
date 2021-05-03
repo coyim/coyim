@@ -101,7 +101,7 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	p.setDescriptionField()
 	setLabelText(p.language, supportedLanguageDescription(p.form.GetStringValue(muc.ConfigFieldLanguage)))
 	setLabelText(p.includePublicList, summaryYesOrNoText(p.form.GetBooleanValue(muc.ConfigFieldIsPublic)))
-	setLabelText(p.persistent, summaryYesOrNoText(p.form.Persistent))
+	setLabelText(p.persistent, summaryYesOrNoText(p.form.GetBooleanValue(muc.ConfigFieldIsPersistent)))
 
 	// Access
 	setLabelText(p.password, summaryPasswordText(p.form.PasswordProtected))

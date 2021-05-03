@@ -213,13 +213,13 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_setUnknowField(c *C) {
 	}
 
 	for _, chk := range checks {
-		fieldX := xmppData.FormFieldX{
+		field := xmppData.FormFieldX{
 			Var:    chk.name,
 			Type:   chk.tp,
 			Label:  chk.label,
 			Values: chk.value,
 		}
-		cf.setFieldX(chk.name, fieldX)
+		cf.setFieldX(chk.name, field)
 	}
 
 	c.Assert(cf.Fields, DeepEquals, fieldsToCompare)
@@ -455,13 +455,13 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_updateFieldValueByName(c *C) {
 	}
 
 	for _, chk := range checks {
-		fieldX := xmppData.FormFieldX{
+		field := xmppData.FormFieldX{
 			Var:    chk.name,
 			Type:   chk.tp,
 			Label:  chk.label,
 			Values: chk.value,
 		}
-		cf.setFieldX(chk.name, fieldX)
+		cf.setFieldX(chk.name, field)
 	}
 
 	cf.UpdateFieldValueByName("foo", "something")

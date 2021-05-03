@@ -51,7 +51,6 @@
                                 <property name="show_expanders">False</property>
                                 <property name="enable_grid_lines">horizontal</property>
                                 <property name="enable_tree_lines">True</property>
-                                <property name="tooltip_column">2</property>
                                 <child internal-child="selection">
                                   <object class="GtkTreeSelection" id="ban-list-treeview-selection">
                                     <property name="mode">multiple</property>
@@ -69,6 +68,7 @@
                                         <property name="xpad">6</property>
                                         <property name="ypad">6</property>
                                         <property name="editable">True</property>
+                                        <property name="placeholder_text">Account address</property>
                                         <signal name="edited" handler="on_jid_edited" swapped="no"/>
                                       </object>
                                       <attributes>

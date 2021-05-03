@@ -296,6 +296,12 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 			return nil, true
 		}
 		return val, true
+	case *gtk.Separator:
+		val := WrapSeparatorSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
 	case *gtk.SpinButton:
 		val := WrapSpinButtonSimple(oo)
 		if val == nil {
@@ -695,6 +701,12 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *separatorMenuItem:
 		val := UnwrapSeparatorMenuItem(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *separator:
+		val := UnwrapSeparator(oo)
 		if val == nil {
 			return nil, true
 		}

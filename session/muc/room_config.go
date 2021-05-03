@@ -87,12 +87,14 @@ type RoomConfigForm struct {
 	Password                       string
 	Whois                          ConfigListSingleField
 
-	Fields []HasRoomConfigFormField
+	Fields map[string]HasRoomConfigFormField
 }
 
 // NewRoomConfigForm creates a new room configuration form instance
 func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
-	cf := &RoomConfigForm{}
+	cf := &RoomConfigForm{
+		Fields: make(map[string]HasRoomConfigFormField),
+	}
 
 	cf.MaxHistoryFetch = newConfigListSingleField([]string{
 		RoomConfigOption10,
@@ -266,7 +268,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.Whois.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 
 	default:
-		rcf.setFieldX(field)
+		rcf.setFieldX(field.Var, field)
 	}
 }
 
@@ -280,9 +282,9 @@ func (rcf *RoomConfigForm) UpdateFieldValueByName(name string, value interface{}
 	}
 }
 
-func (rcf *RoomConfigForm) setFieldX(field xmppData.FormFieldX) {
+func (rcf *RoomConfigForm) setFieldX(id string, field xmppData.FormFieldX) {
 	if field.Type != RoomConfigFieldHidden && field.Type != RoomConfigFieldFixed {
-		rcf.Fields = append(rcf.Fields, roomConfigFormFieldFactory(field))
+		rcf.Fields[id] = roomConfigFormFieldFactory(field)
 	}
 }
 
@@ -317,6 +319,16 @@ func roomConfigFormFieldFactory(field xmppData.FormFieldX) HasRoomConfigFormFiel
 	}
 
 	return f
+}
+
+// GetStringValue returns the value of a string type field
+func (rcf *RoomConfigForm) GetStringValue(identifier string) string {
+	return rcf.Fields[identifier].ValueX()[0]
+}
+
+// UpdateFieldValue updates the value of a field based on their identifier
+func (rcf *RoomConfigForm) UpdateFieldValue(identifier string, value interface{}) {
+	rcf.Fields[identifier].SetValue(value)
 }
 
 func formFieldBool(values []string) bool {

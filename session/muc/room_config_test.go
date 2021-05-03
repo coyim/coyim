@@ -105,8 +105,54 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 }
 
 func (*MucRoomConfigSuite) Test_RoomConfigForm_setUnknowField(c *C) {
-	cf := &RoomConfigForm{}
-	fields := []HasRoomConfigFormField{}
+	cf := &RoomConfigForm{
+		Fields: make(map[string]HasRoomConfigFormField),
+	}
+
+	fieldsToCompare := map[string]HasRoomConfigFormField{
+		"RoomConfigFieldText": roomConfigFormFieldFactory(xmppData.FormFieldX{
+			Var:    "RoomConfigFieldText",
+			Type:   RoomConfigFieldText,
+			Label:  "field label",
+			Values: []string{"bla"},
+		}),
+		"RoomConfigFieldTextPrivate": roomConfigFormFieldFactory(xmppData.FormFieldX{
+			Var:    "RoomConfigFieldTextPrivate",
+			Type:   RoomConfigFieldTextPrivate,
+			Label:  "field label",
+			Values: []string{"foo"},
+		}),
+		"RoomConfigFieldTextMulti": roomConfigFormFieldFactory(xmppData.FormFieldX{
+			Var:    "RoomConfigFieldTextMulti",
+			Type:   RoomConfigFieldTextMulti,
+			Label:  "field label",
+			Values: []string{"bla foo"},
+		}),
+		"RoomConfigFieldBoolean": roomConfigFormFieldFactory(xmppData.FormFieldX{
+			Var:    "RoomConfigFieldBoolean",
+			Type:   RoomConfigFieldBoolean,
+			Label:  "field label",
+			Values: []string{"true"},
+		}),
+		"RoomConfigFieldList": roomConfigFormFieldFactory(xmppData.FormFieldX{
+			Var:    "RoomConfigFieldList",
+			Type:   RoomConfigFieldList,
+			Label:  "field label",
+			Values: []string{"bla"},
+		}),
+		"RoomConfigFieldListMulti": roomConfigFormFieldFactory(xmppData.FormFieldX{
+			Var:    "RoomConfigFieldListMulti",
+			Type:   RoomConfigFieldListMulti,
+			Label:  "field label",
+			Values: []string{"bla", "foo", "bla1", "foo1"},
+		}),
+		"RoomConfigFieldJidMulti": roomConfigFormFieldFactory(xmppData.FormFieldX{
+			Var:    "RoomConfigFieldJidMulti",
+			Type:   RoomConfigFieldJidMulti,
+			Label:  "field label",
+			Values: []string{"bla", "foo", "bla@domain.org", "foo@domain.org"},
+		}),
+	}
 
 	checks := []struct {
 		name          string
@@ -173,10 +219,10 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_setUnknowField(c *C) {
 			Label:  chk.label,
 			Values: chk.value,
 		}
-		cf.setFieldX(fieldX)
-		fields = append(fields, roomConfigFormFieldFactory(fieldX))
-		c.Assert(cf.Fields, DeepEquals, fields)
+		cf.setFieldX(chk.name, fieldX)
 	}
+
+	c.Assert(cf.Fields, DeepEquals, fieldsToCompare)
 }
 
 func (*MucRoomConfigSuite) Test_roomConfigFormFieldFactory(c *C) {
@@ -302,8 +348,53 @@ func (*MucRoomConfigSuite) Test_jidListToStringList(c *C) {
 }
 
 func (*MucRoomConfigSuite) Test_RoomConfigForm_updateFieldValueByName(c *C) {
-	cf := &RoomConfigForm{}
-	fields := []HasRoomConfigFormField{}
+	cf := &RoomConfigForm{
+		Fields: make(map[string]HasRoomConfigFormField),
+	}
+	fieldsToCompare := map[string]HasRoomConfigFormField{
+		"RoomConfigFieldText": roomConfigFormFieldFactory(xmppData.FormFieldX{
+			Var:    "RoomConfigFieldText",
+			Type:   RoomConfigFieldText,
+			Label:  "field label",
+			Values: []string{"bla"},
+		}),
+		"RoomConfigFieldTextPrivate": roomConfigFormFieldFactory(xmppData.FormFieldX{
+			Var:    "RoomConfigFieldTextPrivate",
+			Type:   RoomConfigFieldTextPrivate,
+			Label:  "field label",
+			Values: []string{"foo"},
+		}),
+		"RoomConfigFieldTextMulti": roomConfigFormFieldFactory(xmppData.FormFieldX{
+			Var:    "RoomConfigFieldTextMulti",
+			Type:   RoomConfigFieldTextMulti,
+			Label:  "field label",
+			Values: []string{"bla foo"},
+		}),
+		"RoomConfigFieldBoolean": roomConfigFormFieldFactory(xmppData.FormFieldX{
+			Var:    "RoomConfigFieldBoolean",
+			Type:   RoomConfigFieldBoolean,
+			Label:  "field label",
+			Values: []string{"true"},
+		}),
+		"RoomConfigFieldList": roomConfigFormFieldFactory(xmppData.FormFieldX{
+			Var:    "RoomConfigFieldList",
+			Type:   RoomConfigFieldList,
+			Label:  "field label",
+			Values: []string{"bla"},
+		}),
+		"RoomConfigFieldListMulti": roomConfigFormFieldFactory(xmppData.FormFieldX{
+			Var:    "RoomConfigFieldListMulti",
+			Type:   RoomConfigFieldListMulti,
+			Label:  "field label",
+			Values: []string{"bla", "foo", "bla1", "foo1"},
+		}),
+		"RoomConfigFieldJidMulti": roomConfigFormFieldFactory(xmppData.FormFieldX{
+			Var:    "RoomConfigFieldJidMulti",
+			Type:   RoomConfigFieldJidMulti,
+			Label:  "field label",
+			Values: []string{"bla", "foo", "bla@domain.org", "foo@domain.org"},
+		}),
+	}
 
 	checks := []struct {
 		name          string
@@ -370,28 +461,29 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_updateFieldValueByName(c *C) {
 			Label:  chk.label,
 			Values: chk.value,
 		}
-		cf.setFieldX(fieldX)
-		fields = append(fields, roomConfigFormFieldFactory(fieldX))
+		cf.setFieldX(chk.name, fieldX)
 	}
 
 	cf.UpdateFieldValueByName("foo", "something")
-	c.Assert(cf.Fields, DeepEquals, fields)
+	c.Assert(cf.Fields, DeepEquals, fieldsToCompare)
 
-	for _, f := range fields {
-		if f.Name() == "RoomConfigFieldText" {
-			f.SetValue("bla1")
-		}
-	}
+	fieldsToCompare["RoomConfigFieldText"].SetValue("bla1")
 
 	cf.UpdateFieldValueByName("RoomConfigFieldText", "bla1")
-	c.Assert(cf.Fields, DeepEquals, fields)
+	c.Assert(cf.Fields, DeepEquals, fieldsToCompare)
 
-	for _, f := range fields {
-		if f.Name() == "RoomConfigFieldText" {
-			f.SetValue(nil)
-		}
-	}
+	fieldsToCompare["RoomConfigFieldText"].SetValue(nil)
 
 	cf.UpdateFieldValueByName("RoomConfigFieldText", nil)
-	c.Assert(cf.Fields, DeepEquals, fields)
+	c.Assert(cf.Fields, DeepEquals, fieldsToCompare)
+
+	fieldsToCompare["RoomConfigFieldText"].SetValue("bla1")
+
+	cf.UpdateFieldValue("RoomConfigFieldText", "bla1")
+	c.Assert(cf.Fields, DeepEquals, fieldsToCompare)
+
+	fieldsToCompare["RoomConfigFieldText"].SetValue(nil)
+
+	cf.UpdateFieldValue("RoomConfigFieldText", nil)
+	c.Assert(cf.Fields, DeepEquals, fieldsToCompare)
 }

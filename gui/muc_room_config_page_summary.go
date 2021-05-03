@@ -100,7 +100,7 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	setLabelText(p.title, summaryAssignedValueText(p.form.GetStringValue(muc.ConfigFieldRoomName)))
 	p.setDescriptionField()
 	setLabelText(p.language, supportedLanguageDescription(p.form.GetStringValue(muc.ConfigFieldLanguage)))
-	setLabelText(p.includePublicList, summaryYesOrNoText(p.form.Public))
+	setLabelText(p.includePublicList, summaryYesOrNoText(p.form.GetBooleanValue(muc.ConfigFieldIsPublic)))
 	setLabelText(p.persistent, summaryYesOrNoText(p.form.Persistent))
 
 	// Access

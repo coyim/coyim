@@ -56,7 +56,7 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	c.Assert(rcf.OccupantsCanInvite, Equals, true)
 	c.Assert(rcf.AllowPrivateMessages.CurrentValue(), Equals, "allow private messages")
 	c.Assert(rcf.MaxOccupantsNumber.CurrentValue(), Equals, "42")
-	c.Assert(rcf.Public, Equals, true)
+	c.Assert(rcf.GetBooleanValue(ConfigFieldIsPublic), Equals, true)
 	c.Assert(rcf.Persistent, Equals, true)
 	c.Assert(rcf.Moderated, Equals, true)
 	c.Assert(rcf.MembersOnly, Equals, true)

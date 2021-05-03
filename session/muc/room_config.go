@@ -77,7 +77,6 @@ type RoomConfigForm struct {
 	PasswordProtected         bool
 	Persistent                bool
 	PresenceBroadcast         ConfigListMultiField
-	Public                    bool
 	Admins                    []jid.Any
 	Owners                    []jid.Any
 	Whois                     ConfigListSingleField
@@ -154,7 +153,6 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 		ConfigFieldAllowPM:              {rcf.AllowPrivateMessages.CurrentValue()},
 		ConfigFieldAllowPrivateMessages: {rcf.AllowPrivateMessages.CurrentValue()},
 		ConfigFieldMaxOccupantsNumber:   {rcf.MaxOccupantsNumber.CurrentValue()},
-		ConfigFieldIsPublic:             {strconv.FormatBool(rcf.Public)},
 		ConfigFieldIsPersistent:         {strconv.FormatBool(rcf.Persistent)},
 		ConfigFieldModerated:            {strconv.FormatBool(rcf.Moderated)},
 		ConfigFieldMembersOnly:          {strconv.FormatBool(rcf.MembersOnly)},
@@ -237,7 +235,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.PresenceBroadcast.UpdateField(field.Values, formFieldOptionsValues(field.Options))
 
 	case ConfigFieldIsPublic:
-		rcf.Public = formFieldBool(field.Values)
+		rcf.setFieldX(ConfigFieldIsPublic, field)
 
 	case ConfigFieldRoomAdmins:
 		rcf.Admins = formFieldJidList(field.Values)
@@ -309,6 +307,11 @@ func roomConfigFormFieldFactory(field xmppData.FormFieldX) HasRoomConfigFormFiel
 	}
 
 	return f
+}
+
+// GetBooleanValue returns the value of a boolean type field
+func (rcf *RoomConfigForm) GetBooleanValue(identifier string) bool {
+	return len(rcf.Fields[identifier].ValueX()) > 0 && (strings.ToLower(rcf.Fields[identifier].ValueX()[0]) == "true" || rcf.Fields[identifier].ValueX()[0] == "1")
 }
 
 // GetStringValue returns the value of a string type field

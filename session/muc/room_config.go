@@ -71,7 +71,6 @@ type RoomConfigForm struct {
 	OccupantsCanChangeSubject      bool
 	Logged                         bool
 	RetrieveMembersList            ConfigListMultiField
-	Language                       string
 	AssociatedPublishSubscribeNode string
 	MaxOccupantsNumber             ConfigListSingleField
 	MembersOnly                    bool
@@ -166,7 +165,6 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 		ConfigFieldWhoIs:                {rcf.Whois.CurrentValue()},
 		ConfigFieldMaxHistoryFetch:      {rcf.MaxHistoryFetch.CurrentValue()},
 		ConfigFieldMaxHistoryLength:     {rcf.MaxHistoryFetch.CurrentValue()},
-		ConfigFieldLanguage:             {rcf.Language},
 		ConfigFieldRoomAdmins:           jidListToStringList(rcf.Admins),
 	}
 
@@ -219,7 +217,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.RetrieveMembersList.UpdateField(field.Values, formFieldOptionsValues(field.Options))
 
 	case ConfigFieldLanguage:
-		rcf.Language = formFieldSingleString(field.Values)
+		rcf.setFieldX(ConfigFieldLanguage, field)
 
 	case ConfigFieldPubsub:
 		rcf.AssociatedPublishSubscribeNode = formFieldSingleString(field.Values)

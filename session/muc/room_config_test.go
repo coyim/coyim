@@ -64,7 +64,7 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	c.Assert(rcf.Password, Equals, "a password")
 	c.Assert(rcf.Whois.CurrentValue(), Equals, "a whois")
 	c.Assert(rcf.MaxHistoryFetch.CurrentValue(), Equals, "43")
-	c.Assert(rcf.Language, Equals, "eng")
+	c.Assert(rcf.GetStringValue(ConfigFieldLanguage), Equals, "eng")
 	c.Assert(rcf.Admins, DeepEquals, []jid.Any{jid.Parse("one@foobar.com"), jid.Parse("two@example.org")})
 
 	res := rcf.GetFormData()

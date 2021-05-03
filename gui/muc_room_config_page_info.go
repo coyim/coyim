@@ -35,7 +35,7 @@ func (c *mucRoomConfigComponent) newRoomConfigInfoPage() mucRoomConfigPage {
 func (p *roomConfigInfoPage) initDefaultValues() {
 	setEntryText(p.roomTitle, p.form.GetStringValue(muc.ConfigFieldRoomName))
 	setTextViewText(p.roomDescription, p.form.GetStringValue(muc.ConfigFieldRoomDescription))
-	p.roomLanguageComponent.setLanguage(p.form.Language)
+	p.roomLanguageComponent.setLanguage(p.form.GetStringValue(muc.ConfigFieldLanguage))
 	setSwitchActive(p.roomPersistent, p.form.Persistent)
 	setSwitchActive(p.roomPublic, p.form.Public)
 }
@@ -43,7 +43,7 @@ func (p *roomConfigInfoPage) initDefaultValues() {
 func (p *roomConfigInfoPage) collectData() {
 	p.form.UpdateFieldValue(muc.ConfigFieldRoomName, getEntryText(p.roomTitle))
 	p.form.UpdateFieldValue(muc.ConfigFieldRoomDescription, getTextViewText(p.roomDescription))
-	p.form.Language = p.roomLanguageComponent.currentLanguage()
+	p.form.UpdateFieldValue(muc.ConfigFieldLanguage, p.roomLanguageComponent.currentLanguage())
 	p.form.Persistent = getSwitchActive(p.roomPersistent)
 	p.form.Public = getSwitchActive(p.roomPublic)
 }

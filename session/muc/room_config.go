@@ -82,7 +82,6 @@ type RoomConfigForm struct {
 	Public                         bool
 	Admins                         []jid.Any
 	Description                    string
-	Title                          string
 	Owners                         []jid.Any
 	Password                       string
 	Whois                          ConfigListSingleField
@@ -151,7 +150,6 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 	fields := map[string][]string{
 		"FORM_TYPE":                     {ConfigFieldFormType},
-		ConfigFieldRoomName:             {rcf.Title},
 		ConfigFieldRoomDescription:      {rcf.Description},
 		ConfigFieldEnableLogging:        {strconv.FormatBool(rcf.Logged)},
 		ConfigFieldEnableArchiving:      {strconv.FormatBool(rcf.Logged)},
@@ -256,7 +254,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.Description = formFieldSingleString(field.Values)
 
 	case ConfigFieldRoomName:
-		rcf.Title = formFieldSingleString(field.Values)
+		rcf.setFieldX(ConfigFieldRoomName, field)
 
 	case ConfigFieldOwners:
 		rcf.Owners = formFieldJidList(field.Values)

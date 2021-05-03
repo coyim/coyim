@@ -97,7 +97,7 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	p.autojoinCheckButton.SetActive(p.autoJoin)
 
 	// Basic information
-	setLabelText(p.title, summaryAssignedValueText(p.form.Title))
+	setLabelText(p.title, summaryAssignedValueText(p.form.GetStringValue(muc.ConfigFieldRoomName)))
 	p.setDescriptionField()
 	setLabelText(p.language, supportedLanguageDescription(p.form.Language))
 	setLabelText(p.includePublicList, summaryYesOrNoText(p.form.Public))

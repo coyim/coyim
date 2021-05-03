@@ -49,7 +49,7 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 		},
 	})
 
-	c.Assert(rcf.Title, Equals, "a title")
+	c.Assert(rcf.GetStringValue(ConfigFieldRoomName), Equals, "a title")
 	c.Assert(rcf.Description, Equals, "a description")
 	c.Assert(rcf.Logged, Equals, true)
 	c.Assert(rcf.OccupantsCanChangeSubject, Equals, true)

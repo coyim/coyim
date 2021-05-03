@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -32,7 +33,7 @@ func (c *mucRoomConfigComponent) newRoomConfigInfoPage() mucRoomConfigPage {
 }
 
 func (p *roomConfigInfoPage) initDefaultValues() {
-	setEntryText(p.roomTitle, p.form.Title)
+	setEntryText(p.roomTitle, p.form.GetStringValue(muc.ConfigFieldRoomName))
 	setTextViewText(p.roomDescription, p.form.Description)
 	p.roomLanguageComponent.setLanguage(p.form.Language)
 	setSwitchActive(p.roomPersistent, p.form.Persistent)
@@ -40,7 +41,7 @@ func (p *roomConfigInfoPage) initDefaultValues() {
 }
 
 func (p *roomConfigInfoPage) collectData() {
-	p.form.Title = getEntryText(p.roomTitle)
+	p.form.UpdateFieldValue(muc.ConfigFieldRoomName, getEntryText(p.roomTitle))
 	p.form.Description = getTextViewText(p.roomDescription)
 	p.form.Language = p.roomLanguageComponent.currentLanguage()
 	p.form.Persistent = getSwitchActive(p.roomPersistent)

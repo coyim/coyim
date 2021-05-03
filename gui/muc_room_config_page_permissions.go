@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -31,7 +32,7 @@ func (c *mucRoomConfigComponent) newRoomConfigPermissionsPage() mucRoomConfigPag
 }
 
 func (p *roomConfigPermissionsPage) initDefaultValues() {
-	setSwitchActive(p.roomChangeSubject, p.form.OccupantsCanChangeSubject)
+	setSwitchActive(p.roomChangeSubject, p.form.GetBooleanValue(muc.ConfigFieldCanChangeSubject))
 	setSwitchActive(p.roomModerated, p.form.Moderated)
 
 	p.refreshWhoisField()
@@ -65,7 +66,7 @@ func (p *roomConfigPermissionsPage) activateWhoisOption(o string) {
 }
 
 func (p *roomConfigPermissionsPage) collectData() {
-	p.form.OccupantsCanChangeSubject = getSwitchActive(p.roomChangeSubject)
+	p.form.UpdateFieldValue(muc.ConfigFieldCanChangeSubject, getSwitchActive(p.roomChangeSubject))
 	p.form.Moderated = getSwitchActive(p.roomModerated)
 
 	for o, index := range p.roomWhoisOptions {

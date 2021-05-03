@@ -65,19 +65,18 @@ const (
 
 // RoomConfigForm represents a room configuration form
 type RoomConfigForm struct {
-	MaxHistoryFetch           ConfigListSingleField
-	AllowPrivateMessages      ConfigListSingleField
-	OccupantsCanChangeSubject bool
-	Logged                    bool
-	RetrieveMembersList       ConfigListMultiField
-	MaxOccupantsNumber        ConfigListSingleField
-	MembersOnly               bool
-	Moderated                 bool
-	PasswordProtected         bool
-	PresenceBroadcast         ConfigListMultiField
-	Admins                    []jid.Any
-	Owners                    []jid.Any
-	Whois                     ConfigListSingleField
+	MaxHistoryFetch      ConfigListSingleField
+	AllowPrivateMessages ConfigListSingleField
+	Logged               bool
+	RetrieveMembersList  ConfigListMultiField
+	MaxOccupantsNumber   ConfigListSingleField
+	MembersOnly          bool
+	Moderated            bool
+	PasswordProtected    bool
+	PresenceBroadcast    ConfigListMultiField
+	Admins               []jid.Any
+	Owners               []jid.Any
+	Whois                ConfigListSingleField
 
 	Fields map[string]HasRoomConfigFormField
 }
@@ -145,7 +144,6 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 		"FORM_TYPE":                     {ConfigFieldFormType},
 		ConfigFieldEnableLogging:        {strconv.FormatBool(rcf.Logged)},
 		ConfigFieldEnableArchiving:      {strconv.FormatBool(rcf.Logged)},
-		ConfigFieldCanChangeSubject:     {strconv.FormatBool(rcf.OccupantsCanChangeSubject)},
 		ConfigFieldAllowPM:              {rcf.AllowPrivateMessages.CurrentValue()},
 		ConfigFieldAllowPrivateMessages: {rcf.AllowPrivateMessages.CurrentValue()},
 		ConfigFieldMaxOccupantsNumber:   {rcf.MaxOccupantsNumber.CurrentValue()},
@@ -197,7 +195,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.setFieldX(ConfigFieldAllowInvites, field)
 
 	case ConfigFieldCanChangeSubject:
-		rcf.OccupantsCanChangeSubject = formFieldBool(field.Values)
+		rcf.setFieldX(ConfigFieldCanChangeSubject, field)
 
 	case ConfigFieldEnableLogging, ConfigFieldEnableArchiving:
 		rcf.Logged = formFieldBool(field.Values)

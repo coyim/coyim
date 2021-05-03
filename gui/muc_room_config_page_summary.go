@@ -123,12 +123,13 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 }
 
 func (p *roomConfigSummaryPage) setDescriptionField() {
-	if p.form.Description != "" {
-		setTextViewText(p.description, summaryAssignedValueText(p.form.Description))
+	desc := p.form.GetStringValue(muc.ConfigFieldRoomDescription)
+	if desc != "" {
+		setTextViewText(p.description, summaryAssignedValueText(desc))
 		p.descriptionScrollWindow.Show()
 		p.descriptionNotAssigned.SetVisible(false)
 	} else {
-		setLabelText(p.descriptionNotAssigned, summaryAssignedValueText(p.form.Description))
+		setLabelText(p.descriptionNotAssigned, summaryAssignedValueText(desc))
 		p.descriptionScrollWindow.Hide()
 		p.descriptionNotAssigned.SetVisible(true)
 	}

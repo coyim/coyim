@@ -5,8 +5,8 @@
     <child>
       <object class="GtkListBox" id="room-config-assistant-navigation-list">
         <property name="visible">True</property>
-        <property name="selection_mode">browse</property>
-        <signal name="row-selected" handler="row_selected" swapped="no"/>
+        <signal name="row-activated" handler="on_row_activated" swapped="no"/>
+        <signal name="row-selected" handler="on_row_selected" swapped="no"/>
       </object>
       <packing>
         <property name="expand">False</property>

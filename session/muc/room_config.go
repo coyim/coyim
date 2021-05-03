@@ -65,23 +65,22 @@ const (
 
 // RoomConfigForm represents a room configuration form
 type RoomConfigForm struct {
-	MaxHistoryFetch                ConfigListSingleField
-	AllowPrivateMessages           ConfigListSingleField
-	OccupantsCanInvite             bool
-	OccupantsCanChangeSubject      bool
-	Logged                         bool
-	RetrieveMembersList            ConfigListMultiField
-	AssociatedPublishSubscribeNode string
-	MaxOccupantsNumber             ConfigListSingleField
-	MembersOnly                    bool
-	Moderated                      bool
-	PasswordProtected              bool
-	Persistent                     bool
-	PresenceBroadcast              ConfigListMultiField
-	Public                         bool
-	Admins                         []jid.Any
-	Owners                         []jid.Any
-	Whois                          ConfigListSingleField
+	MaxHistoryFetch           ConfigListSingleField
+	AllowPrivateMessages      ConfigListSingleField
+	OccupantsCanInvite        bool
+	OccupantsCanChangeSubject bool
+	Logged                    bool
+	RetrieveMembersList       ConfigListMultiField
+	MaxOccupantsNumber        ConfigListSingleField
+	MembersOnly               bool
+	Moderated                 bool
+	PasswordProtected         bool
+	Persistent                bool
+	PresenceBroadcast         ConfigListMultiField
+	Public                    bool
+	Admins                    []jid.Any
+	Owners                    []jid.Any
+	Whois                     ConfigListSingleField
 
 	Fields map[string]HasRoomConfigFormField
 }
@@ -217,7 +216,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.setFieldX(ConfigFieldLanguage, field)
 
 	case ConfigFieldPubsub:
-		rcf.AssociatedPublishSubscribeNode = formFieldSingleString(field.Values)
+		rcf.setFieldX(ConfigFieldPubsub, field)
 
 	case ConfigFieldMaxOccupantsNumber:
 		rcf.MaxOccupantsNumber.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))

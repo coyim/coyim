@@ -31,7 +31,7 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 			{Var: ConfigFieldEnableLogging, Values: []string{"true"}},
 			{Var: ConfigFieldMemberList, Values: []string{}},
 			{Var: ConfigFieldLanguage, Values: []string{"eng"}},
-			{Var: ConfigFieldPubsub, Values: []string{}},
+			{Var: ConfigFieldPubsub, Values: []string{"bla"}},
 			{Var: ConfigFieldMaxOccupantsNumber, Values: []string{"42"}},
 			{Var: ConfigFieldMembersOnly, Values: []string{"true"}},
 			{Var: ConfigFieldModerated, Values: []string{"true"}},
@@ -65,12 +65,13 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	c.Assert(rcf.Whois.CurrentValue(), Equals, "a whois")
 	c.Assert(rcf.MaxHistoryFetch.CurrentValue(), Equals, "43")
 	c.Assert(rcf.GetStringValue(ConfigFieldLanguage), Equals, "eng")
+	c.Assert(rcf.GetStringValue(ConfigFieldPubsub), Equals, "bla")
 	c.Assert(rcf.Admins, DeepEquals, []jid.Any{jid.Parse("one@foobar.com"), jid.Parse("two@example.org")})
 
 	res := rcf.GetFormData()
 
 	c.Assert(res.Type, Equals, "submit")
-	c.Assert(res.Fields, HasLen, 23)
+	c.Assert(res.Fields, HasLen, 24)
 
 	vals := map[string][]string{}
 	for _, ff := range res.Fields {
@@ -101,6 +102,7 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 		"muc#roomconfig_maxusers":                                       {"42"},
 		"muc#roomconfig_membersonly":                                    {"true"},
 		"unknown_field_name":                                            {"foo"},
+		"muc#roomconfig_pubsub":                                         {"bla"},
 	})
 }
 

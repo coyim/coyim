@@ -64,3 +64,6 @@ func (*MockTreeView) GetModel() (gtki.TreeModel, error) {
 
 func (*MockTreeView) SetModel(gtki.TreeModel) {
 }
+
+func (*MockTreeView) SetCursorOnCell(gtki.TreePath, gtki.TreeViewColumn, gtki.CellRenderer, bool) {
+}

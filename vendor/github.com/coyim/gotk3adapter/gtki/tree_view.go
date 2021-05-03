@@ -19,6 +19,7 @@ type TreeView interface {
 	SetSearchEqualSubstringMatch()
 	GetModel() (TreeModel, error)
 	SetModel(TreeModel)
+	SetCursorOnCell(TreePath, TreeViewColumn, CellRenderer, bool)
 }
 
 func AssertTreeView(_ TreeView) {}

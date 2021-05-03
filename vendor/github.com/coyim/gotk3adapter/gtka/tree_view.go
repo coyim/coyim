@@ -98,3 +98,7 @@ func (v *treeView) GetModel() (gtki.TreeModel, error) {
 
 	return WrapTreeModelSimple(m), nil
 }
+
+func (v *treeView) SetCursorOnCell(v2 gtki.TreePath, v3 gtki.TreeViewColumn, v4 gtki.CellRenderer, v5 bool) {
+	v.internal.SetCursorOnCell(UnwrapTreePath(v2), UnwrapTreeViewColumn(v3), UnwrapCellRenderer(v4), v5)
+}

@@ -61,7 +61,7 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	c.Assert(rcf.Moderated, Equals, true)
 	c.Assert(rcf.MembersOnly, Equals, true)
 	c.Assert(rcf.PasswordProtected, Equals, true)
-	c.Assert(rcf.Password, Equals, "a password")
+	c.Assert(rcf.GetStringValue(ConfigFieldPassword), Equals, "a password")
 	c.Assert(rcf.Whois.CurrentValue(), Equals, "a whois")
 	c.Assert(rcf.MaxHistoryFetch.CurrentValue(), Equals, "43")
 	c.Assert(rcf.GetStringValue(ConfigFieldLanguage), Equals, "eng")

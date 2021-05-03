@@ -81,7 +81,6 @@ type RoomConfigForm struct {
 	Public                         bool
 	Admins                         []jid.Any
 	Owners                         []jid.Any
-	Password                       string
 	Whois                          ConfigListSingleField
 
 	Fields map[string]HasRoomConfigFormField
@@ -161,7 +160,6 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 		ConfigFieldModerated:            {strconv.FormatBool(rcf.Moderated)},
 		ConfigFieldMembersOnly:          {strconv.FormatBool(rcf.MembersOnly)},
 		ConfigFieldPasswordProtected:    {strconv.FormatBool(rcf.PasswordProtected)},
-		ConfigFieldPassword:             {rcf.Password},
 		ConfigFieldWhoIs:                {rcf.Whois.CurrentValue()},
 		ConfigFieldMaxHistoryFetch:      {rcf.MaxHistoryFetch.CurrentValue()},
 		ConfigFieldMaxHistoryLength:     {rcf.MaxHistoryFetch.CurrentValue()},
@@ -255,7 +253,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.Owners = formFieldJidList(field.Values)
 
 	case ConfigFieldPassword:
-		rcf.Password = formFieldSingleString(field.Values)
+		rcf.setFieldX(ConfigFieldPassword, field)
 
 	case ConfigFieldWhoIs:
 		rcf.Whois.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))

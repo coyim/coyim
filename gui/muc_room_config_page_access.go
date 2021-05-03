@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -30,14 +31,14 @@ func (p *roomConfigAccessPage) initPasswordComponent() {
 }
 
 func (p *roomConfigAccessPage) initDefaultValues() {
-	p.roomPassword.setPassword(p.form.Password)
+	p.roomPassword.setPassword(p.form.GetStringValue(muc.ConfigFieldPassword))
 	setSwitchActive(p.roomMembersOnly, p.form.MembersOnly)
 	setSwitchActive(p.roomAllowInvites, p.form.OccupantsCanInvite)
 }
 
 func (p *roomConfigAccessPage) collectData() {
-	p.form.Password = p.roomPassword.currentPassword()
-	p.form.PasswordProtected = p.form.Password != ""
+	p.form.UpdateFieldValue(muc.ConfigFieldPassword, p.roomPassword.currentPassword())
+	p.form.PasswordProtected = p.form.GetStringValue(muc.ConfigFieldPassword) != ""
 	p.form.MembersOnly = getSwitchActive(p.roomMembersOnly)
 	p.form.OccupantsCanInvite = getSwitchActive(p.roomAllowInvites)
 }

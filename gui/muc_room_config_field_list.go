@@ -43,8 +43,8 @@ func newRoomConfigFormFieldList(f muc.HasRoomConfigFormField) hasRoomConfigFormF
 func (f *roomConfigFormFieldList) initOptions() {
 	f.options = map[string]int{}
 
-	if list, ok := f.fieldValue().(muc.ConfigListSingleField); ok {
-		for index, o := range list.Options() {
+	if lf, ok := f.field.Value().(muc.ConfigListSingleField); ok {
+		for index, o := range lf.Options() {
 			iter := f.optionsModel.Append()
 
 			_ = f.optionsModel.SetValue(iter, roomConfigFieldListOptionValueIndex, o)
@@ -53,7 +53,7 @@ func (f *roomConfigFormFieldList) initOptions() {
 			f.options[o] = index
 		}
 
-		f.activateOption(list.CurrentValue())
+		f.activateOption(lf.CurrentValue())
 	}
 }
 

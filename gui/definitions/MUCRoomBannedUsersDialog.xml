@@ -64,7 +64,7 @@
                                     <property name="title" translatable="yes">Account</property>
                                     <property name="expand">True</property>
                                     <child>
-                                      <object class="GtkCellRendererText" id="ban-list-account-renderer">
+                                      <object class="GtkCellRendererText" id="ban-list-jid-renderer">
                                         <property name="xpad">6</property>
                                         <property name="ypad">6</property>
                                         <property name="editable">True</property>

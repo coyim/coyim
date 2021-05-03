@@ -28,20 +28,22 @@ const (
 type roomBanListView struct {
 	roomView *roomView
 
-	dialog             gtki.Window        `gtk-widget:"ban-list-window"`
-	view               gtki.Box           `gtk-widget:"ban-list-main"`
-	addEntryButton     gtki.Button        `gtk-widget:"ban-list-add-entry-button"`
-	removeEntryButton  gtki.Button        `gtk-widget:"ban-list-remove-entry-button"`
-	list               gtki.TreeView      `gtk-widget:"ban-list-treeview"`
-	listSelection      gtki.TreeSelection `gtk-widget:"ban-list-treeview-selection"`
-	listContent        gtki.Overlay       `gtk-widget:"ban-list-content-overlay"`
-	listView           gtki.Overlay       `gtk-widget:"ban-list-overlay-view"`
-	listLoadingView    gtki.Box           `gtk-widget:"ban-list-loading-view"`
-	noEntriesView      gtki.Box           `gtk-widget:"ban-list-no-entries-view"`
-	noEntriesErrorView gtki.Box           `gtk-widget:"ban-list-error-view"`
-	applyButton        gtki.Button        `gtk-widget:"ban-list-apply-changes-button"`
-	notificationsBox   gtki.Box           `gtk-widget:"notifications-box"`
-	spinnerBox         gtki.Box           `gtk-widget:"spinner-box"`
+	dialog                gtki.Window         `gtk-widget:"ban-list-window"`
+	view                  gtki.Box            `gtk-widget:"ban-list-main"`
+	addEntryButton        gtki.Button         `gtk-widget:"ban-list-add-entry-button"`
+	removeEntryButton     gtki.Button         `gtk-widget:"ban-list-remove-entry-button"`
+	list                  gtki.TreeView       `gtk-widget:"ban-list-treeview"`
+	listSelection         gtki.TreeSelection  `gtk-widget:"ban-list-treeview-selection"`
+	listJidColumn         gtki.TreeViewColumn `gtk-widget:"ban-list-jid-column"`
+	listJidColumnRenderer gtki.CellRenderer   `gtk-widget:"ban-list-jid-renderer"`
+	listContent           gtki.Overlay        `gtk-widget:"ban-list-content-overlay"`
+	listView              gtki.Overlay        `gtk-widget:"ban-list-overlay-view"`
+	listLoadingView       gtki.Box            `gtk-widget:"ban-list-loading-view"`
+	noEntriesView         gtki.Box            `gtk-widget:"ban-list-no-entries-view"`
+	noEntriesErrorView    gtki.Box            `gtk-widget:"ban-list-error-view"`
+	applyButton           gtki.Button         `gtk-widget:"ban-list-apply-changes-button"`
+	notificationsBox      gtki.Box            `gtk-widget:"notifications-box"`
+	spinnerBox            gtki.Box            `gtk-widget:"spinner-box"`
 
 	listModel       gtki.ListStore
 	originalBanList muc.RoomBanList
@@ -282,12 +284,17 @@ func (bl *roomBanListView) onAddNewItem() {
 	bl.noEntriesView.Hide()
 
 	bl.unselectSelectedRows()
-	bl.listSelection.SelectIter(bl.getEmptyRowIter())
+	iter := bl.getEmptyRowIterOrAddNew()
+	bl.listSelection.SelectIter(iter)
+
+	path, _ := bl.listModel.GetPath(iter)
+	bl.list.SetCursorOnCell(path, bl.listJidColumn, bl.listJidColumnRenderer, true)
+
 	bl.enableApplyIfConditionsAreMet()
 }
 
-// getEmptyRowIter MUST be called from the UI thread
-func (bl *roomBanListView) getEmptyRowIter() gtki.TreeIter {
+// getEmptyRowIterOrAddNew MUST be called from the UI thread
+func (bl *roomBanListView) getEmptyRowIterOrAddNew() gtki.TreeIter {
 	iter, ok := bl.listModel.GetIterFirst()
 	for ok {
 		account := bl.columnStringValueFromListModelIter(iter, roomBanListAccountIndex)

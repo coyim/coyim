@@ -150,9 +150,9 @@ func (rc *roomConfigAssistant) updateAssistantPage(indexPage int) {
 	if rc.canChangePage() {
 		rc.pageByIndex(rc.currentPageIndex).collectData()
 		rc.updateContentPage(indexPage)
-		rc.navigation.selectOptionByIndex(indexPage)
+		rc.navigation.selectPageByIndex(indexPage)
 	} else {
-		rc.navigation.selectOptionByIndex(rc.currentPageIndex)
+		rc.navigation.selectPageByIndex(rc.currentPageIndex)
 	}
 }
 

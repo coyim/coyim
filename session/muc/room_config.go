@@ -67,7 +67,6 @@ const (
 type RoomConfigForm struct {
 	MaxHistoryFetch           ConfigListSingleField
 	AllowPrivateMessages      ConfigListSingleField
-	OccupantsCanInvite        bool
 	OccupantsCanChangeSubject bool
 	Logged                    bool
 	RetrieveMembersList       ConfigListMultiField
@@ -147,8 +146,6 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 		ConfigFieldEnableLogging:        {strconv.FormatBool(rcf.Logged)},
 		ConfigFieldEnableArchiving:      {strconv.FormatBool(rcf.Logged)},
 		ConfigFieldCanChangeSubject:     {strconv.FormatBool(rcf.OccupantsCanChangeSubject)},
-		ConfigFieldAllowInvites:         {strconv.FormatBool(rcf.OccupantsCanInvite)},
-		ConfigFieldAllowMemberInvites:   {strconv.FormatBool(rcf.OccupantsCanInvite)},
 		ConfigFieldAllowPM:              {rcf.AllowPrivateMessages.CurrentValue()},
 		ConfigFieldAllowPrivateMessages: {rcf.AllowPrivateMessages.CurrentValue()},
 		ConfigFieldMaxOccupantsNumber:   {rcf.MaxOccupantsNumber.CurrentValue()},
@@ -197,7 +194,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.AllowPrivateMessages.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 
 	case ConfigFieldAllowInvites, ConfigFieldAllowMemberInvites:
-		rcf.OccupantsCanInvite = formFieldBool(field.Values)
+		rcf.setFieldX(ConfigFieldAllowInvites, field)
 
 	case ConfigFieldCanChangeSubject:
 		rcf.OccupantsCanChangeSubject = formFieldBool(field.Values)

@@ -48,5 +48,19 @@
         <property name="position">1</property>
       </packing>
     </child>
+    <child>
+      <object class="GtkLabel" id="room-config-field-description">
+        <property name="visible">True</property>
+        <property name="halign">start</property>
+        <property name="valign">center</property>
+        <property name="label" translatable="yes"></property>
+        <property name="justify">right</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">2</property>
+      </packing>
+    </child>
   </object>
 </interface>

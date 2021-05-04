@@ -87,12 +87,15 @@ type RoomConfigForm struct {
 	Password                       string
 	Whois                          ConfigListSingleField
 
-	Fields []HasRoomConfigFormField
+	fieldNames map[string]int
+	Fields     []HasRoomConfigFormField
 }
 
 // NewRoomConfigForm creates a new room configuration form instance
 func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
-	cf := &RoomConfigForm{}
+	cf := &RoomConfigForm{
+		fieldNames: map[string]int{},
+	}
 
 	cf.MaxHistoryFetch = newConfigListSingleField([]string{
 		RoomConfigOption10,
@@ -147,35 +150,49 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 // https://xmpp.org/extensions/xep-0045.html#createroom-reserved
 // https://xmpp.org/extensions/xep-0045.html#example-163
 func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
-	fields := map[string][]string{
-		"FORM_TYPE":                     {ConfigFieldFormType},
-		ConfigFieldRoomName:             {rcf.Title},
-		ConfigFieldRoomDescription:      {rcf.Description},
-		ConfigFieldEnableLogging:        {strconv.FormatBool(rcf.Logged)},
-		ConfigFieldEnableArchiving:      {strconv.FormatBool(rcf.Logged)},
-		ConfigFieldCanChangeSubject:     {strconv.FormatBool(rcf.OccupantsCanChangeSubject)},
-		ConfigFieldAllowInvites:         {strconv.FormatBool(rcf.OccupantsCanInvite)},
-		ConfigFieldAllowMemberInvites:   {strconv.FormatBool(rcf.OccupantsCanInvite)},
-		ConfigFieldAllowPM:              {rcf.AllowPrivateMessages.CurrentValue()},
-		ConfigFieldAllowPrivateMessages: {rcf.AllowPrivateMessages.CurrentValue()},
-		ConfigFieldMaxOccupantsNumber:   {rcf.MaxOccupantsNumber.CurrentValue()},
-		ConfigFieldIsPublic:             {strconv.FormatBool(rcf.Public)},
-		ConfigFieldIsPersistent:         {strconv.FormatBool(rcf.Persistent)},
-		ConfigFieldModerated:            {strconv.FormatBool(rcf.Moderated)},
-		ConfigFieldMembersOnly:          {strconv.FormatBool(rcf.MembersOnly)},
-		ConfigFieldPasswordProtected:    {strconv.FormatBool(rcf.PasswordProtected)},
-		ConfigFieldPassword:             {rcf.Password},
-		ConfigFieldWhoIs:                {rcf.Whois.CurrentValue()},
-		ConfigFieldMaxHistoryFetch:      {rcf.MaxHistoryFetch.CurrentValue()},
-		ConfigFieldMaxHistoryLength:     {rcf.MaxHistoryFetch.CurrentValue()},
-		ConfigFieldLanguage:             {rcf.Language},
-		ConfigFieldRoomAdmins:           jidListToStringList(rcf.Admins),
+	formFields := []xmppData.FormFieldX{
+		{
+			Var:    "FORM_TYPE",
+			Values: []string{ConfigFieldFormType},
+		},
 	}
 
-	formFields := []xmppData.FormFieldX{}
-	for name, values := range fields {
+	for fieldName := range rcf.fieldNames {
+		var values []string
+
+		switch fieldName {
+		case ConfigFieldEnableLogging, ConfigFieldEnableArchiving:
+			values = []string{strconv.FormatBool(rcf.Logged)}
+		case ConfigFieldCanChangeSubject:
+			values = []string{strconv.FormatBool(rcf.OccupantsCanChangeSubject)}
+		case ConfigFieldAllowInvites, ConfigFieldAllowMemberInvites:
+			values = []string{strconv.FormatBool(rcf.OccupantsCanInvite)}
+		case ConfigFieldAllowPM, ConfigFieldAllowPrivateMessages:
+			values = []string{rcf.AllowPrivateMessages.CurrentValue()}
+		case ConfigFieldMaxOccupantsNumber:
+			values = []string{rcf.MaxOccupantsNumber.CurrentValue()}
+		case ConfigFieldIsPublic:
+			values = []string{strconv.FormatBool(rcf.Public)}
+		case ConfigFieldIsPersistent:
+			values = []string{strconv.FormatBool(rcf.Persistent)}
+		case ConfigFieldModerated:
+			values = []string{strconv.FormatBool(rcf.Moderated)}
+		case ConfigFieldMembersOnly:
+			values = []string{strconv.FormatBool(rcf.MembersOnly)}
+		case ConfigFieldPasswordProtected:
+			values = []string{strconv.FormatBool(rcf.PasswordProtected)}
+		case ConfigFieldPassword:
+			values = []string{rcf.Password}
+		case ConfigFieldWhoIs:
+			values = []string{rcf.Whois.CurrentValue()}
+		case ConfigFieldMaxHistoryFetch, ConfigFieldMaxHistoryLength:
+			values = []string{rcf.MaxHistoryFetch.CurrentValue()}
+		case ConfigFieldRoomAdmins:
+			values = jidListToStringList(rcf.Admins)
+		}
+
 		formFields = append(formFields, xmppData.FormFieldX{
-			Var:    name,
+			Var:    fieldName,
 			Values: values,
 		})
 	}

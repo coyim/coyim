@@ -88,7 +88,7 @@ func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant) *occupantActionVie
 	k := newOccupantActionView(&occupantActionViewData{
 		parentWindow: r.parentWindow(),
 
-		dialogTitle: i18n.Localf("Expel %s from the room", o.Nickname),
+		dialogTitle: i18n.Local("Expel person"),
 		headerText:  i18n.Localf("You are about to temporarily remove %s from the room.", o.Nickname),
 		messageText: i18n.Local("They will be able to join the room again. Are you sure you want to continue?"),
 		reasonText:  i18n.Local("Here you can provide an optional reason for removing the person. Everyone in the room will see this reason."),
@@ -106,7 +106,7 @@ func (r *roomViewRoster) newBanOccupantView(o *muc.Occupant) *occupantActionView
 	k := newOccupantActionView(&occupantActionViewData{
 		parentWindow: r.parentWindow(),
 
-		dialogTitle: i18n.Localf("Ban %s from the room", o.Nickname),
+		dialogTitle: i18n.Local("Ban person"),
 		headerText:  i18n.Localf("You are about to ban %s from the room", o.Nickname),
 		messageText: i18n.Local("They won't be able to join the room again. Are you sure you want to continue?"),
 		reasonText:  i18n.Local("Here you can provide an optional reason for banning the person. Everyone in the room will see this reason."),

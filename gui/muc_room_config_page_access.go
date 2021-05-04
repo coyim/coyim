@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -31,16 +30,16 @@ func (p *roomConfigAccessPage) initPasswordComponent() {
 }
 
 func (p *roomConfigAccessPage) initDefaultValues() {
-	p.roomPassword.setPassword(p.form.GetStringValue(muc.ConfigFieldPassword))
-	setSwitchActive(p.roomMembersOnly, p.form.GetBooleanValue(muc.ConfigFieldMembersOnly))
-	setSwitchActive(p.roomAllowInvites, p.form.GetBooleanValue(muc.ConfigFieldAllowInvites))
+	p.roomPassword.setPassword(p.form.Password)
+	setSwitchActive(p.roomMembersOnly, p.form.MembersOnly)
+	setSwitchActive(p.roomAllowInvites, p.form.OccupantsCanInvite)
 }
 
 func (p *roomConfigAccessPage) collectData() {
-	p.form.UpdateFieldValue(muc.ConfigFieldPassword, p.roomPassword.currentPassword())
-	p.form.PasswordProtected = p.form.GetStringValue(muc.ConfigFieldPassword) != ""
-	p.form.UpdateFieldValue(muc.ConfigFieldMembersOnly, getSwitchActive(p.roomMembersOnly))
-	p.form.UpdateFieldValue(muc.ConfigFieldAllowInvites, getSwitchActive(p.roomAllowInvites))
+	p.form.Password = p.roomPassword.currentPassword()
+	p.form.PasswordProtected = p.form.Password != ""
+	p.form.MembersOnly = getSwitchActive(p.roomMembersOnly)
+	p.form.OccupantsCanInvite = getSwitchActive(p.roomAllowInvites)
 }
 
 func (p *roomConfigAccessPage) isInvalid() bool {

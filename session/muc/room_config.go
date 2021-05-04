@@ -19,8 +19,6 @@ const (
 	ConfigFieldEnableLogging = "muc#roomconfig_enablelogging"
 	// ConfigFieldEnableArchiving represents the enable archiving form field
 	ConfigFieldEnableArchiving = "muc#roomconfig_enablearchiving"
-	// ConfigFieldMessageArchiveManagment represents the enable archiving form field
-	ConfigFieldMessageArchiveManagment = "mam"
 	// ConfigFieldMemberList represents the get member list form field
 	ConfigFieldMemberList = "muc#roomconfig_getmemberlist"
 	// ConfigFieldLanguage represents the room language form field
@@ -67,24 +65,34 @@ const (
 
 // RoomConfigForm represents a room configuration form
 type RoomConfigForm struct {
-	MaxHistoryFetch      ConfigListSingleField
-	AllowPrivateMessages ConfigListSingleField
-	RetrieveMembersList  ConfigListMultiField
-	MaxOccupantsNumber   ConfigListSingleField
-	PasswordProtected    bool
-	PresenceBroadcast    ConfigListMultiField
-	Admins               []jid.Any
-	Owners               []jid.Any
-	Whois                ConfigListSingleField
+	MaxHistoryFetch                ConfigListSingleField
+	AllowPrivateMessages           ConfigListSingleField
+	OccupantsCanInvite             bool
+	OccupantsCanChangeSubject      bool
+	Logged                         bool
+	RetrieveMembersList            ConfigListMultiField
+	Language                       string
+	AssociatedPublishSubscribeNode string
+	MaxOccupantsNumber             ConfigListSingleField
+	MembersOnly                    bool
+	Moderated                      bool
+	PasswordProtected              bool
+	Persistent                     bool
+	PresenceBroadcast              ConfigListMultiField
+	Public                         bool
+	Admins                         []jid.Any
+	Description                    string
+	Title                          string
+	Owners                         []jid.Any
+	Password                       string
+	Whois                          ConfigListSingleField
 
-	Fields map[string]HasRoomConfigFormField
+	Fields []HasRoomConfigFormField
 }
 
 // NewRoomConfigForm creates a new room configuration form instance
 func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
-	cf := &RoomConfigForm{
-		Fields: make(map[string]HasRoomConfigFormField),
-	}
+	cf := &RoomConfigForm{}
 
 	cf.MaxHistoryFetch = newConfigListSingleField([]string{
 		RoomConfigOption10,
@@ -127,7 +135,7 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 		RoomConfigOptionAnyone,
 	})
 
-	cf.setFormFields(form.Fields)
+	cf.SetFormFields(form)
 
 	return cf
 }
@@ -141,13 +149,26 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 	fields := map[string][]string{
 		"FORM_TYPE":                     {ConfigFieldFormType},
+		ConfigFieldRoomName:             {rcf.Title},
+		ConfigFieldRoomDescription:      {rcf.Description},
+		ConfigFieldEnableLogging:        {strconv.FormatBool(rcf.Logged)},
+		ConfigFieldEnableArchiving:      {strconv.FormatBool(rcf.Logged)},
+		ConfigFieldCanChangeSubject:     {strconv.FormatBool(rcf.OccupantsCanChangeSubject)},
+		ConfigFieldAllowInvites:         {strconv.FormatBool(rcf.OccupantsCanInvite)},
+		ConfigFieldAllowMemberInvites:   {strconv.FormatBool(rcf.OccupantsCanInvite)},
 		ConfigFieldAllowPM:              {rcf.AllowPrivateMessages.CurrentValue()},
 		ConfigFieldAllowPrivateMessages: {rcf.AllowPrivateMessages.CurrentValue()},
 		ConfigFieldMaxOccupantsNumber:   {rcf.MaxOccupantsNumber.CurrentValue()},
+		ConfigFieldIsPublic:             {strconv.FormatBool(rcf.Public)},
+		ConfigFieldIsPersistent:         {strconv.FormatBool(rcf.Persistent)},
+		ConfigFieldModerated:            {strconv.FormatBool(rcf.Moderated)},
+		ConfigFieldMembersOnly:          {strconv.FormatBool(rcf.MembersOnly)},
 		ConfigFieldPasswordProtected:    {strconv.FormatBool(rcf.PasswordProtected)},
+		ConfigFieldPassword:             {rcf.Password},
 		ConfigFieldWhoIs:                {rcf.Whois.CurrentValue()},
 		ConfigFieldMaxHistoryFetch:      {rcf.MaxHistoryFetch.CurrentValue()},
 		ConfigFieldMaxHistoryLength:     {rcf.MaxHistoryFetch.CurrentValue()},
+		ConfigFieldLanguage:             {rcf.Language},
 		ConfigFieldRoomAdmins:           jidListToStringList(rcf.Admins),
 	}
 
@@ -172,8 +193,9 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 	}
 }
 
-func (rcf *RoomConfigForm) setFormFields(fields []xmppData.FormFieldX) {
-	for _, field := range fields {
+// SetFormFields extract the form fields and updates the room config form properties based on each data
+func (rcf *RoomConfigForm) SetFormFields(form *xmppData.Form) {
+	for _, field := range form.Fields {
 		rcf.setField(field)
 	}
 }
@@ -187,64 +209,64 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.AllowPrivateMessages.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 
 	case ConfigFieldAllowInvites, ConfigFieldAllowMemberInvites:
-		rcf.setFieldX(ConfigFieldAllowInvites, field)
+		rcf.OccupantsCanInvite = formFieldBool(field.Values)
 
 	case ConfigFieldCanChangeSubject:
-		rcf.setFieldX(ConfigFieldCanChangeSubject, field)
+		rcf.OccupantsCanChangeSubject = formFieldBool(field.Values)
 
-	case ConfigFieldEnableLogging, ConfigFieldEnableArchiving, ConfigFieldMessageArchiveManagment:
-		rcf.setFieldX(ConfigFieldEnableLogging, field)
+	case ConfigFieldEnableLogging, ConfigFieldEnableArchiving:
+		rcf.Logged = formFieldBool(field.Values)
 
 	case ConfigFieldMemberList:
 		rcf.RetrieveMembersList.UpdateField(field.Values, formFieldOptionsValues(field.Options))
 
 	case ConfigFieldLanguage:
-		rcf.setFieldX(ConfigFieldLanguage, field)
+		rcf.Language = formFieldSingleString(field.Values)
 
 	case ConfigFieldPubsub:
-		rcf.setFieldX(ConfigFieldPubsub, field)
+		rcf.AssociatedPublishSubscribeNode = formFieldSingleString(field.Values)
 
 	case ConfigFieldMaxOccupantsNumber:
 		rcf.MaxOccupantsNumber.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 
 	case ConfigFieldMembersOnly:
-		rcf.setFieldX(ConfigFieldMembersOnly, field)
+		rcf.MembersOnly = formFieldBool(field.Values)
 
 	case ConfigFieldModerated:
-		rcf.setFieldX(ConfigFieldModerated, field)
+		rcf.Moderated = formFieldBool(field.Values)
 
 	case ConfigFieldPasswordProtected:
 		rcf.PasswordProtected = formFieldBool(field.Values)
 
 	case ConfigFieldIsPersistent:
-		rcf.setFieldX(ConfigFieldIsPersistent, field)
+		rcf.Persistent = formFieldBool(field.Values)
 
 	case ConfigFieldPresenceBroadcast:
 		rcf.PresenceBroadcast.UpdateField(field.Values, formFieldOptionsValues(field.Options))
 
 	case ConfigFieldIsPublic:
-		rcf.setFieldX(ConfigFieldIsPublic, field)
+		rcf.Public = formFieldBool(field.Values)
 
 	case ConfigFieldRoomAdmins:
 		rcf.Admins = formFieldJidList(field.Values)
 
 	case ConfigFieldRoomDescription:
-		rcf.setFieldX(ConfigFieldRoomDescription, field)
+		rcf.Description = formFieldSingleString(field.Values)
 
 	case ConfigFieldRoomName:
-		rcf.setFieldX(ConfigFieldRoomName, field)
+		rcf.Title = formFieldSingleString(field.Values)
 
 	case ConfigFieldOwners:
 		rcf.Owners = formFieldJidList(field.Values)
 
 	case ConfigFieldPassword:
-		rcf.setFieldX(ConfigFieldPassword, field)
+		rcf.Password = formFieldSingleString(field.Values)
 
 	case ConfigFieldWhoIs:
 		rcf.Whois.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 
 	default:
-		rcf.setFieldX(field.Var, field)
+		rcf.setFieldX(field)
 	}
 }
 
@@ -258,9 +280,9 @@ func (rcf *RoomConfigForm) UpdateFieldValueByName(name string, value interface{}
 	}
 }
 
-func (rcf *RoomConfigForm) setFieldX(id string, field xmppData.FormFieldX) {
+func (rcf *RoomConfigForm) setFieldX(field xmppData.FormFieldX) {
 	if field.Type != RoomConfigFieldHidden && field.Type != RoomConfigFieldFixed {
-		rcf.Fields[id] = roomConfigFormFieldFactory(field)
+		rcf.Fields = append(rcf.Fields, roomConfigFormFieldFactory(field))
 	}
 }
 
@@ -295,21 +317,6 @@ func roomConfigFormFieldFactory(field xmppData.FormFieldX) HasRoomConfigFormFiel
 	}
 
 	return f
-}
-
-// GetBooleanValue returns the value of a boolean type field
-func (rcf *RoomConfigForm) GetBooleanValue(identifier string) bool {
-	return len(rcf.Fields[identifier].ValueX()) > 0 && (strings.ToLower(rcf.Fields[identifier].ValueX()[0]) == "true" || rcf.Fields[identifier].ValueX()[0] == "1")
-}
-
-// GetStringValue returns the value of a string type field
-func (rcf *RoomConfigForm) GetStringValue(identifier string) string {
-	return rcf.Fields[identifier].ValueX()[0]
-}
-
-// UpdateFieldValue updates the value of a field based on their identifier
-func (rcf *RoomConfigForm) UpdateFieldValue(identifier string, value interface{}) {
-	rcf.Fields[identifier].SetValue(value)
 }
 
 func formFieldBool(values []string) bool {

@@ -90,7 +90,7 @@ func (v *mucCreateRoomView) createRoomDataBasedOnConfigForm(ca *account, roomID 
 	crd.ca = ca
 	crd.roomName = roomID.Local()
 	crd.where = roomID.Host()
-	crd.password = cf.GetStringValue(muc.ConfigFieldPassword)
+	crd.password = cf.Password
 	crd.autoJoin = v.autoJoin
 	crd.customConfig = true
 
@@ -105,7 +105,7 @@ func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, 
 
 	onSuccess := func(autoJoin bool) {
 		createRoomData.autoJoin = autoJoin
-		createRoomData.password = cf.GetStringValue(muc.ConfigFieldPassword)
+		createRoomData.password = cf.Password
 		v.onCreateRoomFinished(ca, roomID, createRoomData, func() {
 			v.u.mucShowCreateRoomSuccess(ca, roomID, createRoomData)
 		})

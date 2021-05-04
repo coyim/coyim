@@ -97,20 +97,20 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	p.autojoinCheckButton.SetActive(p.autoJoin)
 
 	// Basic information
-	setLabelText(p.title, summaryAssignedValueText(p.form.GetStringValue(muc.ConfigFieldRoomName)))
+	setLabelText(p.title, summaryAssignedValueText(p.form.Title))
 	p.setDescriptionField()
-	setLabelText(p.language, supportedLanguageDescription(p.form.GetStringValue(muc.ConfigFieldLanguage)))
-	setLabelText(p.includePublicList, summaryYesOrNoText(p.form.GetBooleanValue(muc.ConfigFieldIsPublic)))
-	setLabelText(p.persistent, summaryYesOrNoText(p.form.GetBooleanValue(muc.ConfigFieldIsPersistent)))
+	setLabelText(p.language, supportedLanguageDescription(p.form.Language))
+	setLabelText(p.includePublicList, summaryYesOrNoText(p.form.Public))
+	setLabelText(p.persistent, summaryYesOrNoText(p.form.Persistent))
 
 	// Access
 	setLabelText(p.password, summaryPasswordText(p.form.PasswordProtected))
-	setLabelText(p.allowInviteUsers, summaryYesOrNoText(p.form.GetBooleanValue(muc.ConfigFieldAllowInvites)))
-	setLabelText(p.onlyMembers, summaryYesOrNoText(p.form.GetBooleanValue(muc.ConfigFieldMembersOnly)))
+	setLabelText(p.allowInviteUsers, summaryYesOrNoText(p.form.OccupantsCanInvite))
+	setLabelText(p.onlyMembers, summaryYesOrNoText(p.form.MembersOnly))
 
 	// Permissions
-	setLabelText(p.allowSetRoomSubject, summaryYesOrNoText(p.form.GetBooleanValue(muc.ConfigFieldCanChangeSubject)))
-	setLabelText(p.moderatedRoom, summaryYesOrNoText(p.form.GetBooleanValue(muc.ConfigFieldModerated)))
+	setLabelText(p.allowSetRoomSubject, summaryYesOrNoText(p.form.OccupantsCanChangeSubject))
+	setLabelText(p.moderatedRoom, summaryYesOrNoText(p.form.Moderated))
 	setLabelText(p.whoIs, configOptionToFriendlyMessage(p.form.Whois.CurrentValue()))
 
 	// Occupants
@@ -119,17 +119,16 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	// Other settings
 	setLabelText(p.maxHistoryFetch, summaryConfigurationOptionText(p.form.MaxHistoryFetch.CurrentValue()))
 	setLabelText(p.maxOccupants, summaryConfigurationOptionText(p.form.MaxOccupantsNumber.CurrentValue()))
-	setLabelText(p.enableArchiving, summaryYesOrNoText(p.form.GetBooleanValue(muc.ConfigFieldEnableLogging)))
+	setLabelText(p.enableArchiving, summaryYesOrNoText(p.form.Logged))
 }
 
 func (p *roomConfigSummaryPage) setDescriptionField() {
-	desc := p.form.GetStringValue(muc.ConfigFieldRoomDescription)
-	if desc != "" {
-		setTextViewText(p.description, summaryAssignedValueText(desc))
+	if p.form.Description != "" {
+		setTextViewText(p.description, summaryAssignedValueText(p.form.Description))
 		p.descriptionScrollWindow.Show()
 		p.descriptionNotAssigned.SetVisible(false)
 	} else {
-		setLabelText(p.descriptionNotAssigned, summaryAssignedValueText(desc))
+		setLabelText(p.descriptionNotAssigned, summaryAssignedValueText(p.form.Description))
 		p.descriptionScrollWindow.Hide()
 		p.descriptionNotAssigned.SetVisible(true)
 	}

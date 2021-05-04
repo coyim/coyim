@@ -24,12 +24,14 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 			}},
 			{Var: ConfigFieldAllowPM, Values: []string{"allow private messages"}},
 			{Var: ConfigFieldAllowPrivateMessages, Values: []string{"allow private messages"}},
+			{Var: ConfigFieldAllowMemberInvites, Values: []string{"true"}},
 			{Var: ConfigFieldAllowInvites, Values: []string{"true"}},
 			{Var: ConfigFieldCanChangeSubject, Values: []string{"true"}},
+			{Var: ConfigFieldEnableArchiving, Values: []string{"true"}},
 			{Var: ConfigFieldEnableLogging, Values: []string{"true"}},
 			{Var: ConfigFieldMemberList, Values: []string{}},
 			{Var: ConfigFieldLanguage, Values: []string{"eng"}},
-			{Var: ConfigFieldPubsub, Values: []string{"bla"}},
+			{Var: ConfigFieldPubsub, Values: []string{}},
 			{Var: ConfigFieldMaxOccupantsNumber, Values: []string{"42"}},
 			{Var: ConfigFieldMembersOnly, Values: []string{"true"}},
 			{Var: ConfigFieldModerated, Values: []string{"true"}},
@@ -47,29 +49,28 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 		},
 	})
 
-	c.Assert(rcf.GetStringValue(ConfigFieldRoomName), Equals, "a title")
-	c.Assert(rcf.GetStringValue(ConfigFieldRoomDescription), Equals, "a description")
-	c.Assert(rcf.GetBooleanValue(ConfigFieldEnableLogging), Equals, true)
-	c.Assert(rcf.GetBooleanValue(ConfigFieldCanChangeSubject), Equals, true)
-	c.Assert(rcf.GetBooleanValue(ConfigFieldAllowInvites), Equals, true)
+	c.Assert(rcf.Title, Equals, "a title")
+	c.Assert(rcf.Description, Equals, "a description")
+	c.Assert(rcf.Logged, Equals, true)
+	c.Assert(rcf.OccupantsCanChangeSubject, Equals, true)
+	c.Assert(rcf.OccupantsCanInvite, Equals, true)
 	c.Assert(rcf.AllowPrivateMessages.CurrentValue(), Equals, "allow private messages")
 	c.Assert(rcf.MaxOccupantsNumber.CurrentValue(), Equals, "42")
-	c.Assert(rcf.GetBooleanValue(ConfigFieldIsPublic), Equals, true)
-	c.Assert(rcf.GetBooleanValue(ConfigFieldIsPersistent), Equals, true)
-	c.Assert(rcf.GetBooleanValue(ConfigFieldModerated), Equals, true)
-	c.Assert(rcf.GetBooleanValue(ConfigFieldMembersOnly), Equals, true)
+	c.Assert(rcf.Public, Equals, true)
+	c.Assert(rcf.Persistent, Equals, true)
+	c.Assert(rcf.Moderated, Equals, true)
+	c.Assert(rcf.MembersOnly, Equals, true)
 	c.Assert(rcf.PasswordProtected, Equals, true)
-	c.Assert(rcf.GetStringValue(ConfigFieldPassword), Equals, "a password")
+	c.Assert(rcf.Password, Equals, "a password")
 	c.Assert(rcf.Whois.CurrentValue(), Equals, "a whois")
 	c.Assert(rcf.MaxHistoryFetch.CurrentValue(), Equals, "43")
-	c.Assert(rcf.GetStringValue(ConfigFieldLanguage), Equals, "eng")
-	c.Assert(rcf.GetStringValue(ConfigFieldPubsub), Equals, "bla")
+	c.Assert(rcf.Language, Equals, "eng")
 	c.Assert(rcf.Admins, DeepEquals, []jid.Any{jid.Parse("one@foobar.com"), jid.Parse("two@example.org")})
 
 	res := rcf.GetFormData()
 
 	c.Assert(res.Type, Equals, "submit")
-	c.Assert(res.Fields, HasLen, 22)
+	c.Assert(res.Fields, HasLen, 23)
 
 	vals := map[string][]string{}
 	for _, ff := range res.Fields {
@@ -77,80 +78,35 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	}
 
 	c.Assert(vals, DeepEquals, map[string][]string{
-		"muc#roomconfig_enablelogging":         {"true"},
-		"muc#roomconfig_changesubject":         {"true"},
-		"muc#roomconfig_persistentroom":        {"true"},
-		"muc#roomconfig_passwordprotectedroom": {"true"},
-		"muc#roomconfig_lang":                  {"eng"},
-		"muc#roomconfig_roomname":              {"a title"},
-		"muc#roomconfig_allowinvites":          {"true"},
-		"muc#roomconfig_allowpm":               {"allow private messages"},
-		"allow_private_messages":               {"allow private messages"},
-		"muc#roomconfig_roomsecret":            {"a password"},
-		"muc#roomconfig_whois":                 {"a whois"},
-		"muc#roomconfig_publicroom":            {"true"},
-		"muc#roomconfig_moderatedroom":         {"true"},
-		"muc#maxhistoryfetch":                  {"43"},
-		"muc#roomconfig_historylength":         {"43"},
-		"muc#roomconfig_roomadmins":            {"one@foobar.com", "two@example.org"},
-		"FORM_TYPE":                            {"http://jabber.org/protocol/muc#roomconfig"},
-		"muc#roomconfig_roomdesc":              {"a description"},
-		"muc#roomconfig_maxusers":              {"42"},
-		"muc#roomconfig_membersonly":           {"true"},
-		"unknown_field_name":                   {"foo"},
-		"muc#roomconfig_pubsub":                {"bla"},
+		"muc#roomconfig_enablelogging":                                  {"true"},
+		"muc#roomconfig_enablearchiving":                                {"true"},
+		"muc#roomconfig_changesubject":                                  {"true"},
+		"muc#roomconfig_persistentroom":                                 {"true"},
+		"muc#roomconfig_passwordprotectedroom":                          {"true"},
+		"muc#roomconfig_lang":                                           {"eng"},
+		"muc#roomconfig_roomname":                                       {"a title"},
+		"muc#roomconfig_allowinvites":                                   {"true"},
+		"{http://prosody.im/protocol/muc}roomconfig_allowmemberinvites": {"true"},
+		"muc#roomconfig_allowpm":                                        {"allow private messages"},
+		"allow_private_messages":                                        {"allow private messages"},
+		"muc#roomconfig_roomsecret":                                     {"a password"},
+		"muc#roomconfig_whois":                                          {"a whois"},
+		"muc#roomconfig_publicroom":                                     {"true"},
+		"muc#roomconfig_moderatedroom":                                  {"true"},
+		"muc#maxhistoryfetch":                                           {"43"},
+		"muc#roomconfig_historylength":                                  {"43"},
+		"muc#roomconfig_roomadmins":                                     {"one@foobar.com", "two@example.org"},
+		"FORM_TYPE":                                                     {"http://jabber.org/protocol/muc#roomconfig"},
+		"muc#roomconfig_roomdesc":                                       {"a description"},
+		"muc#roomconfig_maxusers":                                       {"42"},
+		"muc#roomconfig_membersonly":                                    {"true"},
+		"unknown_field_name":                                            {"foo"},
 	})
 }
 
 func (*MucRoomConfigSuite) Test_RoomConfigForm_setUnknowField(c *C) {
-	cf := &RoomConfigForm{
-		Fields: make(map[string]HasRoomConfigFormField),
-	}
-
-	fieldsToCompare := map[string]HasRoomConfigFormField{
-		"RoomConfigFieldText": roomConfigFormFieldFactory(xmppData.FormFieldX{
-			Var:    "RoomConfigFieldText",
-			Type:   RoomConfigFieldText,
-			Label:  "field label",
-			Values: []string{"bla"},
-		}),
-		"RoomConfigFieldTextPrivate": roomConfigFormFieldFactory(xmppData.FormFieldX{
-			Var:    "RoomConfigFieldTextPrivate",
-			Type:   RoomConfigFieldTextPrivate,
-			Label:  "field label",
-			Values: []string{"foo"},
-		}),
-		"RoomConfigFieldTextMulti": roomConfigFormFieldFactory(xmppData.FormFieldX{
-			Var:    "RoomConfigFieldTextMulti",
-			Type:   RoomConfigFieldTextMulti,
-			Label:  "field label",
-			Values: []string{"bla foo"},
-		}),
-		"RoomConfigFieldBoolean": roomConfigFormFieldFactory(xmppData.FormFieldX{
-			Var:    "RoomConfigFieldBoolean",
-			Type:   RoomConfigFieldBoolean,
-			Label:  "field label",
-			Values: []string{"true"},
-		}),
-		"RoomConfigFieldList": roomConfigFormFieldFactory(xmppData.FormFieldX{
-			Var:    "RoomConfigFieldList",
-			Type:   RoomConfigFieldList,
-			Label:  "field label",
-			Values: []string{"bla"},
-		}),
-		"RoomConfigFieldListMulti": roomConfigFormFieldFactory(xmppData.FormFieldX{
-			Var:    "RoomConfigFieldListMulti",
-			Type:   RoomConfigFieldListMulti,
-			Label:  "field label",
-			Values: []string{"bla", "foo", "bla1", "foo1"},
-		}),
-		"RoomConfigFieldJidMulti": roomConfigFormFieldFactory(xmppData.FormFieldX{
-			Var:    "RoomConfigFieldJidMulti",
-			Type:   RoomConfigFieldJidMulti,
-			Label:  "field label",
-			Values: []string{"bla", "foo", "bla@domain.org", "foo@domain.org"},
-		}),
-	}
+	cf := &RoomConfigForm{}
+	fields := []HasRoomConfigFormField{}
 
 	checks := []struct {
 		name          string
@@ -211,16 +167,16 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_setUnknowField(c *C) {
 	}
 
 	for _, chk := range checks {
-		field := xmppData.FormFieldX{
+		fieldX := xmppData.FormFieldX{
 			Var:    chk.name,
 			Type:   chk.tp,
 			Label:  chk.label,
 			Values: chk.value,
 		}
-		cf.setFieldX(chk.name, field)
+		cf.setFieldX(fieldX)
+		fields = append(fields, roomConfigFormFieldFactory(fieldX))
+		c.Assert(cf.Fields, DeepEquals, fields)
 	}
-
-	c.Assert(cf.Fields, DeepEquals, fieldsToCompare)
 }
 
 func (*MucRoomConfigSuite) Test_roomConfigFormFieldFactory(c *C) {
@@ -346,53 +302,8 @@ func (*MucRoomConfigSuite) Test_jidListToStringList(c *C) {
 }
 
 func (*MucRoomConfigSuite) Test_RoomConfigForm_updateFieldValueByName(c *C) {
-	cf := &RoomConfigForm{
-		Fields: make(map[string]HasRoomConfigFormField),
-	}
-	fieldsToCompare := map[string]HasRoomConfigFormField{
-		"RoomConfigFieldText": roomConfigFormFieldFactory(xmppData.FormFieldX{
-			Var:    "RoomConfigFieldText",
-			Type:   RoomConfigFieldText,
-			Label:  "field label",
-			Values: []string{"bla"},
-		}),
-		"RoomConfigFieldTextPrivate": roomConfigFormFieldFactory(xmppData.FormFieldX{
-			Var:    "RoomConfigFieldTextPrivate",
-			Type:   RoomConfigFieldTextPrivate,
-			Label:  "field label",
-			Values: []string{"foo"},
-		}),
-		"RoomConfigFieldTextMulti": roomConfigFormFieldFactory(xmppData.FormFieldX{
-			Var:    "RoomConfigFieldTextMulti",
-			Type:   RoomConfigFieldTextMulti,
-			Label:  "field label",
-			Values: []string{"bla foo"},
-		}),
-		"RoomConfigFieldBoolean": roomConfigFormFieldFactory(xmppData.FormFieldX{
-			Var:    "RoomConfigFieldBoolean",
-			Type:   RoomConfigFieldBoolean,
-			Label:  "field label",
-			Values: []string{"true"},
-		}),
-		"RoomConfigFieldList": roomConfigFormFieldFactory(xmppData.FormFieldX{
-			Var:    "RoomConfigFieldList",
-			Type:   RoomConfigFieldList,
-			Label:  "field label",
-			Values: []string{"bla"},
-		}),
-		"RoomConfigFieldListMulti": roomConfigFormFieldFactory(xmppData.FormFieldX{
-			Var:    "RoomConfigFieldListMulti",
-			Type:   RoomConfigFieldListMulti,
-			Label:  "field label",
-			Values: []string{"bla", "foo", "bla1", "foo1"},
-		}),
-		"RoomConfigFieldJidMulti": roomConfigFormFieldFactory(xmppData.FormFieldX{
-			Var:    "RoomConfigFieldJidMulti",
-			Type:   RoomConfigFieldJidMulti,
-			Label:  "field label",
-			Values: []string{"bla", "foo", "bla@domain.org", "foo@domain.org"},
-		}),
-	}
+	cf := &RoomConfigForm{}
+	fields := []HasRoomConfigFormField{}
 
 	checks := []struct {
 		name          string
@@ -453,35 +364,34 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_updateFieldValueByName(c *C) {
 	}
 
 	for _, chk := range checks {
-		field := xmppData.FormFieldX{
+		fieldX := xmppData.FormFieldX{
 			Var:    chk.name,
 			Type:   chk.tp,
 			Label:  chk.label,
 			Values: chk.value,
 		}
-		cf.setFieldX(chk.name, field)
+		cf.setFieldX(fieldX)
+		fields = append(fields, roomConfigFormFieldFactory(fieldX))
 	}
 
 	cf.UpdateFieldValueByName("foo", "something")
-	c.Assert(cf.Fields, DeepEquals, fieldsToCompare)
+	c.Assert(cf.Fields, DeepEquals, fields)
 
-	fieldsToCompare["RoomConfigFieldText"].SetValue("bla1")
+	for _, f := range fields {
+		if f.Name() == "RoomConfigFieldText" {
+			f.SetValue("bla1")
+		}
+	}
 
 	cf.UpdateFieldValueByName("RoomConfigFieldText", "bla1")
-	c.Assert(cf.Fields, DeepEquals, fieldsToCompare)
+	c.Assert(cf.Fields, DeepEquals, fields)
 
-	fieldsToCompare["RoomConfigFieldText"].SetValue(nil)
+	for _, f := range fields {
+		if f.Name() == "RoomConfigFieldText" {
+			f.SetValue(nil)
+		}
+	}
 
 	cf.UpdateFieldValueByName("RoomConfigFieldText", nil)
-	c.Assert(cf.Fields, DeepEquals, fieldsToCompare)
-
-	fieldsToCompare["RoomConfigFieldText"].SetValue("bla1")
-
-	cf.UpdateFieldValue("RoomConfigFieldText", "bla1")
-	c.Assert(cf.Fields, DeepEquals, fieldsToCompare)
-
-	fieldsToCompare["RoomConfigFieldText"].SetValue(nil)
-
-	cf.UpdateFieldValue("RoomConfigFieldText", nil)
-	c.Assert(cf.Fields, DeepEquals, fieldsToCompare)
+	c.Assert(cf.Fields, DeepEquals, fields)
 }

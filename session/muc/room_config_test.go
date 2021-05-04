@@ -26,7 +26,6 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 			{Var: ConfigFieldAllowPrivateMessages, Values: []string{"allow private messages"}},
 			{Var: ConfigFieldAllowInvites, Values: []string{"true"}},
 			{Var: ConfigFieldCanChangeSubject, Values: []string{"true"}},
-			{Var: ConfigFieldEnableArchiving, Values: []string{"true"}},
 			{Var: ConfigFieldEnableLogging, Values: []string{"true"}},
 			{Var: ConfigFieldMemberList, Values: []string{}},
 			{Var: ConfigFieldLanguage, Values: []string{"eng"}},
@@ -50,7 +49,7 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 
 	c.Assert(rcf.GetStringValue(ConfigFieldRoomName), Equals, "a title")
 	c.Assert(rcf.GetStringValue(ConfigFieldRoomDescription), Equals, "a description")
-	c.Assert(rcf.Logged, Equals, true)
+	c.Assert(rcf.GetBooleanValue(ConfigFieldEnableLogging), Equals, true)
 	c.Assert(rcf.GetBooleanValue(ConfigFieldCanChangeSubject), Equals, true)
 	c.Assert(rcf.GetBooleanValue(ConfigFieldAllowInvites), Equals, true)
 	c.Assert(rcf.AllowPrivateMessages.CurrentValue(), Equals, "allow private messages")
@@ -70,7 +69,7 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	res := rcf.GetFormData()
 
 	c.Assert(res.Type, Equals, "submit")
-	c.Assert(res.Fields, HasLen, 23)
+	c.Assert(res.Fields, HasLen, 22)
 
 	vals := map[string][]string{}
 	for _, ff := range res.Fields {
@@ -79,7 +78,6 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 
 	c.Assert(vals, DeepEquals, map[string][]string{
 		"muc#roomconfig_enablelogging":         {"true"},
-		"muc#roomconfig_enablearchiving":       {"true"},
 		"muc#roomconfig_changesubject":         {"true"},
 		"muc#roomconfig_persistentroom":        {"true"},
 		"muc#roomconfig_passwordprotectedroom": {"true"},

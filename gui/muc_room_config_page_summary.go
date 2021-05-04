@@ -119,7 +119,7 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	// Other settings
 	setLabelText(p.maxHistoryFetch, summaryConfigurationOptionText(p.form.MaxHistoryFetch.CurrentValue()))
 	setLabelText(p.maxOccupants, summaryConfigurationOptionText(p.form.MaxOccupantsNumber.CurrentValue()))
-	setLabelText(p.enableArchiving, summaryYesOrNoText(p.form.Logged))
+	setLabelText(p.enableArchiving, summaryYesOrNoText(p.form.GetBooleanValue(muc.ConfigFieldEnableLogging)))
 }
 
 func (p *roomConfigSummaryPage) setDescriptionField() {

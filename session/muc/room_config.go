@@ -19,6 +19,8 @@ const (
 	ConfigFieldEnableLogging = "muc#roomconfig_enablelogging"
 	// ConfigFieldEnableArchiving represents the enable archiving form field
 	ConfigFieldEnableArchiving = "muc#roomconfig_enablearchiving"
+	// ConfigFieldMessageArchiveManagment represents the enable archiving form field
+	ConfigFieldMessageArchiveManagment = "mam"
 	// ConfigFieldMemberList represents the get member list form field
 	ConfigFieldMemberList = "muc#roomconfig_getmemberlist"
 	// ConfigFieldLanguage represents the room language form field
@@ -67,7 +69,6 @@ const (
 type RoomConfigForm struct {
 	MaxHistoryFetch      ConfigListSingleField
 	AllowPrivateMessages ConfigListSingleField
-	Logged               bool
 	RetrieveMembersList  ConfigListMultiField
 	MaxOccupantsNumber   ConfigListSingleField
 	MembersOnly          bool
@@ -142,8 +143,6 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 	fields := map[string][]string{
 		"FORM_TYPE":                     {ConfigFieldFormType},
-		ConfigFieldEnableLogging:        {strconv.FormatBool(rcf.Logged)},
-		ConfigFieldEnableArchiving:      {strconv.FormatBool(rcf.Logged)},
 		ConfigFieldAllowPM:              {rcf.AllowPrivateMessages.CurrentValue()},
 		ConfigFieldAllowPrivateMessages: {rcf.AllowPrivateMessages.CurrentValue()},
 		ConfigFieldMaxOccupantsNumber:   {rcf.MaxOccupantsNumber.CurrentValue()},
@@ -197,8 +196,8 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 	case ConfigFieldCanChangeSubject:
 		rcf.setFieldX(ConfigFieldCanChangeSubject, field)
 
-	case ConfigFieldEnableLogging, ConfigFieldEnableArchiving:
-		rcf.Logged = formFieldBool(field.Values)
+	case ConfigFieldEnableLogging, ConfigFieldEnableArchiving, ConfigFieldMessageArchiveManagment:
+		rcf.setFieldX(ConfigFieldEnableLogging, field)
 
 	case ConfigFieldMemberList:
 		rcf.RetrieveMembersList.UpdateField(field.Values, formFieldOptionsValues(field.Options))

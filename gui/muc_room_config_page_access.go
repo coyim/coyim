@@ -32,14 +32,14 @@ func (p *roomConfigAccessPage) initPasswordComponent() {
 
 func (p *roomConfigAccessPage) initDefaultValues() {
 	p.roomPassword.setPassword(p.form.GetStringValue(muc.ConfigFieldPassword))
-	setSwitchActive(p.roomMembersOnly, p.form.MembersOnly)
+	setSwitchActive(p.roomMembersOnly, p.form.GetBooleanValue(muc.ConfigFieldMembersOnly))
 	setSwitchActive(p.roomAllowInvites, p.form.GetBooleanValue(muc.ConfigFieldAllowInvites))
 }
 
 func (p *roomConfigAccessPage) collectData() {
 	p.form.UpdateFieldValue(muc.ConfigFieldPassword, p.roomPassword.currentPassword())
 	p.form.PasswordProtected = p.form.GetStringValue(muc.ConfigFieldPassword) != ""
-	p.form.MembersOnly = getSwitchActive(p.roomMembersOnly)
+	p.form.UpdateFieldValue(muc.ConfigFieldMembersOnly, getSwitchActive(p.roomMembersOnly))
 	p.form.UpdateFieldValue(muc.ConfigFieldAllowInvites, getSwitchActive(p.roomAllowInvites))
 }
 

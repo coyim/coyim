@@ -57,7 +57,7 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	c.Assert(rcf.GetBooleanValue(ConfigFieldIsPublic), Equals, true)
 	c.Assert(rcf.GetBooleanValue(ConfigFieldIsPersistent), Equals, true)
 	c.Assert(rcf.Moderated, Equals, true)
-	c.Assert(rcf.MembersOnly, Equals, true)
+	c.Assert(rcf.GetBooleanValue(ConfigFieldMembersOnly), Equals, true)
 	c.Assert(rcf.PasswordProtected, Equals, true)
 	c.Assert(rcf.GetStringValue(ConfigFieldPassword), Equals, "a password")
 	c.Assert(rcf.Whois.CurrentValue(), Equals, "a whois")

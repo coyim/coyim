@@ -71,7 +71,6 @@ type RoomConfigForm struct {
 	AllowPrivateMessages ConfigListSingleField
 	RetrieveMembersList  ConfigListMultiField
 	MaxOccupantsNumber   ConfigListSingleField
-	MembersOnly          bool
 	Moderated            bool
 	PasswordProtected    bool
 	PresenceBroadcast    ConfigListMultiField
@@ -147,7 +146,6 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 		ConfigFieldAllowPrivateMessages: {rcf.AllowPrivateMessages.CurrentValue()},
 		ConfigFieldMaxOccupantsNumber:   {rcf.MaxOccupantsNumber.CurrentValue()},
 		ConfigFieldModerated:            {strconv.FormatBool(rcf.Moderated)},
-		ConfigFieldMembersOnly:          {strconv.FormatBool(rcf.MembersOnly)},
 		ConfigFieldPasswordProtected:    {strconv.FormatBool(rcf.PasswordProtected)},
 		ConfigFieldWhoIs:                {rcf.Whois.CurrentValue()},
 		ConfigFieldMaxHistoryFetch:      {rcf.MaxHistoryFetch.CurrentValue()},
@@ -212,7 +210,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.MaxOccupantsNumber.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 
 	case ConfigFieldMembersOnly:
-		rcf.MembersOnly = formFieldBool(field.Values)
+		rcf.setFieldX(ConfigFieldMembersOnly, field)
 
 	case ConfigFieldModerated:
 		rcf.Moderated = formFieldBool(field.Values)

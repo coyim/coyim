@@ -106,7 +106,7 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	// Access
 	setLabelText(p.password, summaryPasswordText(p.form.PasswordProtected))
 	setLabelText(p.allowInviteUsers, summaryYesOrNoText(p.form.GetBooleanValue(muc.ConfigFieldAllowInvites)))
-	setLabelText(p.onlyMembers, summaryYesOrNoText(p.form.MembersOnly))
+	setLabelText(p.onlyMembers, summaryYesOrNoText(p.form.GetBooleanValue(muc.ConfigFieldMembersOnly)))
 
 	// Permissions
 	setLabelText(p.allowSetRoomSubject, summaryYesOrNoText(p.form.GetBooleanValue(muc.ConfigFieldCanChangeSubject)))

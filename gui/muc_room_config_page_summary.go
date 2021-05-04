@@ -110,7 +110,7 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 
 	// Permissions
 	setLabelText(p.allowSetRoomSubject, summaryYesOrNoText(p.form.GetBooleanValue(muc.ConfigFieldCanChangeSubject)))
-	setLabelText(p.moderatedRoom, summaryYesOrNoText(p.form.Moderated))
+	setLabelText(p.moderatedRoom, summaryYesOrNoText(p.form.GetBooleanValue(muc.ConfigFieldModerated)))
 	setLabelText(p.whoIs, configOptionToFriendlyMessage(p.form.Whois.CurrentValue()))
 
 	// Occupants

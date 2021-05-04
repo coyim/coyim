@@ -33,7 +33,7 @@ func (c *mucRoomConfigComponent) newRoomConfigPermissionsPage() mucRoomConfigPag
 
 func (p *roomConfigPermissionsPage) initDefaultValues() {
 	setSwitchActive(p.roomChangeSubject, p.form.GetBooleanValue(muc.ConfigFieldCanChangeSubject))
-	setSwitchActive(p.roomModerated, p.form.Moderated)
+	setSwitchActive(p.roomModerated, p.form.GetBooleanValue(muc.ConfigFieldModerated))
 
 	p.refreshWhoisField()
 }
@@ -67,7 +67,7 @@ func (p *roomConfigPermissionsPage) activateWhoisOption(o string) {
 
 func (p *roomConfigPermissionsPage) collectData() {
 	p.form.UpdateFieldValue(muc.ConfigFieldCanChangeSubject, getSwitchActive(p.roomChangeSubject))
-	p.form.Moderated = getSwitchActive(p.roomModerated)
+	p.form.UpdateFieldValue(muc.ConfigFieldModerated, getSwitchActive(p.roomModerated))
 
 	for o, index := range p.roomWhoisOptions {
 		if index == p.roomWhois.GetActive() {

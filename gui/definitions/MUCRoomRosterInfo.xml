@@ -686,17 +686,17 @@
     <property name="visible">True</property>
     <property name="menu_type_hint">menu</property>
     <child>
-      <object class="GtkMenuItem" id="ban-occupant">
-        <property name="visible">True</property>
-        <property name="label" translatable="yes">Ban</property>
-        <signal name="activate" handler="on_ban" swapped="no"/>
-      </object>
-    </child>
-    <child>
       <object class="GtkMenuItem" id="kick-occupant">
         <property name="visible">True</property>
         <property name="label" translatable="yes">Expel</property>
         <signal name="activate" handler="on_kick" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="ban-occupant">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Ban</property>
+        <signal name="activate" handler="on_ban" swapped="no"/>
       </object>
     </child>
   </object>

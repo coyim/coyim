@@ -159,32 +159,67 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 		switch fieldName {
 		case ConfigFieldFormType:
 			values = []string{rcf.formType}
+
+		case ConfigFieldRoomName:
+			values = []string{rcf.Title}
+
+		case ConfigFieldRoomDescription:
+			values = []string{rcf.Description}
+
 		case ConfigFieldEnableLogging, ConfigFieldEnableArchiving:
 			values = []string{strconv.FormatBool(rcf.Logged)}
+
+		case ConfigFieldMemberList:
+			values = rcf.RetrieveMembersList.Values()
+
+		case ConfigFieldLanguage:
+			values = []string{rcf.Language}
+
+		case ConfigFieldPubsub:
+			values = []string{rcf.AssociatedPublishSubscribeNode}
+
 		case ConfigFieldCanChangeSubject:
 			values = []string{strconv.FormatBool(rcf.OccupantsCanChangeSubject)}
+
 		case ConfigFieldAllowInvites, ConfigFieldAllowMemberInvites:
 			values = []string{strconv.FormatBool(rcf.OccupantsCanInvite)}
+
 		case ConfigFieldAllowPM, ConfigFieldAllowPrivateMessages:
 			values = []string{rcf.AllowPrivateMessages.CurrentValue()}
+
 		case ConfigFieldMaxOccupantsNumber:
 			values = []string{rcf.MaxOccupantsNumber.CurrentValue()}
+
 		case ConfigFieldIsPublic:
 			values = []string{strconv.FormatBool(rcf.Public)}
+
 		case ConfigFieldIsPersistent:
 			values = []string{strconv.FormatBool(rcf.Persistent)}
+
+		case ConfigFieldPresenceBroadcast:
+			values = rcf.PresenceBroadcast.Values()
+
 		case ConfigFieldModerated:
 			values = []string{strconv.FormatBool(rcf.Moderated)}
+
 		case ConfigFieldMembersOnly:
 			values = []string{strconv.FormatBool(rcf.MembersOnly)}
+
 		case ConfigFieldPasswordProtected:
 			values = []string{strconv.FormatBool(rcf.PasswordProtected)}
+
 		case ConfigFieldPassword:
 			values = []string{rcf.Password}
+
+		case ConfigFieldOwners:
+			values = jidListToStringList(rcf.Owners)
+
 		case ConfigFieldWhoIs:
 			values = []string{rcf.Whois.CurrentValue()}
+
 		case ConfigFieldMaxHistoryFetch, ConfigFieldMaxHistoryLength:
 			values = []string{rcf.MaxHistoryFetch.CurrentValue()}
+
 		case ConfigFieldRoomAdmins:
 			values = jidListToStringList(rcf.Admins)
 		}

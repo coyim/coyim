@@ -178,12 +178,12 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_setUnknowField(c *C) {
 			Values: chk.value,
 		}
 		cf.setField(fieldX)
-		fields = append(fields, roomConfigFormFieldFactory(fieldX))
+		fields = append(fields, newRoomConfigFormField(fieldX))
 		c.Assert(cf.Fields, DeepEquals, fields)
 	}
 }
 
-func (*MucRoomConfigSuite) Test_roomConfigFormFieldFactory(c *C) {
+func (*MucRoomConfigSuite) Test_newRoomConfigFormField(c *C) {
 	checks := []struct {
 		name          string
 		tp            string
@@ -210,7 +210,7 @@ func (*MucRoomConfigSuite) Test_roomConfigFormFieldFactory(c *C) {
 			RoomConfigFieldTextMulti,
 			"field label",
 			[]string{"bla foo"},
-			"bla foo",
+			[]string{"bla foo"},
 		},
 		{
 			"RoomConfigFieldBoolean",
@@ -224,14 +224,14 @@ func (*MucRoomConfigSuite) Test_roomConfigFormFieldFactory(c *C) {
 			RoomConfigFieldList,
 			"field label",
 			[]string{"bla"},
-			&configListSingleField{value: "bla"},
+			"bla",
 		},
 		{
 			"RoomConfigFieldListMulti",
 			RoomConfigFieldListMulti,
 			"field label",
 			[]string{"bla", "foo", "bla1", "foo1"},
-			&configListMultiField{values: []string{"bla", "foo", "bla1", "foo1"}},
+			[]string{"bla", "foo", "bla1", "foo1"},
 		},
 		{
 			"RoomConfigFieldJidMulti",
@@ -250,7 +250,7 @@ func (*MucRoomConfigSuite) Test_roomConfigFormFieldFactory(c *C) {
 	}
 
 	for _, chk := range checks {
-		field := roomConfigFormFieldFactory(xmppData.FormFieldX{
+		field := newRoomConfigFormField(xmppData.FormFieldX{
 			Var:    chk.name,
 			Type:   chk.tp,
 			Label:  chk.label,
@@ -260,7 +260,7 @@ func (*MucRoomConfigSuite) Test_roomConfigFormFieldFactory(c *C) {
 		c.Assert(field.Name, Equals, chk.name)
 		c.Assert(field.Type, Equals, chk.tp)
 		c.Assert(field.Label, Equals, chk.label)
-		c.Assert(field.Value, DeepEquals, chk.expectedValue)
+		c.Assert(field.RawValue(), DeepEquals, chk.expectedValue)
 	}
 }
 
@@ -375,7 +375,7 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_updateFieldValueByName(c *C) {
 			Values: chk.value,
 		}
 		cf.setField(fieldX)
-		fields = append(fields, roomConfigFormFieldFactory(fieldX))
+		fields = append(fields, newRoomConfigFormField(fieldX))
 	}
 
 	cf.UpdateFieldValueByName("foo", "something")

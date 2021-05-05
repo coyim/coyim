@@ -40,15 +40,15 @@ func (*MucRoomConfigFieldsSuite) Test_configListMultiField_UpdateField(c *C) {
 func (*MucRoomConfigFieldsSuite) Test_RoomConfigFormField(c *C) {
 	field := &RoomConfigFormField{}
 
-	field.Value = roomConfigFormFieldValueFactory(RoomConfigFieldBoolean, []string{"true"})
-	c.Assert(field.Raw(), DeepEquals, true)
-	c.Assert(field.ValueX(), DeepEquals, []string{"true"})
+	field.value = roomConfigFormFieldValueFactory(RoomConfigFieldBoolean, []string{"true"})
+	c.Assert(field.RawValue(), DeepEquals, true)
+	c.Assert(field.Value(), DeepEquals, []string{"true"})
 
-	field.Value = roomConfigFormFieldValueFactory(RoomConfigFieldText, []string{"bla"})
-	c.Assert(field.Raw(), Equals, "bla")
-	c.Assert(field.ValueX(), DeepEquals, []string{"bla"})
+	field.value = roomConfigFormFieldValueFactory(RoomConfigFieldText, []string{"bla"})
+	c.Assert(field.RawValue(), Equals, "bla")
+	c.Assert(field.Value(), DeepEquals, []string{"bla"})
 
-	field.Value = roomConfigFormFieldValueFactory(RoomConfigFieldList, []string{"foo"})
-	c.Assert(field.Raw(), DeepEquals, "foo")
-	c.Assert(field.ValueX(), DeepEquals, []string{"foo"})
+	field.value = roomConfigFormFieldValueFactory(RoomConfigFieldList, []string{"foo"})
+	c.Assert(field.RawValue(), DeepEquals, "foo")
+	c.Assert(field.Value(), DeepEquals, []string{"foo"})
 }

@@ -146,8 +146,10 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 
 func (rcf *RoomConfigForm) setFormFields(fields []xmppData.FormFieldX) {
 	for idx, field := range fields {
-		rcf.fieldNames[field.Var] = idx
-		rcf.setField(field)
+		if field.Var != "" {
+			rcf.fieldNames[field.Var] = idx
+			rcf.setField(field)
+		}
 	}
 }
 

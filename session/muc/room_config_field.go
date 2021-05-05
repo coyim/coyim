@@ -1,10 +1,6 @@
 package muc
 
-import (
-	"fmt"
-	"reflect"
-	"strconv"
-)
+import xmppData "github.com/coyim/coyim/xmpp/data"
 
 // HasRoomConfigFormFieldValue description
 type HasRoomConfigFormFieldValue interface {
@@ -19,48 +15,48 @@ type RoomConfigFormField struct {
 	Type        string
 	Label       string
 	Description string
-	Value       interface{}
+	value       HasRoomConfigFormFieldValue
 }
 
-func newRoomConfigFormField(name, typ, label, description string) *RoomConfigFormField {
+func newRoomConfigFormField(field xmppData.FormFieldX) *RoomConfigFormField {
 	return &RoomConfigFormField{
-		Name:        name,
-		Type:        typ,
-		Label:       label,
-		Description: description,
+		Name:        field.Var,
+		Type:        field.Type,
+		Label:       field.Label,
+		Description: field.Desc,
+		value:       roomConfigFormFieldValueFactory(field.Type, field.Values),
 	}
 }
 
-// ValueX implements the HasRoomConfigFormField interface
-func (f *RoomConfigFormField) ValueX() []string {
-	v := reflect.ValueOf(f.Value)
-
-	switch t := v.Kind(); t {
-	case reflect.String:
-		return []string{v.String()}
-	case reflect.Bool:
-		return []string{strconv.FormatBool(v.Bool())}
-	case reflect.Int, reflect.Int8, reflect.Int32, reflect.Int64:
-		return []string{strconv.FormatInt(v.Int(), 10)}
-	case reflect.Uint, reflect.Uint8, reflect.Uint32, reflect.Uint64:
-		return []string{strconv.FormatUint(v.Uint(), 10)}
-	case reflect.Slice:
-		values := []string{}
-		if list, ok := v.Interface().([]string); ok {
-			for _, itm := range list {
-				values = append(values, string(itm))
-			}
-		}
-		return values
-	default:
-		fmt.Printf("DON'T KNOW ABOUT TYPE: %d\n", t)
-
-	}
-
-	return []string{}
-}
-
-// SetValue implements the HasRoomConfigFormField interface
+// SetValue sets the field value with the given "v" parameter
 func (f *RoomConfigFormField) SetValue(v interface{}) {
-	f.Value = v
+	f.value.SetValue(v)
+}
+
+// Value returns the current field value
+func (f *RoomConfigFormField) Value() []string {
+	return f.value.Value()
+}
+
+// RawValue returns the raw value of the field
+func (f *RoomConfigFormField) RawValue() interface{} {
+	return f.value.Raw()
+}
+
+func roomConfigFormFieldValueFactory(typ string, values []string) HasRoomConfigFormFieldValue {
+	switch typ {
+	case RoomConfigFieldText, RoomConfigFieldTextPrivate:
+		return newRoomConfigFieldTextValue(values)
+	case RoomConfigFieldTextMulti:
+		return newRoomConfigFieldTextMultiValue(values)
+	case RoomConfigFieldBoolean:
+		return newRoomConfigFieldBooleanValue(values)
+	case RoomConfigFieldList:
+		return newRoomConfigFieldListValue(values)
+	case RoomConfigFieldListMulti:
+		return newRoomConfigFieldListMultiValue(values)
+	case RoomConfigFieldJidMulti:
+		return newRoomConfigFieldJidMultiValue(values)
+	}
+	return newRoomConfigFieldUnknowValue(values)
 }

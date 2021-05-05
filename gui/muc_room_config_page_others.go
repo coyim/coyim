@@ -38,8 +38,12 @@ func (c *mucRoomConfigComponent) newRoomConfigOthersPage() mucRoomConfigPage {
 }
 
 func (p *roomConfigOthersPage) initDefaultValues() {
+	p.roomMaxHistoryFetch.updateCurrentValue(p.form.MaxHistoryFetch.CurrentValue())
 	p.roomMaxHistoryFetch.updateOptions(p.form.MaxHistoryFetch.Options())
+
+	p.roomMaxOccupants.updateCurrentValue(p.form.MaxOccupantsNumber.CurrentValue())
 	p.roomMaxOccupants.updateOptions(p.form.MaxOccupantsNumber.Options())
+
 	p.roomEnableLogging.SetActive(p.form.Logged)
 
 	for _, f := range p.form.Fields {
@@ -123,6 +127,11 @@ func newRoomConfigCombo(cb gtki.ComboBoxText, e gtki.Entry) *roomConfigComboEntr
 	cc.comboBox.SetEntryTextColumn(roomConfigComboOptionLabelIndex)
 
 	return cc
+}
+
+// updateCurrentValue MUST be called from the UI thread
+func (cc *roomConfigComboEntry) updateCurrentValue(v string) {
+	cc.entry.SetText(v)
 }
 
 // updateOptions MUST be called from the UI thread

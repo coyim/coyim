@@ -20,7 +20,7 @@ type roomConfigFormFieldList struct {
 	options      map[string]int
 }
 
-func newRoomConfigFormFieldList(f muc.HasRoomConfigFormField) hasRoomConfigFormField {
+func newRoomConfigFormFieldList(f *muc.RoomConfigFormField) hasRoomConfigFormField {
 	field := &roomConfigFormFieldList{}
 	field.roomConfigFormField = newRoomConfigFormField(f, "MUCRoomConfigFormFieldList")
 
@@ -43,7 +43,7 @@ func newRoomConfigFormFieldList(f muc.HasRoomConfigFormField) hasRoomConfigFormF
 func (f *roomConfigFormFieldList) initOptions() {
 	f.options = map[string]int{}
 
-	if lf, ok := f.field.Value().(muc.ConfigListSingleField); ok {
+	if lf, ok := f.field.Value.(muc.ConfigListSingleField); ok {
 		for index, o := range lf.Options() {
 			iter := f.optionsModel.Append()
 

@@ -17,7 +17,7 @@ type hasRoomConfigFormField interface {
 }
 
 type roomConfigFormField struct {
-	field   muc.HasRoomConfigFormField
+	field   *muc.RoomConfigFormField
 	builder *builder
 
 	widget      gtki.Box   `gtk-widget:"room-config-field-box"`
@@ -25,7 +25,7 @@ type roomConfigFormField struct {
 	description gtki.Label `gtk-widget:"room-config-field-description"`
 }
 
-func newRoomConfigFormField(f muc.HasRoomConfigFormField, template string) *roomConfigFormField {
+func newRoomConfigFormField(f *muc.RoomConfigFormField, template string) *roomConfigFormField {
 	field := &roomConfigFormField{
 		field: f,
 	}
@@ -46,17 +46,17 @@ func newRoomConfigFormField(f muc.HasRoomConfigFormField, template string) *room
 
 // fieldName implements the hasRoomConfigFormField interface
 func (f *roomConfigFormField) fieldName() string {
-	return f.field.Name()
+	return f.field.Name
 }
 
 // fieldLabel implements the hasRoomConfigFormField interface
 func (f *roomConfigFormField) fieldLabel() string {
-	return f.field.Label()
+	return f.field.Label
 }
 
 // fieldDescription implements the hasRoomConfigFormField interface
 func (f *roomConfigFormField) fieldDescription() string {
-	return f.field.Description()
+	return f.field.Description
 }
 
 // fieldValue implements the hasRoomConfigFormField interface
@@ -76,8 +76,8 @@ var (
 	errRoomConfigFieldNotSupported = errors.New("room configuration form field not supported")
 )
 
-func roomConfigFormFieldFactory(field muc.HasRoomConfigFormField) (hasRoomConfigFormField, error) {
-	switch field.Type() {
+func roomConfigFormFieldFactory(field *muc.RoomConfigFormField) (hasRoomConfigFormField, error) {
+	switch field.Type {
 	case muc.RoomConfigFieldText:
 		return newRoomConfigFormTextField(field), nil
 	case muc.RoomConfigFieldBoolean:

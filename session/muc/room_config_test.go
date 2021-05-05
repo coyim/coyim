@@ -110,7 +110,7 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 
 func (*MucRoomConfigSuite) Test_RoomConfigForm_setUnknowField(c *C) {
 	cf := &RoomConfigForm{}
-	fields := []HasRoomConfigFormField{}
+	fields := []*RoomConfigFormField{}
 
 	checks := []struct {
 		name          string
@@ -257,10 +257,10 @@ func (*MucRoomConfigSuite) Test_roomConfigFormFieldFactory(c *C) {
 			Values: chk.value,
 		})
 
-		c.Assert(field.Name(), Equals, chk.name)
-		c.Assert(field.Type(), Equals, chk.tp)
-		c.Assert(field.Label(), Equals, chk.label)
-		c.Assert(field.Value(), DeepEquals, chk.expectedValue)
+		c.Assert(field.Name, Equals, chk.name)
+		c.Assert(field.Type, Equals, chk.tp)
+		c.Assert(field.Label, Equals, chk.label)
+		c.Assert(field.Value, DeepEquals, chk.expectedValue)
 	}
 }
 
@@ -307,7 +307,7 @@ func (*MucRoomConfigSuite) Test_jidListToStringList(c *C) {
 
 func (*MucRoomConfigSuite) Test_RoomConfigForm_updateFieldValueByName(c *C) {
 	cf := &RoomConfigForm{}
-	fields := []HasRoomConfigFormField{}
+	fields := []*RoomConfigFormField{}
 
 	checks := []struct {
 		name          string
@@ -382,7 +382,7 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_updateFieldValueByName(c *C) {
 	c.Assert(cf.Fields, DeepEquals, fields)
 
 	for _, f := range fields {
-		if f.Name() == "RoomConfigFieldText" {
+		if f.Name == "RoomConfigFieldText" {
 			f.SetValue("bla1")
 		}
 	}
@@ -391,7 +391,7 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_updateFieldValueByName(c *C) {
 	c.Assert(cf.Fields, DeepEquals, fields)
 
 	for _, f := range fields {
-		if f.Name() == "RoomConfigFieldText" {
+		if f.Name == "RoomConfigFieldText" {
 			f.SetValue(nil)
 		}
 	}

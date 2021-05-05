@@ -89,7 +89,7 @@ type RoomConfigForm struct {
 
 	formType   string
 	fieldNames map[string]int
-	Fields     []HasRoomConfigFormField
+	Fields     []*RoomConfigFormField
 }
 
 // NewRoomConfigForm creates a new room configuration form instance
@@ -241,7 +241,7 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 
 	for _, f := range rcf.Fields {
 		formFields = append(formFields, xmppData.FormFieldX{
-			Var:    f.Name(),
+			Var:    f.Name,
 			Values: f.ValueX(),
 		})
 	}
@@ -330,14 +330,14 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 // UpdateFieldValueByName finds a field from the unknown fields list by their name and updates their value
 func (rcf *RoomConfigForm) UpdateFieldValueByName(name string, value interface{}) {
 	for _, field := range rcf.Fields {
-		if field.Name() == name {
+		if field.Name == name {
 			field.SetValue(value)
 			return
 		}
 	}
 }
 
-func roomConfigFormFieldFactory(field xmppData.FormFieldX) HasRoomConfigFormField {
+func roomConfigFormFieldFactory(field xmppData.FormFieldX) *RoomConfigFormField {
 	f := newRoomConfigFormField(field.Var, field.Type, field.Label, field.Desc)
 
 	switch field.Type {

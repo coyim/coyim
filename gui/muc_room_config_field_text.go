@@ -11,13 +11,13 @@ type roomConfigFormFieldText struct {
 	entry gtki.Entry `gtk-widget:"room-config-text-field-entry"`
 }
 
-func newRoomConfigFormTextField(f muc.HasRoomConfigFormField) hasRoomConfigFormField {
+func newRoomConfigFormTextField(f *muc.RoomConfigFormField) hasRoomConfigFormField {
 	field := &roomConfigFormFieldText{}
 	field.roomConfigFormField = newRoomConfigFormField(f, "MUCRoomConfigFormFieldText")
 
 	panicOnDevError(field.builder.bindObjects(field))
 
-	if text, ok := f.Value().(string); ok {
+	if text, ok := f.Value.(string); ok {
 		field.entry.SetText(text)
 	}
 

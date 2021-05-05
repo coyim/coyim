@@ -18,7 +18,7 @@ func newRoomConfigFormFieldBoolean(f *muc.RoomConfigFormField) hasRoomConfigForm
 
 	panicOnDevError(field.builder.bindObjects(field))
 
-	if active, ok := f.Value.(bool); ok {
+	if active, ok := f.RawValue().(bool); ok {
 		field.toggle.SetActive(active)
 	}
 

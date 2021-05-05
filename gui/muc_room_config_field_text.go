@@ -17,7 +17,7 @@ func newRoomConfigFormTextField(f *muc.RoomConfigFormField) hasRoomConfigFormFie
 
 	panicOnDevError(field.builder.bindObjects(field))
 
-	if text, ok := f.Value.(string); ok {
+	if text, ok := f.RawValue().(string); ok {
 		field.entry.SetText(text)
 	}
 

@@ -4,6 +4,7 @@ package muc
 type ConfigListMultiField interface {
 	// UpdateField will update the field with the given "values" and "options"
 	UpdateField(values, options []string)
+	Values() []string
 }
 
 type configListMultiField struct {
@@ -20,4 +21,8 @@ func newConfigListMultiField(o []string) ConfigListMultiField {
 func (cf *configListMultiField) UpdateField(v, o []string) {
 	cf.values = v
 	cf.options = o
+}
+
+func (cf *configListMultiField) Values() []string {
+	return cf.values
 }

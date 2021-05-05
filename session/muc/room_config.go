@@ -369,7 +369,13 @@ func roomConfigFormFieldFactory(field xmppData.FormFieldX) HasRoomConfigFormFiel
 }
 
 func formFieldBool(values []string) bool {
-	return len(values) > 0 && (strings.ToLower(values[0]) == "true" || values[0] == "1")
+	if len(values) > 0 {
+		v, err := strconv.ParseBool(values[0])
+		if err == nil {
+			return v
+		}
+	}
+	return false
 }
 
 func formFieldSingleString(values []string) string {

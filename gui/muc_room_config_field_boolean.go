@@ -31,3 +31,7 @@ func (f *roomConfigFormFieldBoolean) refreshContent() {
 		f.grid.SetVAlign(gtki.ALIGN_CENTER)
 	})
 }
+
+func (f *roomConfigFormFieldBoolean) fieldValue() interface{} {
+	return f.toggle.GetActive()
+}

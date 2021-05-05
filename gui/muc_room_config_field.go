@@ -61,7 +61,7 @@ func (f *roomConfigFormField) fieldDescription() string {
 
 // fieldValue implements the hasRoomConfigFormField interface
 func (f *roomConfigFormField) fieldValue() interface{} {
-	return f.field.Value()
+	return nil
 }
 
 // fieldWidget implements the hasRoomConfigFormField interface

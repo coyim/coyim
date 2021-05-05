@@ -10,7 +10,7 @@ import (
 
 const (
 	// ConfigFieldFormType represents the configuration form type field
-	ConfigFieldFormType = "http://jabber.org/protocol/muc#roomconfig"
+	ConfigFieldFormType = "FORM_TYPE"
 	// ConfigFieldRoomName represents the room name form field
 	ConfigFieldRoomName = "muc#roomconfig_roomname"
 	// ConfigFieldRoomDescription represents the room description form field

@@ -177,7 +177,7 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_setUnknowField(c *C) {
 			Label:  chk.label,
 			Values: chk.value,
 		}
-		cf.setFieldX(fieldX)
+		cf.setField(fieldX)
 		fields = append(fields, roomConfigFormFieldFactory(fieldX))
 		c.Assert(cf.Fields, DeepEquals, fields)
 	}
@@ -374,7 +374,7 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_updateFieldValueByName(c *C) {
 			Label:  chk.label,
 			Values: chk.value,
 		}
-		cf.setFieldX(fieldX)
+		cf.setField(fieldX)
 		fields = append(fields, roomConfigFormFieldFactory(fieldX))
 	}
 

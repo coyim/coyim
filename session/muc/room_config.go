@@ -319,7 +319,9 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.Whois.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 
 	default:
-		rcf.setFieldX(field)
+		if field.Type != RoomConfigFieldHidden && field.Type != RoomConfigFieldFixed {
+			rcf.Fields = append(rcf.Fields, roomConfigFormFieldFactory(field))
+		}
 	}
 }
 
@@ -330,12 +332,6 @@ func (rcf *RoomConfigForm) UpdateFieldValueByName(name string, value interface{}
 			field.SetValue(value)
 			return
 		}
-	}
-}
-
-func (rcf *RoomConfigForm) setFieldX(field xmppData.FormFieldX) {
-	if field.Type != RoomConfigFieldHidden && field.Type != RoomConfigFieldFixed {
-		rcf.Fields = append(rcf.Fields, roomConfigFormFieldFactory(field))
 	}
 }
 

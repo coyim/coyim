@@ -87,6 +87,7 @@ type RoomConfigForm struct {
 	Password                       string
 	Whois                          ConfigListSingleField
 
+	formType   string
 	fieldNames map[string]int
 	Fields     []HasRoomConfigFormField
 }
@@ -150,17 +151,14 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 // https://xmpp.org/extensions/xep-0045.html#createroom-reserved
 // https://xmpp.org/extensions/xep-0045.html#example-163
 func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
-	formFields := []xmppData.FormFieldX{
-		{
-			Var:    "FORM_TYPE",
-			Values: []string{ConfigFieldFormType},
-		},
-	}
+	formFields := []xmppData.FormFieldX{}
 
 	for fieldName := range rcf.fieldNames {
 		var values []string
 
 		switch fieldName {
+		case ConfigFieldFormType:
+			values = []string{rcf.formType}
 		case ConfigFieldEnableLogging, ConfigFieldEnableArchiving:
 			values = []string{strconv.FormatBool(rcf.Logged)}
 		case ConfigFieldCanChangeSubject:
@@ -219,6 +217,9 @@ func (rcf *RoomConfigForm) SetFormFields(form *xmppData.Form) {
 
 func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 	switch field.Var {
+	case ConfigFieldFormType:
+		rcf.formType = formFieldSingleString(field.Values)
+
 	case ConfigFieldMaxHistoryFetch, ConfigFieldMaxHistoryLength:
 		rcf.MaxHistoryFetch.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 

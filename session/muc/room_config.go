@@ -2,7 +2,6 @@ package muc
 
 import (
 	"strconv"
-	"strings"
 
 	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -242,7 +241,7 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 	for _, f := range rcf.Fields {
 		formFields = append(formFields, xmppData.FormFieldX{
 			Var:    f.Name,
-			Values: f.ValueX(),
+			Values: f.Value(),
 		})
 	}
 
@@ -322,7 +321,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 
 	default:
 		if field.Type != RoomConfigFieldHidden && field.Type != RoomConfigFieldFixed {
-			rcf.Fields = append(rcf.Fields, roomConfigFormFieldFactory(field))
+			rcf.Fields = append(rcf.Fields, newRoomConfigFormField(field))
 		}
 	}
 }
@@ -335,39 +334,6 @@ func (rcf *RoomConfigForm) UpdateFieldValueByName(name string, value interface{}
 			return
 		}
 	}
-}
-
-func roomConfigFormFieldFactory(field xmppData.FormFieldX) *RoomConfigFormField {
-	f := newRoomConfigFormField(field.Var, field.Type, field.Label, field.Desc)
-
-	switch field.Type {
-	case RoomConfigFieldText, RoomConfigFieldTextPrivate:
-		f.SetValue(formFieldSingleString(field.Values))
-
-	case RoomConfigFieldTextMulti:
-		f.SetValue(strings.Join(field.Values, "\n"))
-
-	case RoomConfigFieldBoolean:
-		f.SetValue(formFieldBool(field.Values))
-
-	case RoomConfigFieldList:
-		ls := newConfigListSingleField(nil)
-		ls.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
-		f.SetValue(ls)
-
-	case RoomConfigFieldListMulti:
-		lm := newConfigListMultiField(nil)
-		lm.UpdateField(field.Values, formFieldOptionsValues(field.Options))
-		f.SetValue(lm)
-
-	case RoomConfigFieldJidMulti:
-		f.SetValue(formFieldJidList(field.Values))
-
-	default:
-		f.SetValue(field.Values)
-	}
-
-	return f
 }
 
 func formFieldBool(values []string) bool {

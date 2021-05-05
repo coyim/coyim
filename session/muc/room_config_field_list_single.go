@@ -44,11 +44,12 @@ func (cf *configListSingleField) Options() []string {
 
 // RoomConfigFieldListValue contains information of the value of the list single field
 type RoomConfigFieldListValue struct {
-	value string
+	value   string
+	options []string
 }
 
-func newRoomConfigFieldListValue(values []string) HasRoomConfigFormFieldValue {
-	return &RoomConfigFieldListValue{formFieldSingleString(values)}
+func newRoomConfigFieldListValue(values, options []string) *RoomConfigFieldListValue {
+	return &RoomConfigFieldListValue{formFieldSingleString(values), options}
 }
 
 // Value implements the "HasRoomConfigFormFieldValue" interface
@@ -66,4 +67,9 @@ func (v *RoomConfigFieldListValue) SetValue(value interface{}) {
 // Raw implements the "HasRoomConfigFormFieldValue" interface
 func (v *RoomConfigFieldListValue) Raw() interface{} {
 	return v.value
+}
+
+// Options returns the available options for the field
+func (v *RoomConfigFieldListValue) Options() []string {
+	return v.options
 }

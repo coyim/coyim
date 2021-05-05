@@ -32,14 +32,14 @@ func (*MucRoomConfigFieldListSuite) Test_newRoomConfigFieldListValue(c *C) {
 	}
 
 	for _, mock := range cases {
-		field := newRoomConfigFieldListValue(mock.values)
+		field := newRoomConfigFieldListValue(mock.values, []string{})
 		c.Assert(field.Raw(), Equals, mock.expected)
 		c.Assert(field.Value(), DeepEquals, []string{mock.expected})
 	}
 }
 
 func (*MucRoomConfigFieldBooleanSuite) Test_RoomConfigFieldListValue_SetValue(c *C) {
-	field := newRoomConfigFieldListValue([]string{"bla", "foo"})
+	field := newRoomConfigFieldListValue([]string{"bla", "foo"}, []string{})
 	c.Assert(field.Raw(), DeepEquals, "bla")
 	c.Assert(field.Value(), DeepEquals, []string{"bla"})
 
@@ -62,4 +62,15 @@ func (*MucRoomConfigFieldBooleanSuite) Test_RoomConfigFieldListValue_SetValue(c 
 	field.SetValue("abc")
 	c.Assert(field.Raw(), DeepEquals, "abc")
 	c.Assert(field.Value(), DeepEquals, []string{"abc"})
+}
+
+func (*MucRoomConfigFieldBooleanSuite) Test_RoomConfigFieldListValue_Options(c *C) {
+	field := newRoomConfigFieldListValue([]string{}, []string{"bla", "foo"})
+	c.Assert(field.Options(), DeepEquals, []string{"bla", "foo"})
+
+	field = newRoomConfigFieldListValue([]string{}, []string{"foo"})
+	c.Assert(field.Options(), DeepEquals, []string{"foo"})
+
+	field = newRoomConfigFieldListValue([]string{}, []string{"whatever"})
+	c.Assert(field.Options(), DeepEquals, []string{"whatever"})
 }

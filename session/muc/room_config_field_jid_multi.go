@@ -7,7 +7,7 @@ type RoomConfigFieldJidMultiValue struct {
 	value []jid.Any
 }
 
-func newRoomConfigFieldJidMultiValue(values []string) HasRoomConfigFormFieldValue {
+func newRoomConfigFieldJidMultiValue(values []string) *RoomConfigFieldJidMultiValue {
 	v := &RoomConfigFieldJidMultiValue{}
 
 	v.initValues(values)
@@ -16,6 +16,7 @@ func newRoomConfigFieldJidMultiValue(values []string) HasRoomConfigFormFieldValu
 }
 
 func (v *RoomConfigFieldJidMultiValue) initValues(values []string) {
+	v.value = []jid.Any{}
 	for _, addr := range values {
 		if any := jid.Parse(addr); any.Valid() {
 			v.value = append(v.value, any)

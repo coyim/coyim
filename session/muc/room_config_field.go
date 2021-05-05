@@ -6,6 +6,13 @@ import (
 	"strconv"
 )
 
+// HasRoomConfigFormFieldValue description
+type HasRoomConfigFormFieldValue interface {
+	Value() []string
+	SetValue(interface{})
+	Raw() interface{}
+}
+
 // RoomConfigFormField contains information of the field from the configuration form
 type RoomConfigFormField struct {
 	Name        string

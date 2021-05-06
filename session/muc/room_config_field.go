@@ -24,7 +24,7 @@ func newRoomConfigFormField(field xmppData.FormFieldX) *RoomConfigFormField {
 		Type:        field.Type,
 		Label:       field.Label,
 		Description: field.Desc,
-		value:       roomConfigFormFieldValueFactory(field.Type, field.Values),
+		value:       roomConfigFormFieldValueFactory(field),
 	}
 }
 
@@ -43,8 +43,11 @@ func (f *RoomConfigFormField) RawValue() interface{} {
 	return f.value.Raw()
 }
 
-func roomConfigFormFieldValueFactory(typ string, values []string) HasRoomConfigFormFieldValue {
-	switch typ {
+func roomConfigFormFieldValueFactory(field xmppData.FormFieldX) HasRoomConfigFormFieldValue {
+	values := field.Values
+	options := formFieldOptionsValues(field.Options)
+
+	switch field.Type {
 	case RoomConfigFieldText, RoomConfigFieldTextPrivate:
 		return newRoomConfigFieldTextValue(values)
 	case RoomConfigFieldTextMulti:
@@ -54,9 +57,10 @@ func roomConfigFormFieldValueFactory(typ string, values []string) HasRoomConfigF
 	case RoomConfigFieldList:
 		return newRoomConfigFieldListValue(values)
 	case RoomConfigFieldListMulti:
-		return newRoomConfigFieldListMultiValue(values)
+		return newRoomConfigFieldListMultiValue(values, options)
 	case RoomConfigFieldJidMulti:
 		return newRoomConfigFieldJidMultiValue(values)
 	}
+
 	return newRoomConfigFieldUnknowValue(values)
 }

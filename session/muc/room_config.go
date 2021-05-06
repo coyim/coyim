@@ -315,16 +315,6 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 	}
 }
 
-// UpdateFieldValueByName finds a field from the unknown fields list by their name and updates their value
-func (rcf *RoomConfigForm) UpdateFieldValueByName(name string, value interface{}) {
-	for _, field := range rcf.Fields {
-		if field.Name == name {
-			field.SetValue(value)
-			return
-		}
-	}
-}
-
 func formFieldBool(values []string) bool {
 	if len(values) > 0 {
 		v, err := strconv.ParseBool(values[0])

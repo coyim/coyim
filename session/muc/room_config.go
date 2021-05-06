@@ -69,7 +69,6 @@ type RoomConfigForm struct {
 	OccupantsCanInvite             bool
 	OccupantsCanChangeSubject      bool
 	Logged                         bool
-	RetrieveMembersList            ConfigListMultiField
 	Language                       string
 	AssociatedPublishSubscribeNode string
 	MaxOccupantsNumber             ConfigListSingleField
@@ -77,7 +76,6 @@ type RoomConfigForm struct {
 	Moderated                      bool
 	PasswordProtected              bool
 	Persistent                     bool
-	PresenceBroadcast              ConfigListMultiField
 	Public                         bool
 	Admins                         []jid.Any
 	Description                    string
@@ -85,6 +83,9 @@ type RoomConfigForm struct {
 	Owners                         []jid.Any
 	Password                       string
 	Whois                          ConfigListSingleField
+
+	RetrieveMembersList *RoomConfigFieldListMultiValue
+	PresenceBroadcast   *RoomConfigFieldListMultiValue
 
 	formType   string
 	fieldNames map[string]int
@@ -112,12 +113,6 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 		RoomConfigOptionNone,
 	})
 
-	cf.RetrieveMembersList = newConfigListMultiField([]string{
-		RoomConfigOptionModerator,
-		RoomConfigOptionParticipant,
-		RoomConfigOptionVisitor,
-	})
-
 	cf.MaxOccupantsNumber = newConfigListSingleField([]string{
 		RoomConfigOption10,
 		RoomConfigOption20,
@@ -127,20 +122,21 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 		RoomConfigOptionNone,
 	})
 
-	cf.PresenceBroadcast = newConfigListMultiField([]string{
-		RoomConfigOptionModerator,
-		RoomConfigOptionParticipant,
-		RoomConfigOptionVisitor,
-	})
-
 	cf.Whois = newConfigListSingleField([]string{
 		RoomConfigOptionModerators,
 		RoomConfigOptionAnyone,
 	})
 
+	cf.initListMultiValueFields()
+
 	cf.setFormFields(form.Fields)
 
 	return cf
+}
+
+func (rcf *RoomConfigForm) initListMultiValueFields() {
+	rcf.RetrieveMembersList = newRoomConfigFieldListMultiValue(nil, retrieveMembersListDefaultOptions)
+	rcf.PresenceBroadcast = newRoomConfigFieldListMultiValue(nil, presenceBroadcastDefaultOptions)
 }
 
 func (rcf *RoomConfigForm) setFormFields(fields []xmppData.FormFieldX) {
@@ -178,7 +174,7 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 			values = []string{strconv.FormatBool(rcf.Logged)}
 
 		case ConfigFieldMemberList:
-			values = rcf.RetrieveMembersList.Values()
+			values = rcf.RetrieveMembersList.Value()
 
 		case ConfigFieldLanguage:
 			values = []string{rcf.Language}
@@ -205,7 +201,7 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 			values = []string{strconv.FormatBool(rcf.Persistent)}
 
 		case ConfigFieldPresenceBroadcast:
-			values = rcf.PresenceBroadcast.Values()
+			values = rcf.PresenceBroadcast.Value()
 
 		case ConfigFieldModerated:
 			values = []string{strconv.FormatBool(rcf.Moderated)}

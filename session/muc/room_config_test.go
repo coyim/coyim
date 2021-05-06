@@ -159,7 +159,7 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_setUnknowField(c *C) {
 			RoomConfigFieldListMulti,
 			"field label",
 			[]string{"bla", "foo", "bla1", "foo1"},
-			&configListMultiField{values: []string{"bla", "foo", "bla1", "foo1"}},
+			&RoomConfigFieldListMultiValue{value: []string{"bla", "foo", "bla1", "foo1"}},
 		},
 		{
 			"RoomConfigFieldJidMulti",
@@ -356,7 +356,7 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_updateFieldValueByName(c *C) {
 			RoomConfigFieldListMulti,
 			"field label",
 			[]string{"bla", "foo", "bla1", "foo1"},
-			&configListMultiField{values: []string{"bla", "foo", "bla1", "foo1"}},
+			&RoomConfigFieldListMultiValue{value: []string{"bla", "foo", "bla1", "foo1"}},
 		},
 		{
 			"RoomConfigFieldJidMulti",

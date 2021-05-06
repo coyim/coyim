@@ -7,13 +7,14 @@ import (
 
 type roomConfigFormFieldBoolean struct {
 	*roomConfigFormField
+	value *muc.RoomConfigFieldBooleanValue
 
 	grid   gtki.Grid   `gtk-widget:"room-config-field-boolean-grid"`
 	toggle gtki.Switch `gtk-widget:"room-config-field-boolean"`
 }
 
 func newRoomConfigFormFieldBoolean(f *muc.RoomConfigFormField, value *muc.RoomConfigFieldBooleanValue) hasRoomConfigFormField {
-	field := &roomConfigFormFieldBoolean{}
+	field := &roomConfigFormFieldBoolean{value: value}
 	field.roomConfigFormField = newRoomConfigFormField(f, "MUCRoomConfigFormFieldBoolean")
 
 	panicOnDevError(field.builder.bindObjects(field))
@@ -32,4 +33,9 @@ func (f *roomConfigFormFieldBoolean) refreshContent() {
 
 func (f *roomConfigFormFieldBoolean) fieldValue() interface{} {
 	return f.toggle.GetActive()
+}
+
+// collectFieldValue MUST be called from the UI thread
+func (f *roomConfigFormFieldBoolean) collectFieldValue() {
+	f.value.SetValue(f.fieldValue())
 }

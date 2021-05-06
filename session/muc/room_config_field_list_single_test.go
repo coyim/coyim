@@ -68,9 +68,12 @@ func (*MucRoomConfigFieldBooleanSuite) Test_RoomConfigFieldListValue_Options(c *
 	field := newRoomConfigFieldListValue([]string{}, []string{"bla", "foo"})
 	c.Assert(field.Options(), DeepEquals, []string{"bla", "foo"})
 
-	field = newRoomConfigFieldListValue([]string{}, []string{"foo"})
+	field.SetOptions(nil)
+	c.Assert(field.Options(), DeepEquals, []string(nil))
+
+	field.SetOptions([]string{"foo"})
 	c.Assert(field.Options(), DeepEquals, []string{"foo"})
 
-	field = newRoomConfigFieldListValue([]string{}, []string{"whatever"})
+	field.SetOptions([]string{"whatever"})
 	c.Assert(field.Options(), DeepEquals, []string{"whatever"})
 }

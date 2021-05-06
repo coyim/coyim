@@ -31,3 +31,8 @@ func (v *RoomConfigFieldListValue) Raw() interface{} {
 func (v *RoomConfigFieldListValue) Options() []string {
 	return v.options
 }
+
+// SetOptions updates the options for the field
+func (v *RoomConfigFieldListValue) SetOptions(options []string) {
+	v.options = options
+}

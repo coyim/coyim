@@ -14,11 +14,9 @@ func (v *RoomConfigFieldTextValue) Value() []string {
 	return []string{v.value}
 }
 
-// SetValue implements the "HasRoomConfigFormFieldValue" interface
-func (v *RoomConfigFieldTextValue) SetValue(value interface{}) {
-	if val, ok := value.(string); ok {
-		v.value = val
-	}
+// SetText sets the current text value
+func (v *RoomConfigFieldTextValue) SetText(t string) {
+	v.value = t
 }
 
 // Text returns the current text value

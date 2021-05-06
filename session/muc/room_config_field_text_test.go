@@ -34,24 +34,20 @@ func (*MucRoomConfigFieldTextSuite) Test_newRoomConfigFieldTextValue(c *C) {
 	}
 }
 
-func (*MucRoomConfigFieldTextSuite) Test_RoomConfigFieldTextValue_SetValue(c *C) {
+func (*MucRoomConfigFieldTextSuite) Test_RoomConfigFieldTextValue_SetText(c *C) {
 	field := newRoomConfigFieldTextValue([]string{"false"})
 	c.Assert(field.Text(), Equals, "false")
 	c.Assert(field.Value(), DeepEquals, []string{"false"})
 
-	field.SetValue("bla")
+	field.SetText("bla")
 	c.Assert(field.Text(), Equals, "bla")
 	c.Assert(field.Value(), DeepEquals, []string{"bla"})
 
-	field.SetValue("foo")
+	field.SetText("foo")
 	c.Assert(field.Text(), Equals, "foo")
 	c.Assert(field.Value(), DeepEquals, []string{"foo"})
 
-	field.SetValue(nil)
-	c.Assert(field.Text(), Equals, "foo")
-	c.Assert(field.Value(), DeepEquals, []string{"foo"})
-
-	field.SetValue("")
+	field.SetText("")
 	c.Assert(field.Text(), Equals, "")
 	c.Assert(field.Value(), DeepEquals, []string{""})
 }

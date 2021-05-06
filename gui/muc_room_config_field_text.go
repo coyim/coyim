@@ -25,5 +25,5 @@ func newRoomConfigFormTextField(f *muc.RoomConfigFormField, value *muc.RoomConfi
 
 // collectFieldValue MUST be called from the UI thread
 func (f *roomConfigFormFieldText) collectFieldValue() {
-	f.value.SetValue(getEntryText(f.entry))
+	f.value.SetText(getEntryText(f.entry))
 }

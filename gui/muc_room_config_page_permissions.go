@@ -70,7 +70,7 @@ func (p *roomConfigPermissionsPage) collectData() {
 
 	for o, index := range p.roomWhoisOptions {
 		if index == p.roomWhois.GetActive() {
-			p.form.Whois.SetValue(o)
+			p.form.Whois.SetSelected(o)
 			return
 		}
 	}

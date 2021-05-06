@@ -66,10 +66,10 @@ func (f *roomConfigFormFieldList) activateOption(o string) {
 
 // collectFieldValue MUST be called from the UI thread
 func (f *roomConfigFormFieldList) collectFieldValue() {
-	f.value.SetValue("")
+	f.value.SetSelected("")
 	for o, index := range f.options {
 		if index == f.list.GetActive() {
-			f.value.SetValue(o)
+			f.value.SetSelected(o)
 			return
 		}
 	}

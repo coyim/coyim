@@ -240,11 +240,11 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.formType = formFieldSingleString(field.Values)
 
 	case ConfigFieldMaxHistoryFetch, ConfigFieldMaxHistoryLength:
-		rcf.MaxHistoryFetch.SetValue(formFieldSingleString(field.Values))
+		rcf.MaxHistoryFetch.SetSelected(formFieldSingleString(field.Values))
 		rcf.MaxHistoryFetch.SetOptions(formFieldOptionsValues(field.Options))
 
 	case ConfigFieldAllowPM, ConfigFieldAllowPrivateMessages:
-		rcf.AllowPrivateMessages.SetValue(formFieldSingleString(field.Values))
+		rcf.AllowPrivateMessages.SetSelected(formFieldSingleString(field.Values))
 		rcf.AllowPrivateMessages.SetOptions(formFieldOptionsValues(field.Options))
 
 	case ConfigFieldAllowInvites, ConfigFieldAllowMemberInvites:
@@ -267,7 +267,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.AssociatedPublishSubscribeNode = formFieldSingleString(field.Values)
 
 	case ConfigFieldMaxOccupantsNumber:
-		rcf.MaxOccupantsNumber.SetValue(formFieldSingleString(field.Values))
+		rcf.MaxOccupantsNumber.SetSelected(formFieldSingleString(field.Values))
 		rcf.MaxOccupantsNumber.SetOptions(formFieldOptionsValues(field.Options))
 
 	case ConfigFieldMembersOnly:
@@ -305,7 +305,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.Password = formFieldSingleString(field.Values)
 
 	case ConfigFieldWhoIs:
-		rcf.Whois.SetValue(formFieldSingleString(field.Values))
+		rcf.Whois.SetSelected(formFieldSingleString(field.Values))
 		rcf.Whois.SetOptions(formFieldOptionsValues(field.Options))
 
 	default:

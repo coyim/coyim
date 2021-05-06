@@ -43,23 +43,19 @@ func (*MucRoomConfigFieldBooleanSuite) Test_RoomConfigFieldListValue_SetValue(c 
 	c.Assert(field.Selected(), DeepEquals, "bla")
 	c.Assert(field.Value(), DeepEquals, []string{"bla"})
 
-	field.SetValue("foo")
+	field.SetSelected("foo")
 	c.Assert(field.Selected(), DeepEquals, "foo")
 	c.Assert(field.Value(), DeepEquals, []string{"foo"})
 
-	field.SetValue("whatever")
+	field.SetSelected("whatever")
 	c.Assert(field.Selected(), DeepEquals, "whatever")
 	c.Assert(field.Value(), DeepEquals, []string{"whatever"})
 
-	field.SetValue("")
+	field.SetSelected("")
 	c.Assert(field.Selected(), DeepEquals, "")
 	c.Assert(field.Value(), DeepEquals, []string{""})
 
-	field.SetValue(1000)
-	c.Assert(field.Selected(), DeepEquals, "")
-	c.Assert(field.Value(), DeepEquals, []string{""})
-
-	field.SetValue("abc")
+	field.SetSelected("abc")
 	c.Assert(field.Selected(), DeepEquals, "abc")
 	c.Assert(field.Value(), DeepEquals, []string{"abc"})
 }

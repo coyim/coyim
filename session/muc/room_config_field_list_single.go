@@ -15,11 +15,9 @@ func (v *RoomConfigFieldListValue) Value() []string {
 	return []string{v.value}
 }
 
-// SetValue implements the "HasRoomConfigFormFieldValue" interface
-func (v *RoomConfigFieldListValue) SetValue(value interface{}) {
-	if val, ok := value.(string); ok {
-		v.value = val
-	}
+// SetSelected sets the current selected value
+func (v *RoomConfigFieldListValue) SetSelected(s string) {
+	v.value = s
 }
 
 // Selected returns the current selected value

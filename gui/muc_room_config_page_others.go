@@ -80,8 +80,8 @@ func (p *roomConfigOthersPage) showValidationErrors() {
 
 // collectData MUST be called from the UI thread
 func (p *roomConfigOthersPage) collectData() {
-	p.form.MaxHistoryFetch.SetValue(p.roomMaxHistoryFetch.currentValue())
-	p.form.MaxOccupantsNumber.SetValue(p.roomMaxOccupants.currentValue())
+	p.form.MaxHistoryFetch.SetSelected(p.roomMaxHistoryFetch.currentValue())
+	p.form.MaxOccupantsNumber.SetSelected(p.roomMaxOccupants.currentValue())
 	p.form.Logged = p.roomEnableLogging.GetActive()
 
 	for _, f := range p.fields {

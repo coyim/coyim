@@ -63,19 +63,20 @@ const (
 
 // RoomConfigForm represents a room configuration form
 type RoomConfigForm struct {
-	OccupantsCanInvite             bool
-	OccupantsCanChangeSubject      bool
-	Logged                         bool
-	Language                       string
-	AssociatedPublishSubscribeNode string
-	MembersOnly                    bool
-	Moderated                      bool
-	PasswordProtected              bool
-	Persistent                     bool
-	Public                         bool
-	Description                    string
 	Title                          string
+	Description                    string
+	Language                       string
 	Password                       string
+	AssociatedPublishSubscribeNode string
+
+	OccupantsCanInvite        bool
+	OccupantsCanChangeSubject bool
+	Logged                    bool
+	MembersOnly               bool
+	Moderated                 bool
+	PasswordProtected         bool
+	Persistent                bool
+	Public                    bool
 
 	MaxHistoryFetch      *RoomConfigFieldListValue
 	AllowPrivateMessages *RoomConfigFieldListValue

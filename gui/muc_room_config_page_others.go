@@ -38,10 +38,10 @@ func (c *mucRoomConfigComponent) newRoomConfigOthersPage() mucRoomConfigPage {
 }
 
 func (p *roomConfigOthersPage) initDefaultValues() {
-	p.roomMaxHistoryFetch.updateCurrentValue(p.form.MaxHistoryFetch.CurrentValue())
+	p.roomMaxHistoryFetch.updateCurrentValue(p.form.MaxHistoryFetch.Raw().(string))
 	p.roomMaxHistoryFetch.updateOptions(p.form.MaxHistoryFetch.Options())
 
-	p.roomMaxOccupants.updateCurrentValue(p.form.MaxOccupantsNumber.CurrentValue())
+	p.roomMaxOccupants.updateCurrentValue(p.form.MaxOccupantsNumber.Raw().(string))
 	p.roomMaxOccupants.updateOptions(p.form.MaxOccupantsNumber.Options())
 
 	p.roomEnableLogging.SetActive(p.form.Logged)
@@ -80,8 +80,8 @@ func (p *roomConfigOthersPage) showValidationErrors() {
 
 // collectData MUST be called from the UI thread
 func (p *roomConfigOthersPage) collectData() {
-	p.form.MaxHistoryFetch.UpdateValue(p.roomMaxHistoryFetch.currentValue())
-	p.form.MaxOccupantsNumber.UpdateValue(p.roomMaxOccupants.currentValue())
+	p.form.MaxHistoryFetch.SetValue(p.roomMaxHistoryFetch.currentValue())
+	p.form.MaxOccupantsNumber.SetValue(p.roomMaxOccupants.currentValue())
 	p.form.Logged = p.roomEnableLogging.GetActive()
 
 	for _, f := range p.fields {

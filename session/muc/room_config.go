@@ -64,14 +64,14 @@ const (
 
 // RoomConfigForm represents a room configuration form
 type RoomConfigForm struct {
-	MaxHistoryFetch                ConfigListSingleField
-	AllowPrivateMessages           ConfigListSingleField
+	MaxHistoryFetch                *RoomConfigFieldListValue
+	AllowPrivateMessages           *RoomConfigFieldListValue
 	OccupantsCanInvite             bool
 	OccupantsCanChangeSubject      bool
 	Logged                         bool
 	Language                       string
 	AssociatedPublishSubscribeNode string
-	MaxOccupantsNumber             ConfigListSingleField
+	MaxOccupantsNumber             *RoomConfigFieldListValue
 	MembersOnly                    bool
 	Moderated                      bool
 	PasswordProtected              bool
@@ -82,7 +82,7 @@ type RoomConfigForm struct {
 	Title                          string
 	Owners                         []jid.Any
 	Password                       string
-	Whois                          ConfigListSingleField
+	Whois                          *RoomConfigFieldListValue
 
 	RetrieveMembersList *RoomConfigFieldListMultiValue
 	PresenceBroadcast   *RoomConfigFieldListMultiValue
@@ -98,7 +98,7 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 		fieldNames: map[string]int{},
 	}
 
-	cf.MaxHistoryFetch = newConfigListSingleField([]string{
+	cf.MaxHistoryFetch = newRoomConfigFieldListValue([]string{""}, []string{
 		RoomConfigOption10,
 		RoomConfigOption20,
 		RoomConfigOption30,
@@ -107,13 +107,13 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 		RoomConfigOptionNone,
 	})
 
-	cf.AllowPrivateMessages = newConfigListSingleField([]string{
+	cf.AllowPrivateMessages = newRoomConfigFieldListValue([]string{""}, []string{
 		RoomConfigOptionParticipant,
 		RoomConfigOptionModerators,
 		RoomConfigOptionNone,
 	})
 
-	cf.MaxOccupantsNumber = newConfigListSingleField([]string{
+	cf.MaxOccupantsNumber = newRoomConfigFieldListValue([]string{""}, []string{
 		RoomConfigOption10,
 		RoomConfigOption20,
 		RoomConfigOption30,
@@ -122,7 +122,7 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 		RoomConfigOptionNone,
 	})
 
-	cf.Whois = newConfigListSingleField([]string{
+	cf.Whois = newRoomConfigFieldListValue([]string{""}, []string{
 		RoomConfigOptionModerators,
 		RoomConfigOptionAnyone,
 	})
@@ -189,10 +189,10 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 			values = []string{strconv.FormatBool(rcf.OccupantsCanInvite)}
 
 		case ConfigFieldAllowPM, ConfigFieldAllowPrivateMessages:
-			values = []string{rcf.AllowPrivateMessages.CurrentValue()}
+			values = rcf.AllowPrivateMessages.Value()
 
 		case ConfigFieldMaxOccupantsNumber:
-			values = []string{rcf.MaxOccupantsNumber.CurrentValue()}
+			values = rcf.MaxOccupantsNumber.Value()
 
 		case ConfigFieldIsPublic:
 			values = []string{strconv.FormatBool(rcf.Public)}
@@ -219,10 +219,10 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 			values = jidListToStringList(rcf.Owners)
 
 		case ConfigFieldWhoIs:
-			values = []string{rcf.Whois.CurrentValue()}
+			values = rcf.Whois.Value()
 
 		case ConfigFieldMaxHistoryFetch, ConfigFieldMaxHistoryLength:
-			values = []string{rcf.MaxHistoryFetch.CurrentValue()}
+			values = rcf.MaxHistoryFetch.Value()
 
 		case ConfigFieldRoomAdmins:
 			values = jidListToStringList(rcf.Admins)
@@ -253,10 +253,10 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.formType = formFieldSingleString(field.Values)
 
 	case ConfigFieldMaxHistoryFetch, ConfigFieldMaxHistoryLength:
-		rcf.MaxHistoryFetch.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
+		rcf.MaxHistoryFetch.SetValue(formFieldSingleString(field.Values))
 
 	case ConfigFieldAllowPM, ConfigFieldAllowPrivateMessages:
-		rcf.AllowPrivateMessages.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
+		rcf.AllowPrivateMessages.SetValue(formFieldSingleString(field.Values))
 
 	case ConfigFieldAllowInvites, ConfigFieldAllowMemberInvites:
 		rcf.OccupantsCanInvite = formFieldBool(field.Values)
@@ -278,7 +278,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.AssociatedPublishSubscribeNode = formFieldSingleString(field.Values)
 
 	case ConfigFieldMaxOccupantsNumber:
-		rcf.MaxOccupantsNumber.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
+		rcf.MaxOccupantsNumber.SetValue(formFieldSingleString(field.Values))
 
 	case ConfigFieldMembersOnly:
 		rcf.MembersOnly = formFieldBool(field.Values)
@@ -315,7 +315,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.Password = formFieldSingleString(field.Values)
 
 	case ConfigFieldWhoIs:
-		rcf.Whois.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
+		rcf.Whois.SetValue(formFieldSingleString(field.Values))
 
 	default:
 		if field.Type != RoomConfigFieldHidden && field.Type != RoomConfigFieldFixed {

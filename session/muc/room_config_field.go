@@ -55,7 +55,7 @@ func roomConfigFormFieldValueFactory(field xmppData.FormFieldX) HasRoomConfigFor
 	case RoomConfigFieldBoolean:
 		return newRoomConfigFieldBooleanValue(values)
 	case RoomConfigFieldList:
-		return newRoomConfigFieldListValue(values)
+		return newRoomConfigFieldListValue(values, options)
 	case RoomConfigFieldListMulti:
 		return newRoomConfigFieldListMultiValue(values, options)
 	case RoomConfigFieldJidMulti:

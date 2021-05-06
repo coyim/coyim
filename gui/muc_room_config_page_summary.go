@@ -111,14 +111,14 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	// Permissions
 	setLabelText(p.allowSetRoomSubject, summaryYesOrNoText(p.form.OccupantsCanChangeSubject))
 	setLabelText(p.moderatedRoom, summaryYesOrNoText(p.form.Moderated))
-	setLabelText(p.whoIs, configOptionToFriendlyMessage(p.form.Whois.CurrentValue()))
+	setLabelText(p.whoIs, configOptionToFriendlyMessage(p.form.Whois.Raw().(string)))
 
 	// Occupants
 	p.setOwnersAndAdminsList()
 
 	// Other settings
-	setLabelText(p.maxHistoryFetch, summaryConfigurationOptionText(p.form.MaxHistoryFetch.CurrentValue()))
-	setLabelText(p.maxOccupants, summaryConfigurationOptionText(p.form.MaxOccupantsNumber.CurrentValue()))
+	setLabelText(p.maxHistoryFetch, summaryConfigurationOptionText(p.form.MaxHistoryFetch.Raw().(string)))
+	setLabelText(p.maxOccupants, summaryConfigurationOptionText(p.form.MaxOccupantsNumber.Raw().(string)))
 	setLabelText(p.enableArchiving, summaryYesOrNoText(p.form.Logged))
 }
 

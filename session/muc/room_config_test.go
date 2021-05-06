@@ -54,16 +54,16 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	c.Assert(rcf.Logged, Equals, true)
 	c.Assert(rcf.OccupantsCanChangeSubject, Equals, true)
 	c.Assert(rcf.OccupantsCanInvite, Equals, true)
-	c.Assert(rcf.AllowPrivateMessages.CurrentValue(), Equals, "allow private messages")
-	c.Assert(rcf.MaxOccupantsNumber.CurrentValue(), Equals, "42")
+	c.Assert(rcf.AllowPrivateMessages.Raw().(string), Equals, "allow private messages")
+	c.Assert(rcf.MaxOccupantsNumber.Raw().(string), Equals, "42")
 	c.Assert(rcf.Public, Equals, true)
 	c.Assert(rcf.Persistent, Equals, true)
 	c.Assert(rcf.Moderated, Equals, true)
 	c.Assert(rcf.MembersOnly, Equals, true)
 	c.Assert(rcf.PasswordProtected, Equals, true)
 	c.Assert(rcf.Password, Equals, "a password")
-	c.Assert(rcf.Whois.CurrentValue(), Equals, "a whois")
-	c.Assert(rcf.MaxHistoryFetch.CurrentValue(), Equals, "43")
+	c.Assert(rcf.Whois.Raw().(string), Equals, "a whois")
+	c.Assert(rcf.MaxHistoryFetch.Raw().(string), Equals, "43")
 	c.Assert(rcf.Language, Equals, "eng")
 	c.Assert(rcf.Admins, DeepEquals, []jid.Any{jid.Parse("one@foobar.com"), jid.Parse("two@example.org")})
 
@@ -152,7 +152,7 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_setUnknowField(c *C) {
 			RoomConfigFieldList,
 			"field label",
 			[]string{"bla"},
-			&configListSingleField{value: "bla"},
+			newRoomConfigFieldListValue([]string{"bla"}, []string{"bla"}),
 		},
 		{
 			"RoomConfigFieldListMulti",
@@ -349,7 +349,7 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_updateFieldValueByName(c *C) {
 			RoomConfigFieldList,
 			"field label",
 			[]string{"bla"},
-			&configListSingleField{value: "bla"},
+			newRoomConfigFieldListValue([]string{"bla"}, []string{"bla"}),
 		},
 		{
 			"RoomConfigFieldListMulti",

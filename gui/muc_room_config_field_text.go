@@ -7,12 +7,13 @@ import (
 
 type roomConfigFormFieldText struct {
 	*roomConfigFormField
+	value *muc.RoomConfigFieldTextValue
 
 	entry gtki.Entry `gtk-widget:"room-config-text-field-entry"`
 }
 
 func newRoomConfigFormTextField(f *muc.RoomConfigFormField, value *muc.RoomConfigFieldTextValue) hasRoomConfigFormField {
-	field := &roomConfigFormFieldText{}
+	field := &roomConfigFormFieldText{value: value}
 	field.roomConfigFormField = newRoomConfigFormField(f, "MUCRoomConfigFormFieldText")
 
 	panicOnDevError(field.builder.bindObjects(field))
@@ -24,4 +25,9 @@ func newRoomConfigFormTextField(f *muc.RoomConfigFormField, value *muc.RoomConfi
 
 func (f *roomConfigFormFieldText) fieldValue() interface{} {
 	return getEntryText(f.entry)
+}
+
+// collectFieldValue MUST be called from the UI thread
+func (f *roomConfigFormFieldText) collectFieldValue() {
+	f.value.SetValue(f.fieldValue())
 }

@@ -59,3 +59,32 @@ var presenceBroadcastDefaultOptions = []string{
 	RoomConfigOptionParticipant,
 	RoomConfigOptionVisitor,
 }
+
+var maxHistoryFetchDefaultOptions = []string{
+	RoomConfigOption10,
+	RoomConfigOption20,
+	RoomConfigOption30,
+	RoomConfigOption50,
+	RoomConfigOption100,
+	RoomConfigOptionNone,
+}
+
+var allowPrivateMessagesDefaultOptions = []string{
+	RoomConfigOptionParticipant,
+	RoomConfigOptionModerators,
+	RoomConfigOptionNone,
+}
+
+var maxOccupantsNumberDefaultOptions = []string{
+	RoomConfigOption10,
+	RoomConfigOption20,
+	RoomConfigOption30,
+	RoomConfigOption50,
+	RoomConfigOption100,
+	RoomConfigOptionNone,
+}
+
+var whoisDefaultOptions = []string{
+	RoomConfigOptionModerators,
+	RoomConfigOptionAnyone,
+}

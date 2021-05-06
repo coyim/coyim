@@ -109,34 +109,10 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 }
 
 func (rcf *RoomConfigForm) initListSingleValueFields() {
-	rcf.MaxHistoryFetch = newRoomConfigFieldListValue([]string{""}, []string{
-		RoomConfigOption10,
-		RoomConfigOption20,
-		RoomConfigOption30,
-		RoomConfigOption50,
-		RoomConfigOption100,
-		RoomConfigOptionNone,
-	})
-
-	rcf.AllowPrivateMessages = newRoomConfigFieldListValue([]string{""}, []string{
-		RoomConfigOptionParticipant,
-		RoomConfigOptionModerators,
-		RoomConfigOptionNone,
-	})
-
-	rcf.MaxOccupantsNumber = newRoomConfigFieldListValue([]string{""}, []string{
-		RoomConfigOption10,
-		RoomConfigOption20,
-		RoomConfigOption30,
-		RoomConfigOption50,
-		RoomConfigOption100,
-		RoomConfigOptionNone,
-	})
-
-	rcf.Whois = newRoomConfigFieldListValue([]string{""}, []string{
-		RoomConfigOptionModerators,
-		RoomConfigOptionAnyone,
-	})
+	rcf.MaxHistoryFetch = newRoomConfigFieldListValue([]string{""}, maxHistoryFetchDefaultOptions)
+	rcf.AllowPrivateMessages = newRoomConfigFieldListValue([]string{""}, allowPrivateMessagesDefaultOptions)
+	rcf.MaxOccupantsNumber = newRoomConfigFieldListValue([]string{""}, maxOccupantsNumberDefaultOptions)
+	rcf.Whois = newRoomConfigFieldListValue([]string{""}, whoisDefaultOptions)
 }
 
 func (rcf *RoomConfigForm) initListMultiValueFields() {

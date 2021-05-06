@@ -144,10 +144,12 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 	formFields := []xmppData.FormFieldX{}
 
 	for fieldName := range rcf.receivedFieldNames {
-		formFields = append(formFields, xmppData.FormFieldX{
-			Var:    fieldName,
-			Values: rcf.getFieldDataValue(fieldName),
-		})
+		if values, exists := rcf.getFieldDataValue(fieldName); exists {
+			formFields = append(formFields, xmppData.FormFieldX{
+				Var:    fieldName,
+				Values: values,
+			})
+		}
 	}
 
 	return &xmppData.Form{
@@ -156,79 +158,79 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 	}
 }
 
-func (rcf *RoomConfigForm) getFieldDataValue(fieldName string) []string {
+func (rcf *RoomConfigForm) getFieldDataValue(fieldName string) ([]string, bool) {
 	switch fieldName {
 	case ConfigFieldRoomName:
-		return []string{rcf.Title}
+		return []string{rcf.Title}, true
 
 	case ConfigFieldRoomDescription:
-		return []string{rcf.Description}
+		return []string{rcf.Description}, true
 
 	case ConfigFieldEnableLogging, ConfigFieldEnableArchiving:
-		return []string{strconv.FormatBool(rcf.Logged)}
+		return []string{strconv.FormatBool(rcf.Logged)}, true
 
 	case ConfigFieldMemberList:
-		return rcf.RetrieveMembersList.Value()
+		return rcf.RetrieveMembersList.Value(), true
 
 	case ConfigFieldLanguage:
-		return []string{rcf.Language}
+		return []string{rcf.Language}, true
 
 	case ConfigFieldPubsub:
-		return []string{rcf.AssociatedPublishSubscribeNode}
+		return []string{rcf.AssociatedPublishSubscribeNode}, true
 
 	case ConfigFieldCanChangeSubject:
-		return []string{strconv.FormatBool(rcf.OccupantsCanChangeSubject)}
+		return []string{strconv.FormatBool(rcf.OccupantsCanChangeSubject)}, true
 
 	case ConfigFieldAllowInvites, ConfigFieldAllowMemberInvites:
-		return []string{strconv.FormatBool(rcf.OccupantsCanInvite)}
+		return []string{strconv.FormatBool(rcf.OccupantsCanInvite)}, true
 
 	case ConfigFieldAllowPM, ConfigFieldAllowPrivateMessages:
-		return rcf.AllowPrivateMessages.Value()
+		return rcf.AllowPrivateMessages.Value(), true
 
 	case ConfigFieldMaxOccupantsNumber:
-		return rcf.MaxOccupantsNumber.Value()
+		return rcf.MaxOccupantsNumber.Value(), true
 
 	case ConfigFieldIsPublic:
-		return []string{strconv.FormatBool(rcf.Public)}
+		return []string{strconv.FormatBool(rcf.Public)}, true
 
 	case ConfigFieldIsPersistent:
-		return []string{strconv.FormatBool(rcf.Persistent)}
+		return []string{strconv.FormatBool(rcf.Persistent)}, true
 
 	case ConfigFieldPresenceBroadcast:
-		return rcf.PresenceBroadcast.Value()
+		return rcf.PresenceBroadcast.Value(), true
 
 	case ConfigFieldModerated:
-		return []string{strconv.FormatBool(rcf.Moderated)}
+		return []string{strconv.FormatBool(rcf.Moderated)}, true
 
 	case ConfigFieldMembersOnly:
-		return []string{strconv.FormatBool(rcf.MembersOnly)}
+		return []string{strconv.FormatBool(rcf.MembersOnly)}, true
 
 	case ConfigFieldPasswordProtected:
-		return []string{strconv.FormatBool(rcf.PasswordProtected)}
+		return []string{strconv.FormatBool(rcf.PasswordProtected)}, true
 
 	case ConfigFieldPassword:
-		return []string{rcf.Password}
+		return []string{rcf.Password}, true
 
 	case ConfigFieldOwners:
-		return rcf.Owners.Value()
+		return rcf.Owners.Value(), true
 
 	case ConfigFieldWhoIs:
-		return rcf.Whois.Value()
+		return rcf.Whois.Value(), true
 
 	case ConfigFieldMaxHistoryFetch, ConfigFieldMaxHistoryLength:
-		return rcf.MaxHistoryFetch.Value()
+		return rcf.MaxHistoryFetch.Value(), true
 
 	case ConfigFieldRoomAdmins:
-		return rcf.Admins.Value()
+		return rcf.Admins.Value(), true
 	}
 
 	for _, field := range rcf.Fields {
 		if field.Name == fieldName {
-			return field.Value()
+			return field.Value(), true
 		}
 	}
 
-	return nil
+	return nil, false
 }
 
 func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {

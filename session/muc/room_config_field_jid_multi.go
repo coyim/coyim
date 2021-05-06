@@ -10,18 +10,13 @@ type RoomConfigFieldJidMultiValue struct {
 func newRoomConfigFieldJidMultiValue(values []string) *RoomConfigFieldJidMultiValue {
 	v := &RoomConfigFieldJidMultiValue{}
 
-	v.initValues(values)
+	v.SetValues(values)
 
 	return v
 }
 
 func (v *RoomConfigFieldJidMultiValue) initValues(values []string) {
-	v.value = []jid.Any{}
-	for _, addr := range values {
-		if any := jid.Parse(addr); any.Valid() {
-			v.value = append(v.value, any)
-		}
-	}
+
 }
 
 // Value implements the "HasRoomConfigFormFieldValue" interface
@@ -33,10 +28,13 @@ func (v *RoomConfigFieldJidMultiValue) Value() []string {
 	return value
 }
 
-// SetValue implements the "HasRoomConfigFormFieldValue" interface
-func (v *RoomConfigFieldJidMultiValue) SetValue(value interface{}) {
-	if val, ok := value.([]string); ok {
-		v.initValues(val)
+// SetValues will try to set the new list based on the provided values
+func (v *RoomConfigFieldJidMultiValue) SetValues(values []string) {
+	v.value = []jid.Any{}
+	for _, addr := range values {
+		if any := jid.Parse(addr); any.Valid() {
+			v.value = append(v.value, any)
+		}
 	}
 }
 

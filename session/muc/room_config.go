@@ -290,7 +290,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.Public = formFieldBool(field.Values)
 
 	case ConfigFieldRoomAdmins:
-		rcf.Admins.SetValue(field.Values)
+		rcf.Admins.SetValues(field.Values)
 
 	case ConfigFieldRoomDescription:
 		rcf.Description = formFieldSingleString(field.Values)
@@ -299,7 +299,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.Title = formFieldSingleString(field.Values)
 
 	case ConfigFieldOwners:
-		rcf.Owners.SetValue(field.Values)
+		rcf.Owners.SetValues(field.Values)
 
 	case ConfigFieldPassword:
 		rcf.Password = formFieldSingleString(field.Values)

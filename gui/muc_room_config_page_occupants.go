@@ -2,7 +2,6 @@ package gui
 
 import (
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 	log "github.com/sirupsen/logrus"
 )
@@ -107,14 +106,6 @@ func (p *roomConfigOccupantsPage) refreshContentLists() {
 }
 
 func (p *roomConfigOccupantsPage) collectData() {
-	p.form.Owners.SetValue(jidListFromConfigListController(p.ownersListController))
-	p.form.Admins.SetValue(jidListFromConfigListController(p.adminsListController))
-}
-
-func jidListFromConfigListController(l *mucRoomConfigListController) []jid.Any {
-	result := []jid.Any{}
-	for _, li := range l.listItems() {
-		result = append(result, jid.Parse(li))
-	}
-	return result
+	p.form.Owners.SetValues(p.ownersListController.listItems())
+	p.form.Admins.SetValues(p.adminsListController.listItems())
 }

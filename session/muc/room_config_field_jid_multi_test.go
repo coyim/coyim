@@ -41,17 +41,17 @@ func (*MucRoomConfigFieldJidMultiSuite) Test_RoomConfigFieldJidMultiValue_setsRi
 	c.Assert(field.Value(), DeepEquals, []string{"bla"})
 	c.Assert(field.Length(), Equals, 1)
 
-	field.SetValue(nil)
+	field.SetValues(nil)
 	c.Assert(field.List(), Equals, []jid.Any{})
 	c.Assert(field.Value(), DeepEquals, []string{})
 	c.Assert(field.Length(), Equals, 0)
 
-	field.SetValue([]string{"bla@domain.org"})
+	field.SetValues([]string{"bla@domain.org"})
 	c.Assert(field.List(), Equals, []jid.Any{jid.Parse("bla@domain.org")})
 	c.Assert(field.Value(), DeepEquals, []string{"bla@domain.org"})
 	c.Assert(field.Length(), Equals, 1)
 
-	field.SetValue([]string{"foo@domain.org", "invalid*@whatever"})
+	field.SetValues([]string{"foo@domain.org", "invalid*@whatever"})
 	c.Assert(field.List(), Equals, []jid.Any{jid.Parse("foo@domain.org")})
 	c.Assert(field.Value(), DeepEquals, []string{"foo@domain.org"})
 	c.Assert(field.Length(), Equals, 1)
@@ -75,15 +75,15 @@ func (*MucRoomConfigFieldJidMultiSuite) Test_RoomConfigFieldJidMultiValue_return
 	field := newRoomConfigFieldJidMultiValue([]string{"bla", "foo"})
 	c.Assert(field.Length(), Equals, 2)
 
-	field.SetValue([]string{"bla"})
+	field.SetValues([]string{"bla"})
 	c.Assert(field.Length(), Equals, 1)
 
-	field.SetValue(nil)
+	field.SetValues(nil)
 	c.Assert(field.Length(), Equals, 0)
 
-	field.SetValue([]string{"foo"})
+	field.SetValues([]string{"foo"})
 	c.Assert(field.Length(), Equals, 1)
 
-	field.SetValue([]string{})
+	field.SetValues([]string{})
 	c.Assert(field.Length(), Equals, 0)
 }

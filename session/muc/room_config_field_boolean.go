@@ -16,11 +16,9 @@ func (v *RoomConfigFieldBooleanValue) Value() []string {
 	return []string{strconv.FormatBool(v.value)}
 }
 
-// SetValue implements the "HasRoomConfigFormFieldValue" interface
-func (v *RoomConfigFieldBooleanValue) SetValue(value interface{}) {
-	if val, ok := value.(bool); ok {
-		v.value = val
-	}
+// SetBoolean sets the current boolean value
+func (v *RoomConfigFieldBooleanValue) SetBoolean(b bool) {
+	v.value = b
 }
 
 // Boolean returns the current boolean value

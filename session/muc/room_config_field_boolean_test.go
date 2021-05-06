@@ -61,19 +61,11 @@ func (*MucRoomConfigFieldBooleanSuite) Test_RoomConfigFieldBooleanValue_SetValue
 	c.Assert(field.Boolean(), Equals, false)
 	c.Assert(field.Value(), DeepEquals, []string{"false"})
 
-	field.SetValue(true)
+	field.SetBoolean(true)
 	c.Assert(field.Boolean(), Equals, true)
 	c.Assert(field.Value(), DeepEquals, []string{"true"})
 
-	field.SetValue("true")
-	c.Assert(field.Boolean(), Equals, true)
-	c.Assert(field.Value(), DeepEquals, []string{"true"})
-
-	field.SetValue("bla")
-	c.Assert(field.Boolean(), Equals, true)
-	c.Assert(field.Value(), DeepEquals, []string{"true"})
-
-	field.SetValue(false)
+	field.SetBoolean(false)
 	c.Assert(field.Boolean(), Equals, false)
 	c.Assert(field.Value(), DeepEquals, []string{"false"})
 }

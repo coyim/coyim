@@ -15,10 +15,6 @@ func newRoomConfigFieldJidMultiValue(values []string) *RoomConfigFieldJidMultiVa
 	return v
 }
 
-func (v *RoomConfigFieldJidMultiValue) initValues(values []string) {
-
-}
-
 // Value implements the "HasRoomConfigFormFieldValue" interface
 func (v *RoomConfigFieldJidMultiValue) Value() []string {
 	value := []string{}

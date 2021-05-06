@@ -62,11 +62,11 @@ func (*MucRoomConfigFieldJidMultiSuite) Test_RoomConfigFieldJidMultiValue_initVa
 	c.Assert(field.List(), DeepEquals, []jid.Any{jid.Parse("bla"), jid.Parse("foo")})
 	c.Assert(field.Length(), Equals, 2)
 
-	field.initValues([]string{"whatever", "bla@domain.org"})
+	field.SetValues([]string{"whatever", "bla@domain.org"})
 	c.Assert(field.List(), DeepEquals, []jid.Any{jid.Parse("whatever"), jid.Parse("bla@domain.org")})
 	c.Assert(field.Length(), Equals, 2)
 
-	field.initValues(nil)
+	field.SetValues(nil)
 	c.Assert(field.List(), IsNil)
 	c.Assert(field.Length(), Equals, 0)
 }

@@ -21,7 +21,12 @@ func (v *RoomConfigFieldTextValue) SetValue(value interface{}) {
 	}
 }
 
+// Text returns the current text value
+func (v *RoomConfigFieldTextValue) Text() string {
+	return v.value
+}
+
 // Raw implements the "HasRoomConfigFormFieldValue" interface
 func (v *RoomConfigFieldTextValue) Raw() interface{} {
-	return v.value
+	return v.Text()
 }

@@ -64,14 +64,11 @@ const (
 
 // RoomConfigForm represents a room configuration form
 type RoomConfigForm struct {
-	MaxHistoryFetch                *RoomConfigFieldListValue
-	AllowPrivateMessages           *RoomConfigFieldListValue
 	OccupantsCanInvite             bool
 	OccupantsCanChangeSubject      bool
 	Logged                         bool
 	Language                       string
 	AssociatedPublishSubscribeNode string
-	MaxOccupantsNumber             *RoomConfigFieldListValue
 	MembersOnly                    bool
 	Moderated                      bool
 	PasswordProtected              bool
@@ -82,7 +79,11 @@ type RoomConfigForm struct {
 	Title                          string
 	Owners                         []jid.Any
 	Password                       string
-	Whois                          *RoomConfigFieldListValue
+
+	MaxHistoryFetch      *RoomConfigFieldListValue
+	AllowPrivateMessages *RoomConfigFieldListValue
+	MaxOccupantsNumber   *RoomConfigFieldListValue
+	Whois                *RoomConfigFieldListValue
 
 	RetrieveMembersList *RoomConfigFieldListMultiValue
 	PresenceBroadcast   *RoomConfigFieldListMultiValue
@@ -98,40 +99,43 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 		fieldNames: map[string]int{},
 	}
 
-	cf.MaxHistoryFetch = newRoomConfigFieldListValue([]string{""}, []string{
-		RoomConfigOption10,
-		RoomConfigOption20,
-		RoomConfigOption30,
-		RoomConfigOption50,
-		RoomConfigOption100,
-		RoomConfigOptionNone,
-	})
-
-	cf.AllowPrivateMessages = newRoomConfigFieldListValue([]string{""}, []string{
-		RoomConfigOptionParticipant,
-		RoomConfigOptionModerators,
-		RoomConfigOptionNone,
-	})
-
-	cf.MaxOccupantsNumber = newRoomConfigFieldListValue([]string{""}, []string{
-		RoomConfigOption10,
-		RoomConfigOption20,
-		RoomConfigOption30,
-		RoomConfigOption50,
-		RoomConfigOption100,
-		RoomConfigOptionNone,
-	})
-
-	cf.Whois = newRoomConfigFieldListValue([]string{""}, []string{
-		RoomConfigOptionModerators,
-		RoomConfigOptionAnyone,
-	})
-
+	cf.initListSingleValueFields()
 	cf.initListMultiValueFields()
 
 	cf.setFormFields(form.Fields)
 
 	return cf
+}
+
+func (rcf *RoomConfigForm) initListSingleValueFields() {
+	rcf.MaxHistoryFetch = newRoomConfigFieldListValue([]string{""}, []string{
+		RoomConfigOption10,
+		RoomConfigOption20,
+		RoomConfigOption30,
+		RoomConfigOption50,
+		RoomConfigOption100,
+		RoomConfigOptionNone,
+	})
+
+	rcf.AllowPrivateMessages = newRoomConfigFieldListValue([]string{""}, []string{
+		RoomConfigOptionParticipant,
+		RoomConfigOptionModerators,
+		RoomConfigOptionNone,
+	})
+
+	rcf.MaxOccupantsNumber = newRoomConfigFieldListValue([]string{""}, []string{
+		RoomConfigOption10,
+		RoomConfigOption20,
+		RoomConfigOption30,
+		RoomConfigOption50,
+		RoomConfigOption100,
+		RoomConfigOptionNone,
+	})
+
+	rcf.Whois = newRoomConfigFieldListValue([]string{""}, []string{
+		RoomConfigOptionModerators,
+		RoomConfigOptionAnyone,
+	})
 }
 
 func (rcf *RoomConfigForm) initListMultiValueFields() {

@@ -38,8 +38,3 @@ func (v *RoomConfigFieldJidMultiValue) SetValues(values []string) {
 func (v *RoomConfigFieldJidMultiValue) List() []jid.Any {
 	return v.value
 }
-
-// Length return the current number of entries in the list of jids
-func (v *RoomConfigFieldJidMultiValue) Length() int {
-	return len(v.value)
-}

@@ -64,17 +64,13 @@ func (f *roomConfigFormFieldList) activateOption(o string) {
 	}
 }
 
-// fieldValue MUST be called from the UI thread
-func (f *roomConfigFormFieldList) fieldValue() interface{} {
-	for o, index := range f.options {
-		if index == f.list.GetActive() {
-			return o
-		}
-	}
-	return nil
-}
-
 // collectFieldValue MUST be called from the UI thread
 func (f *roomConfigFormFieldList) collectFieldValue() {
-	f.value.SetValue(f.fieldValue())
+	f.value.SetValue("")
+	for o, index := range f.options {
+		if index == f.list.GetActive() {
+			f.value.SetValue(o)
+			return
+		}
+	}
 }

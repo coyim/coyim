@@ -134,8 +134,8 @@ func (p *roomConfigSummaryPage) setDescriptionField() {
 }
 
 func (p *roomConfigSummaryPage) setOwnersAndAdminsList() {
-	totalOwners := p.form.Owners.Length()
-	totalAdmins := p.form.Admins.Length()
+	totalOwners := len(p.form.Owners.List())
+	totalAdmins := len(p.form.Admins.List())
 
 	p.ownersListBox.SetVisible(false)
 	p.adminsListBox.SetVisible(false)

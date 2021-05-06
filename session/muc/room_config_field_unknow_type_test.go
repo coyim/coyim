@@ -29,7 +29,6 @@ func (*MucRoomConfigFieldUnknowTypeSuite) Test_newRoomConfigFieldUnknowValue(c *
 
 	for _, mock := range cases {
 		field := newRoomConfigFieldUnknowValue(mock.values)
-		c.Assert(field.Raw(), DeepEquals, mock.expected)
 		c.Assert(field.Value(), DeepEquals, mock.expected)
 	}
 }

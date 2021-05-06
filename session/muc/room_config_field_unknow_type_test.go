@@ -41,7 +41,7 @@ func (*MucRoomConfigFieldUnknowTypeSuite) Test_RoomConfigFieldUnknowValue_ValueA
 	c.Assert(field.Value(), DeepEquals, []string{"foo"})
 
 	field.SetValue(nil)
-	c.Assert(field.Value(), DeepEquals, []string{"foo"})
+	c.Assert(field.Value(), IsNil)
 
 	field.SetValue([]string{"1", "2", "3"})
 	c.Assert(field.Value(), DeepEquals, []string{"1", "2", "3"})

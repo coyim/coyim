@@ -53,7 +53,7 @@ func (p *roomConfigPermissionsPage) refreshWhoisField() {
 		p.roomWhoisOptions[o] = index
 	}
 
-	p.activateWhoisOption(p.form.Whois.Raw().(string))
+	p.activateWhoisOption(p.form.Whois.Selected())
 }
 
 func (p *roomConfigPermissionsPage) activateWhoisOption(o string) {

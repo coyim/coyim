@@ -38,10 +38,10 @@ func (c *mucRoomConfigComponent) newRoomConfigOthersPage() mucRoomConfigPage {
 }
 
 func (p *roomConfigOthersPage) initDefaultValues() {
-	p.roomMaxHistoryFetch.updateCurrentValue(p.form.MaxHistoryFetch.Raw().(string))
+	p.roomMaxHistoryFetch.updateCurrentValue(p.form.MaxHistoryFetch.Selected())
 	p.roomMaxHistoryFetch.updateOptions(p.form.MaxHistoryFetch.Options())
 
-	p.roomMaxOccupants.updateCurrentValue(p.form.MaxOccupantsNumber.Raw().(string))
+	p.roomMaxOccupants.updateCurrentValue(p.form.MaxOccupantsNumber.Selected())
 	p.roomMaxOccupants.updateOptions(p.form.MaxOccupantsNumber.Options())
 
 	p.roomEnableLogging.SetActive(p.form.Logged)

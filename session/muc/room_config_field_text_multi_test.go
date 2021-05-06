@@ -39,27 +39,19 @@ func (*MucRoomConfigFieldBooleanSuite) Test_RoomConfigFieldTextMultiValue_SetVal
 	c.Assert(field.Text(), DeepEquals, []string{"bla", "foo"})
 	c.Assert(field.Value(), DeepEquals, []string{"bla", "foo"})
 
-	field.SetValue([]string{"text"})
+	field.SetText([]string{"text"})
 	c.Assert(field.Text(), DeepEquals, []string{"text"})
 	c.Assert(field.Value(), DeepEquals, []string{"text"})
 
-	field.SetValue([]string{"whatever"})
+	field.SetText([]string{"whatever"})
 	c.Assert(field.Text(), DeepEquals, []string{"whatever"})
 	c.Assert(field.Value(), DeepEquals, []string{"whatever"})
 
-	field.SetValue([]string{})
+	field.SetText([]string{})
 	c.Assert(field.Text(), DeepEquals, []string{})
 	c.Assert(field.Value(), DeepEquals, []string{})
 
-	field.SetValue("bla")
-	c.Assert(field.Text(), DeepEquals, []string{})
+	field.SetText(nil)
+	c.Assert(field.Text(), IsNil)
 	c.Assert(field.Value(), DeepEquals, []string{})
-
-	field.SetValue([]string{"multi", "line", "text"})
-	c.Assert(field.Text(), DeepEquals, []string{"multi", "line", "text"})
-	c.Assert(field.Value(), DeepEquals, []string{"multi", "line", "text"})
-
-	field.SetValue(20000)
-	c.Assert(field.Text(), DeepEquals, []string{"multi", "line", "text"})
-	c.Assert(field.Value(), DeepEquals, []string{"multi", "line", "text"})
 }

@@ -6,7 +6,6 @@ import xmppData "github.com/coyim/coyim/xmpp/data"
 type HasRoomConfigFormFieldValue interface {
 	Value() []string
 	SetValue(interface{})
-	Raw() interface{}
 }
 
 // RoomConfigFormField contains information of the field from the configuration form
@@ -40,7 +39,24 @@ func (f *RoomConfigFormField) Value() []string {
 
 // RawValue returns the raw value of the field
 func (f *RoomConfigFormField) RawValue() interface{} {
-	return f.value.Raw()
+	switch v := f.value.(type) {
+	case *RoomConfigFieldTextValue:
+		return v.Text()
+	case *RoomConfigFieldTextMultiValue:
+		return v.Text()
+	case *RoomConfigFieldBooleanValue:
+		return v.Boolean()
+	case *RoomConfigFieldListValue:
+		return v.Selected()
+	case *RoomConfigFieldListMultiValue:
+		return v.Selected()
+	case *RoomConfigFieldJidMultiValue:
+		return v.List()
+	case *RoomConfigFieldUnknowValue:
+		return v.Value()
+	}
+
+	return nil
 }
 
 // ValueType returns the value type handler of the field

@@ -145,86 +145,9 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 	formFields := []xmppData.FormFieldX{}
 
 	for fieldName := range rcf.fieldNames {
-		var values []string
-
-		switch fieldName {
-		case ConfigFieldFormType:
-			values = []string{rcf.formType}
-
-		case ConfigFieldRoomName:
-			values = []string{rcf.Title}
-
-		case ConfigFieldRoomDescription:
-			values = []string{rcf.Description}
-
-		case ConfigFieldEnableLogging, ConfigFieldEnableArchiving:
-			values = []string{strconv.FormatBool(rcf.Logged)}
-
-		case ConfigFieldMemberList:
-			values = rcf.RetrieveMembersList.Value()
-
-		case ConfigFieldLanguage:
-			values = []string{rcf.Language}
-
-		case ConfigFieldPubsub:
-			values = []string{rcf.AssociatedPublishSubscribeNode}
-
-		case ConfigFieldCanChangeSubject:
-			values = []string{strconv.FormatBool(rcf.OccupantsCanChangeSubject)}
-
-		case ConfigFieldAllowInvites, ConfigFieldAllowMemberInvites:
-			values = []string{strconv.FormatBool(rcf.OccupantsCanInvite)}
-
-		case ConfigFieldAllowPM, ConfigFieldAllowPrivateMessages:
-			values = rcf.AllowPrivateMessages.Value()
-
-		case ConfigFieldMaxOccupantsNumber:
-			values = rcf.MaxOccupantsNumber.Value()
-
-		case ConfigFieldIsPublic:
-			values = []string{strconv.FormatBool(rcf.Public)}
-
-		case ConfigFieldIsPersistent:
-			values = []string{strconv.FormatBool(rcf.Persistent)}
-
-		case ConfigFieldPresenceBroadcast:
-			values = rcf.PresenceBroadcast.Value()
-
-		case ConfigFieldModerated:
-			values = []string{strconv.FormatBool(rcf.Moderated)}
-
-		case ConfigFieldMembersOnly:
-			values = []string{strconv.FormatBool(rcf.MembersOnly)}
-
-		case ConfigFieldPasswordProtected:
-			values = []string{strconv.FormatBool(rcf.PasswordProtected)}
-
-		case ConfigFieldPassword:
-			values = []string{rcf.Password}
-
-		case ConfigFieldOwners:
-			values = rcf.Owners.Value()
-
-		case ConfigFieldWhoIs:
-			values = rcf.Whois.Value()
-
-		case ConfigFieldMaxHistoryFetch, ConfigFieldMaxHistoryLength:
-			values = rcf.MaxHistoryFetch.Value()
-
-		case ConfigFieldRoomAdmins:
-			values = rcf.Admins.Value()
-		}
-
 		formFields = append(formFields, xmppData.FormFieldX{
 			Var:    fieldName,
-			Values: values,
-		})
-	}
-
-	for _, f := range rcf.Fields {
-		formFields = append(formFields, xmppData.FormFieldX{
-			Var:    f.Name,
-			Values: f.Value(),
+			Values: rcf.getFieldDataValue(fieldName),
 		})
 	}
 
@@ -232,6 +155,84 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 		Type:   "submit",
 		Fields: formFields,
 	}
+}
+
+func (rcf *RoomConfigForm) getFieldDataValue(fieldName string) []string {
+	switch fieldName {
+	case ConfigFieldFormType:
+		return []string{rcf.formType}
+
+	case ConfigFieldRoomName:
+		return []string{rcf.Title}
+
+	case ConfigFieldRoomDescription:
+		return []string{rcf.Description}
+
+	case ConfigFieldEnableLogging, ConfigFieldEnableArchiving:
+		return []string{strconv.FormatBool(rcf.Logged)}
+
+	case ConfigFieldMemberList:
+		return rcf.RetrieveMembersList.Value()
+
+	case ConfigFieldLanguage:
+		return []string{rcf.Language}
+
+	case ConfigFieldPubsub:
+		return []string{rcf.AssociatedPublishSubscribeNode}
+
+	case ConfigFieldCanChangeSubject:
+		return []string{strconv.FormatBool(rcf.OccupantsCanChangeSubject)}
+
+	case ConfigFieldAllowInvites, ConfigFieldAllowMemberInvites:
+		return []string{strconv.FormatBool(rcf.OccupantsCanInvite)}
+
+	case ConfigFieldAllowPM, ConfigFieldAllowPrivateMessages:
+		return rcf.AllowPrivateMessages.Value()
+
+	case ConfigFieldMaxOccupantsNumber:
+		return rcf.MaxOccupantsNumber.Value()
+
+	case ConfigFieldIsPublic:
+		return []string{strconv.FormatBool(rcf.Public)}
+
+	case ConfigFieldIsPersistent:
+		return []string{strconv.FormatBool(rcf.Persistent)}
+
+	case ConfigFieldPresenceBroadcast:
+		return rcf.PresenceBroadcast.Value()
+
+	case ConfigFieldModerated:
+		return []string{strconv.FormatBool(rcf.Moderated)}
+
+	case ConfigFieldMembersOnly:
+		return []string{strconv.FormatBool(rcf.MembersOnly)}
+
+	case ConfigFieldPasswordProtected:
+		return []string{strconv.FormatBool(rcf.PasswordProtected)}
+
+	case ConfigFieldPassword:
+		return []string{rcf.Password}
+
+	case ConfigFieldOwners:
+		return rcf.Owners.Value()
+
+	case ConfigFieldWhoIs:
+		return rcf.Whois.Value()
+
+	case ConfigFieldMaxHistoryFetch, ConfigFieldMaxHistoryLength:
+		return rcf.MaxHistoryFetch.Value()
+
+	case ConfigFieldRoomAdmins:
+		return rcf.Admins.Value()
+	}
+
+	for _, field := range rcf.Fields {
+		if field.Name == fieldName {
+			return field.Value()
+		}
+	}
+
+	return nil
 }
 
 func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {

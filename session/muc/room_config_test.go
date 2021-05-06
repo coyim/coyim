@@ -70,7 +70,7 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	res := rcf.GetFormData()
 
 	c.Assert(res.Type, Equals, "submit")
-	c.Assert(res.Fields, HasLen, 28)
+	c.Assert(res.Fields, HasLen, 27)
 
 	vals := map[string][]string{}
 	for _, ff := range res.Fields {

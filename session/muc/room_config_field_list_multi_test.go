@@ -35,19 +35,15 @@ func (*MucRoomConfigFieldListMultiSuite) Test_RoomConfigFieldListMultiValue_SetV
 	c.Assert(field.Selected(), DeepEquals, []string{"bla", "Juan", "dog"})
 	c.Assert(field.Value(), DeepEquals, []string{"bla", "Juan", "dog"})
 
-	field.SetValue([]string{})
+	field.SetSelected([]string{})
 	c.Assert(field.Selected(), DeepEquals, []string{})
 	c.Assert(field.Value(), DeepEquals, []string{})
 
-	field.SetValue(nil)
-	c.Assert(field.Selected(), DeepEquals, []string{})
-	c.Assert(field.Value(), DeepEquals, []string{})
+	field.SetSelected(nil)
+	c.Assert(field.Selected(), IsNil)
+	c.Assert(field.Value(), IsNil)
 
-	field.SetValue("")
-	c.Assert(field.Selected(), DeepEquals, []string{})
-	c.Assert(field.Value(), DeepEquals, []string{})
-
-	field.SetValue([]string{"foooooo"})
+	field.SetSelected([]string{"foooooo"})
 	c.Assert(field.Selected(), DeepEquals, []string{"foooooo"})
 	c.Assert(field.Value(), DeepEquals, []string{"foooooo"})
 }

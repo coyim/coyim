@@ -73,3 +73,8 @@ func (f *roomConfigFormFieldList) fieldValue() interface{} {
 	}
 	return nil
 }
+
+// collectFieldValue MUST be called from the UI thread
+func (f *roomConfigFormFieldList) collectFieldValue() {
+	f.value.SetValue(f.fieldValue())
+}

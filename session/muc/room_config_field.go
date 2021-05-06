@@ -5,7 +5,6 @@ import xmppData "github.com/coyim/coyim/xmpp/data"
 // HasRoomConfigFormFieldValue description
 type HasRoomConfigFormFieldValue interface {
 	Value() []string
-	SetValue(interface{})
 }
 
 // RoomConfigFormField contains information of the field from the configuration form
@@ -25,11 +24,6 @@ func newRoomConfigFormField(field xmppData.FormFieldX) *RoomConfigFormField {
 		Description: field.Desc,
 		value:       roomConfigFormFieldValueFactory(field),
 	}
-}
-
-// SetValue sets the field value with the given "v" parameter
-func (f *RoomConfigFormField) SetValue(v interface{}) {
-	f.value.SetValue(v)
 }
 
 // Value returns the current field value

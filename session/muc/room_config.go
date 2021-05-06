@@ -89,7 +89,6 @@ type RoomConfigForm struct {
 	Admins *RoomConfigFieldJidMultiValue
 	Owners *RoomConfigFieldJidMultiValue
 
-	formType           string
 	receivedFieldNames map[string]bool
 	Fields             []*RoomConfigFormField
 }
@@ -159,9 +158,6 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 
 func (rcf *RoomConfigForm) getFieldDataValue(fieldName string) []string {
 	switch fieldName {
-	case ConfigFieldFormType:
-		return []string{rcf.formType}
-
 	case ConfigFieldRoomName:
 		return []string{rcf.Title}
 
@@ -237,9 +233,6 @@ func (rcf *RoomConfigForm) getFieldDataValue(fieldName string) []string {
 
 func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 	switch field.Var {
-	case ConfigFieldFormType:
-		rcf.formType = formFieldSingleString(field.Values)
-
 	case ConfigFieldMaxHistoryFetch, ConfigFieldMaxHistoryLength:
 		rcf.MaxHistoryFetch.SetSelected(formFieldSingleString(field.Values))
 		rcf.MaxHistoryFetch.SetOptions(formFieldOptionsValues(field.Options))
@@ -310,7 +303,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.Whois.SetOptions(formFieldOptionsValues(field.Options))
 
 	default:
-		if field.Type != RoomConfigFieldHidden && field.Type != RoomConfigFieldFixed {
+		if field.Type != RoomConfigFieldFixed {
 			rcf.Fields = append(rcf.Fields, newRoomConfigFormField(field))
 		}
 	}

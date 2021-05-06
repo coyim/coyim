@@ -77,12 +77,12 @@ var (
 )
 
 func roomConfigFormFieldFactory(field *muc.RoomConfigFormField) (hasRoomConfigFormField, error) {
-	switch field.Type {
-	case muc.RoomConfigFieldText:
-		return newRoomConfigFormTextField(field), nil
-	case muc.RoomConfigFieldBoolean:
+	switch valueHandler := field.ValueType().(type) {
+	case *muc.RoomConfigFieldTextValue:
+		return newRoomConfigFormTextField(field, valueHandler), nil
+	case *muc.RoomConfigFieldBooleanValue:
 		return newRoomConfigFormFieldBoolean(field), nil
-	case muc.RoomConfigFieldList:
+	case *muc.RoomConfigFieldListValue:
 		return newRoomConfigFormFieldList(field), nil
 	}
 

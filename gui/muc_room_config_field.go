@@ -83,7 +83,7 @@ func roomConfigFormFieldFactory(field *muc.RoomConfigFormField) (hasRoomConfigFo
 	case *muc.RoomConfigFieldBooleanValue:
 		return newRoomConfigFormFieldBoolean(field, valueHandler), nil
 	case *muc.RoomConfigFieldListValue:
-		return newRoomConfigFormFieldList(field), nil
+		return newRoomConfigFormFieldList(field, valueHandler), nil
 	}
 
 	return nil, errRoomConfigFieldNotSupported

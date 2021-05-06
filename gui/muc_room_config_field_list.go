@@ -13,6 +13,7 @@ const (
 
 type roomConfigFormFieldList struct {
 	*roomConfigFormField
+	value *muc.RoomConfigFieldListValue
 
 	list gtki.ComboBox `gtk-widget:"room-config-field-list"`
 
@@ -20,8 +21,8 @@ type roomConfigFormFieldList struct {
 	options      map[string]int
 }
 
-func newRoomConfigFormFieldList(f *muc.RoomConfigFormField) hasRoomConfigFormField {
-	field := &roomConfigFormFieldList{}
+func newRoomConfigFormFieldList(f *muc.RoomConfigFormField, value *muc.RoomConfigFieldListValue) hasRoomConfigFormField {
+	field := &roomConfigFormFieldList{value: value}
 	field.roomConfigFormField = newRoomConfigFormField(f, "MUCRoomConfigFormFieldList")
 
 	panicOnDevError(field.builder.bindObjects(field))
@@ -43,18 +44,16 @@ func newRoomConfigFormFieldList(f *muc.RoomConfigFormField) hasRoomConfigFormFie
 func (f *roomConfigFormFieldList) initOptions() {
 	f.options = map[string]int{}
 
-	if lf, ok := f.field.RawValue().(muc.RoomConfigFieldListValue); ok {
-		for index, o := range lf.Options() {
-			iter := f.optionsModel.Append()
+	for index, o := range f.value.Options() {
+		iter := f.optionsModel.Append()
 
-			_ = f.optionsModel.SetValue(iter, roomConfigFieldListOptionValueIndex, o)
-			_ = f.optionsModel.SetValue(iter, roomConfigFieldListOptionLabelIndex, configOptionToFriendlyMessage(o))
+		_ = f.optionsModel.SetValue(iter, roomConfigFieldListOptionValueIndex, o)
+		_ = f.optionsModel.SetValue(iter, roomConfigFieldListOptionLabelIndex, configOptionToFriendlyMessage(o))
 
-			f.options[o] = index
-		}
-
-		f.activateOption(lf.Raw().(string))
+		f.options[o] = index
 	}
+
+	f.activateOption(f.value.Selected())
 }
 
 // activateOption MUST be called from the UI thread

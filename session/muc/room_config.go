@@ -4,7 +4,6 @@ import (
 	"strconv"
 
 	xmppData "github.com/coyim/coyim/xmpp/data"
-	"github.com/coyim/coyim/xmpp/jid"
 )
 
 const (
@@ -74,10 +73,8 @@ type RoomConfigForm struct {
 	PasswordProtected              bool
 	Persistent                     bool
 	Public                         bool
-	Admins                         []jid.Any
 	Description                    string
 	Title                          string
-	Owners                         []jid.Any
 	Password                       string
 
 	MaxHistoryFetch      *RoomConfigFieldListValue
@@ -87,6 +84,9 @@ type RoomConfigForm struct {
 
 	RetrieveMembersList *RoomConfigFieldListMultiValue
 	PresenceBroadcast   *RoomConfigFieldListMultiValue
+
+	Admins *RoomConfigFieldJidMultiValue
+	Owners *RoomConfigFieldJidMultiValue
 
 	formType   string
 	fieldNames map[string]int
@@ -101,6 +101,7 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 
 	cf.initListSingleValueFields()
 	cf.initListMultiValueFields()
+	cf.initJidMultiValueFields()
 
 	cf.setFormFields(form.Fields)
 
@@ -141,6 +142,11 @@ func (rcf *RoomConfigForm) initListSingleValueFields() {
 func (rcf *RoomConfigForm) initListMultiValueFields() {
 	rcf.RetrieveMembersList = newRoomConfigFieldListMultiValue(nil, retrieveMembersListDefaultOptions)
 	rcf.PresenceBroadcast = newRoomConfigFieldListMultiValue(nil, presenceBroadcastDefaultOptions)
+}
+
+func (rcf *RoomConfigForm) initJidMultiValueFields() {
+	rcf.Admins = newRoomConfigFieldJidMultiValue(nil)
+	rcf.Owners = newRoomConfigFieldJidMultiValue(nil)
 }
 
 func (rcf *RoomConfigForm) setFormFields(fields []xmppData.FormFieldX) {
@@ -220,7 +226,7 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 			values = []string{rcf.Password}
 
 		case ConfigFieldOwners:
-			values = jidListToStringList(rcf.Owners)
+			values = rcf.Owners.Value()
 
 		case ConfigFieldWhoIs:
 			values = rcf.Whois.Value()
@@ -229,7 +235,7 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 			values = rcf.MaxHistoryFetch.Value()
 
 		case ConfigFieldRoomAdmins:
-			values = jidListToStringList(rcf.Admins)
+			values = rcf.Admins.Value()
 		}
 
 		formFields = append(formFields, xmppData.FormFieldX{
@@ -307,7 +313,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.Public = formFieldBool(field.Values)
 
 	case ConfigFieldRoomAdmins:
-		rcf.Admins = formFieldJidList(field.Values)
+		rcf.Admins.SetValue(field.Values)
 
 	case ConfigFieldRoomDescription:
 		rcf.Description = formFieldSingleString(field.Values)
@@ -316,7 +322,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.Title = formFieldSingleString(field.Values)
 
 	case ConfigFieldOwners:
-		rcf.Owners = formFieldJidList(field.Values)
+		rcf.Owners.SetValue(field.Values)
 
 	case ConfigFieldPassword:
 		rcf.Password = formFieldSingleString(field.Values)
@@ -365,18 +371,4 @@ func formFieldOptionsValues(options []xmppData.FormFieldOptionX) (list []string)
 	}
 
 	return list
-}
-
-func formFieldJidList(values []string) (list []jid.Any) {
-	for _, v := range values {
-		list = append(list, jid.Parse(v))
-	}
-	return list
-}
-
-func jidListToStringList(jidList []jid.Any) (result []string) {
-	for _, j := range jidList {
-		result = append(result, j.String())
-	}
-	return result
 }

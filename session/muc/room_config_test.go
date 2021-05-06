@@ -65,7 +65,7 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	c.Assert(rcf.Whois.Raw().(string), Equals, "a whois")
 	c.Assert(rcf.MaxHistoryFetch.Raw().(string), Equals, "43")
 	c.Assert(rcf.Language, Equals, "eng")
-	c.Assert(rcf.Admins, DeepEquals, []jid.Any{jid.Parse("one@foobar.com"), jid.Parse("two@example.org")})
+	c.Assert(rcf.Admins.Raw(), DeepEquals, []jid.Any{jid.Parse("one@foobar.com"), jid.Parse("two@example.org")})
 
 	res := rcf.GetFormData()
 
@@ -99,7 +99,7 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 		"muc#roomconfig_membersonly":           {"true"},
 		"muc#roomconfig_passwordprotectedroom": {"true"},
 		"muc#roomconfig_roomsecret":            {"a password"},
-		"muc#roomconfig_roomowners":            []string(nil),
+		"muc#roomconfig_roomowners":            {},
 		"muc#roomconfig_whois":                 {"a whois"},
 		"muc#maxhistoryfetch":                  {"43"},
 		"muc#roomconfig_historylength":         {"43"},
@@ -289,20 +289,6 @@ func (*MucRoomConfigSuite) Test_formFieldOptionsValues(c *C) {
 		{Label: "whatever2", Value: "bla2"},
 		{Label: "whatever3", Value: "foo2"},
 	}), DeepEquals, []string{"bla", "foo", "bla2", "foo2"})
-}
-
-func (*MucRoomConfigSuite) Test_formFieldJidList(c *C) {
-	c.Assert(formFieldJidList(nil), IsNil)
-	c.Assert(formFieldJidList([]string{}), DeepEquals, []jid.Any(nil))
-	c.Assert(formFieldJidList([]string{"bla"}), DeepEquals, []jid.Any{jid.Parse("bla")})
-	c.Assert(formFieldJidList([]string{"bla", "foo@domain.org"}), DeepEquals, []jid.Any{jid.Parse("bla"), jid.Parse("foo@domain.org")})
-}
-
-func (*MucRoomConfigSuite) Test_jidListToStringList(c *C) {
-	c.Assert(jidListToStringList(nil), IsNil)
-	c.Assert(jidListToStringList([]jid.Any{}), DeepEquals, []string(nil))
-	c.Assert(jidListToStringList([]jid.Any{jid.Parse("bla")}), DeepEquals, []string{"bla"})
-	c.Assert(jidListToStringList([]jid.Any{jid.Parse("foo@domain.org"), jid.Parse("foo"), jid.Parse("bla@domain.org")}), DeepEquals, []string{"foo@domain.org", "foo", "bla@domain.org"})
 }
 
 func (*MucRoomConfigSuite) Test_RoomConfigForm_updateFieldValueByName(c *C) {

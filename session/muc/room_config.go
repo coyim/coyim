@@ -9,55 +9,55 @@ import (
 const (
 	// ConfigFieldFormType represents the configuration form type field
 	ConfigFieldFormType = "FORM_TYPE"
-	// ConfigFieldRoomName represents the room name form field
+	// ConfigFieldRoomName represents the var value of the "room name" configuration field
 	ConfigFieldRoomName = "muc#roomconfig_roomname"
-	// ConfigFieldRoomDescription represents the room description form field
+	// ConfigFieldRoomDescription represents the var value of the "room description" configuration field
 	ConfigFieldRoomDescription = "muc#roomconfig_roomdesc"
-	// ConfigFieldEnableLogging represents the enable logging form field
+	// ConfigFieldEnableLogging represents the var value of the "enable logging" configuration field
 	ConfigFieldEnableLogging = "muc#roomconfig_enablelogging"
-	// ConfigFieldEnableArchiving represents the enable archiving form field
+	// ConfigFieldEnableArchiving represents the var value of the "enable archiving" configuration field
 	ConfigFieldEnableArchiving = "muc#roomconfig_enablearchiving"
-	// ConfigFieldMemberList represents the get member list form field
+	// ConfigFieldMemberList represents the var value of the "get members list" configuration field
 	ConfigFieldMemberList = "muc#roomconfig_getmemberlist"
-	// ConfigFieldLanguage represents the room language form field
+	// ConfigFieldLanguage represents the var value of the "room language" configuration field
 	ConfigFieldLanguage = "muc#roomconfig_lang"
-	// ConfigFieldPubsub represents the pubsub form field
+	// ConfigFieldPubsub represents the var value of the "pubsub" configuration field
 	ConfigFieldPubsub = "muc#roomconfig_pubsub"
-	// ConfigFieldCanChangeSubject represents the change subject form field
+	// ConfigFieldCanChangeSubject represents the var value of the "change subject" configuration field
 	ConfigFieldCanChangeSubject = "muc#roomconfig_changesubject"
-	// ConfigFieldAllowInvites represents the allow invites form field
+	// ConfigFieldAllowInvites represents the var value of the "allow invites" configuration field
 	ConfigFieldAllowInvites = "muc#roomconfig_allowinvites"
-	// ConfigFieldAllowMemberInvites represents the allow member invites form field (for some services)
+	// ConfigFieldAllowMemberInvites represents the var value of the "allow member invites" configuration field
 	ConfigFieldAllowMemberInvites = "{http://prosody.im/protocol/muc}roomconfig_allowmemberinvites"
-	// ConfigFieldAllowPM represents the allow private messages form field
+	// ConfigFieldAllowPM represents the var value of the "allow private messages" configuration field
 	ConfigFieldAllowPM = "muc#roomconfig_allowpm"
-	// ConfigFieldAllowPrivateMessages represent the allow private messages form fields (for some services)
+	// ConfigFieldAllowPrivateMessages represents the var value of the "allow private messages" configuration field
 	ConfigFieldAllowPrivateMessages = "allow_private_messages"
-	// ConfigFieldMaxOccupantsNumber represents the max users form field
+	// ConfigFieldMaxOccupantsNumber represents the var value of the "max users" configuration field
 	ConfigFieldMaxOccupantsNumber = "muc#roomconfig_maxusers"
-	// ConfigFieldIsPublic represents the public room form field
+	// ConfigFieldIsPublic represents the var value of the "public room" configuration field
 	ConfigFieldIsPublic = "muc#roomconfig_publicroom"
-	// ConfigFieldIsPersistent represents the persistent room form field
+	// ConfigFieldIsPersistent represents the var value of the "persistent room" configuration field
 	ConfigFieldIsPersistent = "muc#roomconfig_persistentroom"
-	// ConfigFieldPresenceBroadcast represents the presence broadcast form field
+	// ConfigFieldPresenceBroadcast represents the var value of the "presence broadcast" configuration field
 	ConfigFieldPresenceBroadcast = "muc#roomconfig_presencebroadcast"
-	// ConfigFieldModerated represents the moderated room form field
+	// ConfigFieldModerated represents the var value of the "moderated room" configuration field
 	ConfigFieldModerated = "muc#roomconfig_moderatedroom"
-	// ConfigFieldMembersOnly represents the members only form field (for some services)
+	// ConfigFieldMembersOnly represents the var value of the "members only" configuration field
 	ConfigFieldMembersOnly = "muc#roomconfig_membersonly"
-	// ConfigFieldPasswordProtected represents the password protected room form field
+	// ConfigFieldPasswordProtected represents the var value of the "password protected room" configuration field
 	ConfigFieldPasswordProtected = "muc#roomconfig_passwordprotectedroom"
-	// ConfigFieldPassword represents the room secret form field (for some services)
+	// ConfigFieldPassword represents the var value of the "room secret" configuration field
 	ConfigFieldPassword = "muc#roomconfig_roomsecret"
-	// ConfigFieldOwners represents the room owners list form field
+	// ConfigFieldOwners represents the var value of the "room owners" configuration field
 	ConfigFieldOwners = "muc#roomconfig_roomowners"
-	// ConfigFieldWhoIs represents the whois form field
+	// ConfigFieldWhoIs represents the var value of the "who is" configuration field
 	ConfigFieldWhoIs = "muc#roomconfig_whois"
-	// ConfigFieldMaxHistoryFetch represents the max history fetch form field
+	// ConfigFieldMaxHistoryFetch represents the var value of the "max history fetch" configuration field
 	ConfigFieldMaxHistoryFetch = "muc#maxhistoryfetch"
-	// ConfigFieldMaxHistoryLength represents the max history length form field (for some services)
+	// ConfigFieldMaxHistoryLength represents the var value of the "history length" configuration field
 	ConfigFieldMaxHistoryLength = "muc#roomconfig_historylength"
-	// ConfigFieldRoomAdmins represents the room admins list form field
+	// ConfigFieldRoomAdmins represents the var value of the "room admins" configuration field
 	ConfigFieldRoomAdmins = "muc#roomconfig_roomadmins"
 )
 

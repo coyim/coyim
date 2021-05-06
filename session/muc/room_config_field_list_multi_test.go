@@ -24,14 +24,14 @@ func (*MucRoomConfigFieldListMultiSuite) Test_newRoomConfigFieldListMultiValue(c
 	}
 
 	for _, mock := range cases {
-		field := newRoomConfigFieldListMultiValue(mock.values)
+		field := newRoomConfigFieldListMultiValue(mock.values, nil)
 		c.Assert(field.Raw(), DeepEquals, mock.expected)
 		c.Assert(field.Value(), DeepEquals, mock.expected)
 	}
 }
 
 func (*MucRoomConfigFieldListMultiSuite) Test_RoomConfigFieldListMultiValue_SetValue(c *C) {
-	field := newRoomConfigFieldListMultiValue([]string{"bla", "Juan", "dog"})
+	field := newRoomConfigFieldListMultiValue([]string{"bla", "Juan", "dog"}, nil)
 	c.Assert(field.Raw(), DeepEquals, []string{"bla", "Juan", "dog"})
 	c.Assert(field.Value(), DeepEquals, []string{"bla", "Juan", "dog"})
 

@@ -268,7 +268,8 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.Logged = formFieldBool(field.Values)
 
 	case ConfigFieldMemberList:
-		rcf.RetrieveMembersList.UpdateField(field.Values, formFieldOptionsValues(field.Options))
+		rcf.RetrieveMembersList.SetValue(field.Values)
+		rcf.RetrieveMembersList.SetOptions(formFieldOptionsValues(field.Options))
 
 	case ConfigFieldLanguage:
 		rcf.Language = formFieldSingleString(field.Values)
@@ -292,7 +293,8 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 		rcf.Persistent = formFieldBool(field.Values)
 
 	case ConfigFieldPresenceBroadcast:
-		rcf.PresenceBroadcast.UpdateField(field.Values, formFieldOptionsValues(field.Options))
+		rcf.PresenceBroadcast.SetValue(field.Values)
+		rcf.PresenceBroadcast.SetOptions(formFieldOptionsValues(field.Options))
 
 	case ConfigFieldIsPublic:
 		rcf.Public = formFieldBool(field.Values)

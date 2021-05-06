@@ -63,6 +63,7 @@ func (l *roomViewLobby) unknownErrorEvent() {
 }
 
 func (l *roomViewLobby) occupantForbiddenEvent() {
+	l.accountIsBanned = true
 	l.joinRequestErrorEvent(errOccupantForbidden)
 }
 

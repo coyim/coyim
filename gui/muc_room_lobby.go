@@ -13,6 +13,7 @@ import (
 type roomViewLobby struct {
 	roomID                jid.Bare
 	account               *account
+	accountIsBanned       bool
 	isPasswordProtected   bool
 	isReadyToJoinRoom     bool
 	nicknamesWithConflict *set.Set
@@ -159,8 +160,10 @@ func (l *roomViewLobby) isNotNicknameInConflictList() bool {
 }
 
 func (l *roomViewLobby) enableJoinIfConditionsAreMet() {
-	l.notifications.clearAll()
-	setFieldSensitive(l.joinButton, l.checkJoinConditions())
+	if !l.accountIsBanned {
+		l.notifications.clearAll()
+		setFieldSensitive(l.joinButton, l.checkJoinConditions())
+	}
 }
 
 func (l *roomViewLobby) checkJoinConditions() bool {
@@ -215,9 +218,9 @@ func (l *roomViewLobby) onJoinFailed(err error) {
 	userMessage := i18n.Local("An unknown error occurred while trying to join the room, please check your connection or try again.")
 	if err, ok := err.(*mucRoomLobbyErr); ok {
 		userMessage = l.getUserErrorMessage(err)
+		shouldEnableJoin = false
 
 		if err.errType == errJoinNicknameConflict {
-			shouldEnableJoin = false
 			if !l.nicknamesWithConflict.Has(err.nickname) {
 				l.nicknamesWithConflict.Insert(err.nickname)
 			}

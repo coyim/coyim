@@ -42,5 +42,15 @@ func (v *RoomConfigFieldJidMultiValue) SetValue(value interface{}) {
 
 // Raw implements the "HasRoomConfigFormFieldValue" interface
 func (v *RoomConfigFieldJidMultiValue) Raw() interface{} {
+	return v.List()
+}
+
+// List return the current list of jids
+func (v *RoomConfigFieldJidMultiValue) List() []jid.Any {
 	return v.value
+}
+
+// Length return the current number of entries in the list of jids
+func (v *RoomConfigFieldJidMultiValue) Length() int {
+	return len(v.value)
 }

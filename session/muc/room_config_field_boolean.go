@@ -23,7 +23,12 @@ func (v *RoomConfigFieldBooleanValue) SetValue(value interface{}) {
 	}
 }
 
+// Boolean returns the current boolean value
+func (v *RoomConfigFieldBooleanValue) Boolean() bool {
+	return v.value
+}
+
 // Raw implements the "HasRoomConfigFormFieldValue" interface
 func (v *RoomConfigFieldBooleanValue) Raw() interface{} {
-	return v.value
+	return v.Boolean()
 }

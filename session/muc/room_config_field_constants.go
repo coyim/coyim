@@ -47,3 +47,15 @@ const (
 	// RoomConfigOption100 represents the field option for "100"
 	RoomConfigOption100 = "100"
 )
+
+var retrieveMembersListDefaultOptions = []string{
+	RoomConfigOptionModerator,
+	RoomConfigOptionParticipant,
+	RoomConfigOptionVisitor,
+}
+
+var presenceBroadcastDefaultOptions = []string{
+	RoomConfigOptionModerator,
+	RoomConfigOptionParticipant,
+	RoomConfigOptionVisitor,
+}

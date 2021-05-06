@@ -107,8 +107,8 @@ func (p *roomConfigOccupantsPage) refreshContentLists() {
 }
 
 func (p *roomConfigOccupantsPage) collectData() {
-	p.form.Owners = jidListFromConfigListController(p.ownersListController)
-	p.form.Admins = jidListFromConfigListController(p.adminsListController)
+	p.form.Owners.SetValue(jidListFromConfigListController(p.ownersListController))
+	p.form.Admins.SetValue(jidListFromConfigListController(p.adminsListController))
 }
 
 func jidListFromConfigListController(l *mucRoomConfigListController) []jid.Any {

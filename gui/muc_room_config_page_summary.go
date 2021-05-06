@@ -3,7 +3,6 @@ package gui
 import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
-	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -135,8 +134,8 @@ func (p *roomConfigSummaryPage) setDescriptionField() {
 }
 
 func (p *roomConfigSummaryPage) setOwnersAndAdminsList() {
-	totalOwners := len(p.form.Owners)
-	totalAdmins := len(p.form.Admins)
+	totalOwners := p.form.Owners.Length()
+	totalAdmins := p.form.Admins.Length()
 
 	p.ownersListBox.SetVisible(false)
 	p.adminsListBox.SetVisible(false)
@@ -169,8 +168,10 @@ func summaryOccupantsListHideOrShow(list gtki.TreeView, toggleButtonImage gtki.I
 	}
 }
 
-func summaryOccupantsModelList(model gtki.ListStore, items []jid.Any) {
+func summaryOccupantsModelList(model gtki.ListStore, field *muc.RoomConfigFieldJidMultiValue) {
 	model.Clear()
+
+	items := field.List()
 
 	for _, j := range items {
 		iter := model.Append()

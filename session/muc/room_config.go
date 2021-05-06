@@ -89,15 +89,15 @@ type RoomConfigForm struct {
 	Admins *RoomConfigFieldJidMultiValue
 	Owners *RoomConfigFieldJidMultiValue
 
-	formType   string
-	fieldNames map[string]int
-	Fields     []*RoomConfigFormField
+	formType           string
+	receivedFieldNames map[string]bool
+	Fields             []*RoomConfigFormField
 }
 
 // NewRoomConfigForm creates a new room configuration form instance
 func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 	cf := &RoomConfigForm{
-		fieldNames: map[string]int{},
+		receivedFieldNames: map[string]bool{},
 	}
 
 	cf.initListSingleValueFields()
@@ -127,9 +127,9 @@ func (rcf *RoomConfigForm) initJidMultiValueFields() {
 }
 
 func (rcf *RoomConfigForm) setFormFields(fields []xmppData.FormFieldX) {
-	for idx, field := range fields {
+	for _, field := range fields {
 		if field.Var != "" {
-			rcf.fieldNames[field.Var] = idx
+			rcf.receivedFieldNames[field.Var] = true
 			rcf.setField(field)
 		}
 	}
@@ -144,7 +144,7 @@ func (rcf *RoomConfigForm) setFormFields(fields []xmppData.FormFieldX) {
 func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 	formFields := []xmppData.FormFieldX{}
 
-	for fieldName := range rcf.fieldNames {
+	for fieldName := range rcf.receivedFieldNames {
 		formFields = append(formFields, xmppData.FormFieldX{
 			Var:    fieldName,
 			Values: rcf.getFieldDataValue(fieldName),

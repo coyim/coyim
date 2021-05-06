@@ -51,3 +51,14 @@ func (*MucRoomConfigFieldListMultiSuite) Test_RoomConfigFieldListMultiValue_SetV
 	c.Assert(field.Raw(), DeepEquals, []string{"foooooo"})
 	c.Assert(field.Value(), DeepEquals, []string{"foooooo"})
 }
+
+func (*MucRoomConfigFieldListMultiSuite) Test_RoomConfigFieldListMultiValue_optionsWorks(c *C) {
+	field := newRoomConfigFieldListMultiValue(nil, []string{"one", "two"})
+	c.Assert(field.Options(), DeepEquals, []string{"one", "two"})
+
+	field.SetOptions([]string{"bla", "foo"})
+	c.Assert(field.Options(), DeepEquals, []string{"bla", "foo"})
+
+	field.SetOptions(nil)
+	c.Assert(field.Options(), DeepEquals, []string{"bla", "foo"})
+}

@@ -258,9 +258,11 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 
 	case ConfigFieldMaxHistoryFetch, ConfigFieldMaxHistoryLength:
 		rcf.MaxHistoryFetch.SetValue(formFieldSingleString(field.Values))
+		rcf.MaxHistoryFetch.SetOptions(formFieldOptionsValues(field.Options))
 
 	case ConfigFieldAllowPM, ConfigFieldAllowPrivateMessages:
 		rcf.AllowPrivateMessages.SetValue(formFieldSingleString(field.Values))
+		rcf.AllowPrivateMessages.SetOptions(formFieldOptionsValues(field.Options))
 
 	case ConfigFieldAllowInvites, ConfigFieldAllowMemberInvites:
 		rcf.OccupantsCanInvite = formFieldBool(field.Values)
@@ -283,6 +285,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 
 	case ConfigFieldMaxOccupantsNumber:
 		rcf.MaxOccupantsNumber.SetValue(formFieldSingleString(field.Values))
+		rcf.MaxOccupantsNumber.SetOptions(formFieldOptionsValues(field.Options))
 
 	case ConfigFieldMembersOnly:
 		rcf.MembersOnly = formFieldBool(field.Values)
@@ -320,6 +323,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 
 	case ConfigFieldWhoIs:
 		rcf.Whois.SetValue(formFieldSingleString(field.Values))
+		rcf.Whois.SetOptions(formFieldOptionsValues(field.Options))
 
 	default:
 		if field.Type != RoomConfigFieldHidden && field.Type != RoomConfigFieldFixed {

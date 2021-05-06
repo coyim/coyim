@@ -65,7 +65,7 @@ func (*MucRoomConfigFieldBooleanSuite) Test_RoomConfigFieldListValue_SetValue(c 
 }
 
 func (*MucRoomConfigFieldBooleanSuite) Test_RoomConfigFieldListValue_Options(c *C) {
-	field := newRoomConfigFieldListValue([]string{}, []string{"bla", "foo"})
+	field := newRoomConfigFieldListValue(nil, []string{"bla", "foo"})
 	c.Assert(field.Options(), DeepEquals, []string{"bla", "foo"})
 
 	field.SetOptions(nil)

@@ -109,10 +109,10 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 }
 
 func (rcf *RoomConfigForm) initListSingleValueFields() {
-	rcf.MaxHistoryFetch = newRoomConfigFieldListValue([]string{""}, maxHistoryFetchDefaultOptions)
-	rcf.AllowPrivateMessages = newRoomConfigFieldListValue([]string{""}, allowPrivateMessagesDefaultOptions)
-	rcf.MaxOccupantsNumber = newRoomConfigFieldListValue([]string{""}, maxOccupantsNumberDefaultOptions)
-	rcf.Whois = newRoomConfigFieldListValue([]string{""}, whoisDefaultOptions)
+	rcf.MaxHistoryFetch = newRoomConfigFieldListValue(nil, maxHistoryFetchDefaultOptions)
+	rcf.AllowPrivateMessages = newRoomConfigFieldListValue(nil, allowPrivateMessagesDefaultOptions)
+	rcf.MaxOccupantsNumber = newRoomConfigFieldListValue(nil, maxOccupantsNumberDefaultOptions)
+	rcf.Whois = newRoomConfigFieldListValue(nil, whoisDefaultOptions)
 }
 
 func (rcf *RoomConfigForm) initListMultiValueFields() {

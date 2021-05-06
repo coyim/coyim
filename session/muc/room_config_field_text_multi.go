@@ -5,7 +5,7 @@ type RoomConfigFieldTextMultiValue struct {
 	value []string
 }
 
-func newRoomConfigFieldTextMultiValue(values []string) HasRoomConfigFormFieldValue {
+func newRoomConfigFieldTextMultiValue(values []string) *RoomConfigFieldTextMultiValue {
 	return &RoomConfigFieldTextMultiValue{values}
 }
 
@@ -21,7 +21,7 @@ func (v *RoomConfigFieldTextMultiValue) SetValue(value interface{}) {
 	}
 }
 
-// Raw implements the "HasRoomConfigFormFieldValue" interface
-func (v *RoomConfigFieldTextMultiValue) Raw() interface{} {
-	return v.value
+// Text returns the current text (multi line) value
+func (v *RoomConfigFieldTextMultiValue) Text() []string {
+	return v.Value()
 }

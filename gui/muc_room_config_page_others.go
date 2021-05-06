@@ -85,7 +85,7 @@ func (p *roomConfigOthersPage) collectData() {
 	p.form.Logged = p.roomEnableLogging.GetActive()
 
 	for _, f := range p.fields {
-		p.form.UpdateFieldValueByName(f.fieldName(), f.fieldValue())
+		f.collectFieldValue()
 	}
 }
 

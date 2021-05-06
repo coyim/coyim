@@ -14,6 +14,7 @@ type hasRoomConfigFormField interface {
 	fieldValue() interface{}
 	fieldWidget() gtki.Widget
 	refreshContent()
+	collectFieldValue()
 }
 
 type roomConfigFormField struct {
@@ -71,6 +72,9 @@ func (f *roomConfigFormField) fieldWidget() gtki.Widget {
 
 // refreshContent implements the hasRoomConfigFormField interface
 func (f *roomConfigFormField) refreshContent() {}
+
+// collectFieldValue implements the hasRoomConfigFormField interface
+func (f *roomConfigFormField) collectFieldValue() {}
 
 var (
 	errRoomConfigFieldNotSupported = errors.New("room configuration form field not supported")

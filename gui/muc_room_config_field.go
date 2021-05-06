@@ -11,7 +11,6 @@ type hasRoomConfigFormField interface {
 	fieldName() string
 	fieldLabel() string
 	fieldDescription() string
-	fieldValue() interface{}
 	fieldWidget() gtki.Widget
 	refreshContent()
 	collectFieldValue()
@@ -58,11 +57,6 @@ func (f *roomConfigFormField) fieldLabel() string {
 // fieldDescription implements the hasRoomConfigFormField interface
 func (f *roomConfigFormField) fieldDescription() string {
 	return f.field.Description
-}
-
-// fieldValue implements the hasRoomConfigFormField interface
-func (f *roomConfigFormField) fieldValue() interface{} {
-	return nil
 }
 
 // fieldWidget implements the hasRoomConfigFormField interface

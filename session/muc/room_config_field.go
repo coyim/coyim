@@ -43,6 +43,11 @@ func (f *RoomConfigFormField) RawValue() interface{} {
 	return f.value.Raw()
 }
 
+// ValueType returns the value type handler of the field
+func (f *RoomConfigFormField) ValueType() HasRoomConfigFormFieldValue {
+	return f.value
+}
+
 func roomConfigFormFieldValueFactory(field xmppData.FormFieldX) HasRoomConfigFormFieldValue {
 	values := field.Values
 	options := formFieldOptionsValues(field.Options)

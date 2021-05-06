@@ -22,9 +22,9 @@ func (v *RoomConfigFieldListMultiValue) SetValue(value interface{}) {
 	}
 }
 
-// Raw implements the "HasRoomConfigFormFieldValue" interface
-func (v *RoomConfigFieldListMultiValue) Raw() interface{} {
-	return v.value
+// Selected returns the current selected values
+func (v *RoomConfigFieldListMultiValue) Selected() []string {
+	return v.Value()
 }
 
 // Options return the list of options from where the value can be taken

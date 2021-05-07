@@ -25,7 +25,7 @@ func (v *RoomConfigFieldListValue) Selected() string {
 	return v.value
 }
 
-// Selected returns the current option based on the selected value
+// SelectedOption returns the current option based on the selected value
 func (v *RoomConfigFieldListValue) SelectedOption() *RoomConfigFieldOption {
 	selected := v.value
 	for _, op := range v.options {

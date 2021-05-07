@@ -264,6 +264,88 @@ func (*MucRoomConfigSuite) Test_newRoomConfigFormField(c *C) {
 	}
 }
 
+func (*MucRoomConfigSuite) Test_RoomConfigForm_getFieldDataValue(c *C) {
+	rcf := NewRoomConfigForm(&xmppData.Form{
+		Fields: []xmppData.FormFieldX{
+			{Var: ConfigFieldFormType, Type: RoomConfigFieldHidden, Values: []string{"stuff"}},
+			{Var: ConfigFieldRoomName, Values: []string{"a title"}},
+			{Var: ConfigFieldRoomDescription, Values: []string{"a description"}},
+			{Var: ConfigFieldEnableLogging, Values: []string{"true"}},
+			{Var: ConfigFieldEnableArchiving, Values: []string{"true"}},
+			{Var: ConfigFieldMemberList, Values: []string{}},
+			{Var: ConfigFieldLanguage, Values: []string{"eng"}},
+			{Var: ConfigFieldPubsub, Values: []string{}},
+			{Var: ConfigFieldCanChangeSubject, Values: []string{"true"}},
+			{Var: ConfigFieldAllowInvites, Values: []string{"true"}},
+			{Var: ConfigFieldAllowMemberInvites, Values: []string{"true"}},
+			{Var: ConfigFieldAllowPM, Values: []string{"allow private messages"}},
+			{Var: ConfigFieldAllowPrivateMessages, Values: []string{"allow private messages"}},
+			{Var: ConfigFieldMaxOccupantsNumber, Values: []string{"42"}},
+			{Var: ConfigFieldIsPublic, Values: []string{"true"}},
+			{Var: ConfigFieldIsPersistent, Values: []string{"true"}},
+			{Var: ConfigFieldPresenceBroadcast, Values: []string{}},
+			{Var: ConfigFieldModerated, Values: []string{"true"}},
+			{Var: ConfigFieldMembersOnly, Values: []string{"true"}},
+			{Var: ConfigFieldPasswordProtected, Values: []string{"true"}},
+			{Var: ConfigFieldPassword, Values: []string{"a password"}},
+			{Var: ConfigFieldOwners, Values: []string{}},
+			{Var: ConfigFieldWhoIs, Values: []string{"a whois"}},
+			{Var: ConfigFieldMaxHistoryFetch, Values: []string{"43"}, Options: []xmppData.FormFieldOptionX{
+				{Value: "one"},
+				{Value: "two"},
+			}},
+			{Var: ConfigFieldMaxHistoryLength, Values: []string{"43"}, Options: []xmppData.FormFieldOptionX{
+				{Value: "one"},
+				{Value: "two"},
+			}},
+			{Var: ConfigFieldRoomAdmins, Values: []string{"one@foobar.com", "two@example.org"}},
+			{Var: "unknown_field_name", Type: RoomConfigFieldText, Values: []string{"foo"}},
+		},
+	})
+
+	fields := []struct {
+		fieldName     string
+		expectedValue []string
+		ok            bool
+	}{
+		{ConfigFieldFormType, []string{"stuff"}, true},
+		{ConfigFieldRoomName, []string{"a title"}, true},
+		{ConfigFieldRoomDescription, []string{"a description"}, true},
+		{ConfigFieldEnableLogging, []string{"true"}, true},
+		{ConfigFieldEnableArchiving, []string{"true"}, true},
+		{ConfigFieldMemberList, []string{}, true},
+		{ConfigFieldLanguage, []string{"eng"}, true},
+		{ConfigFieldPubsub, []string{""}, true},
+		{ConfigFieldCanChangeSubject, []string{"true"}, true},
+		{ConfigFieldAllowInvites, []string{"true"}, true},
+		{ConfigFieldAllowMemberInvites, []string{"true"}, true},
+		{ConfigFieldAllowPM, []string{"allow private messages"}, true},
+		{ConfigFieldAllowPrivateMessages, []string{"allow private messages"}, true},
+		{ConfigFieldMaxOccupantsNumber, []string{"42"}, true},
+		{ConfigFieldIsPublic, []string{"true"}, true},
+		{ConfigFieldIsPersistent, []string{"true"}, true},
+		{ConfigFieldPresenceBroadcast, []string{}, true},
+		{ConfigFieldModerated, []string{"true"}, true},
+		{ConfigFieldMembersOnly, []string{"true"}, true},
+		{ConfigFieldPasswordProtected, []string{"true"}, true},
+		{ConfigFieldPassword, []string{"a password"}, true},
+		{ConfigFieldOwners, []string{}, true},
+		{ConfigFieldWhoIs, []string{"a whois"}, true},
+		{ConfigFieldMaxHistoryFetch, []string{"43"}, true},
+		{ConfigFieldMaxHistoryLength, []string{"43"}, true},
+		{ConfigFieldRoomAdmins, []string{"one@foobar.com", "two@example.org"}, true},
+		{"unknown_field_name", []string{"foo"}, true},
+		{"another_unknown_field_name", nil, false},
+	}
+
+	for _, fieldCase := range fields {
+		c.Logf("Checking case %s with expected value %v", fieldCase.fieldName, fieldCase.expectedValue)
+		value, ok := rcf.getFieldDataValue(fieldCase.fieldName)
+		c.Assert(value, DeepEquals, fieldCase.expectedValue)
+		c.Assert(ok, Equals, fieldCase.ok)
+	}
+}
+
 func (*MucRoomConfigSuite) Test_formFieldBool(c *C) {
 	c.Assert(formFieldBool(nil), Equals, false)
 	c.Assert(formFieldBool([]string(nil)), Equals, false)

@@ -73,3 +73,18 @@ func (*MucRoomConfigFieldBooleanSuite) Test_RoomConfigFieldListValue_Options(c *
 	field.SetOptions([]*RoomConfigFieldOption{{Value: "whatever"}})
 	c.Assert(field.Options(), DeepEquals, []*RoomConfigFieldOption{{Value: "whatever"}})
 }
+
+func (*MucRoomConfigFieldBooleanSuite) Test_RoomConfigFieldListValue_SelectedOption(c *C) {
+	field := newRoomConfigFieldListValue([]string{"bla"}, []*RoomConfigFieldOption{{"bla", "Bla"}})
+	c.Assert(field.SelectedOption(), DeepEquals, &RoomConfigFieldOption{"bla", "Bla"})
+
+	field.SetSelected("whatever")
+	c.Assert(field.SelectedOption(), IsNil)
+
+	field.SetSelected("Bla")
+	c.Assert(field.SelectedOption(), IsNil)
+
+	field.SetOptions([]*RoomConfigFieldOption{{"one", "One"}, {"two", "Two"}})
+	field.SetSelected("two")
+	c.Assert(field.SelectedOption(), DeepEquals, &RoomConfigFieldOption{"two", "Two"})
+}

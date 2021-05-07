@@ -48,43 +48,43 @@ const (
 	RoomConfigOption100 = "100"
 )
 
-var retrieveMembersListDefaultOptions = []string{
-	RoomConfigOptionModerator,
-	RoomConfigOptionParticipant,
-	RoomConfigOptionVisitor,
+var retrieveMembersListDefaultOptions = []*RoomConfigFieldOption{
+	newRoomConfigFieldOption(RoomConfigOptionModerator, RoomConfigOptionModerator),
+	newRoomConfigFieldOption(RoomConfigOptionParticipant, RoomConfigOptionParticipant),
+	newRoomConfigFieldOption(RoomConfigOptionVisitor, RoomConfigOptionVisitor),
 }
 
-var presenceBroadcastDefaultOptions = []string{
-	RoomConfigOptionModerator,
-	RoomConfigOptionParticipant,
-	RoomConfigOptionVisitor,
+var presenceBroadcastDefaultOptions = []*RoomConfigFieldOption{
+	newRoomConfigFieldOption(RoomConfigOptionModerator, RoomConfigOptionModerator),
+	newRoomConfigFieldOption(RoomConfigOptionParticipant, RoomConfigOptionParticipant),
+	newRoomConfigFieldOption(RoomConfigOptionVisitor, RoomConfigOptionVisitor),
 }
 
-var maxHistoryFetchDefaultOptions = []string{
-	RoomConfigOption10,
-	RoomConfigOption20,
-	RoomConfigOption30,
-	RoomConfigOption50,
-	RoomConfigOption100,
-	RoomConfigOptionNone,
+var maxHistoryFetchDefaultOptions = []*RoomConfigFieldOption{
+	newRoomConfigFieldOption(RoomConfigOption10, RoomConfigOption10),
+	newRoomConfigFieldOption(RoomConfigOption20, RoomConfigOption20),
+	newRoomConfigFieldOption(RoomConfigOption30, RoomConfigOption30),
+	newRoomConfigFieldOption(RoomConfigOption50, RoomConfigOption50),
+	newRoomConfigFieldOption(RoomConfigOption100, RoomConfigOption100),
+	newRoomConfigFieldOption(RoomConfigOptionNone, RoomConfigOptionNone),
 }
 
-var allowPrivateMessagesDefaultOptions = []string{
-	RoomConfigOptionParticipant,
-	RoomConfigOptionModerators,
-	RoomConfigOptionNone,
+var allowPrivateMessagesDefaultOptions = []*RoomConfigFieldOption{
+	newRoomConfigFieldOption(RoomConfigOptionParticipant, RoomConfigOptionParticipant),
+	newRoomConfigFieldOption(RoomConfigOptionModerators, RoomConfigOptionModerators),
+	newRoomConfigFieldOption(RoomConfigOptionNone, RoomConfigOptionNone),
 }
 
-var maxOccupantsNumberDefaultOptions = []string{
-	RoomConfigOption10,
-	RoomConfigOption20,
-	RoomConfigOption30,
-	RoomConfigOption50,
-	RoomConfigOption100,
-	RoomConfigOptionNone,
+var maxOccupantsNumberDefaultOptions = []*RoomConfigFieldOption{
+	newRoomConfigFieldOption(RoomConfigOption10, RoomConfigOption10),
+	newRoomConfigFieldOption(RoomConfigOption20, RoomConfigOption20),
+	newRoomConfigFieldOption(RoomConfigOption30, RoomConfigOption30),
+	newRoomConfigFieldOption(RoomConfigOption50, RoomConfigOption50),
+	newRoomConfigFieldOption(RoomConfigOption100, RoomConfigOption100),
+	newRoomConfigFieldOption(RoomConfigOptionNone, RoomConfigOptionNone),
 }
 
-var whoisDefaultOptions = []string{
-	RoomConfigOptionModerators,
-	RoomConfigOptionAnyone,
+var whoisDefaultOptions = []*RoomConfigFieldOption{
+	newRoomConfigFieldOption(RoomConfigOptionModerators, RoomConfigOptionModerators),
+	newRoomConfigFieldOption(RoomConfigOptionAnyone, RoomConfigOptionAnyone),
 }

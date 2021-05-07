@@ -135,13 +135,13 @@ func (cc *roomConfigComboEntry) updateCurrentValue(v string) {
 }
 
 // updateOptions MUST be called from the UI thread
-func (cc *roomConfigComboEntry) updateOptions(options []string) {
+func (cc *roomConfigComboEntry) updateOptions(options []*muc.RoomConfigFieldOption) {
 	cc.model.Clear()
 	cc.options = make(map[string]string)
 
 	for _, o := range options {
-		label := configOptionToFriendlyMessage(o)
-		if o == muc.RoomConfigOptionNone {
+		label := configOptionToFriendlyMessage(o.Value, o.Label)
+		if o.Value == muc.RoomConfigOptionNone {
 			label = i18n.Local("No maximum (default)")
 		}
 
@@ -149,7 +149,7 @@ func (cc *roomConfigComboEntry) updateOptions(options []string) {
 		cc.model.SetValue(iter, roomMaxHistoryFetchValueColumIndex, o)
 		cc.model.SetValue(iter, roomMaxHistoryFetchLabelColumIndex, label)
 
-		cc.options[label] = o
+		cc.options[label] = o.Value
 	}
 }
 

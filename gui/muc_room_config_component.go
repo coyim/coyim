@@ -134,7 +134,7 @@ func (c *mucRoomConfigComponent) friendlyConfigErrorMessage(err error) string {
 	}
 }
 
-func configOptionToFriendlyMessage(o string) string {
+func configOptionToFriendlyMessage(o, defaultLabel string) string {
 	switch o {
 	case muc.RoomConfigOptionParticipants:
 		return i18n.Local("Participants")
@@ -161,5 +161,5 @@ func configOptionToFriendlyMessage(o string) string {
 	case muc.RoomConfigOption100:
 		return i18n.Local("100")
 	}
-	return i18n.Localf("Unsupported \"%s\" option", o)
+	return defaultLabel
 }

@@ -48,9 +48,9 @@ func (f *roomConfigFormFieldList) initOptions() {
 		iter := f.optionsModel.Append()
 
 		_ = f.optionsModel.SetValue(iter, roomConfigFieldListOptionValueIndex, o)
-		_ = f.optionsModel.SetValue(iter, roomConfigFieldListOptionLabelIndex, configOptionToFriendlyMessage(o))
+		_ = f.optionsModel.SetValue(iter, roomConfigFieldListOptionLabelIndex, configOptionToFriendlyMessage(o.Value, o.Label))
 
-		f.options[o] = index
+		f.options[o.Value] = index
 	}
 
 	f.activateOption(f.value.Selected())

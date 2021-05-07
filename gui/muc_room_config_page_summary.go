@@ -110,14 +110,19 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	// Permissions
 	setLabelText(p.allowSetRoomSubject, summaryYesOrNoText(p.form.OccupantsCanChangeSubject))
 	setLabelText(p.moderatedRoom, summaryYesOrNoText(p.form.Moderated))
-	setLabelText(p.whoIs, configOptionToFriendlyMessage(p.form.Whois.Selected()))
+	selectedWhoIs := p.form.Whois.SelectedOption()
+	setLabelText(p.whoIs, configOptionToFriendlyMessage(selectedWhoIs.Value, selectedWhoIs.Label))
 
 	// Occupants
 	p.setOwnersAndAdminsList()
 
 	// Other settings
-	setLabelText(p.maxHistoryFetch, summaryConfigurationOptionText(p.form.MaxHistoryFetch.Selected()))
-	setLabelText(p.maxOccupants, summaryConfigurationOptionText(p.form.MaxOccupantsNumber.Selected()))
+	selectedMaxHistoryFetch := p.form.MaxHistoryFetch.SelectedOption()
+	setLabelText(p.maxHistoryFetch, summaryConfigurationOptionText(selectedMaxHistoryFetch.Value, selectedMaxHistoryFetch.Label))
+
+	selectedMaxOccupantsNumber := p.form.MaxOccupantsNumber.SelectedOption()
+	setLabelText(p.maxOccupants, summaryConfigurationOptionText(selectedMaxOccupantsNumber.Value, selectedMaxOccupantsNumber.Label))
+
 	setLabelText(p.enableArchiving, summaryYesOrNoText(p.form.Logged))
 }
 
@@ -179,11 +184,11 @@ func summaryOccupantsModelList(model gtki.ListStore, field *muc.RoomConfigFieldJ
 	}
 }
 
-func summaryConfigurationOptionText(v string) string {
+func summaryConfigurationOptionText(v, l string) string {
 	if v == "" {
 		v = muc.RoomConfigOptionNone
 	}
-	return configOptionToFriendlyMessage(v)
+	return configOptionToFriendlyMessage(v, l)
 }
 
 func summaryPasswordText(v bool) string {

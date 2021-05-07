@@ -6,12 +6,14 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type MucRoomConfigSuite struct{}
+type MucRoomConfigSuite struct {
+	rcf *RoomConfigForm
+}
 
 var _ = Suite(&MucRoomConfigSuite{})
 
-func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
-	rcf := NewRoomConfigForm(&xmppData.Form{
+func (s *MucRoomConfigSuite) SetUpSuite(c *C) {
+	s.rcf = NewRoomConfigForm(&xmppData.Form{
 		Fields: []xmppData.FormFieldX{
 			{Var: ConfigFieldFormType, Type: RoomConfigFieldHidden, Values: []string{"stuff"}},
 			{Var: ConfigFieldRoomName, Values: []string{"a title"}},
@@ -48,26 +50,28 @@ func (*MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 			{Var: "unknown_field_name", Type: RoomConfigFieldText, Values: []string{"foo"}},
 		},
 	})
+}
 
-	c.Assert(rcf.Title, Equals, "a title")
-	c.Assert(rcf.Description, Equals, "a description")
-	c.Assert(rcf.Logged, Equals, true)
-	c.Assert(rcf.OccupantsCanChangeSubject, Equals, true)
-	c.Assert(rcf.OccupantsCanInvite, Equals, true)
-	c.Assert(rcf.AllowPrivateMessages.Selected(), Equals, "allow private messages")
-	c.Assert(rcf.MaxOccupantsNumber.Selected(), Equals, "42")
-	c.Assert(rcf.Public, Equals, true)
-	c.Assert(rcf.Persistent, Equals, true)
-	c.Assert(rcf.Moderated, Equals, true)
-	c.Assert(rcf.MembersOnly, Equals, true)
-	c.Assert(rcf.PasswordProtected, Equals, true)
-	c.Assert(rcf.Password, Equals, "a password")
-	c.Assert(rcf.Whois.Selected(), Equals, "a whois")
-	c.Assert(rcf.MaxHistoryFetch.Selected(), Equals, "43")
-	c.Assert(rcf.Language, Equals, "eng")
-	c.Assert(rcf.Admins.List(), DeepEquals, []jid.Any{jid.Parse("one@foobar.com"), jid.Parse("two@example.org")})
+func (s *MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
+	c.Assert(s.rcf.Title, Equals, "a title")
+	c.Assert(s.rcf.Description, Equals, "a description")
+	c.Assert(s.rcf.Logged, Equals, true)
+	c.Assert(s.rcf.OccupantsCanChangeSubject, Equals, true)
+	c.Assert(s.rcf.OccupantsCanInvite, Equals, true)
+	c.Assert(s.rcf.AllowPrivateMessages.Selected(), Equals, "allow private messages")
+	c.Assert(s.rcf.MaxOccupantsNumber.Selected(), Equals, "42")
+	c.Assert(s.rcf.Public, Equals, true)
+	c.Assert(s.rcf.Persistent, Equals, true)
+	c.Assert(s.rcf.Moderated, Equals, true)
+	c.Assert(s.rcf.MembersOnly, Equals, true)
+	c.Assert(s.rcf.PasswordProtected, Equals, true)
+	c.Assert(s.rcf.Password, Equals, "a password")
+	c.Assert(s.rcf.Whois.Selected(), Equals, "a whois")
+	c.Assert(s.rcf.MaxHistoryFetch.Selected(), Equals, "43")
+	c.Assert(s.rcf.Language, Equals, "eng")
+	c.Assert(s.rcf.Admins.List(), DeepEquals, []jid.Any{jid.Parse("one@foobar.com"), jid.Parse("two@example.org")})
 
-	res := rcf.GetFormData()
+	res := s.rcf.GetFormData()
 
 	c.Assert(res.Type, Equals, "submit")
 	c.Assert(res.Fields, HasLen, 27)
@@ -264,45 +268,7 @@ func (*MucRoomConfigSuite) Test_newRoomConfigFormField(c *C) {
 	}
 }
 
-func (*MucRoomConfigSuite) Test_RoomConfigForm_getFieldDataValue(c *C) {
-	rcf := NewRoomConfigForm(&xmppData.Form{
-		Fields: []xmppData.FormFieldX{
-			{Var: ConfigFieldFormType, Type: RoomConfigFieldHidden, Values: []string{"stuff"}},
-			{Var: ConfigFieldRoomName, Values: []string{"a title"}},
-			{Var: ConfigFieldRoomDescription, Values: []string{"a description"}},
-			{Var: ConfigFieldEnableLogging, Values: []string{"true"}},
-			{Var: ConfigFieldEnableArchiving, Values: []string{"true"}},
-			{Var: ConfigFieldMemberList, Values: []string{}},
-			{Var: ConfigFieldLanguage, Values: []string{"eng"}},
-			{Var: ConfigFieldPubsub, Values: []string{}},
-			{Var: ConfigFieldCanChangeSubject, Values: []string{"true"}},
-			{Var: ConfigFieldAllowInvites, Values: []string{"true"}},
-			{Var: ConfigFieldAllowMemberInvites, Values: []string{"true"}},
-			{Var: ConfigFieldAllowPM, Values: []string{"allow private messages"}},
-			{Var: ConfigFieldAllowPrivateMessages, Values: []string{"allow private messages"}},
-			{Var: ConfigFieldMaxOccupantsNumber, Values: []string{"42"}},
-			{Var: ConfigFieldIsPublic, Values: []string{"true"}},
-			{Var: ConfigFieldIsPersistent, Values: []string{"true"}},
-			{Var: ConfigFieldPresenceBroadcast, Values: []string{}},
-			{Var: ConfigFieldModerated, Values: []string{"true"}},
-			{Var: ConfigFieldMembersOnly, Values: []string{"true"}},
-			{Var: ConfigFieldPasswordProtected, Values: []string{"true"}},
-			{Var: ConfigFieldPassword, Values: []string{"a password"}},
-			{Var: ConfigFieldOwners, Values: []string{}},
-			{Var: ConfigFieldWhoIs, Values: []string{"a whois"}},
-			{Var: ConfigFieldMaxHistoryFetch, Values: []string{"43"}, Options: []xmppData.FormFieldOptionX{
-				{Value: "one"},
-				{Value: "two"},
-			}},
-			{Var: ConfigFieldMaxHistoryLength, Values: []string{"43"}, Options: []xmppData.FormFieldOptionX{
-				{Value: "one"},
-				{Value: "two"},
-			}},
-			{Var: ConfigFieldRoomAdmins, Values: []string{"one@foobar.com", "two@example.org"}},
-			{Var: "unknown_field_name", Type: RoomConfigFieldText, Values: []string{"foo"}},
-		},
-	})
-
+func (s *MucRoomConfigSuite) Test_RoomConfigForm_getFieldDataValue(c *C) {
 	fields := []struct {
 		fieldName     string
 		expectedValue []string
@@ -340,7 +306,7 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_getFieldDataValue(c *C) {
 
 	for _, fieldCase := range fields {
 		c.Logf("Checking case %s with expected value %v", fieldCase.fieldName, fieldCase.expectedValue)
-		value, ok := rcf.getFieldDataValue(fieldCase.fieldName)
+		value, ok := s.rcf.getFieldDataValue(fieldCase.fieldName)
 		c.Assert(value, DeepEquals, fieldCase.expectedValue)
 		c.Assert(ok, Equals, fieldCase.ok)
 	}

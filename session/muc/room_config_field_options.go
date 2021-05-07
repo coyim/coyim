@@ -2,7 +2,7 @@ package muc
 
 import xmppData "github.com/coyim/coyim/xmpp/data"
 
-// RoomConfigFieldOptions contains information of the option of
+// RoomConfigFieldOption contains information of the option of
 // of the field part of the configuration form
 type RoomConfigFieldOption struct {
 	Value string

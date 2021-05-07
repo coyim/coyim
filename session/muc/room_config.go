@@ -327,11 +327,3 @@ func formFieldSingleString(values []string) string {
 	}
 	return ""
 }
-
-func formFieldOptionsValues(options []xmppData.FormFieldOptionX) (list []string) {
-	for _, o := range options {
-		list = append(list, o.Value)
-	}
-
-	return list
-}

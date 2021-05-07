@@ -156,7 +156,7 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_setUnknowField(c *C) {
 			RoomConfigFieldList,
 			"field label",
 			[]string{"bla"},
-			newRoomConfigFieldListValue([]string{"bla"}, []string{"bla"}),
+			newRoomConfigFieldListValue([]string{"bla"}, []*RoomConfigFieldOption{{Value: "bla"}}),
 		},
 		{
 			"RoomConfigFieldListMulti",
@@ -329,12 +329,17 @@ func (*MucRoomConfigSuite) Test_formFieldSingleString(c *C) {
 }
 
 func (*MucRoomConfigSuite) Test_formFieldOptionsValues(c *C) {
-	c.Assert(formFieldOptionsValues(nil), IsNil)
-	c.Assert(formFieldOptionsValues([]xmppData.FormFieldOptionX{}), DeepEquals, []string(nil))
+	c.Assert(formFieldOptionsValues(nil), DeepEquals, []*RoomConfigFieldOption{})
+	c.Assert(formFieldOptionsValues([]xmppData.FormFieldOptionX{}), DeepEquals, []*RoomConfigFieldOption{})
 	c.Assert(formFieldOptionsValues([]xmppData.FormFieldOptionX{
 		{Label: "bla", Value: "bla"},
 		{Label: "whatever", Value: "foo"},
 		{Label: "whatever2", Value: "bla2"},
 		{Label: "whatever3", Value: "foo2"},
-	}), DeepEquals, []string{"bla", "foo", "bla2", "foo2"})
+	}), DeepEquals, []*RoomConfigFieldOption{
+		{Label: "bla", Value: "bla"},
+		{Label: "whatever", Value: "foo"},
+		{Label: "whatever2", Value: "bla2"},
+		{Label: "whatever3", Value: "foo2"},
+	})
 }

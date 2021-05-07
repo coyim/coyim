@@ -46,11 +46,9 @@ func (f *RoomConfigFormField) RawValue() interface{} {
 		return v.Selected()
 	case *RoomConfigFieldJidMultiValue:
 		return v.List()
-	case *RoomConfigFieldUnknowValue:
-		return v.Value()
 	}
 
-	return nil
+	return f.value.Value()
 }
 
 // ValueType returns the value type handler of the field

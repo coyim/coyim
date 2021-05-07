@@ -3,10 +3,10 @@ package muc
 // RoomConfigFieldListMultiValue contains information of the value of the text field
 type RoomConfigFieldListMultiValue struct {
 	value   []string
-	options []string
+	options []*RoomConfigFieldOption
 }
 
-func newRoomConfigFieldListMultiValue(values, options []string) *RoomConfigFieldListMultiValue {
+func newRoomConfigFieldListMultiValue(values []string, options []*RoomConfigFieldOption) *RoomConfigFieldListMultiValue {
 	return &RoomConfigFieldListMultiValue{values, options}
 }
 
@@ -26,13 +26,13 @@ func (v *RoomConfigFieldListMultiValue) Selected() []string {
 }
 
 // Options return the list of options from where the value can be taken
-func (v *RoomConfigFieldListMultiValue) Options() []string {
+func (v *RoomConfigFieldListMultiValue) Options() []*RoomConfigFieldOption {
 	return v.options
 }
 
 // SetOptions update the list of options from where the value can be taken, only if
 // the given list is not empty
-func (v *RoomConfigFieldListMultiValue) SetOptions(options []string) {
+func (v *RoomConfigFieldListMultiValue) SetOptions(options []*RoomConfigFieldOption) {
 	if len(options) > 0 {
 		v.options = options
 	}

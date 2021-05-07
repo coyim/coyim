@@ -78,6 +78,8 @@ func roomConfigFormFieldFactory(field *muc.RoomConfigFormField) (hasRoomConfigFo
 	switch valueHandler := field.ValueType().(type) {
 	case *muc.RoomConfigFieldTextValue:
 		return newRoomConfigFormTextField(field, valueHandler), nil
+	case *muc.RoomConfigFieldTextMultiValue:
+		return newRoomConfigFormTextMulti(field, valueHandler), nil
 	case *muc.RoomConfigFieldBooleanValue:
 		return newRoomConfigFormFieldBoolean(field, valueHandler), nil
 	case *muc.RoomConfigFieldListValue:

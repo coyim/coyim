@@ -30,3 +30,7 @@ func UnwrapTreePath(v gtki.TreePath) *gtk.TreePath {
 func (v *treePath) GetDepth() int {
 	return v.TreePath.GetDepth()
 }
+
+func (v *treePath) String() string {
+	return v.TreePath.String()
+}

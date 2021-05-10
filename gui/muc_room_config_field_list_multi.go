@@ -24,51 +24,76 @@ func newRoomConfigFieldListMulti(f *muc.RoomConfigFormField, value *muc.RoomConf
 	field := &roomConfigFieldListMulti{value: value}
 	field.roomConfigFormField = newRoomConfigFormField(f, "MUCRoomConfigFormFieldListMulti")
 
-	panicOnDevError(field.builder.bindObjects(field))
-
-	field.builder.ConnectSignals(map[string]interface{}{
-		"on_check_changed": func(_ gtki.CellRenderer, path string) {
-			field.onCheckChanged(path)
-		},
-	})
-
-	field.model, _ = g.gtk.ListStoreNew(glibi.TYPE_STRING, glibi.TYPE_STRING, glibi.TYPE_BOOLEAN)
-	field.list.SetModel(field.model)
-
-	for _, o := range value.Options() {
-		iter := field.model.Append()
-		field.model.SetValue(iter, configFieldListMultiValueIndex, o.Value)
-		field.model.SetValue(iter, configFieldListMultiTextIndex, configOptionToFriendlyMessage(o.Value, o.Label))
-		field.model.SetValue(iter, configFieldListMultiActivableIndex, value.IsSelected(o))
-	}
+	field.initBuilder()
+	field.initModel()
 
 	return field
 
 }
 
+func (f *roomConfigFieldListMulti) initBuilder() {
+	panicOnDevError(f.builder.bindObjects(f))
+	f.builder.ConnectSignals(map[string]interface{}{
+		"on_check_changed": func(_ gtki.CellRenderer, path string) {
+			f.onCheckChanged(path)
+		},
+	})
+}
+
+func (f *roomConfigFieldListMulti) initModel() {
+	f.model, _ = g.gtk.ListStoreNew(
+		// column key
+		glibi.TYPE_STRING,
+		// column label
+		glibi.TYPE_STRING,
+		// column selected
+		glibi.TYPE_BOOLEAN,
+	)
+	f.list.SetModel(f.model)
+
+	for _, o := range f.value.Options() {
+		iter := f.model.Append()
+		f.model.SetValue(iter, configFieldListMultiValueIndex, o.Value)
+		f.model.SetValue(iter, configFieldListMultiTextIndex, configOptionToFriendlyMessage(o.Value, o.Label))
+		f.model.SetValue(iter, configFieldListMultiActivableIndex, f.value.IsSelected(o))
+	}
+}
+
+// onCheckChanged MUST be called from the UI thread
 func (f *roomConfigFieldListMulti) onCheckChanged(path string) {
 	iter, _ := f.model.GetIterFromString(path)
-	mv, _ := f.model.GetValue(iter, configFieldListMultiActivableIndex)
-	gv, _ := mv.GoValue()
-	if active, ok := gv.(bool); ok {
-		f.model.SetValue(iter, configFieldListMultiActivableIndex, !active)
-	}
+	f.model.SetValue(iter, configFieldListMultiActivableIndex, !f.isIterSelected(iter))
 }
 
 // collectFieldValue MUST be called from the UI thread
 func (f *roomConfigFieldListMulti) collectFieldValue() {
 	selected := []string{}
 
-	itr, ok := f.model.GetIterFirst()
+	iter, ok := f.model.GetIterFirst()
 	for ok {
-		mv, _ := f.model.GetValue(itr, configFieldListMultiActivableIndex)
-		gv, _ := mv.GoValue()
-		if active, ok := gv.(bool); ok && active {
-			k, _ := f.model.GetValue(itr, configFieldListMultiValueIndex)
-			kv, _ := k.GetString()
-			selected = append(selected, kv)
+		if f.isIterSelected(iter) {
+			selected = append(selected, f.getIterColumnKeyValue(iter))
 		}
-		ok = f.model.IterNext(itr)
+		ok = f.model.IterNext(iter)
 	}
+
 	f.value.SetSelected(selected)
+}
+
+func (f *roomConfigFieldListMulti) getIterColumnValue(iter gtki.TreeIter, columnIndex int) interface{} {
+	mv, _ := f.model.GetValue(iter, columnIndex)
+	gv, _ := mv.GoValue()
+	return gv
+}
+
+func (f *roomConfigFieldListMulti) getIterColumnKeyValue(iter gtki.TreeIter) string {
+	return f.getIterColumnValue(iter, configFieldListMultiValueIndex).(string)
+}
+
+func (f *roomConfigFieldListMulti) isIterSelected(iter gtki.TreeIter) bool {
+	gv := f.getIterColumnValue(iter, configFieldListMultiActivableIndex)
+	if selected, ok := gv.(bool); ok {
+		return selected
+	}
+	return false
 }

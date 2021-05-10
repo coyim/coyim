@@ -146,7 +146,7 @@ func (cc *roomConfigComboEntry) updateOptions(options []*muc.RoomConfigFieldOpti
 		}
 
 		iter := cc.model.Append()
-		cc.model.SetValue(iter, roomMaxHistoryFetchValueColumIndex, o)
+		cc.model.SetValue(iter, roomMaxHistoryFetchValueColumIndex, o.Label)
 		cc.model.SetValue(iter, roomMaxHistoryFetchLabelColumIndex, label)
 
 		cc.options[label] = o.Value

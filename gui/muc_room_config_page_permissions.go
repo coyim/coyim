@@ -48,7 +48,7 @@ func (p *roomConfigPermissionsPage) refreshWhoisField() {
 
 	for index, o := range p.form.Whois.Options() {
 		iter := p.roomWhoisModel.Append()
-		_ = p.roomWhoisModel.SetValue(iter, configWhoisOptionValueIndex, o)
+		_ = p.roomWhoisModel.SetValue(iter, configWhoisOptionValueIndex, o.Label)
 		_ = p.roomWhoisModel.SetValue(iter, configWhoisOptionLabelIndex, configOptionToFriendlyMessage(o.Value, o.Label))
 		p.roomWhoisOptions[o.Value] = index
 	}

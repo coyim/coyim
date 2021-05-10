@@ -62,7 +62,7 @@ func (s *RecvSuite) Test_recvContext_finalizeFileTransfer_forFile(c *C) {
 	defer os.Remove(tf.Name())
 
 	tf2, _ := ioutil.TempFile("", "")
-	os.Remove(tf2.Name())
+	_ = tf2.Close()
 	defer os.Remove(tf2.Name())
 
 	ctrl := sdata.CreateFileTransferControl(func() bool { return false }, func(bool) {})

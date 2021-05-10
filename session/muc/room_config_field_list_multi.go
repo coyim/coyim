@@ -1,5 +1,14 @@
 package muc
 
+type RoomConfigFieldListMultiOption struct {
+	Value string
+	Label string
+}
+
+func newRoomConfigFieldListMultiOption(v, l string) *RoomConfigFieldListMultiOption {
+	return &RoomConfigFieldListMultiOption{v, l}
+}
+
 // RoomConfigFieldListMultiValue contains information of the value of the text field
 type RoomConfigFieldListMultiValue struct {
 	value   []string
@@ -36,4 +45,14 @@ func (v *RoomConfigFieldListMultiValue) SetOptions(options []*RoomConfigFieldOpt
 	if len(options) > 0 {
 		v.options = options
 	}
+}
+
+// IsSelected returns a boolean that indicates if the given option is selected
+func (v *RoomConfigFieldListMultiValue) IsSelected(option *RoomConfigFieldOption) bool {
+	for _, o := range v.Selected() {
+		if o == option.Value {
+			return true
+		}
+	}
+	return false
 }

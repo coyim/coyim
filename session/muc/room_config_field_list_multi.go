@@ -1,5 +1,7 @@
 package muc
 
+// RoomConfigFieldListMultiOption represents the list multi type for the
+// config form
 type RoomConfigFieldListMultiOption struct {
 	Value string
 	Label string

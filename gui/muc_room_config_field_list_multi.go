@@ -28,7 +28,6 @@ func newRoomConfigFieldListMulti(f *muc.RoomConfigFormField, value *muc.RoomConf
 	field.initModel()
 
 	return field
-
 }
 
 func (f *roomConfigFieldListMulti) initBuilder() {

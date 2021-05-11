@@ -4,34 +4,34 @@ package data
 type RoomConfigType int
 
 const (
-	// RoomConfigSupportsVoiceRequests represents the "SupportsVoiceRequests" configuration info of the room
+	// RoomConfigSupportsVoiceRequests represents the field "SupportsVoiceRequests" of the room configuration info
 	RoomConfigSupportsVoiceRequests RoomConfigType = iota
-	// RoomConfigAllowsRegistration represents the "AllowsRegistration" configuration info of the room
+	// RoomConfigAllowsRegistration represents the field "AllowsRegistration" of the room configuration info
 	RoomConfigAllowsRegistration
-	// RoomConfigPersistent represents the "Persistent" configuration info of the room
+	// RoomConfigPersistent represents the field "Persistent" of the room configuration info
 	RoomConfigPersistent
-	// RoomConfigModerated represents the "Moderated" configuration info of the room
+	// RoomConfigModerated represents the field "Moderated" of the room configuration info
 	RoomConfigModerated
-	// RoomConfigOpen represents the "Open" configuration info of the room
+	// RoomConfigOpen represents the field "Open" of the room configuration info
 	RoomConfigOpen
-	// RoomConfigPasswordProtected represents the "PasswordProtected" configuration info of the room
+	// RoomConfigPasswordProtected represents the field "PasswordProtected" of the room configuration info
 	RoomConfigPasswordProtected
-	// RoomConfigPublic represents the "Public" configuration info of the room
+	// RoomConfigPublic represents the field "Public" of the room configuration info
 	RoomConfigPublic
-	// RoomConfigLanguage represents the "Language" configuration info of the room
+	// RoomConfigLanguage represents the field "Language" of the room configuration info
 	RoomConfigLanguage
-	// RoomConfigOccupantsCanChangeSubject represents the "OccupantsCanChangeSubject" configuration info of the room
+	// RoomConfigOccupantsCanChangeSubject represents the field "OccupantsCanChangeSubject" of the room configuration info
 	RoomConfigOccupantsCanChangeSubject
-	// RoomConfigTitle represents the "Title" configuration info of the room
+	// RoomConfigTitle represents the field "Title" of the room configuration info
 	RoomConfigTitle
-	// RoomConfigDescription represents the "Description" configuration info of the room
+	// RoomConfigDescription represents the field "Description" of the room configuration info
 	RoomConfigDescription
-	// RoomConfigMembersCanInvite represents the "OccupantsCanInvite" configuration info of the room
+	// RoomConfigMembersCanInvite represents the field "OccupantsCanInvite" of the room configuration info
 	RoomConfigMembersCanInvite
-	// RoomConfigAllowPrivateMessages represents the "AllowPrivateMessages" configuration info of the room
+	// RoomConfigAllowPrivateMessages represents the field "AllowPrivateMessages" of the room configuration info
 	RoomConfigAllowPrivateMessages
-	// RoomConfigLogged represents the "Logged" configuration info of the room
+	// RoomConfigLogged represents the field "Logged" of the room configuration info
 	RoomConfigLogged
-	// RoomConfigMaxHistoryFetch represents the "MaxHistoryFetch" configuration info of the room
+	// RoomConfigMaxHistoryFetch represents the field "MaxHistoryFetch" of the room configuration info
 	RoomConfigMaxHistoryFetch
 )

@@ -41,7 +41,7 @@ func (*MucRoomConfigFieldJidMultiSuite) Test_RoomConfigFieldJidMultiValue_setsRi
 
 	field.SetValues(nil)
 	c.Assert(field.List(), Equals, []jid.Any{})
-	c.Assert(field.Value(), DeepEquals, []string{})
+	c.Assert(field.Value(), IsNil)
 
 	field.SetValues([]string{"bla@domain.org"})
 	c.Assert(field.List(), Equals, []jid.Any{jid.Parse("bla@domain.org")})

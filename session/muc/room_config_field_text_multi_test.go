@@ -53,5 +53,5 @@ func (*MucRoomConfigFieldBooleanSuite) Test_RoomConfigFieldTextMultiValue_SetVal
 
 	field.SetText(nil)
 	c.Assert(field.Text(), IsNil)
-	c.Assert(field.Value(), DeepEquals, []string(nil))
+	c.Assert(field.Value(), IsNil)
 }

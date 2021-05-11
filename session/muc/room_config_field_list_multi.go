@@ -1,16 +1,5 @@
 package muc
 
-// RoomConfigFieldListMultiOption represents the list multi type for the
-// config form
-type RoomConfigFieldListMultiOption struct {
-	Value string
-	Label string
-}
-
-func newRoomConfigFieldListMultiOption(v, l string) *RoomConfigFieldListMultiOption {
-	return &RoomConfigFieldListMultiOption{v, l}
-}
-
 // RoomConfigFieldListMultiValue contains information of the value of the text field
 type RoomConfigFieldListMultiValue struct {
 	value   []string

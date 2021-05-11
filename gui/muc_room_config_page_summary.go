@@ -110,18 +110,14 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	// Permissions
 	setLabelText(p.allowSetRoomSubject, summaryYesOrNoText(p.form.OccupantsCanChangeSubject))
 	setLabelText(p.moderatedRoom, summaryYesOrNoText(p.form.Moderated))
-	selectedWhoIs := p.form.Whois.SelectedOption()
-	setLabelText(p.whoIs, configOptionToFriendlyMessage(selectedWhoIs.Value, selectedWhoIs.Label))
+	setLabelText(p.whoIs, summaryForSelectedOption(p.form.Whois))
 
 	// Occupants
 	p.setOwnersAndAdminsList()
 
 	// Other settings
-	selectedMaxHistoryFetch := p.form.MaxHistoryFetch.SelectedOption()
-	setLabelText(p.maxHistoryFetch, summaryConfigurationOptionText(selectedMaxHistoryFetch.Value, selectedMaxHistoryFetch.Label))
-
-	selectedMaxOccupantsNumber := p.form.MaxOccupantsNumber.SelectedOption()
-	setLabelText(p.maxOccupants, summaryConfigurationOptionText(selectedMaxOccupantsNumber.Value, selectedMaxOccupantsNumber.Label))
+	setLabelText(p.maxHistoryFetch, summaryForSelectedOption(p.form.MaxHistoryFetch))
+	setLabelText(p.maxOccupants, summaryForSelectedOption(p.form.MaxOccupantsNumber))
 
 	setLabelText(p.enableArchiving, summaryYesOrNoText(p.form.Logged))
 }
@@ -220,4 +216,11 @@ func summaryOccupantsTotalText(total int) string {
 		return i18n.Localf("%d accounts", total)
 	}
 	return i18n.Local("None")
+}
+
+func summaryForSelectedOption(field *muc.RoomConfigFieldListValue) string {
+	if s, ok := field.SelectedOption(); ok {
+		return configOptionToFriendlyMessage(s.Value, s.Label)
+	}
+	return i18n.Local("Not assigned")
 }

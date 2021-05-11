@@ -75,16 +75,27 @@ func (*MucRoomConfigFieldBooleanSuite) Test_RoomConfigFieldListValue_Options(c *
 }
 
 func (*MucRoomConfigFieldBooleanSuite) Test_RoomConfigFieldListValue_SelectedOption(c *C) {
+	var selected *RoomConfigFieldOption
+	var ok bool
+
 	field := newRoomConfigFieldListValue([]string{"bla"}, []*RoomConfigFieldOption{{"bla", "Bla"}})
-	c.Assert(field.SelectedOption(), DeepEquals, &RoomConfigFieldOption{"bla", "Bla"})
+	selected, ok = field.SelectedOption()
+	c.Assert(selected, DeepEquals, &RoomConfigFieldOption{"bla", "Bla"})
+	c.Assert(ok, Equals, true)
 
 	field.SetSelected("whatever")
-	c.Assert(field.SelectedOption(), IsNil)
+	selected, ok = field.SelectedOption()
+	c.Assert(selected, IsNil)
+	c.Assert(ok, Equals, false)
 
 	field.SetSelected("Bla")
-	c.Assert(field.SelectedOption(), IsNil)
+	selected, ok = field.SelectedOption()
+	c.Assert(selected, IsNil)
+	c.Assert(ok, Equals, false)
 
 	field.SetOptions([]*RoomConfigFieldOption{{"one", "One"}, {"two", "Two"}})
 	field.SetSelected("two")
-	c.Assert(field.SelectedOption(), DeepEquals, &RoomConfigFieldOption{"two", "Two"})
+	selected, ok = field.SelectedOption()
+	c.Assert(selected, DeepEquals, &RoomConfigFieldOption{"two", "Two"})
+	c.Assert(ok, Equals, true)
 }

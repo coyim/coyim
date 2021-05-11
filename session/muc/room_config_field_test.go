@@ -137,7 +137,7 @@ func (*MucRoomConfigFieldsSuite) Test_RoomConfigFormField_ValueType(c *C) {
 				Type:   "unknow field type",
 				Values: []string{"foo", "bla"},
 			},
-			newRoomConfigFieldUnknowValue([]string{"foo", "bla"}),
+			newRoomConfigFieldUnknownValue([]string{"foo", "bla"}),
 		},
 	}
 

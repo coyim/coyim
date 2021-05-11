@@ -75,5 +75,5 @@ func roomConfigFormFieldValueFactory(field xmppData.FormFieldX) HasRoomConfigFor
 		return newRoomConfigFieldJidMultiValue(values)
 	}
 
-	return newRoomConfigFieldUnknowValue(values)
+	return newRoomConfigFieldUnknownValue(values)
 }

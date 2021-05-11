@@ -239,7 +239,7 @@ func (c *roomViewConversation) messageEvent(tp, nickname, message string, timest
 			c.displayDelayedMessage(nickname, message, timestamp)
 		})
 	default:
-		c.log.WithField("type", tp).Warn("Unknow message event type")
+		c.log.WithField("type", tp).Warn("Unknown message event type")
 	}
 }
 

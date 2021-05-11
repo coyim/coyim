@@ -8,7 +8,7 @@ type MucRoomConfigFieldUnknowTypeSuite struct{}
 
 var _ = Suite(&MucRoomConfigFieldUnknowTypeSuite{})
 
-func (*MucRoomConfigFieldUnknowTypeSuite) Test_newRoomConfigFieldUnknowValue(c *C) {
+func (*MucRoomConfigFieldUnknowTypeSuite) Test_newRoomConfigFieldUnknownValue(c *C) {
 	cases := []struct {
 		values   []string
 		expected []string
@@ -28,13 +28,13 @@ func (*MucRoomConfigFieldUnknowTypeSuite) Test_newRoomConfigFieldUnknowValue(c *
 	}
 
 	for _, mock := range cases {
-		field := newRoomConfigFieldUnknowValue(mock.values)
+		field := newRoomConfigFieldUnknownValue(mock.values)
 		c.Assert(field.Value(), DeepEquals, mock.expected)
 	}
 }
 
-func (*MucRoomConfigFieldUnknowTypeSuite) Test_RoomConfigFieldUnknowValue_ValueAndSetValue(c *C) {
-	field := newRoomConfigFieldUnknowValue([]string{"foo", "bla"})
+func (*MucRoomConfigFieldUnknowTypeSuite) Test_RoomConfigFieldUnknownValue_ValueAndSetValue(c *C) {
+	field := newRoomConfigFieldUnknownValue([]string{"foo", "bla"})
 	c.Assert(field.Value(), DeepEquals, []string{"foo", "bla"})
 
 	field.SetValue([]string{"foo"})

@@ -54,7 +54,7 @@ func (f *roomConfigFieldListMulti) initModel() {
 		iter := f.model.Append()
 		f.model.SetValue(iter, configFieldListMultiValueIndex, o.Value)
 		f.model.SetValue(iter, configFieldListMultiTextIndex, configOptionToFriendlyMessage(o.Value, o.Label))
-		f.model.SetValue(iter, configFieldListMultiActivableIndex, f.value.IsSelected(o))
+		f.model.SetValue(iter, configFieldListMultiActivableIndex, f.value.IsSelected(o.Value))
 	}
 }
 

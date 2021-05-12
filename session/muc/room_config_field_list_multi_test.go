@@ -49,12 +49,37 @@ func (*MucRoomConfigFieldListMultiSuite) Test_RoomConfigFieldListMultiValue_SetV
 }
 
 func (*MucRoomConfigFieldListMultiSuite) Test_RoomConfigFieldListMultiValue_optionsWorks(c *C) {
-	field := newRoomConfigFieldListMultiValue(nil, []*RoomConfigFieldOption{{"one", "two"}})
-	c.Assert(field.Options(), DeepEquals, []*RoomConfigFieldOption{{"one", "two"}})
+	field := newRoomConfigFieldListMultiValue(nil, []*RoomConfigFieldOption{{"one", "One"}, {"two", "Two"}})
+	c.Assert(field.Options(), DeepEquals, []*RoomConfigFieldOption{{"one", "One"}, {"two", "Two"}})
 
-	field.SetOptions([]*RoomConfigFieldOption{{"bla", "foo"}})
-	c.Assert(field.Options(), DeepEquals, []*RoomConfigFieldOption{{"bla", "foo"}})
+	field.SetOptions([]*RoomConfigFieldOption{{"bla", "Bla"}, {"foo", "Foo"}})
+	c.Assert(field.Options(), DeepEquals, []*RoomConfigFieldOption{{"bla", "Bla"}, {"foo", "Foo"}})
 
 	field.SetOptions(nil)
-	c.Assert(field.Options(), DeepEquals, []*RoomConfigFieldOption{{"bla", "foo"}})
+	c.Assert(field.Options(), DeepEquals, []*RoomConfigFieldOption{{"bla", "Bla"}, {"foo", "Foo"}})
+}
+
+func (*MucRoomConfigFieldListMultiSuite) Test_RoomConfigFieldListMultiValue_IsSelected(c *C) {
+	field := newRoomConfigFieldListMultiValue([]string{"one"}, []*RoomConfigFieldOption{{"one", "One"}, {"two", "Two"}, {"three", "Three"}})
+	c.Assert(field.IsSelected("one"), Equals, true)
+	c.Assert(field.IsSelected("two"), Equals, false)
+	c.Assert(field.IsSelected("something"), Equals, false)
+
+	field.SetSelected([]string{"three"})
+	c.Assert(field.IsSelected("three"), Equals, true)
+	c.Assert(field.IsSelected("one"), Equals, false)
+	c.Assert(field.IsSelected("two"), Equals, false)
+	c.Assert(field.IsSelected("something"), Equals, false)
+
+	field.SetSelected([]string{"one", "three"})
+	c.Assert(field.IsSelected("three"), Equals, true)
+	c.Assert(field.IsSelected("one"), Equals, true)
+	c.Assert(field.IsSelected("two"), Equals, false)
+	c.Assert(field.IsSelected("something"), Equals, false)
+
+	field.SetSelected(nil)
+	c.Assert(field.IsSelected("three"), Equals, false)
+	c.Assert(field.IsSelected("one"), Equals, false)
+	c.Assert(field.IsSelected("two"), Equals, false)
+	c.Assert(field.IsSelected("something"), Equals, false)
 }

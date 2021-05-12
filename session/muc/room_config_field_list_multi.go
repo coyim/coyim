@@ -39,9 +39,9 @@ func (v *RoomConfigFieldListMultiValue) SetOptions(options []*RoomConfigFieldOpt
 }
 
 // IsSelected returns a boolean that indicates if the given option is selected
-func (v *RoomConfigFieldListMultiValue) IsSelected(option *RoomConfigFieldOption) bool {
+func (v *RoomConfigFieldListMultiValue) IsSelected(optionValue string) bool {
 	for _, o := range v.Selected() {
-		if o == option.Value {
+		if o == optionValue {
 			return true
 		}
 	}

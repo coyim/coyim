@@ -44,8 +44,8 @@ type roomConfigSummaryPage struct {
 	enableArchiving           gtki.Label          `gtk-widget:"room-config-summary-archive-label"`
 	autojoinCheckButton       gtki.CheckButton    `gtk-widget:"room-config-autojoin"`
 
-	ownersListStore gtki.ListStore
-	adminsListStore gtki.ListStore
+	ownersListModel gtki.ListStore
+	adminsListModel gtki.ListStore
 }
 
 func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
@@ -83,11 +83,11 @@ func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
 	mucStyles.setRoomConfigSummarySectionLinkButtonStyle(p.others)
 
 	// The following will create two models with a column for the "jid"
-	p.ownersListStore, _ = g.gtk.ListStoreNew(glibi.TYPE_STRING)
-	p.adminsListStore, _ = g.gtk.ListStoreNew(glibi.TYPE_STRING)
+	p.ownersListModel, _ = g.gtk.ListStoreNew(glibi.TYPE_STRING)
+	p.adminsListModel, _ = g.gtk.ListStoreNew(glibi.TYPE_STRING)
 
-	p.ownersTreeView.SetModel(p.ownersListStore)
-	p.adminsTreeView.SetModel(p.adminsListStore)
+	p.ownersTreeView.SetModel(p.ownersListModel)
+	p.adminsTreeView.SetModel(p.adminsListModel)
 
 	return p
 }
@@ -147,8 +147,8 @@ func (p *roomConfigSummaryPage) setOwnersAndAdminsList() {
 	p.ownersListShowButton.SetVisible(totalOwners > 0)
 	p.adminsListShowButton.SetVisible(totalAdmins > 0)
 
-	summaryOccupantsModelList(p.ownersListStore, p.form.Owners)
-	summaryOccupantsModelList(p.adminsListStore, p.form.Admins)
+	summaryOccupantsModelList(p.ownersListModel, p.form.Owners)
+	summaryOccupantsModelList(p.adminsListModel, p.form.Admins)
 }
 
 func (p *roomConfigSummaryPage) onShowOwersList() {

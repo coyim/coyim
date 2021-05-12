@@ -12,20 +12,20 @@ import (
 
 type roomViewDataProvider interface {
 	passwordProvider() string
-	backToPreviousStepProvider() func()
+	backToPreviousStep() func()
 }
 
 type roomViewData struct {
-	passsword          string
-	backToPreviousStep func()
+	passsword            string
+	onBackToPreviousStep func()
 }
 
 func (rvd *roomViewData) passwordProvider() string {
 	return rvd.passsword
 }
 
-func (rvd *roomViewData) backToPreviousStepProvider() func() {
-	return rvd.backToPreviousStep
+func (rvd *roomViewData) backToPreviousStep() func() {
+	return rvd.onBackToPreviousStep
 }
 
 func newRoomViewData() *roomViewData {

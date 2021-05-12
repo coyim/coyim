@@ -183,7 +183,7 @@ func (crd *mucCreateRoomData) passwordProvider() string {
 	return crd.password
 }
 
-func (crd *mucCreateRoomData) backToPreviousStepProvider() func() {
+func (crd *mucCreateRoomData) backToPreviousStep() func() {
 	return nil
 }
 

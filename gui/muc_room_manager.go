@@ -20,9 +20,9 @@ func (u *gtkUI) getOrCreateRoomView(a *account, roomID jid.Bare) *roomView {
 // might be useful in some scenarios like "returning to previous step".
 //
 // Please note that "backToPreviousStep" will be called from the UI thread too
-func (u *gtkUI) joinRoom(a *account, roomID jid.Bare, backToPreviousStepProvider func()) {
+func (u *gtkUI) joinRoom(a *account, roomID jid.Bare, backToPreviousStep func()) {
 	rvd := newRoomViewData()
-	rvd.backToPreviousStep = backToPreviousStepProvider
+	rvd.onBackToPreviousStep = backToPreviousStep
 	u.joinRoomWithData(a, roomID, rvd)
 }
 
@@ -41,7 +41,7 @@ func (u *gtkUI) joinRoomWithData(a *account, roomID jid.Bare, d roomViewDataProv
 	if v.isSelfOccupantInTheRoom() {
 		v.switchToMainView()
 	} else {
-		v.backToPreviousStep = d.backToPreviousStepProvider()
+		v.backToPreviousStep = d.backToPreviousStep()
 		v.passwordProvider = d.passwordProvider
 		v.switchToLobbyView()
 	}

@@ -12,11 +12,11 @@ import (
 )
 
 const (
-	pageConfigAccess      = "access"
 	pageConfigInfo        = "info"
+	pageConfigAccess      = "access"
+	pageConfigPermissions = "permissions"
 	pageConfigOccupants   = "occupants"
 	pageConfigOthers      = "others"
-	pageConfigPermissions = "permissions"
 	pageConfigSummary     = "summary"
 )
 

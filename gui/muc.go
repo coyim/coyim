@@ -12,6 +12,7 @@ import (
 func (u *gtkUI) initMUC() {
 	initMUCSupportedErrors()
 	initMUCConfigUpdateMessages()
+	initMUCRoomConfig()
 	initMUCStyles(u.currentMUCColorSet())
 }
 

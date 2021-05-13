@@ -20,6 +20,44 @@ const (
 	pageConfigSummary     = "summary"
 )
 
+var roomConfigPagesFields map[string][]muc.RoomConfigFieldType
+
+func initMUCRoomConfigPages() {
+	roomConfigPagesFields = map[string][]muc.RoomConfigFieldType{
+		pageConfigInfo: {
+			muc.RoomConfigFieldName,
+			muc.RoomConfigFieldDescription,
+			muc.RoomConfigFieldLanguage,
+			muc.RoomConfigFieldIsPublic,
+			muc.RoomConfigFieldIsPersistent,
+		},
+		pageConfigAccess: {
+			muc.RoomConfigFieldIsPasswordProtected,
+			muc.RoomConfigFieldPassword,
+			muc.RoomConfigFieldIsMembersOnly,
+			muc.RoomConfigFieldAllowInvites,
+		},
+		pageConfigPermissions: {
+			muc.RoomConfigFieldPresenceBroadcast,
+			muc.RoomConfigFieldIsModerated,
+			muc.RoomConfigFieldCanChangeSubject,
+			muc.RoomConfigFieldAllowPrivateMessages,
+		},
+		pageConfigOccupants: {
+			muc.RoomConfigFieldOwners,
+			muc.RoomConfigFieldAdmins,
+			muc.RoomConfigFieldMembers,
+		},
+		pageConfigOthers: {
+			muc.RoomConfigFieldMaxOccupantsNumber,
+			muc.RoomConfigFieldMaxHistoryFetch,
+			muc.RoomConfigFieldEnableLogging,
+			muc.RoomConfigFieldPubsub,
+			muc.RoomConfigFieldWhoIs,
+		},
+	}
+}
+
 type mucRoomConfigPage interface {
 	pageView() gtki.Overlay
 	pageTitle() string

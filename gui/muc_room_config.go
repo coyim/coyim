@@ -7,6 +7,10 @@ import (
 	"golang.org/x/text/language/display"
 )
 
+func initMUCRoomConfig() {
+	initMUCRoomConfigPages()
+}
+
 type roomConfigChangedTypes []data.RoomConfigType
 
 func (c roomConfigChangedTypes) contains(k data.RoomConfigType) bool {

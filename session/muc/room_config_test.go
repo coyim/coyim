@@ -459,3 +459,32 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_HasKnownField(c *C) {
 	c.Assert(s.rcf.HasKnownField(RoomConfigFieldDescription), Equals, true)
 	c.Assert(s.rcf.HasKnownField(roomConfigFieldUnexpected), Equals, false)
 }
+
+func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetKnownField(c *C) {
+	var field *RoomConfigFormField
+	var ok bool
+
+	field, ok = s.rcf.GetKnownField(RoomConfigFieldName)
+	c.Assert(field, DeepEquals, &RoomConfigFormField{
+		Name:        "muc#roomconfig_roomname",
+		Label:       "",
+		Type:        "text-single",
+		Description: "",
+		value:       &RoomConfigFieldTextValue{"a title"},
+	})
+	c.Assert(ok, Equals, true)
+
+	field, ok = s.rcf.GetKnownField(RoomConfigFieldDescription)
+	c.Assert(field, DeepEquals, &RoomConfigFormField{
+		Name:        "muc#roomconfig_roomdesc",
+		Label:       "",
+		Type:        "text-multi",
+		Description: "",
+		value:       &RoomConfigFieldTextMultiValue{[]string{"a description"}},
+	})
+	c.Assert(ok, Equals, true)
+
+	field, ok = s.rcf.GetKnownField(roomConfigFieldUnexpected)
+	c.Assert(field, IsNil)
+	c.Assert(ok, Equals, false)
+}

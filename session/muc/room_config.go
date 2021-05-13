@@ -92,7 +92,7 @@ type RoomConfigForm struct {
 	Owners *RoomConfigFieldJidMultiValue
 
 	receivedFieldNames map[string]bool
-	knownFields        map[RoomConfigFieldType]bool
+	knownFields        map[RoomConfigFieldType]*RoomConfigFormField
 	Fields             []*RoomConfigFormField
 }
 
@@ -100,7 +100,7 @@ type RoomConfigForm struct {
 func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 	cf := &RoomConfigForm{
 		receivedFieldNames: map[string]bool{},
-		knownFields:        map[RoomConfigFieldType]bool{},
+		knownFields:        map[RoomConfigFieldType]*RoomConfigFormField{},
 	}
 
 	cf.initListSingleValueFields()
@@ -135,7 +135,7 @@ func (rcf *RoomConfigForm) setFormFields(fields []xmppData.FormFieldX) {
 			rcf.setField(field)
 			rcf.receivedFieldNames[field.Var] = true
 			if key, isKnown := getKnownRoomConfigFieldKey(field.Var); isKnown {
-				rcf.knownFields[key] = true
+				rcf.knownFields[key] = newRoomConfigFormField(field)
 			}
 		}
 	}
@@ -145,6 +145,14 @@ func (rcf *RoomConfigForm) setFormFields(fields []xmppData.FormFieldX) {
 func (rcf *RoomConfigForm) HasKnownField(k RoomConfigFieldType) bool {
 	_, ok := rcf.knownFields[k]
 	return ok
+}
+
+// GetKnownField returns the known form field for the given key
+func (rcf *RoomConfigForm) GetKnownField(k RoomConfigFieldType) (*RoomConfigFormField, bool) {
+	if rcf.HasKnownField(k) {
+		return rcf.knownFields[k], true
+	}
+	return nil, false
 }
 
 // GetFormData returns a representation of the room config FORM_TYPE as described in the

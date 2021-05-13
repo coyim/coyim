@@ -454,13 +454,8 @@ func (*MucRoomConfigSuite) Test_formFieldOptionsValues(c *C) {
 	})
 }
 
-func (s *MucRoomConfigSuite) Test_HasKnownField(c *C) {
-	s.rcf.knownFields = map[RoomConfigFieldType]bool{
-		RoomConfigFieldName:                 true,
-		RoomConfigFieldDescription:          true,
-		RoomConfigFieldAllowPrivateMessages: true,
-	}
-
+func (s *MucRoomConfigSuite) Test_RoomConfigForm_HasKnownField(c *C) {
 	c.Assert(s.rcf.HasKnownField(RoomConfigFieldName), Equals, true)
+	c.Assert(s.rcf.HasKnownField(RoomConfigFieldDescription), Equals, true)
 	c.Assert(s.rcf.HasKnownField(roomConfigFieldUnexpected), Equals, false)
 }

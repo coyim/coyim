@@ -49,6 +49,51 @@ const (
 	RoomConfigFieldAdmins
 )
 
+var roomConfigKnownFields = map[RoomConfigFieldType][]string{
+	RoomConfigFieldName:                 {configFieldRoomName},
+	RoomConfigFieldDescription:          {configFieldRoomDescription},
+	RoomConfigFieldEnableLogging:        {configFieldEnableLogging, configFieldEnableArchiving},
+	RoomConfigFieldLanguage:             {configFieldLanguage},
+	RoomConfigFieldPubsub:               {configFieldPubsub},
+	RoomConfigFieldCanChangeSubject:     {configFieldCanChangeSubject},
+	RoomConfigFieldAllowInvites:         {configFieldAllowInvites, configFieldAllowMemberInvites},
+	RoomConfigFieldAllowPrivateMessages: {configFieldAllowPM, configFieldAllowPrivateMessages},
+	RoomConfigFieldMaxOccupantsNumber:   {configFieldMaxOccupantsNumber},
+	RoomConfigFieldIsPublic:             {configFieldIsPublic},
+	RoomConfigFieldIsPersistent:         {configFieldIsPersistent},
+	RoomConfigFieldPresenceBroadcast:    {configFieldPresenceBroadcast},
+	RoomConfigFieldIsModerated:          {configFieldModerated},
+	RoomConfigFieldIsMembersOnly:        {configFieldMembersOnly},
+	RoomConfigFieldMembers:              {configFieldMemberList},
+	RoomConfigFieldIsPasswordProtected:  {configFieldPasswordProtected},
+	RoomConfigFieldPassword:             {configFieldPassword},
+	RoomConfigFieldOwners:               {configFieldOwners},
+	RoomConfigFieldWhoIs:                {configFieldWhoIs},
+	RoomConfigFieldMaxHistoryFetch:      {configFieldMaxHistoryFetch, configFieldMaxHistoryLength},
+	RoomConfigFieldAdmins:               {configFieldRoomAdmins},
+}
+
+type roomConfigFieldsNames []string
+
+func (l roomConfigFieldsNames) includes(fieldName string) bool {
+	for _, fn := range l {
+		if fn == fieldName {
+			return true
+		}
+	}
+	return false
+}
+
+func getKnownRoomConfigFieldKey(fieldName string) (RoomConfigFieldType, bool) {
+	for key, fieldNames := range roomConfigKnownFields {
+		names := roomConfigFieldsNames(fieldNames)
+		if names.includes(fieldName) {
+			return key, true
+		}
+	}
+	return roomConfigFieldUnexpected, false
+}
+
 const (
 	// RoomConfigFieldText represents a "text-single" config field type
 	RoomConfigFieldText = "text-single"

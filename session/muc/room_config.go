@@ -90,6 +90,7 @@ type RoomConfigForm struct {
 	Owners *RoomConfigFieldJidMultiValue
 
 	receivedFieldNames map[string]bool
+	knownFields        map[RoomConfigFieldType]bool
 	Fields             []*RoomConfigFormField
 }
 
@@ -97,6 +98,7 @@ type RoomConfigForm struct {
 func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 	cf := &RoomConfigForm{
 		receivedFieldNames: map[string]bool{},
+		knownFields:        map[RoomConfigFieldType]bool{},
 	}
 
 	cf.initListSingleValueFields()
@@ -128,8 +130,11 @@ func (rcf *RoomConfigForm) initJidMultiValueFields() {
 func (rcf *RoomConfigForm) setFormFields(fields []xmppData.FormFieldX) {
 	for _, field := range fields {
 		if field.Var != "" {
-			rcf.receivedFieldNames[field.Var] = true
 			rcf.setField(field)
+			rcf.receivedFieldNames[field.Var] = true
+			if key, isKnown := getKnownRoomConfigFieldKey(field.Var); isKnown {
+				rcf.knownFields[key] = true
+			}
 		}
 	}
 }

@@ -1,5 +1,54 @@
 package muc
 
+// RoomConfigFieldType represents a known field
+type RoomConfigFieldType int
+
+const (
+	roomConfigFieldUnexpected RoomConfigFieldType = iota
+	// RoomConfigFieldName represents the "name" field
+	RoomConfigFieldName
+	// RoomConfigFieldDescription represents the "description" field
+	RoomConfigFieldDescription
+	// RoomConfigFieldEnableLogging represents the room "enable logging" field
+	RoomConfigFieldEnableLogging
+	// RoomConfigFieldLanguage represents the "language" field
+	RoomConfigFieldLanguage
+	// RoomConfigFieldPubsub represents the "pubsub" field
+	RoomConfigFieldPubsub
+	// RoomConfigFieldCanChangeSubject represents the "can change subject" field
+	RoomConfigFieldCanChangeSubject
+	// RoomConfigFieldAllowInvites represents the "allow invites" field
+	RoomConfigFieldAllowInvites
+	// RoomConfigFieldAllowPrivateMessages represents the "allow private messages" field
+	RoomConfigFieldAllowPrivateMessages
+	// RoomConfigFieldMaxOccupantsNumber represents the "max occupants number" field
+	RoomConfigFieldMaxOccupantsNumber
+	// RoomConfigFieldIsPublic represents the "public" field
+	RoomConfigFieldIsPublic
+	// RoomConfigFieldIsPersistent represents the "persistent" field
+	RoomConfigFieldIsPersistent
+	// RoomConfigFieldPresenceBroadcast represents the "presence broadcast" field
+	RoomConfigFieldPresenceBroadcast
+	// RoomConfigFieldIsModerated represents the "moderated" field
+	RoomConfigFieldIsModerated
+	// RoomConfigFieldIsMembersOnly represents the "members only" field
+	RoomConfigFieldIsMembersOnly
+	// RoomConfigFieldMembers represents the "members" field
+	RoomConfigFieldMembers
+	// RoomConfigFieldIsPasswordProtected represents the "password protected" field
+	RoomConfigFieldIsPasswordProtected
+	// RoomConfigFieldPassword represents the "password" field
+	RoomConfigFieldPassword
+	// RoomConfigFieldOwners represents the "owners list" field
+	RoomConfigFieldOwners
+	// RoomConfigFieldWhoIs represents the "who is" field
+	RoomConfigFieldWhoIs
+	// RoomConfigFieldMaxHistoryFetch represents the "max history fecth" field
+	RoomConfigFieldMaxHistoryFetch
+	// RoomConfigFieldAdmins represents the "admins list" field
+	RoomConfigFieldAdmins
+)
+
 const (
 	// RoomConfigFieldText represents a "text-single" config field type
 	RoomConfigFieldText = "text-single"

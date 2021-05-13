@@ -16,6 +16,7 @@ type roomConfigOthersPage struct {
 	roomMaxHistoryFetchEntry gtki.Entry        `gtk-widget:"room-maxhistoryfetch-entry"`
 	roomMaxOccupantsCombo    gtki.ComboBoxText `gtk-widget:"room-maxoccupants"`
 	roomMaxOccupantsEntry    gtki.Entry        `gtk-widget:"room-maxoccupants-entry"`
+	roomEnableLoggingContent gtki.Box          `gtk-widget:"room-enablelogging-content"`
 	roomEnableLogging        gtki.Switch       `gtk-widget:"room-enablelogging"`
 	roomUnknowFieldsBox      gtki.Box          `gtk-widget:"room-config-unknow-fields-box"`
 
@@ -38,13 +39,13 @@ func (c *mucRoomConfigComponent) newRoomConfigOthersPage() mucRoomConfigPage {
 }
 
 func (p *roomConfigOthersPage) initDefaultValues() {
+	p.initKnownFields()
+
 	p.roomMaxHistoryFetch.updateCurrentValue(p.form.MaxHistoryFetch.Selected())
 	p.roomMaxHistoryFetch.updateOptions(p.form.MaxHistoryFetch.Options())
 
 	p.roomMaxOccupants.updateCurrentValue(p.form.MaxOccupantsNumber.Selected())
 	p.roomMaxOccupants.updateOptions(p.form.MaxOccupantsNumber.Options())
-
-	p.roomEnableLogging.SetActive(p.form.Logged)
 
 	for _, f := range p.form.Fields {
 		field, err := roomConfigFormFieldFactory(f)
@@ -55,6 +56,19 @@ func (p *roomConfigOthersPage) initDefaultValues() {
 
 		p.addField(field)
 		p.doAfterRefresh.add(field.refreshContent)
+	}
+}
+
+// initKnownFields MUST be called from the UI thread
+func (p *roomConfigOthersPage) initKnownFields() {
+	p.initRoomLoggedField()
+}
+
+// initRoomLoggedField MUST be called from the UI thread
+func (p *roomConfigOthersPage) initRoomLoggedField() {
+	if p.form.HasKnownField(muc.RoomConfigFieldEnableLogging) {
+		p.roomEnableLogging.SetActive(p.form.Logged)
+		p.roomEnableLoggingContent.SetVisible(true)
 	}
 }
 

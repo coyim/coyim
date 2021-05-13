@@ -14,15 +14,15 @@ const (
 	discoInfoFieldFormType             = "http://jabber.org/protocol/muc#roominfo"
 	discoInfoFieldLang                 = "muc#roominfo_lang"
 	discoInfoFieldChangeSubject        = "muc#roominfo_changesubject"
-	discoInfoFieldEnableLogging        = ConfigFieldEnableLogging
-	discoInfoFieldRoomName             = ConfigFieldRoomName
+	discoInfoFieldEnableLogging        = configFieldEnableLogging
+	discoInfoFieldRoomName             = configFieldRoomName
 	discoInfoFieldDescription          = "muc#roominfo_description"
 	discoInfoFieldOccupants            = "muc#roominfo_occupants"
-	discoInfoFieldAllowMemberInvites   = ConfigFieldAllowMemberInvites
-	discoInfoFieldAllowInvites         = ConfigFieldAllowInvites
-	discoInfoFieldAllowPrivateMessages = ConfigFieldAllowPM
+	discoInfoFieldAllowMemberInvites   = configFieldAllowMemberInvites
+	discoInfoFieldAllowInvites         = configFieldAllowInvites
+	discoInfoFieldAllowPrivateMessages = configFieldAllowPM
 	discoInfoFieldContactJid           = "muc#roominfo_contactjid"
-	discoInfoFieldMaxHistoryFetch      = ConfigFieldMaxHistoryFetch
+	discoInfoFieldMaxHistoryFetch      = configFieldMaxHistoryFetch
 )
 
 // RoomListing contains the information about a room for listing it

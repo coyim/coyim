@@ -7,58 +7,58 @@ import (
 )
 
 const (
-	// ConfigFieldFormType represents the configuration form type field
-	ConfigFieldFormType = "FORM_TYPE"
-	// ConfigFieldRoomName represents the var value of the "room name" configuration field
-	ConfigFieldRoomName = "muc#roomconfig_roomname"
-	// ConfigFieldRoomDescription represents the var value of the "room description" configuration field
-	ConfigFieldRoomDescription = "muc#roomconfig_roomdesc"
-	// ConfigFieldEnableLogging represents the var value of the "enable logging" configuration field
-	ConfigFieldEnableLogging = "muc#roomconfig_enablelogging"
-	// ConfigFieldEnableArchiving represents the var value of the "enable archiving" configuration field
-	ConfigFieldEnableArchiving = "muc#roomconfig_enablearchiving"
-	// ConfigFieldMemberList represents the var value of the "get members list" configuration field
-	ConfigFieldMemberList = "muc#roomconfig_getmemberlist"
-	// ConfigFieldLanguage represents the var value of the "room language" configuration field
-	ConfigFieldLanguage = "muc#roomconfig_lang"
-	// ConfigFieldPubsub represents the var value of the "pubsub" configuration field
-	ConfigFieldPubsub = "muc#roomconfig_pubsub"
-	// ConfigFieldCanChangeSubject represents the var value of the "change subject" configuration field
-	ConfigFieldCanChangeSubject = "muc#roomconfig_changesubject"
-	// ConfigFieldAllowInvites represents the var value of the "allow invites" configuration field
-	ConfigFieldAllowInvites = "muc#roomconfig_allowinvites"
-	// ConfigFieldAllowMemberInvites represents the var value of the "allow member invites" configuration field
-	ConfigFieldAllowMemberInvites = "{http://prosody.im/protocol/muc}roomconfig_allowmemberinvites"
-	// ConfigFieldAllowPM represents the var value of the "allow private messages" configuration field
-	ConfigFieldAllowPM = "muc#roomconfig_allowpm"
-	// ConfigFieldAllowPrivateMessages represents the var value of the "allow private messages" configuration field
-	ConfigFieldAllowPrivateMessages = "allow_private_messages"
-	// ConfigFieldMaxOccupantsNumber represents the var value of the "max users" configuration field
-	ConfigFieldMaxOccupantsNumber = "muc#roomconfig_maxusers"
-	// ConfigFieldIsPublic represents the var value of the "public room" configuration field
-	ConfigFieldIsPublic = "muc#roomconfig_publicroom"
-	// ConfigFieldIsPersistent represents the var value of the "persistent room" configuration field
-	ConfigFieldIsPersistent = "muc#roomconfig_persistentroom"
-	// ConfigFieldPresenceBroadcast represents the var value of the "presence broadcast" configuration field
-	ConfigFieldPresenceBroadcast = "muc#roomconfig_presencebroadcast"
-	// ConfigFieldModerated represents the var value of the "moderated room" configuration field
-	ConfigFieldModerated = "muc#roomconfig_moderatedroom"
-	// ConfigFieldMembersOnly represents the var value of the "members only" configuration field
-	ConfigFieldMembersOnly = "muc#roomconfig_membersonly"
-	// ConfigFieldPasswordProtected represents the var value of the "password protected room" configuration field
-	ConfigFieldPasswordProtected = "muc#roomconfig_passwordprotectedroom"
-	// ConfigFieldPassword represents the var value of the "room secret" configuration field
-	ConfigFieldPassword = "muc#roomconfig_roomsecret"
-	// ConfigFieldOwners represents the var value of the "room owners" configuration field
-	ConfigFieldOwners = "muc#roomconfig_roomowners"
-	// ConfigFieldWhoIs represents the var value of the "who is" configuration field
-	ConfigFieldWhoIs = "muc#roomconfig_whois"
-	// ConfigFieldMaxHistoryFetch represents the var value of the "max history fetch" configuration field
-	ConfigFieldMaxHistoryFetch = "muc#maxhistoryfetch"
-	// ConfigFieldMaxHistoryLength represents the var value of the "history length" configuration field
-	ConfigFieldMaxHistoryLength = "muc#roomconfig_historylength"
-	// ConfigFieldRoomAdmins represents the var value of the "room admins" configuration field
-	ConfigFieldRoomAdmins = "muc#roomconfig_roomadmins"
+	// configFieldFormType represents the configuration form type field
+	configFieldFormType = "FORM_TYPE"
+	// configFieldRoomName represents the var value of the "room name" configuration field
+	configFieldRoomName = "muc#roomconfig_roomname"
+	// configFieldRoomDescription represents the var value of the "room description" configuration field
+	configFieldRoomDescription = "muc#roomconfig_roomdesc"
+	// configFieldEnableLogging represents the var value of the "enable logging" configuration field
+	configFieldEnableLogging = "muc#roomconfig_enablelogging"
+	// configFieldEnableArchiving represents the var value of the "enable archiving" configuration field
+	configFieldEnableArchiving = "muc#roomconfig_enablearchiving"
+	// configFieldMemberList represents the var value of the "get members list" configuration field
+	configFieldMemberList = "muc#roomconfig_getmemberlist"
+	// configFieldLanguage represents the var value of the "room language" configuration field
+	configFieldLanguage = "muc#roomconfig_lang"
+	// configFieldPubsub represents the var value of the "pubsub" configuration field
+	configFieldPubsub = "muc#roomconfig_pubsub"
+	// configFieldCanChangeSubject represents the var value of the "change subject" configuration field
+	configFieldCanChangeSubject = "muc#roomconfig_changesubject"
+	// configFieldAllowInvites represents the var value of the "allow invites" configuration field
+	configFieldAllowInvites = "muc#roomconfig_allowinvites"
+	// configFieldAllowMemberInvites represents the var value of the "allow member invites" configuration field
+	configFieldAllowMemberInvites = "{http://prosody.im/protocol/muc}roomconfig_allowmemberinvites"
+	// configFieldAllowPM represents the var value of the "allow private messages" configuration field
+	configFieldAllowPM = "muc#roomconfig_allowpm"
+	// configFieldAllowPrivateMessages represents the var value of the "allow private messages" configuration field
+	configFieldAllowPrivateMessages = "allow_private_messages"
+	// configFieldMaxOccupantsNumber represents the var value of the "max users" configuration field
+	configFieldMaxOccupantsNumber = "muc#roomconfig_maxusers"
+	// configFieldIsPublic represents the var value of the "public room" configuration field
+	configFieldIsPublic = "muc#roomconfig_publicroom"
+	// configFieldIsPersistent represents the var value of the "persistent room" configuration field
+	configFieldIsPersistent = "muc#roomconfig_persistentroom"
+	// configFieldPresenceBroadcast represents the var value of the "presence broadcast" configuration field
+	configFieldPresenceBroadcast = "muc#roomconfig_presencebroadcast"
+	// configFieldModerated represents the var value of the "moderated room" configuration field
+	configFieldModerated = "muc#roomconfig_moderatedroom"
+	// configFieldMembersOnly represents the var value of the "members only" configuration field
+	configFieldMembersOnly = "muc#roomconfig_membersonly"
+	// configFieldPasswordProtected represents the var value of the "password protected room" configuration field
+	configFieldPasswordProtected = "muc#roomconfig_passwordprotectedroom"
+	// configFieldPassword represents the var value of the "room secret" configuration field
+	configFieldPassword = "muc#roomconfig_roomsecret"
+	// configFieldOwners represents the var value of the "room owners" configuration field
+	configFieldOwners = "muc#roomconfig_roomowners"
+	// configFieldWhoIs represents the var value of the "who is" configuration field
+	configFieldWhoIs = "muc#roomconfig_whois"
+	// configFieldMaxHistoryFetch represents the var value of the "max history fetch" configuration field
+	configFieldMaxHistoryFetch = "muc#maxhistoryfetch"
+	// configFieldMaxHistoryLength represents the var value of the "history length" configuration field
+	configFieldMaxHistoryLength = "muc#roomconfig_historylength"
+	// configFieldRoomAdmins represents the var value of the "room admins" configuration field
+	configFieldRoomAdmins = "muc#roomconfig_roomadmins"
 )
 
 // RoomConfigForm represents a room configuration form
@@ -160,67 +160,67 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 
 func (rcf *RoomConfigForm) getFieldDataValue(fieldName string) ([]string, bool) {
 	switch fieldName {
-	case ConfigFieldRoomName:
+	case configFieldRoomName:
 		return []string{rcf.Title}, true
 
-	case ConfigFieldRoomDescription:
+	case configFieldRoomDescription:
 		return []string{rcf.Description}, true
 
-	case ConfigFieldEnableLogging, ConfigFieldEnableArchiving:
+	case configFieldEnableLogging, configFieldEnableArchiving:
 		return []string{strconv.FormatBool(rcf.Logged)}, true
 
-	case ConfigFieldMemberList:
+	case configFieldMemberList:
 		return rcf.RetrieveMembersList.Value(), true
 
-	case ConfigFieldLanguage:
+	case configFieldLanguage:
 		return []string{rcf.Language}, true
 
-	case ConfigFieldPubsub:
+	case configFieldPubsub:
 		return []string{rcf.AssociatedPublishSubscribeNode}, true
 
-	case ConfigFieldCanChangeSubject:
+	case configFieldCanChangeSubject:
 		return []string{strconv.FormatBool(rcf.OccupantsCanChangeSubject)}, true
 
-	case ConfigFieldAllowInvites, ConfigFieldAllowMemberInvites:
+	case configFieldAllowInvites, configFieldAllowMemberInvites:
 		return []string{strconv.FormatBool(rcf.OccupantsCanInvite)}, true
 
-	case ConfigFieldAllowPM, ConfigFieldAllowPrivateMessages:
+	case configFieldAllowPM, configFieldAllowPrivateMessages:
 		return rcf.AllowPrivateMessages.Value(), true
 
-	case ConfigFieldMaxOccupantsNumber:
+	case configFieldMaxOccupantsNumber:
 		return rcf.MaxOccupantsNumber.Value(), true
 
-	case ConfigFieldIsPublic:
+	case configFieldIsPublic:
 		return []string{strconv.FormatBool(rcf.Public)}, true
 
-	case ConfigFieldIsPersistent:
+	case configFieldIsPersistent:
 		return []string{strconv.FormatBool(rcf.Persistent)}, true
 
-	case ConfigFieldPresenceBroadcast:
+	case configFieldPresenceBroadcast:
 		return rcf.PresenceBroadcast.Value(), true
 
-	case ConfigFieldModerated:
+	case configFieldModerated:
 		return []string{strconv.FormatBool(rcf.Moderated)}, true
 
-	case ConfigFieldMembersOnly:
+	case configFieldMembersOnly:
 		return []string{strconv.FormatBool(rcf.MembersOnly)}, true
 
-	case ConfigFieldPasswordProtected:
+	case configFieldPasswordProtected:
 		return []string{strconv.FormatBool(rcf.PasswordProtected)}, true
 
-	case ConfigFieldPassword:
+	case configFieldPassword:
 		return []string{rcf.Password}, true
 
-	case ConfigFieldOwners:
+	case configFieldOwners:
 		return rcf.Owners.Value(), true
 
-	case ConfigFieldWhoIs:
+	case configFieldWhoIs:
 		return rcf.Whois.Value(), true
 
-	case ConfigFieldMaxHistoryFetch, ConfigFieldMaxHistoryLength:
+	case configFieldMaxHistoryFetch, configFieldMaxHistoryLength:
 		return rcf.MaxHistoryFetch.Value(), true
 
-	case ConfigFieldRoomAdmins:
+	case configFieldRoomAdmins:
 		return rcf.Admins.Value(), true
 	}
 
@@ -235,72 +235,72 @@ func (rcf *RoomConfigForm) getFieldDataValue(fieldName string) ([]string, bool) 
 
 func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 	switch field.Var {
-	case ConfigFieldMaxHistoryFetch, ConfigFieldMaxHistoryLength:
+	case configFieldMaxHistoryFetch, configFieldMaxHistoryLength:
 		rcf.MaxHistoryFetch.SetSelected(formFieldSingleString(field.Values))
 		rcf.MaxHistoryFetch.SetOptions(formFieldOptionsValues(field.Options))
 
-	case ConfigFieldAllowPM, ConfigFieldAllowPrivateMessages:
+	case configFieldAllowPM, configFieldAllowPrivateMessages:
 		rcf.AllowPrivateMessages.SetSelected(formFieldSingleString(field.Values))
 		rcf.AllowPrivateMessages.SetOptions(formFieldOptionsValues(field.Options))
 
-	case ConfigFieldAllowInvites, ConfigFieldAllowMemberInvites:
+	case configFieldAllowInvites, configFieldAllowMemberInvites:
 		rcf.OccupantsCanInvite = formFieldBool(field.Values)
 
-	case ConfigFieldCanChangeSubject:
+	case configFieldCanChangeSubject:
 		rcf.OccupantsCanChangeSubject = formFieldBool(field.Values)
 
-	case ConfigFieldEnableLogging, ConfigFieldEnableArchiving:
+	case configFieldEnableLogging, configFieldEnableArchiving:
 		rcf.Logged = formFieldBool(field.Values)
 
-	case ConfigFieldMemberList:
+	case configFieldMemberList:
 		rcf.RetrieveMembersList.SetSelected(field.Values)
 		rcf.RetrieveMembersList.SetOptions(formFieldOptionsValues(field.Options))
 
-	case ConfigFieldLanguage:
+	case configFieldLanguage:
 		rcf.Language = formFieldSingleString(field.Values)
 
-	case ConfigFieldPubsub:
+	case configFieldPubsub:
 		rcf.AssociatedPublishSubscribeNode = formFieldSingleString(field.Values)
 
-	case ConfigFieldMaxOccupantsNumber:
+	case configFieldMaxOccupantsNumber:
 		rcf.MaxOccupantsNumber.SetSelected(formFieldSingleString(field.Values))
 		rcf.MaxOccupantsNumber.SetOptions(formFieldOptionsValues(field.Options))
 
-	case ConfigFieldMembersOnly:
+	case configFieldMembersOnly:
 		rcf.MembersOnly = formFieldBool(field.Values)
 
-	case ConfigFieldModerated:
+	case configFieldModerated:
 		rcf.Moderated = formFieldBool(field.Values)
 
-	case ConfigFieldPasswordProtected:
+	case configFieldPasswordProtected:
 		rcf.PasswordProtected = formFieldBool(field.Values)
 
-	case ConfigFieldIsPersistent:
+	case configFieldIsPersistent:
 		rcf.Persistent = formFieldBool(field.Values)
 
-	case ConfigFieldPresenceBroadcast:
+	case configFieldPresenceBroadcast:
 		rcf.PresenceBroadcast.SetSelected(field.Values)
 		rcf.PresenceBroadcast.SetOptions(formFieldOptionsValues(field.Options))
 
-	case ConfigFieldIsPublic:
+	case configFieldIsPublic:
 		rcf.Public = formFieldBool(field.Values)
 
-	case ConfigFieldRoomAdmins:
+	case configFieldRoomAdmins:
 		rcf.Admins.SetValues(field.Values)
 
-	case ConfigFieldRoomDescription:
+	case configFieldRoomDescription:
 		rcf.Description = formFieldSingleString(field.Values)
 
-	case ConfigFieldRoomName:
+	case configFieldRoomName:
 		rcf.Title = formFieldSingleString(field.Values)
 
-	case ConfigFieldOwners:
+	case configFieldOwners:
 		rcf.Owners.SetValues(field.Values)
 
-	case ConfigFieldPassword:
+	case configFieldPassword:
 		rcf.Password = formFieldSingleString(field.Values)
 
-	case ConfigFieldWhoIs:
+	case configFieldWhoIs:
 		rcf.Whois.SetSelected(formFieldSingleString(field.Values))
 		rcf.Whois.SetOptions(formFieldOptionsValues(field.Options))
 

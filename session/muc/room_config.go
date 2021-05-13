@@ -139,6 +139,12 @@ func (rcf *RoomConfigForm) setFormFields(fields []xmppData.FormFieldX) {
 	}
 }
 
+// HasKnownField cheks if the filed was defined from the form
+func (rcf *RoomConfigForm) HasKnownField(k RoomConfigFieldType) bool {
+	_, ok := rcf.knownFields[k]
+	return ok
+}
+
 // GetFormData returns a representation of the room config FORM_TYPE as described in the
 // XMPP specification for MUC
 //

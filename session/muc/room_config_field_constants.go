@@ -52,7 +52,7 @@ const (
 var roomConfigKnownFields = map[RoomConfigFieldType][]string{
 	RoomConfigFieldName:                 {configFieldRoomName},
 	RoomConfigFieldDescription:          {configFieldRoomDescription},
-	RoomConfigFieldEnableLogging:        {configFieldEnableLogging, configFieldEnableArchiving},
+	RoomConfigFieldEnableLogging:        {configFieldEnableLogging, configFieldEnableArchiving, configFieldMessageArchiveManagement},
 	RoomConfigFieldLanguage:             {configFieldLanguage},
 	RoomConfigFieldPubsub:               {configFieldPubsub},
 	RoomConfigFieldCanChangeSubject:     {configFieldCanChangeSubject},

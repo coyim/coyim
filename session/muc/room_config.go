@@ -17,6 +17,8 @@ const (
 	configFieldEnableLogging = "muc#roomconfig_enablelogging"
 	// configFieldEnableArchiving represents the var value of the "enable archiving" configuration field
 	configFieldEnableArchiving = "muc#roomconfig_enablearchiving"
+	// configFieldMessageArchiveManagement represents the var value of the "mam" configuration field
+	configFieldMessageArchiveManagement = "mam"
 	// configFieldMemberList represents the var value of the "get members list" configuration field
 	configFieldMemberList = "muc#roomconfig_getmemberlist"
 	// configFieldLanguage represents the var value of the "room language" configuration field
@@ -177,7 +179,7 @@ func (rcf *RoomConfigForm) getFieldDataValue(fieldName string) ([]string, bool) 
 	case configFieldRoomDescription:
 		return []string{rcf.Description}, true
 
-	case configFieldEnableLogging, configFieldEnableArchiving:
+	case configFieldEnableLogging, configFieldEnableArchiving, configFieldMessageArchiveManagement:
 		return []string{strconv.FormatBool(rcf.Logged)}, true
 
 	case configFieldMemberList:
@@ -260,7 +262,7 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 	case configFieldCanChangeSubject:
 		rcf.OccupantsCanChangeSubject = formFieldBool(field.Values)
 
-	case configFieldEnableLogging, configFieldEnableArchiving:
+	case configFieldEnableLogging, configFieldEnableArchiving, configFieldMessageArchiveManagement:
 		rcf.Logged = formFieldBool(field.Values)
 
 	case configFieldMemberList:

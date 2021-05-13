@@ -15,39 +15,149 @@ var _ = Suite(&MucRoomConfigSuite{})
 func (s *MucRoomConfigSuite) SetUpSuite(c *C) {
 	s.rcf = NewRoomConfigForm(&xmppData.Form{
 		Fields: []xmppData.FormFieldX{
-			{Var: configFieldFormType, Type: RoomConfigFieldHidden, Values: []string{"stuff"}},
-			{Var: configFieldRoomName, Values: []string{"a title"}},
-			{Var: configFieldRoomDescription, Values: []string{"a description"}},
-			{Var: configFieldEnableLogging, Values: []string{"true"}},
-			{Var: configFieldEnableArchiving, Values: []string{"true"}},
-			{Var: configFieldMemberList, Values: []string{}},
-			{Var: configFieldLanguage, Values: []string{"eng"}},
-			{Var: configFieldPubsub, Values: []string{}},
-			{Var: configFieldCanChangeSubject, Values: []string{"true"}},
-			{Var: configFieldAllowInvites, Values: []string{"true"}},
-			{Var: configFieldAllowMemberInvites, Values: []string{"true"}},
-			{Var: configFieldAllowPM, Values: []string{"allow private messages"}},
-			{Var: configFieldAllowPrivateMessages, Values: []string{"allow private messages"}},
-			{Var: configFieldMaxOccupantsNumber, Values: []string{"42"}},
-			{Var: configFieldIsPublic, Values: []string{"true"}},
-			{Var: configFieldIsPersistent, Values: []string{"true"}},
-			{Var: configFieldPresenceBroadcast, Values: []string{}},
-			{Var: configFieldModerated, Values: []string{"true"}},
-			{Var: configFieldMembersOnly, Values: []string{"true"}},
-			{Var: configFieldPasswordProtected, Values: []string{"true"}},
-			{Var: configFieldPassword, Values: []string{"a password"}},
-			{Var: configFieldOwners, Values: []string{}},
-			{Var: configFieldWhoIs, Values: []string{"a whois"}},
-			{Var: configFieldMaxHistoryFetch, Values: []string{"43"}, Options: []xmppData.FormFieldOptionX{
-				{Value: "one"},
-				{Value: "two"},
-			}},
-			{Var: configFieldMaxHistoryLength, Values: []string{"43"}, Options: []xmppData.FormFieldOptionX{
-				{Value: "one"},
-				{Value: "two"},
-			}},
-			{Var: configFieldRoomAdmins, Values: []string{"one@foobar.com", "two@example.org"}},
-			{Var: "unknown_field_name", Type: RoomConfigFieldText, Values: []string{"foo"}},
+			{
+				Var:    configFieldFormType,
+				Type:   RoomConfigFieldHidden,
+				Values: []string{"stuff"},
+			},
+			{
+				Var:    configFieldRoomName,
+				Type:   RoomConfigFieldText,
+				Values: []string{"a title"},
+			},
+			{
+				Var:    configFieldRoomDescription,
+				Type:   RoomConfigFieldTextMulti,
+				Values: []string{"a description"},
+			},
+			{
+				Var:    configFieldEnableLogging,
+				Type:   RoomConfigFieldBoolean,
+				Values: []string{"true"},
+			},
+			{
+				Var:    configFieldEnableArchiving,
+				Type:   RoomConfigFieldBoolean,
+				Values: []string{"true"},
+			},
+			{
+				Var:    configFieldMemberList,
+				Type:   RoomConfigFieldJidMulti,
+				Values: []string{},
+			},
+			{
+				Var:    configFieldLanguage,
+				Type:   RoomConfigFieldText,
+				Values: []string{"eng"},
+			},
+			{
+				Var:    configFieldPubsub,
+				Type:   RoomConfigFieldText,
+				Values: []string{},
+			},
+			{
+				Var:    configFieldCanChangeSubject,
+				Type:   RoomConfigFieldBoolean,
+				Values: []string{"true"},
+			},
+			{
+				Var:    configFieldAllowInvites,
+				Type:   RoomConfigFieldBoolean,
+				Values: []string{"true"},
+			},
+			{
+				Var:    configFieldAllowMemberInvites,
+				Type:   RoomConfigFieldBoolean,
+				Values: []string{"true"},
+			},
+			{
+				Var:    configFieldAllowPM,
+				Type:   RoomConfigFieldBoolean,
+				Values: []string{"allow private messages"},
+			},
+			{
+				Var:    configFieldAllowPrivateMessages,
+				Type:   RoomConfigFieldBoolean,
+				Values: []string{"allow private messages"},
+			},
+			{
+				Var:    configFieldMaxOccupantsNumber,
+				Type:   RoomConfigFieldList,
+				Values: []string{"42"},
+			},
+			{
+				Var:    configFieldIsPublic,
+				Type:   RoomConfigFieldBoolean,
+				Values: []string{"true"},
+			},
+			{
+				Var:    configFieldIsPersistent,
+				Type:   RoomConfigFieldBoolean,
+				Values: []string{"true"},
+			},
+			{
+				Var:    configFieldPresenceBroadcast,
+				Type:   RoomConfigFieldListMulti,
+				Values: []string{},
+			},
+			{
+				Var:    configFieldModerated,
+				Type:   RoomConfigFieldBoolean,
+				Values: []string{"true"},
+			},
+			{
+				Var:    configFieldMembersOnly,
+				Type:   RoomConfigFieldBoolean,
+				Values: []string{"true"},
+			},
+			{
+				Var:    configFieldPasswordProtected,
+				Type:   RoomConfigFieldBoolean,
+				Values: []string{"true"},
+			},
+			{
+				Var:    configFieldPassword,
+				Type:   RoomConfigFieldText,
+				Values: []string{"a password"},
+			},
+			{
+				Var:    configFieldOwners,
+				Type:   RoomConfigFieldJidMulti,
+				Values: []string{},
+			},
+			{
+				Var:    configFieldWhoIs,
+				Type:   RoomConfigFieldList,
+				Values: []string{"a whois"},
+			},
+			{
+				Var:    configFieldMaxHistoryFetch,
+				Type:   RoomConfigFieldList,
+				Values: []string{"43"},
+				Options: []xmppData.FormFieldOptionX{
+					{Value: "one"},
+					{Value: "two"},
+				},
+			},
+			{
+				Var:    configFieldMaxHistoryLength,
+				Type:   RoomConfigFieldList,
+				Values: []string{"43"},
+				Options: []xmppData.FormFieldOptionX{
+					{Value: "one"},
+					{Value: "two"},
+				},
+			},
+			{
+				Var:    configFieldRoomAdmins,
+				Type:   RoomConfigFieldJidMulti,
+				Values: []string{"one@foobar.com", "two@example.org"},
+			},
+			{
+				Var:    "unknown_field_name",
+				Type:   RoomConfigFieldText,
+				Values: []string{"foo"},
+			},
 		},
 	})
 }

@@ -9,6 +9,7 @@ import (
 
 func initMUCRoomConfig() {
 	initMUCRoomConfigPages()
+	initMUCRoomConfigTexts()
 }
 
 type roomConfigChangedTypes []data.RoomConfigType

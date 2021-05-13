@@ -67,3 +67,8 @@ func getRoomConfigPageTexts(pageID string) roomConfigPageTextInfo {
 		displayTitle: fmt.Sprintf("UnsupportedPage(%s)", pageID),
 	}
 }
+
+func configPageDisplayTitle(pageID string) string {
+	t := getRoomConfigPageTexts(pageID)
+	return t.displayTitle
+}

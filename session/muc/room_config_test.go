@@ -487,3 +487,14 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetKnownField(c *C) {
 	c.Assert(field, IsNil)
 	c.Assert(ok, Equals, false)
 }
+
+func (s *MucRoomConfigSuite) Test_RoomConfigForm_getKnownFieldValue(c *C) {
+	value, ok := s.rcf.getKnownFieldValue(configFieldRoomName)
+	c.Assert(value, DeepEquals, []string{"a title"})
+	c.Assert(ok, Equals, true)
+
+	value, ok = s.rcf.getKnownFieldValue("foo")
+	c.Assert(value, IsNil)
+	c.Assert(ok, Equals, false)
+
+}

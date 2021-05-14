@@ -456,7 +456,7 @@ func (*MucRoomConfigSuite) Test_formFieldOptionsValues(c *C) {
 func (s *MucRoomConfigSuite) Test_RoomConfigForm_HasKnownField(c *C) {
 	c.Assert(s.rcf.HasKnownField(RoomConfigFieldName), Equals, true)
 	c.Assert(s.rcf.HasKnownField(RoomConfigFieldDescription), Equals, true)
-	c.Assert(s.rcf.HasKnownField(roomConfigFieldUnexpected), Equals, false)
+	c.Assert(s.rcf.HasKnownField(RoomConfigFieldUnexpected), Equals, false)
 }
 
 func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetKnownField(c *C) {
@@ -483,7 +483,7 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetKnownField(c *C) {
 	})
 	c.Assert(ok, Equals, true)
 
-	field, ok = s.rcf.GetKnownField(roomConfigFieldUnexpected)
+	field, ok = s.rcf.GetKnownField(RoomConfigFieldUnexpected)
 	c.Assert(field, IsNil)
 	c.Assert(ok, Equals, false)
 }

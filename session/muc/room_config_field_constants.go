@@ -4,7 +4,8 @@ package muc
 type RoomConfigFieldType int
 
 const (
-	roomConfigFieldUnexpected RoomConfigFieldType = iota
+	// RoomConfigFieldUnexpected represents an unknown field
+	RoomConfigFieldUnexpected RoomConfigFieldType = iota
 	// RoomConfigFieldName represents the "name" field
 	RoomConfigFieldName
 	// RoomConfigFieldDescription represents the "description" field
@@ -91,7 +92,7 @@ func getKnownRoomConfigFieldKey(fieldName string) (RoomConfigFieldType, bool) {
 			return key, true
 		}
 	}
-	return roomConfigFieldUnexpected, false
+	return RoomConfigFieldUnexpected, false
 }
 
 const (

@@ -96,7 +96,7 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	p.autojoinCheckButton.SetActive(p.autoJoin)
 
 	// Basic information
-	setLabelText(p.title, summaryAssignedValueText(p.form.Title))
+	setLabelText(p.title, p.getKnownFieldTextValue(muc.RoomConfigFieldName))
 	p.setDescriptionField()
 	setLabelText(p.language, supportedLanguageDescription(p.form.Language))
 	setLabelText(p.includePublicList, summaryYesOrNoText(p.form.Public))
@@ -120,6 +120,19 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	setLabelText(p.maxOccupants, summaryForSelectedOption(p.form.MaxOccupantsNumber))
 
 	setLabelText(p.enableArchiving, summaryYesOrNoText(p.form.Logged))
+}
+
+func (p *roomConfigSummaryPage) getKnownFieldTextValue(field muc.RoomConfigFieldType) string {
+	label := ""
+
+	if field, ok := p.form.GetKnownField(field); ok {
+		switch v := field.ValueType().(type) {
+		case *muc.RoomConfigFieldTextValue:
+			label = v.Text()
+		}
+	}
+
+	return summaryAssignedValueText(label)
 }
 
 func (p *roomConfigSummaryPage) setDescriptionField() {

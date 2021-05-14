@@ -441,6 +441,7 @@
               <object class="GtkBox" id="room-config-fields-content">
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
+                <property name="spacing">24</property>
               </object>
               <packing>
                 <property name="expand">False</property>

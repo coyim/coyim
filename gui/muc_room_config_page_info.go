@@ -7,7 +7,6 @@ import (
 type roomConfigInfoPage struct {
 	*roomConfigPageBase
 	roomDescriptionBuffer gtki.TextBuffer
-	languageField         *roomConfigFormFieldLanguage
 
 	roomDescription            gtki.TextView `gtk-widget:"room-description"`
 	roomLanguageFieldContainer gtki.Box      `gtk-widget:"room-config-language-field"`
@@ -21,9 +20,6 @@ func (c *mucRoomConfigComponent) newRoomConfigInfoPage() mucRoomConfigPage {
 
 	p.roomDescriptionBuffer, _ = g.gtk.TextBufferNew(nil)
 	p.roomDescription.SetBuffer(p.roomDescriptionBuffer)
-
-	p.languageField = c.newRoomConfigFormFieldLanguage()
-	p.roomLanguageFieldContainer.Add(p.languageField.fieldWidget())
 
 	p.initDefaultValues()
 
@@ -40,6 +36,4 @@ func (p *roomConfigInfoPage) collectData() {
 	p.form.Description = getTextViewText(p.roomDescription)
 	p.form.Persistent = getSwitchActive(p.roomPersistent)
 	p.form.Public = getSwitchActive(p.roomPublic)
-
-	p.languageField.collectFieldValue()
 }

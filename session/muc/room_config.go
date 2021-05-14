@@ -254,6 +254,15 @@ func (rcf *RoomConfigForm) getFieldDataValue(fieldName string) ([]string, bool) 
 	return nil, false
 }
 
+func (rcf *RoomConfigForm) getKnownFieldValue(fieldName string) ([]string, bool) {
+	for _, field := range rcf.knownFields {
+		if field.Name == fieldName {
+			return field.Value(), true
+		}
+	}
+	return nil, false
+}
+
 func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 	switch field.Var {
 	case configFieldMaxHistoryFetch, configFieldMaxHistoryLength:

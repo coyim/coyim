@@ -163,7 +163,6 @@ func (s *MucRoomConfigSuite) SetUpSuite(c *C) {
 }
 
 func (s *MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
-	c.Assert(s.rcf.Title, Equals, "a title")
 	c.Assert(s.rcf.Description, Equals, "a description")
 	c.Assert(s.rcf.Logged, Equals, true)
 	c.Assert(s.rcf.OccupantsCanChangeSubject, Equals, true)

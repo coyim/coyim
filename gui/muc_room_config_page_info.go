@@ -9,7 +9,6 @@ type roomConfigInfoPage struct {
 	roomDescriptionBuffer gtki.TextBuffer
 	languageField         *roomConfigFormFieldLanguage
 
-	roomTitle                  gtki.Entry    `gtk-widget:"room-title"`
 	roomDescription            gtki.TextView `gtk-widget:"room-description"`
 	roomLanguageFieldContainer gtki.Box      `gtk-widget:"room-config-language-field"`
 	roomPersistent             gtki.Switch   `gtk-widget:"room-persistent"`
@@ -32,14 +31,12 @@ func (c *mucRoomConfigComponent) newRoomConfigInfoPage() mucRoomConfigPage {
 }
 
 func (p *roomConfigInfoPage) initDefaultValues() {
-	setEntryText(p.roomTitle, p.form.Title)
 	setTextViewText(p.roomDescription, p.form.Description)
 	setSwitchActive(p.roomPersistent, p.form.Persistent)
 	setSwitchActive(p.roomPublic, p.form.Public)
 }
 
 func (p *roomConfigInfoPage) collectData() {
-	p.form.Title = getEntryText(p.roomTitle)
 	p.form.Description = getTextViewText(p.roomDescription)
 	p.form.Persistent = getSwitchActive(p.roomPersistent)
 	p.form.Public = getSwitchActive(p.roomPublic)

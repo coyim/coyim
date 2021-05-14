@@ -65,7 +65,6 @@ const (
 
 // RoomConfigForm represents a room configuration form
 type RoomConfigForm struct {
-	Title                          string
 	Description                    string
 	Language                       string
 	Password                       string
@@ -182,7 +181,7 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 func (rcf *RoomConfigForm) getFieldDataValue(fieldName string) ([]string, bool) {
 	switch fieldName {
 	case configFieldRoomName:
-		return []string{rcf.Title}, true
+		return rcf.getKnownFieldValue(fieldName)
 
 	case configFieldRoomDescription:
 		return []string{rcf.Description}, true
@@ -320,9 +319,6 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 
 	case configFieldRoomDescription:
 		rcf.Description = formFieldSingleString(field.Values)
-
-	case configFieldRoomName:
-		rcf.Title = formFieldSingleString(field.Values)
 
 	case configFieldOwners:
 		rcf.Owners.SetValues(field.Values)

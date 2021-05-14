@@ -27,7 +27,7 @@ type languageSelectorComponent struct {
 	languages *languageSelectorValues
 }
 
-func (u *gtkUI) createLanguageSelectorComponent(entry gtki.Entry, combo gtki.ComboBoxText) *languageSelectorComponent {
+func createLanguageSelectorComponent(entry gtki.Entry, combo gtki.ComboBoxText) *languageSelectorComponent {
 	lc := &languageSelectorComponent{
 		entry:     entry,
 		combo:     combo,

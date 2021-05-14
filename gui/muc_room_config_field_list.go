@@ -21,9 +21,9 @@ type roomConfigFormFieldList struct {
 	options      map[string]int
 }
 
-func newRoomConfigFormFieldList(f *muc.RoomConfigFormField, value *muc.RoomConfigFieldListValue) hasRoomConfigFormField {
+func newRoomConfigFormFieldList(fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldListValue) hasRoomConfigFormField {
 	field := &roomConfigFormFieldList{value: value}
-	field.roomConfigFormField = newRoomConfigFormField(f, "MUCRoomConfigFormFieldList")
+	field.roomConfigFormField = newRoomConfigFormField(fieldInfo, "MUCRoomConfigFormFieldList")
 
 	panicOnDevError(field.builder.bindObjects(field))
 

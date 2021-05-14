@@ -25,17 +25,15 @@ type roomConfigFormField struct {
 	description gtki.Label `gtk-widget:"room-config-field-description"`
 }
 
-func newRoomConfigFormField(f *muc.RoomConfigFormField, template string) *roomConfigFormField {
-	field := &roomConfigFormField{
-		field: f,
-	}
+func newRoomConfigFormField(fieldInfo roomConfigFieldTextInfo, template string) *roomConfigFormField {
+	field := &roomConfigFormField{}
 
 	field.builder = newBuilder(template)
 	panicOnDevError(field.builder.bindObjects(field))
 
-	field.label.SetText(field.fieldLabel())
+	field.label.SetText(fieldInfo.displayLabel)
 
-	description := field.fieldDescription()
+	description := fieldInfo.displayDescription
 	field.description.SetText(description)
 	if description == "" {
 		field.description.Hide()
@@ -74,18 +72,18 @@ var (
 	errRoomConfigFieldNotSupported = errors.New("room configuration form field not supported")
 )
 
-func roomConfigFormFieldFactory(field *muc.RoomConfigFormField) (hasRoomConfigFormField, error) {
-	switch valueHandler := field.ValueType().(type) {
+func roomConfigFormFieldFactory(fieldInfo roomConfigFieldTextInfo, fieldType interface{}) (hasRoomConfigFormField, error) {
+	switch valueHandler := fieldType.(type) {
 	case *muc.RoomConfigFieldTextValue:
-		return newRoomConfigFormTextField(field, valueHandler), nil
+		return newRoomConfigFormTextField(fieldInfo, valueHandler), nil
 	case *muc.RoomConfigFieldTextMultiValue:
-		return newRoomConfigFormTextMulti(field, valueHandler), nil
+		return newRoomConfigFormTextMulti(fieldInfo, valueHandler), nil
 	case *muc.RoomConfigFieldBooleanValue:
-		return newRoomConfigFormFieldBoolean(field, valueHandler), nil
+		return newRoomConfigFormFieldBoolean(fieldInfo, valueHandler), nil
 	case *muc.RoomConfigFieldListValue:
-		return newRoomConfigFormFieldList(field, valueHandler), nil
+		return newRoomConfigFormFieldList(fieldInfo, valueHandler), nil
 	case *muc.RoomConfigFieldListMultiValue:
-		return newRoomConfigFieldListMulti(field, valueHandler), nil
+		return newRoomConfigFieldListMulti(fieldInfo, valueHandler), nil
 	}
 
 	return nil, errRoomConfigFieldNotSupported

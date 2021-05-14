@@ -143,7 +143,7 @@ func (p *roomConfigPageBase) initKnownFields(pageID string) {
 	if knownFields, ok := roomConfigPagesFields[pageID]; ok {
 		for _, kf := range knownFields {
 			if knownField, ok := p.form.GetKnownField(kf); ok {
-				field, err := roomConfigFormFieldFactory(knownField)
+				field, err := roomConfigFormFieldFactory(roomConfigFieldsTexts[kf], knownField.ValueType())
 				if err != nil {
 					p.log.WithError(err).Error("Room configuration form field not supported")
 					continue

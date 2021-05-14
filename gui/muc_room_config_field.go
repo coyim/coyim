@@ -53,10 +53,10 @@ var (
 	errRoomConfigFieldNotSupported = errors.New("room configuration form field not supported")
 )
 
-func roomConfigFormFieldFactory(fieldInfo roomConfigFieldTextInfo, fieldType interface{}) (hasRoomConfigFormField, error) {
-	switch valueHandler := fieldType.(type) {
+func roomConfigFormFieldFactory(fieldType muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, fieldTypeValue interface{}) (hasRoomConfigFormField, error) {
+	switch valueHandler := fieldTypeValue.(type) {
 	case *muc.RoomConfigFieldTextValue:
-		return newRoomConfigFormTextField(fieldInfo, valueHandler), nil
+		return roomConfigFormTextFieldFactory(fieldType, valueHandler)
 	case *muc.RoomConfigFieldTextMultiValue:
 		return newRoomConfigFormTextMulti(fieldInfo, valueHandler), nil
 	case *muc.RoomConfigFieldBooleanValue:
@@ -68,4 +68,12 @@ func roomConfigFormFieldFactory(fieldInfo roomConfigFieldTextInfo, fieldType int
 	}
 
 	return nil, errRoomConfigFieldNotSupported
+}
+
+func roomConfigFormTextFieldFactory(ft muc.RoomConfigFieldType, value *muc.RoomConfigFieldTextValue) (hasRoomConfigFormField, error) {
+	switch ft {
+	case muc.RoomConfigFieldLanguage:
+		return newRoomConfigFormFieldLanguage(roomConfigFieldsTexts[ft], value), nil
+	}
+	return newRoomConfigFormTextField(roomConfigFieldsTexts[ft], value), nil
 }

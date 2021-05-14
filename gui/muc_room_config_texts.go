@@ -80,6 +80,13 @@ type roomConfigFieldTextInfo struct {
 	displayDescription string
 }
 
+func newRoomConfigFieldTextInfo(label, description string) roomConfigFieldTextInfo {
+	return roomConfigFieldTextInfo{
+		displayLabel:       label,
+		displayDescription: description,
+	}
+}
+
 var roomConfigFieldsTexts map[muc.RoomConfigFieldType]roomConfigFieldTextInfo
 
 func initMUCRoomConfigFieldsTexts() {

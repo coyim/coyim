@@ -141,6 +141,7 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page
 
 func (p *roomConfigPageBase) initKnownFields(pageID string) {
 	if knownFields, ok := roomConfigPagesFields[pageID]; ok {
+		booleanFields := []*roomConfigFormFieldBoolean{}
 		for _, kf := range knownFields {
 			if knownField, ok := p.form.GetKnownField(kf); ok {
 				field, err := roomConfigFormFieldFactory(kf, roomConfigFieldsTexts[kf], knownField.ValueType())
@@ -148,10 +149,21 @@ func (p *roomConfigPageBase) initKnownFields(pageID string) {
 					p.log.WithError(err).Error("Room configuration form field not supported")
 					continue
 				}
+				switch v := field.(type) {
+				case *roomConfigFormFieldBoolean:
+					booleanFields = append(booleanFields, v)
+					continue
+				}
 				p.fields = append(p.fields, field)
 				p.fieldsContent.Add(field.fieldWidget())
 				p.doAfterRefresh.add(field.refreshContent)
 			}
+		}
+		if len(booleanFields) > 0 {
+			field := newRoomConfigFormFieldBooleanContainer(booleanFields)
+			p.fields = append(p.fields, field)
+			p.fieldsContent.Add(field.fieldWidget())
+			p.doAfterRefresh.add(field.refreshContent)
 		}
 	}
 }

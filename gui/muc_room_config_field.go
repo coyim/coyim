@@ -14,7 +14,6 @@ type hasRoomConfigFormField interface {
 }
 
 type roomConfigFormField struct {
-	field   *muc.RoomConfigFormField
 	builder *builder
 
 	widget      gtki.Box   `gtk-widget:"room-config-field-box"`

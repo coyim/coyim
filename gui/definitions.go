@@ -5788,6 +5788,28 @@ ZXJmYWNlPgo=
 `,
 	},
 
+	"/definitions/MUCRoomConfigFormFieldBooleanContainer.xml": {
+		local:   "definitions/MUCRoomConfigFormFieldBooleanContainer.xml",
+		size:    784,
+		modtime: 1489449600,
+		compressed: `
+PGludGVyZmFjZT4KICA8b2JqZWN0IGNsYXNzPSJHdGtCb3giIGlkPSJyb29tLWNvbmZpZy1maWVsZC1i
+b3giPgogICAgPHByb3BlcnR5IG5hbWU9InZpc2libGUiPlRydWU8L3Byb3BlcnR5PgogICAgPHByb3Bl
+cnR5IG5hbWU9InZhbGlnbiI+Y2VudGVyPC9wcm9wZXJ0eT4KICAgIDxwcm9wZXJ0eSBuYW1lPSJvcmll
+bnRhdGlvbiI+dmVydGljYWw8L3Byb3BlcnR5PgogICAgPGNoaWxkPgogICAgICA8b2JqZWN0IGNsYXNz
+PSJHdGtGcmFtZSI+CiAgICAgICAgPHByb3BlcnR5IG5hbWU9InZpc2libGUiPlRydWU8L3Byb3BlcnR5
+PgogICAgICAgIDxwcm9wZXJ0eSBuYW1lPSJsYWJlbF94YWxpZ24iPjA8L3Byb3BlcnR5PgogICAgICAg
+IDxwcm9wZXJ0eSBuYW1lPSJzaGFkb3dfdHlwZSI+aW48L3Byb3BlcnR5PgogICAgICAgIDxjaGlsZD4K
+ICAgICAgICAgIDxvYmplY3QgY2xhc3M9Ikd0a0xpc3RCb3giIGlkPSJyb29tLWNvbmZpZy1ib29sZWFu
+LWZpZWxkcy1jb250ZW50Ij4KICAgICAgICAgICAgPHByb3BlcnR5IG5hbWU9InZpc2libGUiPlRydWU8
+L3Byb3BlcnR5PgogICAgICAgICAgICA8cHJvcGVydHkgbmFtZT0ic2VsZWN0aW9uX21vZGUiPm5vbmU8
+L3Byb3BlcnR5PgogICAgICAgICAgICA8cHJvcGVydHkgbmFtZT0iYWN0aXZhdGVfb25fc2luZ2xlX2Ns
+aWNrIj5GYWxzZTwvcHJvcGVydHk+ICAgICAgICAgICAKICAgICAgICAgIDwvb2JqZWN0PgogICAgICAg
+IDwvY2hpbGQ+CiAgICAgIDwvb2JqZWN0PgogICAgPC9jaGlsZD4KICA8L29iamVjdD4KPC9pbnRlcmZh
+Y2U+Cg==
+`,
+	},
+
 	"/definitions/MUCRoomConfigFormFieldLanguage.xml": {
 		local:   "definitions/MUCRoomConfigFormFieldLanguage.xml",
 		size:    1914,

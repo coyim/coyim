@@ -9,8 +9,9 @@ type roomConfigFormFieldBoolean struct {
 	*roomConfigFormField
 	value *muc.RoomConfigFieldBooleanValue
 
-	grid   gtki.Grid   `gtk-widget:"room-config-field-boolean-grid"`
-	toggle gtki.Switch `gtk-widget:"room-config-field-boolean"`
+	grid   gtki.Grid       `gtk-widget:"room-config-field-boolean-grid"`
+	field  gtki.ListBoxRow `gtk-widget:"room-config-boolean-field"`
+	toggle gtki.Switch     `gtk-widget:"room-config-field-boolean"`
 }
 
 func newRoomConfigFormFieldBoolean(fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldBooleanValue) hasRoomConfigFormField {

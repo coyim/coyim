@@ -146,3 +146,13 @@ func (*MucRoomConfigFieldsSuite) Test_RoomConfigFormField_ValueType(c *C) {
 		c.Assert(field.ValueType(), DeepEquals, fieldCase.valueType)
 	}
 }
+
+func (*MucRoomConfigFieldsSuite) Test_RoomConfigFormField_getFieldType(c *C) {
+	field := xmppData.FormFieldX{
+		Var:  configFieldRoomDescription,
+		Type: RoomConfigFieldText,
+	}
+	c.Assert(getFieldType(field), Equals, RoomConfigFieldTextMulti)
+	field.Var = configFieldRoomName
+	c.Assert(getFieldType(field), Equals, RoomConfigFieldText)
+}

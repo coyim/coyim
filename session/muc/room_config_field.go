@@ -60,7 +60,7 @@ func roomConfigFormFieldValueFactory(field xmppData.FormFieldX) HasRoomConfigFor
 	values := field.Values
 	options := formFieldOptionsValues(field.Options)
 
-	switch field.Type {
+	switch getFieldType(field) {
 	case RoomConfigFieldText, RoomConfigFieldTextPrivate:
 		return newRoomConfigFieldTextValue(values)
 	case RoomConfigFieldTextMulti:
@@ -76,4 +76,11 @@ func roomConfigFormFieldValueFactory(field xmppData.FormFieldX) HasRoomConfigFor
 	}
 
 	return newRoomConfigFieldUnknownValue(values)
+}
+
+func getFieldType(f xmppData.FormFieldX) string {
+	if f.Var == configFieldRoomDescription {
+		return RoomConfigFieldTextMulti
+	}
+	return f.Type
 }

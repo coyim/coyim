@@ -71,10 +71,12 @@ type mucRoomConfigPage interface {
 }
 
 type roomConfigPageBase struct {
-	u    *gtkUI
-	form *muc.RoomConfigForm
+	u      *gtkUI
+	form   *muc.RoomConfigForm
+	fields []hasRoomConfigFormField
 
-	title string
+	title         string
+	fieldsContent gtki.Box
 
 	page              gtki.Overlay `gtk-widget:"room-config-page-overlay"`
 	content           gtki.Box     `gtk-widget:"room-config-page-content"`
@@ -124,9 +126,34 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page
 	pageContent.SetHExpand(false)
 	p.content.Add(pageContent)
 
+	fieldsContent, err := builder.GetObject("room-config-fields-content")
+	if err != nil {
+		panic(fmt.Sprintf("developer error: the ID for \"%s\" page doesn't exists", pageID))
+	}
+
+	p.fieldsContent = fieldsContent.(gtki.Box)
+	p.initKnownFields(pageID)
+
 	mucStyles.setRoomConfigPageStyle(pageContent)
 
 	return p
+}
+
+func (p *roomConfigPageBase) initKnownFields(pageID string) {
+	if knownFields, ok := roomConfigPagesFields[pageID]; ok {
+		for _, kf := range knownFields {
+			if knownField, ok := p.form.GetKnownField(kf); ok {
+				field, err := roomConfigFormFieldFactory(knownField)
+				if err != nil {
+					p.log.WithError(err).Error("Room configuration form field not supported")
+					continue
+				}
+				p.fields = append(p.fields, field)
+				p.fieldsContent.Add(field.fieldWidget())
+				p.doAfterRefresh.add(field.refreshContent)
+			}
+		}
+	}
 }
 
 // pageTitle implements the "mucRoomConfigPage" interface

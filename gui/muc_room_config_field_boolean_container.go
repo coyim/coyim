@@ -28,10 +28,9 @@ func (fc *roomConfigFormFieldBooleanContainer) initBuilder() {
 }
 
 func (fc *roomConfigFormFieldBooleanContainer) initDefaults() {
-	for i, f := range fc.fields {
-		if i > 0 {
-			fc.content.Add(createSeparator(gtki.HorizontalOrientation))
-		}
+	fc.content.Add(fc.fields[0].widget)
+	for _, f := range fc.fields[1:] {
+		fc.content.Add(createSeparator(gtki.HorizontalOrientation))
 		fc.content.Add(f.widget)
 	}
 }

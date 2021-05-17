@@ -47,7 +47,7 @@ func (f *roomConfigFormFieldList) initOptions() {
 	for index, o := range f.value.Options() {
 		iter := f.optionsModel.Append()
 
-		_ = f.optionsModel.SetValue(iter, roomConfigFieldListOptionValueIndex, o)
+		_ = f.optionsModel.SetValue(iter, roomConfigFieldListOptionValueIndex, o.Value)
 		_ = f.optionsModel.SetValue(iter, roomConfigFieldListOptionLabelIndex, configOptionToFriendlyMessage(o.Value, o.Label))
 
 		f.options[o.Value] = index

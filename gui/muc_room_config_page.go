@@ -38,10 +38,11 @@ func initMUCRoomConfigPages() {
 			muc.RoomConfigFieldAllowInvites,
 		},
 		pageConfigPermissions: {
-			muc.RoomConfigFieldPresenceBroadcast,
+			muc.RoomConfigFieldWhoIs,
 			muc.RoomConfigFieldIsModerated,
 			muc.RoomConfigFieldCanChangeSubject,
 			muc.RoomConfigFieldAllowPrivateMessages,
+			muc.RoomConfigFieldPresenceBroadcast,
 		},
 		pageConfigOccupants: {
 			muc.RoomConfigFieldOwners,
@@ -53,7 +54,6 @@ func initMUCRoomConfigPages() {
 			muc.RoomConfigFieldMaxHistoryFetch,
 			muc.RoomConfigFieldEnableLogging,
 			muc.RoomConfigFieldPubsub,
-			muc.RoomConfigFieldWhoIs,
 		},
 	}
 }

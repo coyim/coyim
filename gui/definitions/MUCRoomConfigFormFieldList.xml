@@ -53,7 +53,7 @@
         <property name="visible">True</property>
         <property name="halign">start</property>
         <property name="valign">center</property>
-        <property name="label" translatable="yes"></property>
+        <property name="no_show_all">True</property>
         <property name="justify">right</property>
       </object>
       <packing>

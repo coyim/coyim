@@ -6,7 +6,7 @@ import (
 )
 
 type passwordConfirmationComponent struct {
-	box                     gtki.Box    `gtk-widget:"password-confirmation-box"`
+	box                     gtki.Box    `gtk-widget:"room-config-field-box"`
 	entry                   gtki.Entry  `gtk-widget:"password-entry"`
 	confirmEntry            gtki.Entry  `gtk-widget:"password-confirmation-entry"`
 	showPasswordButton      gtki.Button `gtk-widget:"password-show-button"`

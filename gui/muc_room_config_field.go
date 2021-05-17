@@ -49,6 +49,11 @@ func (f *roomConfigFormField) refreshContent() {}
 // collectFieldValue implements the hasRoomConfigFormField interface
 func (f *roomConfigFormField) collectFieldValue() {}
 
+// isInvalid implements the hasRoomConfigFormField interface
+func (f *roomConfigFormField) isInvalid() bool {
+	return false
+}
+
 var (
 	errRoomConfigFieldNotSupported = errors.New("room configuration form field not supported")
 )

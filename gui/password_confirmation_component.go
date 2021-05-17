@@ -23,7 +23,7 @@ func (u *gtkUI) createPasswordConfirmationComponent() *passwordConfirmationCompo
 }
 
 func (pc *passwordConfirmationComponent) initBuilder() {
-	builder := newBuilder("PasswordConfirmation")
+	builder := newBuilder("MUCRoomConfigFormFieldPassword")
 	panicOnDevError(builder.bindObjects(pc))
 	builder.ConnectSignals(map[string]interface{}{
 		"on_show_password_clicked":   pc.onShowPasswordClicked,

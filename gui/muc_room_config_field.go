@@ -76,8 +76,11 @@ func roomConfigFormFieldFactory(fieldType muc.RoomConfigFieldType, fieldInfo roo
 }
 
 func roomConfigFormTextFieldFactory(ft muc.RoomConfigFieldType, value *muc.RoomConfigFieldTextValue) (hasRoomConfigFormField, error) {
-	if ft == muc.RoomConfigFieldLanguage {
+	switch ft {
+	case muc.RoomConfigFieldLanguage:
 		return newRoomConfigFormFieldLanguage(roomConfigFieldsTexts[ft], value), nil
+	case muc.RoomConfigFieldPassword:
+		return newRoomConfigFormFieldPassword(roomConfigFieldsTexts[ft], value), nil
 	}
 	return newRoomConfigFormTextField(roomConfigFieldsTexts[ft], value), nil
 }

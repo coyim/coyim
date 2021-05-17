@@ -43,7 +43,7 @@ func (p *roomConfigAccessPage) collectData() {
 }
 
 func (p *roomConfigAccessPage) isInvalid() bool {
-	return !p.roomPassword.passwordsMatch()
+	return p.roomConfigPageBase.isInvalid()
 }
 
 func (p *roomConfigAccessPage) showValidationErrors() {

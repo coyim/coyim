@@ -180,8 +180,14 @@ func (p *roomConfigPageBase) pageView() gtki.Overlay {
 }
 
 // isInvalid implements the "mucRoomConfigPage" interface
-func (p *roomConfigPageBase) isInvalid() bool {
-	return false
+func (p *roomConfigPageBase) isInvalid() (isInvalid bool) {
+	for _, f := range p.fields {
+		if f.isInvalid() {
+			f.showValidationErrors()
+			isInvalid = true
+		}
+	}
+	return isInvalid
 }
 
 // validate implements the "mucRoomConfigPage" interface

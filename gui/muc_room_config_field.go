@@ -11,6 +11,8 @@ type hasRoomConfigFormField interface {
 	fieldWidget() gtki.Widget
 	refreshContent()
 	collectFieldValue()
+	isInvalid() bool
+	showValidationErrors()
 }
 
 type roomConfigFormField struct {
@@ -53,6 +55,9 @@ func (f *roomConfigFormField) collectFieldValue() {}
 func (f *roomConfigFormField) isInvalid() bool {
 	return false
 }
+
+// showValidationErrors implements the hasRoomConfigFormField interface
+func (f *roomConfigFormField) showValidationErrors() {}
 
 var (
 	errRoomConfigFieldNotSupported = errors.New("room configuration form field not supported")

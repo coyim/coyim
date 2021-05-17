@@ -49,6 +49,14 @@ func (fc *roomConfigFormFieldBooleanContainer) collectFieldValue() {
 	}
 }
 
+// isInvalid implements the hasRoomConfigFormField interface
+func (fc *roomConfigFormFieldBooleanContainer) isInvalid() bool {
+	return false
+}
+
+// showValidationErrors implements the hasRoomConfigFormField interface
+func (fc *roomConfigFormFieldBooleanContainer) showValidationErrors() {}
+
 func createSeparator(orientation gtki.Orientation) gtki.Separator {
 	sep, _ := g.gtk.SeparatorNew(orientation)
 	return sep

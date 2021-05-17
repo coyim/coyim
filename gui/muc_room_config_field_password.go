@@ -58,6 +58,18 @@ func (f *roomConfigFormFieldPassword) collectFieldValue() {
 	f.value.SetText(f.currentPassword())
 }
 
+// isInvalid implements the hasRoomConfigFormField interface
+func (f *roomConfigFormFieldPassword) isInvalid() bool {
+	return !f.passwordsMatch()
+}
+
+// showValidationErrors implements the hasRoomConfigFormField interface
+func (f *roomConfigFormFieldPassword) showValidationErrors() {
+	f.changeConfirmPasswordEntryStyle()
+	f.onShowConfirmPasswordBasedOnMatchError()
+	f.focusConfirm()
+}
+
 func (f *roomConfigFormFieldPassword) focus() {
 	f.entry.GrabFocus()
 }

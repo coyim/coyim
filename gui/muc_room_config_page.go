@@ -149,23 +149,24 @@ func (p *roomConfigPageBase) initKnownFields(pageID string) {
 					p.log.WithError(err).Error("Room configuration form field not supported")
 					continue
 				}
-				switch v := field.(type) {
-				case *roomConfigFormFieldBoolean:
-					booleanFields = append(booleanFields, v)
+				f, ok := field.(*roomConfigFormFieldBoolean)
+				if ok {
+					booleanFields = append(booleanFields, f)
 					continue
 				}
-				p.fields = append(p.fields, field)
-				p.fieldsContent.Add(field.fieldWidget())
-				p.doAfterRefresh.add(field.refreshContent)
+				p.addField(field)
 			}
 		}
 		if len(booleanFields) > 0 {
-			field := newRoomConfigFormFieldBooleanContainer(booleanFields)
-			p.fields = append(p.fields, field)
-			p.fieldsContent.Add(field.fieldWidget())
-			p.doAfterRefresh.add(field.refreshContent)
+			p.addField(newRoomConfigFormFieldBooleanContainer(booleanFields))
 		}
 	}
+}
+
+func (p *roomConfigPageBase) addField(field hasRoomConfigFormField) {
+	p.fields = append(p.fields, field)
+	p.fieldsContent.Add(field.fieldWidget())
+	p.doAfterRefresh.add(field.refreshContent)
 }
 
 // pageTitle implements the "mucRoomConfigPage" interface

@@ -65,7 +65,13 @@ func (s *GajimSuite) Test_GajimImporter_canImportPrivateKey(c *C) {
 
 func (s *GajimSuite) Test_GajimImporter_canImportPluginSettings(c *C) {
 	importer := gajimImporter{}
-	res, res2, ok := importer.importOTRSettings(testResourceFilename("gajim_test_data/gotr"))
+
+	file := testResourceFilename("gajim_test_data/gotr")
+	res, res2, ok := importer.importOTRSettings(file)
+
+	c.Logf("testResourceFilename: %s", file)
+	c.Logf("map[string]gajimOTRSettings: %s", res)
+	c.Logf("map[gajimAccountAndPeer]gajimOTRSettings: %s", res2)
 
 	c.Assert(ok, Equals, true)
 

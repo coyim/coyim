@@ -1,52 +1,26 @@
 package gui
 
 import (
-	"strconv"
-
-	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
-	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type roomConfigOthersPage struct {
 	*roomConfigPageBase
-
-	roomMaxHistoryFetchCombo gtki.ComboBoxText `gtk-widget:"room-maxhistoryfetch"`
-	roomMaxHistoryFetchEntry gtki.Entry        `gtk-widget:"room-maxhistoryfetch-entry"`
-	roomMaxOccupantsCombo    gtki.ComboBoxText `gtk-widget:"room-maxoccupants"`
-	roomMaxOccupantsEntry    gtki.Entry        `gtk-widget:"room-maxoccupants-entry"`
-	roomEnableLoggingContent gtki.Box          `gtk-widget:"room-enablelogging-content"`
-	roomEnableLogging        gtki.Switch       `gtk-widget:"room-enablelogging"`
-	roomUnknowFieldsBox      gtki.Box          `gtk-widget:"room-config-unknow-fields-box"`
-
-	roomMaxHistoryFetch *roomConfigComboEntry
-	roomMaxOccupants    *roomConfigComboEntry
-
 	fields []hasRoomConfigFormField
+
+	roomUnknowFieldsBox gtki.Box `gtk-widget:"room-config-unknow-fields-box"`
 }
 
 func (c *mucRoomConfigComponent) newRoomConfigOthersPage() mucRoomConfigPage {
 	p := &roomConfigOthersPage{}
 	p.roomConfigPageBase = c.newConfigPage(pageConfigOthers, "MUCRoomConfigPageOthers", p, nil)
 
-	p.roomMaxHistoryFetch = newRoomConfigCombo(p.roomMaxHistoryFetchCombo, p.roomMaxHistoryFetchEntry)
-	p.roomMaxOccupants = newRoomConfigCombo(p.roomMaxOccupantsCombo, p.roomMaxOccupantsEntry)
-
 	p.initDefaultValues()
-
 	return p
 }
 
 func (p *roomConfigOthersPage) initDefaultValues() {
-	p.initKnownFields()
-
-	p.roomMaxHistoryFetch.updateCurrentValue(p.form.MaxHistoryFetch.Selected())
-	p.roomMaxHistoryFetch.updateOptions(p.form.MaxHistoryFetch.Options())
-
-	p.roomMaxOccupants.updateCurrentValue(p.form.MaxOccupantsNumber.Selected())
-	p.roomMaxOccupants.updateOptions(p.form.MaxOccupantsNumber.Options())
-
 	for _, f := range p.form.Fields {
 		field, err := roomConfigFormFieldFactory(muc.RoomConfigFieldUnexpected, newRoomConfigFieldTextInfo(f.Label, f.Description), f.ValueType())
 		if err != nil {
@@ -59,45 +33,13 @@ func (p *roomConfigOthersPage) initDefaultValues() {
 	}
 }
 
-// initKnownFields MUST be called from the UI thread
-func (p *roomConfigOthersPage) initKnownFields() {
-	p.initRoomLoggedField()
-}
-
-// initRoomLoggedField MUST be called from the UI thread
-func (p *roomConfigOthersPage) initRoomLoggedField() {
-	if p.form.HasKnownField(muc.RoomConfigFieldEnableLogging) {
-		p.roomEnableLogging.SetActive(p.form.Logged)
-		p.roomEnableLoggingContent.SetVisible(true)
-	}
-}
-
 // isInvalid MUST be called from the UI thread
-func (p *roomConfigOthersPage) isInvalid() bool {
-	return p.roomMaxHistoryFetch.isInvalid() || p.roomMaxOccupants.isInvalid()
-}
-
-// showValidationErrors MUST be called from the UI thread
-func (p *roomConfigOthersPage) showValidationErrors() {
-	p.clearErrors()
-
-	if p.roomMaxHistoryFetch.isInvalid() {
-		p.roomMaxHistoryFetch.focus()
-		return
-	}
-
-	if p.roomMaxOccupants.isInvalid() {
-		p.roomMaxOccupants.focus()
-		return
-	}
+func (p *roomConfigOthersPage) isValid() bool {
+	return p.roomConfigPageBase.isValid()
 }
 
 // collectData MUST be called from the UI thread
 func (p *roomConfigOthersPage) collectData() {
-	p.form.MaxHistoryFetch.SetSelected(p.roomMaxHistoryFetch.currentValue())
-	p.form.MaxOccupantsNumber.SetSelected(p.roomMaxOccupants.currentValue())
-	p.form.Logged = p.roomEnableLogging.GetActive()
-
 	for _, f := range p.fields {
 		f.collectFieldValue()
 	}
@@ -107,102 +49,4 @@ func (p *roomConfigOthersPage) collectData() {
 func (p *roomConfigOthersPage) addField(f hasRoomConfigFormField) {
 	p.fields = append(p.fields, f)
 	p.roomUnknowFieldsBox.PackStart(f.fieldWidget(), true, false, 0)
-}
-
-const (
-	roomMaxHistoryFetchValueColumIndex = iota
-	roomMaxHistoryFetchLabelColumIndex
-)
-
-const (
-	roomConfigComboOptionValueIndex = iota
-	roomConfigComboOptionLabelIndex
-)
-
-type roomConfigComboEntry struct {
-	options map[string]string
-
-	model    gtki.ListStore
-	comboBox gtki.ComboBoxText
-	entry    gtki.Entry
-}
-
-func newRoomConfigCombo(cb gtki.ComboBoxText, e gtki.Entry) *roomConfigComboEntry {
-	cc := &roomConfigComboEntry{
-		comboBox: cb,
-		entry:    e,
-		options:  make(map[string]string),
-	}
-
-	// The following is created with two columns, one is for the "value" and the other for the "label"
-	cc.model, _ = g.gtk.ListStoreNew(glibi.TYPE_STRING, glibi.TYPE_STRING)
-	cc.comboBox.SetModel(cc.model)
-	cc.comboBox.SetIDColumn(roomConfigComboOptionValueIndex)
-	cc.comboBox.SetEntryTextColumn(roomConfigComboOptionLabelIndex)
-
-	return cc
-}
-
-// updateCurrentValue MUST be called from the UI thread
-func (cc *roomConfigComboEntry) updateCurrentValue(v string) {
-	cc.entry.SetText(v)
-}
-
-// updateOptions MUST be called from the UI thread
-func (cc *roomConfigComboEntry) updateOptions(options []*muc.RoomConfigFieldOption) {
-	cc.model.Clear()
-	cc.options = make(map[string]string)
-
-	for _, o := range options {
-		label := configOptionToFriendlyMessage(o.Value, o.Label)
-		if o.Value == muc.RoomConfigOptionNone {
-			label = i18n.Local("No maximum (default)")
-		}
-
-		iter := cc.model.Append()
-		cc.model.SetValue(iter, roomMaxHistoryFetchValueColumIndex, o.Label)
-		cc.model.SetValue(iter, roomMaxHistoryFetchLabelColumIndex, label)
-
-		cc.options[label] = o.Value
-	}
-}
-
-// isInvalid MUST be called from the UI thread
-func (cc *roomConfigComboEntry) isInvalid() bool {
-	ct := getEntryText(cc.entry)
-	if ct != "" {
-		_, err := strconv.Atoi(cc.currentValue())
-		if err != nil {
-			return true
-		}
-	}
-	return false
-}
-
-// currentValue MUST be called from the UI thread
-func (cc *roomConfigComboEntry) currentValue() string {
-	selected := cc.comboBox.GetActiveID()
-	if selected != "" {
-		return selected
-	}
-
-	ok := false
-	entryText := getEntryText(cc.entry)
-
-	selected, ok = cc.options[entryText]
-	if ok {
-		return selected
-	}
-
-	_, err := strconv.Atoi(entryText)
-	if err != nil {
-		return ""
-	}
-
-	return entryText
-}
-
-// focus MUST be called from the UI thread
-func (cc *roomConfigComboEntry) focus() {
-	cc.entry.GrabFocus()
 }

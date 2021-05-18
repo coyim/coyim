@@ -75,6 +75,11 @@ func configPageDisplayTitle(pageID string) string {
 	return t.displayTitle
 }
 
+func configPageDisplayIntro(pageID string) string {
+	t := getRoomConfigPageTexts(pageID)
+	return t.displayIntro
+}
+
 type roomConfigFieldTextInfo struct {
 	displayLabel       string
 	displayDescription string

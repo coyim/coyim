@@ -11,6 +11,6 @@ func (c *mucRoomConfigComponent) newRoomConfigAccessPage() mucRoomConfigPage {
 	return p
 }
 
-func (p *roomConfigAccessPage) isInvalid() bool {
-	return p.roomConfigPageBase.isInvalid()
+func (p *roomConfigAccessPage) isValid() bool {
+	return p.roomConfigPageBase.isValid()
 }

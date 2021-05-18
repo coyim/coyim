@@ -61,7 +61,7 @@ func initMUCRoomConfigPages() {
 type mucRoomConfigPage interface {
 	pageView() gtki.Overlay
 	pageTitle() string
-	isInvalid() bool
+	isValid() bool
 	showValidationErrors()
 	collectData()
 	refresh()
@@ -190,15 +190,16 @@ func (p *roomConfigPageBase) pageView() gtki.Overlay {
 	return p.page
 }
 
-// isInvalid implements the "mucRoomConfigPage" interface
-func (p *roomConfigPageBase) isInvalid() (isInvalid bool) {
+// isValid implements the "mucRoomConfigPage" interface
+func (p *roomConfigPageBase) isValid() bool {
+	isValid := true
 	for _, f := range p.fields {
-		if f.isInvalid() {
+		if !f.isValid() {
 			f.showValidationErrors()
-			isInvalid = true
+			isValid = false
 		}
 	}
-	return isInvalid
+	return isValid
 }
 
 // validate implements the "mucRoomConfigPage" interface

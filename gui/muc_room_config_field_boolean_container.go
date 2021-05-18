@@ -49,9 +49,9 @@ func (fc *roomConfigFormFieldBooleanContainer) collectFieldValue() {
 	}
 }
 
-// isInvalid implements the hasRoomConfigFormField interface
-func (fc *roomConfigFormFieldBooleanContainer) isInvalid() bool {
-	return false
+// isValid implements the hasRoomConfigFormField interface
+func (fc *roomConfigFormFieldBooleanContainer) isValid() bool {
+	return true
 }
 
 // showValidationErrors implements the hasRoomConfigFormField interface

@@ -23,7 +23,7 @@ func fakeTCPConnToDNS(answer []byte) (net.Conn, error) {
 	go func() {
 		conn, _ := fakeResolver.Accept()
 
-		var dest [46]byte
+		var dest [256]byte
 		_, _ = conn.Read(dest[:])
 		_, _ = conn.Write(answer)
 

@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"strconv"
+
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -59,11 +61,20 @@ func (f *roomConfigFormFieldListEntry) activateOption(v string) {
 
 // collectFieldValue MUST be called from the UI thread
 func (f *roomConfigFormFieldListEntry) collectFieldValue() {
-	f.value.SetSelected("")
-	for o, index := range f.options {
-		if index == f.list.GetActive() {
-			f.value.SetSelected(o)
-			return
-		}
+	f.value.SetSelected(getEntryText(f.entry))
+}
+
+// isValid implements the hasRoomConfigFormField interface
+func (f *roomConfigFormFieldListEntry) isValid() bool {
+	v := getEntryText(f.entry)
+	if v != "" {
+		_, err := strconv.Atoi(v)
+		return err == nil
 	}
+	return true
+}
+
+// showValidationErrors implements the hasRoomConfigFormField interface
+func (f *roomConfigFormFieldListEntry) showValidationErrors() {
+	f.entry.GrabFocus()
 }

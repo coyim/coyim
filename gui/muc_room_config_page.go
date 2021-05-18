@@ -79,6 +79,7 @@ type roomConfigPageBase struct {
 	fieldsContent gtki.Box
 
 	page              gtki.Overlay `gtk-widget:"room-config-page-overlay"`
+	header            gtki.Label   `gtk-widget:"room-config-page-header-label"`
 	content           gtki.Box     `gtk-widget:"room-config-page-content"`
 	notificationsArea gtki.Box     `gtk-widget:"notifications-box"`
 
@@ -132,11 +133,21 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page
 	}
 
 	p.fieldsContent = fieldsContent.(gtki.Box)
+	p.initDefaults(pageID)
 	p.initKnownFields(pageID)
 
 	mucStyles.setRoomConfigPageStyle(pageContent)
 
 	return p
+}
+
+func (p *roomConfigPageBase) initDefaults(pageID string) {
+	intro := configPageDisplayIntro(pageID)
+	if intro == "" {
+		p.header.SetVisible(false)
+		return
+	}
+	p.header.SetText(intro)
 }
 
 func (p *roomConfigPageBase) initKnownFields(pageID string) {

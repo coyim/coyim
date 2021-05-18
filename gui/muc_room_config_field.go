@@ -72,7 +72,7 @@ func roomConfigFormFieldFactory(fieldType muc.RoomConfigFieldType, fieldInfo roo
 	case *muc.RoomConfigFieldBooleanValue:
 		return newRoomConfigFormFieldBoolean(fieldInfo, valueHandler), nil
 	case *muc.RoomConfigFieldListValue:
-		return newRoomConfigFormFieldList(fieldInfo, valueHandler), nil
+		return roomConfigFormListFieldFactory(fieldType, valueHandler)
 	case *muc.RoomConfigFieldListMultiValue:
 		return newRoomConfigFieldListMulti(fieldInfo, valueHandler), nil
 	}
@@ -88,4 +88,11 @@ func roomConfigFormTextFieldFactory(ft muc.RoomConfigFieldType, value *muc.RoomC
 		return newRoomConfigFormFieldPassword(roomConfigFieldsTexts[ft], value), nil
 	}
 	return newRoomConfigFormTextField(roomConfigFieldsTexts[ft], value), nil
+}
+
+func roomConfigFormListFieldFactory(ft muc.RoomConfigFieldType, value *muc.RoomConfigFieldListValue) (hasRoomConfigFormField, error) {
+	if ft == muc.RoomConfigFieldMaxOccupantsNumber {
+		return newRoomConfigFormFieldListEntry(roomConfigFieldsTexts[ft], value), nil
+	}
+	return newRoomConfigFormFieldList(roomConfigFieldsTexts[ft], value), nil
 }

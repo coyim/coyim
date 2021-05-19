@@ -1,6 +1,7 @@
 package xmpp
 
 import (
+	"bufio"
 	"encoding/hex"
 	"fmt"
 	"net"
@@ -22,12 +23,15 @@ func fakeTCPConnToDNS(answer []byte) (net.Conn, error) {
 	fakeResolver, _ := net.Listen("tcp", fmt.Sprintf("%s:0", host))
 	go func() {
 		conn, _ := fakeResolver.Accept()
+		defer func() {
+			_ = conn.Close()
+		}()
 
-		var dest [256]byte
-		_, _ = conn.Read(dest[:])
+		reader := bufio.NewReader(conn)
+		destination := make([]byte, reader.Size())
+
+		_, _ = conn.Read(destination[:])
 		_, _ = conn.Write(answer)
-
-		_ = conn.Close()
 	}()
 
 	return net.Dial("tcp", fakeResolver.Addr().String())

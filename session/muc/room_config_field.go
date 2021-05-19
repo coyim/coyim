@@ -59,8 +59,16 @@ func (f *RoomConfigFormField) ValueType() HasRoomConfigFormFieldValue {
 func roomConfigFormFieldValueFactory(field xmppData.FormFieldX) HasRoomConfigFormFieldValue {
 	values := field.Values
 	options := formFieldOptionsValues(field.Options)
+	fieldType := field.Type
+	switch field.Var {
+	case configFieldRoomDescription:
+		fieldType = RoomConfigFieldTextMulti
+	case configFieldMaxHistoryFetch, configFieldMaxHistoryLength:
+		fieldType = RoomConfigFieldList
+		options = maxHistoryFetchDefaultOptions
+	}
 
-	switch getFieldType(field) {
+	switch fieldType {
 	case RoomConfigFieldText, RoomConfigFieldTextPrivate:
 		return newRoomConfigFieldTextValue(values)
 	case RoomConfigFieldTextMulti:
@@ -76,11 +84,4 @@ func roomConfigFormFieldValueFactory(field xmppData.FormFieldX) HasRoomConfigFor
 	}
 
 	return newRoomConfigFieldUnknownValue(values)
-}
-
-func getFieldType(f xmppData.FormFieldX) string {
-	if f.Var == configFieldRoomDescription {
-		return RoomConfigFieldTextMulti
-	}
-	return f.Type
 }

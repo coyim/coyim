@@ -91,7 +91,7 @@ func roomConfigFormTextFieldFactory(ft muc.RoomConfigFieldType, value *muc.RoomC
 }
 
 func roomConfigFormListFieldFactory(ft muc.RoomConfigFieldType, value *muc.RoomConfigFieldListValue) (hasRoomConfigFormField, error) {
-	if ft == muc.RoomConfigFieldMaxOccupantsNumber {
+	if ft == muc.RoomConfigFieldMaxOccupantsNumber || ft == muc.RoomConfigFieldMaxHistoryFetch {
 		return newRoomConfigFormFieldListEntry(roomConfigFieldsTexts[ft], value), nil
 	}
 	return newRoomConfigFormFieldList(roomConfigFieldsTexts[ft], value), nil

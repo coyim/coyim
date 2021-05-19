@@ -145,6 +145,9 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page
 func (p *roomConfigPageBase) initDefaults() {
 	p.initIntroPage()
 	p.initKnownFields()
+	if p.pageID == pageConfigOthers {
+		p.initUnknownFields()
+	}
 }
 
 func (p *roomConfigPageBase) initIntroPage() {
@@ -166,8 +169,7 @@ func (p *roomConfigPageBase) initKnownFields() {
 					p.log.WithError(err).Error("Room configuration form field not supported")
 					continue
 				}
-				f, ok := field.(*roomConfigFormFieldBoolean)
-				if ok {
+				if f, ok := field.(*roomConfigFormFieldBoolean); ok {
 					booleanFields = append(booleanFields, f)
 					continue
 				}
@@ -177,6 +179,26 @@ func (p *roomConfigPageBase) initKnownFields() {
 		if len(booleanFields) > 0 {
 			p.addField(newRoomConfigFormFieldBooleanContainer(booleanFields))
 		}
+	}
+}
+
+func (p *roomConfigPageBase) initUnknownFields() {
+	booleanFields := []*roomConfigFormFieldBoolean{}
+	for _, ff := range p.form.GetUnknownFields() {
+		field, err := roomConfigFormUnknownFieldFactory(newRoomConfigFieldTextInfo(ff.Label, ff.Description), ff.ValueType())
+		if err != nil {
+			p.log.WithError(err).Error("Room configuration form field not supported")
+			continue
+		}
+		f, ok := field.(*roomConfigFormFieldBoolean)
+		if ok {
+			booleanFields = append(booleanFields, f)
+			continue
+		}
+		p.addField(field)
+	}
+	if len(booleanFields) > 0 {
+		p.addField(newRoomConfigFormFieldBooleanContainer(booleanFields))
 	}
 }
 

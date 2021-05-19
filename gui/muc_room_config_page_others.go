@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -16,21 +15,7 @@ func (c *mucRoomConfigComponent) newRoomConfigOthersPage() mucRoomConfigPage {
 	p := &roomConfigOthersPage{}
 	p.roomConfigPageBase = c.newConfigPage(pageConfigOthers, "MUCRoomConfigPageOthers", p, nil)
 
-	p.initDefaultValues()
 	return p
-}
-
-func (p *roomConfigOthersPage) initDefaultValues() {
-	for _, f := range p.form.Fields {
-		field, err := roomConfigFormFieldFactory(muc.RoomConfigFieldUnexpected, newRoomConfigFieldTextInfo(f.Label, f.Description), f.ValueType())
-		if err != nil {
-			p.log.WithField("field", f.Name).WithError(err).Error("Room configuration form field not supported")
-			continue
-		}
-
-		p.addField(field)
-		p.doAfterRefresh.add(field.refreshContent)
-	}
 }
 
 // isInvalid MUST be called from the UI thread

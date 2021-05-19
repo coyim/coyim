@@ -292,7 +292,7 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_setUnknowField(c *C) {
 		}
 		cf.setField(fieldX)
 		fields = append(fields, newRoomConfigFormField(fieldX))
-		c.Assert(cf.Fields, DeepEquals, fields)
+		c.Assert(cf.GetUnknownFields(), DeepEquals, fields)
 	}
 }
 

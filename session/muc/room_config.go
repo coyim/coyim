@@ -92,7 +92,7 @@ type RoomConfigForm struct {
 
 	receivedFieldNames map[string]bool
 	knownFields        map[RoomConfigFieldType]*RoomConfigFormField
-	Fields             []*RoomConfigFormField
+	unknownFields      []*RoomConfigFormField
 }
 
 // NewRoomConfigForm creates a new room configuration form instance
@@ -135,6 +135,8 @@ func (rcf *RoomConfigForm) setFormFields(fields []xmppData.FormFieldX) {
 			rcf.receivedFieldNames[field.Var] = true
 			if key, isKnown := getKnownRoomConfigFieldKey(field.Var); isKnown {
 				rcf.knownFields[key] = newRoomConfigFormField(field)
+			} else if field.Type != RoomConfigFieldFixed {
+				rcf.unknownFields = append(rcf.unknownFields, newRoomConfigFormField(field))
 			}
 		}
 	}
@@ -152,6 +154,11 @@ func (rcf *RoomConfigForm) GetKnownField(k RoomConfigFieldType) (*RoomConfigForm
 		return rcf.knownFields[k], true
 	}
 	return nil, false
+}
+
+// GetUnknownFields returns the known form field for the given key
+func (rcf *RoomConfigForm) GetUnknownFields() []*RoomConfigFormField {
+	return rcf.unknownFields
 }
 
 // GetFormData returns a representation of the room config FORM_TYPE as described in the
@@ -244,7 +251,7 @@ func (rcf *RoomConfigForm) getFieldDataValue(fieldName string) ([]string, bool) 
 		return rcf.Admins.Value(), true
 	}
 
-	for _, field := range rcf.Fields {
+	for _, field := range rcf.unknownFields {
 		if field.Name == fieldName {
 			return field.Value(), true
 		}
@@ -329,11 +336,6 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 	case configFieldWhoIs:
 		rcf.Whois.SetSelected(formFieldSingleString(field.Values))
 		rcf.Whois.SetOptions(formFieldOptionsValues(field.Options))
-
-	default:
-		if field.Type != RoomConfigFieldFixed {
-			rcf.Fields = append(rcf.Fields, newRoomConfigFormField(field))
-		}
 	}
 }
 

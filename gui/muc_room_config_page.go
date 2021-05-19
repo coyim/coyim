@@ -76,6 +76,7 @@ type roomConfigPageBase struct {
 	fields []hasRoomConfigFormField
 
 	title         string
+	pageID        string
 	fieldsContent gtki.Box
 
 	page              gtki.Overlay `gtk-widget:"room-config-page-overlay"`
@@ -94,6 +95,7 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page
 	p := &roomConfigPageBase{
 		u:              c.u,
 		title:          configPageDisplayTitle(pageID),
+		pageID:         pageID,
 		loadingOverlay: c.u.newLoadingOverlayComponent(),
 		doAfterRefresh: newCallbacksSet(),
 		form:           c.form,
@@ -133,16 +135,20 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page
 	}
 
 	p.fieldsContent = fieldsContent.(gtki.Box)
-	p.initDefaults(pageID)
-	p.initKnownFields(pageID)
+	p.initDefaults()
 
 	mucStyles.setRoomConfigPageStyle(pageContent)
 
 	return p
 }
 
-func (p *roomConfigPageBase) initDefaults(pageID string) {
-	intro := configPageDisplayIntro(pageID)
+func (p *roomConfigPageBase) initDefaults() {
+	p.initIntroPage()
+	p.initKnownFields()
+}
+
+func (p *roomConfigPageBase) initIntroPage() {
+	intro := configPageDisplayIntro(p.pageID)
 	if intro == "" {
 		p.header.SetVisible(false)
 		return
@@ -150,8 +156,8 @@ func (p *roomConfigPageBase) initDefaults(pageID string) {
 	p.header.SetText(intro)
 }
 
-func (p *roomConfigPageBase) initKnownFields(pageID string) {
-	if knownFields, ok := roomConfigPagesFields[pageID]; ok {
+func (p *roomConfigPageBase) initKnownFields() {
+	if knownFields, ok := roomConfigPagesFields[p.pageID]; ok {
 		booleanFields := []*roomConfigFormFieldBoolean{}
 		for _, kf := range knownFields {
 			if knownField, ok := p.form.GetKnownField(kf); ok {

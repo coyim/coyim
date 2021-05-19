@@ -1,0 +1,11 @@
+<interface>
+  <object class="GtkLinkButton" id="room-config-link-button-field">
+    <property name="focus_on_click">False</property>
+    <property name="receives_default">False</property>
+    <property name="halign">start</property>
+    <property name="valign">center</property>
+    <property name="relief">none</property>
+    <property name="uri">Go to basic information page</property>
+    <signal name="activate-link" handler="go_to_page" swapped="no"/>
+  </object>
+</interface>

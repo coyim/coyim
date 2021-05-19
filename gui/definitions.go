@@ -5836,6 +5836,23 @@ ICAgICA8L3BhY2tpbmc+CiAgICA8L2NoaWxkPgogIDwvb2JqZWN0Pgo8L2ludGVyZmFjZT4K
 `,
 	},
 
+	"/definitions/MUCRoomConfigFormFieldLinkButton.xml": {
+		local:   "definitions/MUCRoomConfigFormFieldLinkButton.xml",
+		size:    482,
+		modtime: 1489449600,
+		compressed: `
+PGludGVyZmFjZT4KICA8b2JqZWN0IGNsYXNzPSJHdGtMaW5rQnV0dG9uIiBpZD0icm9vbS1jb25maWct
+bGluay1idXR0b24tZmllbGQiPgogICAgPHByb3BlcnR5IG5hbWU9ImZvY3VzX29uX2NsaWNrIj5GYWxz
+ZTwvcHJvcGVydHk+CiAgICA8cHJvcGVydHkgbmFtZT0icmVjZWl2ZXNfZGVmYXVsdCI+RmFsc2U8L3By
+b3BlcnR5PgogICAgPHByb3BlcnR5IG5hbWU9ImhhbGlnbiI+c3RhcnQ8L3Byb3BlcnR5PgogICAgPHBy
+b3BlcnR5IG5hbWU9InZhbGlnbiI+Y2VudGVyPC9wcm9wZXJ0eT4KICAgIDxwcm9wZXJ0eSBuYW1lPSJy
+ZWxpZWYiPm5vbmU8L3Byb3BlcnR5PgogICAgPHByb3BlcnR5IG5hbWU9InVyaSI+R28gdG8gYmFzaWMg
+aW5mb3JtYXRpb24gcGFnZTwvcHJvcGVydHk+CiAgICA8c2lnbmFsIG5hbWU9ImFjdGl2YXRlLWxpbmsi
+IGhhbmRsZXI9ImdvX3RvX3BhZ2UiIHN3YXBwZWQ9Im5vIi8+CiAgPC9vYmplY3Q+CjwvaW50ZXJmYWNl
+Pgo=
+`,
+	},
+
 	"/definitions/MUCRoomConfigFormFieldList.xml": {
 		local:   "definitions/MUCRoomConfigFormFieldList.xml",
 		size:    2444,

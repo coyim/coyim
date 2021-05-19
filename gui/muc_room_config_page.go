@@ -143,11 +143,18 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page
 }
 
 func (p *roomConfigPageBase) initDefaults() {
+	switch p.pageID {
+	case pageConfigSummary:
+		p.initSummary()
+		return
+	case pageConfigOthers:
+		p.initIntroPage()
+		p.initKnownFields()
+		p.initUnknownFields()
+		return
+	}
 	p.initIntroPage()
 	p.initKnownFields()
-	if p.pageID == pageConfigOthers {
-		p.initUnknownFields()
-	}
 }
 
 func (p *roomConfigPageBase) initIntroPage() {
@@ -200,6 +207,14 @@ func (p *roomConfigPageBase) initUnknownFields() {
 	if len(booleanFields) > 0 {
 		p.addField(newRoomConfigFormFieldBooleanContainer(booleanFields))
 	}
+}
+
+func (p *roomConfigPageBase) initSummary() {
+	p.initSummaryFields(pageConfigInfo)
+}
+
+func (p *roomConfigPageBase) initSummaryFields(pageID string) {
+	p.addField(newRoomConfigFormFieldLinkButton(pageID, func(int) {}))
 }
 
 func (p *roomConfigPageBase) addField(field hasRoomConfigFormField) {

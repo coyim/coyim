@@ -89,8 +89,7 @@ func (rc *roomConfigAssistant) initBuilder() {
 }
 
 func (rc *roomConfigAssistant) initRoomConfigComponent(form *muc.RoomConfigForm) {
-	rc.roomConfigComponent = rc.u.newMUCRoomConfigComponent(rc.account, rc.roomID, form, rc.autoJoin, rc.assistant)
-	rc.roomConfigComponent.setCurrentPage = rc.assistant.SetCurrentPage
+	rc.roomConfigComponent = rc.u.newMUCRoomConfigComponent(rc.account, rc.roomID, form, rc.autoJoin, rc.assistant.SetCurrentPage, rc.assistant)
 }
 
 func (rc *roomConfigAssistant) initRoomConfigPages() {

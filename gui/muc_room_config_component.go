@@ -37,13 +37,14 @@ type mucRoomConfigComponent struct {
 	log coylog.Logger
 }
 
-func (u *gtkUI) newMUCRoomConfigComponent(account *account, roomID jid.Bare, f *muc.RoomConfigForm, autoJoin bool, parent gtki.Window) *mucRoomConfigComponent {
+func (u *gtkUI) newMUCRoomConfigComponent(account *account, roomID jid.Bare, f *muc.RoomConfigForm, autoJoin bool, setCurrentPage func(indexPage int), parent gtki.Window) *mucRoomConfigComponent {
 	c := &mucRoomConfigComponent{
-		u:        u,
-		account:  account,
-		roomID:   roomID,
-		form:     f,
-		autoJoin: autoJoin,
+		u:              u,
+		account:        account,
+		roomID:         roomID,
+		form:           f,
+		autoJoin:       autoJoin,
+		setCurrentPage: setCurrentPage,
 		log: u.log.WithFields(log.Fields{
 			"room":  roomID,
 			"where": "roomConfigComponent",

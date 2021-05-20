@@ -8527,6 +8527,27 @@ dD4KPC9pbnRlcmZhY2U+Cg==
 `,
 	},
 
+	"/definitions/MUCRoomConfigSummaryFieldContainer.xml": {
+		local:   "definitions/MUCRoomConfigSummaryFieldContainer.xml",
+		size:    776,
+		modtime: 1489449600,
+		compressed: `
+PGludGVyZmFjZT4KICA8b2JqZWN0IGNsYXNzPSJHdGtCb3giIGlkPSJyb29tLWNvbmZpZy1maWVsZC1i
+b3giPgogICAgPHByb3BlcnR5IG5hbWU9InZpc2libGUiPlRydWU8L3Byb3BlcnR5PgogICAgPHByb3Bl
+cnR5IG5hbWU9InZhbGlnbiI+Y2VudGVyPC9wcm9wZXJ0eT4KICAgIDxwcm9wZXJ0eSBuYW1lPSJvcmll
+bnRhdGlvbiI+dmVydGljYWw8L3Byb3BlcnR5PgogICAgPGNoaWxkPgogICAgICA8b2JqZWN0IGNsYXNz
+PSJHdGtGcmFtZSI+CiAgICAgICAgPHByb3BlcnR5IG5hbWU9InZpc2libGUiPlRydWU8L3Byb3BlcnR5
+PgogICAgICAgIDxwcm9wZXJ0eSBuYW1lPSJsYWJlbF94YWxpZ24iPjA8L3Byb3BlcnR5PgogICAgICAg
+IDxwcm9wZXJ0eSBuYW1lPSJzaGFkb3dfdHlwZSI+aW48L3Byb3BlcnR5PgogICAgICAgIDxjaGlsZD4K
+ICAgICAgICAgIDxvYmplY3QgY2xhc3M9Ikd0a0xpc3RCb3giIGlkPSJyb29tLWNvbmZpZy1maWVsZHMt
+Y29udGVudCI+CiAgICAgICAgICAgIDxwcm9wZXJ0eSBuYW1lPSJ2aXNpYmxlIj5UcnVlPC9wcm9wZXJ0
+eT4KICAgICAgICAgICAgPHByb3BlcnR5IG5hbWU9InNlbGVjdGlvbl9tb2RlIj5ub25lPC9wcm9wZXJ0
+eT4KICAgICAgICAgICAgPHByb3BlcnR5IG5hbWU9ImFjdGl2YXRlX29uX3NpbmdsZV9jbGljayI+RmFs
+c2U8L3Byb3BlcnR5PiAgICAgICAgICAgCiAgICAgICAgICA8L29iamVjdD4KICAgICAgICA8L2NoaWxk
+PgogICAgICA8L29iamVjdD4KICAgIDwvY2hpbGQ+CiAgPC9vYmplY3Q+CjwvaW50ZXJmYWNlPgo=
+`,
+	},
+
 	"/definitions/MUCRoomConfirmationRoomDialog.xml": {
 		local:   "definitions/MUCRoomConfirmationRoomDialog.xml",
 		size:    5047,

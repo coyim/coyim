@@ -16,12 +16,12 @@ type roomConfigSummaryField struct {
 	fieldValue gtki.Label      `gtk-widget:"room-config-field-value"`
 }
 
-func newRoomConfigSummaryField(fieldTexts roomConfigFieldTextInfo, fieldTypeValue interface{}) *roomConfigSummaryField {
+func newRoomConfigSummaryField(fieldType muc.RoomConfigFieldType, fieldTexts roomConfigFieldTextInfo, fieldTypeValue interface{}) *roomConfigSummaryField {
 	field := &roomConfigSummaryField{fieldTexts: fieldTexts}
 
 	field.initBuilder()
 	field.initDefaults()
-	field.handleFieldValue(fieldTypeValue)
+	field.handleFieldValue(fieldType, fieldTypeValue)
 
 	return field
 }
@@ -39,16 +39,22 @@ func (f *roomConfigSummaryField) fieldWidget() gtki.Widget {
 	return f.field
 }
 
-func (f *roomConfigSummaryField) handleFieldValue(fieldTypeValue interface{}) {
+func (f *roomConfigSummaryField) handleFieldValue(fieldType muc.RoomConfigFieldType, fieldTypeValue interface{}) {
 	switch v := fieldTypeValue.(type) {
 	case *muc.RoomConfigFieldTextValue:
-		f.handleTextFieldValue(v.Text())
+		f.handleTextFieldValue(fieldType, v.Text())
 	case *muc.RoomConfigFieldBooleanValue:
-		f.handleTextFieldValue(summaryYesOrNoText(v.Boolean()))
+		f.handleTextFieldValue(fieldType, summaryYesOrNoText(v.Boolean()))
 	}
 }
 
-func (f *roomConfigSummaryField) handleTextFieldValue(value string) {
+func (f *roomConfigSummaryField) handleTextFieldValue(ft muc.RoomConfigFieldType, value string) {
+	switch ft {
+	case muc.RoomConfigFieldLanguage:
+		setLabelText(f.fieldValue, supportedLanguageDescription(value))
+	case muc.RoomConfigFieldPassword:
+		setLabelText(f.fieldValue, summaryPasswordText(value == ""))
+	}
 	setLabelText(f.fieldValue, summaryAssignedValueText(value))
 }
 

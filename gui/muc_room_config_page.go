@@ -235,7 +235,7 @@ func (p *roomConfigPageBase) initSummaryFields(pageID string) {
 	fields := []*roomConfigSummaryField{}
 	for _, kf := range roomConfigPagesFields[pageID] {
 		knownField, _ := p.form.GetKnownField(kf)
-		fields = append(fields, newRoomConfigSummaryField(roomConfigFieldsTexts[kf], knownField.ValueType()))
+		fields = append(fields, newRoomConfigSummaryField(kf, roomConfigFieldsTexts[kf], knownField.ValueType()))
 	}
 	p.addField(newRoomConfigSummaryFieldContainer(fields))
 }

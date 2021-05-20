@@ -3,6 +3,7 @@ package importer
 import (
 	"bufio"
 	"encoding/hex"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -124,11 +125,13 @@ func intoGajimOTRSettings(vv map[string]interface{}) gajimOTRSettings {
 func (g *gajimImporter) importOTRSettings(f string) (map[string]gajimOTRSettings, map[gajimAccountAndPeer]gajimOTRSettings, bool) {
 	file, err := os.Open(filepath.Clean(f))
 	if err != nil {
+		fmt.Printf("importOTRSettings() error opening file: %s\n", err)
 		return nil, nil, false
 	}
 	defer closeAndIgnore(file)
 	res, err := stalecucumber.DictString(stalecucumber.Unpickle(file))
 	if err != nil {
+		fmt.Printf("importOTRSettings() error converting the return value of Unpickle into a map[string]interface{}: %s\n", err)
 		return nil, nil, false
 	}
 

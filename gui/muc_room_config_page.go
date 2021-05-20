@@ -197,8 +197,7 @@ func (p *roomConfigPageBase) initUnknownFields() {
 			p.log.WithError(err).Error("Room configuration form field not supported")
 			continue
 		}
-		f, ok := field.(*roomConfigFormFieldBoolean)
-		if ok {
+		if f, ok := field.(*roomConfigFormFieldBoolean); ok {
 			booleanFields = append(booleanFields, f)
 			continue
 		}
@@ -215,6 +214,12 @@ func (p *roomConfigPageBase) initSummary() {
 
 func (p *roomConfigPageBase) initSummaryFields(pageID string) {
 	p.addField(newRoomConfigFormFieldLinkButton(pageID, func(int) {}))
+	fields := []*roomConfigSummaryField{}
+	for _, kf := range roomConfigPagesFields[pageID] {
+		knownField, _ := p.form.GetKnownField(kf)
+		fields = append(fields, newRoomConfigSummaryField(roomConfigFieldsTexts[kf], knownField.ValueType()))
+	}
+	p.addField(newRoomConfigSummaryFieldContainer(fields))
 }
 
 func (p *roomConfigPageBase) addField(field hasRoomConfigFormField) {

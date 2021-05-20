@@ -70,9 +70,7 @@ func (s *GajimSuite) Test_GajimImporter_canImportPluginSettings(c *C) {
 	res, res2, ok := importer.importOTRSettings(file)
 
 	c.Logf("testResourceFilename: %s", file)
-	info, err := os.Stat(file)
-	c.Logf("testResourceFilename file info: %+v", info)
-	c.Logf("testResourceFilename file info error: %s", err)
+	c.Logf("testResourceFilename ok: %v", ok)
 	c.Logf("map[string]gajimOTRSettings: %s", res)
 	c.Logf("map[gajimAccountAndPeer]gajimOTRSettings: %s", res2)
 

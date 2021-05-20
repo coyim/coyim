@@ -221,9 +221,29 @@ func (s *MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	})
 }
 
-func (*MucRoomConfigSuite) Test_RoomConfigForm_setUnknowField(c *C) {
-	cf := &RoomConfigForm{}
-	fields := []*RoomConfigFormField{}
+func (*MucRoomConfigSuite) Test_RoomConfigForm_GetUnknownFields(c *C) {
+	cf := NewRoomConfigForm(&xmppData.Form{
+		Fields: []xmppData.FormFieldX{
+			{
+				Label:  "field label",
+				Var:    "foo",
+				Type:   RoomConfigFieldHidden,
+				Values: []string{"stuff"},
+			},
+			{
+				Label:  "field label",
+				Var:    "bla",
+				Type:   RoomConfigFieldText,
+				Values: []string{"a title"},
+			},
+			{
+				Label:  "field label",
+				Var:    "stuff",
+				Type:   RoomConfigFieldTextMulti,
+				Values: []string{"a description"},
+			},
+		},
+	})
 
 	checks := []struct {
 		name          string
@@ -233,56 +253,29 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_setUnknowField(c *C) {
 		expectedValue interface{}
 	}{
 		{
-			"RoomConfigFieldText",
-			RoomConfigFieldText,
+			"foo",
+			RoomConfigFieldHidden,
 			"field label",
-			[]string{"bla"},
+			[]string{"stuff"},
 			"bla",
 		},
 		{
-			"RoomConfigFieldTextPrivate",
-			RoomConfigFieldTextPrivate,
+			"bla",
+			RoomConfigFieldText,
 			"field label",
-			[]string{"foo"},
-			"foo",
+			[]string{"a title"},
+			"bla",
 		},
 		{
-			"RoomConfigFieldTextMulti",
+			"stuff",
 			RoomConfigFieldTextMulti,
 			"field label",
-			[]string{"bla foo"},
-			"bla foo",
-		},
-		{
-			"RoomConfigFieldBoolean",
-			RoomConfigFieldBoolean,
-			"field label",
-			[]string{"true"},
-			true,
-		},
-		{
-			"RoomConfigFieldList",
-			RoomConfigFieldList,
-			"field label",
-			[]string{"bla"},
-			newRoomConfigFieldListValue([]string{"bla"}, []*RoomConfigFieldOption{{Value: "bla"}}),
-		},
-		{
-			"RoomConfigFieldListMulti",
-			RoomConfigFieldListMulti,
-			"field label",
-			[]string{"bla", "foo", "bla1", "foo1"},
-			&RoomConfigFieldListMultiValue{value: []string{"bla", "foo", "bla1", "foo1"}},
-		},
-		{
-			"RoomConfigFieldJidMulti",
-			RoomConfigFieldJidMulti,
-			"field label",
-			[]string{"bla", "foo", "bla@domain.org", "foo@domain.org"},
-			[]jid.Any{jid.Parse("bla"), jid.Parse("foo"), jid.Parse("bla@domain.org"), jid.Parse("foo@domain.org")},
+			[]string{"a description"},
+			"foo",
 		},
 	}
 
+	fields := []*RoomConfigFormField{}
 	for _, chk := range checks {
 		fieldX := xmppData.FormFieldX{
 			Var:    chk.name,
@@ -292,8 +285,8 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_setUnknowField(c *C) {
 		}
 		cf.setField(fieldX)
 		fields = append(fields, newRoomConfigFormField(fieldX))
-		c.Assert(cf.GetUnknownFields(), DeepEquals, fields)
 	}
+	c.Assert(cf.GetUnknownFields(), DeepEquals, fields)
 }
 
 func (*MucRoomConfigSuite) Test_newRoomConfigFormField(c *C) {

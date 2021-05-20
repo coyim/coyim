@@ -10,10 +10,12 @@ type roomConfigSummaryField struct {
 	*roomConfigFormField
 	fieldTexts roomConfigFieldTextInfo
 
-	widget     gtki.Box        `gtk-widget:"room-config-field-box"`
-	field      gtki.ListBoxRow `gtk-widget:"room-config-field"`
-	fieldLabel gtki.Label      `gtk-widget:"room-config-field-label"`
-	fieldValue gtki.Label      `gtk-widget:"room-config-field-value"`
+	widget                gtki.Box            `gtk-widget:"room-config-field-box"`
+	field                 gtki.ListBoxRow     `gtk-widget:"room-config-field"`
+	fieldLabel            gtki.Label          `gtk-widget:"room-config-field-label"`
+	fieldValue            gtki.Label          `gtk-widget:"room-config-field-value"`
+	fieldTextMultiContent gtki.ScrolledWindow `gtk-widget:"room-config-field-text-area"`
+	fieldTextMultiValue   gtki.TextView       `gtk-widget:"room-config-field-text-area-value"`
 }
 
 func newRoomConfigSummaryField(fieldType muc.RoomConfigFieldType, fieldTexts roomConfigFieldTextInfo, fieldTypeValue interface{}) *roomConfigSummaryField {

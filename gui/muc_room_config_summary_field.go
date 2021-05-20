@@ -60,6 +60,19 @@ func (f *roomConfigSummaryField) handleTextFieldValue(ft muc.RoomConfigFieldType
 	setLabelText(f.fieldValue, summaryAssignedValueText(value))
 }
 
+func (f *roomConfigSummaryField) handleTextMultiFieldValue(ft muc.RoomConfigFieldType, value string) {
+	if value != "" {
+		setTextViewText(f.fieldTextMultiValue, summaryAssignedValueText(value))
+		f.fieldTextMultiContent.Show()
+		f.fieldValue.SetVisible(false)
+		return
+	}
+
+	setLabelText(f.fieldValue, summaryAssignedValueText(value))
+	f.fieldTextMultiContent.Hide()
+	f.fieldValue.SetVisible(true)
+}
+
 func summaryPasswordText(v bool) string {
 	if v {
 		return i18n.Local("**********")

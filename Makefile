@@ -130,10 +130,10 @@ lint: $(AUTOGEN)
 	golint -set_exit_status $(SRC_DIRS)
 
 test: $(AUTOGEN)
-	$(GOTEST) -cover -v $(TAGS) ./...
+	CGO_CFLAGS_ALLOW="-Wno-deprecated-declarations" CGO_CFLAGS="-Wno-deprecated-declarations" $(GOTEST) -cover -v $(TAGS) ./...
 
 test-named: $(AUTOGEN)
-	$(GOTEST) -v $(TAGS) $(SRC_DIRS)
+	CGO_CFLAGS_ALLOW="-Wno-deprecated-declarations" CGO_CFLAGS="-Wno-deprecated-declarations" $(GOTEST) -v $(TAGS) $(SRC_DIRS)
 
 deps:
 	go get -u golang.org/x/lint/golint

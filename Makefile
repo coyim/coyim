@@ -29,7 +29,7 @@ AUTOGEN := gui/settings/definitions/schemas.go gui/definitions.go
 
 LDFLAGS := -ldflags "-X 'main.BuildTimestamp=$(BUILD_TIMESTAMP)' -X 'main.BuildCommit=$(GIT_VERSION)' -X 'main.BuildShortCommit=$(GIT_SHORT_VERSION)' -X 'main.BuildTag=$(TAG_VERSION)'"
 
-GCC_HIDE_DEPRECATED_WARNINGS := CGO_CFLAGS_ALLOW="-Wno-deprecated-declarations" CGO_CFLAGS="-Wno-deprecated-declarations"
+GCC_DEPRECATED_WARNINGS_FLAG := CGO_CFLAGS_ALLOW="-Wno-deprecated-declarations" CGO_CFLAGS="-Wno-deprecated-declarations"
 
 .PHONY: default check autogen build build-gui build-gui-memory-analyzer build-gui-address-san build-gui-win build-debug debug win-ci-deps reproducible-linux-create-image reproducible-linux-build sign-reproducible upload-reproducible-signature send-reproducible-signature check-reproducible-signatures clean clean-cache update-vendor gosec ineffassign i18n lint test test-named dep-supported-only deps run-cover clean-cover cover all
 
@@ -132,10 +132,10 @@ lint: $(AUTOGEN)
 	golint -set_exit_status $(SRC_DIRS)
 
 test: $(AUTOGEN)
-	$(GCC_HIDE_DEPRECATED_WARNINGS) $(GOTEST) -cover -v $(TAGS) ./...
+	$(GCC_DEPRECATED_WARNINGS_FLAG) $(GOTEST) -cover -v $(TAGS) ./...
 
 test-named: $(AUTOGEN)
-	$(GCC_HIDE_DEPRECATED_WARNINGS) $(GOTEST) -v $(TAGS) $(SRC_DIRS)
+	$(GCC_DEPRECATED_WARNINGS_FLAG) $(GOTEST) -v $(TAGS) $(SRC_DIRS)
 
 deps:
 	go get -u golang.org/x/lint/golint

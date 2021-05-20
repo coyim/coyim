@@ -91,9 +91,10 @@ type roomConfigPageBase struct {
 	form   *muc.RoomConfigForm
 	fields []hasRoomConfigFormField
 
-	title         string
-	pageID        string
-	fieldsContent gtki.Box
+	title          string
+	pageID         string
+	setCurrentPage func(indexPage int)
+	fieldsContent  gtki.Box
 
 	page              gtki.Overlay `gtk-widget:"room-config-page-overlay"`
 	header            gtki.Label   `gtk-widget:"room-config-page-header-label"`
@@ -110,6 +111,7 @@ type roomConfigPageBase struct {
 func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page interface{}, signals map[string]interface{}) *roomConfigPageBase {
 	p := &roomConfigPageBase{
 		u:              c.u,
+		setCurrentPage: c.setCurrentPage,
 		title:          configPageDisplayTitle(pageID),
 		pageID:         pageID,
 		loadingOverlay: c.u.newLoadingOverlayComponent(),
@@ -229,7 +231,7 @@ func (p *roomConfigPageBase) initSummary() {
 }
 
 func (p *roomConfigPageBase) initSummaryFields(pageID string) {
-	p.addField(newRoomConfigFormFieldLinkButton(pageID, func(int) {}))
+	p.addField(newRoomConfigFormFieldLinkButton(pageID, p.setCurrentPage))
 	fields := []*roomConfigSummaryField{}
 	for _, kf := range roomConfigPagesFields[pageID] {
 		knownField, _ := p.form.GetKnownField(kf)

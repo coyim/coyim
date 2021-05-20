@@ -58,6 +58,22 @@ func initMUCRoomConfigPages() {
 	}
 }
 
+func getPageIndexBasedOnPageID(pageID string) int {
+	switch pageID {
+	case pageConfigInfo:
+		return roomConfigInformationPageIndex
+	case pageConfigAccess:
+		return roomConfigAccessPageIndex
+	case pageConfigPermissions:
+		return roomConfigPermissionsPageIndex
+	case pageConfigOccupants:
+		return roomConfigOccupantsPageIndex
+	case pageConfigOthers:
+		return roomConfigOthersPageIndex
+	}
+	return roomConfigSummaryPageIndex
+}
+
 type mucRoomConfigPage interface {
 	pageView() gtki.Overlay
 	pageTitle() string

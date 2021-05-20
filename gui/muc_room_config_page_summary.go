@@ -200,27 +200,6 @@ func summaryConfigurationOptionText(v, l string) string {
 	return configOptionToFriendlyMessage(v, l)
 }
 
-func summaryPasswordText(v bool) string {
-	if v {
-		return i18n.Local("**********")
-	}
-	return i18n.Local("Not assigned")
-}
-
-func summaryYesOrNoText(v bool) string {
-	if v {
-		return i18n.Local("Yes")
-	}
-	return i18n.Local("No")
-}
-
-func summaryAssignedValueText(label string) string {
-	if label != "" {
-		return label
-	}
-	return i18n.Local("Not assigned")
-}
-
 func summaryOccupantsTotalText(total int) string {
 	switch {
 	case total == 1:

@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -49,4 +50,25 @@ func (f *roomConfigSummaryField) handleFieldValue(fieldTypeValue interface{}) {
 
 func (f *roomConfigSummaryField) handleTextFieldValue(value string) {
 	setLabelText(f.fieldValue, summaryAssignedValueText(value))
+}
+
+func summaryPasswordText(v bool) string {
+	if v {
+		return i18n.Local("**********")
+	}
+	return i18n.Local("Not assigned")
+}
+
+func summaryYesOrNoText(v bool) string {
+	if v {
+		return i18n.Local("Yes")
+	}
+	return i18n.Local("No")
+}
+
+func summaryAssignedValueText(label string) string {
+	if label != "" {
+		return label
+	}
+	return i18n.Local("Not assigned")
 }

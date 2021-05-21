@@ -1,12 +1,12 @@
 package xmpp
 
 import (
-	"encoding/binary"
 	"encoding/hex"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net"
 	"sort"
+	"time"
 
 	. "gopkg.in/check.v1"
 )
@@ -14,6 +14,8 @@ import (
 type DNSXMPPSuite struct{}
 
 var _ = Suite(&DNSXMPPSuite{})
+
+const tcpFakeConnToDNSTimeout time.Duration = 5 * time.Second
 
 func fakeTCPConnToDNS(answer []byte) (net.Conn, error) {
 	host := "127.0.0.1"
@@ -25,12 +27,8 @@ func fakeTCPConnToDNS(answer []byte) (net.Conn, error) {
 	go func() {
 		conn, _ := fakeResolver.Accept()
 
-		var length uint16
-		_ = binary.Read(conn, binary.BigEndian, &length)
-
-		dest := make([]byte, length)
-		_, _ = io.ReadFull(conn, dest)
-
+		conn.SetReadDeadline(time.Now().Add(tcpFakeConnToDNSTimeout))
+		_, _ = ioutil.ReadAll(conn)
 		_, _ = conn.Write(answer)
 
 		_ = conn.Close()

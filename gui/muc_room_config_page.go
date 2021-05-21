@@ -1,8 +1,6 @@
 package gui
 
 import (
-	"fmt"
-
 	"github.com/coyim/coyim/i18n"
 
 	"github.com/coyim/coyim/coylog"
@@ -91,10 +89,9 @@ type roomConfigPageBase struct {
 	form   *muc.RoomConfigForm
 	fields []hasRoomConfigFormField
 
-	title          string
-	pageID         string
-	setCurrentPage func(indexPage int)
-	fieldsContent  gtki.Box
+	title               string
+	pageID              string
+	roomConfigComponent *mucRoomConfigComponent
 
 	page                gtki.Overlay     `gtk-widget:"room-config-page-overlay"`
 	header              gtki.Label       `gtk-widget:"room-config-page-header-label"`
@@ -110,61 +107,39 @@ type roomConfigPageBase struct {
 	log coylog.Logger
 }
 
-func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page interface{}, signals map[string]interface{}) *roomConfigPageBase {
+func (c *mucRoomConfigComponent) newConfigPage(pageID string) *roomConfigPageBase {
 	p := &roomConfigPageBase{
-		u:              c.u,
-		setCurrentPage: c.setCurrentPage,
-		title:          configPageDisplayTitle(pageID),
-		pageID:         pageID,
-		loadingOverlay: c.u.newLoadingOverlayComponent(),
-		doAfterRefresh: newCallbacksSet(),
-		form:           c.form,
+		u:                   c.u,
+		roomConfigComponent: c,
+		title:               configPageDisplayTitle(pageID),
+		pageID:              pageID,
+		loadingOverlay:      c.u.newLoadingOverlayComponent(),
+		doAfterRefresh:      newCallbacksSet(),
+		form:                c.form,
 		log: c.log.WithFields(log.Fields{
-			"page":     pageID,
-			"template": pageTemplate,
+			"page": pageID,
 		}),
 	}
 
+	p.initBuilder()
+	p.initDefaults()
+	mucStyles.setRoomConfigPageStyle(p.content)
+
+	return p
+}
+
+func (p *roomConfigPageBase) initBuilder() {
 	builder := newBuilder("MUCRoomConfigPage")
 	panicOnDevError(builder.bindObjects(p))
 	builder.ConnectSignals(map[string]interface{}{
 		"on_autojoin_toggled": func() {
-			c.updateAutoJoin(p.autojoinCheckButton.GetActive())
+			p.roomConfigComponent.updateAutoJoin(p.autojoinCheckButton.GetActive())
 		},
 	})
 
-	p.notifications = c.u.newNotificationsComponent()
-	p.loadingOverlay = c.u.newLoadingOverlayComponent()
+	p.notifications = p.u.newNotificationsComponent()
+	p.loadingOverlay = p.u.newLoadingOverlayComponent()
 	p.notificationsArea.Add(p.notifications.contentBox())
-
-	p.page.AddOverlay(p.loadingOverlay.getOverlay())
-	p.page.SetHExpand(true)
-	p.page.SetVExpand(true)
-
-	builder = newBuilder(pageTemplate)
-	panicOnDevError(builder.bindObjects(page))
-	builder.ConnectSignals(signals)
-
-	pc, err := builder.GetObject(fmt.Sprintf("room-config-%s-page", pageID))
-	if err != nil {
-		panic(fmt.Sprintf("developer error: the ID for \"%s\" page doesn't exists", pageID))
-	}
-
-	pageContent := pc.(gtki.Box)
-	pageContent.SetHExpand(false)
-	p.content.Add(pageContent)
-
-	fieldsContent, err := builder.GetObject("room-config-fields-content")
-	if err != nil {
-		panic(fmt.Sprintf("developer error: the ID for \"%s\" page doesn't exists", pageID))
-	}
-
-	p.fieldsContent = fieldsContent.(gtki.Box)
-	p.initDefaults()
-
-	mucStyles.setRoomConfigPageStyle(pageContent)
-
-	return p
 }
 
 func (p *roomConfigPageBase) initDefaults() {
@@ -242,7 +217,7 @@ func (p *roomConfigPageBase) initSummary() {
 }
 
 func (p *roomConfigPageBase) initSummaryFields(pageID string) {
-	p.addField(newRoomConfigFormFieldLinkButton(pageID, p.setCurrentPage))
+	p.addField(newRoomConfigFormFieldLinkButton(pageID, p.roomConfigComponent.setCurrentPage))
 	fields := []*roomConfigSummaryField{}
 	for _, kf := range roomConfigPagesFields[pageID] {
 		if knownField, ok := p.form.GetKnownField(kf); ok {
@@ -259,7 +234,7 @@ func (p *roomConfigPageBase) initSummaryFields(pageID string) {
 
 func (p *roomConfigPageBase) addField(field hasRoomConfigFormField) {
 	p.fields = append(p.fields, field)
-	p.fieldsContent.Add(field.fieldWidget())
+	p.content.Add(field.fieldWidget())
 	p.doAfterRefresh.add(field.refreshContent)
 }
 

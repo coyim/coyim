@@ -11,6 +11,5 @@ type roomConfigInfoPage struct {
 
 func (c *mucRoomConfigComponent) newRoomConfigInfoPage() mucRoomConfigPage {
 	p := &roomConfigInfoPage{}
-	p.roomConfigPageBase = c.newConfigPage(pageConfigInfo, "MUCRoomConfigPageInfo", p, nil)
 	return p
 }

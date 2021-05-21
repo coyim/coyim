@@ -51,29 +51,6 @@ type roomConfigSummaryPage struct {
 func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
 	p := &roomConfigSummaryPage{autoJoin: c.autoJoin}
 
-	p.roomConfigPageBase = c.newConfigPage(pageConfigSummary, "MUCRoomConfigPageSummary", p, map[string]interface{}{
-		"on_autojoin_toggled": func() {
-			c.updateAutoJoin(p.autojoinCheckButton.GetActive())
-		},
-		"go_basic_information_page": func() {
-			c.setCurrentPage(roomConfigInformationPageIndex)
-		},
-		"go_access_page": func() {
-			c.setCurrentPage(roomConfigAccessPageIndex)
-		},
-		"go_permissions_page": func() {
-			c.setCurrentPage(roomConfigPermissionsPageIndex)
-		},
-		"go_occupants_page": func() {
-			c.setCurrentPage(roomConfigOccupantsPageIndex)
-		},
-		"go_other_page": func() {
-			c.setCurrentPage(roomConfigOthersPageIndex)
-		},
-		"on_show_owners_list": p.onShowOwersList,
-		"on_show_admins_list": p.onShowAdminList,
-	})
-
 	p.doAfterRefresh.add(p.onSummaryPageRefresh)
 
 	mucStyles.setRoomConfigSummarySectionLinkButtonStyle(p.basicInformation)

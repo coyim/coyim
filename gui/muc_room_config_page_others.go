@@ -13,7 +13,6 @@ type roomConfigOthersPage struct {
 
 func (c *mucRoomConfigComponent) newRoomConfigOthersPage() mucRoomConfigPage {
 	p := &roomConfigOthersPage{}
-	p.roomConfigPageBase = c.newConfigPage(pageConfigOthers, "MUCRoomConfigPageOthers", p, nil)
 
 	return p
 }

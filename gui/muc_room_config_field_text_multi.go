@@ -23,8 +23,7 @@ func newRoomConfigFormTextMulti(fieldInfo roomConfigFieldTextInfo, value *muc.Ro
 	tb, _ := g.gtk.TextBufferNew(nil)
 	field.textView.SetBuffer(tb)
 
-	v := strings.Join(value.Text(), "\n")
-	tb.SetText(v)
+	tb.SetText(value.Text())
 
 	return field
 }

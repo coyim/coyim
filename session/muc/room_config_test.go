@@ -316,7 +316,7 @@ func (*MucRoomConfigSuite) Test_newRoomConfigFormField(c *C) {
 			RoomConfigFieldTextMulti,
 			"field label",
 			[]string{"bla foo"},
-			[]string{"bla foo"},
+			"bla foo",
 		},
 		{
 			"RoomConfigFieldBoolean",

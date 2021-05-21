@@ -1,5 +1,7 @@
 package muc
 
+import "strings"
+
 // RoomConfigFieldTextMultiValue contains information of the value of the boolean field
 type RoomConfigFieldTextMultiValue struct {
 	value []string
@@ -20,6 +22,6 @@ func (v *RoomConfigFieldTextMultiValue) SetText(lines []string) {
 }
 
 // Text returns the current text (multi line) value
-func (v *RoomConfigFieldTextMultiValue) Text() []string {
-	return v.Value()
+func (v *RoomConfigFieldTextMultiValue) Text() string {
+	return strings.Join(v.Value(), " ")
 }

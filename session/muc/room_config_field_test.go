@@ -32,7 +32,7 @@ func (*MucRoomConfigFieldsSuite) Test_RoomConfigFormField_roomConfigFormFieldVal
 				Values: []string{"bla", "foo"},
 			},
 			[]string{"bla", "foo"},
-			[]string{"bla", "foo"},
+			"bla foo",
 		},
 		{
 			xmppData.FormFieldX{

@@ -49,6 +49,8 @@ func (f *roomConfigSummaryField) handleFieldValue(fieldType muc.RoomConfigFieldT
 		f.handleTextMultiFieldValue(fieldType, v.Text())
 	case *muc.RoomConfigFieldBooleanValue:
 		f.handleTextFieldValue(fieldType, summaryYesOrNoText(v.Boolean()))
+	case *muc.RoomConfigFieldListValue:
+		f.handleTextFieldValue(fieldType, configOptionToFriendlyMessage(v.Selected(), v.Selected()))
 	}
 }
 

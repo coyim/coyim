@@ -241,6 +241,11 @@ func (p *roomConfigPageBase) initSummaryFields(pageID string) {
 			fields = append(fields, newRoomConfigSummaryField(kf, roomConfigFieldsTexts[kf], knownField.ValueType()))
 		}
 	}
+	if pageID == pageConfigOthers {
+		for _, ff := range p.form.GetUnknownFields() {
+			fields = append(fields, newRoomConfigSummaryField(muc.RoomConfigFieldUnexpected, newRoomConfigFieldTextInfo(ff.Label, ff.Description), ff.ValueType()))
+		}
+	}
 	p.addField(newRoomConfigSummaryFieldContainer(fields))
 }
 

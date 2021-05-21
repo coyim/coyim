@@ -82,12 +82,14 @@ func configPageDisplayIntro(pageID string) string {
 
 type roomConfigFieldTextInfo struct {
 	displayLabel       string
+	summaryLabel       string
 	displayDescription string
 }
 
 func newRoomConfigFieldTextInfo(label, description string) roomConfigFieldTextInfo {
 	return roomConfigFieldTextInfo{
 		displayLabel:       label,
+		summaryLabel:       label,
 		displayDescription: description,
 	}
 }
@@ -98,81 +100,99 @@ func initMUCRoomConfigFieldsTexts() {
 	roomConfigFieldsTexts = map[muc.RoomConfigFieldType]roomConfigFieldTextInfo{
 		muc.RoomConfigFieldName: {
 			displayLabel:       i18n.Local("Title"),
+			summaryLabel:       i18n.Local("Title"),
 			displayDescription: i18n.Local("The room title can be used to find the room in the public list."),
 		},
 		muc.RoomConfigFieldDescription: {
 			displayLabel: i18n.Local("Description"),
+			summaryLabel: i18n.Local("Description"),
 			displayDescription: i18n.Local("The room description can be used to add more information " +
 				"about the room, such as the purpose, the discussion topics, interests, etc."),
 		},
 		muc.RoomConfigFieldEnableLogging: {
 			displayLabel: i18n.Local("Enable archiving of discussions"),
+			summaryLabel: i18n.Local("Enable archiving of discussions"),
 			displayDescription: i18n.Local("The conversation of this room will be stored in an " +
 				"archive that could be accessed publicly. CoyIM users will be notified about this " +
 				"when enter in the room, other client might not."),
 		},
 		muc.RoomConfigFieldLanguage: {
 			displayLabel: i18n.Local("Primary language of discussion"),
+			summaryLabel: i18n.Local("Primary language of discussion"),
 			displayDescription: i18n.Local("This is the primary language in which conversations are " +
 				"held. Changing this will not impact the language of the application."),
 		},
 		muc.RoomConfigFieldPubsub: {
 			displayLabel: i18n.Local("XMPP URI of associated publish-subscribe node"),
+			summaryLabel: i18n.Local("XMPP URI of associated publish-subscribe node"),
 			displayDescription: i18n.Local("A chat room can have an associated place where publication " +
 				"and subscription of certain information can happen. This is a technical setting, " +
 				"which should be left empty unless you know what it means."),
 		},
 		muc.RoomConfigFieldCanChangeSubject: {
 			displayLabel:       i18n.Local("Allow anyone to set the room's subject"),
+			summaryLabel:       i18n.Local("Occupants can change subject of the room"),
 			displayDescription: i18n.Local("If not set, only moderators can modify it."),
 		},
 		muc.RoomConfigFieldAllowInvites: {
 			displayLabel: i18n.Local("Allow members to invite others to the room"),
+			summaryLabel: i18n.Local("Allow members to invite others"),
 		},
 		muc.RoomConfigFieldAllowPrivateMessages: {
-			displayLabel: i18n.Local("Private messages to others in the room can be sent by:"),
+			displayLabel: i18n.Local("People can send private messages"),
+			summaryLabel: i18n.Local("People can send private messages"),
 		},
 		muc.RoomConfigFieldMaxOccupantsNumber: {
 			displayLabel: i18n.Local("Maximum number of people in the room"),
+			summaryLabel: i18n.Local("Maximum number of people in the room"),
 		},
 		muc.RoomConfigFieldIsPublic: {
 			displayLabel: i18n.Local("Make this room public"),
+			summaryLabel: i18n.Local("Include in public lists"),
 			displayDescription: i18n.Local("A public room can be found by all users in any public " +
 				"listing."),
 		},
 		muc.RoomConfigFieldIsPersistent: {
 			displayLabel: i18n.Local("Make this room persistent"),
+			summaryLabel: i18n.Local("Persistent"),
 			displayDescription: i18n.Local("A persistent room won't be destroyed when the last " +
 				"occupant leaves the room."),
 		},
 		muc.RoomConfigFieldPresenceBroadcast: {
 			displayLabel: i18n.Local("What roles will receive information about other people in the room:"),
+			summaryLabel: i18n.Local("Roles will receive information about other people in the room"),
 		},
 		muc.RoomConfigFieldIsModerated: {
 			displayLabel: i18n.Local("Make this room moderated"),
+			summaryLabel: i18n.Local("Moderated"),
 			displayDescription: i18n.Local("In a moderated room, visitors must be given permission " +
 				"to speak."),
 		},
 		muc.RoomConfigFieldIsMembersOnly: {
 			displayLabel: i18n.Local("Make this room members-only"),
+			summaryLabel: i18n.Local("Only allow members to join"),
 		},
 		muc.RoomConfigFieldMembers: {
 			displayLabel: i18n.Local("Members"),
 		},
 		muc.RoomConfigFieldIsPasswordProtected: {
 			displayLabel: i18n.Local("Make this room password protected"),
+			summaryLabel: i18n.Local("Password protected"),
 		},
 		muc.RoomConfigFieldPassword: {
 			displayLabel: i18n.Local("Enter the room password"),
+			summaryLabel: i18n.Local("Password"),
 		},
 		muc.RoomConfigFieldOwners: {
 			displayLabel: i18n.Local("Owners"),
 		},
 		muc.RoomConfigFieldWhoIs: {
 			displayLabel: i18n.Local("The account address of others in the room may be viewed by:"),
+			summaryLabel: i18n.Local("Account address of occupants can be viewed by"),
 		},
 		muc.RoomConfigFieldMaxHistoryFetch: {
 			displayLabel: i18n.Local("Maximum previous messages sent to people when joining the room"),
+			summaryLabel: i18n.Local("Maximum previous messages sent to people when joining the room"),
 		},
 		muc.RoomConfigFieldAdmins: {
 			displayLabel: i18n.Local("Administrators"),

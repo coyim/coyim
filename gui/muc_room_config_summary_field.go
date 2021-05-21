@@ -34,7 +34,7 @@ func (f *roomConfigSummaryField) initBuilder() {
 }
 
 func (f *roomConfigSummaryField) initDefaults() {
-	f.fieldLabel.SetText(f.fieldTexts.displayLabel)
+	f.fieldLabel.SetText(f.fieldTexts.summaryLabel)
 }
 
 func (f *roomConfigSummaryField) fieldWidget() gtki.Widget {

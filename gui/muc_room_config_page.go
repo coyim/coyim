@@ -96,10 +96,12 @@ type roomConfigPageBase struct {
 	setCurrentPage func(indexPage int)
 	fieldsContent  gtki.Box
 
-	page              gtki.Overlay `gtk-widget:"room-config-page-overlay"`
-	header            gtki.Label   `gtk-widget:"room-config-page-header-label"`
-	content           gtki.Box     `gtk-widget:"room-config-page-content"`
-	notificationsArea gtki.Box     `gtk-widget:"notifications-box"`
+	page                gtki.Overlay     `gtk-widget:"room-config-page-overlay"`
+	header              gtki.Label       `gtk-widget:"room-config-page-header-label"`
+	content             gtki.Box         `gtk-widget:"room-config-page-content"`
+	notificationsArea   gtki.Box         `gtk-widget:"notifications-box"`
+	autojoinContent     gtki.Box         `gtk-widget:"room-config-autojoin-content"`
+	autojoinCheckButton gtki.CheckButton `gtk-widget:"room-config-autojoin"`
 
 	notifications  *notificationsComponent
 	loadingOverlay *loadingOverlayComponent
@@ -125,6 +127,11 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page
 
 	builder := newBuilder("MUCRoomConfigPage")
 	panicOnDevError(builder.bindObjects(p))
+	builder.ConnectSignals(map[string]interface{}{
+		"on_autojoin_toggled": func() {
+			c.updateAutoJoin(p.autojoinCheckButton.GetActive())
+		},
+	})
 
 	p.notifications = c.u.newNotificationsComponent()
 	p.loadingOverlay = c.u.newLoadingOverlayComponent()
@@ -231,6 +238,7 @@ func (p *roomConfigPageBase) initSummary() {
 	p.initSummaryFields(pageConfigAccess)
 	p.initSummaryFields(pageConfigPermissions)
 	p.initSummaryFields(pageConfigOthers)
+	p.autojoinContent.Show()
 }
 
 func (p *roomConfigPageBase) initSummaryFields(pageID string) {

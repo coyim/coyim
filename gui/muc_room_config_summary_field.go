@@ -45,6 +45,8 @@ func (f *roomConfigSummaryField) handleFieldValue(fieldType muc.RoomConfigFieldT
 	switch v := fieldTypeValue.(type) {
 	case *muc.RoomConfigFieldTextValue:
 		f.handleTextFieldValue(fieldType, v.Text())
+	case *muc.RoomConfigFieldTextMultiValue:
+		f.handleTextMultiFieldValue(fieldType, v.Text())
 	case *muc.RoomConfigFieldBooleanValue:
 		f.handleTextFieldValue(fieldType, summaryYesOrNoText(v.Boolean()))
 	}

@@ -15,7 +15,7 @@ type DNSXMPPSuite struct{}
 
 var _ = Suite(&DNSXMPPSuite{})
 
-const tcpFakeConnToDNSTimeout time.Duration = 5 * time.Second
+const tcpFakeConnToDNSTimeout = 5 * time.Second
 
 func fakeTCPConnToDNS(answer []byte) (net.Conn, error) {
 	host := "127.0.0.1"

@@ -135,7 +135,7 @@ func (rcf *RoomConfigForm) setFormFields(fields []xmppData.FormFieldX) {
 			rcf.receivedFieldNames[field.Var] = true
 			if key, isKnown := getKnownRoomConfigFieldKey(field.Var); isKnown {
 				rcf.knownFields[key] = newRoomConfigFormField(field)
-			} else if field.Type != RoomConfigFieldFixed {
+			} else if field.Type != RoomConfigFieldFixed && field.Var != configFieldFormType {
 				rcf.unknownFields = append(rcf.unknownFields, newRoomConfigFormField(field))
 			}
 		}

@@ -228,14 +228,18 @@ func (p *roomConfigPageBase) initUnknownFields() {
 
 func (p *roomConfigPageBase) initSummary() {
 	p.initSummaryFields(pageConfigInfo)
+	p.initSummaryFields(pageConfigAccess)
+	p.initSummaryFields(pageConfigPermissions)
+	p.initSummaryFields(pageConfigOthers)
 }
 
 func (p *roomConfigPageBase) initSummaryFields(pageID string) {
 	p.addField(newRoomConfigFormFieldLinkButton(pageID, p.setCurrentPage))
 	fields := []*roomConfigSummaryField{}
 	for _, kf := range roomConfigPagesFields[pageID] {
-		knownField, _ := p.form.GetKnownField(kf)
-		fields = append(fields, newRoomConfigSummaryField(kf, roomConfigFieldsTexts[kf], knownField.ValueType()))
+		if knownField, ok := p.form.GetKnownField(kf); ok {
+			fields = append(fields, newRoomConfigSummaryField(kf, roomConfigFieldsTexts[kf], knownField.ValueType()))
+		}
 	}
 	p.addField(newRoomConfigSummaryFieldContainer(fields))
 }

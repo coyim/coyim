@@ -118,17 +118,16 @@ func (p *roomConfigPageBase) initBuilder() {
 }
 
 func (p *roomConfigPageBase) initDefaults() {
+	p.initIntroPage()
 	switch p.pageID {
 	case roomConfigSummaryPageIndex:
 		p.initSummary()
 		return
 	case roomConfigOthersPageIndex:
-		p.initIntroPage()
 		p.initKnownFields()
 		p.initUnknownFields()
 		return
 	}
-	p.initIntroPage()
 	p.initKnownFields()
 }
 

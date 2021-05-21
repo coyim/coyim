@@ -17,16 +17,16 @@ type roomConfigPageTextInfo struct {
 	displayIntro string
 }
 
-var roomConfigPagesTexts map[string]roomConfigPageTextInfo
+var roomConfigPagesTexts map[int]roomConfigPageTextInfo
 
 func initMUCRoomConfigPagesTexts() {
-	roomConfigPagesTexts = map[string]roomConfigPageTextInfo{
-		pageConfigInfo: {
+	roomConfigPagesTexts = map[int]roomConfigPageTextInfo{
+		roomConfigInformationPageIndex: {
 			displayTitle: i18n.Local("Basic information"),
 			displayIntro: i18n.Local("This section contains basic configuration options that you can " +
 				"set for the room."),
 		},
-		pageConfigAccess: {
+		roomConfigAccessPageIndex: {
 			displayTitle: i18n.Local("Access"),
 			displayIntro: i18n.Local("Here you can manage access to the room. If you specify a password " +
 				"for the room, you should share it in a secure way. This will help to protect the " +
@@ -34,12 +34,12 @@ func initMUCRoomConfigPagesTexts() {
 				"people that control the location of the room might still have access to it, even " +
 				"without providing a password."),
 		},
-		pageConfigPermissions: {
+		roomConfigPermissionsPageIndex: {
 			displayTitle: i18n.Local("Permissions"),
 			displayIntro: i18n.Local("Here you can change settings that impact who can do what inside " +
 				"the room."),
 		},
-		pageConfigOccupants: {
+		roomConfigOccupantsPageIndex: {
 			displayTitle: i18n.Local("Occupants"),
 			displayIntro: i18n.Local("Here you can define who the owners and administrators are. " +
 				"Owners will always be moderators in a room. They can give or take away any position " +
@@ -48,19 +48,19 @@ func initMUCRoomConfigPagesTexts() {
 				"also ban or unban people from a room. An administrator can't change the room configuration " +
 				"or destroy the room."),
 		},
-		pageConfigOthers: {
+		roomConfigOthersPageIndex: {
 			displayTitle: i18n.Local("Other settings"),
 			displayIntro: i18n.Local("Here you can find other configuration options that might be useful " +
 				"to you. Note that if archiving is enabled, all the discussions in the room might be logged " +
 				"and potentially made publicly accessible."),
 		},
-		pageConfigSummary: {
+		roomConfigSummaryPageIndex: {
 			displayTitle: i18n.Local("Summary"),
 		},
 	}
 }
 
-func getRoomConfigPageTexts(pageID string) roomConfigPageTextInfo {
+func getRoomConfigPageTexts(pageID int) roomConfigPageTextInfo {
 	if t, ok := roomConfigPagesTexts[pageID]; ok {
 		return t
 	}
@@ -70,12 +70,12 @@ func getRoomConfigPageTexts(pageID string) roomConfigPageTextInfo {
 	}
 }
 
-func configPageDisplayTitle(pageID string) string {
+func configPageDisplayTitle(pageID int) string {
 	t := getRoomConfigPageTexts(pageID)
 	return t.displayTitle
 }
 
-func configPageDisplayIntro(pageID string) string {
+func configPageDisplayIntro(pageID int) string {
 	t := getRoomConfigPageTexts(pageID)
 	return t.displayIntro
 }

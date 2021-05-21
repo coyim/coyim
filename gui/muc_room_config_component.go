@@ -57,12 +57,12 @@ func (u *gtkUI) newMUCRoomConfigComponent(account *account, roomID jid.Bare, f *
 }
 
 func (c *mucRoomConfigComponent) initConfigPages(parent gtki.Window) {
-	c.infoPage = c.newConfigPage(pageConfigInfo)
-	c.accessPage = c.newConfigPage(pageConfigAccess)
-	c.permissionsPage = c.newConfigPage(pageConfigPermissions)
-	c.occupantsPage = c.newConfigPage(pageConfigOccupants)
-	c.othersPage = c.newConfigPage(pageConfigOthers)
-	c.summaryPage = c.newConfigPage(pageConfigSummary)
+	c.infoPage = c.newConfigPage(roomConfigInformationPageIndex)
+	c.accessPage = c.newConfigPage(roomConfigAccessPageIndex)
+	c.permissionsPage = c.newConfigPage(roomConfigPermissionsPageIndex)
+	c.occupantsPage = c.newConfigPage(roomConfigOccupantsPageIndex)
+	c.othersPage = c.newConfigPage(roomConfigOthersPageIndex)
+	c.summaryPage = c.newConfigPage(roomConfigSummaryPageIndex)
 }
 
 func (c *mucRoomConfigComponent) updateAutoJoin(v bool) {

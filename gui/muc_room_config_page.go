@@ -9,67 +9,42 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const (
-	pageConfigInfo        = "info"
-	pageConfigAccess      = "access"
-	pageConfigPermissions = "permissions"
-	pageConfigOccupants   = "occupants"
-	pageConfigOthers      = "others"
-	pageConfigSummary     = "summary"
-)
-
-var roomConfigPagesFields map[string][]muc.RoomConfigFieldType
+var roomConfigPagesFields map[int][]muc.RoomConfigFieldType
 
 func initMUCRoomConfigPages() {
-	roomConfigPagesFields = map[string][]muc.RoomConfigFieldType{
-		pageConfigInfo: {
+	roomConfigPagesFields = map[int][]muc.RoomConfigFieldType{
+		roomConfigInformationPageIndex: {
 			muc.RoomConfigFieldName,
 			muc.RoomConfigFieldDescription,
 			muc.RoomConfigFieldLanguage,
 			muc.RoomConfigFieldIsPublic,
 			muc.RoomConfigFieldIsPersistent,
 		},
-		pageConfigAccess: {
+		roomConfigAccessPageIndex: {
 			muc.RoomConfigFieldIsPasswordProtected,
 			muc.RoomConfigFieldPassword,
 			muc.RoomConfigFieldIsMembersOnly,
 			muc.RoomConfigFieldAllowInvites,
 		},
-		pageConfigPermissions: {
+		roomConfigPermissionsPageIndex: {
 			muc.RoomConfigFieldWhoIs,
 			muc.RoomConfigFieldIsModerated,
 			muc.RoomConfigFieldCanChangeSubject,
 			muc.RoomConfigFieldAllowPrivateMessages,
 			muc.RoomConfigFieldPresenceBroadcast,
 		},
-		pageConfigOccupants: {
+		roomConfigOccupantsPageIndex: {
 			muc.RoomConfigFieldOwners,
 			muc.RoomConfigFieldAdmins,
 			muc.RoomConfigFieldMembers,
 		},
-		pageConfigOthers: {
+		roomConfigOthersPageIndex: {
 			muc.RoomConfigFieldMaxOccupantsNumber,
 			muc.RoomConfigFieldMaxHistoryFetch,
 			muc.RoomConfigFieldEnableLogging,
 			muc.RoomConfigFieldPubsub,
 		},
 	}
-}
-
-func getPageIndexBasedOnPageID(pageID string) int {
-	switch pageID {
-	case pageConfigInfo:
-		return roomConfigInformationPageIndex
-	case pageConfigAccess:
-		return roomConfigAccessPageIndex
-	case pageConfigPermissions:
-		return roomConfigPermissionsPageIndex
-	case pageConfigOccupants:
-		return roomConfigOccupantsPageIndex
-	case pageConfigOthers:
-		return roomConfigOthersPageIndex
-	}
-	return roomConfigSummaryPageIndex
 }
 
 type mucRoomConfigPage interface {
@@ -90,7 +65,7 @@ type roomConfigPageBase struct {
 	fields []hasRoomConfigFormField
 
 	title               string
-	pageID              string
+	pageID              int
 	roomConfigComponent *mucRoomConfigComponent
 
 	page                gtki.Overlay     `gtk-widget:"room-config-page-overlay"`
@@ -107,7 +82,7 @@ type roomConfigPageBase struct {
 	log coylog.Logger
 }
 
-func (c *mucRoomConfigComponent) newConfigPage(pageID string) *roomConfigPageBase {
+func (c *mucRoomConfigComponent) newConfigPage(pageID int) *roomConfigPageBase {
 	p := &roomConfigPageBase{
 		u:                   c.u,
 		roomConfigComponent: c,
@@ -144,10 +119,10 @@ func (p *roomConfigPageBase) initBuilder() {
 
 func (p *roomConfigPageBase) initDefaults() {
 	switch p.pageID {
-	case pageConfigSummary:
+	case roomConfigSummaryPageIndex:
 		p.initSummary()
 		return
-	case pageConfigOthers:
+	case roomConfigOthersPageIndex:
 		p.initIntroPage()
 		p.initKnownFields()
 		p.initUnknownFields()
@@ -209,14 +184,14 @@ func (p *roomConfigPageBase) initUnknownFields() {
 }
 
 func (p *roomConfigPageBase) initSummary() {
-	p.initSummaryFields(pageConfigInfo)
-	p.initSummaryFields(pageConfigAccess)
-	p.initSummaryFields(pageConfigPermissions)
-	p.initSummaryFields(pageConfigOthers)
+	p.initSummaryFields(roomConfigInformationPageIndex)
+	p.initSummaryFields(roomConfigAccessPageIndex)
+	p.initSummaryFields(roomConfigPermissionsPageIndex)
+	p.initSummaryFields(roomConfigOthersPageIndex)
 	p.autojoinContent.Show()
 }
 
-func (p *roomConfigPageBase) initSummaryFields(pageID string) {
+func (p *roomConfigPageBase) initSummaryFields(pageID int) {
 	p.addField(newRoomConfigFormFieldLinkButton(pageID, p.roomConfigComponent.setCurrentPage))
 	fields := []*roomConfigSummaryField{}
 	for _, kf := range roomConfigPagesFields[pageID] {
@@ -224,7 +199,7 @@ func (p *roomConfigPageBase) initSummaryFields(pageID string) {
 			fields = append(fields, newRoomConfigSummaryField(kf, roomConfigFieldsTexts[kf], knownField.ValueType()))
 		}
 	}
-	if pageID == pageConfigOthers {
+	if pageID == roomConfigOthersPageIndex {
 		for _, ff := range p.form.GetUnknownFields() {
 			fields = append(fields, newRoomConfigSummaryField(muc.RoomConfigFieldUnexpected, newRoomConfigFieldTextInfo(ff.Label, ff.Description), ff.ValueType()))
 		}

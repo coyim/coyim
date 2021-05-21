@@ -6,13 +6,13 @@ import (
 
 type roomConfigFormFieldLinkButton struct {
 	*roomConfigFormField
-	pageID         string
+	pageID         int
 	setCurrentPage func(indexPage int)
 
 	linkButton gtki.LinkButton `gtk-widget:"room-config-link-button-field"`
 }
 
-func newRoomConfigFormFieldLinkButton(pageID string, setCurrentPage func(indexPage int)) hasRoomConfigFormField {
+func newRoomConfigFormFieldLinkButton(pageID int, setCurrentPage func(indexPage int)) hasRoomConfigFormField {
 	field := &roomConfigFormFieldLinkButton{
 		pageID:         pageID,
 		setCurrentPage: setCurrentPage,
@@ -40,5 +40,5 @@ func (f *roomConfigFormFieldLinkButton) fieldWidget() gtki.Widget {
 }
 
 func (f *roomConfigFormFieldLinkButton) goToPage() {
-	f.setCurrentPage(getPageIndexBasedOnPageID(f.pageID))
+	f.setCurrentPage(f.pageID)
 }

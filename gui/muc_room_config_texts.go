@@ -5,11 +5,13 @@ import (
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/session/muc/data"
 )
 
 func initMUCRoomConfigTexts() {
 	initMUCRoomConfigPagesTexts()
 	initMUCRoomConfigFieldsTexts()
+	initMUCRoomConfigOccupantFieldTexts()
 }
 
 type roomConfigPageTextInfo struct {
@@ -196,6 +198,34 @@ func initMUCRoomConfigFieldsTexts() {
 		},
 		muc.RoomConfigFieldAdmins: {
 			displayLabel: i18n.Local("Administrators"),
+		},
+	}
+}
+
+type roomConfigOccupantFieldText struct {
+	headerLabel       string
+	dialogTitle       string
+	dialogDescription string
+}
+
+var roomConfigOccupantFieldTexts map[data.Affiliation]roomConfigOccupantFieldText
+
+func initMUCRoomConfigOccupantFieldTexts() {
+	roomConfigOccupantFieldTexts = map[data.Affiliation]roomConfigOccupantFieldText{
+		&data.OwnerAffiliation{}: {
+			headerLabel:       i18n.Local("Owners:"),
+			dialogTitle:       i18n.Local("Add owners"),
+			dialogDescription: i18n.Local("Here you can add one or more new owners to the room. You will have to use the account address of the user in order to make them an owner. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
+		},
+		&data.AdminAffiliation{}: {
+			headerLabel:       i18n.Local("Administrators:"),
+			dialogTitle:       i18n.Local("Add administrators"),
+			dialogDescription: i18n.Local("Here you can add one or more new administrators to the room. You will have to use the account address of the user in order to make them an administrator. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
+		},
+		&data.OutcastAffiliation{}: {
+			headerLabel:       i18n.Local("Banned people:"),
+			dialogTitle:       i18n.Local("Add ban people"),
+			dialogDescription: i18n.Local("Here you can add one or more people who will not be able to enter in this room. You will have to use the account address of the user in order to ban them. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
 		},
 	}
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/gotk3adapter/gtki"
 	log "github.com/sirupsen/logrus"
 )
@@ -123,6 +124,9 @@ func (p *roomConfigPageBase) initDefaults() {
 	case roomConfigSummaryPageIndex:
 		p.initSummary()
 		return
+	case roomConfigOccupantsPageIndex:
+		p.initOccupants()
+		return
 	case roomConfigOthersPageIndex:
 		p.initKnownFields()
 		p.initUnknownFields()
@@ -204,6 +208,14 @@ func (p *roomConfigPageBase) initSummaryFields(pageID int) {
 		}
 	}
 	p.addField(newRoomConfigSummaryFieldContainer(fields))
+}
+
+func (p *roomConfigPageBase) initOccupants() {
+	p.addField(newRoomConfigOccupants(&data.OwnerAffiliation{}))
+	p.content.Add(createSeparator(gtki.HorizontalOrientation))
+	p.addField(newRoomConfigOccupants(&data.AdminAffiliation{}))
+	p.content.Add(createSeparator(gtki.HorizontalOrientation))
+	p.addField(newRoomConfigOccupants(&data.OutcastAffiliation{}))
 }
 
 func (p *roomConfigPageBase) addField(field hasRoomConfigFormField) {

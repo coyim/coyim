@@ -14,14 +14,12 @@ type mucRoomConfigListControllerData struct {
 }
 
 type mucRoomConfigListController struct {
-	u                  *gtkUI
 	listComponent      *mucRoomConfigListComponent
 	doAfterListUpdated func() // doAfterListUpdated will be called from the UI thread
 }
 
-func (u *gtkUI) newMUCRoomConfigListController(d *mucRoomConfigListControllerData) *mucRoomConfigListController {
+func newMUCRoomConfigListController(d *mucRoomConfigListControllerData) *mucRoomConfigListController {
 	c := &mucRoomConfigListController{
-		u:                  u,
 		doAfterListUpdated: d.onListUpdated,
 	}
 
@@ -31,7 +29,7 @@ func (u *gtkUI) newMUCRoomConfigListController(d *mucRoomConfigListControllerDat
 }
 
 func (c *mucRoomConfigListController) initListComponent(d *mucRoomConfigListControllerData) {
-	c.listComponent = c.u.newMUCRoomConfigListComponent(
+	c.listComponent = newMUCRoomConfigListComponent(
 		d.occupantsTreeView,
 		d.addOccupantButton,
 		d.removeOccupantButton,
@@ -44,7 +42,7 @@ func (c *mucRoomConfigListController) initListComponent(d *mucRoomConfigListCont
 // onAddOccupantsToList MUST be called from the UI thread
 func (c *mucRoomConfigListController) onAddOccupantsToList(d *mucRoomConfigListControllerData) func() {
 	return func() {
-		addToList := c.u.newMUCRoomConfigListAddComponent(
+		addToList := newMUCRoomConfigListAddComponent(
 			d.addOccupantDialogTitle,
 			d.addOccupantDescription,
 			c.onAddListItems,

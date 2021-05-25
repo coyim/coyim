@@ -31,9 +31,8 @@ type mucRoomConfigListAddComponent struct {
 	onApply       func(jidList []string)
 }
 
-func (u *gtkUI) newMUCRoomConfigListAddComponent(dialogTitle, formTitle string, onApply func(jidList []string), parent gtki.Window) *mucRoomConfigListAddComponent {
+func newMUCRoomConfigListAddComponent(dialogTitle, formTitle string, onApply func(jidList []string), parent gtki.Window) *mucRoomConfigListAddComponent {
 	la := &mucRoomConfigListAddComponent{
-		u:           u,
 		dialogTitle: dialogTitle,
 		formTitle:   formTitle,
 		onApply:     onApply,

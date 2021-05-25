@@ -9,7 +9,6 @@ import (
 const jidColumnIndex = 0
 
 type mucRoomConfigListComponent struct {
-	u                 *gtkUI
 	list              gtki.TreeView
 	listModel         gtki.ListStore
 	addButton         gtki.Button
@@ -19,9 +18,8 @@ type mucRoomConfigListComponent struct {
 	onNoItems         func()
 }
 
-func (u *gtkUI) newMUCRoomConfigListComponent(list gtki.TreeView, addButton, removeButton gtki.Button, removeButtonLabel gtki.Label, onAdd, onNoItems func()) *mucRoomConfigListComponent {
+func newMUCRoomConfigListComponent(list gtki.TreeView, addButton, removeButton gtki.Button, removeButtonLabel gtki.Label, onAdd, onNoItems func()) *mucRoomConfigListComponent {
 	cl := &mucRoomConfigListComponent{
-		u:                 u,
 		list:              list,
 		addButton:         addButton,
 		removeButton:      removeButton,

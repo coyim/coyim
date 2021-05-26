@@ -184,9 +184,6 @@
                         </child>
                       </object>
                     </child>
-                    <child type="label_item">
-                      <placeholder/>
-                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>

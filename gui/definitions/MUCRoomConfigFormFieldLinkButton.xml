@@ -5,7 +5,6 @@
     <property name="halign">start</property>
     <property name="valign">center</property>
     <property name="relief">none</property>
-    <property name="uri">Go to basic information page</property>
     <signal name="activate-link" handler="go_to_page" swapped="no"/>
   </object>
 </interface>

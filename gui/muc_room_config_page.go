@@ -251,7 +251,11 @@ func (p *roomConfigPageBase) showValidationErrors() {
 }
 
 // Nothing to do, just implement the "mucRoomConfigPage" interface
-func (p *roomConfigPageBase) collectData() {}
+func (p *roomConfigPageBase) collectData() {
+	for _, f := range p.fields {
+		f.collectFieldValue()
+	}
+}
 
 // refresh MUST be called from the UI thread
 func (p *roomConfigPageBase) refresh() {

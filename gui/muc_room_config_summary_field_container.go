@@ -40,7 +40,11 @@ func (fc *roomConfigSummaryFieldContainer) fieldWidget() gtki.Widget {
 }
 
 // refreshContent MUST NOT be called from the UI thread
-func (fc *roomConfigSummaryFieldContainer) refreshContent() {}
+func (fc *roomConfigSummaryFieldContainer) refreshContent() {
+	for _, f := range fc.fields {
+		f.refreshContent()
+	}
+}
 
 // collectFieldValue MUST be called from the UI thread
 func (fc *roomConfigSummaryFieldContainer) collectFieldValue() {

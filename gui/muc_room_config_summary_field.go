@@ -7,7 +7,6 @@ import (
 )
 
 type roomConfigSummaryField struct {
-	*roomConfigFormField
 	fieldTexts roomConfigFieldTextInfo
 
 	widget                gtki.Box            `gtk-widget:"room-config-field-box"`
@@ -18,7 +17,7 @@ type roomConfigSummaryField struct {
 	fieldTextMultiValue   gtki.TextView       `gtk-widget:"room-config-field-text-area-value"`
 }
 
-func newRoomConfigSummaryField(fieldType muc.RoomConfigFieldType, fieldTexts roomConfigFieldTextInfo, fieldTypeValue interface{}) *roomConfigSummaryField {
+func newRoomConfigSummaryField(fieldType muc.RoomConfigFieldType, fieldTexts roomConfigFieldTextInfo, fieldTypeValue interface{}) hasRoomConfigFormField {
 	field := &roomConfigSummaryField{fieldTexts: fieldTexts}
 
 	field.initBuilder()
@@ -35,10 +34,6 @@ func (f *roomConfigSummaryField) initBuilder() {
 
 func (f *roomConfigSummaryField) initDefaults() {
 	f.fieldLabel.SetText(f.fieldTexts.summaryLabel)
-}
-
-func (f *roomConfigSummaryField) fieldWidget() gtki.Widget {
-	return f.field
 }
 
 func (f *roomConfigSummaryField) handleFieldValue(fieldType muc.RoomConfigFieldType, fieldTypeValue interface{}) {
@@ -76,6 +71,20 @@ func (f *roomConfigSummaryField) handleTextMultiFieldValue(ft muc.RoomConfigFiel
 	f.fieldTextMultiContent.Hide()
 	f.fieldValue.SetVisible(true)
 }
+
+func (f *roomConfigSummaryField) fieldWidget() gtki.Widget {
+	return f.widget
+}
+
+func (f *roomConfigSummaryField) refreshContent() {}
+
+func (f *roomConfigSummaryField) collectFieldValue() {}
+
+func (f *roomConfigSummaryField) isValid() bool {
+	return true
+}
+
+func (f *roomConfigSummaryField) showValidationErrors() {}
 
 func summaryPasswordText(v bool) string {
 	if v {

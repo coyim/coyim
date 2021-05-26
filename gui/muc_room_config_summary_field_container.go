@@ -5,13 +5,13 @@ import (
 )
 
 type roomConfigSummaryFieldContainer struct {
-	fields []*roomConfigSummaryField
+	fields []hasRoomConfigFormField
 
 	widget  gtki.Box     `gtk-widget:"room-config-field-box"`
 	content gtki.ListBox `gtk-widget:"room-config-fields-content"`
 }
 
-func newRoomConfigSummaryFieldContainer(f []*roomConfigSummaryField) hasRoomConfigFormField {
+func newRoomConfigSummaryFieldContainer(f []hasRoomConfigFormField) hasRoomConfigFormField {
 	field := &roomConfigSummaryFieldContainer{
 		fields: f,
 	}
@@ -28,10 +28,10 @@ func (fc *roomConfigSummaryFieldContainer) initBuilder() {
 }
 
 func (fc *roomConfigSummaryFieldContainer) initDefaults() {
-	fc.content.Add(fc.fields[0].widget)
+	fc.content.Add(fc.fields[0].fieldWidget())
 	for _, f := range fc.fields[1:] {
 		fc.content.Add(createSeparator(gtki.HorizontalOrientation))
-		fc.content.Add(f.widget)
+		fc.content.Add(f.fieldWidget())
 	}
 }
 

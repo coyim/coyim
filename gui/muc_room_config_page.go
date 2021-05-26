@@ -196,7 +196,7 @@ func (p *roomConfigPageBase) initSummary() {
 
 func (p *roomConfigPageBase) initSummaryFields(pageID int) {
 	p.addField(newRoomConfigFormFieldLinkButton(pageID, p.roomConfigComponent.setCurrentPage))
-	fields := []*roomConfigSummaryField{}
+	fields := []hasRoomConfigFormField{}
 	for _, kf := range roomConfigPagesFields[pageID] {
 		if knownField, ok := p.form.GetKnownField(kf); ok {
 			fields = append(fields, newRoomConfigSummaryField(kf, roomConfigFieldsTexts[kf], knownField.ValueType()))

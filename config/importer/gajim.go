@@ -3,7 +3,6 @@ package importer
 import (
 	"bufio"
 	"encoding/hex"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -14,7 +13,7 @@ import (
 	"strings"
 
 	"github.com/coyim/coyim/config"
-	"github.com/hydrogen18/stalecucumber"
+	"github.com/coyim/coyim/config/importer/pickle"
 )
 
 const gajimOtrDataKeyExtension = ".key3"
@@ -123,15 +122,13 @@ func intoGajimOTRSettings(vv map[string]interface{}) gajimOTRSettings {
 }
 
 func (g *gajimImporter) importOTRSettings(f string) (map[string]gajimOTRSettings, map[gajimAccountAndPeer]gajimOTRSettings, bool) {
-	file, err := os.Open(filepath.Clean(f))
+	d, err := pickle.Load(f)
 	if err != nil {
-		fmt.Printf("importOTRSettings() error opening file: %s\n", err)
 		return nil, nil, false
 	}
-	defer closeAndIgnore(file)
-	res, err := stalecucumber.DictString(stalecucumber.Unpickle(file))
+
+	res, err := pickle.DictString(d)
 	if err != nil {
-		fmt.Printf("importOTRSettings() error converting the return value of Unpickle into a map[string]interface{}: %s\n", err)
 		return nil, nil, false
 	}
 
@@ -139,10 +136,11 @@ func (g *gajimImporter) importOTRSettings(f string) (map[string]gajimOTRSettings
 	resAccountToPeer := make(map[gajimAccountAndPeer]gajimOTRSettings)
 
 	for k, v := range res {
-		vv, err := stalecucumber.Dict(v, nil)
+		vv, err := pickle.Dict(v)
 		if err == nil {
-			for k2, v2 := range vv {
-				vv2, _ := stalecucumber.DictString(v2, nil)
+			for _, v2 := range vv {
+				k2 := v2.Key
+				vv2, _ := pickle.DictString(v2.Value)
 				settings := intoGajimOTRSettings(vv2)
 				switch k2 := k2.(type) {
 				case string:

@@ -113,14 +113,6 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:8c2d6d0b00c2b021a1560f1f8657ceb589ef0bbacabdefbd700979b51cdef2b8"
-  name = "github.com/hydrogen18/stalecucumber"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "6de214d141dda4b540da196a19a68228f0c8323d"
-
-[[projects]]
-  branch = "master"
   digest = "1:f433da6fbabb0bd1bd730fd340782015c644123d02eb78c20c69ce03352daad1"
   name = "github.com/kardianos/osext"
   packages = ["."]
@@ -329,9 +321,10 @@
     "github.com/coyim/otr3",
     "github.com/godbus/dbus",
     "github.com/golang-collections/collections/set",
-    "github.com/hydrogen18/stalecucumber",
     "github.com/kardianos/osext",
     "github.com/miekg/dns",
+    "github.com/nlpodyssey/gopickle/pickle",
+    "github.com/nlpodyssey/gopickle/types",
     "github.com/sirupsen/logrus",
     "github.com/sirupsen/logrus/hooks/test",
     "github.com/xdg/stringprep",

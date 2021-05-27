@@ -58,12 +58,12 @@ func (f *roomConfigFormFieldListEntry) activateOption(v string) {
 
 // collectFieldValue MUST be called from the UI thread
 func (f *roomConfigFormFieldListEntry) collectFieldValue() {
-	f.value.SetSelected(getEntryText(f.entry))
+	f.value.SetSelected(f.currentValue())
 }
 
 // isValid implements the hasRoomConfigFormField interface
 func (f *roomConfigFormFieldListEntry) isValid() bool {
-	v := getEntryText(f.entry)
+	v := f.currentValue()
 	if v != "" {
 		_, err := strconv.Atoi(v)
 		return err == nil
@@ -74,4 +74,12 @@ func (f *roomConfigFormFieldListEntry) isValid() bool {
 // showValidationErrors implements the hasRoomConfigFormField interface
 func (f *roomConfigFormFieldListEntry) showValidationErrors() {
 	f.entry.GrabFocus()
+}
+
+func (f *roomConfigFormFieldListEntry) currentValue() string {
+	iter, err := f.list.GetActiveIter()
+	if err == nil {
+		return getStringValueFromModel(f.optionsModel, iter, roomConfigFieldListOptionValueIndex)
+	}
+	return getEntryText(f.entry)
 }

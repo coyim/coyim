@@ -64,7 +64,7 @@ func (f *roomConfigSummaryField) handleTextFieldValue(value string) {
 	case muc.RoomConfigFieldLanguage:
 		setLabelText(f.fieldValueLabel, supportedLanguageDescription(value))
 	case muc.RoomConfigFieldPassword:
-		setLabelText(f.fieldValueLabel, summaryPasswordText(value == ""))
+		setLabelText(f.fieldValueLabel, summaryPasswordText(value))
 	}
 }
 
@@ -97,8 +97,8 @@ func (f *roomConfigSummaryField) isValid() bool {
 
 func (f *roomConfigSummaryField) showValidationErrors() {}
 
-func summaryPasswordText(v bool) string {
-	if v {
+func summaryPasswordText(v string) string {
+	if v != "" {
 		return i18n.Local("**********")
 	}
 	return i18n.Local("Not assigned")

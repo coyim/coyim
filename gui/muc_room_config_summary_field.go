@@ -56,6 +56,8 @@ func (f *roomConfigSummaryField) handleFieldValue() {
 }
 
 func (f *roomConfigSummaryField) handleTextFieldValue(value string) {
+	setLabelText(f.fieldValueLabel, summaryAssignedValueText(value))
+
 	switch f.fieldType {
 	case muc.RoomConfigFieldDescription:
 		f.handleTextMultiFieldValue(value)
@@ -64,7 +66,6 @@ func (f *roomConfigSummaryField) handleTextFieldValue(value string) {
 	case muc.RoomConfigFieldPassword:
 		setLabelText(f.fieldValueLabel, summaryPasswordText(value == ""))
 	}
-	setLabelText(f.fieldValueLabel, summaryAssignedValueText(value))
 }
 
 func (f *roomConfigSummaryField) handleTextMultiFieldValue(value string) {

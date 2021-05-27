@@ -32,6 +32,8 @@ func newRoomConfigFormFieldListEntry(fieldInfo roomConfigFieldTextInfo, value *m
 	)
 
 	field.list.SetModel(field.optionsModel)
+	field.list.SetIDColumn(roomConfigFieldListOptionValueIndex)
+	field.list.SetEntryTextColumn(roomConfigFieldListOptionLabelIndex)
 
 	field.initOptions()
 

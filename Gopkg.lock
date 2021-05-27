@@ -160,6 +160,17 @@
   revision = "a10e7caefd8e0d600cea437f5c3613aeb1553d56"
 
 [[projects]]
+  digest = "1:12ea5df21abfca4f267e6722e2ab8a6b70fbfc63774b26054b3683d67d11b161"
+  name = "github.com/nlpodyssey/gopickle"
+  packages = [
+    "pickle",
+    "types",
+  ]
+  pruneopts = "UT"
+  revision = "962b6d61d03e7cd2868fdf667e4561d8e4b28757"
+  version = "v0.1.0"
+
+[[projects]]
   digest = "1:1705716d33e69b9567ec6fd8e318a6e60869838b60643e54d0301bed8ac427d1"
   name = "github.com/sirupsen/logrus"
   packages = [

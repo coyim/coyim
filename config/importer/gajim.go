@@ -3,6 +3,7 @@ package importer
 import (
 	"bufio"
 	"encoding/hex"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -124,11 +125,13 @@ func intoGajimOTRSettings(vv map[string]interface{}) gajimOTRSettings {
 func (g *gajimImporter) importOTRSettings(f string) (map[string]gajimOTRSettings, map[gajimAccountAndPeer]gajimOTRSettings, bool) {
 	d, err := pickle.Load(f)
 	if err != nil {
+		fmt.Printf("importOTRSettings(): loading pickle error: %s\n", err)
 		return nil, nil, false
 	}
 
 	res, err := pickle.DictString(d)
 	if err != nil {
+		fmt.Printf("importOTRSettings(): converting to dict string: %s\n", err)
 		return nil, nil, false
 	}
 

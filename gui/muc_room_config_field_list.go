@@ -18,7 +18,6 @@ type roomConfigFormFieldList struct {
 	list gtki.ComboBox `gtk-widget:"room-config-field-list"`
 
 	optionsModel gtki.ListStore
-	options      map[string]int
 }
 
 func newRoomConfigFormFieldList(fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldListValue) hasRoomConfigFormField {
@@ -42,15 +41,11 @@ func newRoomConfigFormFieldList(fieldInfo roomConfigFieldTextInfo, value *muc.Ro
 }
 
 func (f *roomConfigFormFieldList) initOptions() {
-	f.options = map[string]int{}
-
-	for index, o := range f.value.Options() {
+	for _, o := range f.value.Options() {
 		iter := f.optionsModel.Append()
 
 		_ = f.optionsModel.SetValue(iter, roomConfigFieldListOptionValueIndex, o.Value)
 		_ = f.optionsModel.SetValue(iter, roomConfigFieldListOptionLabelIndex, configOptionToFriendlyMessage(o.Value, o.Label))
-
-		f.options[o.Value] = index
 	}
 
 	f.activateOption(f.value.Selected())
@@ -58,19 +53,27 @@ func (f *roomConfigFormFieldList) initOptions() {
 
 // activateOption MUST be called from the UI thread
 func (f *roomConfigFormFieldList) activateOption(o string) {
-	if index, ok := f.options[o]; ok {
-		f.list.SetActive(index)
-		return
+	iter, ok := f.optionsModel.GetIterFirst()
+	idx := 0
+	for ok {
+		if getStringValueFromModel(f.optionsModel, iter, roomConfigFieldListOptionValueIndex) == o {
+			f.list.SetActive(idx)
+			return
+		}
+		idx++
+		ok = f.optionsModel.IterNext(iter)
 	}
 }
 
 // collectFieldValue MUST be called from the UI thread
 func (f *roomConfigFormFieldList) collectFieldValue() {
-	f.value.SetSelected("")
-	for o, index := range f.options {
-		if index == f.list.GetActive() {
-			f.value.SetSelected(o)
-			return
-		}
-	}
+	iter, _ := f.list.GetActiveIter()
+	f.value.SetSelected(getStringValueFromModel(f.optionsModel, iter, roomConfigFieldListOptionValueIndex))
+}
+
+func getStringValueFromModel(model gtki.ListStore, iter gtki.TreeIter, columnID int) string {
+	ov, _ := model.GetValue(iter, columnID)
+	s, _ := ov.GetString()
+
+	return s
 }

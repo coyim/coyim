@@ -16,7 +16,6 @@ type roomConfigFormFieldListEntry struct {
 	entry gtki.Entry    `gtk-widget:"room-config-field-list-entry"`
 
 	optionsModel gtki.ListStore
-	options      map[string]int
 }
 
 func newRoomConfigFormFieldListEntry(fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldListValue) hasRoomConfigFormField {
@@ -40,15 +39,11 @@ func newRoomConfigFormFieldListEntry(fieldInfo roomConfigFieldTextInfo, value *m
 }
 
 func (f *roomConfigFormFieldListEntry) initOptions() {
-	f.options = map[string]int{}
-
-	for index, o := range f.value.Options() {
+	for _, o := range f.value.Options() {
 		iter := f.optionsModel.Append()
 
 		_ = f.optionsModel.SetValue(iter, roomConfigFieldListOptionValueIndex, o.Value)
 		_ = f.optionsModel.SetValue(iter, roomConfigFieldListOptionLabelIndex, configOptionToFriendlyMessage(o.Value, o.Label))
-
-		f.options[o.Value] = index
 	}
 
 	f.activateOption(f.value.Selected())

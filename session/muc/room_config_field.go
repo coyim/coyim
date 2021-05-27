@@ -60,10 +60,7 @@ func roomConfigFormFieldValueFactory(field xmppData.FormFieldX) HasRoomConfigFor
 	values := field.Values
 	options := formFieldOptionsValues(field.Options)
 	fieldType := field.Type
-	switch field.Var {
-	case configFieldRoomDescription:
-		fieldType = RoomConfigFieldTextMulti
-	case configFieldMaxHistoryFetch, configFieldMaxHistoryLength:
+	if field.Var == configFieldMaxHistoryFetch || field.Var == configFieldMaxHistoryLength {
 		fieldType = RoomConfigFieldList
 		options = maxHistoryFetchDefaultOptions
 	}

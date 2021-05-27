@@ -69,11 +69,6 @@ func (s *GajimSuite) Test_GajimImporter_canImportPluginSettings(c *C) {
 	file := testResourceFilename("gajim_test_data/gotr")
 	res, res2, ok := importer.importOTRSettings(file)
 
-	c.Logf("testResourceFilename: %s", file)
-	c.Logf("testResourceFilename ok: %v", ok)
-	c.Logf("map[string]gajimOTRSettings: %s", res)
-	c.Logf("map[gajimAccountAndPeer]gajimOTRSettings: %s", res2)
-
 	c.Assert(ok, Equals, true)
 
 	c.Assert(len(res), Equals, 27)

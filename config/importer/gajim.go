@@ -3,7 +3,6 @@ package importer
 import (
 	"bufio"
 	"encoding/hex"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -130,7 +129,6 @@ func (g *gajimImporter) importOTRSettings(f string) (map[string]gajimOTRSettings
 	defer closeAndIgnore(file)
 	res, err := stalecucumber.DictString(stalecucumber.Unpickle(file))
 	if err != nil {
-		fmt.Printf("importOTRSettings(): converting to dict string: %s\n", err)
 		return nil, nil, false
 	}
 

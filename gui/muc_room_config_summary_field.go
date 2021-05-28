@@ -3,6 +3,7 @@ package gui
 import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -11,12 +12,18 @@ type roomConfigSummaryField struct {
 	fieldType  muc.RoomConfigFieldType
 	fieldValue muc.HasRoomConfigFormFieldValue
 
-	widget                gtki.Box            `gtk-widget:"room-config-field-box"`
-	field                 gtki.ListBoxRow     `gtk-widget:"room-config-field"`
-	fieldLabel            gtki.Label          `gtk-widget:"room-config-field-label"`
-	fieldValueLabel       gtki.Label          `gtk-widget:"room-config-field-value"`
-	fieldTextMultiContent gtki.ScrolledWindow `gtk-widget:"room-config-field-text-area"`
-	fieldTextMultiValue   gtki.TextView       `gtk-widget:"room-config-field-text-area-value"`
+	widget                    gtki.Box            `gtk-widget:"room-config-field-box"`
+	field                     gtki.ListBoxRow     `gtk-widget:"room-config-field"`
+	fieldLabel                gtki.Label          `gtk-widget:"room-config-field-label"`
+	fieldValueLabel           gtki.Label          `gtk-widget:"room-config-field-value"`
+	fieldTextMultiContent     gtki.ScrolledWindow `gtk-widget:"room-config-field-text-area"`
+	fieldTextMultiValue       gtki.TextView       `gtk-widget:"room-config-field-text-area-value"`
+	fieldListContent          gtki.Box            `gtk-widget:"room-config-field-list-content"`
+	fieldListValueButton      gtki.Button         `gtk-widget:"room-config-field-list-button"`
+	fieldListValueButtonImage gtki.Image          `gtk-widget:"room-config-field-list-button-image"`
+	fieldListValues           gtki.TreeView       `gtk-widget:"room-config-field-list-values-tree"`
+
+	listModel gtki.ListStore
 }
 
 func newRoomConfigSummaryField(fieldType muc.RoomConfigFieldType, fieldTexts roomConfigFieldTextInfo, value muc.HasRoomConfigFormFieldValue) hasRoomConfigFormField {
@@ -36,6 +43,9 @@ func newRoomConfigSummaryField(fieldType muc.RoomConfigFieldType, fieldTexts roo
 func (f *roomConfigSummaryField) initBuilder() {
 	builder := newBuilder("MUCRoomConfigSummaryField")
 	panicOnDevError(builder.bindObjects(f))
+	builder.ConnectSignals(map[string]interface{}{
+		"on_show_list": f.onShowList,
+	})
 }
 
 func (f *roomConfigSummaryField) initDefaults() {
@@ -52,6 +62,8 @@ func (f *roomConfigSummaryField) handleFieldValue() {
 		f.handleTextFieldValue(summaryYesOrNoText(v.Boolean()))
 	case *muc.RoomConfigFieldListValue:
 		f.handleTextFieldValue(configOptionToFriendlyMessage(v.Selected(), v.Selected()))
+	case *muc.RoomConfigFieldListMultiValue:
+		f.handleListMultiFieldValue(v.Value())
 	}
 }
 
@@ -79,6 +91,29 @@ func (f *roomConfigSummaryField) handleTextMultiFieldValue(value string) {
 	setLabelText(f.fieldValueLabel, summaryAssignedValueText(value))
 	f.fieldTextMultiContent.Hide()
 	f.fieldValueLabel.SetVisible(true)
+}
+
+func (f *roomConfigSummaryField) handleListMultiFieldValue(value []string) {
+	f.listModel, _ = g.gtk.ListStoreNew(glibi.TYPE_STRING)
+	f.fieldListValues.SetModel(f.listModel)
+
+	setLabelText(f.fieldValueLabel, summaryListTotalText(len(value)))
+	f.fieldListValueButton.SetVisible(len(value) > 0)
+
+	f.initListContent(value)
+}
+
+func (f *roomConfigSummaryField) initListContent(items []string) {
+	f.listModel.Clear()
+
+	for _, j := range items {
+		iter := f.listModel.Append()
+		f.listModel.SetValue(iter, 0, configOptionToFriendlyMessage(j, j))
+	}
+}
+
+func (f *roomConfigSummaryField) onShowList() {
+	summaryListHideOrShow(f.fieldListValues, f.fieldListValueButtonImage, f.fieldListContent)
 }
 
 func (f *roomConfigSummaryField) fieldWidget() gtki.Widget {
@@ -116,4 +151,24 @@ func summaryAssignedValueText(label string) string {
 		return label
 	}
 	return i18n.Local("Not assigned")
+}
+
+func summaryListTotalText(total int) string {
+	switch {
+	case total == 1:
+		return i18n.Local("One result")
+	case total > 0:
+		return i18n.Localf("%d results", total)
+	}
+	return i18n.Local("None")
+}
+
+func summaryListHideOrShow(list gtki.TreeView, toggleButtonImage gtki.Image, container gtki.Box) {
+	if list.IsVisible() {
+		toggleButtonImage.SetFromIconName("pan-down-symbolic", gtki.ICON_SIZE_MENU)
+		container.SetVisible(false)
+	} else {
+		toggleButtonImage.SetFromIconName("pan-up-symbolic", gtki.ICON_SIZE_MENU)
+		container.SetVisible(true)
+	}
 }

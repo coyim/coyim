@@ -14,7 +14,7 @@ import (
 	"strings"
 
 	"github.com/coyim/coyim/config"
-	"github.com/coyim/coyim/config/importer/pickle"
+	"github.com/hydrogen18/stalecucumber"
 )
 
 const gajimOtrDataKeyExtension = ".key3"
@@ -123,13 +123,12 @@ func intoGajimOTRSettings(vv map[string]interface{}) gajimOTRSettings {
 }
 
 func (g *gajimImporter) importOTRSettings(f string) (map[string]gajimOTRSettings, map[gajimAccountAndPeer]gajimOTRSettings, bool) {
-	d, err := pickle.Load(f)
+	file, err := os.Open(filepath.Clean(f))
 	if err != nil {
-		fmt.Printf("importOTRSettings(): loading pickle error: %s\n", err)
 		return nil, nil, false
 	}
-
-	res, err := pickle.DictString(d)
+	defer closeAndIgnore(file)
+	res, err := stalecucumber.DictString(stalecucumber.Unpickle(file))
 	if err != nil {
 		fmt.Printf("importOTRSettings(): converting to dict string: %s\n", err)
 		return nil, nil, false
@@ -139,11 +138,10 @@ func (g *gajimImporter) importOTRSettings(f string) (map[string]gajimOTRSettings
 	resAccountToPeer := make(map[gajimAccountAndPeer]gajimOTRSettings)
 
 	for k, v := range res {
-		vv, err := pickle.Dict(v)
+		vv, err := stalecucumber.Dict(v, nil)
 		if err == nil {
-			for _, v2 := range vv {
-				k2 := v2.Key
-				vv2, _ := pickle.DictString(v2.Value)
+			for k2, v2 := range vv {
+				vv2, _ := stalecucumber.DictString(v2, nil)
 				settings := intoGajimOTRSettings(vv2)
 				switch k2 := k2.(type) {
 				case string:

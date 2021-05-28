@@ -60,3 +60,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/golang-collections/collections"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/hydrogen18/stalecucumber"

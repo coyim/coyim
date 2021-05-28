@@ -18,31 +18,40 @@
       </packing>
     </child>
     <child>
-      <object class="GtkTreeView" id="room-config-field-treeview">
+      <object class="GtkFrame">
         <property name="visible">True</property>
-        <property name="headers_visible">False</property>
-        <child internal-child="selection">
-          <object class="GtkTreeSelection"/>
-        </child>
+        <property name="label-xalign">0</property>
+        <property name="shadow-type">in</property>
         <child>
-          <object class="GtkTreeViewColumn" id="room-config-field-treeview-text-column">
-            <child>
-              <object class="GtkCellRendererText" id="room-config-field-treeview-text-renderer"/>
-              <attributes>
-                <attribute name="text">1</attribute>
-              </attributes>
+          <object class="GtkTreeView" id="room-config-field-treeview">
+            <property name="visible">True</property>
+            <property name="headers_visible">False</property>
+            <child internal-child="selection">
+              <object class="GtkTreeSelection"/>
             </child>
-          </object>
-        </child>
-        <child>
-          <object class="GtkTreeViewColumn" id="room-config-field-treeview-toggle-column">
             <child>
-              <object class="GtkCellRendererToggle" id="room-config-field-treeview-toggle-renderer">
-                <signal name="toggled" handler="on_check_changed" swapped="no"/>
+              <object class="GtkTreeViewColumn" id="room-config-field-treeview-text-column">
+                <child>
+                  <object class="GtkCellRendererToggle" id="room-config-field-treeview-toggle-renderer">
+                    <property name="width">30</property>
+                    <property name="ypad">6</property>
+                    <property name="xalign">1</property>
+                    <signal name="toggled" handler="on_check_changed" swapped="no"/>
+                  </object>
+                  <attributes>
+                    <attribute name="active">2</attribute>
+                  </attributes>
+                </child>
+                <child>
+                  <object class="GtkCellRendererText" id="room-config-field-treeview-text-renderer">
+                    <property name="xpad">12</property>
+                    <property name="ypad">6</property>
+                  </object>
+                  <attributes>
+                    <attribute name="text">1</attribute>
+                  </attributes>
+                </child>
               </object>
-              <attributes>
-                <attribute name="active">2</attribute>
-              </attributes>
             </child>
           </object>
         </child>

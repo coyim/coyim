@@ -80,7 +80,7 @@ func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueAndFilesInside(c *C) {
 
 	res := ifExistsDir([]string{"foo", "bar"}, dir)
 
-	sort.Sort(sort.StringSlice(res))
+	sort.Strings(res)
 
 	c.Assert(res, DeepEquals, []string{filepath.Join(dir, "goodbye.conf"), filepath.Join(dir, "hello.conf"), "bar", "foo"})
 }

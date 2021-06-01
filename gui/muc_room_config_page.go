@@ -211,11 +211,11 @@ func (p *roomConfigPageBase) initSummaryFields(pageID int) {
 }
 
 func (p *roomConfigPageBase) initOccupants() {
-	p.addField(newRoomConfigOccupants(&data.OwnerAffiliation{}))
+	p.addField(newRoomConfigOccupants(&data.OwnerAffiliation{}, p.form.GetRoomOccupants()))
 	p.content.Add(createSeparator(gtki.HorizontalOrientation))
-	p.addField(newRoomConfigOccupants(&data.AdminAffiliation{}))
+	p.addField(newRoomConfigOccupants(&data.AdminAffiliation{}, p.form.GetRoomOccupants()))
 	p.content.Add(createSeparator(gtki.HorizontalOrientation))
-	p.addField(newRoomConfigOccupants(&data.OutcastAffiliation{}))
+	p.addField(newRoomConfigOccupants(&data.OutcastAffiliation{}, p.form.GetRoomOccupants()))
 }
 
 func (p *roomConfigPageBase) addField(field hasRoomConfigFormField) {

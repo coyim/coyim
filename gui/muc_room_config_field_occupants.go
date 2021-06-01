@@ -1,7 +1,9 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 	log "github.com/sirupsen/logrus"
 )
@@ -10,6 +12,7 @@ const occupantsListJidColumnIndex = 0
 
 type roomConfigOccupants struct {
 	affiliation data.Affiliation
+	occupants   map[data.Affiliation][]*muc.RoomOccupantItem
 
 	content                  gtki.Box              `gtk-widget:"room-config-occupants-content"`
 	header                   gtki.Label            `gtk-widget:"room-config-occupant-header"`
@@ -23,8 +26,11 @@ type roomConfigOccupants struct {
 	occupantsListController *mucRoomConfigListController
 }
 
-func newRoomConfigOccupants(a data.Affiliation) hasRoomConfigFormField {
-	field := &roomConfigOccupants{affiliation: a}
+func newRoomConfigOccupants(affiliation data.Affiliation, occupants map[data.Affiliation][]*muc.RoomOccupantItem) hasRoomConfigFormField {
+	field := &roomConfigOccupants{
+		affiliation: affiliation,
+		occupants:   occupants,
+	}
 
 	field.initBuilder()
 	field.initDefaults()
@@ -83,7 +89,16 @@ func (p *roomConfigOccupants) updateOccupantListCellForString(controller *mucRoo
 	}
 }
 
-func (p *roomConfigOccupants) collectFieldValue() {}
+func (p *roomConfigOccupants) collectFieldValue() {
+	occupantList := []*muc.RoomOccupantItem{}
+	for _, item := range p.occupantsListController.listItems() {
+		occupantList = append(occupantList, &muc.RoomOccupantItem{
+			Jid:         jid.Parse(item),
+			Affiliation: p.affiliation,
+		})
+	}
+	p.occupants[p.affiliation] = occupantList
+}
 
 func (p *roomConfigOccupants) showValidationErrors() {}
 

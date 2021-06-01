@@ -544,7 +544,6 @@ func (s *GajimTryImportSuite) SetUpTest(c *C) {
 
 func (s *GajimTryImportSuite) TearDownTest(c *C) {
 	s.restoreAppDataHome()
-	os.RemoveAll(s.tempPath)
 }
 
 func (s *GajimTryImportSuite) Test_gajimImporter_TryImport_works(c *C) {

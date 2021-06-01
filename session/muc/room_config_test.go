@@ -1,6 +1,7 @@
 package muc
 
 import (
+	"github.com/coyim/coyim/session/muc/data"
 	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	. "gopkg.in/check.v1"
@@ -488,4 +489,49 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_getKnownFieldValue(c *C) {
 	c.Assert(value, IsNil)
 	c.Assert(ok, Equals, false)
 
+}
+
+func (s *MucRoomConfigSuite) Test_RoomConfigForm_getOccupantsByAffiliation(c *C) {
+	ownerAffiliation := &data.OwnerAffiliation{}
+	adminAffiliation := &data.AdminAffiliation{}
+	s.rcf.occupants[ownerAffiliation] = []*RoomOccupantItem{
+		{
+			Jid:         jid.Parse("jid"),
+			Affiliation: ownerAffiliation,
+			Reason:      "bla",
+		},
+		{
+			Jid:         jid.Parse("jid@foo.org"),
+			Affiliation: ownerAffiliation,
+			Reason:      "foo",
+		},
+		{
+			Jid:         jid.Parse("1234"),
+			Affiliation: ownerAffiliation,
+			Reason:      "foo123",
+		},
+	}
+
+	s.rcf.occupants[adminAffiliation] = []*RoomOccupantItem{
+		{
+			Jid:         jid.Parse("batman@cave.org"),
+			Affiliation: adminAffiliation,
+			Reason:      "boom",
+		},
+	}
+
+	roomOccupants := s.rcf.GetRoomOccupants()
+	c.Assert(len(roomOccupants), Equals, 2)
+
+	outcastAffiliation := &data.OutcastAffiliation{}
+	s.rcf.occupants[outcastAffiliation] = []*RoomOccupantItem{
+		{
+			Jid:         jid.Parse("robin"),
+			Affiliation: outcastAffiliation,
+			Reason:      "123456",
+		},
+	}
+
+	roomOccupants = s.rcf.GetRoomOccupants()
+	c.Assert(len(roomOccupants), Equals, 3)
 }

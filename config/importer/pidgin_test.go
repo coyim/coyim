@@ -271,8 +271,9 @@ func (s *PidginSuite) Test_pidginImporter_TryImport_works(c *C) {
 	}()
 	os.Setenv("HOME", dir)
 
-	os.Mkdir(filepath.Join(dir, pidginConfigDir), 0755)
-	os.Create(filepath.Join(dir, pidginConfigDir, pidginAccountsFile))
+	_ = os.Mkdir(filepath.Join(dir, pidginConfigDir), 0755)
+	f, _ := os.Create(filepath.Join(dir, pidginConfigDir, pidginAccountsFile))
+	_ = f.Close()
 
 	input, _ := ioutil.ReadFile(testResourceFilename("pidgin_test_data/accounts.xml"))
 	_ = ioutil.WriteFile(filepath.Join(dir, pidginConfigDir, pidginAccountsFile), input, 0644)

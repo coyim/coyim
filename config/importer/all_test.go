@@ -1,7 +1,6 @@
 package importer
 
 import (
-	"io/ioutil"
 	"os"
 
 	. "gopkg.in/check.v1"
@@ -12,8 +11,7 @@ type AllSuite struct{}
 var _ = Suite(&AllSuite{})
 
 func (s *AllSuite) Test_TryImportAll(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	dir := c.MkDir()
 
 	origHome := os.Getenv("HOME")
 	defer func() {

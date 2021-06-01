@@ -274,8 +274,7 @@ func (s *AdiumSuite) Test_AdiumImporter_canDoAFullImport(c *C) {
 }
 
 func (s *AdiumSuite) Test_adiumImporter_TryImport(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	dir := c.MkDir()
 
 	origHome := os.Getenv("HOME")
 	defer func() {

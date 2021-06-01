@@ -65,8 +65,7 @@ func (s *XMPPClientXMPPSuite) Test_XmppClient_canImportXmppClientConfiguration(c
 }
 
 func (s *XMPPClientXMPPSuite) Test_xmppClientImporter_TryImport(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	dir := c.MkDir()
 
 	origHome := os.Getenv("HOME")
 	defer func() {
@@ -82,8 +81,7 @@ func (s *XMPPClientXMPPSuite) Test_xmppClientImporter_TryImport(c *C) {
 }
 
 func (s *XMPPClientXMPPSuite) Test_xmppClientImporter_TryImport_noFilesFound(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	dir := c.MkDir()
 
 	origHome := os.Getenv("HOME")
 	defer func() {
@@ -96,8 +94,7 @@ func (s *XMPPClientXMPPSuite) Test_xmppClientImporter_TryImport_noFilesFound(c *
 }
 
 func (s *XMPPClientXMPPSuite) Test_xmppClientImporter_TryImport_failsOnBadFile(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	dir := c.MkDir()
 
 	origHome := os.Getenv("HOME")
 	defer func() {

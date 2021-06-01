@@ -23,8 +23,7 @@ func (s *UtilsSuite) Test_ifExists_returnsTheValueAndTheFileIfItExists(c *C) {
 }
 
 func (s *UtilsSuite) Test_ifExists_returnsTheValueButNothingElseIfItsADir(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	dir := c.MkDir()
 
 	res := ifExists([]string{"foo", "bar"}, dir)
 

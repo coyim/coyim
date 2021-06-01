@@ -263,8 +263,7 @@ func (s *PidginSuite) Test_pidginImporter_importAllFrom_setsAlwaysEncryptWithAnd
 }
 
 func (s *PidginSuite) Test_pidginImporter_TryImport_works(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	dir := c.MkDir()
 
 	origHome := os.Getenv("HOME")
 	defer func() {

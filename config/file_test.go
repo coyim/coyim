@@ -20,8 +20,7 @@ func isNotWindows() bool {
 }
 
 func (s *FileSuite) Test_ensureDir_createsUnknownDirectories(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	dir := c.MkDir()
 
 	fullName := filepath.Join(dir, "foo", "bar")
 
@@ -43,8 +42,7 @@ func (s *FileSuite) Test_ensureDir_createsUnknownDirectories(c *C) {
 }
 
 func (s *FileSuite) Test_findConfigFile_returnsBasicPathIfNoFileFound(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	dir := c.MkDir()
 
 	origSystemConfigDir := SystemConfigDir
 	defer func() {
@@ -63,8 +61,7 @@ func (s *FileSuite) Test_findConfigFile_returnsTheFilanameIfGiven(c *C) {
 }
 
 func (s *FileSuite) Test_findConfigFile_returnsEncryptedFileIfExists(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	dir := c.MkDir()
 
 	origSystemConfigDir := SystemConfigDir
 	defer func() {
@@ -81,8 +78,7 @@ func (s *FileSuite) Test_findConfigFile_returnsEncryptedFileIfExists(c *C) {
 }
 
 func (s *FileSuite) Test_findConfigFile_returnsEncryptedBackupFileIfExists(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	dir := c.MkDir()
 
 	origSystemConfigDir := SystemConfigDir
 	defer func() {
@@ -99,8 +95,7 @@ func (s *FileSuite) Test_findConfigFile_returnsEncryptedBackupFileIfExists(c *C)
 }
 
 func (s *FileSuite) Test_readFileOrTemporaryBackup_readsBackupFileIfOriginalFileIsEmpty(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	dir := c.MkDir()
 
 	ioutil.WriteFile(filepath.Join(dir, "accounts.json"), []byte(""), 0666)
 	ioutil.WriteFile(filepath.Join(dir, "accounts.json.000~"), []byte("hello"), 0666)
@@ -111,8 +106,7 @@ func (s *FileSuite) Test_readFileOrTemporaryBackup_readsBackupFileIfOriginalFile
 }
 
 func (s *FileSuite) Test_readFileOrTemporaryBackup_readsOriginalFileEvenIfBackupExists(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	dir := c.MkDir()
 
 	ioutil.WriteFile(filepath.Join(dir, "accounts.json"), []byte("who is there?"), 0666)
 	ioutil.WriteFile(filepath.Join(dir, "accounts.json.000~"), []byte("hello"), 0666)
@@ -128,8 +122,7 @@ func (s *FileSuite) Test_safeWrite_doesntAllowWritingOfTooLittleData(c *C) {
 }
 
 func (s *FileSuite) Test_safeWrite_removesBackupFileIfItExists(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	dir := c.MkDir()
 
 	ioutil.WriteFile(filepath.Join(dir, "accounts.json.backup.000~"), []byte("backup content"), 0666)
 	e := safeWrite(filepath.Join(dir, "accounts.json"), []byte("12345678910111213"), 0700)
@@ -156,8 +149,7 @@ func (*fileExistsChecker) Check(params []interface{}, names []string) (result bo
 }
 
 func (s *FileSuite) Test_safeWrite_savesABackupFileIfPreviousFileExists(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	dir := c.MkDir()
 
 	ioutil.WriteFile(filepath.Join(dir, "accounts.json"), []byte("previous content"), 0666)
 	e := safeWrite(filepath.Join(dir, "accounts.json"), []byte("12345678910111213"), 0700)
@@ -167,8 +159,7 @@ func (s *FileSuite) Test_safeWrite_savesABackupFileIfPreviousFileExists(c *C) {
 }
 
 func (s *FileSuite) Test_safeWrite_filesIfWeCantSaveTheBackupFile(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	dir := c.MkDir()
 
 	origOsRename := osRename
 	defer func() {
@@ -185,8 +176,7 @@ func (s *FileSuite) Test_safeWrite_filesIfWeCantSaveTheBackupFile(c *C) {
 }
 
 func (s *FileSuite) Test_safeWrite_failsIfImpossibleToWriteFile(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	dir := c.MkDir()
 
 	ioutil.WriteFile(filepath.Join(dir, "accounts.json.000~"), []byte("previous content"), 0444)
 	e := safeWrite(filepath.Join(dir, "accounts.json"), []byte("12345678910111213"), 0700)

@@ -66,7 +66,7 @@ win-ci-deps:
 	go get -u github.com/rosatolen/esc
 
 win-gtk-fix:
-	./fix_gtk_on_windows
+	./fix_gtk_on_windows.sh
 
 reproducible-linux-create-image:
 	make -C ./reproducible/docker create-image

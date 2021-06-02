@@ -44,6 +44,9 @@ version_generated.go
 *.iml
 .idea/
 
+# vscode
+.vscode
+
 #Zanata - Translation platform
 .zanata
 

@@ -1,6 +1,8 @@
 package importer
 
 import (
+	"os"
+
 	. "gopkg.in/check.v1"
 )
 
@@ -15,9 +17,10 @@ func (s *PidginLikeSuite) Test_ImportKeysFromPidginStyle_failsWithBadFile(c *C) 
 }
 
 func (s *PidginLikeSuite) Test_ImportKeysFromPidginStyle_failsWithBadContent(c *C) {
-	tmpFileName := writeToTempFileAndReturnName([]byte("hopefully something that isn't valid"), c)
+	tmpFile := s.tempFile([]byte("hopefully something that isn't valid"), c)
+	_ = tmpFile.Close()
 
-	res, ok := ImportKeysFromPidginStyle(tmpFileName, nil)
+	res, ok := ImportKeysFromPidginStyle(tmpFile.Name(), nil)
 	c.Assert(res, IsNil)
 	c.Assert(ok, Equals, false)
 }
@@ -29,9 +32,10 @@ func (s *PidginLikeSuite) Test_importAccountsPidginStyle_failsWithBadFile(c *C) 
 }
 
 func (s *PidginLikeSuite) Test_importAccountsPidginStyle_failsWithBadContent(c *C) {
-	tmpFileName := writeToTempFileAndReturnName([]byte("hopefully something that isn't valid"), c)
+	tmpFile := s.tempFile([]byte("hopefully something that isn't valid"), c)
+	_ = tmpFile.Close()
 
-	res, ok := importAccountsPidginStyle(tmpFileName)
+	res, ok := importAccountsPidginStyle(tmpFile.Name())
 	c.Assert(res, IsNil)
 	c.Assert(ok, Equals, false)
 }
@@ -43,9 +47,10 @@ func (s *PidginLikeSuite) Test_importPeerPrefsPidginStyle_failsWithBadFile(c *C)
 }
 
 func (s *PidginLikeSuite) Test_importPeerPrefsPidginStyle_failsWithBadContent(c *C) {
-	tmpFileName := writeToTempFileAndReturnName([]byte("hopefully something that isn't valid"), c)
+	tmpFile := s.tempFile([]byte("hopefully something that isn't valid"), c)
+	_ = tmpFile.Close()
 
-	res, ok := importPeerPrefsPidginStyle(tmpFileName)
+	res, ok := importPeerPrefsPidginStyle(tmpFile.Name())
 	c.Assert(res, IsNil)
 	c.Assert(ok, Equals, false)
 }
@@ -57,9 +62,10 @@ func (s *PidginLikeSuite) Test_importGlobalPrefsPidginStyle_failsWithBadFile(c *
 }
 
 func (s *PidginLikeSuite) Test_importGlobalPrefsPidginStyle_failsWithBadContent(c *C) {
-	tmpFileName := writeToTempFileAndReturnName([]byte("hopefully something that isn't valid"), c)
+	tmpFile := s.tempFile([]byte("hopefully something that isn't valid"), c)
+	_ = tmpFile.Close()
 
-	res, ok := importGlobalPrefsPidginStyle(tmpFileName)
+	res, ok := importGlobalPrefsPidginStyle(tmpFile.Name())
 	c.Assert(res, IsNil)
 	c.Assert(ok, Equals, false)
 }
@@ -71,26 +77,27 @@ func (s *PidginLikeSuite) Test_ImportFingerprintsFromPidginStyle_failsWithBadFil
 }
 
 func (s *PidginLikeSuite) Test_ImportFingerprintsFromPidginStyle_failsWithBadContent(c *C) {
-	tmpFileName := writeToTempFileAndReturnName([]byte("hopefully something that isn't valid"), c)
+	tmpFile := s.tempFile([]byte("hopefully something that isn't valid"), c)
+	_ = tmpFile.Close()
 
-	res, ok := ImportFingerprintsFromPidginStyle(tmpFileName, nil)
+	res, ok := ImportFingerprintsFromPidginStyle(tmpFile.Name(), nil)
 	c.Assert(res, IsNil)
 	c.Assert(ok, Equals, false)
 }
 
 func (s *PidginLikeSuite) Test_ImportFingerprintsFromPidginStyle_ignoresBadFingerprintHEx(c *C) {
-	tmpFileName := writeToTempFileAndReturnName([]byte("line\tsomething\tbla\tqqqq"), c)
+	tmpFile := s.tempFile([]byte("line\tsomething\tbla\tqqqq"), c)
+	_ = tmpFile.Close()
 
-	res, ok := ImportFingerprintsFromPidginStyle(tmpFileName, func(string) bool { return true })
+	res, ok := ImportFingerprintsFromPidginStyle(tmpFile.Name(), func(string) bool { return true })
 	c.Assert(res, HasLen, 0)
 	c.Assert(ok, Equals, true)
 }
 
-func writeToTempFileAndReturnName(content []byte, c *C) string {
+func (s *PidginLikeSuite) tempFile(content []byte, c *C) *os.File {
 	tmpfile := tempFile(c)
 
 	_, _ = tmpfile.Write(content)
-	_ = tmpfile.Close()
 
-	return tmpfile.Name()
+	return tmpfile
 }

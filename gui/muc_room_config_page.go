@@ -190,12 +190,18 @@ func (p *roomConfigPageBase) initSummary() {
 	p.initSummaryFields(roomConfigInformationPageIndex)
 	p.initSummaryFields(roomConfigAccessPageIndex)
 	p.initSummaryFields(roomConfigPermissionsPageIndex)
+	p.initSummaryFields(roomConfigOccupantsPageIndex)
 	p.initSummaryFields(roomConfigOthersPageIndex)
 	p.autojoinContent.Show()
 }
 
 func (p *roomConfigPageBase) initSummaryFields(pageID int) {
 	p.addField(newRoomConfigFormFieldLinkButton(pageID, p.roomConfigComponent.setCurrentPage))
+	if pageID == roomConfigOccupantsPageIndex {
+		p.initOccupantsSummaryFields()
+		return
+	}
+
 	fields := []hasRoomConfigFormField{}
 	for _, kf := range roomConfigPagesFields[pageID] {
 		if knownField, ok := p.form.GetKnownField(kf); ok {
@@ -206,6 +212,15 @@ func (p *roomConfigPageBase) initSummaryFields(pageID int) {
 		for _, ff := range p.form.GetUnknownFields() {
 			fields = append(fields, newRoomConfigSummaryField(muc.RoomConfigFieldUnexpected, newRoomConfigFieldTextInfo(ff.Label, ff.Description), ff.ValueType()))
 		}
+	}
+	p.addField(newRoomConfigSummaryFieldContainer(fields))
+}
+
+func (p *roomConfigPageBase) initOccupantsSummaryFields() {
+	fields := []hasRoomConfigFormField{
+		newRoomConfigSummaryOccupantField(&data.OwnerAffiliation{}, p.form.GetRoomOccupants()),
+		newRoomConfigSummaryOccupantField(&data.AdminAffiliation{}, p.form.GetRoomOccupants()),
+		newRoomConfigSummaryOccupantField(&data.OutcastAffiliation{}, p.form.GetRoomOccupants()),
 	}
 	p.addField(newRoomConfigSummaryFieldContainer(fields))
 }

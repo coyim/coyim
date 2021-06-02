@@ -521,7 +521,7 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_getOccupantsByAffiliation(c *C)
 	}
 
 	roomOccupants := s.rcf.GetRoomOccupants()
-	c.Assert(len(roomOccupants), Equals, 2)
+	c.Assert(roomOccupants, HasLen, 2)
 
 	outcastAffiliation := &data.OutcastAffiliation{}
 	s.rcf.occupants[outcastAffiliation] = []*RoomOccupantItem{
@@ -533,5 +533,5 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_getOccupantsByAffiliation(c *C)
 	}
 
 	roomOccupants = s.rcf.GetRoomOccupants()
-	c.Assert(len(roomOccupants), Equals, 3)
+	c.Assert(roomOccupants, HasLen, 3)
 }

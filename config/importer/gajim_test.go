@@ -533,17 +533,21 @@ type GajimTryImportSuite struct {
 var _ = Suite(&GajimTryImportSuite{})
 
 func (s *GajimTryImportSuite) SetUpTest(c *C) {
-	s.tempPath = c.MkDir()
+	tempPath, _ := ioutil.TempDir("", "")
+	s.tempPath = tempPath
+
 	s.appPath = filepath.Join(s.tempPath, s.appDirName())
 
 	s.setAppDataHome()
 
-	_ = os.MkdirAll(filepath.Join(s.appPath, "config"), 0755)
-	_ = os.MkdirAll(filepath.Join(s.appPath, "pluginsconfig"), 0755)
+	os.MkdirAll(s.tempPath, 0755)
+	os.MkdirAll(filepath.Join(s.appPath, "config"), 0755)
+	os.MkdirAll(filepath.Join(s.appPath, "pluginsconfig"), 0755)
 }
 
 func (s *GajimTryImportSuite) TearDownTest(c *C) {
 	s.restoreAppDataHome()
+	os.RemoveAll(s.tempPath)
 }
 
 func (s *GajimTryImportSuite) Test_gajimImporter_TryImport_works(c *C) {

@@ -1,6 +1,7 @@
 package importer
 
 import (
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
@@ -13,8 +14,8 @@ type UtilsSuite struct{}
 var _ = Suite(&UtilsSuite{})
 
 func (s *UtilsSuite) Test_ifExists_returnsTheValueAndTheFileIfItExists(c *C) {
-	tmpfile := tempFile(c)
-	_ = tmpfile.Close()
+	tmpfile, _ := ioutil.TempFile("", "")
+	defer os.Remove(tmpfile.Name())
 
 	res := ifExists([]string{"foo", "bar"}, tmpfile.Name())
 
@@ -36,8 +37,8 @@ func (s *UtilsSuite) Test_ifExists_returnsTheValueButNothingElseIfDoesntExist(c 
 }
 
 func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfFile(c *C) {
-	tmpfile := tempFile(c)
-	_ = tmpfile.Close()
+	tmpfile, _ := ioutil.TempFile("", "")
+	defer os.Remove(tmpfile.Name())
 
 	res := ifExistsDir([]string{"foo", "bar"}, tmpfile.Name())
 
@@ -51,16 +52,15 @@ func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfDoesntExist
 }
 
 func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfReadingDirFails(c *C) {
-	dir := c.MkDir()
-	defer makeDirectoryAccessible(dir)
+	dir, _ := ioutil.TempDir("", "")
+	defer func() {
+		makeDirectoryAccessible(dir)
+		os.RemoveAll(dir)
+	}()
 
-	_ = os.Mkdir(filepath.Join(dir, "foo"), 0755)
-
-	f1, _ := os.Create(filepath.Join(dir, "hello.conf"))
-	f2, _ := os.Create(filepath.Join(dir, "goodbye.conf"))
-
-	_ = f1.Close()
-	_ = f2.Close()
+	os.Mkdir(filepath.Join(dir, "foo"), 0755)
+	os.Create(filepath.Join(dir, "hello.conf"))
+	os.Create(filepath.Join(dir, "goodbye.conf"))
 
 	makeDirectoryInaccessible(dir)
 
@@ -70,15 +70,12 @@ func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfReadingDirF
 }
 
 func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueAndFilesInside(c *C) {
-	dir := c.MkDir()
+	dir, _ := ioutil.TempDir("", "")
+	defer os.RemoveAll(dir)
 
-	_ = os.Mkdir(filepath.Join(dir, "foo"), 0755)
-
-	f1, _ := os.Create(filepath.Join(dir, "hello.conf"))
-	f2, _ := os.Create(filepath.Join(dir, "goodbye.conf"))
-
-	_ = f1.Close()
-	_ = f2.Close()
+	os.Mkdir(filepath.Join(dir, "foo"), 0755)
+	os.Create(filepath.Join(dir, "hello.conf"))
+	os.Create(filepath.Join(dir, "goodbye.conf"))
 
 	res := ifExistsDir([]string{"foo", "bar"}, dir)
 

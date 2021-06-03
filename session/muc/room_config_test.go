@@ -37,11 +37,6 @@ func (s *MucRoomConfigSuite) SetUpSuite(c *C) {
 				Values: []string{"true"},
 			},
 			{
-				Var:    configFieldEnableArchiving,
-				Type:   RoomConfigFieldBoolean,
-				Values: []string{"true"},
-			},
-			{
 				Var:    configFieldMemberList,
 				Type:   RoomConfigFieldJidMulti,
 				Values: []string{},
@@ -62,24 +57,14 @@ func (s *MucRoomConfigSuite) SetUpSuite(c *C) {
 				Values: []string{"true"},
 			},
 			{
-				Var:    configFieldAllowInvites,
-				Type:   RoomConfigFieldBoolean,
-				Values: []string{"true"},
-			},
-			{
 				Var:    configFieldAllowMemberInvites,
 				Type:   RoomConfigFieldBoolean,
 				Values: []string{"true"},
 			},
 			{
-				Var:    configFieldAllowPM,
-				Type:   RoomConfigFieldBoolean,
-				Values: []string{"allow private messages"},
-			},
-			{
 				Var:    configFieldAllowPrivateMessages,
 				Type:   RoomConfigFieldBoolean,
-				Values: []string{"allow private messages"},
+				Values: []string{"false"},
 			},
 			{
 				Var:    configFieldMaxOccupantsNumber,
@@ -132,15 +117,6 @@ func (s *MucRoomConfigSuite) SetUpSuite(c *C) {
 				Values: []string{"a whois"},
 			},
 			{
-				Var:    configFieldMaxHistoryFetch,
-				Type:   RoomConfigFieldList,
-				Values: []string{"43"},
-				Options: []xmppData.FormFieldOptionX{
-					{Value: "one"},
-					{Value: "two"},
-				},
-			},
-			{
 				Var:    configFieldMaxHistoryLength,
 				Type:   RoomConfigFieldList,
 				Values: []string{"43"},
@@ -168,7 +144,7 @@ func (s *MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	c.Assert(s.rcf.Logged, Equals, true)
 	c.Assert(s.rcf.OccupantsCanChangeSubject, Equals, true)
 	c.Assert(s.rcf.OccupantsCanInvite, Equals, true)
-	c.Assert(s.rcf.AllowPrivateMessages.Selected(), Equals, "allow private messages")
+	c.Assert(s.rcf.AllowPrivateMessages.Selected(), Equals, "false")
 	c.Assert(s.rcf.MaxOccupantsNumber.Selected(), Equals, "42")
 	c.Assert(s.rcf.Public, Equals, true)
 	c.Assert(s.rcf.Persistent, Equals, true)
@@ -184,7 +160,7 @@ func (s *MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	res := s.rcf.GetFormData()
 
 	c.Assert(res.Type, Equals, "submit")
-	c.Assert(res.Fields, HasLen, 27)
+	c.Assert(res.Fields, HasLen, 23)
 
 	vals := map[string][]string{}
 	for _, ff := range res.Fields {
@@ -192,19 +168,16 @@ func (s *MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 	}
 
 	c.Assert(vals, DeepEquals, map[string][]string{
-		"FORM_TYPE":                      {"http://jabber.org/protocol/muc#roomconfig"},
-		"muc#roomconfig_roomname":        {"a title"},
-		"muc#roomconfig_roomdesc":        {"a description"},
-		"muc#roomconfig_enablelogging":   {"true"},
-		"muc#roomconfig_enablearchiving": {"true"},
-		"muc#roomconfig_getmemberlist":   {},
-		"muc#roomconfig_lang":            {"eng"},
-		"muc#roomconfig_pubsub":          {""},
-		"muc#roomconfig_changesubject":   {"true"},
-		"muc#roomconfig_allowinvites":    {"true"},
+		"FORM_TYPE":                    {"http://jabber.org/protocol/muc#roomconfig"},
+		"muc#roomconfig_roomname":      {"a title"},
+		"muc#roomconfig_roomdesc":      {"a description"},
+		"muc#roomconfig_enablelogging": {"true"},
+		"muc#roomconfig_getmemberlist": {},
+		"muc#roomconfig_lang":          {"eng"},
+		"muc#roomconfig_pubsub":        {""},
+		"muc#roomconfig_changesubject": {"true"},
 		"{http://prosody.im/protocol/muc}roomconfig_allowmemberinvites": {"true"},
-		"muc#roomconfig_allowpm":               {"allow private messages"},
-		"allow_private_messages":               {"allow private messages"},
+		"allow_private_messages":               {"false"},
 		"muc#roomconfig_maxusers":              {"42"},
 		"muc#roomconfig_publicroom":            {"true"},
 		"muc#roomconfig_persistentroom":        {"true"},
@@ -215,7 +188,6 @@ func (s *MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
 		"muc#roomconfig_roomsecret":            {"a password"},
 		"muc#roomconfig_roomowners":            {},
 		"muc#roomconfig_whois":                 {"a whois"},
-		"muc#maxhistoryfetch":                  {"43"},
 		"muc#roomconfig_historylength":         {"43"},
 		"muc#roomconfig_roomadmins":            {"one@foobar.com", "two@example.org"},
 		"unknown_field_name":                   {"foo"},
@@ -387,8 +359,8 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_getFieldDataValue(c *C) {
 		{configFieldCanChangeSubject, []string{"true"}, true},
 		{configFieldAllowInvites, []string{"true"}, true},
 		{configFieldAllowMemberInvites, []string{"true"}, true},
-		{configFieldAllowPM, []string{"allow private messages"}, true},
-		{configFieldAllowPrivateMessages, []string{"allow private messages"}, true},
+		{configFieldAllowPM, []string{"false"}, true},
+		{configFieldAllowPrivateMessages, []string{"false"}, true},
 		{configFieldMaxOccupantsNumber, []string{"42"}, true},
 		{configFieldIsPublic, []string{"true"}, true},
 		{configFieldIsPersistent, []string{"true"}, true},

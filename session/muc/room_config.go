@@ -93,18 +93,16 @@ type RoomConfigForm struct {
 	Admins *RoomConfigFieldJidMultiValue
 	Owners *RoomConfigFieldJidMultiValue
 
-	receivedFieldNames map[string]bool
-	knownFields        map[RoomConfigFieldType]*RoomConfigFormField
-	unknownFields      []*RoomConfigFormField
-	occupants          map[data.Affiliation][]*RoomOccupantItem
+	knownFields   map[RoomConfigFieldType]*RoomConfigFormField
+	unknownFields []*RoomConfigFormField
+	occupants     map[data.Affiliation][]*RoomOccupantItem
 }
 
 // NewRoomConfigForm creates a new room configuration form instance
 func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 	cf := &RoomConfigForm{
-		occupants:          map[data.Affiliation][]*RoomOccupantItem{},
-		receivedFieldNames: map[string]bool{},
-		knownFields:        map[RoomConfigFieldType]*RoomConfigFormField{},
+		occupants:   map[data.Affiliation][]*RoomOccupantItem{},
+		knownFields: map[RoomConfigFieldType]*RoomConfigFormField{},
 	}
 
 	cf.initListSingleValueFields()
@@ -137,7 +135,6 @@ func (rcf *RoomConfigForm) setFormFields(fields []xmppData.FormFieldX) {
 	for _, field := range fields {
 		if field.Var != "" {
 			rcf.setField(field)
-			rcf.receivedFieldNames[field.Var] = true
 			if key, isKnown := getKnownRoomConfigFieldKey(field.Var); isKnown {
 				rcf.knownFields[key] = newRoomConfigFormField(field)
 			} else if field.Type != RoomConfigFieldFixed && field.Var != configFieldFormType {
@@ -180,13 +177,18 @@ func (rcf *RoomConfigForm) GetRoomOccupants() map[data.Affiliation][]*RoomOccupa
 func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 	formFields := []xmppData.FormFieldX{{Var: configFieldFormType, Values: []string{configFieldFormTypeValue}}}
 
-	for fieldName := range rcf.receivedFieldNames {
-		if values, exists := rcf.getFieldDataValue(fieldName); exists {
-			formFields = append(formFields, xmppData.FormFieldX{
-				Var:    fieldName,
-				Values: values,
-			})
-		}
+	for _, field := range rcf.knownFields {
+		formFields = append(formFields, xmppData.FormFieldX{
+			Var:    field.Name,
+			Values: field.Value(),
+		})
+	}
+
+	for _, field := range rcf.unknownFields {
+		formFields = append(formFields, xmppData.FormFieldX{
+			Var:    field.Name,
+			Values: field.Value(),
+		})
 	}
 
 	return &xmppData.Form{

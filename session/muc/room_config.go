@@ -10,6 +10,8 @@ import (
 const (
 	// configFieldFormType represents the configuration form type field
 	configFieldFormType = "FORM_TYPE"
+	// configFieldFormTypeValue represents the value of field type of configuration form
+	configFieldFormTypeValue = "http://jabber.org/protocol/muc#roomconfig"
 	// configFieldRoomName represents the var value of the "room name" configuration field
 	configFieldRoomName = "muc#roomconfig_roomname"
 	// configFieldRoomDescription represents the var value of the "room description" configuration field
@@ -176,7 +178,7 @@ func (rcf *RoomConfigForm) GetRoomOccupants() map[data.Affiliation][]*RoomOccupa
 // https://xmpp.org/extensions/xep-0045.html#createroom-reserved
 // https://xmpp.org/extensions/xep-0045.html#example-163
 func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
-	formFields := []xmppData.FormFieldX{}
+	formFields := []xmppData.FormFieldX{{Var: configFieldFormType, Values: []string{configFieldFormTypeValue}}}
 
 	for fieldName := range rcf.receivedFieldNames {
 		if values, exists := rcf.getFieldDataValue(fieldName); exists {

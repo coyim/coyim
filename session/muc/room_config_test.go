@@ -343,49 +343,6 @@ func (*MucRoomConfigSuite) Test_newRoomConfigFormField(c *C) {
 	}
 }
 
-func (s *MucRoomConfigSuite) Test_RoomConfigForm_getFieldDataValue(c *C) {
-	fields := []struct {
-		fieldName     string
-		expectedValue []string
-		ok            bool
-	}{
-		{configFieldRoomName, []string{"a title"}, true},
-		{configFieldRoomDescription, []string{"a description"}, true},
-		{configFieldEnableLogging, []string{"true"}, true},
-		{configFieldEnableArchiving, []string{"true"}, true},
-		{configFieldMemberList, []string{}, true},
-		{configFieldLanguage, []string{"eng"}, true},
-		{configFieldPubsub, []string{""}, true},
-		{configFieldCanChangeSubject, []string{"true"}, true},
-		{configFieldAllowInvites, []string{"true"}, true},
-		{configFieldAllowMemberInvites, []string{"true"}, true},
-		{configFieldAllowPM, []string{"false"}, true},
-		{configFieldAllowPrivateMessages, []string{"false"}, true},
-		{configFieldMaxOccupantsNumber, []string{"42"}, true},
-		{configFieldIsPublic, []string{"true"}, true},
-		{configFieldIsPersistent, []string{"true"}, true},
-		{configFieldPresenceBroadcast, []string{}, true},
-		{configFieldModerated, []string{"true"}, true},
-		{configFieldMembersOnly, []string{"true"}, true},
-		{configFieldPasswordProtected, []string{"true"}, true},
-		{configFieldPassword, []string{"a password"}, true},
-		{configFieldOwners, []string{}, true},
-		{configFieldWhoIs, []string{"a whois"}, true},
-		{configFieldMaxHistoryFetch, []string{"43"}, true},
-		{configFieldMaxHistoryLength, []string{"43"}, true},
-		{configFieldRoomAdmins, []string{"one@foobar.com", "two@example.org"}, true},
-		{"unknown_field_name", []string{"foo"}, true},
-		{"another_unknown_field_name", nil, false},
-	}
-
-	for _, fieldCase := range fields {
-		c.Logf("Checking case %s with expected value %v", fieldCase.fieldName, fieldCase.expectedValue)
-		value, ok := s.rcf.getFieldDataValue(fieldCase.fieldName)
-		c.Assert(value, DeepEquals, fieldCase.expectedValue)
-		c.Assert(ok, Equals, fieldCase.ok)
-	}
-}
-
 func (*MucRoomConfigSuite) Test_formFieldBool(c *C) {
 	c.Assert(formFieldBool(nil), Equals, false)
 	c.Assert(formFieldBool([]string(nil)), Equals, false)

@@ -129,10 +129,7 @@ jobs:
         env:
           DISPLAY: ':99.0'
       - name: run tests
-        run: |
-          make doctor -C ci/
-          cygdrop make test -C ci/
-          make coveralls -C ci/
+        run: cygdrop make -C ci/
         env:
           DISPLAY: ':99.0'
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}

@@ -143,18 +143,6 @@ const (
 	RoomConfigOption100 = "100"
 )
 
-var retrieveMembersListDefaultOptions = []*RoomConfigFieldOption{
-	newRoomConfigFieldOption(RoomConfigOptionModerator, RoomConfigOptionModerator),
-	newRoomConfigFieldOption(RoomConfigOptionParticipant, RoomConfigOptionParticipant),
-	newRoomConfigFieldOption(RoomConfigOptionVisitor, RoomConfigOptionVisitor),
-}
-
-var presenceBroadcastDefaultOptions = []*RoomConfigFieldOption{
-	newRoomConfigFieldOption(RoomConfigOptionModerator, RoomConfigOptionModerator),
-	newRoomConfigFieldOption(RoomConfigOptionParticipant, RoomConfigOptionParticipant),
-	newRoomConfigFieldOption(RoomConfigOptionVisitor, RoomConfigOptionVisitor),
-}
-
 var maxHistoryFetchDefaultOptions = []*RoomConfigFieldOption{
 	newRoomConfigFieldOption(RoomConfigOption10, RoomConfigOption10),
 	newRoomConfigFieldOption(RoomConfigOption20, RoomConfigOption20),

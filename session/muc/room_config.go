@@ -68,9 +68,6 @@ const (
 
 // RoomConfigForm represents a room configuration form
 type RoomConfigForm struct {
-	RetrieveMembersList *RoomConfigFieldListMultiValue
-	PresenceBroadcast   *RoomConfigFieldListMultiValue
-
 	Admins *RoomConfigFieldJidMultiValue
 	Owners *RoomConfigFieldJidMultiValue
 
@@ -86,17 +83,11 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 		knownFields: map[RoomConfigFieldType]*RoomConfigFormField{},
 	}
 
-	cf.initListMultiValueFields()
 	cf.initJidMultiValueFields()
 
 	cf.setFormFields(form.Fields)
 
 	return cf
-}
-
-func (rcf *RoomConfigForm) initListMultiValueFields() {
-	rcf.RetrieveMembersList = newRoomConfigFieldListMultiValue(nil, retrieveMembersListDefaultOptions)
-	rcf.PresenceBroadcast = newRoomConfigFieldListMultiValue(nil, presenceBroadcastDefaultOptions)
 }
 
 func (rcf *RoomConfigForm) initJidMultiValueFields() {

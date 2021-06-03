@@ -139,23 +139,30 @@ func (s *MucRoomConfigSuite) SetUpSuite(c *C) {
 	})
 }
 
+func (s *MucRoomConfigSuite) stringValueFromFormField(rcft RoomConfigFieldType) (v string) {
+	f, ok := s.rcf.GetKnownField(rcft)
+	if ok {
+		v = f.Value()[0]
+	}
+	return
+}
+
 func (s *MucRoomConfigSuite) Test_NewRoomConfigForm(c *C) {
-	c.Assert(s.rcf.Description, Equals, "a description")
-	c.Assert(s.rcf.Logged, Equals, true)
-	c.Assert(s.rcf.OccupantsCanChangeSubject, Equals, true)
-	c.Assert(s.rcf.OccupantsCanInvite, Equals, true)
-	c.Assert(s.rcf.AllowPrivateMessages.Selected(), Equals, "false")
-	c.Assert(s.rcf.MaxOccupantsNumber.Selected(), Equals, "42")
-	c.Assert(s.rcf.Public, Equals, true)
-	c.Assert(s.rcf.Persistent, Equals, true)
-	c.Assert(s.rcf.Moderated, Equals, true)
-	c.Assert(s.rcf.MembersOnly, Equals, true)
-	c.Assert(s.rcf.PasswordProtected, Equals, true)
-	c.Assert(s.rcf.Password, Equals, "a password")
-	c.Assert(s.rcf.Whois.Selected(), Equals, "a whois")
-	c.Assert(s.rcf.MaxHistoryFetch.Selected(), Equals, "43")
-	c.Assert(s.rcf.Language, Equals, "eng")
-	c.Assert(s.rcf.Admins.List(), DeepEquals, []jid.Any{jid.Parse("one@foobar.com"), jid.Parse("two@example.org")})
+	c.Assert(s.stringValueFromFormField(RoomConfigFieldDescription), Equals, "a description")
+	c.Assert(s.stringValueFromFormField(RoomConfigFieldEnableLogging), Equals, "true")
+	c.Assert(s.stringValueFromFormField(RoomConfigFieldCanChangeSubject), Equals, "true")
+	c.Assert(s.stringValueFromFormField(RoomConfigFieldAllowInvites), Equals, "true")
+	c.Assert(s.stringValueFromFormField(RoomConfigFieldAllowPrivateMessages), Equals, "false")
+	c.Assert(s.stringValueFromFormField(RoomConfigFieldMaxOccupantsNumber), Equals, "42")
+	c.Assert(s.stringValueFromFormField(RoomConfigFieldIsPublic), Equals, "true")
+	c.Assert(s.stringValueFromFormField(RoomConfigFieldIsPersistent), Equals, "true")
+	c.Assert(s.stringValueFromFormField(RoomConfigFieldIsModerated), Equals, "true")
+	c.Assert(s.stringValueFromFormField(RoomConfigFieldIsMembersOnly), Equals, "true")
+	c.Assert(s.stringValueFromFormField(RoomConfigFieldIsPasswordProtected), Equals, "true")
+	c.Assert(s.stringValueFromFormField(RoomConfigFieldPassword), Equals, "a password")
+	c.Assert(s.stringValueFromFormField(RoomConfigFieldWhoIs), Equals, "a whois")
+	c.Assert(s.stringValueFromFormField(RoomConfigFieldMaxHistoryFetch), Equals, "43")
+	c.Assert(s.stringValueFromFormField(RoomConfigFieldLanguage), Equals, "eng")
 
 	res := s.rcf.GetFormData()
 
@@ -256,7 +263,6 @@ func (*MucRoomConfigSuite) Test_RoomConfigForm_GetUnknownFields(c *C) {
 			Label:  chk.label,
 			Values: chk.value,
 		}
-		cf.setField(fieldX)
 		fields = append(fields, newRoomConfigFormField(fieldX))
 	}
 	c.Assert(cf.GetUnknownFields(), DeepEquals, fields)

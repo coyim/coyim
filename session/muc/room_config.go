@@ -134,7 +134,6 @@ func (rcf *RoomConfigForm) initJidMultiValueFields() {
 func (rcf *RoomConfigForm) setFormFields(fields []xmppData.FormFieldX) {
 	for _, field := range fields {
 		if field.Var != "" {
-			rcf.setField(field)
 			if key, isKnown := getKnownRoomConfigFieldKey(field.Var); isKnown {
 				rcf.knownFields[key] = newRoomConfigFormField(field)
 			} else if field.Type != RoomConfigFieldFixed && field.Var != configFieldFormType {
@@ -204,76 +203,6 @@ func (rcf *RoomConfigForm) getKnownFieldValue(fieldName string) ([]string, bool)
 		}
 	}
 	return nil, false
-}
-
-func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
-	switch field.Var {
-	case configFieldMaxHistoryFetch, configFieldMaxHistoryLength:
-		rcf.MaxHistoryFetch.SetSelected(formFieldSingleString(field.Values))
-		rcf.MaxHistoryFetch.SetOptions(formFieldOptionsValues(field.Options))
-
-	case configFieldAllowPM, configFieldAllowPrivateMessages:
-		rcf.AllowPrivateMessages.SetSelected(formFieldSingleString(field.Values))
-		rcf.AllowPrivateMessages.SetOptions(formFieldOptionsValues(field.Options))
-
-	case configFieldAllowInvites, configFieldAllowMemberInvites:
-		rcf.OccupantsCanInvite = formFieldBool(field.Values)
-
-	case configFieldCanChangeSubject:
-		rcf.OccupantsCanChangeSubject = formFieldBool(field.Values)
-
-	case configFieldEnableLogging, configFieldEnableArchiving, configFieldMessageArchiveManagement:
-		rcf.Logged = formFieldBool(field.Values)
-
-	case configFieldMemberList:
-		rcf.RetrieveMembersList.SetSelected(field.Values)
-		rcf.RetrieveMembersList.SetOptions(formFieldOptionsValues(field.Options))
-
-	case configFieldLanguage:
-		rcf.Language = formFieldSingleString(field.Values)
-
-	case configFieldPubsub:
-		rcf.AssociatedPublishSubscribeNode = formFieldSingleString(field.Values)
-
-	case configFieldMaxOccupantsNumber:
-		rcf.MaxOccupantsNumber.SetSelected(formFieldSingleString(field.Values))
-		rcf.MaxOccupantsNumber.SetOptions(formFieldOptionsValues(field.Options))
-
-	case configFieldMembersOnly:
-		rcf.MembersOnly = formFieldBool(field.Values)
-
-	case configFieldModerated:
-		rcf.Moderated = formFieldBool(field.Values)
-
-	case configFieldPasswordProtected:
-		rcf.PasswordProtected = formFieldBool(field.Values)
-
-	case configFieldIsPersistent:
-		rcf.Persistent = formFieldBool(field.Values)
-
-	case configFieldPresenceBroadcast:
-		rcf.PresenceBroadcast.SetSelected(field.Values)
-		rcf.PresenceBroadcast.SetOptions(formFieldOptionsValues(field.Options))
-
-	case configFieldIsPublic:
-		rcf.Public = formFieldBool(field.Values)
-
-	case configFieldRoomAdmins:
-		rcf.Admins.SetValues(field.Values)
-
-	case configFieldRoomDescription:
-		rcf.Description = formFieldSingleString(field.Values)
-
-	case configFieldOwners:
-		rcf.Owners.SetValues(field.Values)
-
-	case configFieldPassword:
-		rcf.Password = formFieldSingleString(field.Values)
-
-	case configFieldWhoIs:
-		rcf.Whois.SetSelected(formFieldSingleString(field.Values))
-		rcf.Whois.SetOptions(formFieldOptionsValues(field.Options))
-	}
 }
 
 func formFieldBool(values []string) bool {

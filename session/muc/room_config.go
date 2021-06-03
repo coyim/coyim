@@ -68,11 +68,6 @@ const (
 
 // RoomConfigForm represents a room configuration form
 type RoomConfigForm struct {
-	Description                    string
-	Language                       string
-	Password                       string
-	AssociatedPublishSubscribeNode string
-
 	OccupantsCanInvite        bool
 	OccupantsCanChangeSubject bool
 	Logged                    bool

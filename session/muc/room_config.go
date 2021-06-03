@@ -68,11 +68,6 @@ const (
 
 // RoomConfigForm represents a room configuration form
 type RoomConfigForm struct {
-	MaxHistoryFetch      *RoomConfigFieldListValue
-	AllowPrivateMessages *RoomConfigFieldListValue
-	MaxOccupantsNumber   *RoomConfigFieldListValue
-	Whois                *RoomConfigFieldListValue
-
 	RetrieveMembersList *RoomConfigFieldListMultiValue
 	PresenceBroadcast   *RoomConfigFieldListMultiValue
 
@@ -91,20 +86,12 @@ func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 		knownFields: map[RoomConfigFieldType]*RoomConfigFormField{},
 	}
 
-	cf.initListSingleValueFields()
 	cf.initListMultiValueFields()
 	cf.initJidMultiValueFields()
 
 	cf.setFormFields(form.Fields)
 
 	return cf
-}
-
-func (rcf *RoomConfigForm) initListSingleValueFields() {
-	rcf.MaxHistoryFetch = newRoomConfigFieldListValue(nil, maxHistoryFetchDefaultOptions)
-	rcf.AllowPrivateMessages = newRoomConfigFieldListValue(nil, allowPrivateMessagesDefaultOptions)
-	rcf.MaxOccupantsNumber = newRoomConfigFieldListValue(nil, maxOccupantsNumberDefaultOptions)
-	rcf.Whois = newRoomConfigFieldListValue(nil, whoisDefaultOptions)
 }
 
 func (rcf *RoomConfigForm) initListMultiValueFields() {

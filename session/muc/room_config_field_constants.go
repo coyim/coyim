@@ -163,23 +163,3 @@ var maxHistoryFetchDefaultOptions = []*RoomConfigFieldOption{
 	newRoomConfigFieldOption(RoomConfigOption100, RoomConfigOption100),
 	newRoomConfigFieldOption(RoomConfigOptionNone, RoomConfigOptionNone),
 }
-
-var allowPrivateMessagesDefaultOptions = []*RoomConfigFieldOption{
-	newRoomConfigFieldOption(RoomConfigOptionParticipant, RoomConfigOptionParticipant),
-	newRoomConfigFieldOption(RoomConfigOptionModerators, RoomConfigOptionModerators),
-	newRoomConfigFieldOption(RoomConfigOptionNone, RoomConfigOptionNone),
-}
-
-var maxOccupantsNumberDefaultOptions = []*RoomConfigFieldOption{
-	newRoomConfigFieldOption(RoomConfigOption10, RoomConfigOption10),
-	newRoomConfigFieldOption(RoomConfigOption20, RoomConfigOption20),
-	newRoomConfigFieldOption(RoomConfigOption30, RoomConfigOption30),
-	newRoomConfigFieldOption(RoomConfigOption50, RoomConfigOption50),
-	newRoomConfigFieldOption(RoomConfigOption100, RoomConfigOption100),
-	newRoomConfigFieldOption(RoomConfigOptionNone, RoomConfigOptionNone),
-}
-
-var whoisDefaultOptions = []*RoomConfigFieldOption{
-	newRoomConfigFieldOption(RoomConfigOptionModerators, RoomConfigOptionModerators),
-	newRoomConfigFieldOption(RoomConfigOptionAnyone, RoomConfigOptionAnyone),
-}

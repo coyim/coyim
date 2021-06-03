@@ -471,3 +471,7 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_getOccupantsByAffiliation(c *C)
 	roomOccupants = s.rcf.GetRoomOccupants()
 	c.Assert(roomOccupants, HasLen, 3)
 }
+
+func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetConfiguredPassword(c *C) {
+	c.Assert(s.rcf.GetConfiguredPassword(), Equals, "a password")
+}

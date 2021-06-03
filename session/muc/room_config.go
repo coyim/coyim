@@ -157,6 +157,15 @@ func (rcf *RoomConfigForm) GetKnownField(k RoomConfigFieldType) (*RoomConfigForm
 	return nil, false
 }
 
+// GetConfiguredPassword returns the configured password in the room configuration form
+func (rcf *RoomConfigForm) GetConfiguredPassword() (pwd string) {
+	field, ok := rcf.GetKnownField(RoomConfigFieldPassword)
+	if ok {
+		pwd = field.Value()[0]
+	}
+	return
+}
+
 // GetUnknownFields returns the known form field for the given key
 func (rcf *RoomConfigForm) GetUnknownFields() []*RoomConfigFormField {
 	return rcf.unknownFields

@@ -31,7 +31,7 @@ LDFLAGS := -ldflags "-X 'main.BuildTimestamp=$(BUILD_TIMESTAMP)' -X 'main.BuildC
 
 GCC_IGNORE_DEPRECATED_WARNINGS := CGO_CFLAGS_ALLOW="-Wno-deprecated-declarations" CGO_CFLAGS="-Wno-deprecated-declarations"
 
-.PHONY: default check autogen build build-gui build-gui-memory-analyzer build-gui-address-san build-gui-win build-debug debug win-ci-deps win-gtk-fix reproducible-linux-create-image reproducible-linux-build sign-reproducible upload-reproducible-signature send-reproducible-signature check-reproducible-signatures clean clean-cache update-vendor gosec ineffassign i18n lint test test-named dep-supported-only deps run-cover clean-cover cover all
+.PHONY: default check autogen build build-gui build-gui-memory-analyzer build-gui-address-san build-gui-win build-debug debug win-ci-deps reproducible-linux-create-image reproducible-linux-build sign-reproducible upload-reproducible-signature send-reproducible-signature check-reproducible-signatures clean clean-cache update-vendor gosec ineffassign i18n lint test test-named dep-supported-only deps run-cover clean-cover cover all
 
 default: check
 check: lint test
@@ -64,9 +64,6 @@ debug: $(BUILD_DIR)/coyim-debug
 
 win-ci-deps:
 	go get -u github.com/rosatolen/esc
-
-win-gtk-fix:
-	./fix_gtk_on_windows.sh
 
 reproducible-linux-create-image:
 	make -C ./reproducible/docker create-image

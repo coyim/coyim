@@ -47,10 +47,10 @@ func (f *roomConfigSummaryOccupantField) initBuilder() {
 
 func (f *roomConfigSummaryOccupantField) initDefaults() {
 	fieldLabel := i18n.Local("Owners")
-	switch f.affiliation.(type) {
-	case *data.AdminAffiliation:
+	switch {
+	case f.affiliation.IsAdmin():
 		fieldLabel = i18n.Local("Administrators")
-	case *data.OutcastAffiliation:
+	case f.affiliation.IsBanned():
 		fieldLabel = i18n.Local("Banned")
 	}
 	setLabelText(f.fieldLabel, fieldLabel)

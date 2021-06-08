@@ -60,7 +60,7 @@ func (m *mucManager) requestRoomBanList(roomID jid.Bare) ([]xmppData.MUCItem, er
 		return nil, errors.New("the client iq reply is not the expected")
 	}
 
-	var list xmppData.MUCRoomBanListItems
+	var list xmppData.MUCAdmin
 	if err := xml.Unmarshal(reply.Query, &list); err != nil {
 		return nil, errors.New("failed to parse room's ban list response")
 	}
@@ -70,8 +70,8 @@ func (m *mucManager) requestRoomBanList(roomID jid.Bare) ([]xmppData.MUCItem, er
 
 func newRoomBanListRequestQuery() xmppData.MUCAdmin {
 	return xmppData.MUCAdmin{
-		Item: &xmppData.MUCItem{
-			Affiliation: data.AffiliationOutcast,
+		Items: []xmppData.MUCItem{
+			{Affiliation: data.AffiliationOutcast},
 		},
 	}
 }
@@ -110,7 +110,7 @@ func (m *mucManager) modifyRoomBanList(roomID jid.Bare, items []*muc.RoomBanList
 	return nil
 }
 
-func newRoomBanListSaveQuery(items []*muc.RoomBanListItem) xmppData.MUCRoomBanListItems {
+func newRoomBanListSaveQuery(items []*muc.RoomBanListItem) xmppData.MUCAdmin {
 	list := []xmppData.MUCItem{}
 	for _, itm := range items {
 		list = append(list, xmppData.MUCItem{
@@ -120,7 +120,5 @@ func newRoomBanListSaveQuery(items []*muc.RoomBanListItem) xmppData.MUCRoomBanLi
 		})
 	}
 
-	return xmppData.MUCRoomBanListItems{
-		Items: list,
-	}
+	return xmppData.MUCAdmin{Items: list}
 }

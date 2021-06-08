@@ -53,8 +53,8 @@ type MUCRoomConfiguration struct {
 
 // MUCAdmin contains the deserialized information about a query tag with muc#admin name space
 type MUCAdmin struct {
-	XMLName xml.Name `xml:"http://jabber.org/protocol/muc#admin query"`
-	Item    *MUCItem `xml:"item,omitempty"`
+	XMLName xml.Name  `xml:"http://jabber.org/protocol/muc#admin query"`
+	Items   []MUCItem `xml:"item,omitempty"`
 }
 
 // MUCNotAuthorized inform user that a password is required
@@ -119,10 +119,4 @@ type MUCItem struct {
 	Role        string `xml:"role,attr,omitempty"`
 	Nick        string `xml:"nick,attr,omitempty"`
 	Reason      string `xml:"reason,omitempty"`
-}
-
-// MUCRoomBanListItems contains information about the room's ban list items
-type MUCRoomBanListItems struct {
-	XMLName xml.Name  `xml:"http://jabber.org/protocol/muc#admin query"`
-	Items   []MUCItem `xml:"item,omitempty"`
 }

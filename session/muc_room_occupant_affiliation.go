@@ -35,10 +35,12 @@ func (m *mucManager) updateOccupantAffiliation(roomID jid.Bare, occupantNickname
 
 	go func() {
 		reply, _, err := m.conn().SendIQ(roomID.String(), "set", &xmppData.MUCAdmin{
-			Item: &xmppData.MUCItem{
-				Affiliation: affiliation.Name(),
-				Jid:         occupantID.String(),
-				Reason:      reason,
+			Items: []xmppData.MUCItem{
+				{
+					Affiliation: affiliation.Name(),
+					Jid:         occupantID.String(),
+					Reason:      reason,
+				},
 			},
 		})
 

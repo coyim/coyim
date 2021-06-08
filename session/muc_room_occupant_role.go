@@ -30,10 +30,12 @@ func (m *mucManager) updateOccupantRole(roomID jid.Bare, occupantNickname string
 
 	go func() {
 		reply, _, err := m.conn().SendIQ(roomID.String(), "set", &xmppData.MUCAdmin{
-			Item: &xmppData.MUCItem{
-				Nick:   occupantNickname,
-				Role:   role.Name(),
-				Reason: reason,
+			Items: []xmppData.MUCItem{
+				{
+					Nick:   occupantNickname,
+					Role:   role.Name(),
+					Reason: reason,
+				},
 			},
 		})
 

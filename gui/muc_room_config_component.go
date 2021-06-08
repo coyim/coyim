@@ -92,7 +92,7 @@ func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onErr
 	go func() {
 		select {
 		case <-rc:
-			doInUIThread(onSuccess)
+			go c.configureOccupantAffiliations(onSuccess, onError)
 		case err := <-ec:
 			c.log.WithError(err).Error("An error occurred when submitting the configuration form")
 			doInUIThread(func() {
@@ -100,6 +100,19 @@ func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onErr
 			})
 		}
 	}()
+}
+
+func (c *mucRoomConfigComponent) configureOccupantAffiliations(onSuccess func(), onError func(error)) {
+	rc, ec := c.account.session.UpdateOccupantAffiliations(c.roomID, c.form.GetRoomOccupantsToUpdate())
+	select {
+	case <-rc:
+		doInUIThread(onSuccess)
+	case err := <-ec:
+		c.log.WithError(err).Error("An error occurred when configurating the occupant affiliations")
+		doInUIThread(func() {
+			onError(err)
+		})
+	}
 }
 
 func (c *mucRoomConfigComponent) getConfigPage(p int) mucRoomConfigPage {

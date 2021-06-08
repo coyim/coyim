@@ -2,6 +2,7 @@ package muc
 
 import (
 	"strconv"
+	"sync"
 
 	"github.com/coyim/coyim/session/muc/data"
 	xmppData "github.com/coyim/coyim/xmpp/data"
@@ -68,9 +69,10 @@ const (
 
 // RoomConfigForm represents a room configuration form
 type RoomConfigForm struct {
-	knownFields   map[RoomConfigFieldType]*RoomConfigFormField
-	unknownFields []*RoomConfigFormField
-	occupants     map[data.Affiliation][]*RoomOccupantItem
+	knownFields    map[RoomConfigFieldType]*RoomConfigFormField
+	unknownFields  []*RoomConfigFormField
+	occupants      map[data.Affiliation][]*RoomOccupantItem
+	occupantsMutex sync.Mutex
 }
 
 // NewRoomConfigForm creates a new room configuration form instance
@@ -128,6 +130,18 @@ func (rcf *RoomConfigForm) GetUnknownFields() []*RoomConfigFormField {
 // GetRoomOccupants returns all occupants in the room configuration form
 func (rcf *RoomConfigForm) GetRoomOccupants() map[data.Affiliation][]*RoomOccupantItem {
 	return rcf.occupants
+}
+
+// GetRoomOccupantsToUpdate returns all occupants in the room configuration form
+func (rcf *RoomConfigForm) GetRoomOccupantsToUpdate() []*RoomOccupantItem {
+	rcf.occupantsMutex.Lock()
+	defer rcf.occupantsMutex.Unlock()
+
+	ocupants := []*RoomOccupantItem{}
+	for _, v := range rcf.occupants {
+		ocupants = append(ocupants, v...)
+	}
+	return ocupants
 }
 
 // GetFormData returns a representation of the room config FORM_TYPE as described in the

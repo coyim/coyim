@@ -11,8 +11,8 @@ import (
 const occupantsListJidColumnIndex = 0
 
 type roomConfigOccupants struct {
-	affiliation data.Affiliation
-	occupants   map[data.Affiliation][]*muc.RoomOccupantItem
+	affiliation                  data.Affiliation
+	updateOccupantsByAffiliation func(affiliation data.Affiliation, occupants []*muc.RoomOccupantItem)
 
 	content                  gtki.Box              `gtk-widget:"room-config-occupants-content"`
 	header                   gtki.Label            `gtk-widget:"room-config-occupant-header"`
@@ -26,10 +26,10 @@ type roomConfigOccupants struct {
 	occupantsListController *mucRoomConfigListController
 }
 
-func newRoomConfigOccupants(affiliation data.Affiliation, occupants map[data.Affiliation][]*muc.RoomOccupantItem) hasRoomConfigFormField {
+func newRoomConfigOccupants(affiliation data.Affiliation, updateOccupantsByAffiliation func(affiliation data.Affiliation, occupants []*muc.RoomOccupantItem)) hasRoomConfigFormField {
 	field := &roomConfigOccupants{
-		affiliation: affiliation,
-		occupants:   occupants,
+		affiliation:                  affiliation,
+		updateOccupantsByAffiliation: updateOccupantsByAffiliation,
 	}
 
 	field.initBuilder()
@@ -97,7 +97,7 @@ func (p *roomConfigOccupants) collectFieldValue() {
 			Affiliation: p.affiliation,
 		})
 	}
-	p.occupants[p.affiliation] = occupantList
+	p.updateOccupantsByAffiliation(p.affiliation, occupantList)
 }
 
 func (p *roomConfigOccupants) showValidationErrors() {}

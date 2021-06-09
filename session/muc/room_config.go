@@ -137,6 +137,9 @@ func (rcf *RoomConfigForm) UpdateRoomOccupantsByAffiliation(a data.Affiliation, 
 
 // GetRoomOccupants returns all occupants in the room configuration form
 func (rcf *RoomConfigForm) GetRoomOccupants() map[data.Affiliation][]*RoomOccupantItem {
+	rcf.occupantsMutex.Lock()
+	defer rcf.occupantsMutex.Unlock()
+
 	return rcf.occupants
 }
 

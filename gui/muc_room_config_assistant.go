@@ -147,7 +147,7 @@ func (rc *roomConfigAssistant) onPageChanged() {
 // updateAssistantPage MUST be called from the UI thread
 func (rc *roomConfigAssistant) updateAssistantPage(indexPage int) {
 	if rc.canChangePage() {
-		rc.pageByIndex(rc.currentPageIndex).collectData()
+		rc.pageByIndex(rc.currentPageIndex).updateFieldValues()
 		rc.updateContentPage(indexPage)
 		rc.navigation.selectPageByIndex(indexPage)
 	} else {

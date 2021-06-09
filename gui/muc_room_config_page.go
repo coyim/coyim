@@ -53,7 +53,7 @@ type mucRoomConfigPage interface {
 	pageTitle() string
 	isValid() bool
 	showValidationErrors()
-	collectData()
+	updateFieldValues()
 	refresh()
 	notifyError(string)
 	onConfigurationApply()
@@ -266,7 +266,7 @@ func (p *roomConfigPageBase) showValidationErrors() {
 }
 
 // Nothing to do, just implement the "mucRoomConfigPage" interface
-func (p *roomConfigPageBase) collectData() {
+func (p *roomConfigPageBase) updateFieldValues() {
 	for _, f := range p.fields {
 		f.updateFieldValue()
 	}

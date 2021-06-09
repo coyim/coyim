@@ -137,11 +137,11 @@ func (rcf *RoomConfigForm) GetRoomOccupantsToUpdate() []*RoomOccupantItem {
 	rcf.occupantsMutex.Lock()
 	defer rcf.occupantsMutex.Unlock()
 
-	ocupants := []*RoomOccupantItem{}
+	occupants := []*RoomOccupantItem{}
 	for _, v := range rcf.occupants {
-		ocupants = append(ocupants, v...)
+		occupants = append(occupants, v...)
 	}
-	return ocupants
+	return occupants
 }
 
 // GetFormData returns a representation of the room config FORM_TYPE as described in the

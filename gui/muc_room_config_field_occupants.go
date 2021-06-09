@@ -89,7 +89,7 @@ func (p *roomConfigOccupants) updateOccupantListCellForString(controller *mucRoo
 	}
 }
 
-func (p *roomConfigOccupants) collectFieldValue() {
+func (p *roomConfigOccupants) updateFieldValue() {
 	occupantList := []*muc.RoomOccupantItem{}
 	for _, item := range p.occupantsListController.listItems() {
 		occupantList = append(occupantList, &muc.RoomOccupantItem{

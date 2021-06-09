@@ -124,7 +124,7 @@ func (f *roomConfigSummaryField) refreshContent() {
 	f.handleFieldValue()
 }
 
-func (f *roomConfigSummaryField) collectFieldValue() {}
+func (f *roomConfigSummaryField) updateFieldValue() {}
 
 func (f *roomConfigSummaryField) isValid() bool {
 	return true

@@ -28,8 +28,8 @@ func newRoomConfigFormTextMulti(fieldInfo roomConfigFieldTextInfo, value *muc.Ro
 	return field
 }
 
-// collectFieldValue MUST be called from the UI thread
-func (f *roomConfigFieldTextMulti) collectFieldValue() {
+// updateFieldValue MUST be called from the UI thread
+func (f *roomConfigFieldTextMulti) updateFieldValue() {
 	sp := strings.Split(getTextViewText(f.textView), "\n")
 	f.value.SetText(sp)
 }

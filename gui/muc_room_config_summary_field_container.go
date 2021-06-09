@@ -46,10 +46,10 @@ func (fc *roomConfigSummaryFieldContainer) refreshContent() {
 	}
 }
 
-// collectFieldValue MUST be called from the UI thread
-func (fc *roomConfigSummaryFieldContainer) collectFieldValue() {
+// updateFieldValue MUST be called from the UI thread
+func (fc *roomConfigSummaryFieldContainer) updateFieldValue() {
 	for _, f := range fc.fields {
-		f.collectFieldValue()
+		f.updateFieldValue()
 	}
 }
 

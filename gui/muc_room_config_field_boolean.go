@@ -32,7 +32,7 @@ func (f *roomConfigFormFieldBoolean) refreshContent() {
 	})
 }
 
-// collectFieldValue MUST be called from the UI thread
-func (f *roomConfigFormFieldBoolean) collectFieldValue() {
+// updateFieldValue MUST be called from the UI thread
+func (f *roomConfigFormFieldBoolean) updateFieldValue() {
 	f.value.SetBoolean(f.toggle.GetActive())
 }

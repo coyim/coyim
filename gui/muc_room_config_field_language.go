@@ -26,7 +26,7 @@ func newRoomConfigFormFieldLanguage(fieldInfo roomConfigFieldTextInfo, value *mu
 	return field
 }
 
-// collectFieldValue MUST be called from the UI thread
-func (f *roomConfigFormFieldLanguage) collectFieldValue() {
+// updateFieldValue MUST be called from the UI thread
+func (f *roomConfigFormFieldLanguage) updateFieldValue() {
 	f.value.SetText(f.languageComponent.currentLanguage())
 }

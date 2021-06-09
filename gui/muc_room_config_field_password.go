@@ -53,8 +53,8 @@ func (f *roomConfigFormFieldPassword) currentPassword() string {
 	return getEntryText(f.entry)
 }
 
-// collectFieldValue MUST be called from the UI thread
-func (f *roomConfigFormFieldPassword) collectFieldValue() {
+// updateFieldValue MUST be called from the UI thread
+func (f *roomConfigFormFieldPassword) updateFieldValue() {
 	f.value.SetText(f.currentPassword())
 }
 

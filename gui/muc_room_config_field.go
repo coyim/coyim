@@ -10,7 +10,7 @@ import (
 type hasRoomConfigFormField interface {
 	fieldWidget() gtki.Widget
 	refreshContent()
-	collectFieldValue()
+	updateFieldValue()
 	isValid() bool
 	showValidationErrors()
 }
@@ -48,8 +48,8 @@ func (f *roomConfigFormField) fieldWidget() gtki.Widget {
 // refreshContent implements the hasRoomConfigFormField interface
 func (f *roomConfigFormField) refreshContent() {}
 
-// collectFieldValue implements the hasRoomConfigFormField interface
-func (f *roomConfigFormField) collectFieldValue() {}
+// updateFieldValue implements the hasRoomConfigFormField interface
+func (f *roomConfigFormField) updateFieldValue() {}
 
 // isValid implements the hasRoomConfigFormField interface
 func (f *roomConfigFormField) isValid() bool {

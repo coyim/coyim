@@ -64,8 +64,8 @@ func (f *roomConfigFieldListMulti) onCheckChanged(path string) {
 	f.model.SetValue(iter, configFieldListMultiActivableIndex, !f.isIterSelected(iter))
 }
 
-// collectFieldValue MUST be called from the UI thread
-func (f *roomConfigFieldListMulti) collectFieldValue() {
+// updateFieldValue MUST be called from the UI thread
+func (f *roomConfigFieldListMulti) updateFieldValue() {
 	selected := []string{}
 
 	iter, ok := f.model.GetIterFirst()

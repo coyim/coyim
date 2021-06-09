@@ -268,7 +268,7 @@ func (p *roomConfigPageBase) showValidationErrors() {
 // Nothing to do, just implement the "mucRoomConfigPage" interface
 func (p *roomConfigPageBase) collectData() {
 	for _, f := range p.fields {
-		f.collectFieldValue()
+		f.updateFieldValue()
 	}
 }
 

@@ -56,8 +56,8 @@ func (f *roomConfigFormFieldListEntry) activateOption(v string) {
 	f.entry.SetText(v)
 }
 
-// collectFieldValue MUST be called from the UI thread
-func (f *roomConfigFormFieldListEntry) collectFieldValue() {
+// updateFieldValue MUST be called from the UI thread
+func (f *roomConfigFormFieldListEntry) updateFieldValue() {
 	f.value.SetSelected(f.currentValue())
 }
 

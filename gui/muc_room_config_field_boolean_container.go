@@ -42,10 +42,10 @@ func (fc *roomConfigFormFieldBooleanContainer) fieldWidget() gtki.Widget {
 // refreshContent MUST NOT be called from the UI thread
 func (fc *roomConfigFormFieldBooleanContainer) refreshContent() {}
 
-// collectFieldValue MUST be called from the UI thread
-func (fc *roomConfigFormFieldBooleanContainer) collectFieldValue() {
+// updateFieldValue MUST be called from the UI thread
+func (fc *roomConfigFormFieldBooleanContainer) updateFieldValue() {
 	for _, f := range fc.fields {
-		f.collectFieldValue()
+		f.updateFieldValue()
 	}
 }
 

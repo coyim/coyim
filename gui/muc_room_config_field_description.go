@@ -26,7 +26,7 @@ func newRoomConfigFieldDescription(fieldInfo roomConfigFieldTextInfo, value *muc
 	return field
 }
 
-// collectFieldValue MUST be called from the UI thread
-func (f *roomConfigFieldDescription) collectFieldValue() {
+// updateFieldValue MUST be called from the UI thread
+func (f *roomConfigFieldDescription) updateFieldValue() {
 	f.value.SetText(getTextViewText(f.textView))
 }

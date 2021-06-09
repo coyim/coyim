@@ -127,6 +127,14 @@ func (rcf *RoomConfigForm) GetUnknownFields() []*RoomConfigFormField {
 	return rcf.unknownFields
 }
 
+// UpdateRoomOccupantsByAffiliation updates the occupant list based on a given affiliation in the room configuration form
+func (rcf *RoomConfigForm) UpdateRoomOccupantsByAffiliation(a data.Affiliation, occupants []*RoomOccupantItem) {
+	rcf.occupantsMutex.Lock()
+	defer rcf.occupantsMutex.Unlock()
+
+	rcf.occupants[a] = occupants
+}
+
 // GetRoomOccupants returns all occupants in the room configuration form
 func (rcf *RoomConfigForm) GetRoomOccupants() map[data.Affiliation][]*RoomOccupantItem {
 	return rcf.occupants

@@ -427,10 +427,9 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_getKnownFieldValue(c *C) {
 
 }
 
-func (s *MucRoomConfigSuite) Test_RoomConfigForm_getOccupantsByAffiliation(c *C) {
+func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetRoomOccupants(c *C) {
 	ownerAffiliation := &data.OwnerAffiliation{}
-	adminAffiliation := &data.AdminAffiliation{}
-	s.rcf.occupants[ownerAffiliation] = []*RoomOccupantItem{
+	s.rcf.UpdateRoomOccupantsByAffiliation(ownerAffiliation, []*RoomOccupantItem{
 		{
 			Jid:         jid.Parse("jid"),
 			Affiliation: ownerAffiliation,
@@ -446,30 +445,29 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_getOccupantsByAffiliation(c *C)
 			Affiliation: ownerAffiliation,
 			Reason:      "foo123",
 		},
-	}
+	})
 
-	s.rcf.occupants[adminAffiliation] = []*RoomOccupantItem{
+	adminAffiliation := &data.AdminAffiliation{}
+	s.rcf.UpdateRoomOccupantsByAffiliation(adminAffiliation, []*RoomOccupantItem{
 		{
 			Jid:         jid.Parse("batman@cave.org"),
 			Affiliation: adminAffiliation,
 			Reason:      "boom",
 		},
-	}
+	})
 
-	roomOccupants := s.rcf.GetRoomOccupants()
-	c.Assert(roomOccupants, HasLen, 2)
+	c.Assert(s.rcf.GetRoomOccupants(), HasLen, 2)
 
 	outcastAffiliation := &data.OutcastAffiliation{}
-	s.rcf.occupants[outcastAffiliation] = []*RoomOccupantItem{
+	s.rcf.UpdateRoomOccupantsByAffiliation(outcastAffiliation, []*RoomOccupantItem{
 		{
 			Jid:         jid.Parse("robin"),
 			Affiliation: outcastAffiliation,
 			Reason:      "123456",
 		},
-	}
+	})
 
-	roomOccupants = s.rcf.GetRoomOccupants()
-	c.Assert(roomOccupants, HasLen, 3)
+	c.Assert(s.rcf.GetRoomOccupants(), HasLen, 3)
 }
 
 func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetConfiguredPassword(c *C) {
@@ -477,36 +475,17 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetConfiguredPassword(c *C) {
 }
 
 func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetRoomOccupantsToUpdate(c *C) {
-	ownerAffiliation := &data.OwnerAffiliation{}
-	adminAffiliation := &data.AdminAffiliation{}
-	s.rcf.occupants[ownerAffiliation] = []*RoomOccupantItem{
-		{
-			Jid:         jid.Parse("jid"),
-			Affiliation: ownerAffiliation,
-			Reason:      "bla",
-		},
-		{
-			Jid:         jid.Parse("jid@foo.org"),
-			Affiliation: ownerAffiliation,
-			Reason:      "foo",
-		},
-		{
-			Jid:         jid.Parse("1234"),
-			Affiliation: ownerAffiliation,
-			Reason:      "foo123",
-		},
-	}
-
-	s.rcf.occupants[adminAffiliation] = []*RoomOccupantItem{
-		{
-			Jid:         jid.Parse("batman@cave.org"),
-			Affiliation: adminAffiliation,
-			Reason:      "boom",
-		},
-	}
 	roomOccupants := s.rcf.GetRoomOccupantsToUpdate()
-	c.Assert(roomOccupants, HasLen, 4)
-	c.Assert(roomOccupants, DeepEquals, []*RoomOccupantItem{
+	c.Assert(roomOccupants, HasLen, 5)
+
+	owners := []*RoomOccupantItem{}
+	ownerAffiliation := &data.OwnerAffiliation{}
+	for _, o := range roomOccupants {
+		if o.Affiliation == ownerAffiliation {
+			owners = append(owners, o)
+		}
+	}
+	c.Assert(owners, DeepEquals, []*RoomOccupantItem{
 		{
 			Jid:         jid.Parse("jid"),
 			Affiliation: ownerAffiliation,
@@ -522,10 +501,35 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetRoomOccupantsToUpdate(c *C) 
 			Affiliation: ownerAffiliation,
 			Reason:      "foo123",
 		},
+	})
+
+	admins := []*RoomOccupantItem{}
+	adminAffiliation := &data.AdminAffiliation{}
+	for _, o := range roomOccupants {
+		if o.Affiliation == adminAffiliation {
+			admins = append(admins, o)
+		}
+	}
+	c.Assert(admins, DeepEquals, []*RoomOccupantItem{
 		{
 			Jid:         jid.Parse("batman@cave.org"),
 			Affiliation: adminAffiliation,
 			Reason:      "boom",
+		},
+	})
+
+	banned := []*RoomOccupantItem{}
+	outcastAffiliation := &data.OutcastAffiliation{}
+	for _, o := range roomOccupants {
+		if o.Affiliation == outcastAffiliation {
+			banned = append(banned, o)
+		}
+	}
+	c.Assert(banned, DeepEquals, []*RoomOccupantItem{
+		{
+			Jid:         jid.Parse("robin"),
+			Affiliation: outcastAffiliation,
+			Reason:      "123456",
 		},
 	})
 }

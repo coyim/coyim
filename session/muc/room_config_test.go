@@ -470,6 +470,14 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetOccupantsByAffiliation(c *C)
 	c.Assert(s.rcf.GetOccupantsByAffiliation(outcastAffiliation), HasLen, 1)
 }
 
+func (s *MucRoomConfigSuite) Test_RoomConfigForm_ConfigureRoomAsPersistent(c *C) {
+	f := s.rcf.knownFields[RoomConfigFieldIsPersistent].value.(*RoomConfigFieldBooleanValue)
+	f.SetBoolean(false)
+	c.Assert(f.value, Equals, false)
+	s.rcf.ConfigureRoomAsPersistent()
+	c.Assert(f.value, Equals, true)
+}
+
 func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetConfiguredPassword(c *C) {
 	c.Assert(s.rcf.GetConfiguredPassword(), Equals, "a password")
 }

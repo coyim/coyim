@@ -103,7 +103,7 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, onError fun
 		select {
 		case <-sc:
 			if v.configureRoom {
-				v.createReservedRoom(ca, roomID, onError)
+				v.instantiatePersistentRoom(ca, roomID, onError)
 			} else {
 				v.createInstantRoom(ca, roomID, onError)
 			}
@@ -113,6 +113,29 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, onError fun
 		}
 	}()
 
+}
+
+// instantiatePersistentRoom IS SAFE to be called from the UI thread
+func (v *mucCreateRoomView) instantiatePersistentRoom(ca *account, roomID jid.Bare, onError func(error)) {
+	fc, ec := ca.session.CreateReservedRoom(roomID)
+	go func() {
+		select {
+		case err := <-ec:
+			onError(err)
+		case form := <-fc:
+			form.ConfigureRoomAsPersistent()
+			rc, ec := ca.session.SubmitRoomConfigurationForm(roomID, form)
+
+			go func() {
+				select {
+				case <-rc:
+					v.createReservedRoom(ca, roomID, onError)
+				case err := <-ec:
+					ca.log.WithError(err).Error("An error occurred when submitting the configuration form")
+				}
+			}()
+		}
+	}()
 }
 
 // joinRoom MUST be called from the UI thread

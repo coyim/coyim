@@ -85,16 +85,16 @@ func (c *mucRoomConfigComponent) cancelConfiguration(onError func(error)) {
 	}()
 }
 
-// submitConfigurationForm IS SAFE to be called from the UI thread
-func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onError func(error)) {
-	rc, ec := c.account.session.SubmitRoomConfigurationForm(c.roomID, c.form)
+// configureRoom IS SAFE to be called from the UI thread
+func (c *mucRoomConfigComponent) configureRoom(onSuccess func(), onError func(error)) {
+	rc, ec := c.account.session.UpdateOccupantAffiliations(c.roomID, c.form.GetRoomOccupantsToUpdate())
 
 	go func() {
 		select {
 		case <-rc:
-			go c.configureOccupantAffiliations(onSuccess, onError)
+			go c.submitConfigurationForm(onSuccess, onError)
 		case err := <-ec:
-			c.log.WithError(err).Error("An error occurred when submitting the configuration form")
+			c.log.WithError(err).Error("An error occurred when configurating the occupant affiliations")
 			doInUIThread(func() {
 				onError(err)
 			})
@@ -102,17 +102,20 @@ func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onErr
 	}()
 }
 
-func (c *mucRoomConfigComponent) configureOccupantAffiliations(onSuccess func(), onError func(error)) {
-	rc, ec := c.account.session.UpdateOccupantAffiliations(c.roomID, c.form.GetRoomOccupantsToUpdate())
-	select {
-	case <-rc:
-		doInUIThread(onSuccess)
-	case err := <-ec:
-		c.log.WithError(err).Error("An error occurred when configurating the occupant affiliations")
-		doInUIThread(func() {
-			onError(err)
-		})
-	}
+func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onError func(error)) {
+	rc, ec := c.account.session.SubmitRoomConfigurationForm(c.roomID, c.form)
+
+	go func() {
+		select {
+		case <-rc:
+			doInUIThread(onSuccess)
+		case err := <-ec:
+			c.log.WithError(err).Error("An error occurred when submitting the configuration form")
+			doInUIThread(func() {
+				onError(err)
+			})
+		}
+	}()
 }
 
 func (c *mucRoomConfigComponent) getConfigPage(p int) mucRoomConfigPage {

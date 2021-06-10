@@ -218,7 +218,7 @@ func (rc *roomConfigAssistant) onApplyClicked() {
 	rc.disableAssistant()
 	rc.currentPage.onConfigurationApply()
 
-	rc.roomConfigComponent.submitConfigurationForm(
+	rc.roomConfigComponent.configureRoom(
 		rc.onApplySuccess,
 		rc.onApplyError,
 	)

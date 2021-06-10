@@ -192,6 +192,7 @@ func (p *roomConfigPageBase) initSummary() {
 	p.initSummaryFields(roomConfigPermissionsPageIndex)
 	p.initSummaryFields(roomConfigOccupantsPageIndex)
 	p.initSummaryFields(roomConfigOthersPageIndex)
+	p.autojoinCheckButton.SetActive(p.roomConfigComponent.autoJoin)
 	p.autojoinContent.Show()
 }
 

@@ -135,12 +135,12 @@ func (rcf *RoomConfigForm) UpdateRoomOccupantsByAffiliation(a data.Affiliation, 
 	rcf.occupants[a] = occupants
 }
 
-// GetRoomOccupants returns all occupants in the room configuration form
-func (rcf *RoomConfigForm) GetRoomOccupants() map[data.Affiliation][]*RoomOccupantItem {
+// GetOccupantsByAffiliation returns all occupants in the room configuration form based on a given affiliation
+func (rcf *RoomConfigForm) GetOccupantsByAffiliation(a data.Affiliation) []*RoomOccupantItem {
 	rcf.occupantsMutex.Lock()
 	defer rcf.occupantsMutex.Unlock()
 
-	return rcf.occupants
+	return rcf.occupants[a]
 }
 
 // GetRoomOccupantsToUpdate returns all occupants in the room configuration form

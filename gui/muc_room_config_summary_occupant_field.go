@@ -9,8 +9,8 @@ import (
 )
 
 type roomConfigSummaryOccupantField struct {
-	affiliation data.Affiliation
-	occupants   map[data.Affiliation][]*muc.RoomOccupantItem
+	affiliation            data.Affiliation
+	occupantsByAffiliation func(data.Affiliation) []*muc.RoomOccupantItem
 
 	widget                    gtki.Box        `gtk-widget:"room-config-field-box"`
 	field                     gtki.ListBoxRow `gtk-widget:"room-config-field"`
@@ -24,10 +24,10 @@ type roomConfigSummaryOccupantField struct {
 	listModel gtki.ListStore
 }
 
-func newRoomConfigSummaryOccupantField(affiliation data.Affiliation, occupants map[data.Affiliation][]*muc.RoomOccupantItem) hasRoomConfigFormField {
+func newRoomConfigSummaryOccupantField(affiliation data.Affiliation, occupantsByAffiliation func(data.Affiliation) []*muc.RoomOccupantItem) hasRoomConfigFormField {
 	field := &roomConfigSummaryOccupantField{
-		affiliation: affiliation,
-		occupants:   occupants,
+		affiliation:            affiliation,
+		occupantsByAffiliation: occupantsByAffiliation,
 	}
 
 	field.initBuilder()
@@ -60,8 +60,9 @@ func (f *roomConfigSummaryOccupantField) handleFieldValue() {
 	f.listModel, _ = g.gtk.ListStoreNew(glibi.TYPE_STRING)
 	f.fieldListValues.SetModel(f.listModel)
 
-	setLabelText(f.fieldValueLabel, summaryListTotalText(len(f.occupants[f.affiliation])))
-	f.fieldListValueButton.SetVisible(len(f.occupants[f.affiliation]) > 0)
+	occupants := f.occupantsByAffiliation(f.affiliation)
+	setLabelText(f.fieldValueLabel, summaryListTotalText(len(occupants)))
+	f.fieldListValueButton.SetVisible(len(occupants) > 0)
 
 	f.initListContent()
 }
@@ -69,7 +70,7 @@ func (f *roomConfigSummaryOccupantField) handleFieldValue() {
 func (f *roomConfigSummaryOccupantField) initListContent() {
 	f.listModel.Clear()
 
-	for _, o := range f.occupants[f.affiliation] {
+	for _, o := range f.occupantsByAffiliation(f.affiliation) {
 		iter := f.listModel.Append()
 		f.listModel.SetValue(iter, 0, configOptionToFriendlyMessage(o.Jid.String(), o.Jid.String()))
 	}

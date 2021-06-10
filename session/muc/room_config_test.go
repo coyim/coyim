@@ -427,7 +427,7 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_getKnownFieldValue(c *C) {
 
 }
 
-func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetRoomOccupants(c *C) {
+func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetOccupantsByAffiliation(c *C) {
 	ownerAffiliation := &data.OwnerAffiliation{}
 	s.rcf.UpdateRoomOccupantsByAffiliation(ownerAffiliation, []*RoomOccupantItem{
 		{
@@ -456,8 +456,6 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetRoomOccupants(c *C) {
 		},
 	})
 
-	c.Assert(s.rcf.GetRoomOccupants(), HasLen, 2)
-
 	outcastAffiliation := &data.OutcastAffiliation{}
 	s.rcf.UpdateRoomOccupantsByAffiliation(outcastAffiliation, []*RoomOccupantItem{
 		{
@@ -467,7 +465,9 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetRoomOccupants(c *C) {
 		},
 	})
 
-	c.Assert(s.rcf.GetRoomOccupants(), HasLen, 3)
+	c.Assert(s.rcf.GetOccupantsByAffiliation(ownerAffiliation), HasLen, 3)
+	c.Assert(s.rcf.GetOccupantsByAffiliation(adminAffiliation), HasLen, 1)
+	c.Assert(s.rcf.GetOccupantsByAffiliation(outcastAffiliation), HasLen, 1)
 }
 
 func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetConfiguredPassword(c *C) {

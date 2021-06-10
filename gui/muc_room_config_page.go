@@ -219,9 +219,9 @@ func (p *roomConfigPageBase) initSummaryFields(pageID int) {
 
 func (p *roomConfigPageBase) initOccupantsSummaryFields() {
 	fields := []hasRoomConfigFormField{
-		newRoomConfigSummaryOccupantField(&data.OwnerAffiliation{}, p.form.GetRoomOccupants()),
-		newRoomConfigSummaryOccupantField(&data.AdminAffiliation{}, p.form.GetRoomOccupants()),
-		newRoomConfigSummaryOccupantField(&data.OutcastAffiliation{}, p.form.GetRoomOccupants()),
+		newRoomConfigSummaryOccupantField(&data.OwnerAffiliation{}, p.form.GetOccupantsByAffiliation),
+		newRoomConfigSummaryOccupantField(&data.AdminAffiliation{}, p.form.GetOccupantsByAffiliation),
+		newRoomConfigSummaryOccupantField(&data.OutcastAffiliation{}, p.form.GetOccupantsByAffiliation),
 	}
 	p.addField(newRoomConfigSummaryFieldContainer(fields))
 }

@@ -16,6 +16,8 @@ ifneq ($(CYGDROP),)
 	CYGDROP_VERSION := $(shell $(CYGDROP) --version | grep -o '[[:digit:]]\.[[:digit:]]\.[[:digit:]]')
 endif
 
+PKG_CONFIG_PC_FILES_DIR := $(PWD)/.pkgconfig-pc-files
+
 default: doctor test coveralls
 
 
@@ -25,8 +27,9 @@ deps:
 
 test:
 ifeq ($(IS_WINDOWS_SERVER),true)
+	../scripts/fix_pkg_config_pc_files.sh $(PKG_CONFIG_PC_FILES_DIR)
 	@echo "Using cygdrop $(CYGDROP_VERSION)"
-	$(CYGDROP) $(CYGDROP_FLAGS) make check -C ../
+	PKG_CONFIG_PATH=$(PKG_CONFIG_PC_FILES_DIR):$$PKG_CONFIG_PATH $(CYGDROP) $(CYGDROP_FLAGS) make check -C ../
 else
 	make check -C ../
 endif

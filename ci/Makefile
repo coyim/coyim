@@ -1,8 +1,11 @@
 GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 
-WINDOWS := false
+IS_WINDOWS_SERVER := false
 ifeq ($(OS), Windows_NT)
-	WINDOWS := true
+	SYSTEM_INFO := $(shell systeminfo | grep -o "Microsoft Windows Server")
+	ifneq ($(SYSTEM_INFO),)
+		IS_WINDOWS_SERVER := true
+	endif
 endif
 
 CYGDROP := $(shell which cygdrop)
@@ -20,7 +23,7 @@ deps:
 	go get -u github.com/mattn/goveralls
 
 test:
-ifeq ($(WINDOWS),true)
+ifeq ($(IS_WINDOWS_SERVER),true)
 	$(CYGDROP) $(CYGDROP_FLAGS) make check -C ../
 else
 	make check -C ../

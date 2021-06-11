@@ -10,6 +10,7 @@ endif
 
 CYGDROP := $(shell which cygdrop)
 CYGDROP_FLAGS :=
+CYGDROP_VERSION :=
 ifneq ($(CYGDROP),)
 	CYGDROP_FLAGS := -p Backup -p Restore
 	CYGDROP_VERSION := $(shell $(CYGDROP) --version | grep -o '[[:digit:]]\.[[:digit:]]\.[[:digit:]]')
@@ -24,6 +25,7 @@ deps:
 
 test:
 ifeq ($(IS_WINDOWS_SERVER),true)
+	@echo "Using cygdrop $(CYGDROP_VERSION)"
 	$(CYGDROP) $(CYGDROP_FLAGS) make check -C ../
 else
 	make check -C ../

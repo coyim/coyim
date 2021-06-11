@@ -129,7 +129,7 @@ jobs:
         env:
           DISPLAY: ':99.0'
       - name: run tests
-        run: cygdrop make -C ci/
+        run: make -C ci/
         env:
           DISPLAY: ':99.0'
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}

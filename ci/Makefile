@@ -1,5 +1,17 @@
 GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 
+WINDOWS := false
+ifeq ($(OS), Windows_NT)
+	WINDOWS := true
+endif
+
+CYGDROP := $(shell which cygdrop)
+CYGDROP_FLAGS :=
+ifneq ($(CYGDROP),)
+	CYGDROP_FLAGS := -p Backup -p Restore
+	CYGDROP_VERSION := $(shell $(CYGDROP) --version | grep -o '[[:digit:]]\.[[:digit:]]\.[[:digit:]]')
+endif
+
 default: doctor test coveralls
 
 
@@ -8,7 +20,11 @@ deps:
 	go get -u github.com/mattn/goveralls
 
 test:
+ifeq ($(WINDOWS),true)
+	$(CYGDROP) $(CYGDROP_FLAGS) make check -C ../
+else
 	make check -C ../
+endif
 
 doctor: check-go-imports
 

@@ -42,6 +42,7 @@ func (u *gtkUI) newInfoBarComponent(text string, messageType gtki.MessageType) *
 
 	ib.titleLabel.SetText(ib.text)
 	ib.infoBar.SetMessageType(ib.messageType)
+	mucStyles.setInfoBarStyle(ib.infoBar, messageType)
 
 	return ib
 }

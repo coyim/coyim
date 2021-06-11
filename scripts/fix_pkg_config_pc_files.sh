@@ -9,7 +9,7 @@ fix_pc_file()
     pc_file=$2
 
     pc_file_name="$(basename $pc_file)"
-    sed -e "s/prefix=$prefix/prefix=$replace/g" -e 's/-Wl,-luuid/-luuid/g' -e '$aLDFLAGS: -Wl' "$pc_file" > "$pc_file_destination/$pc_file_name"
+    sed -e 's/-Wl,-luuid/-luuid/g' -e '$aLDFLAGS: -Wl' "$pc_file" > "$pc_file_destination/$pc_file_name"
 }
 
 pkg_config_paths="$(pkg-config --variable pc_path pkg-config)"

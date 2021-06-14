@@ -1,1 +1,2 @@
-* text=auto eol=lf
+gui/definitions/*.xml text=auto eol=lf
+gui/definitions/images/*.svg text=auto eol=lf

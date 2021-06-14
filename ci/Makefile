@@ -14,12 +14,12 @@ deps:
 	go get -u github.com/mattn/goveralls
 
 test:
-	ifeq ($(WINDOWS),true)
-		../scripts/fix_pkg_config_pc_files.sh $(PKG_CONFIG_PC_FILES_DIR)
-		PKG_CONFIG_PATH=$(PKG_CONFIG_PC_FILES_DIR):$$PKG_CONFIG_PATH ${THROUGH_COMMAND_PREFIX} make check -C ../
-	else
-		make check -C ../
-	endif
+ifeq ($(WINDOWS),true)
+	../scripts/fix_pkg_config_pc_files.sh $(PKG_CONFIG_PC_FILES_DIR)
+	PKG_CONFIG_PATH=$(PKG_CONFIG_PC_FILES_DIR):$$PKG_CONFIG_PATH ${THROUGH_COMMAND_PREFIX} make check -C ../
+else
+	make check -C ../
+endif
 
 doctor: check-go-imports
 

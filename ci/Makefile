@@ -1,25 +1,8 @@
 GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 
-IS_WINDOWS_SERVER := false
-ifeq ($(OS), Windows_NT)
-	SYSTEM_INFO := $(shell systeminfo | grep -o "Microsoft Windows Server")
-	ifneq ($(SYSTEM_INFO),)
-		IS_WINDOWS_SERVER := true
-	endif
-endif
-
-CYGDROP := $(shell which cygdrop)
-CYGDROP_FLAGS :=
-CYGDROP_VERSION :=
-ifneq ($(CYGDROP),)
-	CYGDROP_FLAGS := -p Backup -p Restore
-	CYGDROP_VERSION := $(shell $(CYGDROP) --version | grep -o '[[:digit:]]\.[[:digit:]]\.[[:digit:]]')
-endif
-
 PKG_CONFIG_PC_FILES_DIR := $(PWD)/.pkgconfig-pc-files
 
 default: doctor test coveralls
-
 
 deps:
 	make -C ../ deps
@@ -28,8 +11,7 @@ deps:
 test:
 ifeq ($(IS_WINDOWS_SERVER),true)
 	../scripts/fix_pkg_config_pc_files.sh $(PKG_CONFIG_PC_FILES_DIR)
-	@echo "Using cygdrop $(CYGDROP_VERSION)"
-	PKG_CONFIG_PATH=$(PKG_CONFIG_PC_FILES_DIR):$$PKG_CONFIG_PATH $(CYGDROP) $(CYGDROP_FLAGS) make check -C ../
+	PKG_CONFIG_PATH=$(PKG_CONFIG_PC_FILES_DIR):$$PKG_CONFIG_PATH ${THROUGH_COMMAND_PREFIX} make check -C ../
 else
 	make check -C ../
 endif
@@ -48,7 +30,7 @@ ifeq ($(TRAVIS),true)
 	@echo "We only send coverage information from Github Actions these days, so skipping it"
 #	goveralls -coverprofile=../.coverprofiles/all.coverprofile -service=travis-ci
 else ifeq ($(GITHUB_ACTIONS),true)
-	goveralls -coverprofile=../.coverprofiles/all.coverprofile
+	${THROUGH_COMMAND_PREFIX} goveralls -coverprofile=../.coverprofiles/all.coverprofile
 else
 	@echo "Can't send coverage results to Coveralls since we don't seem to be in neither Travis nor Github Actions"
 endif

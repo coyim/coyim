@@ -133,6 +133,7 @@ jobs:
         env:
           DISPLAY: ':99.0'
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+          THROUGH_COMMAND_PREFIX: cygdrop -p Backup -p Restore
 
   notify-test:
     name: Notify on success or failure of test

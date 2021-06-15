@@ -145,23 +145,22 @@ func (rcf *RoomConfigForm) ConfigureRoomAsPersistent() {
 }
 
 // GetOccupantsByAffiliation returns all occupants in the room configuration form based on a given affiliation
-func (rcf *RoomConfigForm) GetOccupantsByAffiliation(a data.Affiliation) []*RoomOccupantItem {
+func (rcf *RoomConfigForm) GetOccupantsByAffiliation(a data.Affiliation) (accounts []*RoomOccupantItem) {
 	rcf.occupantsMutex.Lock()
 	defer rcf.occupantsMutex.Unlock()
 
-	return rcf.occupants[a]
+	return append(accounts, rcf.occupants[a]...)
 }
 
 // GetRoomOccupantsToUpdate returns all occupants in the room configuration form
-func (rcf *RoomConfigForm) GetRoomOccupantsToUpdate() []*RoomOccupantItem {
+func (rcf *RoomConfigForm) GetRoomOccupantsToUpdate() (accounts []*RoomOccupantItem) {
 	rcf.occupantsMutex.Lock()
 	defer rcf.occupantsMutex.Unlock()
 
-	occupants := []*RoomOccupantItem{}
 	for _, v := range rcf.occupants {
-		occupants = append(occupants, v...)
+		accounts = append(accounts, v...)
 	}
-	return occupants
+	return accounts
 }
 
 // GetFormData returns a representation of the room config FORM_TYPE as described in the

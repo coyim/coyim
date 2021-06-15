@@ -79,13 +79,13 @@
             <property name="visible">True</property>
             <property name="shadow_type">none</property>
             <child>
-              <object class="GtkBox" id="room-config-occupants-page"></object>
+              <object class="GtkBox" id="room-config-positions-page"></object>
             </child>
           </object>
         </child>
       </object>
       <packing>
-        <property name="title" translatable="yes">Occupants</property>
+        <property name="title" translatable="yes">Positions</property>
         <property name="complete">True</property>
         <property name="has_padding">False</property>
       </packing>

@@ -30,14 +30,14 @@ type roomConfigAssistant struct {
 	infoPageBox        gtki.Box       `gtk-widget:"room-config-info-page"`
 	accessPageBox      gtki.Box       `gtk-widget:"room-config-access-page"`
 	permissionsPageBox gtki.Box       `gtk-widget:"room-config-permissions-page"`
-	occupantsPageBox   gtki.Box       `gtk-widget:"room-config-occupants-page"`
+	positionsPageBox   gtki.Box       `gtk-widget:"room-config-positions-page"`
 	othersPageBox      gtki.Box       `gtk-widget:"room-config-others-page"`
 	summaryPageBox     gtki.Box       `gtk-widget:"room-config-summary-page"`
 
 	infoPage        mucRoomConfigPage
 	accessPage      mucRoomConfigPage
 	permissionsPage mucRoomConfigPage
-	occupantsPage   mucRoomConfigPage
+	positionsPage   mucRoomConfigPage
 	othersPage      mucRoomConfigPage
 	summaryPage     mucRoomConfigPage
 
@@ -96,14 +96,14 @@ func (rc *roomConfigAssistant) initRoomConfigPages() {
 	rc.infoPage = rc.roomConfigComponent.getConfigPage(roomConfigInformationPageIndex)
 	rc.accessPage = rc.roomConfigComponent.getConfigPage(roomConfigAccessPageIndex)
 	rc.permissionsPage = rc.roomConfigComponent.getConfigPage(roomConfigPermissionsPageIndex)
-	rc.occupantsPage = rc.roomConfigComponent.getConfigPage(roomConfigOccupantsPageIndex)
+	rc.positionsPage = rc.roomConfigComponent.getConfigPage(roomConfigPositionsPageIndex)
 	rc.othersPage = rc.roomConfigComponent.getConfigPage(roomConfigOthersPageIndex)
 	rc.summaryPage = rc.roomConfigComponent.getConfigPage(roomConfigSummaryPageIndex)
 
 	rc.infoPageBox.Add(rc.infoPage.pageView())
 	rc.accessPageBox.Add(rc.accessPage.pageView())
 	rc.permissionsPageBox.Add(rc.permissionsPage.pageView())
-	rc.occupantsPageBox.Add(rc.occupantsPage.pageView())
+	rc.positionsPageBox.Add(rc.positionsPage.pageView())
 	rc.othersPageBox.Add(rc.othersPage.pageView())
 	rc.summaryPageBox.Add(rc.summaryPage.pageView())
 
@@ -252,7 +252,7 @@ func (rc *roomConfigAssistant) allPagesBoxes() []gtki.Box {
 		rc.infoPageBox,
 		rc.accessPageBox,
 		rc.permissionsPageBox,
-		rc.occupantsPageBox,
+		rc.positionsPageBox,
 		rc.othersPageBox,
 		rc.summaryPageBox,
 	}
@@ -263,7 +263,7 @@ func (rc *roomConfigAssistant) allPages() []mucRoomConfigPage {
 		rc.infoPage,
 		rc.accessPage,
 		rc.permissionsPage,
-		rc.occupantsPage,
+		rc.positionsPage,
 		rc.othersPage,
 		rc.summaryPage,
 	}
@@ -277,8 +277,8 @@ func (rc *roomConfigAssistant) pageByIndex(p int) mucRoomConfigPage {
 		return rc.accessPage
 	case roomConfigPermissionsPageIndex:
 		return rc.permissionsPage
-	case roomConfigOccupantsPageIndex:
-		return rc.occupantsPage
+	case roomConfigPositionsPageIndex:
+		return rc.positionsPage
 	case roomConfigOthersPageIndex:
 		return rc.othersPage
 	case roomConfigSummaryPageIndex:

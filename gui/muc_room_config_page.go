@@ -34,7 +34,7 @@ func initMUCRoomConfigPages() {
 			muc.RoomConfigFieldAllowPrivateMessages,
 			muc.RoomConfigFieldPresenceBroadcast,
 		},
-		roomConfigOccupantsPageIndex: {
+		roomConfigPositionsPageIndex: {
 			muc.RoomConfigFieldOwners,
 			muc.RoomConfigFieldAdmins,
 			muc.RoomConfigFieldMembers,
@@ -124,7 +124,7 @@ func (p *roomConfigPageBase) initDefaults() {
 	case roomConfigSummaryPageIndex:
 		p.initSummary()
 		return
-	case roomConfigOccupantsPageIndex:
+	case roomConfigPositionsPageIndex:
 		p.initOccupants()
 		return
 	case roomConfigOthersPageIndex:
@@ -190,7 +190,7 @@ func (p *roomConfigPageBase) initSummary() {
 	p.initSummaryFields(roomConfigInformationPageIndex)
 	p.initSummaryFields(roomConfigAccessPageIndex)
 	p.initSummaryFields(roomConfigPermissionsPageIndex)
-	p.initSummaryFields(roomConfigOccupantsPageIndex)
+	p.initSummaryFields(roomConfigPositionsPageIndex)
 	p.initSummaryFields(roomConfigOthersPageIndex)
 	p.autojoinCheckButton.SetActive(p.roomConfigComponent.autoJoin)
 	p.autojoinContent.Show()
@@ -198,7 +198,7 @@ func (p *roomConfigPageBase) initSummary() {
 
 func (p *roomConfigPageBase) initSummaryFields(pageID int) {
 	p.addField(newRoomConfigFormFieldLinkButton(pageID, p.roomConfigComponent.setCurrentPage))
-	if pageID == roomConfigOccupantsPageIndex {
+	if pageID == roomConfigPositionsPageIndex {
 		p.initOccupantsSummaryFields()
 		return
 	}
@@ -227,11 +227,11 @@ func (p *roomConfigPageBase) initOccupantsSummaryFields() {
 }
 
 func (p *roomConfigPageBase) initOccupants() {
-	p.addField(newRoomConfigOccupants(&data.OwnerAffiliation{}, p.form.UpdateRoomOccupantsByAffiliation))
+	p.addField(newRoomConfigPositions(&data.OwnerAffiliation{}, p.form.UpdateRoomOccupantsByAffiliation))
 	p.content.Add(createSeparator(gtki.HorizontalOrientation))
-	p.addField(newRoomConfigOccupants(&data.AdminAffiliation{}, p.form.UpdateRoomOccupantsByAffiliation))
+	p.addField(newRoomConfigPositions(&data.AdminAffiliation{}, p.form.UpdateRoomOccupantsByAffiliation))
 	p.content.Add(createSeparator(gtki.HorizontalOrientation))
-	p.addField(newRoomConfigOccupants(&data.OutcastAffiliation{}, p.form.UpdateRoomOccupantsByAffiliation))
+	p.addField(newRoomConfigPositions(&data.OutcastAffiliation{}, p.form.UpdateRoomOccupantsByAffiliation))
 }
 
 func (p *roomConfigPageBase) addField(field hasRoomConfigFormField) {

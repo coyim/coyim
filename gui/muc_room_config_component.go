@@ -14,7 +14,7 @@ const (
 	roomConfigInformationPageIndex = iota
 	roomConfigAccessPageIndex
 	roomConfigPermissionsPageIndex
-	roomConfigOccupantsPageIndex
+	roomConfigPositionsPageIndex
 	roomConfigOthersPageIndex
 	roomConfigSummaryPageIndex
 )
@@ -30,7 +30,7 @@ type mucRoomConfigComponent struct {
 	infoPage        mucRoomConfigPage
 	accessPage      mucRoomConfigPage
 	permissionsPage mucRoomConfigPage
-	occupantsPage   mucRoomConfigPage
+	positionsPage   mucRoomConfigPage
 	othersPage      mucRoomConfigPage
 	summaryPage     mucRoomConfigPage
 
@@ -60,7 +60,7 @@ func (c *mucRoomConfigComponent) initConfigPages(parent gtki.Window) {
 	c.infoPage = c.newConfigPage(roomConfigInformationPageIndex)
 	c.accessPage = c.newConfigPage(roomConfigAccessPageIndex)
 	c.permissionsPage = c.newConfigPage(roomConfigPermissionsPageIndex)
-	c.occupantsPage = c.newConfigPage(roomConfigOccupantsPageIndex)
+	c.positionsPage = c.newConfigPage(roomConfigPositionsPageIndex)
 	c.othersPage = c.newConfigPage(roomConfigOthersPageIndex)
 	c.summaryPage = c.newConfigPage(roomConfigSummaryPageIndex)
 }
@@ -129,8 +129,8 @@ func (c *mucRoomConfigComponent) getConfigPage(p int) mucRoomConfigPage {
 		return c.accessPage
 	case roomConfigPermissionsPageIndex:
 		return c.permissionsPage
-	case roomConfigOccupantsPageIndex:
-		return c.occupantsPage
+	case roomConfigPositionsPageIndex:
+		return c.positionsPage
 	case roomConfigOthersPageIndex:
 		return c.othersPage
 	case roomConfigSummaryPageIndex:

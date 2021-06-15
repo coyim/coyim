@@ -41,8 +41,8 @@ func initMUCRoomConfigPagesTexts() {
 			displayIntro: i18n.Local("Here you can change settings that impact who can do what inside " +
 				"the room."),
 		},
-		roomConfigOccupantsPageIndex: {
-			displayTitle: i18n.Local("Occupants"),
+		roomConfigPositionsPageIndex: {
+			displayTitle: i18n.Local("Positions"),
 			displayIntro: i18n.Local("Here you can define who the owners and administrators are. " +
 				"Owners will always be moderators in a room. They can give or take away any position " +
 				"or role and control any aspect of the room. A room administrator will automatically " +

@@ -163,6 +163,16 @@ func summaryListTotalText(total int) string {
 	return i18n.Local("None")
 }
 
+func summaryTotalPositionsText(total int) string {
+	switch {
+	case total == 1:
+		return i18n.Local("One account")
+	case total > 0:
+		return i18n.Localf("%d accounts", total)
+	}
+	return i18n.Local("None")
+}
+
 func summaryListHideOrShow(list gtki.TreeView, toggleButtonImage gtki.Image, container gtki.Box) {
 	if list.IsVisible() {
 		toggleButtonImage.SetFromIconName("pan-down-symbolic", gtki.ICON_SIZE_MENU)

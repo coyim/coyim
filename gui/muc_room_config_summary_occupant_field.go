@@ -61,7 +61,7 @@ func (f *roomConfigSummaryOccupantField) handleFieldValue() {
 	f.fieldListValues.SetModel(f.listModel)
 
 	occupants := f.occupantsByAffiliation(f.affiliation)
-	setLabelText(f.fieldValueLabel, summaryListTotalText(len(occupants)))
+	setLabelText(f.fieldValueLabel, summaryTotalPositionsText(len(occupants)))
 	f.fieldListValueButton.SetVisible(len(occupants) > 0)
 
 	f.initListContent()

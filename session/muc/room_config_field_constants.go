@@ -121,6 +121,8 @@ const (
 	RoomConfigOptionModerators = "moderators"
 	// RoomConfigOptionParticipants represents the field option for "participants"
 	RoomConfigOptionParticipants = "participants"
+	// RoomConfigOptionNobody represents the field opion for "nobody"
+	RoomConfigOptionNobody = "nobody"
 	// RoomConfigOptionAnyone represents the field opion for "anyone"
 	RoomConfigOptionAnyone = "anyone"
 	// RoomConfigOptionModerator represents the field option for "moderator"

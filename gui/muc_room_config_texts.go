@@ -116,7 +116,7 @@ func initMUCRoomConfigFieldsTexts() {
 			summaryLabel: i18n.Local("Enable archiving of discussions"),
 			displayDescription: i18n.Local("The conversation of this room will be stored in an " +
 				"archive that could be accessed publicly. CoyIM users will be notified about this " +
-				"when enter in the room, other client might not."),
+				"when joining the room, however, other clients might not."),
 		},
 		muc.RoomConfigFieldLanguage: {
 			displayLabel: i18n.Local("Primary language of discussion"),
@@ -132,7 +132,7 @@ func initMUCRoomConfigFieldsTexts() {
 				"which should be left empty unless you know what it means."),
 		},
 		muc.RoomConfigFieldCanChangeSubject: {
-			displayLabel:       i18n.Local("Allow anyone to set the room's subject"),
+			displayLabel:       i18n.Local("Allow anyone to set the subject of the room"),
 			summaryLabel:       i18n.Local("Occupants can change subject of the room"),
 			displayDescription: i18n.Local("If not set, only moderators can modify it."),
 		},
@@ -214,18 +214,18 @@ func initMUCRoomConfigOccupantFieldTexts() {
 	roomConfigOccupantFieldTexts = map[data.Affiliation]roomConfigOccupantFieldText{
 		&data.OwnerAffiliation{}: {
 			headerLabel:       i18n.Local("Owners:"),
-			dialogTitle:       i18n.Local("Add owners"),
+			dialogTitle:       i18n.Local("Owners"),
 			dialogDescription: i18n.Local("Here you can add one or more new owners to the room. You will have to use the account address of the user in order to make them an owner. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
 		},
 		&data.AdminAffiliation{}: {
 			headerLabel:       i18n.Local("Administrators:"),
-			dialogTitle:       i18n.Local("Add administrators"),
+			dialogTitle:       i18n.Local("Administrators"),
 			dialogDescription: i18n.Local("Here you can add one or more new administrators to the room. You will have to use the account address of the user in order to make them an administrator. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
 		},
 		&data.OutcastAffiliation{}: {
 			headerLabel:       i18n.Local("Banned people:"),
-			dialogTitle:       i18n.Local("Add ban people"),
-			dialogDescription: i18n.Local("Here you can add one or more people who will not be able to enter in this room. You will have to use the account address of the user in order to ban them. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
+			dialogTitle:       i18n.Local("Ban people"),
+			dialogDescription: i18n.Local("Here you can add one or more people who will not be able to join this room. You will have to use the account address of the user in order to ban them. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
 		},
 	}
 }

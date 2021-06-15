@@ -168,6 +168,8 @@ func configOptionToFriendlyMessage(o, defaultLabel string) string {
 		return i18n.Local("Visitor")
 	case muc.RoomConfigOptionAnyone:
 		return i18n.Local("Anyone")
+	case muc.RoomConfigOptionNobody:
+		return i18n.Local("Nobody")
 	case muc.RoomConfigOptionNone:
 		return i18n.Local("No maximum")
 	case muc.RoomConfigOption10:

@@ -133,8 +133,8 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		occupantStatusExtendedAwayBackground: "#FFFBEB",
 		occupantStatusExtendedAwayBorder:     "#D97706",
 
-		infoBarTypeInfoBackgroundStart:     "rgba(14,116,144,1)",
-		infoBarTypeInfoBackgroundStop:      "rgba(8,145,178,1)",
+		infoBarTypeInfoBackgroundStart:     "rgba(6,95,70,1)",
+		infoBarTypeInfoBackgroundStop:      "rgba(4,120,87,1)",
 		infoBarTypeInfoTitle:               "#ECFEFF",
 		infoBarTypeWarningBackgroundStart:  "rgba(234,88,12,1)",
 		infoBarTypeWarningBackgroundStop:   "rgba(249,115,22,1)",
@@ -145,8 +145,8 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		infoBarTypeErrorBackgroundStart:    "rgba(136,19,55,1)",
 		infoBarTypeErrorBackgroundStop:     "rgba(159,18,57,1)",
 		infoBarTypeErrorTitle:              "#FFF1F2",
-		infoBarTypeOtherBackgroundStart:    "rgba(6,95,70,1)",
-		infoBarTypeOtherBackgroundStop:     "rgba(4,120,87,1)",
+		infoBarTypeOtherBackgroundStart:    "rgba(14,116,144,1)",
+		infoBarTypeOtherBackgroundStop:     "rgba(8,145,178,1)",
 		infoBarTypeOtherTitle:              "#F0FDFA",
 
 		entryErrorBackground:   "#FFF5F6",
@@ -209,8 +209,8 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		roomWarningBackground: "#FEFCBF",
 		roomWarningBorder:     "#D69E2E",
 
-		infoBarTypeInfoBackgroundStart:     "rgba(14,116,144,1)",
-		infoBarTypeInfoBackgroundStop:      "rgba(8,145,178,1)",
+		infoBarTypeInfoBackgroundStart:     "rgba(6,95,70,1)",
+		infoBarTypeInfoBackgroundStop:      "rgba(4,120,87,1)",
 		infoBarTypeInfoTitle:               "#ECFEFF",
 		infoBarTypeWarningBackgroundStart:  "rgba(234,88,12,1)",
 		infoBarTypeWarningBackgroundStop:   "rgba(249,115,22,1)",
@@ -221,8 +221,8 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		infoBarTypeErrorBackgroundStart:    "rgba(136,19,55,1)",
 		infoBarTypeErrorBackgroundStop:     "rgba(159,18,57,1)",
 		infoBarTypeErrorTitle:              "#FFF1F2",
-		infoBarTypeOtherBackgroundStart:    "rgba(6,95,70,1)",
-		infoBarTypeOtherBackgroundStop:     "rgba(4,120,87,1)",
+		infoBarTypeOtherBackgroundStart:    "rgba(14,116,144,1)",
+		infoBarTypeOtherBackgroundStop:     "rgba(8,145,178,1)",
 		infoBarTypeOtherTitle:              "#F0FDFA",
 
 		entryErrorBackground:   "#FFF5F6",

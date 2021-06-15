@@ -56,6 +56,12 @@ func (f *RoomConfigFormField) ValueType() HasRoomConfigFormFieldValue {
 	return f.value
 }
 
+func (f *RoomConfigFormField) updateBooleanValue(v bool) {
+	if field, ok := f.value.(*RoomConfigFieldBooleanValue); ok {
+		field.SetBoolean(v)
+	}
+}
+
 func roomConfigFormFieldValueFactory(field xmppData.FormFieldX) HasRoomConfigFormFieldValue {
 	values := field.Values
 	options := formFieldOptionsValues(field.Options)

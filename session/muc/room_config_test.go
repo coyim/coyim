@@ -541,3 +541,15 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetRoomOccupantsToUpdate(c *C) 
 		},
 	})
 }
+
+func (s *MucRoomConfigSuite) Test_RoomConfigForm_updateValueOfPasswordProtectedField(c *C) {
+	field, _ := s.rcf.GetKnownField(RoomConfigFieldIsPasswordProtected)
+	c.Assert(field.Value(), DeepEquals, []string{"true"})
+
+	f := s.rcf.knownFields[RoomConfigFieldPassword].value.(*RoomConfigFieldTextValue)
+	f.SetText("")
+
+	s.rcf.updateValueOfPasswordProtectedField()
+	c.Assert(field.Value(), DeepEquals, []string{"false"})
+
+}

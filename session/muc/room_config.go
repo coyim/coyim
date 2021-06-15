@@ -116,7 +116,7 @@ func (rcf *RoomConfigForm) GetKnownField(k RoomConfigFieldType) (*RoomConfigForm
 // GetConfiguredPassword returns the configured password in the room configuration form
 func (rcf *RoomConfigForm) GetConfiguredPassword() (pwd string) {
 	field, ok := rcf.GetKnownField(RoomConfigFieldPassword)
-	if ok && len(field.Value()) == 1 {
+	if ok && len(field.Value()) > 0 {
 		pwd = field.Value()[0]
 	}
 	return
@@ -138,9 +138,7 @@ func (rcf *RoomConfigForm) UpdateRoomOccupantsByAffiliation(a data.Affiliation, 
 // ConfigureRoomAsPersistent configures the persistent field to true if exists in the room configuration form
 func (rcf *RoomConfigForm) ConfigureRoomAsPersistent() {
 	if f, ok := rcf.knownFields[RoomConfigFieldIsPersistent]; ok {
-		if v, ok := f.value.(*RoomConfigFieldBooleanValue); ok {
-			v.SetBoolean(true)
-		}
+		f.updateBooleanValue(true)
 	}
 }
 
@@ -171,6 +169,7 @@ func (rcf *RoomConfigForm) GetRoomOccupantsToUpdate() (accounts []*RoomOccupantI
 // https://xmpp.org/extensions/xep-0045.html#example-163
 func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 	formFields := []xmppData.FormFieldX{{Var: configFieldFormType, Values: []string{configFieldFormTypeValue}}}
+	rcf.updateValueOfPasswordProtectedField()
 
 	for _, field := range rcf.knownFields {
 		formFields = append(formFields, xmppData.FormFieldX{
@@ -199,6 +198,12 @@ func (rcf *RoomConfigForm) getKnownFieldValue(fieldName string) ([]string, bool)
 		}
 	}
 	return nil, false
+}
+
+func (rcf *RoomConfigForm) updateValueOfPasswordProtectedField() {
+	if knownField, ok := rcf.GetKnownField(RoomConfigFieldIsPasswordProtected); ok {
+		knownField.updateBooleanValue(rcf.GetConfiguredPassword() != "")
+	}
 }
 
 func formFieldBool(values []string) bool {

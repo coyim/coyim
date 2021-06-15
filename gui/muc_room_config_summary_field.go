@@ -97,7 +97,11 @@ func (f *roomConfigSummaryField) handleListMultiFieldValue(value []string) {
 	f.listModel, _ = g.gtk.ListStoreNew(glibi.TYPE_STRING)
 	f.fieldListValues.SetModel(f.listModel)
 
-	setLabelText(f.fieldValueLabel, summaryListTotalText(len(value)))
+	totalItemsLabel := summaryListTotalText(len(value))
+	if f.fieldType == muc.RoomConfigFieldPresenceBroadcast {
+		totalItemsLabel = summaryRolesListText(len(value))
+	}
+	setLabelText(f.fieldValueLabel, totalItemsLabel)
 	f.fieldListValueButton.SetVisible(len(value) > 0)
 
 	f.initListContent(value)
@@ -159,6 +163,16 @@ func summaryListTotalText(total int) string {
 		return i18n.Local("One result")
 	case total > 0:
 		return i18n.Localf("%d results", total)
+	}
+	return i18n.Local("None")
+}
+
+func summaryRolesListText(total int) string {
+	switch {
+	case total == 1:
+		return i18n.Local("One role")
+	case total > 0:
+		return i18n.Localf("%d roles", total)
 	}
 	return i18n.Local("None")
 }

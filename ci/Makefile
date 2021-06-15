@@ -16,7 +16,7 @@ deps:
 test:
 ifeq ($(WINDOWS),true)
 	../scripts/fix_pkg_config_pc_files.sh $(PKG_CONFIG_PC_FILES_DIR)
-	PKG_CONFIG_PATH=$(PKG_CONFIG_PC_FILES_DIR):$$PKG_CONFIG_PATH ${THROUGH_COMMAND_PREFIX} make check -C ../
+	PKG_CONFIG_PATH=$(PKG_CONFIG_PC_FILES_DIR):$$PKG_CONFIG_PATH ${RUN_WITH} make check -C ../
 else
 	make check -C ../
 endif
@@ -29,7 +29,7 @@ check-go-imports:
 	git diff --exit-code .
 
 coveralls:
-	${THROUGH_COMMAND_PREFIX} make run-cover -C ../
+	${RUN_WITH} make run-cover -C ../
 ifeq ($(CI),true)
 ifeq ($(TRAVIS),true)
 	@echo "We only send coverage information from Github Actions these days, so skipping it"

@@ -148,7 +148,7 @@ func (p *roomConfigPageBase) initKnownFields() {
 	if knownFields, ok := roomConfigPagesFields[p.pageID]; ok {
 		booleanFields := []*roomConfigFormFieldBoolean{}
 		for _, kf := range knownFields {
-			if knownField, ok := p.form.GetKnownField(kf); ok {
+			if knownField, ok := p.form.GetKnownField(kf); ok && kf != muc.RoomConfigFieldIsPasswordProtected {
 				field, err := roomConfigFormFieldFactory(kf, roomConfigFieldsTexts[kf], knownField.ValueType())
 				if err != nil {
 					p.log.WithError(err).Error("Room configuration form field not supported")

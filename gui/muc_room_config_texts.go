@@ -177,10 +177,6 @@ func initMUCRoomConfigFieldsTexts() {
 		muc.RoomConfigFieldMembers: {
 			displayLabel: i18n.Local("Members"),
 		},
-		muc.RoomConfigFieldIsPasswordProtected: {
-			displayLabel: i18n.Local("Make this room password protected"),
-			summaryLabel: i18n.Local("Password protected"),
-		},
 		muc.RoomConfigFieldPassword: {
 			displayLabel: i18n.Local("Enter the room password"),
 			summaryLabel: i18n.Local("Password"),

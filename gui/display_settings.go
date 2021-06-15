@@ -6,6 +6,7 @@ import (
 
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/coyim/gotk3adapter/pangoi"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type displaySettings struct {
@@ -121,15 +122,18 @@ func providerWithCSS(s string) gtki.CssProvider {
 	return p
 }
 
+const styleProviderHighPriority = gtk.STYLE_PROVIDER_PRIORITY_USER * 10
+
 func updateWithStyle(l StyleContextable, p gtki.CssProvider) {
-	sc, _ := l.GetStyleContext()
-	sc.AddProvider(p, 9999)
+	if sc, err := l.GetStyleContext(); err == nil {
+		sc.AddProvider(p, styleProviderHighPriority)
+	}
 }
 
 func updateWithStyles(l StyleContextable, p gtki.CssProvider) {
 	sc, _ := l.GetStyleContext()
 	screen, _ := sc.GetScreen()
-	g.gtk.AddProviderForScreen(screen, p, 99999)
+	g.gtk.AddProviderForScreen(screen, p, styleProviderHighPriority)
 }
 
 type style map[string]interface{}

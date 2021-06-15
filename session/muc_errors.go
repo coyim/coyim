@@ -7,11 +7,11 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-func (m *mucManager) publishMUCError(from jid.Full, e *data.StanzaError) {
+func (m *mucManager) publishMUCError(roomID jid.Bare, nickname string, e *data.StanzaError) {
 	ev := events.MUCError{}
 	ev.ErrorType = getEventErrorTypeBasedOnStanzaError(e)
-	ev.Room = from.Bare()
-	ev.Nickname = from.Resource().String()
+	ev.Room = roomID
+	ev.Nickname = nickname
 
 	m.publishEvent(ev)
 }

@@ -1,6 +1,7 @@
 package session
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/coyim/coyim/coylog"
@@ -190,7 +191,21 @@ func (m *mucManager) handleUnavailablePresence(roomID jid.Bare, op *muc.Occupant
 }
 
 func (m *mucManager) handleMUCErrorPresence(from string, e *xmppData.StanzaError) {
-	m.publishMUCError(jid.ParseFull(from), e)
+	if jid, ok := jid.TryParseFull(from); ok {
+		m.publishMUCError(jid.Bare(), jid.Resource().String(), e)
+		return
+	}
+
+	if roomID, ok := jid.TryParseBare(from); ok {
+		m.publishMUCError(roomID, "", e)
+		return
+	}
+
+	m.log.WithFields(log.Fields{
+		"from":         from,
+		"where":        "handleMUCErrorPresence",
+		"stanza error": e,
+	}).Error(errors.New("error trying to publish an error received. It couldn't parse room identifier"))
 }
 
 func (m *mucManager) handleMUCErrorMessage(roomID jid.Bare, e *xmppData.StanzaError) {

@@ -116,7 +116,8 @@ func (s *MUCErrorsSuite) Test_mucManager_publishMUCError_works(c *C) {
 		publishEvent: sess.publishEvent,
 	}
 
-	m.publishMUCError(jid.ParseFull("hello@goodbye.com/foo"), &data.StanzaError{MUCForbidden: &data.MUCForbidden{}})
+	j := jid.ParseFull("hello@goodbye.com/foo")
+	m.publishMUCError(j.Bare(), j.Resource().String(), &data.StanzaError{MUCForbidden: &data.MUCForbidden{}})
 	<-waiting
 
 	close(ch)

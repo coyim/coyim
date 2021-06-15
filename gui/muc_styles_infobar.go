@@ -1,6 +1,10 @@
 package gui
 
-import "github.com/coyim/gotk3adapter/gtki"
+import (
+	"fmt"
+
+	"github.com/coyim/gotk3adapter/gtki"
+)
 
 type infoBarColor struct {
 	background string
@@ -11,26 +15,44 @@ type infoBarColorStyles map[gtki.MessageType]infoBarColor
 
 func newInfoBarColorStyles(c mucColorSet) infoBarColorStyles {
 	return infoBarColorStyles{
-		gtki.MESSAGE_INFO: infoBarColor{
-			background: "linear-gradient(0deg, rgba(14,116,144,1) 0%, rgba(8,145,178,1) 100%)",
-			titleColor: "#ECFEFF",
-		},
-		gtki.MESSAGE_WARNING: infoBarColor{
-			background: "linear-gradient(0deg, rgba(234,88,12,1) 0%, rgba(249,115,22,1) 100%)",
-			titleColor: "#FFF7ED",
-		},
-		gtki.MESSAGE_QUESTION: infoBarColor{
-			background: "linear-gradient(0deg, rgba(153,27,27,1) 0%, rgba(185,28,28,1) 100%)",
-			titleColor: "#FEFCE8",
-		},
-		gtki.MESSAGE_ERROR: infoBarColor{
-			background: "linear-gradient(0deg, rgba(136,19,55,1) 0%, rgba(159,18,57,1) 100%)",
-			titleColor: "#FFF1F2",
-		},
-		gtki.MESSAGE_OTHER: infoBarColor{
-			background: "linear-gradient(0deg, rgba(6,95,70,1) 0%, rgba(4,120,87,1) 100%)",
-			titleColor: "#F0FDFA",
-		},
+		gtki.MESSAGE_INFO:     infoBarTypeColorsFromSet(gtki.MESSAGE_INFO, c),
+		gtki.MESSAGE_WARNING:  infoBarTypeColorsFromSet(gtki.MESSAGE_WARNING, c),
+		gtki.MESSAGE_QUESTION: infoBarTypeColorsFromSet(gtki.MESSAGE_QUESTION, c),
+		gtki.MESSAGE_ERROR:    infoBarTypeColorsFromSet(gtki.MESSAGE_ERROR, c),
+		gtki.MESSAGE_OTHER:    infoBarTypeColorsFromSet(gtki.MESSAGE_OTHER, c),
+	}
+}
+
+func infoBarTypeColorsFromSet(t gtki.MessageType, c mucColorSet) infoBarColor {
+	bgStart := c.infoBarTypeOtherBackgroundStart
+	bgStop := c.infoBarTypeOtherBackgroundStop
+	tc := c.infoBarTypeOtherTitle
+
+	switch t {
+	case gtki.MESSAGE_INFO:
+		bgStart = c.infoBarTypeInfoBackgroundStart
+		bgStop = c.infoBarTypeInfoBackgroundStop
+		tc = c.infoBarTypeInfoTitle
+
+	case gtki.MESSAGE_WARNING:
+		bgStart = c.infoBarTypeWarningBackgroundStart
+		bgStop = c.infoBarTypeWarningBackgroundStop
+		tc = c.infoBarTypeWarningTitle
+
+	case gtki.MESSAGE_QUESTION:
+		bgStart = c.infoBarTypeQuestionBackgroundStart
+		bgStop = c.infoBarTypeQuestionBackgroundStop
+		tc = c.infoBarTypeQuestionTitle
+
+	case gtki.MESSAGE_ERROR:
+		bgStart = c.infoBarTypeErrorBackgroundStart
+		bgStop = c.infoBarTypeErrorBackgroundStop
+		tc = c.infoBarTypeErrorTitle
+	}
+
+	return infoBarColor{
+		background: fmt.Sprintf("linear-gradient(0deg, %s 0%%, %s 100%%)", bgStart, bgStop),
+		titleColor: tc,
 	}
 }
 

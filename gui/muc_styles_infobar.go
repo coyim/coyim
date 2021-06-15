@@ -64,6 +64,7 @@ func (s *mucStylesProvider) setInfoBarStyle(ib gtki.InfoBar) {
 				"text-shadow": "none",
 				"font-weight": "500",
 				"padding":     "8px 10px",
+				"border":      fmt.Sprintf("2px solid %s", s.colors.infoBarDefaultBorderColor),
 			},
 			".infobar .content": style{
 				"text-shadow": "none",

@@ -53,6 +53,7 @@ type mucColorSet struct {
 	occupantStatusExtendedAwayBackground string
 	occupantStatusExtendedAwayBorder     string
 
+	infoBarDefaultBorderColor          string
 	infoBarTypeInfoBackgroundStart     string
 	infoBarTypeInfoBackgroundStop      string
 	infoBarTypeInfoTitle               string
@@ -133,6 +134,7 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		occupantStatusExtendedAwayBackground: "#FFFBEB",
 		occupantStatusExtendedAwayBorder:     "#D97706",
 
+		infoBarDefaultBorderColor:          "@theme_bg_color",
 		infoBarTypeInfoBackgroundStart:     "rgba(6,95,70,1)",
 		infoBarTypeInfoBackgroundStop:      "rgba(4,120,87,1)",
 		infoBarTypeInfoTitle:               "#ECFEFF",
@@ -209,6 +211,7 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		roomWarningBackground: "#FEFCBF",
 		roomWarningBorder:     "#D69E2E",
 
+		infoBarDefaultBorderColor:          "@theme_bg_color",
 		infoBarTypeInfoBackgroundStart:     "rgba(6,95,70,1)",
 		infoBarTypeInfoBackgroundStop:      "rgba(4,120,87,1)",
 		infoBarTypeInfoTitle:               "#ECFEFF",

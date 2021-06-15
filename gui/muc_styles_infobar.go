@@ -6,12 +6,12 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-type infoBarColor struct {
+type infoBarColorInfo struct {
 	background string
 	titleColor string
 }
 
-type infoBarColorStyles map[gtki.MessageType]infoBarColor
+type infoBarColorStyles map[gtki.MessageType]infoBarColorInfo
 
 func newInfoBarColorStyles(c mucColorSet) infoBarColorStyles {
 	return infoBarColorStyles{
@@ -23,7 +23,7 @@ func newInfoBarColorStyles(c mucColorSet) infoBarColorStyles {
 	}
 }
 
-func infoBarTypeColorsFromSet(t gtki.MessageType, c mucColorSet) infoBarColor {
+func infoBarTypeColorsFromSet(t gtki.MessageType, c mucColorSet) infoBarColorInfo {
 	bgStart := c.infoBarTypeOtherBackgroundStart
 	bgStop := c.infoBarTypeOtherBackgroundStop
 	tc := c.infoBarTypeOtherTitle
@@ -50,7 +50,7 @@ func infoBarTypeColorsFromSet(t gtki.MessageType, c mucColorSet) infoBarColor {
 		tc = c.infoBarTypeErrorTitle
 	}
 
-	return infoBarColor{
+	return infoBarColorInfo{
 		background: fmt.Sprintf("linear-gradient(0deg, %s 0%%, %s 100%%)", bgStart, bgStop),
 		titleColor: tc,
 	}

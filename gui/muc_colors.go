@@ -53,6 +53,22 @@ type mucColorSet struct {
 	occupantStatusExtendedAwayBackground string
 	occupantStatusExtendedAwayBorder     string
 
+	infoBarTypeInfoBackgroundStart     string
+	infoBarTypeInfoBackgroundStop      string
+	infoBarTypeInfoTitle               string
+	infoBarTypeWarningBackgroundStart  string
+	infoBarTypeWarningBackgroundStop   string
+	infoBarTypeWarningTitle            string
+	infoBarTypeQuestionBackgroundStart string
+	infoBarTypeQuestionBackgroundStop  string
+	infoBarTypeQuestionTitle           string
+	infoBarTypeErrorBackgroundStart    string
+	infoBarTypeErrorBackgroundStop     string
+	infoBarTypeErrorTitle              string
+	infoBarTypeOtherBackgroundStart    string
+	infoBarTypeOtherBackgroundStop     string
+	infoBarTypeOtherTitle              string
+
 	entryErrorBackground   string
 	entryErrorBorderShadow string
 	entryErrorBorder       string
@@ -117,6 +133,22 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		occupantStatusExtendedAwayBackground: "#FFFBEB",
 		occupantStatusExtendedAwayBorder:     "#D97706",
 
+		infoBarTypeInfoBackgroundStart:     "rgba(14,116,144,1)",
+		infoBarTypeInfoBackgroundStop:      "rgba(8,145,178,1)",
+		infoBarTypeInfoTitle:               "#ECFEFF",
+		infoBarTypeWarningBackgroundStart:  "rgba(234,88,12,1)",
+		infoBarTypeWarningBackgroundStop:   "rgba(249,115,22,1)",
+		infoBarTypeWarningTitle:            "#FFF7ED",
+		infoBarTypeQuestionBackgroundStart: "rgba(153,27,27,1)",
+		infoBarTypeQuestionBackgroundStop:  "rgba(185,28,28,1)",
+		infoBarTypeQuestionTitle:           "#FEFCE8",
+		infoBarTypeErrorBackgroundStart:    "rgba(136,19,55,1)",
+		infoBarTypeErrorBackgroundStop:     "rgba(159,18,57,1)",
+		infoBarTypeErrorTitle:              "#FFF1F2",
+		infoBarTypeOtherBackgroundStart:    "rgba(6,95,70,1)",
+		infoBarTypeOtherBackgroundStop:     "rgba(4,120,87,1)",
+		infoBarTypeOtherTitle:              "#F0FDFA",
+
 		entryErrorBackground:   "#FFF5F6",
 		entryErrorBorderShadow: "#FF7F50",
 		entryErrorBorder:       "#E44635",
@@ -172,10 +204,27 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		occupantStatusExtendedAwayBackground: "#FFFBEB",
 		occupantStatusExtendedAwayBorder:     "#D97706",
 
-		roomSubjectForeground:  "#666666",
-		roomWarningForeground:  "#744210",
-		roomWarningBackground:  "#FEFCBF",
-		roomWarningBorder:      "#D69E2E",
+		roomSubjectForeground: "#666666",
+		roomWarningForeground: "#744210",
+		roomWarningBackground: "#FEFCBF",
+		roomWarningBorder:     "#D69E2E",
+
+		infoBarTypeInfoBackgroundStart:     "rgba(14,116,144,1)",
+		infoBarTypeInfoBackgroundStop:      "rgba(8,145,178,1)",
+		infoBarTypeInfoTitle:               "#ECFEFF",
+		infoBarTypeWarningBackgroundStart:  "rgba(234,88,12,1)",
+		infoBarTypeWarningBackgroundStop:   "rgba(249,115,22,1)",
+		infoBarTypeWarningTitle:            "#FFF7ED",
+		infoBarTypeQuestionBackgroundStart: "rgba(153,27,27,1)",
+		infoBarTypeQuestionBackgroundStop:  "rgba(185,28,28,1)",
+		infoBarTypeQuestionTitle:           "#FEFCE8",
+		infoBarTypeErrorBackgroundStart:    "rgba(136,19,55,1)",
+		infoBarTypeErrorBackgroundStop:     "rgba(159,18,57,1)",
+		infoBarTypeErrorTitle:              "#FFF1F2",
+		infoBarTypeOtherBackgroundStart:    "rgba(6,95,70,1)",
+		infoBarTypeOtherBackgroundStop:     "rgba(4,120,87,1)",
+		infoBarTypeOtherTitle:              "#F0FDFA",
+
 		entryErrorBackground:   "#FFF5F6",
 		entryErrorBorderShadow: "#FF7F50",
 		entryErrorBorder:       "#E44635",

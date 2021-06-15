@@ -1,12 +1,5 @@
 GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 
-PKG_CONFIG_PC_FILES_DIR := $(PWD)/.pkgconfig-pc-files
-
-WINDOWS := false
-ifeq ($(OS), Windows_NT)
-	WINDOWS := true
-endif
-
 default: doctor test coveralls
 
 deps:
@@ -14,12 +7,7 @@ deps:
 	go get -u github.com/mattn/goveralls
 
 test:
-ifeq ($(WINDOWS),true)
-	../scripts/fix_pkg_config_pc_files.sh $(PKG_CONFIG_PC_FILES_DIR)
-	PKG_CONFIG_PATH=$(PKG_CONFIG_PC_FILES_DIR):$$PKG_CONFIG_PATH ${RUN_WITH} make check -C ../
-else
-	make check -C ../
-endif
+	${RUN_WITH} make check -C ../
 
 doctor: check-go-imports
 

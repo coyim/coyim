@@ -9,14 +9,16 @@ import (
 // mucStylesProvider is a representation of the styles that can be applied to specific muc-related interfaces.
 // Please note that all methods of this struct MUST be called from the UI thread.
 type mucStylesProvider struct {
-	colors mucColorSet
+	colors             mucColorSet
+	infoBarColorStyles infoBarColorStyles
 }
 
 var mucStyles *mucStylesProvider
 
 func initMUCStyles(c mucColorSet) {
 	mucStyles = &mucStylesProvider{
-		colors: c,
+		colors:             c,
+		infoBarColorStyles: newInfoBarColorStyles(c),
 	}
 }
 
@@ -304,55 +306,4 @@ func (s *mucStylesProvider) hexToRGBA(hex string, a float64) string {
 
 func (s *mucStylesProvider) boxShadow(shadowStyle, color string) string {
 	return fmt.Sprintf("%s %s", shadowStyle, color)
-}
-
-func (s *mucStylesProvider) setInfoBarStyle(ib gtki.InfoBar, messageType gtki.MessageType) {
-	switch messageType {
-
-	case gtki.MESSAGE_INFO:
-		s.setWidgetStyles(ib, styles{
-			"infobar .horizontal": style{
-				"background": "linear-gradient(180deg, rgba(6,182,212,1) 0%, rgba(8,145,178,1) 20%, rgba(14,116,144,1) 100%)",
-			},
-			"infobar box > #title-label ": style{
-				"color": "#333333",
-			},
-		})
-	case gtki.MESSAGE_WARNING:
-		s.setWidgetStyles(ib, styles{
-			"infobar .horizontal": style{
-				"background": "linear-gradient(180deg, rgba(253,230,138,1) 0%, rgba(252,211,77,1) 20%, rgba(251,191,36,1) 100%)",
-			},
-			"infobar box > #title-label ": style{
-				"color": "#333333",
-			},
-		})
-	case gtki.MESSAGE_QUESTION:
-		s.setWidgetStyles(ib, styles{
-			"infobar .horizontal": style{
-				"background": "linear-gradient(180deg, rgba(192,132,252,1) 0%, rgba(168,85,247,1) 20%, rgba(147,51,234,1) 100%)",
-			},
-			"infobar box > #title-label ": style{
-				"color": "#333333",
-			},
-		})
-	case gtki.MESSAGE_ERROR:
-		s.setWidgetStyles(ib, styles{
-			"infobar .horizontal": style{
-				"background": "linear-gradient(180deg, rgba(251,113,133,1) 0%, rgba(244,63,94,1) 20%, rgba(225,29,72,1) 100%)",
-			},
-			"infobar box > #title-label ": style{
-				"color": "#333333",
-			},
-		})
-	case gtki.MESSAGE_OTHER:
-		s.setWidgetStyles(ib, styles{
-			"infobar .horizontal": style{
-				"background": "linear-gradient(180deg, rgba(212,212,212,1) 0%, rgba(163,163,163,1) 20%, rgba(115,115,115,1) 100%)",
-			},
-			"infobar box > #title-label ": style{
-				"color": "#333333",
-			},
-		})
-	}
 }

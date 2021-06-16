@@ -44,6 +44,12 @@ func initMUCRoomConfigPages() {
 			muc.RoomConfigFieldMaxHistoryFetch,
 			muc.RoomConfigFieldEnableLogging,
 			muc.RoomConfigFieldPubsub,
+			muc.RoomConfigFieldAllowQueryUsers,
+			muc.RoomConfigFieldAllowVisitorStatus,
+			muc.RoomConfigFieldAllowVisitorNickchange,
+			muc.RoomConfigFieldAllowVoiceRequest,
+			muc.RoomConfigFieldAllowSubscription,
+			muc.RoomConfigFieldMembersByDefault,
 		},
 	}
 }

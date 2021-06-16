@@ -65,6 +65,18 @@ const (
 	configFieldMaxHistoryLength = "muc#roomconfig_historylength"
 	// configFieldRoomAdmins represents the var value of the "room admins" configuration field
 	configFieldRoomAdmins = "muc#roomconfig_roomadmins"
+	// allowQueryUsers represents the var value of the "allow_query_users" configuration field
+	allowQueryUsers = "allow_query_users"
+	// allowVisitorStatus represents the var value of the "allow_visitor_status" configuration field
+	allowVisitorStatus = "allow_visitor_status"
+	// allowVisitorNickchange represents the var value of the "allow_visitor_nickchange" configuration field
+	allowVisitorNickchange = "allow_visitor_nickchange"
+	// allowVoiceRequests represents the var value of the "allow_voice_requests" configuration field
+	allowVoiceRequests = "allow_voice_requests"
+	// allowSubscription represents the var value of the "allow_subscription" configuration field
+	allowSubscription = "allow_subscription"
+	// membersByDefault represents the var value of the "members_by_default" configuration field
+	membersByDefault = "members_by_default"
 )
 
 // RoomConfigForm represents a room configuration form

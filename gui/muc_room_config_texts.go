@@ -195,6 +195,37 @@ func initMUCRoomConfigFieldsTexts() {
 		muc.RoomConfigFieldAdmins: {
 			displayLabel: i18n.Local("Administrators"),
 		},
+		muc.RoomConfigFieldAllowQueryUsers: {
+			displayLabel: i18n.Local("A person can find out more information about other people in the room"),
+			summaryLabel: i18n.Local("A person can find out more information about other people in the room"),
+		},
+		muc.RoomConfigFieldAllowVisitorStatus: {
+			displayLabel: i18n.Local("Visitors to a room can change their custom status information"),
+			summaryLabel: i18n.Local("Visitors to a room can change their custom status information"),
+			displayDescription: i18n.Local("Since visitors are not allowed to speak in moderated rooms, " +
+				"this setting would allow visitors to still communicate with others by means of their status text."),
+		},
+		muc.RoomConfigFieldAllowVisitorNickchange: {
+			displayLabel: i18n.Local("Visitors can change their nickname"),
+			summaryLabel: i18n.Local("Visitors can change their nickname"),
+			displayDescription: i18n.Local("Just as with the status updates, this setting could allow " +
+				"visitors to show information to others in the room by changing their nickname."),
+		},
+		muc.RoomConfigFieldAllowVoiceRequest: {
+			displayLabel: i18n.Local("Visitors can ask for permission to speak"),
+			summaryLabel: i18n.Local("Visitors can ask for permission to speak"),
+		},
+		muc.RoomConfigFieldAllowSubscription: {
+			displayLabel: i18n.Local("Allow subscription"),
+			summaryLabel: i18n.Local("Allow subscription"),
+			displayDescription: i18n.Local("This is a technical setting which allows a new, experimental, version " +
+				"of group chat to be used with this room. CoyIM does not support this, but if you turn on this setting, " +
+				"other clients might utilize the setting when connecting to the room."),
+		},
+		muc.RoomConfigFieldMembersByDefault: {
+			displayLabel: i18n.Local("When joining the room, people will be able to talk"),
+			summaryLabel: i18n.Local("When joining the room, people will be able to talk"),
+		},
 	}
 }
 

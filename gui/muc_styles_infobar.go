@@ -92,7 +92,7 @@ func (st *infoBarStyles) stylesFor(ib gtki.InfoBar) styles {
 			"text-shadow": "none",
 			"font-weight": "500",
 			"padding":     "8px 10px",
-			"border":      fmt.Sprintf("2px solid %s", colors.borderColor),
+			"border":      fmt.Sprintf("1px solid %s", colors.borderColor),
 		},
 		nested: styles{
 			".content": style{
@@ -108,7 +108,7 @@ func (st *infoBarStyles) stylesFor(ib gtki.InfoBar) styles {
 				"background":    colors.buttonBackground,
 				"color":         colors.buttonColor,
 				"box-shadow":    "none",
-				"padding":       "4px 12px",
+				"padding":       "3px 12px",
 				"border-radius": "200px",
 				"border":        "none",
 				"text-shadow":   "none",

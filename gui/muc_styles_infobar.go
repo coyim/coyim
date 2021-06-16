@@ -7,7 +7,11 @@ import (
 )
 
 const (
-	infoBarClassName = ".infobar"
+	infoBarClassName         = ".infobar"
+	infoBarInfoClassName     = ".info"
+	infoBarWarningClassName  = ".warning"
+	infoBarQuestionClassName = ".question"
+	infoBarErrorClassName    = ".error"
 )
 
 type infoBarType int
@@ -20,12 +24,21 @@ var (
 	infoBarTypeOther    infoBarType
 )
 
+var infoBarClassNames map[infoBarType]string
+
 func initMUCInfoBarData() {
 	infoBarTypeInfo = infoBarType(gtki.MESSAGE_INFO)
 	infoBarTypeWarning = infoBarType(gtki.MESSAGE_WARNING)
 	infoBarTypeQuestion = infoBarType(gtki.MESSAGE_QUESTION)
 	infoBarTypeError = infoBarType(gtki.MESSAGE_ERROR)
 	infoBarTypeOther = infoBarType(gtki.MESSAGE_OTHER)
+
+	infoBarClassNames = map[infoBarType]string{
+		infoBarTypeInfo:     infoBarInfoClassName,
+		infoBarTypeWarning:  infoBarWarningClassName,
+		infoBarTypeQuestion: infoBarQuestionClassName,
+		infoBarTypeError:    infoBarErrorClassName,
+	}
 }
 
 type infoBarColorInfo struct {
@@ -70,7 +83,8 @@ func (st *infoBarStyles) colorInfoBasedOnType(tp infoBarType) infoBarColorInfo {
 }
 
 func (st *infoBarStyles) stylesFor(ib gtki.InfoBar) styles {
-	colors := st.colorInfoBasedOnType(infoBarType(ib.GetMessageType()))
+	tp := infoBarType(ib.GetMessageType())
+	colors := st.colorInfoBasedOnType(tp)
 
 	nested := &nestedStyles{
 		root: style{
@@ -130,7 +144,12 @@ func (st *infoBarStyles) stylesFor(ib gtki.InfoBar) styles {
 		},
 	}
 
-	return nested.toStyles(infoBarClassName)
+	infoBarSelector := infoBarClassName
+	if definedTypeClass, ok := infoBarClassNames[tp]; ok {
+		infoBarSelector = infoBarSelector + definedTypeClass
+	}
+
+	return nested.toStyles(infoBarSelector)
 }
 
 func (s *mucStylesProvider) setInfoBarStyle(ib gtki.InfoBar) {

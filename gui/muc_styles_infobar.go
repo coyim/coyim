@@ -72,59 +72,63 @@ func (st *infoBarStyles) colorInfoBasedOnType(tp infoBarType) infoBarColorInfo {
 func (st *infoBarStyles) stylesFor(ib gtki.InfoBar) styles {
 	colors := st.colorInfoBasedOnType(infoBarType(ib.GetMessageType()))
 
-	return styles{
-		infoBarClassName: style{
+	nested := &nestedStyles{
+		root: style{
 			"background":  colors.background,
 			"text-shadow": "none",
 			"font-weight": "500",
 			"padding":     "8px 10px",
 			"border":      fmt.Sprintf("2px solid %s", colors.borderColor),
 		},
-		nestedCSSRules(infoBarClassName, ".content"): style{
-			"text-shadow": "none",
-		},
-		nestedCSSRules(infoBarClassName, ".title"): style{
-			"color":       colors.titleColor,
-			"text-shadow": "none",
-		},
-		nestedCSSRules(infoBarClassName, ".actions button"): {
-			"background":    colors.buttonBackground,
-			"color":         colors.buttonColor,
-			"box-shadow":    "none",
-			"padding":       "4px 12px",
-			"border-radius": "200px",
-			"border":        "none",
-			"text-shadow":   "none",
-			"font-size":     "small",
-		},
-		nestedCSSRules(infoBarClassName, ".actions button:hover"): {
-			"background": colors.buttonHoverBackground,
-			"color":      colors.buttonHoverColor,
-		},
-		nestedCSSRules(infoBarClassName, ".actions button:active"): {
-			"background": colors.buttonActiveBackground,
-			"color":      colors.buttonActiveColor,
-		},
-		nestedCSSRules(infoBarClassName, "button.close"): {
-			"padding":     "0",
-			"background":  "none",
-			"border":      "none",
-			"box-shadow":  "none",
-			"text-shadow": "none",
-			"outline":     "none",
-		},
-		nestedCSSRules(infoBarClassName, "button.close:hover"): {
-			"background": "none",
-			"border":     "none",
-			"box-shadow": "none",
-		},
-		nestedCSSRules(infoBarClassName, "button.close:active"): {
-			"background": "none",
-			"border":     "none",
-			"box-shadow": "none",
-			"outline":    "none",
+		nested: styles{
+			".content": style{
+				"text-shadow": "none",
+			},
+			".title": style{
+				"color":       colors.titleColor,
+				"text-shadow": "none",
+			},
+			".actions button": {
+				"background":    colors.buttonBackground,
+				"color":         colors.buttonColor,
+				"box-shadow":    "none",
+				"padding":       "4px 12px",
+				"border-radius": "200px",
+				"border":        "none",
+				"text-shadow":   "none",
+				"font-size":     "small",
+			},
+			".actions button:hover": {
+				"background": colors.buttonHoverBackground,
+				"color":      colors.buttonHoverColor,
+			},
+			".actions button:active": {
+				"background": colors.buttonActiveBackground,
+				"color":      colors.buttonActiveColor,
+			},
+			"button.close": {
+				"padding":     "0",
+				"background":  "none",
+				"border":      "none",
+				"box-shadow":  "none",
+				"text-shadow": "none",
+				"outline":     "none",
+			},
+			"button.close:hover": {
+				"background": "none",
+				"border":     "none",
+				"box-shadow": "none",
+			},
+			"button.close:active": {
+				"background": "none",
+				"border":     "none",
+				"box-shadow": "none",
+				"outline":    "none",
+			},
 		},
 	}
+
+	return nested.toStyles(infoBarClassName)
 }
 
 func (s *mucStylesProvider) setInfoBarStyle(ib gtki.InfoBar) {

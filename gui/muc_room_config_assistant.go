@@ -23,7 +23,7 @@ type roomConfigAssistant struct {
 	onSuccess func(autoJoin bool)
 	onCancel  func()
 
-	currentPageIndex int
+	currentPageIndex mucRoomConfigPageID
 	currentPage      mucRoomConfigPage
 
 	assistant          gtki.Assistant `gtk-widget:"room-config-assistant"`
@@ -89,7 +89,11 @@ func (rc *roomConfigAssistant) initBuilder() {
 }
 
 func (rc *roomConfigAssistant) initRoomConfigComponent(form *muc.RoomConfigForm) {
-	rc.roomConfigComponent = rc.u.newMUCRoomConfigComponent(rc.account, rc.roomID, form, rc.autoJoin, rc.assistant.SetCurrentPage, rc.assistant)
+	rc.roomConfigComponent = rc.u.newMUCRoomConfigComponent(rc.account, rc.roomID, form, rc.autoJoin, rc.setCurrentPage, rc.assistant)
+}
+
+func (rc *roomConfigAssistant) setCurrentPage(pageID mucRoomConfigPageID) {
+	doInUIThread(func() { rc.assistant.SetCurrentPage(int(pageID)) })
 }
 
 func (rc *roomConfigAssistant) initRoomConfigPages() {
@@ -141,15 +145,15 @@ func (rc *roomConfigAssistant) hideBottomActionArea() {
 
 // onPageChanged MUST be called from the UI thread
 func (rc *roomConfigAssistant) onPageChanged() {
-	rc.updateAssistantPage(rc.assistant.GetCurrentPage())
+	rc.updateAssistantPage(mucRoomConfigPageID(rc.assistant.GetCurrentPage()))
 }
 
 // updateAssistantPage MUST be called from the UI thread
-func (rc *roomConfigAssistant) updateAssistantPage(indexPage int) {
+func (rc *roomConfigAssistant) updateAssistantPage(pageID mucRoomConfigPageID) {
 	if rc.canChangePage() {
 		rc.pageByIndex(rc.currentPageIndex).updateFieldValues()
-		rc.updateContentPage(indexPage)
-		rc.navigation.selectPageByIndex(indexPage)
+		rc.updateContentPage(pageID)
+		rc.navigation.selectPageByIndex(pageID)
 	} else {
 		rc.navigation.selectPageByIndex(rc.currentPageIndex)
 	}
@@ -159,7 +163,7 @@ func (rc *roomConfigAssistant) updateAssistantPage(indexPage int) {
 func (rc *roomConfigAssistant) canChangePage() bool {
 	previousPage := rc.pageByIndex(rc.currentPageIndex)
 	if !previousPage.isValid() {
-		rc.assistant.SetCurrentPage(rc.currentPageIndex)
+		rc.assistant.SetCurrentPage(int(rc.currentPageIndex))
 		rc.currentPage.showValidationErrors()
 		return false
 	}
@@ -167,11 +171,11 @@ func (rc *roomConfigAssistant) canChangePage() bool {
 }
 
 // updateContentPage MUST be called from the UI thread
-func (rc *roomConfigAssistant) updateContentPage(indexPage int) {
+func (rc *roomConfigAssistant) updateContentPage(indexPage mucRoomConfigPageID) {
 	rc.currentPageIndex = indexPage
 	rc.currentPage = rc.pageByIndex(rc.currentPageIndex)
 
-	rc.assistant.SetCurrentPage(rc.currentPageIndex)
+	rc.assistant.SetCurrentPage(int(rc.currentPageIndex))
 	rc.currentPage.refresh()
 
 	rc.refreshButtonLabels()
@@ -269,7 +273,7 @@ func (rc *roomConfigAssistant) allPages() []mucRoomConfigPage {
 	}
 }
 
-func (rc *roomConfigAssistant) pageByIndex(p int) mucRoomConfigPage {
+func (rc *roomConfigAssistant) pageByIndex(p mucRoomConfigPageID) mucRoomConfigPage {
 	switch p {
 	case roomConfigInformationPageIndex:
 		return rc.infoPage

@@ -10,8 +10,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+type mucRoomConfigPageID int
+
 const (
-	roomConfigInformationPageIndex = iota
+	roomConfigInformationPageIndex mucRoomConfigPageID = iota
 	roomConfigAccessPageIndex
 	roomConfigPermissionsPageIndex
 	roomConfigPositionsPageIndex
@@ -25,7 +27,7 @@ type mucRoomConfigComponent struct {
 	form           *muc.RoomConfigForm
 	roomID         jid.Bare
 	autoJoin       bool
-	setCurrentPage func(indexPage int)
+	setCurrentPage func(indexPage mucRoomConfigPageID)
 
 	infoPage        mucRoomConfigPage
 	accessPage      mucRoomConfigPage
@@ -37,7 +39,7 @@ type mucRoomConfigComponent struct {
 	log coylog.Logger
 }
 
-func (u *gtkUI) newMUCRoomConfigComponent(account *account, roomID jid.Bare, f *muc.RoomConfigForm, autoJoin bool, setCurrentPage func(indexPage int), parent gtki.Window) *mucRoomConfigComponent {
+func (u *gtkUI) newMUCRoomConfigComponent(account *account, roomID jid.Bare, f *muc.RoomConfigForm, autoJoin bool, setCurrentPage func(indexPage mucRoomConfigPageID), parent gtki.Window) *mucRoomConfigComponent {
 	c := &mucRoomConfigComponent{
 		u:              u,
 		account:        account,
@@ -121,7 +123,7 @@ func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onErr
 	}()
 }
 
-func (c *mucRoomConfigComponent) getConfigPage(p int) mucRoomConfigPage {
+func (c *mucRoomConfigComponent) getConfigPage(p mucRoomConfigPageID) mucRoomConfigPage {
 	switch p {
 	case roomConfigInformationPageIndex:
 		return c.infoPage

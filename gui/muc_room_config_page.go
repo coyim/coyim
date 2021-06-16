@@ -10,10 +10,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var roomConfigPagesFields map[int][]muc.RoomConfigFieldType
+var roomConfigPagesFields map[mucRoomConfigPageID][]muc.RoomConfigFieldType
 
 func initMUCRoomConfigPages() {
-	roomConfigPagesFields = map[int][]muc.RoomConfigFieldType{
+	roomConfigPagesFields = map[mucRoomConfigPageID][]muc.RoomConfigFieldType{
 		roomConfigInformationPageIndex: {
 			muc.RoomConfigFieldName,
 			muc.RoomConfigFieldDescription,
@@ -66,7 +66,7 @@ type roomConfigPageBase struct {
 	fields []hasRoomConfigFormField
 
 	title               string
-	pageID              int
+	pageID              mucRoomConfigPageID
 	roomConfigComponent *mucRoomConfigComponent
 
 	page                gtki.Overlay     `gtk-widget:"room-config-page-overlay"`
@@ -83,7 +83,7 @@ type roomConfigPageBase struct {
 	log coylog.Logger
 }
 
-func (c *mucRoomConfigComponent) newConfigPage(pageID int) *roomConfigPageBase {
+func (c *mucRoomConfigComponent) newConfigPage(pageID mucRoomConfigPageID) *roomConfigPageBase {
 	p := &roomConfigPageBase{
 		u:                   c.u,
 		roomConfigComponent: c,
@@ -196,7 +196,7 @@ func (p *roomConfigPageBase) initSummary() {
 	p.autojoinContent.Show()
 }
 
-func (p *roomConfigPageBase) initSummaryFields(pageID int) {
+func (p *roomConfigPageBase) initSummaryFields(pageID mucRoomConfigPageID) {
 	p.addField(newRoomConfigFormFieldLinkButton(pageID, p.roomConfigComponent.setCurrentPage))
 	if pageID == roomConfigPositionsPageIndex {
 		p.initOccupantsSummaryFields()

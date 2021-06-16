@@ -19,10 +19,10 @@ type roomConfigPageTextInfo struct {
 	displayIntro string
 }
 
-var roomConfigPagesTexts map[int]roomConfigPageTextInfo
+var roomConfigPagesTexts map[mucRoomConfigPageID]roomConfigPageTextInfo
 
 func initMUCRoomConfigPagesTexts() {
-	roomConfigPagesTexts = map[int]roomConfigPageTextInfo{
+	roomConfigPagesTexts = map[mucRoomConfigPageID]roomConfigPageTextInfo{
 		roomConfigInformationPageIndex: {
 			displayTitle: i18n.Local("Basic information"),
 			displayIntro: i18n.Local("This section contains basic configuration options that you can " +
@@ -62,7 +62,7 @@ func initMUCRoomConfigPagesTexts() {
 	}
 }
 
-func getRoomConfigPageTexts(pageID int) roomConfigPageTextInfo {
+func getRoomConfigPageTexts(pageID mucRoomConfigPageID) roomConfigPageTextInfo {
 	if t, ok := roomConfigPagesTexts[pageID]; ok {
 		return t
 	}
@@ -72,12 +72,12 @@ func getRoomConfigPageTexts(pageID int) roomConfigPageTextInfo {
 	}
 }
 
-func configPageDisplayTitle(pageID int) string {
+func configPageDisplayTitle(pageID mucRoomConfigPageID) string {
 	t := getRoomConfigPageTexts(pageID)
 	return t.displayTitle
 }
 
-func configPageDisplayIntro(pageID int) string {
+func configPageDisplayIntro(pageID mucRoomConfigPageID) string {
 	t := getRoomConfigPageTexts(pageID)
 	return t.displayIntro
 }

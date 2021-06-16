@@ -60,15 +60,15 @@ func (rcn *roomConfigAssistantNavigation) onRowSelected(_ gtki.ListBox, r gtki.L
 	// Every time a row is selected, we check if it's not a divider or a normal item.
 	// Normal items will always be in even positions, and rows dividers will be in odd positions.
 	if idx := getListBoxRowIndex(r); idx%2 == 0 {
-		rcn.assistant.updateAssistantPage(idx - (idx / 2))
+		rcn.assistant.updateAssistantPage(mucRoomConfigPageID(idx - (idx / 2)))
 	}
 }
 
 // selectPageByIndex MUST be called from the UI thread
-func (rcn *roomConfigAssistantNavigation) selectPageByIndex(idx int) {
+func (rcn *roomConfigAssistantNavigation) selectPageByIndex(pageID mucRoomConfigPageID) {
 	// Since we have a divider for each navigation item, every time we want to select
 	// a page by its index, we should calculate the right index to avoid a wrong behavior
-	row := rcn.navigation.GetRowAtIndex(idx * 2)
+	row := rcn.navigation.GetRowAtIndex(int(pageID) * 2)
 	rowIndex := getListBoxRowIndex(row)
 	currentRowIndex := getListBoxRowIndex(rcn.navigation.GetSelectedRow())
 

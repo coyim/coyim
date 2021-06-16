@@ -130,8 +130,8 @@ jobs:
           DISPLAY: ':99.0'
       - name: run tests
         run: |
-          sh ./scripts/fix_pkg_config_pc_files.sh "/.pkgconfig-pc-files"
-          PKG_CONFIG_PATH="/.pkgconfig-pc-files:$PKG_CONFIG_PATH" make -C ci/
+          sh ./scripts/fix_pkg_config_pc_files.sh "./.pkgconfig-pc-files"
+          PKG_CONFIG_PATH="./.pkgconfig-pc-files:$PKG_CONFIG_PATH" make -C ci/
         env:
           DISPLAY: ':99.0'
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}

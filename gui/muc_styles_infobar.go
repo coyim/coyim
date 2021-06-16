@@ -7,8 +7,14 @@ import (
 )
 
 type infoBarColorInfo struct {
-	background string
-	titleColor string
+	background             string
+	titleColor             string
+	buttonBackground       string
+	buttonColor            string
+	buttonHoverBackground  string
+	buttonHoverColor       string
+	buttonActiveBackground string
+	buttonActiveColor      string
 }
 
 type infoBarColorStyles map[gtki.MessageType]infoBarColorInfo
@@ -51,8 +57,14 @@ func infoBarTypeColorsFromSet(t gtki.MessageType, c mucColorSet) infoBarColorInf
 	}
 
 	return infoBarColorInfo{
-		background: fmt.Sprintf("linear-gradient(0deg, %s 0%%, %s 100%%)", bgStart, bgStop),
-		titleColor: tc,
+		background:             fmt.Sprintf("linear-gradient(0deg, %s 0%%, %s 100%%)", bgStart, bgStop),
+		titleColor:             tc,
+		buttonBackground:       c.infoBarButtonBackground,
+		buttonColor:            c.infoBarButtonForeground,
+		buttonHoverBackground:  c.infoBarButtonHoverBackground,
+		buttonHoverColor:       c.infoBarButtonHoverForeground,
+		buttonActiveBackground: c.infoBarButtonActiveBackground,
+		buttonActiveColor:      c.infoBarButtonActiveForeground,
 	}
 }
 
@@ -72,6 +84,24 @@ func (s *mucStylesProvider) setInfoBarStyle(ib gtki.InfoBar) {
 			".infobar .title": style{
 				"color":       st.titleColor,
 				"text-shadow": "none",
+			},
+			".infobar .actions button": {
+				"background":    st.buttonBackground,
+				"color":         st.buttonColor,
+				"box-shadow":    "none",
+				"padding":       "4px 12px",
+				"border-radius": "200px",
+				"border":        "none",
+				"text-shadow":   "none",
+				"font-size":     "small",
+			},
+			".infobar .actions button:hover": {
+				"background": st.buttonHoverBackground,
+				"color":      st.buttonHoverColor,
+			},
+			".infobar .actions button:active": {
+				"background": st.buttonActiveBackground,
+				"color":      st.buttonActiveColor,
 			},
 		})
 	}

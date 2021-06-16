@@ -69,6 +69,12 @@ type mucColorSet struct {
 	infoBarTypeOtherBackgroundStart    string
 	infoBarTypeOtherBackgroundStop     string
 	infoBarTypeOtherTitle              string
+	infoBarButtonBackground            string
+	infoBarButtonForeground            string
+	infoBarButtonHoverBackground       string
+	infoBarButtonHoverForeground       string
+	infoBarButtonActiveBackground      string
+	infoBarButtonActiveForeground      string
 
 	entryErrorBackground   string
 	entryErrorBorderShadow string
@@ -150,6 +156,12 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		infoBarTypeOtherBackgroundStart:    "rgba(14,116,144,1)",
 		infoBarTypeOtherBackgroundStop:     "rgba(8,145,178,1)",
 		infoBarTypeOtherTitle:              "#F0FDFA",
+		infoBarButtonBackground:            "rgba(0,0,0,0.25)",
+		infoBarButtonForeground:            "#FFFFFF",
+		infoBarButtonHoverBackground:       "rgba(0,0,0,0.35)",
+		infoBarButtonHoverForeground:       "#FFFFFF",
+		infoBarButtonActiveBackground:      "rgba(0,0,0,0.45)",
+		infoBarButtonActiveForeground:      "#FFFFFF",
 
 		entryErrorBackground:   "#FFF5F6",
 		entryErrorBorderShadow: "#FF7F50",
@@ -227,6 +239,12 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		infoBarTypeOtherBackgroundStart:    "rgba(14,116,144,1)",
 		infoBarTypeOtherBackgroundStop:     "rgba(8,145,178,1)",
 		infoBarTypeOtherTitle:              "#F0FDFA",
+		infoBarButtonBackground:            "rgba(0,0,0,0.25)",
+		infoBarButtonForeground:            "#FFFFFF",
+		infoBarButtonHoverBackground:       "rgba(0,0,0,0.35)",
+		infoBarButtonHoverForeground:       "#FFFFFF",
+		infoBarButtonActiveBackground:      "rgba(0,0,0,0.45)",
+		infoBarButtonActiveForeground:      "#FFFFFF",
 
 		entryErrorBackground:   "#FFF5F6",
 		entryErrorBorderShadow: "#FF7F50",

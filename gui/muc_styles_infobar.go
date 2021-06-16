@@ -83,6 +83,8 @@ func (st *infoBarStyles) stylesFor(ib gtki.InfoBar) styles {
 		nested: styles{
 			".content": style{
 				"text-shadow": "none",
+				"padding":     "0",
+				"background":  "none",
 			},
 			".title": style{
 				"color":       colors.titleColor,

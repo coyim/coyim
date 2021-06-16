@@ -1,7 +1,6 @@
 <interface>
   <object class="GtkInfoBar" id="infobar">
     <property name="visible">True</property>
-    <property name="spacing">12</property>
     <signal name="response" handler="handle-response" swapped="no"/>
     <style>
       <class name="infobar" />

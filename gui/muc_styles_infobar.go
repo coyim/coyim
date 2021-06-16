@@ -88,13 +88,20 @@ func (st *infoBarStyles) stylesFor(ib gtki.InfoBar) styles {
 
 	nested := &nestedStyles{
 		root: style{
-			"background":  colors.background,
-			"text-shadow": "none",
-			"font-weight": "500",
-			"padding":     "8px 10px",
-			"border":      fmt.Sprintf("1px solid %s", colors.borderColor),
+			"background":    colors.background,
+			"text-shadow":   "none",
+			"font-weight":   "500",
+			"padding":       "0 4px 0 0",
+			"border-radius": "0",
+			"border":        fmt.Sprintf("1px solid %s", colors.borderColor),
 		},
 		nested: styles{
+			"revealer > box": style{
+				"padding":    "0",
+				"background": "none",
+				"border":     "none",
+				"box-shadow": "none",
+			},
 			".content": style{
 				"text-shadow": "none",
 				"padding":     "0",
@@ -113,6 +120,9 @@ func (st *infoBarStyles) stylesFor(ib gtki.InfoBar) styles {
 				"border":        "none",
 				"text-shadow":   "none",
 				"font-size":     "small",
+			},
+			".actions button label": {
+				"color": "inherit",
 			},
 			".actions button:hover": {
 				"background": colors.buttonHoverBackground,

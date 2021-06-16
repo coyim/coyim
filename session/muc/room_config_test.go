@@ -141,7 +141,7 @@ func (s *MucRoomConfigSuite) SetUpSuite(c *C) {
 
 func (s *MucRoomConfigSuite) stringValueFromFormField(rcft RoomConfigFieldType) (v string) {
 	f, ok := s.rcf.GetKnownField(rcft)
-	if ok && len(f.Value()) == 1 {
+	if ok && len(f.Value()) > 0 {
 		v = f.Value()[0]
 	}
 	return

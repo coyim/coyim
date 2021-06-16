@@ -174,7 +174,7 @@ func summaryRolesListText(total int) string {
 	case total > 0:
 		return i18n.Localf("%d roles", total)
 	}
-	return i18n.Local("None")
+	return i18n.Local("No roles")
 }
 
 func summaryTotalPositionsText(total int) string {
@@ -184,7 +184,7 @@ func summaryTotalPositionsText(total int) string {
 	case total > 0:
 		return i18n.Localf("%d accounts", total)
 	}
-	return i18n.Local("None")
+	return i18n.Local("No accounts")
 }
 
 func summaryListHideOrShow(list gtki.TreeView, toggleButtonImage gtki.Image, container gtki.Box) {

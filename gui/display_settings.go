@@ -139,6 +139,23 @@ func updateWithStyles(l StyleContextable, p gtki.CssProvider) {
 type style map[string]interface{}
 type styles map[string]style
 
+type nestedStyles struct {
+	root   style
+	nested styles
+}
+
+func (nst *nestedStyles) toStyles(selector string) styles {
+	ret := styles{
+		selector: nst.root,
+	}
+
+	for s, n := range nst.nested {
+		ret[nestedCSSRules(selector, s)] = n
+	}
+
+	return ret
+}
+
 func styleSelectorRules(el string, s style) string {
 	return fmt.Sprintf("%s {%s}", el, inlineStyleProperties(s))
 }

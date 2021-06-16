@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -9,16 +10,18 @@ import (
 // mucStylesProvider is a representation of the styles that can be applied to specific muc-related interfaces.
 // Please note that all methods of this struct MUST be called from the UI thread.
 type mucStylesProvider struct {
-	colors             mucColorSet
-	infoBarColorStyles infoBarColorStyles
+	colors        mucColorSet
+	infoBarStyles *infoBarStyles
 }
 
 var mucStyles *mucStylesProvider
 
 func initMUCStyles(c mucColorSet) {
+	initMUCInfoBarData()
+
 	mucStyles = &mucStylesProvider{
-		colors:             c,
-		infoBarColorStyles: newInfoBarColorStyles(c),
+		colors:        c,
+		infoBarStyles: newInfoBarStyles(c),
 	}
 }
 

@@ -28,11 +28,26 @@ func (fc *roomConfigSummaryFieldContainer) initBuilder() {
 }
 
 func (fc *roomConfigSummaryFieldContainer) initDefaults() {
-	fc.content.Add(fc.fields[0].fieldWidget())
-	for _, f := range fc.fields[1:] {
-		fc.content.Add(createSeparator(gtki.HorizontalOrientation))
-		fc.content.Add(f.fieldWidget())
+	fields := fc.addSeparatorsBetweenWidgets(fc.fieldWidgets())
+	for _, f := range fields {
+		fc.content.Add(f)
 	}
+}
+
+func (fc *roomConfigSummaryFieldContainer) fieldWidgets() (widgets []gtki.Widget) {
+	for _, f := range fc.fields {
+		widgets = append(widgets, f.fieldWidget())
+	}
+	return
+}
+
+func (fc *roomConfigSummaryFieldContainer) addSeparatorsBetweenWidgets(fields []gtki.Widget) (widgets []gtki.Widget) {
+	widgets = append(widgets, fields[0])
+	for _, f := range fields[1:] {
+		widgets = append(widgets, createSeparator(gtki.HorizontalOrientation))
+		widgets = append(widgets, f)
+	}
+	return
 }
 
 func (fc *roomConfigSummaryFieldContainer) fieldWidget() gtki.Widget {

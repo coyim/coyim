@@ -103,6 +103,25 @@ func (s *mucStylesProvider) setInfoBarStyle(ib gtki.InfoBar) {
 				"background": st.buttonActiveBackground,
 				"color":      st.buttonActiveColor,
 			},
+			".infobar button.close": {
+				"padding":     "0",
+				"background":  "none",
+				"border":      "none",
+				"box-shadow":  "none",
+				"text-shadow": "none",
+				"outline":     "none",
+			},
+			".infobar button.close:hover": {
+				"background": "none",
+				"border":     "none",
+				"box-shadow": "none",
+			},
+			".infobar button.close:active": {
+				"background": "none",
+				"border":     "none",
+				"box-shadow": "none",
+				"outline":    "none",
+			},
 		})
 	}
 }

@@ -307,3 +307,7 @@ func (s *mucStylesProvider) hexToRGBA(hex string, a float64) string {
 func (s *mucStylesProvider) boxShadow(shadowStyle, color string) string {
 	return fmt.Sprintf("%s %s", shadowStyle, color)
 }
+
+func nestedCSSRules(rules ...string) string {
+	return strings.Join(rules, " ")
+}

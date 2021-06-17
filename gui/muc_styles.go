@@ -207,6 +207,13 @@ func (s *mucStylesProvider) setHelpTextStyle(p gtki.Box) {
 	})
 }
 
+func (s *mucStylesProvider) setLabelExpanderStyle(l gtki.Label) {
+	s.setLabelStyle(l, style{
+		"font-size":   "medium",
+		"font-weight": "bold",
+	})
+}
+
 func (s *mucStylesProvider) setDisableRoomStyle(p gtki.Box) {
 	s.setBoxStyle(p, style{
 		"opacity": "0.5",

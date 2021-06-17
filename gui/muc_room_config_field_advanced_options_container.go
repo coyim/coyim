@@ -7,8 +7,9 @@ import (
 type roomConfigFormFieldAdvancedOptionsContainer struct {
 	fields []hasRoomConfigFormField
 
-	widget  gtki.Box `gtk-widget:"room-config-field-box"`
-	content gtki.Box `gtk-widget:"room-config-field-advanced-options-content-box"`
+	widget  gtki.Box   `gtk-widget:"room-config-field-box"`
+	content gtki.Box   `gtk-widget:"room-config-field-advanced-options-content-box"`
+	label   gtki.Label `gtk-widget:"room-config-advanced-field-label"`
 }
 
 func newRoomConfigFormFieldAdvancedOptionsContainer(f []hasRoomConfigFormField) hasRoomConfigFormField {
@@ -31,6 +32,7 @@ func (fc *roomConfigFormFieldAdvancedOptionsContainer) initDefaults() {
 	for _, f := range fc.fields {
 		fc.content.Add(f.fieldWidget())
 	}
+	mucStyles.setLabelExpanderStyle(fc.label)
 }
 
 func (fc *roomConfigFormFieldAdvancedOptionsContainer) fieldWidget() gtki.Widget {

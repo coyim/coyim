@@ -36,21 +36,35 @@ func (v *roomView) newRoomNotifications() *roomNotifications {
 	}
 }
 
-func (rn *roomNotifications) info(msg string) {
-	rn.newNotification(msg, gtki.MESSAGE_INFO)
+type roomNotificationOptions struct {
+	message     string
+	messageType gtki.MessageType
+	showTime    bool
+	closeable   bool
 }
 
-func (rn *roomNotifications) warning(msg string) {
-	rn.newNotification(msg, gtki.MESSAGE_WARNING)
+func (rn *roomNotifications) info(n roomNotificationOptions) {
+	n.messageType = gtki.MESSAGE_INFO
+	rn.newNotification(n)
 }
 
-func (rn *roomNotifications) error(msg string) {
-	rn.newNotification(msg, gtki.MESSAGE_ERROR)
+func (rn *roomNotifications) warning(n roomNotificationOptions) {
+	n.messageType = gtki.MESSAGE_WARNING
+	rn.newNotification(n)
 }
 
-func (rn *roomNotifications) newNotification(text string, messageType gtki.MessageType) {
-	nb := rn.u.newNotificationBarWithTime(text, messageType)
-	nb.setClosable(true)
+func (rn *roomNotifications) error(n roomNotificationOptions) {
+	n.messageType = gtki.MESSAGE_ERROR
+	rn.newNotification(n)
+}
+
+func (rn *roomNotifications) newNotification(n roomNotificationOptions) {
+	nb := rn.u.newNotificationBar(n.message, n.messageType)
+	if n.showTime {
+		nb = rn.u.newNotificationBarWithTime(n.message, n.messageType)
+	}
+
+	nb.setClosable(n.closeable)
 	rn.add(nb)
 
 	rn.roomView.onNewNotificationAdded()

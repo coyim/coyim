@@ -153,7 +153,7 @@ func (l *roomViewLobby) passwordHasContent() bool {
 
 func (l *roomViewLobby) isNotNicknameInConflictList() bool {
 	if l.nicknamesWithConflict.Has(getEntryText(l.nicknameEntry)) {
-		l.notifications.error(i18n.Local("That nickname is already being used."))
+		l.notifications.error(roomNotificationOptions{message: i18n.Local("That nickname is already being used.")})
 		return false
 	}
 	return true
@@ -227,7 +227,7 @@ func (l *roomViewLobby) onJoinFailed(err error) {
 		}
 	}
 
-	l.notifications.error(userMessage)
+	l.notifications.error(roomNotificationOptions{message: userMessage})
 
 	setFieldSensitive(l.joinButton, shouldEnableJoin)
 }

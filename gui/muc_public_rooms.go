@@ -496,7 +496,7 @@ func (prv *mucPublicRoomsView) mucUpdatePublicRoomsOn(a *account) {
 }
 
 func (prv *mucPublicRoomsView) showUserMessageForError(err error) {
-	userMessage := i18n.Local("An unknow error ocurred, please try again.")
+	userMessage := i18n.Local("An unknow error occurred, please try again.")
 
 	switch err {
 	case errNoPossibleSelection:

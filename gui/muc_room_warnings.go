@@ -34,7 +34,7 @@ type roomViewWarningsInfoBar struct {
 
 func (v *roomView) newRoomViewWarningsInfoBar() *roomViewWarningsInfoBar {
 	ib := &roomViewWarningsInfoBar{
-		v.u.newNotificationBar(i18n.Local("Please be aware of this room configuration"), gtki.MESSAGE_WARNING),
+		v.u.newNotificationBar(i18n.Local("Check out the security properties of this room!"), gtki.MESSAGE_WARNING),
 	}
 
 	showWarningsButton, _ := g.gtk.ButtonNewWithLabel(i18n.Local("Details"))

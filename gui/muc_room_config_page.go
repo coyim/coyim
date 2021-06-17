@@ -10,47 +10,43 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var roomConfigPagesFields map[mucRoomConfigPageID][]muc.RoomConfigFieldType
-
-func initMUCRoomConfigPages() {
-	roomConfigPagesFields = map[mucRoomConfigPageID][]muc.RoomConfigFieldType{
-		roomConfigInformationPageIndex: {
-			muc.RoomConfigFieldName,
-			muc.RoomConfigFieldDescription,
-			muc.RoomConfigFieldLanguage,
-			muc.RoomConfigFieldIsPublic,
-			muc.RoomConfigFieldIsPersistent,
-		},
-		roomConfigAccessPageIndex: {
-			muc.RoomConfigFieldPassword,
-			muc.RoomConfigFieldIsMembersOnly,
-			muc.RoomConfigFieldAllowInvites,
-		},
-		roomConfigPermissionsPageIndex: {
-			muc.RoomConfigFieldWhoIs,
-			muc.RoomConfigFieldIsModerated,
-			muc.RoomConfigFieldCanChangeSubject,
-			muc.RoomConfigFieldAllowPrivateMessages,
-			muc.RoomConfigFieldPresenceBroadcast,
-		},
-		roomConfigPositionsPageIndex: {
-			muc.RoomConfigFieldOwners,
-			muc.RoomConfigFieldAdmins,
-			muc.RoomConfigFieldMembers,
-		},
-		roomConfigOthersPageIndex: {
-			muc.RoomConfigFieldMaxOccupantsNumber,
-			muc.RoomConfigFieldMaxHistoryFetch,
-			muc.RoomConfigFieldEnableLogging,
-			muc.RoomConfigFieldPubsub,
-			muc.RoomConfigFieldAllowQueryUsers,
-			muc.RoomConfigFieldAllowVisitorStatus,
-			muc.RoomConfigFieldAllowVisitorNickchange,
-			muc.RoomConfigFieldAllowVoiceRequest,
-			muc.RoomConfigFieldAllowSubscription,
-			muc.RoomConfigFieldMembersByDefault,
-		},
-	}
+var roomConfigPagesFields = map[mucRoomConfigPageID][]muc.RoomConfigFieldType{
+	roomConfigInformationPageIndex: {
+		muc.RoomConfigFieldName,
+		muc.RoomConfigFieldDescription,
+		muc.RoomConfigFieldLanguage,
+		muc.RoomConfigFieldIsPublic,
+		muc.RoomConfigFieldIsPersistent,
+	},
+	roomConfigAccessPageIndex: {
+		muc.RoomConfigFieldPassword,
+		muc.RoomConfigFieldIsMembersOnly,
+		muc.RoomConfigFieldAllowInvites,
+	},
+	roomConfigPermissionsPageIndex: {
+		muc.RoomConfigFieldWhoIs,
+		muc.RoomConfigFieldIsModerated,
+		muc.RoomConfigFieldCanChangeSubject,
+		muc.RoomConfigFieldAllowPrivateMessages,
+		muc.RoomConfigFieldPresenceBroadcast,
+	},
+	roomConfigPositionsPageIndex: {
+		muc.RoomConfigFieldOwners,
+		muc.RoomConfigFieldAdmins,
+		muc.RoomConfigFieldMembers,
+	},
+	roomConfigOthersPageIndex: {
+		muc.RoomConfigFieldMaxOccupantsNumber,
+		muc.RoomConfigFieldMaxHistoryFetch,
+		muc.RoomConfigFieldEnableLogging,
+		muc.RoomConfigFieldPubsub,
+		muc.RoomConfigFieldAllowQueryUsers,
+		muc.RoomConfigFieldAllowVisitorStatus,
+		muc.RoomConfigFieldAllowVisitorNickchange,
+		muc.RoomConfigFieldAllowVoiceRequest,
+		muc.RoomConfigFieldAllowSubscription,
+		muc.RoomConfigFieldMembersByDefault,
+	},
 }
 
 type mucRoomConfigPage interface {

@@ -75,7 +75,7 @@ func (l *roomViewLobby) initBuilder() {
 func (l *roomViewLobby) initDefaults(v *roomView) {
 	l.notifications = v.notifications
 
-	l.roomNameLabel.SetText(l.roomID.String())
+	l.roomNameLabel.SetText(i18n.Localf("You are joining to %s", l.roomID.String()))
 	l.content.SetHExpand(true)
 
 	setFieldVisibility(l.passwordLabel, false)

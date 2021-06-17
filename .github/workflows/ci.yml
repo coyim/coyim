@@ -78,7 +78,7 @@ jobs:
     env:
       GOPATH: ${{ github.workspace }}
       GO111MODULE: off
-      REPOSITORY_DIR: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
+      REPOSITORY_DIR: ${{ github.workspace }}/src/github.com/${{ github.repository }}
     defaults:
       run:
         working-directory: ${{ env.REPOSITORY_DIR }}

@@ -83,7 +83,11 @@ func (s *KeepaliveSuite) Test_conn_watchKeepAlive_workingOnce(c *C) {
 
 	cc.watchKeepAlive()
 
-	c.Assert(len(hook.Entries), Equals, 2)
+	ll := len(hook.Entries)
+	// We can get either two or three log entries here, depending on whether the sending
+	// of the stream error happens or not - if it happens, we will get a log saying
+	// the connection is already closed.
+	c.Assert(ll == 2 || ll == 3, Equals, true)
 	c.Assert(hook.Entries[0].Level, Equals, log.InfoLevel)
 	c.Assert(hook.Entries[0].Message, Equals, "xmpp: keepalive failed")
 	c.Assert(hook.Entries[1].Level, Equals, log.InfoLevel)

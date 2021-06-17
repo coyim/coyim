@@ -24,7 +24,12 @@ var (
 	infoBarTypeOther    infoBarType
 )
 
-var infoBarClassNames map[infoBarType]string
+var infoBarClassNames = map[infoBarType]string{
+	infoBarTypeInfo:     infoBarInfoClassName,
+	infoBarTypeWarning:  infoBarWarningClassName,
+	infoBarTypeQuestion: infoBarQuestionClassName,
+	infoBarTypeError:    infoBarErrorClassName,
+}
 
 func initMUCInfoBarData() {
 	infoBarTypeInfo = infoBarType(gtki.MESSAGE_INFO)
@@ -32,13 +37,6 @@ func initMUCInfoBarData() {
 	infoBarTypeQuestion = infoBarType(gtki.MESSAGE_QUESTION)
 	infoBarTypeError = infoBarType(gtki.MESSAGE_ERROR)
 	infoBarTypeOther = infoBarType(gtki.MESSAGE_OTHER)
-
-	infoBarClassNames = map[infoBarType]string{
-		infoBarTypeInfo:     infoBarInfoClassName,
-		infoBarTypeWarning:  infoBarWarningClassName,
-		infoBarTypeQuestion: infoBarQuestionClassName,
-		infoBarTypeError:    infoBarErrorClassName,
-	}
 }
 
 type infoBarColorInfo struct {

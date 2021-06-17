@@ -1,0 +1,42 @@
+<interface>
+  <object class="GtkBox" id="room-config-field-box">
+    <property name="visible">True</property>
+    <property name="valign">center</property>
+    <property name="orientation">vertical</property>
+    <child>
+      <object class="GtkFrame">
+        <property name="visible">True</property>
+        <property name="label_xalign">0</property>
+        <property name="shadow_type">none</property>
+        <child>
+          <object class="GtkAlignment">
+            <property name="visible">True</property>
+            <property name="left_padding">12</property>
+            <child>
+              <object class="GtkExpander">
+                <property name="visible">True</property>
+                <child>
+                  <object class="GtkBox" id="room-config-field-advanced-options-content-box">
+                    <property name="visible">True</property>
+                    <property name="orientation">vertical</property>                    
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Advanced options</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>      
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+  </object>
+</interface>

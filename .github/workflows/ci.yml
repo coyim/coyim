@@ -78,9 +78,10 @@ jobs:
     env:
       GOPATH: ${{ github.workspace }}
       GO111MODULE: off
+      REPOSITORY_DIR: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
     defaults:
       run:
-        working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
+        working-directory: ${{ env.REPOSITORY_DIR }}
         shell: msys2 {0}
 
     strategy:
@@ -130,12 +131,14 @@ jobs:
           DISPLAY: ':99.0'
       - name: run tests
         run: |
-          sh ./scripts/fix_pkg_config_pc_files.sh "./.pkgconfig-pc-files"
-          PKG_CONFIG_PATH="./.pkgconfig-pc-files:$PKG_CONFIG_PATH" make -C ci/
+          export PC_FILES_DIR=`cygpath -u '${{ env.PKG_CONFIG_PC_FILES_DIR }}'`
+          sh ./scripts/fix_pkg_config_pc_files.sh "$PC_FILES_DIR"
+          PKG_CONFIG_PATH="$PC_FILES_DIR:$PKG_CONFIG_PATH" make -C ci/
         env:
           DISPLAY: ':99.0'
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
           RUN_WITH: cygdrop -p Backup -p Restore
+          PKG_CONFIG_PC_FILES_DIR: ${{ env.REPOSITORY_DIR }}/.pkgconfig-pc-files
 
   notify-test:
     name: Notify on success or failure of test

@@ -11,20 +11,23 @@
         <child>
           <object class="GtkAlignment">
             <property name="visible">True</property>
-            <property name="left_padding">12</property>
             <child>
               <object class="GtkExpander">
                 <property name="visible">True</property>
                 <child>
                   <object class="GtkBox" id="room-config-field-advanced-options-content-box">
                     <property name="visible">True</property>
-                    <property name="orientation">vertical</property>                    
+                    <property name="orientation">vertical</property>
+                    <property name="margin_top">12</property>                    
                   </object>
                 </child>
                 <child type="label">
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="room-config-advanced-field-label">
                     <property name="visible">True</property>
                     <property name="label" translatable="yes">Advanced options</property>
+                    <style>
+                      <class name="expander-text"/>
+                    </style>
                   </object>
                 </child>
               </object>

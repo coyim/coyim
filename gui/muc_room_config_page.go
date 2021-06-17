@@ -22,7 +22,6 @@ func initMUCRoomConfigPages() {
 			muc.RoomConfigFieldIsPersistent,
 		},
 		roomConfigAccessPageIndex: {
-			muc.RoomConfigFieldIsPasswordProtected,
 			muc.RoomConfigFieldPassword,
 			muc.RoomConfigFieldIsMembersOnly,
 			muc.RoomConfigFieldAllowInvites,
@@ -154,7 +153,7 @@ func (p *roomConfigPageBase) initKnownFields() {
 	if knownFields, ok := roomConfigPagesFields[p.pageID]; ok {
 		booleanFields := []*roomConfigFormFieldBoolean{}
 		for _, kf := range knownFields {
-			if knownField, ok := p.form.GetKnownField(kf); ok && kf != muc.RoomConfigFieldIsPasswordProtected {
+			if knownField, ok := p.form.GetKnownField(kf); ok {
 				field, err := roomConfigFormFieldFactory(kf, roomConfigFieldsTexts[kf], knownField.ValueType())
 				if err != nil {
 					p.log.WithError(err).Error("Room configuration form field not supported")
@@ -211,7 +210,7 @@ func (p *roomConfigPageBase) initSummaryFields(pageID mucRoomConfigPageID) {
 
 	fields := []hasRoomConfigFormField{}
 	for _, kf := range roomConfigPagesFields[pageID] {
-		if knownField, ok := p.form.GetKnownField(kf); ok && kf != muc.RoomConfigFieldIsPasswordProtected {
+		if knownField, ok := p.form.GetKnownField(kf); ok {
 			fields = append(fields, newRoomConfigSummaryField(kf, roomConfigFieldsTexts[kf], knownField.ValueType()))
 		}
 	}

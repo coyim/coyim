@@ -79,7 +79,7 @@ func (cac *connectedAccountsComponent) hasAccountValue() bool {
 // so no other things can happen to the UI in the meantime
 func (cac *connectedAccountsComponent) initOrReplaceAccounts(accounts []*account) {
 	if !cac.hasAccounts() {
-		cac.errorNotifications.notifyOnError(i18n.Local("There are no connected accounts"))
+		cac.errorNotifications.notifyOnError(i18n.Local("There are no connected accounts."))
 	}
 
 	currentlyActive := 0

@@ -125,16 +125,15 @@ func (d *roomDestroyView) resetAlternativeRoomFields() {
 func (d *roomDestroyView) friendlyMessageForAlternativeRoomError(err error) string {
 	switch err {
 	case errEmptyServiceName:
-		return i18n.Local("You must provide a service name")
+		return i18n.Local("You must provide a service name.")
 	case errEmptyRoomName:
-		return i18n.Local("You must provide a room name")
+		return i18n.Local("You must provide a room name.")
 	case errInvalidRoomName:
-		return i18n.Local("You must provide a valid room name")
+		return i18n.Local("You must provide a valid room name.")
 	case errInvalidServiceName:
-		return i18n.Local("You must provide a valid service name")
-	default:
-		return i18n.Local("You must provide a valid service and room name")
+		return i18n.Local("You must provide a valid service name.")
 	}
+	return i18n.Local("You must provide a valid service and room name.")
 }
 
 // tryParseAlternativeRoomID MUST be called from the UI thread

@@ -334,7 +334,7 @@ func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, pas
 			v.log.Info("The room has been destroyed")
 			v.publishDestroyEvent(reason, alternativeRoomID, password)
 			doInUIThread(func() {
-				v.notifications.info(roomNotificationOptions{message: "The room has been destroyed", showTime: true, closeable: true})
+				v.notifications.info(roomNotificationOptions{message: i18n.Local("The room has been destroyed"), showTime: true, closeable: true})
 				v.loadingViewOverlay.hide()
 			})
 		case err := <-ec:
@@ -379,7 +379,7 @@ func (v *roomView) onOccupantAffiliationUpdateSuccess(o *muc.Occupant, previousA
 
 func (v *roomView) onBannedListUpdated() {
 	doInUIThread(func() {
-		v.notifications.info(roomNotificationOptions{message: "The banned list has been updated", showTime: true, closeable: true})
+		v.notifications.info(roomNotificationOptions{message: i18n.Local("The banned list has been updated"), showTime: true, closeable: true})
 	})
 }
 

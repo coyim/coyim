@@ -340,9 +340,9 @@ func (prv *mucPublicRoomsView) beforeUpdatingPublicRooms() {
 func (prv *mucPublicRoomsView) onUpdatePublicRoomsNoResults(customService string) {
 	prv.enableRoomsViewAndHideSpinner()
 	if customService != "" {
-		prv.notifications.error(i18n.Local("That service doesn't seem to exist"))
+		prv.notifications.error(i18n.Local("That service doesn't seem to exist."))
 	} else {
-		prv.notifications.error(i18n.Local("Your XMPP server doesn't seem to have any chat room services"))
+		prv.notifications.error(i18n.Local("Your XMPP server doesn't seem to have any chat room services."))
 	}
 }
 
@@ -420,7 +420,7 @@ func (prv *mucPublicRoomsView) handleReceivedRoomListing(rl *muc.RoomListing, ge
 func (prv *mucPublicRoomsView) handleReceivedError(err error) {
 	prv.log().WithError(err).Error("Something went wrong when trying to get chat rooms")
 	doInUIThread(func() {
-		prv.notifications.error(i18n.Local("Something went wrong when trying to get chat rooms"))
+		prv.notifications.error(i18n.Local("Something went wrong when trying to get chat rooms."))
 	})
 }
 
@@ -496,7 +496,7 @@ func (prv *mucPublicRoomsView) mucUpdatePublicRoomsOn(a *account) {
 }
 
 func (prv *mucPublicRoomsView) showUserMessageForError(err error) {
-	var userMessage string
+	userMessage := i18n.Local("An unknow error ocurred, please try again.")
 
 	switch err {
 	case errNoPossibleSelection:
@@ -507,8 +507,6 @@ func (prv *mucPublicRoomsView) showUserMessageForError(err error) {
 		userMessage = i18n.Local("Please, select one room from the list to join to.")
 	case errNoService:
 		userMessage = i18n.Local("We cant't determinate which service has been selected, please try again.")
-	default:
-		userMessage = i18n.Local("An unknow error ocurred, please try again.")
 	}
 
 	prv.notifications.error(userMessage)

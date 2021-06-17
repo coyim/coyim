@@ -70,7 +70,7 @@ func (l *roomViewLobby) occupantForbiddenEvent() {
 func (l *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
 	switch err.errType {
 	case errInvalidNickname:
-		return i18n.Local("You must provide a valid nickname")
+		return i18n.Local("You must provide a valid nickname.")
 	case errJoinNicknameConflict:
 		return i18n.Local("You can't join the room using that nickname because it's already being used.")
 	case errJoinOnlyMembers:
@@ -83,7 +83,6 @@ func (l *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
 		return i18n.Local("An unknown error occurred when trying to join the room. Please try again later.")
 	case errOccupantForbidden:
 		return i18n.Local("You can't join the room because your account is currently banned.")
-	default:
-		return i18n.Local("An error occurred when trying to join the room. Please check your connection or make sure the room exists.")
 	}
+	return i18n.Local("An error occurred when trying to join the room. Please check your connection or make sure the room exists.")
 }

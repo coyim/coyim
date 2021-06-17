@@ -99,7 +99,7 @@ func (u *gtkUI) presenceSubscriptionDialog(sendSubscription func(accountID strin
 			doInUIThread(acd.clearErrors)
 		},
 		func() {
-			doInUIThread(func() { acd.notifyOnError(i18n.Local("There are no currently connected accounts")) })
+			doInUIThread(func() { acd.notifyOnError(i18n.Local("There are no currently connected accounts.")) })
 		},
 	)
 
@@ -116,14 +116,14 @@ func (u *gtkUI) presenceSubscriptionDialog(sendSubscription func(accountID strin
 
 			acc := ac.currentAccount()
 			if acc == nil {
-				acd.notifyOnError(i18n.Local("There is no connected account selected"))
+				acd.notifyOnError(i18n.Local("There is no connected account selected."))
 				acc.log.Warn("can't send subscription without a current account")
 				return
 			}
 
 			err := sendSubscription(acc.ID(), jid.NR(contact), acd.getCurrentMessage(), acd.getCurrentNickname(), acd.getAutoAuthorize())
 			if err != nil {
-				acd.notifyOnError(i18n.Local("We couldn't send a subscription"))
+				acd.notifyOnError(i18n.Local("We couldn't send a subscription."))
 				acc.log.WithError(err).Warn("Error encountered when sending subscription")
 				return
 			}

@@ -43,12 +43,7 @@ func initMUCRoomConfigPagesTexts() {
 		},
 		roomConfigPositionsPageIndex: {
 			displayTitle: i18n.Local("Positions"),
-			displayIntro: i18n.Local("Here you can define who the owners and administrators are. " +
-				"Owners will always be moderators in a room. They can give or take away any position " +
-				"or role and control any aspect of the room. A room administrator will automatically " +
-				"become a moderator when entering the room. They can grant or revoke memberships, and " +
-				"also ban or unban people from a room. An administrator can't change the room configuration " +
-				"or destroy the room."),
+			displayIntro: i18n.Local("Here you can define who the owners, administrators and ban people are."),
 		},
 		roomConfigOthersPageIndex: {
 			displayTitle: i18n.Local("Other settings"),
@@ -243,6 +238,7 @@ func initMUCRoomConfigFieldsTexts() {
 
 type roomConfigOccupantFieldText struct {
 	headerLabel       string
+	descriptionLabel  string
 	dialogTitle       string
 	dialogDescription string
 }
@@ -252,17 +248,20 @@ var roomConfigOccupantFieldTexts map[data.Affiliation]roomConfigOccupantFieldTex
 func initMUCRoomConfigOccupantFieldTexts() {
 	roomConfigOccupantFieldTexts = map[data.Affiliation]roomConfigOccupantFieldText{
 		&data.OwnerAffiliation{}: {
-			headerLabel:       i18n.Local("Owners:"),
+			headerLabel:       i18n.Local("Owners"),
+			descriptionLabel:  i18n.Local("Owners will always be moderators in a room. They can give or take away any position or role and control any aspect of the room."),
 			dialogTitle:       i18n.Local("Owners"),
 			dialogDescription: i18n.Local("Here you can add one or more new owners to the room. You will have to use the account address of the user in order to make them an owner. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
 		},
 		&data.AdminAffiliation{}: {
-			headerLabel:       i18n.Local("Administrators:"),
+			headerLabel:       i18n.Local("Administrators"),
+			descriptionLabel:  i18n.Local("A room administrator will automatically become a moderator when entering the room. They can't change the room configuration or destroy the room."),
 			dialogTitle:       i18n.Local("Administrators"),
 			dialogDescription: i18n.Local("Here you can add one or more new administrators to the room. You will have to use the account address of the user in order to make them an administrator. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
 		},
 		&data.OutcastAffiliation{}: {
-			headerLabel:       i18n.Local("Banned people:"),
+			headerLabel:       i18n.Local("Banned people"),
+			descriptionLabel:  i18n.Local("A banned person will not be able to join the room."),
 			dialogTitle:       i18n.Local("Ban people"),
 			dialogDescription: i18n.Local("Here you can add one or more people who will not be able to join this room. You will have to use the account address of the user in order to ban them. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
 		},

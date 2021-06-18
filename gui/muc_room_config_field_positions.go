@@ -16,6 +16,7 @@ type roomConfigPositions struct {
 
 	content                  gtki.Box              `gtk-widget:"room-config-positions-content"`
 	header                   gtki.Label            `gtk-widget:"room-config-position-header"`
+	description              gtki.Label            `gtk-widget:"room-config-position-description"`
 	positionsListContent     gtki.Box              `gtk-widget:"room-config-positions-list-content"`
 	positionsList            gtki.TreeView         `gtk-widget:"room-config-positions-list"`
 	positionsAddButton       gtki.Button           `gtk-widget:"room-config-position-add"`
@@ -47,11 +48,13 @@ func (p *roomConfigPositions) initBuilder() {
 }
 
 func (p *roomConfigPositions) initDefaults() {
-	p.initHeaderLabel()
+	p.initPositionLabels()
+	mucStyles.setHelpTextStyle(p.content)
 }
 
-func (p *roomConfigPositions) initHeaderLabel() {
+func (p *roomConfigPositions) initPositionLabels() {
 	p.header.SetText(roomConfigOccupantFieldTexts[p.affiliation].headerLabel)
+	p.description.SetText(roomConfigOccupantFieldTexts[p.affiliation].descriptionLabel)
 }
 
 func (p *roomConfigPositions) initPositionsLists(parent gtki.Window) {

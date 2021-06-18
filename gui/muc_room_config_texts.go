@@ -156,8 +156,8 @@ func initMUCRoomConfigFieldsTexts() {
 				"occupant leaves the room."),
 		},
 		muc.RoomConfigFieldPresenceBroadcast: {
-			displayLabel: i18n.Local("What roles will receive information about other people in the room:"),
-			summaryLabel: i18n.Local("Roles will receive information about other people in the room"),
+			displayLabel: i18n.Local("Roles that will receive information about other people in the room"),
+			summaryLabel: i18n.Local("Roles that will receive information about other people in the room"),
 		},
 		muc.RoomConfigFieldIsModerated: {
 			displayLabel: i18n.Local("Make this room moderated"),
@@ -230,8 +230,8 @@ func initMUCRoomConfigFieldsTexts() {
 			summaryLabel: i18n.Local("Allow visitors to send private messages to"),
 		},
 		muc.RoomConfigPublicList: {
-			displayLabel: i18n.Local("Make participants list public"),
-			summaryLabel: i18n.Local("Make participants list public"),
+			displayLabel: i18n.Local("Make list of participants public"),
+			summaryLabel: i18n.Local("Make list of participants public"),
 		},
 	}
 }

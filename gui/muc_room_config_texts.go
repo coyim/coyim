@@ -43,7 +43,7 @@ func initMUCRoomConfigPagesTexts() {
 		},
 		roomConfigPositionsPageIndex: {
 			displayTitle: i18n.Local("Positions"),
-			displayIntro: i18n.Local("Here you can define who the owners, administrators and ban people are."),
+			displayIntro: i18n.Local("Here you can define who the owners, administrators and banned people are."),
 		},
 		roomConfigOthersPageIndex: {
 			displayTitle: i18n.Local("Other settings"),

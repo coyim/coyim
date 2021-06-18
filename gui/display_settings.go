@@ -140,16 +140,19 @@ type style map[string]interface{}
 type styles map[string]style
 
 type nestedStyles struct {
-	root   style
-	nested styles
+	rootSelector string
+	rootStyle    style
+	nestedStyles styles
 }
 
-func (nst *nestedStyles) toStyles(selector string) styles {
+func (nst *nestedStyles) toStyles() styles {
+	selector := nst.rootSelector
+
 	ret := styles{
-		selector: nst.root,
+		selector: nst.rootStyle,
 	}
 
-	for s, n := range nst.nested {
+	for s, n := range nst.nestedStyles {
 		ret[nestedCSSRules(selector, s)] = n
 	}
 

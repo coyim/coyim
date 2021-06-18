@@ -184,9 +184,15 @@ func (st *infoBarStyles) stylesFor(ib gtki.InfoBar) styles {
 		"color":      colors.buttonActiveColor,
 	})
 
+	infoBarSelector := infoBarClassName
+	if definedTypeClass, ok := infoBarClassNames[tp]; ok {
+		infoBarSelector = infoBarSelector + definedTypeClass
+	}
+
 	nested := &nestedStyles{
-		root: infoBarStyle,
-		nested: styles{
+		rootSelector: infoBarSelector,
+		rootStyle:    infoBarStyle,
+		nestedStyles: styles{
 			infoBarRevealerBoxSelector:         infoBarRevealerBoxCommonStyle,
 			infoBarContentSelector:             infoBarContentCommonStyle,
 			infoBarTitleSelector:               infoBarTitleStyle,
@@ -200,12 +206,7 @@ func (st *infoBarStyles) stylesFor(ib gtki.InfoBar) styles {
 		},
 	}
 
-	infoBarSelector := infoBarClassName
-	if definedTypeClass, ok := infoBarClassNames[tp]; ok {
-		infoBarSelector = infoBarSelector + definedTypeClass
-	}
-
-	return nested.toStyles(infoBarSelector)
+	return nested.toStyles()
 }
 
 func (s *mucStylesProvider) setInfoBarStyle(ib gtki.InfoBar) {

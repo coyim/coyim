@@ -82,75 +82,121 @@ func (st *infoBarStyles) colorInfoBasedOnType(tp infoBarType) infoBarColorInfo {
 	return st.colorStyles[infoBarTypeOther]
 }
 
+const (
+	infoBarRevealerBoxSelector         = "revealer > box"
+	infoBarContentSelector             = ".content"
+	infoBarTitleSelector               = ".title"
+	infoBarActionsButtonSelector       = ".actions button"
+	infoBarActionsButtonLabelSelector  = ".actions button label"
+	infoBarActionsButtonHoverSelector  = ".actions button:hover"
+	infoBarActionsButtonActiveSelector = ".actions button:active"
+	infoBarButtonCloseSelector         = "button.close"
+	infoBarButtonCloseHoverSelector    = "button.close:hover"
+	infoBarButtonCloseActiveSelector   = "button.close:active"
+)
+
+var (
+	infoBarCommonStyle = style{
+		"text-shadow":   "none",
+		"font-weight":   "500",
+		"padding":       "0 4px 0 0",
+		"border-radius": "0",
+	}
+
+	infoBarRevealerBoxCommonStyle = style{
+		"padding":    "0",
+		"background": "none",
+		"border":     "none",
+		"box-shadow": "none",
+	}
+
+	infoBarContentCommonStyle = style{
+		"text-shadow": "none",
+		"padding":     "0",
+		"background":  "none",
+	}
+
+	infoBarTitleCommonStyle = style{
+		"text-shadow": "none",
+	}
+
+	infoBarActionsButtonCommonStyle = style{
+		"box-shadow":    "none",
+		"padding":       "3px 12px",
+		"border-radius": "200px",
+		"border":        "none",
+		"text-shadow":   "none",
+		"font-size":     "small",
+	}
+
+	infoBarActionsButtonLabelCommonStyle = style{
+		"color": "inherit",
+	}
+
+	infoBarButtonCloseCommonStyle = style{
+		"padding":     "0",
+		"background":  "none",
+		"border":      "none",
+		"box-shadow":  "none",
+		"text-shadow": "none",
+		"outline":     "none",
+	}
+
+	infoBarButtonCloseHoverCommonStyle = style{
+		"background": "none",
+		"border":     "none",
+		"box-shadow": "none",
+	}
+
+	infoBarButtonCloseActiveCommonStyle = style{
+		"background": "none",
+		"border":     "none",
+		"box-shadow": "none",
+		"outline":    "none",
+	}
+)
+
 func (st *infoBarStyles) stylesFor(ib gtki.InfoBar) styles {
 	tp := infoBarType(ib.GetMessageType())
 	colors := st.colorInfoBasedOnType(tp)
 
+	infoBarStyle := mergeStyles(infoBarCommonStyle, style{
+		"background": colors.background,
+		"border":     fmt.Sprintf("1px solid %s", colors.borderColor),
+	})
+
+	infoBarTitleStyle := mergeStyles(infoBarTitleCommonStyle, style{
+		"color": colors.titleColor,
+	})
+
+	infoBarActionsButtonStyle := mergeStyles(infoBarActionsButtonCommonStyle, style{
+		"background": colors.buttonBackground,
+		"color":      colors.buttonColor,
+	})
+
+	infoBarActionsButtonHoverStyle := mergeStyles(infoBarActionsButtonCommonStyle, style{
+		"background": colors.buttonHoverBackground,
+		"color":      colors.buttonHoverColor,
+	})
+
+	infoBarActionsButtonActiveStyle := mergeStyles(infoBarActionsButtonCommonStyle, style{
+		"background": colors.buttonActiveBackground,
+		"color":      colors.buttonActiveColor,
+	})
+
 	nested := &nestedStyles{
-		root: style{
-			"background":    colors.background,
-			"text-shadow":   "none",
-			"font-weight":   "500",
-			"padding":       "0 4px 0 0",
-			"border-radius": "0",
-			"border":        fmt.Sprintf("1px solid %s", colors.borderColor),
-		},
+		root: infoBarStyle,
 		nested: styles{
-			"revealer > box": style{
-				"padding":    "0",
-				"background": "none",
-				"border":     "none",
-				"box-shadow": "none",
-			},
-			".content": style{
-				"text-shadow": "none",
-				"padding":     "0",
-				"background":  "none",
-			},
-			".title": style{
-				"color":       colors.titleColor,
-				"text-shadow": "none",
-			},
-			".actions button": {
-				"background":    colors.buttonBackground,
-				"color":         colors.buttonColor,
-				"box-shadow":    "none",
-				"padding":       "3px 12px",
-				"border-radius": "200px",
-				"border":        "none",
-				"text-shadow":   "none",
-				"font-size":     "small",
-			},
-			".actions button label": {
-				"color": "inherit",
-			},
-			".actions button:hover": {
-				"background": colors.buttonHoverBackground,
-				"color":      colors.buttonHoverColor,
-			},
-			".actions button:active": {
-				"background": colors.buttonActiveBackground,
-				"color":      colors.buttonActiveColor,
-			},
-			"button.close": {
-				"padding":     "0",
-				"background":  "none",
-				"border":      "none",
-				"box-shadow":  "none",
-				"text-shadow": "none",
-				"outline":     "none",
-			},
-			"button.close:hover": {
-				"background": "none",
-				"border":     "none",
-				"box-shadow": "none",
-			},
-			"button.close:active": {
-				"background": "none",
-				"border":     "none",
-				"box-shadow": "none",
-				"outline":    "none",
-			},
+			infoBarRevealerBoxSelector:         infoBarRevealerBoxCommonStyle,
+			infoBarContentSelector:             infoBarContentCommonStyle,
+			infoBarTitleSelector:               infoBarTitleStyle,
+			infoBarActionsButtonSelector:       infoBarActionsButtonStyle,
+			infoBarActionsButtonLabelSelector:  infoBarActionsButtonLabelCommonStyle,
+			infoBarActionsButtonHoverSelector:  infoBarActionsButtonHoverStyle,
+			infoBarActionsButtonActiveSelector: infoBarActionsButtonActiveStyle,
+			infoBarButtonCloseSelector:         infoBarButtonCloseCommonStyle,
+			infoBarButtonCloseHoverSelector:    infoBarButtonCloseHoverCommonStyle,
+			infoBarButtonCloseActiveSelector:   infoBarButtonCloseActiveCommonStyle,
 		},
 	}
 

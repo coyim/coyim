@@ -321,3 +321,15 @@ func (s *mucStylesProvider) boxShadow(shadowStyle, color string) string {
 func nestedCSSRules(rules ...string) string {
 	return strings.Join(rules, " ")
 }
+
+func mergeStyles(merge ...style) style {
+	ret := style{}
+
+	for _, st := range merge {
+		for attr, value := range st {
+			ret[attr] = value
+		}
+	}
+
+	return ret
+}

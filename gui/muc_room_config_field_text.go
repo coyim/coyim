@@ -27,3 +27,10 @@ func newRoomConfigFormTextField(fieldInfo roomConfigFieldTextInfo, value *muc.Ro
 func (f *roomConfigFormFieldText) updateFieldValue() {
 	f.value.SetText(getEntryText(f.entry))
 }
+
+// refreshContent implements the hasRoomConfigFormField interface
+func (f *roomConfigFormFieldText) refreshContent() {
+	doInUIThread(func() {
+		f.description.SetVisible(f.description.GetLabel() != "")
+	})
+}

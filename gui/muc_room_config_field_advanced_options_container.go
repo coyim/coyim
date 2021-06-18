@@ -40,7 +40,11 @@ func (fc *roomConfigFormFieldAdvancedOptionsContainer) fieldWidget() gtki.Widget
 }
 
 // refreshContent MUST NOT be called from the UI thread
-func (fc *roomConfigFormFieldAdvancedOptionsContainer) refreshContent() {}
+func (fc *roomConfigFormFieldAdvancedOptionsContainer) refreshContent() {
+	for _, ff := range fc.fields {
+		ff.refreshContent()
+	}
+}
 
 // updateFieldValue MUST be called from the UI thread
 func (fc *roomConfigFormFieldAdvancedOptionsContainer) updateFieldValue() {

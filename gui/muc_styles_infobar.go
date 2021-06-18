@@ -156,57 +156,79 @@ var (
 	}
 )
 
-func (st *infoBarStyles) stylesFor(ib gtki.InfoBar) styles {
+type infoBarStyle struct {
+	tp       infoBarType
+	selector string
+	colors   infoBarColorInfo
+}
+
+func (st *infoBarStyles) newInfoBarStyle(ib gtki.InfoBar) *infoBarStyle {
 	tp := infoBarType(ib.GetMessageType())
-	colors := st.colorInfoBasedOnType(tp)
 
-	infoBarStyle := mergeStyles(infoBarCommonStyle, style{
-		"background": colors.background,
-		"border":     fmt.Sprintf("1px solid %s", colors.borderColor),
-	})
+	selector := infoBarClassName
+	if definedTypeClass, ok := infoBarClassNames[tp]; ok {
+		selector = selector + definedTypeClass
+	}
 
+	return &infoBarStyle{
+		tp:       tp,
+		selector: selector,
+		colors:   st.colorInfoBasedOnType(tp),
+	}
+}
+
+func (ibst *infoBarStyle) childStyles() styles {
 	infoBarTitleStyle := mergeStyles(infoBarTitleCommonStyle, style{
-		"color": colors.titleColor,
+		"color": ibst.colors.titleColor,
 	})
 
 	infoBarActionsButtonStyle := mergeStyles(infoBarActionsButtonCommonStyle, style{
-		"background": colors.buttonBackground,
-		"color":      colors.buttonColor,
+		"background": ibst.colors.buttonBackground,
+		"color":      ibst.colors.buttonColor,
 	})
 
 	infoBarActionsButtonHoverStyle := mergeStyles(infoBarActionsButtonCommonStyle, style{
-		"background": colors.buttonHoverBackground,
-		"color":      colors.buttonHoverColor,
+		"background": ibst.colors.buttonHoverBackground,
+		"color":      ibst.colors.buttonHoverColor,
 	})
 
 	infoBarActionsButtonActiveStyle := mergeStyles(infoBarActionsButtonCommonStyle, style{
-		"background": colors.buttonActiveBackground,
-		"color":      colors.buttonActiveColor,
+		"background": ibst.colors.buttonActiveBackground,
+		"color":      ibst.colors.buttonActiveColor,
 	})
 
-	infoBarSelector := infoBarClassName
-	if definedTypeClass, ok := infoBarClassNames[tp]; ok {
-		infoBarSelector = infoBarSelector + definedTypeClass
+	return styles{
+		infoBarRevealerBoxSelector:         infoBarRevealerBoxCommonStyle,
+		infoBarContentSelector:             infoBarContentCommonStyle,
+		infoBarTitleSelector:               infoBarTitleStyle,
+		infoBarActionsButtonSelector:       infoBarActionsButtonStyle,
+		infoBarActionsButtonLabelSelector:  infoBarActionsButtonLabelCommonStyle,
+		infoBarActionsButtonHoverSelector:  infoBarActionsButtonHoverStyle,
+		infoBarActionsButtonActiveSelector: infoBarActionsButtonActiveStyle,
+		infoBarButtonCloseSelector:         infoBarButtonCloseCommonStyle,
+		infoBarButtonCloseHoverSelector:    infoBarButtonCloseHoverCommonStyle,
+		infoBarButtonCloseActiveSelector:   infoBarButtonCloseActiveCommonStyle,
 	}
+}
+
+func (ibst *infoBarStyle) styles() styles {
+	infoBarStyle := mergeStyles(infoBarCommonStyle, style{
+		"background": ibst.colors.background,
+		"border":     fmt.Sprintf("1px solid %s", ibst.colors.borderColor),
+	})
 
 	nested := &nestedStyles{
-		rootSelector: infoBarSelector,
+		rootSelector: ibst.selector,
 		rootStyle:    infoBarStyle,
-		nestedStyles: styles{
-			infoBarRevealerBoxSelector:         infoBarRevealerBoxCommonStyle,
-			infoBarContentSelector:             infoBarContentCommonStyle,
-			infoBarTitleSelector:               infoBarTitleStyle,
-			infoBarActionsButtonSelector:       infoBarActionsButtonStyle,
-			infoBarActionsButtonLabelSelector:  infoBarActionsButtonLabelCommonStyle,
-			infoBarActionsButtonHoverSelector:  infoBarActionsButtonHoverStyle,
-			infoBarActionsButtonActiveSelector: infoBarActionsButtonActiveStyle,
-			infoBarButtonCloseSelector:         infoBarButtonCloseCommonStyle,
-			infoBarButtonCloseHoverSelector:    infoBarButtonCloseHoverCommonStyle,
-			infoBarButtonCloseActiveSelector:   infoBarButtonCloseActiveCommonStyle,
-		},
+		nestedStyles: ibst.childStyles(),
 	}
 
 	return nested.toStyles()
+}
+
+func (st *infoBarStyles) stylesFor(ib gtki.InfoBar) styles {
+	ibStyle := st.newInfoBarStyle(ib)
+	return ibStyle.styles()
 }
 
 func (s *mucStylesProvider) setInfoBarStyle(ib gtki.InfoBar) {

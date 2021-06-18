@@ -39,14 +39,20 @@ var roomConfigPagesFields = map[mucRoomConfigPageID][]muc.RoomConfigFieldType{
 		muc.RoomConfigFieldMaxOccupantsNumber,
 		muc.RoomConfigFieldMaxHistoryFetch,
 		muc.RoomConfigFieldEnableLogging,
-		muc.RoomConfigFieldPubsub,
-		muc.RoomConfigFieldAllowQueryUsers,
-		muc.RoomConfigFieldAllowVisitorStatus,
 		muc.RoomConfigFieldAllowVisitorNickchange,
 		muc.RoomConfigFieldAllowVoiceRequest,
 		muc.RoomConfigFieldAllowSubscription,
 		muc.RoomConfigFieldMembersByDefault,
+		muc.RoomConfigFieldAllowVisitorStatus,
+		muc.RoomConfigAllowPrivateMessagesFromVisitors,
+		muc.RoomConfigPublicList,
 	},
+}
+
+var roomConfigAdvancedFields = []muc.RoomConfigFieldType{
+	muc.RoomConfigFieldAllowQueryUsers,
+	muc.RoomConfigFieldPubsub,
+	muc.RoomConfigFieldVoiceRequestMinInteval,
 }
 
 type mucRoomConfigPage interface {
@@ -131,6 +137,7 @@ func (p *roomConfigPageBase) initDefaults() {
 	case roomConfigOthersPageIndex:
 		p.initKnownFields()
 		p.initUnknownFields()
+		p.initAdvancedOptionsFields()
 		return
 	}
 	p.initKnownFields()
@@ -184,6 +191,32 @@ func (p *roomConfigPageBase) initUnknownFields() {
 	}
 	if len(booleanFields) > 0 {
 		p.addField(newRoomConfigFormFieldBooleanContainer(booleanFields))
+	}
+}
+
+func (p *roomConfigPageBase) initAdvancedOptionsFields() {
+	booleanFields := []*roomConfigFormFieldBoolean{}
+	advancedFields := []hasRoomConfigFormField{}
+	for _, aff := range roomConfigAdvancedFields {
+		if knownField, ok := p.form.GetKnownField(aff); ok {
+			field, err := roomConfigFormFieldFactory(aff, roomConfigFieldsTexts[aff], knownField.ValueType())
+			if err != nil {
+				p.log.WithError(err).Error("Room configuration form field not supported")
+				continue
+			}
+			if f, ok := field.(*roomConfigFormFieldBoolean); ok {
+				booleanFields = append(booleanFields, f)
+				continue
+			}
+			advancedFields = append(advancedFields, field)
+		}
+	}
+	if len(booleanFields) > 0 {
+		advancedFields = append(advancedFields, newRoomConfigFormFieldBooleanContainer(booleanFields))
+	}
+
+	if len(advancedFields) > 0 {
+		p.addField(newRoomConfigFormFieldAdvancedOptionsContainer(advancedFields))
 	}
 }
 

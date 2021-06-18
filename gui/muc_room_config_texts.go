@@ -226,6 +226,18 @@ func initMUCRoomConfigFieldsTexts() {
 			displayLabel: i18n.Local("When joining the room, people will be able to talk"),
 			summaryLabel: i18n.Local("When joining the room, people will be able to talk"),
 		},
+		muc.RoomConfigFieldVoiceRequestMinInteval: {
+			displayLabel: i18n.Local("Minimum interval between voice requests (in seconds)"),
+			summaryLabel: i18n.Local("Minimum interval between voice requests (in seconds)"),
+		},
+		muc.RoomConfigAllowPrivateMessagesFromVisitors: {
+			displayLabel: i18n.Local("Allow visitors to send private messages to"),
+			summaryLabel: i18n.Local("Allow visitors to send private messages to"),
+		},
+		muc.RoomConfigPublicList: {
+			displayLabel: i18n.Local("Make participants list public"),
+			summaryLabel: i18n.Local("Make participants list public"),
+		},
 	}
 }
 

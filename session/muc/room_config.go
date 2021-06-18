@@ -77,6 +77,12 @@ const (
 	allowSubscription = "allow_subscription"
 	// membersByDefault represents the var value of the "members_by_default" configuration field
 	membersByDefault = "members_by_default"
+	// voiceRequestMinInterval represents the var value of the "voice_reuqest_min_interval" configuration field
+	voiceRequestMinInterval = "voice_request_min_interval"
+	// allowPrivateMessagesFromVisitors represents the var value of the  "allow_private_messages_from_visitors" configuration field
+	allowPrivateMessagesFromVisitors = "allow_private_messages_from_visitors"
+	// publicList represents the var value of the "public_list" configuration field
+	publicList = "public_list"
 )
 
 // RoomConfigForm represents a room configuration form

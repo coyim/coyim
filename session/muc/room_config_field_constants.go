@@ -60,36 +60,45 @@ const (
 	RoomConfigFieldAllowSubscription
 	// RoomConfigFieldMembersByDefault represents the "members by default" field
 	RoomConfigFieldMembersByDefault
+	// RoomConfigFieldVoiceRequestMinInteval represents the "voice request minimum interval" field
+	RoomConfigFieldVoiceRequestMinInteval
+	// RoomConfigAllowPrivateMessagesFromVisitors represents the "allow private messages from visitors" field
+	RoomConfigAllowPrivateMessagesFromVisitors
+	// RoomConfigPublicList represents the "public list" field
+	RoomConfigPublicList
 )
 
 var roomConfigKnownFields = map[RoomConfigFieldType][]string{
-	RoomConfigFieldName:                   {configFieldRoomName},
-	RoomConfigFieldDescription:            {configFieldRoomDescription},
-	RoomConfigFieldEnableLogging:          {configFieldEnableLogging, configFieldEnableArchiving, configFieldMessageArchiveManagement},
-	RoomConfigFieldLanguage:               {configFieldLanguage},
-	RoomConfigFieldPubsub:                 {configFieldPubsub},
-	RoomConfigFieldCanChangeSubject:       {configFieldCanChangeSubject},
-	RoomConfigFieldAllowInvites:           {configFieldAllowInvites, configFieldAllowMemberInvites},
-	RoomConfigFieldAllowPrivateMessages:   {configFieldAllowPM, configFieldAllowPrivateMessages},
-	RoomConfigFieldMaxOccupantsNumber:     {configFieldMaxOccupantsNumber},
-	RoomConfigFieldIsPublic:               {configFieldIsPublic},
-	RoomConfigFieldIsPersistent:           {configFieldIsPersistent},
-	RoomConfigFieldPresenceBroadcast:      {configFieldPresenceBroadcast},
-	RoomConfigFieldIsModerated:            {configFieldModerated},
-	RoomConfigFieldIsMembersOnly:          {configFieldMembersOnly},
-	RoomConfigFieldMembers:                {configFieldMemberList},
-	RoomConfigFieldIsPasswordProtected:    {configFieldPasswordProtected},
-	RoomConfigFieldPassword:               {configFieldPassword},
-	RoomConfigFieldOwners:                 {configFieldOwners},
-	RoomConfigFieldWhoIs:                  {configFieldWhoIs},
-	RoomConfigFieldMaxHistoryFetch:        {configFieldMaxHistoryFetch, configFieldMaxHistoryLength},
-	RoomConfigFieldAdmins:                 {configFieldRoomAdmins},
-	RoomConfigFieldAllowQueryUsers:        {allowQueryUsers},
-	RoomConfigFieldAllowVisitorStatus:     {allowVisitorStatus},
-	RoomConfigFieldAllowVisitorNickchange: {allowVisitorNickchange},
-	RoomConfigFieldAllowVoiceRequest:      {allowVoiceRequests},
-	RoomConfigFieldAllowSubscription:      {allowSubscription},
-	RoomConfigFieldMembersByDefault:       {membersByDefault},
+	RoomConfigFieldName:                        {configFieldRoomName},
+	RoomConfigFieldDescription:                 {configFieldRoomDescription},
+	RoomConfigFieldEnableLogging:               {configFieldEnableLogging, configFieldEnableArchiving, configFieldMessageArchiveManagement},
+	RoomConfigFieldLanguage:                    {configFieldLanguage},
+	RoomConfigFieldPubsub:                      {configFieldPubsub},
+	RoomConfigFieldCanChangeSubject:            {configFieldCanChangeSubject},
+	RoomConfigFieldAllowInvites:                {configFieldAllowInvites, configFieldAllowMemberInvites},
+	RoomConfigFieldAllowPrivateMessages:        {configFieldAllowPM, configFieldAllowPrivateMessages},
+	RoomConfigFieldMaxOccupantsNumber:          {configFieldMaxOccupantsNumber},
+	RoomConfigFieldIsPublic:                    {configFieldIsPublic},
+	RoomConfigFieldIsPersistent:                {configFieldIsPersistent},
+	RoomConfigFieldPresenceBroadcast:           {configFieldPresenceBroadcast},
+	RoomConfigFieldIsModerated:                 {configFieldModerated},
+	RoomConfigFieldIsMembersOnly:               {configFieldMembersOnly},
+	RoomConfigFieldMembers:                     {configFieldMemberList},
+	RoomConfigFieldIsPasswordProtected:         {configFieldPasswordProtected},
+	RoomConfigFieldPassword:                    {configFieldPassword},
+	RoomConfigFieldOwners:                      {configFieldOwners},
+	RoomConfigFieldWhoIs:                       {configFieldWhoIs},
+	RoomConfigFieldMaxHistoryFetch:             {configFieldMaxHistoryFetch, configFieldMaxHistoryLength},
+	RoomConfigFieldAdmins:                      {configFieldRoomAdmins},
+	RoomConfigFieldAllowQueryUsers:             {allowQueryUsers},
+	RoomConfigFieldAllowVisitorStatus:          {allowVisitorStatus},
+	RoomConfigFieldAllowVisitorNickchange:      {allowVisitorNickchange},
+	RoomConfigFieldAllowVoiceRequest:           {allowVoiceRequests},
+	RoomConfigFieldAllowSubscription:           {allowSubscription},
+	RoomConfigFieldMembersByDefault:            {membersByDefault},
+	RoomConfigFieldVoiceRequestMinInteval:      {voiceRequestMinInterval},
+	RoomConfigAllowPrivateMessagesFromVisitors: {allowPrivateMessagesFromVisitors},
+	RoomConfigPublicList:                       {publicList},
 }
 
 type roomConfigFieldsNames []string

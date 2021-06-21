@@ -28,7 +28,7 @@ func (fc *roomConfigSummaryFieldContainer) initBuilder() {
 }
 
 func (fc *roomConfigSummaryFieldContainer) initDefaults() {
-	fields := fc.addSeparatorsBetweenWidgets(fc.fieldWidgets())
+	fields := addSeparatorsBetweenWidgets(fc.fieldWidgets())
 	for _, f := range fields {
 		fc.content.Add(f)
 	}
@@ -41,7 +41,7 @@ func (fc *roomConfigSummaryFieldContainer) fieldWidgets() (widgets []gtki.Widget
 	return
 }
 
-func (fc *roomConfigSummaryFieldContainer) addSeparatorsBetweenWidgets(fields []gtki.Widget) (widgets []gtki.Widget) {
+func addSeparatorsBetweenWidgets(fields []gtki.Widget) (widgets []gtki.Widget) {
 	widgets = append(widgets, fields[0])
 	for _, f := range fields[1:] {
 		widgets = append(widgets, createSeparator(gtki.HorizontalOrientation))

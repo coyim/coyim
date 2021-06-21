@@ -17,12 +17,12 @@ type mucStylesProvider struct {
 var mucStyles *mucStylesProvider
 
 func initMUCStyles(c mucColorSet) {
-	initMUCInfoBarData()
-
 	mucStyles = &mucStylesProvider{
 		colors:        c,
 		infoBarStyles: newInfoBarStyles(c),
 	}
+
+	initMUCInfoBarStyles()
 }
 
 func (s *mucStylesProvider) setScrolledWindowStyle(msw gtki.ScrolledWindow) {

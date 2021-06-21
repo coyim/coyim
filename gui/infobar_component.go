@@ -6,6 +6,24 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+type infoBarType int
+
+var (
+	infoBarTypeInfo     infoBarType
+	infoBarTypeWarning  infoBarType
+	infoBarTypeQuestion infoBarType
+	infoBarTypeError    infoBarType
+	infoBarTypeOther    infoBarType
+)
+
+func initMUCInfoBarComponent() {
+	infoBarTypeInfo = infoBarType(gtki.MESSAGE_INFO)
+	infoBarTypeWarning = infoBarType(gtki.MESSAGE_WARNING)
+	infoBarTypeQuestion = infoBarType(gtki.MESSAGE_QUESTION)
+	infoBarTypeError = infoBarType(gtki.MESSAGE_ERROR)
+	infoBarTypeOther = infoBarType(gtki.MESSAGE_OTHER)
+}
+
 type infoBarComponent struct {
 	text            string
 	messageType     gtki.MessageType

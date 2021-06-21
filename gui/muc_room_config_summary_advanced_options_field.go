@@ -32,9 +32,9 @@ func (f *roomConfigSummaryAdvancedOptionsField) initBuilder() {
 	})
 }
 
-func (fc *roomConfigSummaryAdvancedOptionsField) fieldWidgets() (widgets []gtki.Widget) {
-	for _, f := range fc.advancedOptions {
-		widgets = append(widgets, f.fieldWidget())
+func (f *roomConfigSummaryAdvancedOptionsField) fieldWidgets() (widgets []gtki.Widget) {
+	for _, ff := range f.advancedOptions {
+		widgets = append(widgets, ff.fieldWidget())
 	}
 	return
 }

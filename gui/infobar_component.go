@@ -16,12 +16,28 @@ var (
 	infoBarTypeOther    infoBarType
 )
 
+const (
+	infoBarInfoIconName     = "message_info"
+	infoBarWarningIconName  = "message_warning"
+	infoBarQuestionIconName = "message_question"
+	infoBarErrorIconName    = "message_error"
+)
+
+var infoBarIconNames map[infoBarType]string
+
 func initMUCInfoBarComponent() {
 	infoBarTypeInfo = infoBarType(gtki.MESSAGE_INFO)
 	infoBarTypeWarning = infoBarType(gtki.MESSAGE_WARNING)
 	infoBarTypeQuestion = infoBarType(gtki.MESSAGE_QUESTION)
 	infoBarTypeError = infoBarType(gtki.MESSAGE_ERROR)
 	infoBarTypeOther = infoBarType(gtki.MESSAGE_OTHER)
+
+	infoBarIconNames = map[infoBarType]string{
+		infoBarTypeInfo:     infoBarInfoIconName,
+		infoBarTypeWarning:  infoBarWarningIconName,
+		infoBarTypeQuestion: infoBarQuestionIconName,
+		infoBarTypeError:    infoBarErrorIconName,
+	}
 }
 
 type infoBarComponent struct {
@@ -35,6 +51,7 @@ type infoBarComponent struct {
 	iconTime   gtki.Image   `gtk-widget:"icon-time"`
 	timeLabel  gtki.Label   `gtk-widget:"time-label"`
 	titleLabel gtki.Label   `gtk-widget:"title-label"`
+	icon       gtki.Image   `gtk-widget:"icon-image"`
 }
 
 func (u *gtkUI) newInfoBarComponent(text string, messageType gtki.MessageType) *infoBarComponent {
@@ -61,6 +78,12 @@ func (u *gtkUI) newInfoBarComponent(text string, messageType gtki.MessageType) *
 	ib.titleLabel.SetText(ib.text)
 	ib.infoBar.SetMessageType(ib.messageType)
 	mucStyles.setInfoBarStyle(ib.infoBar)
+
+	tp := infoBarType(messageType)
+	if icoName, ok := infoBarIconNames[tp]; ok {
+		ib.icon.SetFromPixbuf(getMUCIconPixbuf(icoName))
+		ib.icon.Show()
+	}
 
 	return ib
 }

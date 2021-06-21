@@ -243,12 +243,33 @@ func (p *roomConfigPageBase) initSummaryFields(pageID mucRoomConfigPageID) {
 			fields = append(fields, newRoomConfigSummaryField(kf, roomConfigFieldsTexts[kf], knownField.ValueType()))
 		}
 	}
+
 	if pageID == roomConfigOthersPageIndex {
-		for _, ff := range p.form.GetUnknownFields() {
-			fields = append(fields, newRoomConfigSummaryField(muc.RoomConfigFieldUnexpected, newRoomConfigFieldTextInfo(ff.Label, ff.Description), ff.ValueType()))
+		fields = append(fields, p.otherPageSummaryFields()...)
+	}
+
+	p.addField(newRoomConfigSummaryFieldContainer(fields))
+}
+
+func (p *roomConfigPageBase) otherPageSummaryFields() []hasRoomConfigFormField {
+	fields := []hasRoomConfigFormField{}
+
+	for _, ff := range p.form.GetUnknownFields() {
+		fields = append(fields, newRoomConfigSummaryField(muc.RoomConfigFieldUnexpected, newRoomConfigFieldTextInfo(ff.Label, ff.Description), ff.ValueType()))
+	}
+
+	advancedFields := []hasRoomConfigFormField{}
+	for _, aff := range roomConfigAdvancedFields {
+		if knownField, ok := p.form.GetKnownField(aff); ok {
+			advancedFields = append(advancedFields, newRoomConfigSummaryField(aff, roomConfigFieldsTexts[aff], knownField.ValueType()))
 		}
 	}
-	p.addField(newRoomConfigSummaryFieldContainer(fields))
+
+	if len(advancedFields) > 0 {
+		fields = append(fields, newAdvancedOptionSummaryField(advancedFields))
+	}
+
+	return fields
 }
 
 func (p *roomConfigPageBase) initOccupantsSummaryFields() {

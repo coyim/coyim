@@ -9,14 +9,6 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-func (u *gtkUI) initMUC() {
-	initMUCSupportedErrors()
-	initMUCConfigUpdateMessages()
-	initMUCRoomConfigTexts()
-	initMUCInfoBarComponent()
-	initMUCStyles(u.currentMUCColorSet())
-}
-
 var supportedCreateMUCErrors map[error]string
 
 // We should put here all MUC-related errors that we want to support

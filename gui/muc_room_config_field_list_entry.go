@@ -71,6 +71,13 @@ func (f *roomConfigFormFieldListEntry) isValid() bool {
 	return true
 }
 
+const entryDefaultCursorPosition = -1
+
+// refreshContent implements the hasRoomConfigFormField interface
+func (f *roomConfigFormFieldListEntry) refreshContent() {
+	f.entry.SetPosition(entryDefaultCursorPosition)
+}
+
 // showValidationErrors implements the hasRoomConfigFormField interface
 func (f *roomConfigFormFieldListEntry) showValidationErrors() {
 	f.entry.GrabFocus()

@@ -29,12 +29,12 @@ type mucRoomConfigComponent struct {
 	autoJoin       bool
 	setCurrentPage func(indexPage mucRoomConfigPageID)
 
-	infoPage        mucRoomConfigPage
-	accessPage      mucRoomConfigPage
-	permissionsPage mucRoomConfigPage
-	positionsPage   mucRoomConfigPage
-	othersPage      mucRoomConfigPage
-	summaryPage     mucRoomConfigPage
+	infoPage        *roomConfigPage
+	accessPage      *roomConfigPage
+	permissionsPage *roomConfigPage
+	positionsPage   *roomConfigPage
+	othersPage      *roomConfigPage
+	summaryPage     *roomConfigPage
 
 	log coylog.Logger
 }
@@ -123,7 +123,7 @@ func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onErr
 	}()
 }
 
-func (c *mucRoomConfigComponent) getConfigPage(p mucRoomConfigPageID) mucRoomConfigPage {
+func (c *mucRoomConfigComponent) getConfigPage(p mucRoomConfigPageID) *roomConfigPage {
 	switch p {
 	case roomConfigInformationPageIndex:
 		return c.infoPage

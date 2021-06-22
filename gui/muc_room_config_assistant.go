@@ -24,7 +24,7 @@ type roomConfigAssistant struct {
 	onCancel  func()
 
 	currentPageIndex mucRoomConfigPageID
-	currentPage      mucRoomConfigPage
+	currentPage      *roomConfigPage
 
 	assistant          gtki.Assistant `gtk-widget:"room-config-assistant"`
 	infoPageBox        gtki.Box       `gtk-widget:"room-config-info-page"`
@@ -34,12 +34,12 @@ type roomConfigAssistant struct {
 	othersPageBox      gtki.Box       `gtk-widget:"room-config-others-page"`
 	summaryPageBox     gtki.Box       `gtk-widget:"room-config-summary-page"`
 
-	infoPage        mucRoomConfigPage
-	accessPage      mucRoomConfigPage
-	permissionsPage mucRoomConfigPage
-	positionsPage   mucRoomConfigPage
-	othersPage      mucRoomConfigPage
-	summaryPage     mucRoomConfigPage
+	infoPage        *roomConfigPage
+	accessPage      *roomConfigPage
+	permissionsPage *roomConfigPage
+	positionsPage   *roomConfigPage
+	othersPage      *roomConfigPage
+	summaryPage     *roomConfigPage
 
 	log coylog.Logger
 }
@@ -262,8 +262,8 @@ func (rc *roomConfigAssistant) allPagesBoxes() []gtki.Box {
 	}
 }
 
-func (rc *roomConfigAssistant) allPages() []mucRoomConfigPage {
-	return []mucRoomConfigPage{
+func (rc *roomConfigAssistant) allPages() []*roomConfigPage {
+	return []*roomConfigPage{
 		rc.infoPage,
 		rc.accessPage,
 		rc.permissionsPage,
@@ -273,7 +273,7 @@ func (rc *roomConfigAssistant) allPages() []mucRoomConfigPage {
 	}
 }
 
-func (rc *roomConfigAssistant) pageByIndex(p mucRoomConfigPageID) mucRoomConfigPage {
+func (rc *roomConfigAssistant) pageByIndex(p mucRoomConfigPageID) *roomConfigPage {
 	switch p {
 	case roomConfigInformationPageIndex:
 		return rc.infoPage

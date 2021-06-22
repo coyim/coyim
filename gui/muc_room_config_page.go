@@ -55,19 +55,7 @@ var roomConfigAdvancedFields = []muc.RoomConfigFieldType{
 	muc.RoomConfigFieldVoiceRequestMinInteval,
 }
 
-type mucRoomConfigPage interface {
-	pageView() gtki.Overlay
-	pageTitle() string
-	isValid() bool
-	showValidationErrors()
-	updateFieldValues()
-	refresh()
-	notifyError(string)
-	onConfigurationApply()
-	onConfigurationApplyError()
-}
-
-type roomConfigPageBase struct {
+type roomConfigPage struct {
 	u      *gtkUI
 	form   *muc.RoomConfigForm
 	fields []hasRoomConfigFormField
@@ -90,8 +78,8 @@ type roomConfigPageBase struct {
 	log coylog.Logger
 }
 
-func (c *mucRoomConfigComponent) newConfigPage(pageID mucRoomConfigPageID) *roomConfigPageBase {
-	p := &roomConfigPageBase{
+func (c *mucRoomConfigComponent) newConfigPage(pageID mucRoomConfigPageID) *roomConfigPage {
+	p := &roomConfigPage{
 		u:                   c.u,
 		roomConfigComponent: c,
 		title:               configPageDisplayTitle(pageID),
@@ -111,7 +99,7 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID mucRoomConfigPageID) *room
 	return p
 }
 
-func (p *roomConfigPageBase) initBuilder() {
+func (p *roomConfigPage) initBuilder() {
 	builder := newBuilder("MUCRoomConfigPage")
 	panicOnDevError(builder.bindObjects(p))
 	builder.ConnectSignals(map[string]interface{}{
@@ -125,7 +113,7 @@ func (p *roomConfigPageBase) initBuilder() {
 	p.notificationsArea.Add(p.notifications.contentBox())
 }
 
-func (p *roomConfigPageBase) initDefaults() {
+func (p *roomConfigPage) initDefaults() {
 	p.initIntroPage()
 	switch p.pageID {
 	case roomConfigSummaryPageIndex:
@@ -143,7 +131,7 @@ func (p *roomConfigPageBase) initDefaults() {
 	p.initKnownFields()
 }
 
-func (p *roomConfigPageBase) initIntroPage() {
+func (p *roomConfigPage) initIntroPage() {
 	intro := configPageDisplayIntro(p.pageID)
 	if intro == "" {
 		p.header.SetVisible(false)
@@ -152,7 +140,7 @@ func (p *roomConfigPageBase) initIntroPage() {
 	p.header.SetText(intro)
 }
 
-func (p *roomConfigPageBase) initKnownFields() {
+func (p *roomConfigPage) initKnownFields() {
 	if knownFields, ok := roomConfigPagesFields[p.pageID]; ok {
 		booleanFields := []*roomConfigFormFieldBoolean{}
 		for _, kf := range knownFields {
@@ -175,7 +163,7 @@ func (p *roomConfigPageBase) initKnownFields() {
 	}
 }
 
-func (p *roomConfigPageBase) initUnknownFields() {
+func (p *roomConfigPage) initUnknownFields() {
 	booleanFields := []*roomConfigFormFieldBoolean{}
 	for _, ff := range p.form.GetUnknownFields() {
 		field, err := roomConfigFormUnknownFieldFactory(newRoomConfigFieldTextInfo(ff.Label, ff.Description), ff.ValueType())
@@ -194,7 +182,7 @@ func (p *roomConfigPageBase) initUnknownFields() {
 	}
 }
 
-func (p *roomConfigPageBase) initAdvancedOptionsFields() {
+func (p *roomConfigPage) initAdvancedOptionsFields() {
 	booleanFields := []*roomConfigFormFieldBoolean{}
 	advancedFields := []hasRoomConfigFormField{}
 	for _, aff := range roomConfigAdvancedFields {
@@ -220,7 +208,7 @@ func (p *roomConfigPageBase) initAdvancedOptionsFields() {
 	}
 }
 
-func (p *roomConfigPageBase) initSummary() {
+func (p *roomConfigPage) initSummary() {
 	p.initSummaryFields(roomConfigInformationPageIndex)
 	p.initSummaryFields(roomConfigAccessPageIndex)
 	p.initSummaryFields(roomConfigPermissionsPageIndex)
@@ -230,7 +218,7 @@ func (p *roomConfigPageBase) initSummary() {
 	p.autojoinContent.Show()
 }
 
-func (p *roomConfigPageBase) initSummaryFields(pageID mucRoomConfigPageID) {
+func (p *roomConfigPage) initSummaryFields(pageID mucRoomConfigPageID) {
 	p.addField(newRoomConfigFormFieldLinkButton(pageID, p.roomConfigComponent.setCurrentPage))
 	if pageID == roomConfigPositionsPageIndex {
 		p.initOccupantsSummaryFields()
@@ -251,7 +239,7 @@ func (p *roomConfigPageBase) initSummaryFields(pageID mucRoomConfigPageID) {
 	p.addField(newRoomConfigSummaryFieldContainer(fields))
 }
 
-func (p *roomConfigPageBase) otherPageSummaryFields() []hasRoomConfigFormField {
+func (p *roomConfigPage) otherPageSummaryFields() []hasRoomConfigFormField {
 	fields := []hasRoomConfigFormField{}
 
 	for _, ff := range p.form.GetUnknownFields() {
@@ -272,7 +260,7 @@ func (p *roomConfigPageBase) otherPageSummaryFields() []hasRoomConfigFormField {
 	return fields
 }
 
-func (p *roomConfigPageBase) initOccupantsSummaryFields() {
+func (p *roomConfigPage) initOccupantsSummaryFields() {
 	fields := []hasRoomConfigFormField{
 		newRoomConfigSummaryOccupantField(&data.OwnerAffiliation{}, p.form.GetOccupantsByAffiliation),
 		newRoomConfigSummaryOccupantField(&data.AdminAffiliation{}, p.form.GetOccupantsByAffiliation),
@@ -281,7 +269,7 @@ func (p *roomConfigPageBase) initOccupantsSummaryFields() {
 	p.addField(newRoomConfigSummaryFieldContainer(fields))
 }
 
-func (p *roomConfigPageBase) initOccupants() {
+func (p *roomConfigPage) initOccupants() {
 	p.addField(newRoomConfigPositions(&data.OwnerAffiliation{}, p.form.UpdateRoomOccupantsByAffiliation))
 	p.content.Add(createSeparator(gtki.HorizontalOrientation))
 	p.addField(newRoomConfigPositions(&data.AdminAffiliation{}, p.form.UpdateRoomOccupantsByAffiliation))
@@ -289,24 +277,24 @@ func (p *roomConfigPageBase) initOccupants() {
 	p.addField(newRoomConfigPositions(&data.OutcastAffiliation{}, p.form.UpdateRoomOccupantsByAffiliation))
 }
 
-func (p *roomConfigPageBase) addField(field hasRoomConfigFormField) {
+func (p *roomConfigPage) addField(field hasRoomConfigFormField) {
 	p.fields = append(p.fields, field)
 	p.content.Add(field.fieldWidget())
 	p.doAfterRefresh.add(field.refreshContent)
 }
 
 // pageTitle implements the "mucRoomConfigPage" interface
-func (p *roomConfigPageBase) pageTitle() string {
+func (p *roomConfigPage) pageTitle() string {
 	return p.title
 }
 
 // pageView implements the "mucRoomConfigPage" interface
-func (p *roomConfigPageBase) pageView() gtki.Overlay {
+func (p *roomConfigPage) pageView() gtki.Overlay {
 	return p.page
 }
 
 // isValid implements the "mucRoomConfigPage" interface
-func (p *roomConfigPageBase) isValid() bool {
+func (p *roomConfigPage) isValid() bool {
 	isValid := true
 	for _, f := range p.fields {
 		if !f.isValid() {
@@ -318,18 +306,18 @@ func (p *roomConfigPageBase) isValid() bool {
 }
 
 // validate implements the "mucRoomConfigPage" interface
-func (p *roomConfigPageBase) showValidationErrors() {
+func (p *roomConfigPage) showValidationErrors() {
 }
 
 // Nothing to do, just implement the "mucRoomConfigPage" interface
-func (p *roomConfigPageBase) updateFieldValues() {
+func (p *roomConfigPage) updateFieldValues() {
 	for _, f := range p.fields {
 		f.updateFieldValue()
 	}
 }
 
 // refresh MUST be called from the UI thread
-func (p *roomConfigPageBase) refresh() {
+func (p *roomConfigPage) refresh() {
 	p.page.ShowAll()
 	p.hideLoadingOverlay()
 	p.clearErrors()
@@ -337,32 +325,32 @@ func (p *roomConfigPageBase) refresh() {
 }
 
 // clearErrors MUST be called from the ui thread
-func (p *roomConfigPageBase) clearErrors() {
+func (p *roomConfigPage) clearErrors() {
 	p.notifications.clearErrors()
 }
 
 // notifyError MUST be called from the ui thread
-func (p *roomConfigPageBase) notifyError(m string) {
+func (p *roomConfigPage) notifyError(m string) {
 	p.notifications.notifyOnError(m)
 }
 
 // onConfigurationApply MUST be called from the ui thread
-func (p *roomConfigPageBase) onConfigurationApply() {
+func (p *roomConfigPage) onConfigurationApply() {
 	p.showLoadingOverlay(i18n.Local("Saving room configuration"))
 }
 
 // onConfigurationApplyError MUST be called from the ui thread
-func (p *roomConfigPageBase) onConfigurationApplyError() {
+func (p *roomConfigPage) onConfigurationApplyError() {
 	p.hideLoadingOverlay()
 }
 
 // showLoadingOverlay MUST be called from the ui thread
-func (p *roomConfigPageBase) showLoadingOverlay(m string) {
+func (p *roomConfigPage) showLoadingOverlay(m string) {
 	p.loadingOverlay.setSolid()
 	p.loadingOverlay.showWithMessage(m)
 }
 
 // hideLoadingOverlay MUST be called from the ui thread
-func (p *roomConfigPageBase) hideLoadingOverlay() {
+func (p *roomConfigPage) hideLoadingOverlay() {
 	p.loadingOverlay.hide()
 }

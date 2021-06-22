@@ -35,7 +35,7 @@
 
 [[projects]]
   branch = "main"
-  digest = "1:e86e9fdad0d780ee12d2d3ed695bb0773ffba36bb39ec2705a02902dad687dbe"
+  digest = "1:32ae93ad39887b18939d348f7fee1071fff1ad44a47127d828cfac1da8cb93bb"
   name = "github.com/coyim/gotk3adapter"
   packages = [
     "gdk_mock",
@@ -52,7 +52,7 @@
     "pangoi",
   ]
   pruneopts = "UT"
-  revision = "937aac74e98ea9b218143a63b08db6ab653f4a98"
+  revision = "716e941e659029158c9c3d9980510730a1728fb2"
 
 [[projects]]
   branch = "main"
@@ -318,6 +318,7 @@
     "github.com/coyim/otr3",
     "github.com/godbus/dbus",
     "github.com/golang-collections/collections/set",
+    "github.com/gotk3/gotk3/gtk",
     "github.com/hydrogen18/stalecucumber",
     "github.com/kardianos/osext",
     "github.com/miekg/dns",

@@ -54,3 +54,6 @@ func (a *MockAssistant) RemoveActionWidget(child gtki.Widget) {
 
 func (a *MockAssistant) UpdateButtonsState() {
 }
+
+func (a *MockAssistant) SetPageTitle(page gtki.Widget, title string) {
+}

@@ -15,7 +15,7 @@ type Assistant interface {
 	// RemovePage(pageNum int)
 	SetPageType(page Widget, ptype AssistantPageType)
 	GetPageType(page Widget) AssistantPageType
-	// SetPageTitle(page Widget, title string)
+	SetPageTitle(page Widget, title string)
 	// GetPageTitle(page Widget) string
 	SetPageComplete(page Widget, complete bool)
 	GetPageComplete(page Widget) bool

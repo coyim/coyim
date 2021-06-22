@@ -84,3 +84,7 @@ func (a *assistant) RemoveActionWidget(child gtki.Widget) {
 func (a *assistant) UpdateButtonsState() {
 	a.internal.UpdateButtonsState()
 }
+
+func (a *assistant) SetPageTitle(page gtki.Widget, title string) {
+	a.internal.SetPageTitle(UnwrapWidget(page), title)
+}

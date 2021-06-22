@@ -100,7 +100,7 @@ func toFormField(field data.FormFieldX, media [][]data.Media) interface{} {
 
 		for i, opt := range field.Options {
 			f.Ids = append(f.Ids, opt.Value)
-			f.Values = append(f.Values, opt.Label)
+			f.Values = append(f.Values, opt.Var)
 
 			if field.Values[0] == opt.Value {
 				f.Result = i
@@ -113,7 +113,7 @@ func toFormField(field data.FormFieldX, media [][]data.Media) interface{} {
 		}
 		for i, opt := range field.Options {
 			f.Ids = append(f.Ids, opt.Value)
-			f.Values = append(f.Values, opt.Label)
+			f.Values = append(f.Values, opt.Var)
 
 			if len(f.Results) < len(field.Values) {
 				for _, v := range field.Values {

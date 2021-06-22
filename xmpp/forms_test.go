@@ -162,8 +162,8 @@ func (s *FormsXMPPSuite) Test_processForm_returnsListSingle(c *C) {
 			Label: "hello7",
 			Type:  "list-single",
 			Options: []data.FormFieldOptionX{
-				data.FormFieldOptionX{Label: "One", Value: "Two"},
-				data.FormFieldOptionX{Label: "Three", Value: "Four"},
+				data.FormFieldOptionX{Var: "One", Value: "Two"},
+				data.FormFieldOptionX{Var: "Three", Value: "Four"},
 			},
 
 			Values: []string{"Four"},
@@ -205,10 +205,10 @@ func (s *FormsXMPPSuite) Test_processForm_returnsListMulti(c *C) {
 			Label: "hello1o7",
 			Type:  "list-multi",
 			Options: []data.FormFieldOptionX{
-				data.FormFieldOptionX{Label: "One", Value: "Two"},
-				data.FormFieldOptionX{Label: "Three", Value: "Four"},
-				data.FormFieldOptionX{Label: "Five", Value: "Six"},
-				data.FormFieldOptionX{Label: "Seven", Value: "Eight"},
+				data.FormFieldOptionX{Var: "One", Value: "Two"},
+				data.FormFieldOptionX{Var: "Three", Value: "Four"},
+				data.FormFieldOptionX{Var: "Five", Value: "Six"},
+				data.FormFieldOptionX{Var: "Seven", Value: "Eight"},
 			},
 
 			Values: []string{"Six", "Two"},
@@ -371,8 +371,8 @@ func (s *FormsXMPPSuite) Test_processForm_returnsListMultiWithResults(c *C) {
 			Label: "hello1o7",
 			Type:  "list-multi",
 			Options: []data.FormFieldOptionX{
-				data.FormFieldOptionX{Label: "One", Value: "Two"},
-				data.FormFieldOptionX{Label: "Three", Value: "Four"},
+				data.FormFieldOptionX{Var: "One", Value: "Two"},
+				data.FormFieldOptionX{Var: "Three", Value: "Four"},
 			},
 		},
 	}

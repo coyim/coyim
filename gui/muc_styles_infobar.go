@@ -14,17 +14,11 @@ const (
 	infoBarErrorClassName    = ".error"
 )
 
-var infoBarClassNames map[infoBarType]string
-
-// initMUCInfoBarStyles MUST be called after all the values
-// for each `infoBarType` has been initialized.
-func initMUCInfoBarStyles() {
-	infoBarClassNames = map[infoBarType]string{
-		infoBarTypeInfo:     infoBarInfoClassName,
-		infoBarTypeWarning:  infoBarWarningClassName,
-		infoBarTypeQuestion: infoBarQuestionClassName,
-		infoBarTypeError:    infoBarErrorClassName,
-	}
+var infoBarClassNames = map[infoBarType]string{
+	infoBarTypeInfo:     infoBarInfoClassName,
+	infoBarTypeWarning:  infoBarWarningClassName,
+	infoBarTypeQuestion: infoBarQuestionClassName,
+	infoBarTypeError:    infoBarErrorClassName,
 }
 
 type infoBarColorInfo struct {
@@ -149,7 +143,7 @@ type infoBarStyle struct {
 }
 
 func (st *infoBarStyles) newInfoBarStyle(ib gtki.InfoBar) *infoBarStyle {
-	tp := infoBarType(ib.GetMessageType())
+	tp := infoBarTypeForMessageType(ib.GetMessageType())
 
 	selector := infoBarClassName
 	if definedTypeClass, ok := infoBarClassNames[tp]; ok {

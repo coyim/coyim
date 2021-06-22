@@ -8,12 +8,12 @@ import (
 
 type infoBarType int
 
-var (
-	infoBarTypeInfo     infoBarType
-	infoBarTypeWarning  infoBarType
-	infoBarTypeQuestion infoBarType
-	infoBarTypeError    infoBarType
-	infoBarTypeOther    infoBarType
+const (
+	infoBarTypeInfo infoBarType = iota
+	infoBarTypeWarning
+	infoBarTypeQuestion
+	infoBarTypeError
+	infoBarTypeOther
 )
 
 const (
@@ -23,21 +23,11 @@ const (
 	infoBarErrorIconName    = "message_error"
 )
 
-var infoBarIconNames map[infoBarType]string
-
-func initMUCInfoBarComponent() {
-	infoBarTypeInfo = infoBarType(gtki.MESSAGE_INFO)
-	infoBarTypeWarning = infoBarType(gtki.MESSAGE_WARNING)
-	infoBarTypeQuestion = infoBarType(gtki.MESSAGE_QUESTION)
-	infoBarTypeError = infoBarType(gtki.MESSAGE_ERROR)
-	infoBarTypeOther = infoBarType(gtki.MESSAGE_OTHER)
-
-	infoBarIconNames = map[infoBarType]string{
-		infoBarTypeInfo:     infoBarInfoIconName,
-		infoBarTypeWarning:  infoBarWarningIconName,
-		infoBarTypeQuestion: infoBarQuestionIconName,
-		infoBarTypeError:    infoBarErrorIconName,
-	}
+var infoBarIconNames = map[infoBarType]string{
+	infoBarTypeInfo:     infoBarInfoIconName,
+	infoBarTypeWarning:  infoBarWarningIconName,
+	infoBarTypeQuestion: infoBarQuestionIconName,
+	infoBarTypeError:    infoBarErrorIconName,
 }
 
 type infoBarComponent struct {
@@ -79,7 +69,7 @@ func (u *gtkUI) newInfoBarComponent(text string, messageType gtki.MessageType) *
 	ib.infoBar.SetMessageType(ib.messageType)
 	mucStyles.setInfoBarStyle(ib.infoBar)
 
-	tp := infoBarType(messageType)
+	tp := infoBarTypeForMessageType(messageType)
 	if icoName, ok := infoBarIconNames[tp]; ok {
 		ib.icon.SetFromPixbuf(getMUCIconPixbuf(icoName))
 		ib.icon.Show()
@@ -126,4 +116,18 @@ func (ib *infoBarComponent) setTickerTime(t time.Time) {
 
 	ib.timeLabel.SetText(elapsedFriendlyTime(t))
 	ib.timeBox.Show()
+}
+
+func infoBarTypeForMessageType(mt gtki.MessageType) infoBarType {
+	switch mt {
+	case gtki.MESSAGE_INFO:
+		return infoBarTypeInfo
+	case gtki.MESSAGE_WARNING:
+		return infoBarTypeWarning
+	case gtki.MESSAGE_QUESTION:
+		return infoBarTypeQuestion
+	case gtki.MESSAGE_ERROR:
+		return infoBarTypeError
+	}
+	return infoBarTypeOther
 }

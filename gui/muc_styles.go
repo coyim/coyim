@@ -21,8 +21,6 @@ func initMUCStyles(c mucColorSet) {
 		colors:        c,
 		infoBarStyles: newInfoBarStyles(c),
 	}
-
-	initMUCInfoBarStyles()
 }
 
 func (s *mucStylesProvider) setScrolledWindowStyle(msw gtki.ScrolledWindow) {

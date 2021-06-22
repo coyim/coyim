@@ -8,6 +8,7 @@
         <child>
           <object class="GtkBox" id="room-config-page">
             <property name="orientation">vertical</property>
+            <property name="hexpand">True</property>
             <child>
               <object class="GtkBox" id="notifications-box">
                 <property name="visible">True</property>

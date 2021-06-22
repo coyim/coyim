@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
@@ -26,20 +27,7 @@ type roomConfigAssistant struct {
 	currentPageIndex mucRoomConfigPageID
 	currentPage      *roomConfigPage
 
-	assistant          gtki.Assistant `gtk-widget:"room-config-assistant"`
-	infoPageBox        gtki.Box       `gtk-widget:"room-config-info-page"`
-	accessPageBox      gtki.Box       `gtk-widget:"room-config-access-page"`
-	permissionsPageBox gtki.Box       `gtk-widget:"room-config-permissions-page"`
-	positionsPageBox   gtki.Box       `gtk-widget:"room-config-positions-page"`
-	othersPageBox      gtki.Box       `gtk-widget:"room-config-others-page"`
-	summaryPageBox     gtki.Box       `gtk-widget:"room-config-summary-page"`
-
-	infoPage        *roomConfigPage
-	accessPage      *roomConfigPage
-	permissionsPage *roomConfigPage
-	positionsPage   *roomConfigPage
-	othersPage      *roomConfigPage
-	summaryPage     *roomConfigPage
+	assistant gtki.Assistant `gtk-widget:"room-config-assistant"`
 
 	log coylog.Logger
 }
@@ -97,30 +85,29 @@ func (rc *roomConfigAssistant) setCurrentPage(pageID mucRoomConfigPageID) {
 }
 
 func (rc *roomConfigAssistant) initRoomConfigPages() {
-	rc.infoPage = rc.roomConfigComponent.getConfigPage(roomConfigInformationPageIndex)
-	rc.accessPage = rc.roomConfigComponent.getConfigPage(roomConfigAccessPageIndex)
-	rc.permissionsPage = rc.roomConfigComponent.getConfigPage(roomConfigPermissionsPageIndex)
-	rc.positionsPage = rc.roomConfigComponent.getConfigPage(roomConfigPositionsPageIndex)
-	rc.othersPage = rc.roomConfigComponent.getConfigPage(roomConfigOthersPageIndex)
-	rc.summaryPage = rc.roomConfigComponent.getConfigPage(roomConfigSummaryPageIndex)
+	assignDefaultCurrentPageOnce := sync.Once{}
 
-	rc.infoPageBox.Add(rc.infoPage.page)
-	rc.accessPageBox.Add(rc.accessPage.page)
-	rc.permissionsPageBox.Add(rc.permissionsPage.page)
-	rc.positionsPageBox.Add(rc.positionsPage.page)
-	rc.othersPageBox.Add(rc.othersPage.page)
-	rc.summaryPageBox.Add(rc.summaryPage.page)
+	for _, p := range rc.roomConfigComponent.pages {
+		ap := newRoomConfigAssistantPage(p)
 
-	rc.currentPageIndex = roomConfigInformationPageIndex
-	rc.currentPage = rc.infoPage
+		rc.assistant.AppendPage(ap.page)
+		rc.assistant.SetPageTitle(ap.page, configPageDisplayTitle(p.pageID))
+		rc.assistant.SetPageComplete(ap.page, true)
+
+		if p.pageID == roomConfigSummaryPageIndex {
+			rc.assistant.SetPageType(ap.page, gtki.ASSISTANT_PAGE_CONFIRM)
+		}
+
+		assignDefaultCurrentPageOnce.Do(func() {
+			rc.currentPageIndex = p.pageID
+			rc.currentPage = p
+		})
+	}
 }
 
 func (rc *roomConfigAssistant) initDefaults() {
 	rc.assistant.SetTitle(i18n.Localf("Configuration for room [%s]", rc.roomID))
-
-	for _, b := range rc.allPagesBoxes() {
-		b.SetHExpand(true)
-	}
+	removeMarginFromAssistantPages(rc.assistant)
 }
 
 func (rc *roomConfigAssistant) initSidebarNavigation() {
@@ -250,43 +237,13 @@ func (rc *roomConfigAssistant) showAssistant() {
 	rc.assistant.ShowAll()
 }
 
-func (rc *roomConfigAssistant) allPagesBoxes() []gtki.Box {
-	return []gtki.Box{
-		rc.infoPageBox,
-		rc.accessPageBox,
-		rc.permissionsPageBox,
-		rc.positionsPageBox,
-		rc.othersPageBox,
-		rc.summaryPageBox,
-	}
-}
-
 func (rc *roomConfigAssistant) allPages() []*roomConfigPage {
-	return []*roomConfigPage{
-		rc.infoPage,
-		rc.accessPage,
-		rc.permissionsPage,
-		rc.positionsPage,
-		rc.othersPage,
-		rc.summaryPage,
-	}
+	return rc.roomConfigComponent.pages
 }
 
-func (rc *roomConfigAssistant) pageByIndex(p mucRoomConfigPageID) *roomConfigPage {
-	switch p {
-	case roomConfigInformationPageIndex:
-		return rc.infoPage
-	case roomConfigAccessPageIndex:
-		return rc.accessPage
-	case roomConfigPermissionsPageIndex:
-		return rc.permissionsPage
-	case roomConfigPositionsPageIndex:
-		return rc.positionsPage
-	case roomConfigOthersPageIndex:
-		return rc.othersPage
-	case roomConfigSummaryPageIndex:
-		return rc.summaryPage
-	default:
-		panic(fmt.Sprintf("developer error: unsupported room config assistant page \"%d\"", p))
+func (rc *roomConfigAssistant) pageByIndex(pageID mucRoomConfigPageID) *roomConfigPage {
+	if page, ok := rc.roomConfigComponent.getConfigPage(pageID); ok {
+		return page
 	}
+	panic(fmt.Sprintf("developer error: unsupported room config assistant page \"%d\"", pageID))
 }

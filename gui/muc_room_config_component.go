@@ -122,13 +122,13 @@ func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onErr
 	}()
 }
 
-func (c *mucRoomConfigComponent) getConfigPage(pageID mucRoomConfigPageID) *roomConfigPage {
+func (c *mucRoomConfigComponent) getConfigPage(pageID mucRoomConfigPageID) (*roomConfigPage, bool) {
 	for _, p := range c.pages {
 		if p.pageID == pageID {
-			return p
+			return p, true
 		}
 	}
-	return nil
+	return nil, false
 }
 
 func (c *mucRoomConfigComponent) friendlyConfigErrorMessage(err error) string {

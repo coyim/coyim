@@ -5958,6 +5958,24 @@ eT4KICA8L29iamVjdD4KPC9pbnRlcmZhY2U+Cg==
 `,
 	},
 
+	"/definitions/MUCRoomConfigAssistantePage.xml": {
+		local:   "definitions/MUCRoomConfigAssistantePage.xml",
+		size:    591,
+		modtime: 1489449600,
+		compressed: `
+PGludGVyZmFjZT4KICA8b2JqZWN0IGNsYXNzPSJHdGtTY3JvbGxlZFdpbmRvdyIgaWQ9InJvb20tY29u
+ZmlnLWFzc2lzdGFudC1wYWdlIj4KICAgIDxwcm9wZXJ0eSBuYW1lPSJ2aXNpYmxlIj5UcnVlPC9wcm9w
+ZXJ0eT4KICAgIDxwcm9wZXJ0eSBuYW1lPSJoc2Nyb2xsYmFyX3BvbGljeSI+bmV2ZXI8L3Byb3BlcnR5
+PgogICAgPHByb3BlcnR5IG5hbWU9ImhleHBhbmQiPlRydWU8L3Byb3BlcnR5PgogICAgPHByb3BlcnR5
+IG5hbWU9InZleHBhbmQiPlRydWU8L3Byb3BlcnR5PgogICAgPGNoaWxkPgogICAgICA8b2JqZWN0IGNs
+YXNzPSJHdGtWaWV3cG9ydCI+CiAgICAgICAgPHByb3BlcnR5IG5hbWU9InZpc2libGUiPlRydWU8L3By
+b3BlcnR5PgogICAgICAgIDxwcm9wZXJ0eSBuYW1lPSJzaGFkb3dfdHlwZSI+bm9uZTwvcHJvcGVydHk+
+CiAgICAgICAgPGNoaWxkPgogICAgICAgICAgPG9iamVjdCBjbGFzcz0iR3RrQm94IiBpZD0icm9vbS1j
+b25maWctYXNzaXN0YW50LXBhZ2UtY29udGVudCI+PC9vYmplY3Q+CiAgICAgICAgPC9jaGlsZD4KICAg
+ICAgPC9vYmplY3Q+CiAgICA8L2NoaWxkPgogIDwvb2JqZWN0Pgo8L2ludGVyZmFjZT4K
+`,
+	},
+
 	"/definitions/MUCRoomConfigFormFieldAdvancedOptionsContainer.xml": {
 		local:   "definitions/MUCRoomConfigFormFieldAdvancedOptionsContainer.xml",
 		size:    1806,

@@ -1,0 +1,17 @@
+<interface>
+  <object class="GtkScrolledWindow" id="room-config-assistant-page">
+    <property name="visible">True</property>
+    <property name="hscrollbar_policy">never</property>
+    <property name="hexpand">True</property>
+    <property name="vexpand">True</property>
+    <child>
+      <object class="GtkViewport">
+        <property name="visible">True</property>
+        <property name="shadow_type">none</property>
+        <child>
+          <object class="GtkBox" id="room-config-assistant-page-content"></object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

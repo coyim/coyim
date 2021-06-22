@@ -283,17 +283,7 @@ func (p *roomConfigPage) addField(field hasRoomConfigFormField) {
 	p.doAfterRefresh.add(field.refreshContent)
 }
 
-// pageTitle implements the "mucRoomConfigPage" interface
-func (p *roomConfigPage) pageTitle() string {
-	return p.title
-}
-
-// pageView implements the "mucRoomConfigPage" interface
-func (p *roomConfigPage) pageView() gtki.Overlay {
-	return p.page
-}
-
-// isValid implements the "mucRoomConfigPage" interface
+// isValid MUST be called from the UI thread
 func (p *roomConfigPage) isValid() bool {
 	isValid := true
 	for _, f := range p.fields {
@@ -305,11 +295,6 @@ func (p *roomConfigPage) isValid() bool {
 	return isValid
 }
 
-// validate implements the "mucRoomConfigPage" interface
-func (p *roomConfigPage) showValidationErrors() {
-}
-
-// Nothing to do, just implement the "mucRoomConfigPage" interface
 func (p *roomConfigPage) updateFieldValues() {
 	for _, f := range p.fields {
 		f.updateFieldValue()

@@ -104,12 +104,12 @@ func (rc *roomConfigAssistant) initRoomConfigPages() {
 	rc.othersPage = rc.roomConfigComponent.getConfigPage(roomConfigOthersPageIndex)
 	rc.summaryPage = rc.roomConfigComponent.getConfigPage(roomConfigSummaryPageIndex)
 
-	rc.infoPageBox.Add(rc.infoPage.pageView())
-	rc.accessPageBox.Add(rc.accessPage.pageView())
-	rc.permissionsPageBox.Add(rc.permissionsPage.pageView())
-	rc.positionsPageBox.Add(rc.positionsPage.pageView())
-	rc.othersPageBox.Add(rc.othersPage.pageView())
-	rc.summaryPageBox.Add(rc.summaryPage.pageView())
+	rc.infoPageBox.Add(rc.infoPage.page)
+	rc.accessPageBox.Add(rc.accessPage.page)
+	rc.permissionsPageBox.Add(rc.permissionsPage.page)
+	rc.positionsPageBox.Add(rc.positionsPage.page)
+	rc.othersPageBox.Add(rc.othersPage.page)
+	rc.summaryPageBox.Add(rc.summaryPage.page)
 
 	rc.currentPageIndex = roomConfigInformationPageIndex
 	rc.currentPage = rc.infoPage
@@ -164,7 +164,6 @@ func (rc *roomConfigAssistant) canChangePage() bool {
 	previousPage := rc.pageByIndex(rc.currentPageIndex)
 	if !previousPage.isValid() {
 		rc.assistant.SetCurrentPage(int(rc.currentPageIndex))
-		rc.currentPage.showValidationErrors()
 		return false
 	}
 	return true

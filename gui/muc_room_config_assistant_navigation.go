@@ -22,7 +22,6 @@ func (rc *roomConfigAssistant) newRoomConfigAssistantNavigation() *roomConfigAss
 
 	rcn.initBuilder()
 	rcn.initNavigationItems()
-	rcn.initNavigationDividers()
 
 	return rcn
 }
@@ -42,16 +41,6 @@ func (rcn *roomConfigAssistantNavigation) initNavigationItems() {
 		rcn.items = append(rcn.items, itm)
 		rcn.navigation.Add(itm.row)
 		rcn.navigation.Add(itm.divider)
-	}
-}
-
-func (rcn *roomConfigAssistantNavigation) initNavigationDividers() {
-	for idx := range rcn.dividerIndexes() {
-		divider := rcn.navigation.GetRowAtIndex(idx)
-		if divider != nil {
-			divider.SetProperty("activatable", false)
-			divider.SetProperty("selectable", false)
-		}
 	}
 }
 
@@ -75,17 +64,6 @@ func (rcn *roomConfigAssistantNavigation) selectPageByIndex(pageID mucRoomConfig
 	if rowIndex != noRowIndex && rowIndex != currentRowIndex {
 		rcn.navigation.SelectRow(row)
 	}
-}
-
-func (rcn *roomConfigAssistantNavigation) dividerIndexes() map[int]bool {
-	indexes := map[int]bool{}
-
-	// Each row has a divider near to it. We want the divider and not the row itself.
-	for idx := 1; idx < len(rcn.assistant.allPages())*2; idx += 2 {
-		indexes[idx] = true
-	}
-
-	return indexes
 }
 
 func getListBoxRowIndex(r gtki.ListBoxRow) int {

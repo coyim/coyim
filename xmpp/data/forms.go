@@ -51,6 +51,7 @@ type FormFieldRequiredX struct {
 // FormFieldOptionX contains a form field option
 type FormFieldOptionX struct {
 	Var   string `xml:"var,attr,omitempty"`
+	Label string `xml:"label,attr,omitempty"`
 	Value string `xml:"value"`
 }
 

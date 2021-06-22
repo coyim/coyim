@@ -21,6 +21,15 @@ const (
 	roomConfigSummaryPageIndex
 )
 
+var roomConfigPages = []mucRoomConfigPageID{
+	roomConfigInformationPageIndex,
+	roomConfigAccessPageIndex,
+	roomConfigPermissionsPageIndex,
+	roomConfigPositionsPageIndex,
+	roomConfigOthersPageIndex,
+	roomConfigSummaryPageIndex,
+}
+
 type mucRoomConfigComponent struct {
 	u              *gtkUI
 	account        *account
@@ -28,15 +37,8 @@ type mucRoomConfigComponent struct {
 	roomID         jid.Bare
 	autoJoin       bool
 	setCurrentPage func(indexPage mucRoomConfigPageID)
-
-	infoPage        *roomConfigPage
-	accessPage      *roomConfigPage
-	permissionsPage *roomConfigPage
-	positionsPage   *roomConfigPage
-	othersPage      *roomConfigPage
-	summaryPage     *roomConfigPage
-
-	log coylog.Logger
+	pages          []*roomConfigPage
+	log            coylog.Logger
 }
 
 func (u *gtkUI) newMUCRoomConfigComponent(account *account, roomID jid.Bare, f *muc.RoomConfigForm, autoJoin bool, setCurrentPage func(indexPage mucRoomConfigPageID), parent gtki.Window) *mucRoomConfigComponent {
@@ -59,12 +61,9 @@ func (u *gtkUI) newMUCRoomConfigComponent(account *account, roomID jid.Bare, f *
 }
 
 func (c *mucRoomConfigComponent) initConfigPages(parent gtki.Window) {
-	c.infoPage = c.newConfigPage(roomConfigInformationPageIndex)
-	c.accessPage = c.newConfigPage(roomConfigAccessPageIndex)
-	c.permissionsPage = c.newConfigPage(roomConfigPermissionsPageIndex)
-	c.positionsPage = c.newConfigPage(roomConfigPositionsPageIndex)
-	c.othersPage = c.newConfigPage(roomConfigOthersPageIndex)
-	c.summaryPage = c.newConfigPage(roomConfigSummaryPageIndex)
+	for _, pageID := range roomConfigPages {
+		c.pages = append(c.pages, c.newConfigPage(pageID))
+	}
 }
 
 func (c *mucRoomConfigComponent) updateAutoJoin(v bool) {
@@ -123,20 +122,11 @@ func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onErr
 	}()
 }
 
-func (c *mucRoomConfigComponent) getConfigPage(p mucRoomConfigPageID) *roomConfigPage {
-	switch p {
-	case roomConfigInformationPageIndex:
-		return c.infoPage
-	case roomConfigAccessPageIndex:
-		return c.accessPage
-	case roomConfigPermissionsPageIndex:
-		return c.permissionsPage
-	case roomConfigPositionsPageIndex:
-		return c.positionsPage
-	case roomConfigOthersPageIndex:
-		return c.othersPage
-	case roomConfigSummaryPageIndex:
-		return c.summaryPage
+func (c *mucRoomConfigComponent) getConfigPage(pageID mucRoomConfigPageID) *roomConfigPage {
+	for _, p := range c.pages {
+		if p.pageID == pageID {
+			return p
+		}
 	}
 	return nil
 }

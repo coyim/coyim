@@ -369,10 +369,10 @@ func (*MucRoomConfigSuite) Test_formFieldOptionsValues(c *C) {
 	c.Assert(formFieldOptionsValues(nil), DeepEquals, []*RoomConfigFieldOption{})
 	c.Assert(formFieldOptionsValues([]xmppData.FormFieldOptionX{}), DeepEquals, []*RoomConfigFieldOption{})
 	c.Assert(formFieldOptionsValues([]xmppData.FormFieldOptionX{
-		{Var: "bla", Value: "bla"},
-		{Var: "whatever", Value: "foo"},
-		{Var: "whatever2", Value: "bla2"},
-		{Var: "whatever3", Value: "foo2"},
+		{Label: "bla", Value: "bla"},
+		{Label: "whatever", Value: "foo"},
+		{Label: "whatever2", Value: "bla2"},
+		{Label: "whatever3", Value: "foo2"},
 	}), DeepEquals, []*RoomConfigFieldOption{
 		{Label: "bla", Value: "bla"},
 		{Label: "whatever", Value: "foo"},

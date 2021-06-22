@@ -15,7 +15,7 @@ func newRoomConfigFieldOption(v, l string) *RoomConfigFieldOption {
 func formFieldOptionsValues(options []xmppData.FormFieldOptionX) []*RoomConfigFieldOption {
 	l := []*RoomConfigFieldOption{}
 	for _, o := range options {
-		l = append(l, newRoomConfigFieldOption(o.Value, o.Var))
+		l = append(l, newRoomConfigFieldOption(o.Value, o.Label))
 	}
 	return l
 }

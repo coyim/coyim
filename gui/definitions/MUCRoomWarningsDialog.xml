@@ -30,7 +30,7 @@
                   <object class="GtkButton">
                     <property name="visible">True</property>
                     <property name="receives_default">True</property>
-                    <property name="tooltip_text" translatable="yes">Go to previous</property>
+                    <property name="tooltip_text" translatable="yes">Go to previous [Ctrl + left]</property>
                     <property name="relief">none</property>
                     <signal name="clicked" handler="on_warning_go_previous_clicked" swapped="no"/>
                     <child>
@@ -128,7 +128,7 @@
                   <object class="GtkButton">
                     <property name="visible">True</property>
                     <property name="receives_default">True</property>
-                    <property name="tooltip_text" translatable="yes">Go to next</property>
+                    <property name="tooltip_text" translatable="yes">Go to next [Ctrl + right]</property>
                     <property name="relief">none</property>
                     <signal name="clicked" handler="on_warning_go_next_clicked" swapped="no"/>
                     <child>

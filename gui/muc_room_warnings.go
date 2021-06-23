@@ -102,6 +102,7 @@ func (v *roomView) newRoomViewWarnings() *roomViewWarnings {
 	}
 
 	vw.initBuilder()
+	vw.initShortcuts()
 	vw.initDefaults()
 
 	return vw
@@ -119,6 +120,23 @@ func (vw *roomViewWarnings) initBuilder() {
 			vw.move(roomViewWarningsNextDirection)
 		},
 	})
+}
+
+func (vw *roomViewWarnings) initShortcuts() {
+	callers := map[string]func(){
+		"Escape":         vw.dialog.Hide,
+		"<Primary>Left":  vw.moveLeft,
+		"<Primary>Right": vw.moveRight,
+	}
+
+	for sh, c := range callers {
+		connectShortcut(sh, vw.dialog, simpleWindowShortcutCall(c))
+	}
+}
+
+func (vw *roomViewWarnings) initDefaults() {
+	vw.dialog.SetTransientFor(vw.roomView.window)
+	mucStyles.setRoomWarningsStyles(vw.dialog)
 }
 
 // move MUST be called from the UI thread
@@ -146,9 +164,12 @@ func (vw *roomViewWarnings) move(direction roomViewWarningsDirection) {
 	vw.refresh()
 }
 
-func (vw *roomViewWarnings) initDefaults() {
-	vw.dialog.SetTransientFor(vw.roomView.window)
-	mucStyles.setRoomWarningsStyles(vw.dialog)
+func (vw *roomViewWarnings) moveLeft() {
+	vw.move(roomViewWarningsPreviousDirection)
+}
+
+func (vw *roomViewWarnings) moveRight() {
+	vw.move(roomViewWarningsNextDirection)
 }
 
 // add MUST be called from the UI thread
@@ -200,4 +221,10 @@ func (vw *roomViewWarnings) clear() {
 // show MUST be called from the UI thread
 func (vw *roomViewWarnings) show() {
 	vw.dialog.Show()
+}
+
+func simpleWindowShortcutCall(fn func()) func(gtki.Window) {
+	return func(gtki.Window) {
+		fn()
+	}
 }

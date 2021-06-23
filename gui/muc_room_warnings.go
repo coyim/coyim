@@ -149,7 +149,7 @@ func (vw *roomViewWarnings) initDefaults() {
 }
 
 // add MUST be called from the UI thread
-func (vw *roomViewWarnings) add(text, description string) {
+func (vw *roomViewWarnings) add(text string) {
 	w := newRoomViewWarning(text)
 	vw.warnings = append(vw.warnings, w)
 	vw.refresh()

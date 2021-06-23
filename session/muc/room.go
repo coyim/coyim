@@ -1,7 +1,10 @@
 package muc
 
 import (
+	"time"
+
 	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/session/muc/data"
 
 	"github.com/coyim/coyim/xmpp/jid"
 )
@@ -17,7 +20,8 @@ type Room struct {
 	selfOccupant *Occupant
 	roster       *RoomRoster
 
-	observers *roomObservers
+	observers         *roomObservers
+	discussionHistory *data.DiscussionHistory
 
 	// Configuration options:
 
@@ -44,9 +48,10 @@ type Room struct {
 // NewRoom returns a newly created room
 func NewRoom(roomID jid.Bare) *Room {
 	return &Room{
-		ID:        roomID,
-		roster:    newRoomRoster(),
-		observers: newRoomObservers(),
+		ID:                roomID,
+		roster:            newRoomRoster(),
+		observers:         newRoomObservers(),
+		discussionHistory: data.NewDiscussionHistory(),
 	}
 }
 
@@ -111,4 +116,12 @@ func (r *Room) UpdateSubject(s string) bool {
 
 	r.subjectWasUpdated = true
 	return false
+}
+
+func (r *Room) GetHistory() *data.DiscussionHistory {
+	return r.discussionHistory
+}
+
+func (r *Room) AddHistoryMessage(nickname, message string, timestamp time.Time) {
+	r.discussionHistory.AddMessage(nickname, message, timestamp)
 }

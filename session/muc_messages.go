@@ -12,8 +12,9 @@ func (m *mucManager) receiveClientMessage(stanza *xmppData.ClientMessage) {
 	m.log.WithField("stanza", stanza).Debug("handleMUCReceivedClientMessage()")
 
 	if hasSubject(stanza) {
-		m.dhManager.handleClientPresence(stanza)
+		m.handleDiscussionHistory(stanza)
 		m.handleSubjectReceived(stanza)
+		return
 	}
 
 	switch {
@@ -27,15 +28,10 @@ func (m *mucManager) receiveClientMessage(stanza *xmppData.ClientMessage) {
 }
 
 func (m *mucManager) receiveDelayedMessage(roomID jid.Bare, nickname, message string, timestamp time.Time) {
-	m.dhLock.Lock()
-	defer m.dhLock.Unlock()
-
-	dh, ok := m.dhManager.getHistory(roomID)
-	if !ok {
-		dh = m.dhManager.addHistory(roomID)
+	room, ok := m.roomManager.GetRoom(roomID)
+	if ok {
+		room.AddHistoryMessage(nickname, message, timestamp)
 	}
-
-	dh.AddMessage(nickname, message, timestamp)
 }
 
 // The discussion history MUST happen only one time in the events flow of XMPP's MUC
@@ -43,9 +39,9 @@ func (m *mucManager) receiveDelayedMessage(roomID jid.Bare, nickname, message st
 // that we want to implement later, when that happens, this method should be fine
 func (m *mucManager) handleDiscussionHistory(stanza *xmppData.ClientMessage) {
 	roomID := m.retrieveRoomID(stanza.From, "handleDiscussionHistory")
-	dh, exists := m.dhManager.getHistory(roomID)
-	if exists {
-		m.discussionHistoryReceived(roomID, dh)
+	room, ok := m.roomManager.GetRoom(roomID)
+	if ok {
+		m.discussionHistoryReceived(roomID, room.GetHistory())
 	}
 }
 

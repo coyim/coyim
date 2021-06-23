@@ -24,9 +24,6 @@ type mucManager struct {
 	roomManager *muc.RoomManager
 	roomLock    sync.Mutex
 
-	dhManager *discussionHistoryManager
-	dhLock    sync.Mutex
-
 	roomConfigChangesHandlers     map[int]func(jid.Bare)
 	roomConfigChangesHandlersLock sync.Mutex
 }
@@ -39,8 +36,6 @@ func newMUCManager(log coylog.Logger, conn func() xi.Conn, publishEvent func(ev 
 		roomManager:  muc.NewRoomManager(),
 		roomInfos:    make(map[jid.Bare]*muc.RoomListing),
 	}
-
-	m.dhManager = newDiscussionHistoryManager(m.handleDiscussionHistory)
 
 	return m
 }
@@ -331,14 +326,4 @@ func (m *mucManager) retrieveRoomIDAndNickname(from string) (jid.Bare, string) {
 	}
 
 	return f.Bare(), f.Resource().String()
-}
-
-func doOnceWithStanza(f func(*xmppData.ClientMessage)) func(*xmppData.ClientMessage) {
-	canCallIt := true
-	return func(stanza *xmppData.ClientMessage) {
-		if canCallIt {
-			canCallIt = false
-			f(stanza)
-		}
-	}
 }

@@ -208,23 +208,6 @@ func (v *roomView) disableRoomView() {
 	})
 }
 
-func (v *roomView) showRoomWarnings(info data.RoomDiscoInfo) {
-	v.warnings.add(i18n.Local("Please be aware that communication in chat rooms is not encrypted - anyone that can intercept communication between you and the server - and the server itself - will be able to see what you are saying in this chat room. Only join this room and communicate here if you trust the server to not be hostile."))
-
-	switch info.AnonymityLevel {
-	case "semi":
-		v.warnings.add(i18n.Local("This room is partially anonymous. This means that only moderators can connect your nickname with your real username (your JID)."))
-	case "no":
-		v.warnings.add(i18n.Local("This room is not anonymous. This means that any person in this room can connect your nickname with your real username (your JID)."))
-	default:
-		v.log.WithField("anonymityLevel", info.AnonymityLevel).Warn("Unknown anonymity setting for room")
-	}
-
-	if info.Logged {
-		v.warnings.add(i18n.Local("This room is publicly logged, meaning that everything you and the others in the room say or do can be made public on a website."))
-	}
-}
-
 func (v *roomView) showWarnings() {
 	mucStyles.setRoomMessagesBoxStyle(v.messagesBox)
 

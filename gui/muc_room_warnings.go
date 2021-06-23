@@ -76,6 +76,99 @@ func (v *roomView) newRoomViewWarningsInfoBar() *roomViewWarningsInfoBar {
 	return ib
 }
 
+type roomViewWarningsDirection string
+
+const (
+	roomViewWarningsPreviousDirection roomViewWarningsDirection = "previous"
+	roomViewWarningsNextDirection     roomViewWarningsDirection = "next"
+)
+
+type roomViewWarnings struct {
+	roomView            *roomView
+	warnings            []*roomViewWarning
+	currentWarningIndex int
+
+	dialog      gtki.Window `gtk-widget:"room-warnings-dialog"`
+	currentText gtki.Label  `gtk-widget:"room-warnings-current-title"`
+	currentInfo gtki.Label  `gtk-widget:"room-warnings-current-info"`
+}
+
+func (v *roomView) newRoomViewWarnings() *roomViewWarnings {
+	vw := &roomViewWarnings{
+		roomView: v,
+	}
+
+	vw.initBuilder()
+	vw.initDefaults()
+
+	return vw
+}
+
+func (vw *roomViewWarnings) initBuilder() {
+	builder := newBuilder("MUCRoomWarningsDialog")
+	panicOnDevError(builder.bindObjects(vw))
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_warning_go_previous_clicked": func() {
+			vw.move(roomViewWarningsPreviousDirection)
+		},
+		"on_warning_go_next_clicked": func() {
+			vw.move(roomViewWarningsNextDirection)
+		},
+	})
+}
+
+// move MUST be called from the UI thread
+func (vw *roomViewWarnings) move(direction roomViewWarningsDirection) {
+	firstWarningIndex := 0
+	lastWarningIndex := vw.total() - 1
+	newCurrentWarningIndex := vw.currentWarningIndex
+
+	switch direction {
+	case roomViewWarningsPreviousDirection:
+		newCurrentWarningIndex = vw.currentWarningIndex - 1
+		if newCurrentWarningIndex < firstWarningIndex {
+			newCurrentWarningIndex = lastWarningIndex
+		}
+
+	case roomViewWarningsNextDirection:
+		newCurrentWarningIndex = vw.currentWarningIndex + 1
+		if newCurrentWarningIndex > lastWarningIndex {
+			newCurrentWarningIndex = firstWarningIndex
+		}
+	}
+
+	vw.currentWarningIndex = newCurrentWarningIndex
+
+	vw.refresh()
+}
+
+func (vw *roomViewWarnings) initDefaults() {
+	vw.dialog.SetTransientFor(vw.roomView.window)
+	mucStyles.setRoomWarningsStyles(vw.dialog)
+}
+
+// add MUST be called from the UI thread
+func (vw *roomViewWarnings) add(text, description string) {
+	w := newRoomViewWarning(text)
+	vw.warnings = append(vw.warnings, w)
+	vw.refresh()
+}
+
+// refresh MUST be called from the UI thread
+func (vw *roomViewWarnings) refresh() {
+	warningText := ""
+	warningInfo := ""
+
+	if warning, ok := vw.warningByIndex(vw.currentWarningIndex); ok {
+		warningText = warning.text
+		warningInfo = i18n.Localf("Warning %d of %d", vw.currentWarningIndex+1, vw.total())
+	}
+
+	vw.currentText.SetText(warningText)
+	vw.currentInfo.SetText(warningInfo)
+}
+
 type roomViewWarningsOverlay struct {
 	warnings []*roomViewWarning
 	onClose  func()
@@ -137,4 +230,31 @@ func (o *roomViewWarningsOverlay) clear() {
 		o.box.Remove(w.bar)
 	}
 	o.warnings = nil
+}
+
+func (vw *roomViewWarnings) warningByIndex(idx int) (*roomViewWarning, bool) {
+	if vw.hasWarningIndex(idx) {
+		return vw.warnings[idx], true
+	}
+	return nil, false
+}
+
+func (vw *roomViewWarnings) hasWarningIndex(idx int) bool {
+	return idx >= 0 && idx < vw.total()
+}
+
+func (vw *roomViewWarnings) total() int {
+	return len(vw.warnings)
+}
+
+// clear MUST be called from the UI thread
+func (vw *roomViewWarnings) clear() {
+	vw.warnings = nil
+	vw.currentWarningIndex = 0
+	vw.refresh()
+}
+
+// show MUST be called from the UI thread
+func (vw *roomViewWarnings) show() {
+	vw.dialog.Show()
 }

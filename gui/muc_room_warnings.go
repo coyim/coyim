@@ -8,23 +8,26 @@ import (
 
 func (v *roomView) showRoomWarnings(info data.RoomDiscoInfo) {
 	v.warnings.add(
-		i18n.Local("Please be aware that communication in chat rooms " +
-			"is not encrypted - anyone that can intercept communication between you and " +
-			"the server - and the server itself - will be able to see what you are saying " +
-			"in this chat room. Only join this room and communicate here if you trust the " +
+		i18n.Local("Communication in this room is not encrypted"),
+		i18n.Local("Please be aware that communication in chat rooms "+
+			"is not encrypted - anyone that can intercept communication between you and "+
+			"the server - and the server itself - will be able to see what you are saying "+
+			"in this chat room. Only join this room and communicate here if you trust the "+
 			"server to not be hostile."),
 	)
 
 	switch info.AnonymityLevel {
 	case "semi":
 		v.warnings.add(
-			i18n.Local("This room is partially anonymous. This means that " +
-				"only moderators can connect your nickname with your real username (your JID)."),
+			i18n.Local("This room is partially anonymous"),
+			i18n.Local("This means that only moderators can connect "+
+				"your nickname with your real username (your JID)."),
 		)
 	case "no":
 		v.warnings.add(
-			i18n.Local("This room is not anonymous. This means that any person " +
-				"in this room can connect your nickname with your real username (your JID)."),
+			i18n.Local("This room is not anonymous"),
+			i18n.Local("This means that any person in this room "+
+				"can connect your nickname with your real username (your JID)."),
 		)
 	default:
 		v.log.WithField("anonymityLevel", info.AnonymityLevel).Warn("Unknown anonymity " +
@@ -33,19 +36,22 @@ func (v *roomView) showRoomWarnings(info data.RoomDiscoInfo) {
 
 	if info.Logged {
 		v.warnings.add(
-			i18n.Local("This room is publicly logged, meaning that everything " +
-				"you and the others in the room say or do can be made public on a website."),
+			i18n.Local("This room is publicly logged"),
+			i18n.Local("This means that everything you and the "+
+				"others in the room say or do can be made public on a website."),
 		)
 	}
 }
 
 type roomViewWarning struct {
-	text string
+	title       string
+	description string
 }
 
-func newRoomViewWarning(text string) *roomViewWarning {
+func newRoomViewWarning(title, description string) *roomViewWarning {
 	return &roomViewWarning{
-		text,
+		title,
+		description,
 	}
 }
 
@@ -78,9 +84,10 @@ type roomViewWarnings struct {
 	warnings            []*roomViewWarning
 	currentWarningIndex int
 
-	dialog      gtki.Window `gtk-widget:"room-warnings-dialog"`
-	currentText gtki.Label  `gtk-widget:"room-warnings-current-title"`
-	currentInfo gtki.Label  `gtk-widget:"room-warnings-current-info"`
+	dialog             gtki.Window `gtk-widget:"room-warnings-dialog"`
+	currentTitle       gtki.Label  `gtk-widget:"room-warnings-current-title"`
+	currentDescription gtki.Label  `gtk-widget:"room-warnings-current-description"`
+	currentInfo        gtki.Label  `gtk-widget:"room-warnings-current-info"`
 }
 
 func (v *roomView) newRoomViewWarnings() *roomViewWarnings {
@@ -139,23 +146,26 @@ func (vw *roomViewWarnings) initDefaults() {
 }
 
 // add MUST be called from the UI thread
-func (vw *roomViewWarnings) add(text string) {
-	w := newRoomViewWarning(text)
+func (vw *roomViewWarnings) add(title, description string) {
+	w := newRoomViewWarning(title, description)
 	vw.warnings = append(vw.warnings, w)
 	vw.refresh()
 }
 
 // refresh MUST be called from the UI thread
 func (vw *roomViewWarnings) refresh() {
-	warningText := ""
+	warningTitle := ""
+	warningDescription := ""
 	warningInfo := ""
 
 	if warning, ok := vw.warningByIndex(vw.currentWarningIndex); ok {
-		warningText = warning.text
+		warningTitle = warning.title
+		warningDescription = warning.description
 		warningInfo = i18n.Localf("Warning %d of %d", vw.currentWarningIndex+1, vw.total())
 	}
 
-	vw.currentText.SetText(warningText)
+	vw.currentTitle.SetText(warningTitle)
+	vw.currentDescription.SetText(warningDescription)
 	vw.currentInfo.SetText(warningInfo)
 }
 

@@ -1,6 +1,8 @@
 package muc
 
 import (
+	"time"
+
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -78,4 +80,15 @@ func (s *MucSuite) Test_Room_Publish(c *C) {
 	r.Publish(&events.MUCOccupantUpdated{})
 	c.Assert(called1, Equals, true)
 	c.Assert(called2, Equals, true)
+}
+
+func (s *MucSuite) Test_Room_History(c *C) {
+	r := NewRoom(jid.ParseBare("foo@bar.com"))
+	roomHistory := r.GetHistory()
+	c.Assert(roomHistory.GetHistory(), HasLen, 0)
+
+	r.AddHistoryMessage("juanito", "test message", time.Now())
+	roomHistory = r.GetHistory()
+	c.Assert(roomHistory.GetHistory(), HasLen, 1)
+
 }

@@ -118,10 +118,12 @@ func (r *Room) UpdateSubject(s string) bool {
 	return false
 }
 
+// GetHistory returns the room history
 func (r *Room) GetHistory() *data.DiscussionHistory {
 	return r.discussionHistory
 }
 
+// AddHistoryMessage adds a new message in the room history
 func (r *Room) AddHistoryMessage(nickname, message string, timestamp time.Time) {
 	r.discussionHistory.AddMessage(nickname, message, timestamp)
 }

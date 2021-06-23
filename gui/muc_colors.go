@@ -18,9 +18,10 @@ type mucColorSet struct {
 	errorForeground         string
 	configurationForeground string
 
-	roomMessagesBackground            string
-	roomNameDisabledForeground        string
-	roomSubjectForeground             string
+	roomMessagesBackground     string
+	roomNameDisabledForeground string
+	roomSubjectForeground      string
+
 	roomOverlaySolidBackground        string
 	roomOverlayContentSolidBackground string
 	roomOverlayContentBackground      string
@@ -111,9 +112,10 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		errorForeground:         cs.errorForeground,
 		configurationForeground: "#9a04bf",
 
-		roomMessagesBackground:            "#FFFFFF",
-		roomNameDisabledForeground:        "@insensitive_fg_color",
-		roomSubjectForeground:             "#666666",
+		roomMessagesBackground:     "@theme_base_color",
+		roomNameDisabledForeground: "@insensitive_fg_color",
+		roomSubjectForeground:      "@insensitive_fg_color",
+
 		roomOverlaySolidBackground:        "@theme_bg_color",
 		roomOverlayContentSolidBackground: "transparent",
 		roomOverlayContentBackground:      "@theme_bg_color",
@@ -197,9 +199,10 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		infoMessageForeground:   "#E34267",
 		messageForeground:       "#000000",
 		configurationForeground: "#9a04bf",
-		roomMessagesBackground:  "@theme_base_color",
 
-		roomNameDisabledForeground: "#A9A9A9",
+		roomMessagesBackground:     "@theme_base_color",
+		roomNameDisabledForeground: "@insensitive_fg_color",
+		roomSubjectForeground:      "@insensitive_fg_color",
 
 		roomOverlaySolidBackground:        "@theme_base_color",
 		roomOverlayContentSolidBackground: "transparent",
@@ -238,8 +241,6 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		occupantStatusExtendedAwayForeground: "#92400E",
 		occupantStatusExtendedAwayBackground: "#FFFBEB",
 		occupantStatusExtendedAwayBorder:     "#D97706",
-
-		roomSubjectForeground: "#666666",
 
 		infoBarDefaultBorderColor:          "@theme_bg_color",
 		infoBarTypeInfoBackgroundStart:     "rgba(8,145,178,1)",

@@ -41,22 +41,12 @@ func (v *roomView) showRoomWarnings(info data.RoomDiscoInfo) {
 
 type roomViewWarning struct {
 	text string
-
-	bar     gtki.Box   `gtk-widget:"warning-infobar"`
-	message gtki.Label `gtk-widget:"message"`
 }
 
 func newRoomViewWarning(text string) *roomViewWarning {
-	w := &roomViewWarning{
-		text: text,
+	return &roomViewWarning{
+		text,
 	}
-
-	builder := newBuilder("MUCRoomWarning")
-	panicOnDevError(builder.bindObjects(w))
-
-	w.message.SetText(w.text)
-
-	return w
 }
 
 type roomViewWarningsInfoBar struct {

@@ -9504,24 +9504,6 @@ L29iamVjdD4KPC9pbnRlcmZhY2U+Cg==
 `,
 	},
 
-	"/definitions/MUCRoomWarning.xml": {
-		local:   "definitions/MUCRoomWarning.xml",
-		size:    586,
-		modtime: 1489449600,
-		compressed: `
-PGludGVyZmFjZT4KICA8b2JqZWN0IGNsYXNzPSJHdGtCb3giIGlkPSJ3YXJuaW5nLWluZm9iYXIiPgog
-ICAgPHByb3BlcnR5IG5hbWU9ImhvbW9nZW5lb3VzIj5mYWxzZTwvcHJvcGVydHk+CiAgICA8cHJvcGVy
-dHkgbmFtZT0ib3JpZW50YXRpb24iPkdUS19PUklFTlRBVElPTl9IT1JJWk9OVEFMPC9wcm9wZXJ0eT4K
-ICAgIDxjaGlsZD4KICAgICAgPG9iamVjdCBjbGFzcz0iR3RrTGFiZWwiIGlkPSJtZXNzYWdlIj4KICAg
-ICAgICA8cHJvcGVydHkgbmFtZT0ibWF4LXdpZHRoLWNoYXJzIj45MDwvcHJvcGVydHk+CiAgICAgICAg
-PHByb3BlcnR5IG5hbWU9IndyYXAiPnRydWU8L3Byb3BlcnR5PgogICAgICAgIDxwcm9wZXJ0eSBuYW1l
-PSJoYWxpZ24iPnN0YXJ0PC9wcm9wZXJ0eT4KICAgICAgICA8cHJvcGVydHkgbmFtZT0ieGFsaWduIj4w
-PC9wcm9wZXJ0eT4KICAgICAgICA8cHJvcGVydHkgbmFtZT0ibWFyZ2luIj41PC9wcm9wZXJ0eT4KICAg
-ICAgPC9vYmplY3Q+CiAgICA8L2NoaWxkPgogICAgPHN0eWxlPgogICAgICA8Y2xhc3MgbmFtZT0id2Fy
-bmluZyIvPgogICAgPC9zdHlsZT4KICA8L29iamVjdD4KPC9pbnRlcmZhY2U+Cg==
-`,
-	},
-
 	"/definitions/MUCRoomWarningsDialog.xml": {
 		local:   "definitions/MUCRoomWarningsDialog.xml",
 		size:    7718,

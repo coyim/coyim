@@ -20,6 +20,11 @@ func (icon roomViewWarningIconType) name() string {
 	return string(icon)
 }
 
+// showWarnings MUST be called from the UI thread
+func (v *roomView) showWarnings() {
+	v.warnings.show()
+}
+
 func (v *roomView) addRoomWarningsBasedOnInfo(info data.RoomDiscoInfo) {
 	v.warnings.add(
 		roomViewWarningIconNotEncrypted,
@@ -85,9 +90,7 @@ func (v *roomView) newRoomViewWarningsInfoBar() *roomViewWarningsInfoBar {
 	}
 
 	showWarningsButton, _ := g.gtk.ButtonNewWithLabel(i18n.Local("Details"))
-	showWarningsButton.Connect("clicked", func() {
-		v.warnings.show()
-	})
+	showWarningsButton.Connect("clicked", v.showWarnings)
 
 	ib.addActionWidget(showWarningsButton, gtki.RESPONSE_NONE)
 

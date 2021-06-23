@@ -28,6 +28,14 @@
         <signal name="activate" handler="on_leave_room" swapped="no"/>
       </object>
     </child>
+    <child>
+      <object class="GtkMenuItem" id="security-properties-menu-item">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Security properties</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="on_show_security_properties" swapped="no"/>
+      </object>
+    </child>
   </object>
   <object class="GtkBox" id="room-view-toolbar">
     <property name="visible">True</property>

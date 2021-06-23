@@ -12,19 +12,20 @@ const (
 )
 
 type roomViewToolbar struct {
-	view                   gtki.Box               `gtk-widget:"room-view-toolbar"`
-	roomNameLabel          gtki.Label             `gtk-widget:"room-name-label"`
-	roomStatusIcon         gtki.Image             `gtk-widget:"room-status-icon"`
-	roomMenuButton         gtki.MenuButton        `gtk-widget:"room-menu-button"`
-	roomSubjectButton      gtki.Button            `gtk-widget:"room-subject-button"`
-	roomSubjectButtonImage gtki.Image             `gtk-widget:"room-subject-button-image"`
-	roomSubjectRevealer    gtki.Revealer          `gtk-widget:"room-subject-revealer"`
-	roomSubjectLabel       gtki.Label             `gtk-widget:"room-subject-label"`
-	roomMenu               gtki.Menu              `gtk-widget:"room-menu"`
-	modifyBanMenuItem      gtki.MenuItem          `gtk-widget:"modify-ban-list-menu-item"`
-	adminActionsSeparator  gtki.SeparatorMenuItem `gtk-widget:"admin-action-separator"`
-	leaveRoomMenuItem      gtki.MenuItem          `gtk-widget:"leave-room-menu-item"`
-	destroyRoomMenuItem    gtki.MenuItem          `gtk-widget:"destroy-room-menu-item"`
+	view                       gtki.Box               `gtk-widget:"room-view-toolbar"`
+	roomNameLabel              gtki.Label             `gtk-widget:"room-name-label"`
+	roomStatusIcon             gtki.Image             `gtk-widget:"room-status-icon"`
+	roomMenuButton             gtki.MenuButton        `gtk-widget:"room-menu-button"`
+	roomSubjectButton          gtki.Button            `gtk-widget:"room-subject-button"`
+	roomSubjectButtonImage     gtki.Image             `gtk-widget:"room-subject-button-image"`
+	roomSubjectRevealer        gtki.Revealer          `gtk-widget:"room-subject-revealer"`
+	roomSubjectLabel           gtki.Label             `gtk-widget:"room-subject-label"`
+	roomMenu                   gtki.Menu              `gtk-widget:"room-menu"`
+	modifyBanMenuItem          gtki.MenuItem          `gtk-widget:"modify-ban-list-menu-item"`
+	adminActionsSeparator      gtki.SeparatorMenuItem `gtk-widget:"admin-action-separator"`
+	leaveRoomMenuItem          gtki.MenuItem          `gtk-widget:"leave-room-menu-item"`
+	securityPropertiesMenuItem gtki.MenuItem          `gtk-widget:"security-properties-menu-item"`
+	destroyRoomMenuItem        gtki.MenuItem          `gtk-widget:"destroy-room-menu-item"`
 }
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
@@ -42,10 +43,11 @@ func (t *roomViewToolbar) initBuilder(v *roomView) {
 	panicOnDevError(builder.bindObjects(t))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_leave_room":          v.onLeaveRoom,
-		"on_destroy_room":        v.onDestroyRoom,
-		"on_modify_ban_list":     v.onModifyBanList,
-		"on_toggle_room_subject": t.onToggleRoomSubject,
+		"on_leave_room":               v.onLeaveRoom,
+		"on_destroy_room":             v.onDestroyRoom,
+		"on_show_security_properties": v.showWarnings,
+		"on_modify_ban_list":          v.onModifyBanList,
+		"on_toggle_room_subject":      t.onToggleRoomSubject,
 	})
 }
 

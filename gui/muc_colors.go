@@ -21,14 +21,20 @@ type mucColorSet struct {
 	roomMessagesBackground            string
 	roomNameDisabledForeground        string
 	roomSubjectForeground             string
-	roomWarningForeground             string
-	roomWarningBackground             string
-	roomWarningBorder                 string
 	roomOverlaySolidBackground        string
 	roomOverlayContentSolidBackground string
 	roomOverlayContentBackground      string
 	roomOverlayBackground             string
 	roomOverlayContentForeground      string
+
+	roomWarningForeground                  string
+	roomWarningBackground                  string
+	roomWarningBorder                      string
+	roomWarningsDialogBackground           string
+	roomWarningsDialogDecorationBackground string
+	roomWarningsDialogHeaderBackground     string
+	roomWarningsDialogContentBackground    string
+	roomWarningsCurrentInfoForeground      string
 
 	rosterGroupBackground        string
 	rosterGroupForeground        string
@@ -108,14 +114,20 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		roomMessagesBackground:            "#FFFFFF",
 		roomNameDisabledForeground:        "@insensitive_fg_color",
 		roomSubjectForeground:             "#666666",
-		roomWarningForeground:             "#744210",
-		roomWarningBackground:             "#FEFCBF",
-		roomWarningBorder:                 "#D69E2E",
 		roomOverlaySolidBackground:        "@theme_bg_color",
 		roomOverlayContentSolidBackground: "transparent",
 		roomOverlayContentBackground:      "@theme_bg_color",
 		roomOverlayBackground:             "#000000",
 		roomOverlayContentForeground:      "@theme_fg_color",
+
+		roomWarningForeground:                  "#744210",
+		roomWarningBackground:                  "#FEFCBF",
+		roomWarningBorder:                      "#D69E2E",
+		roomWarningsDialogBackground:           "none",
+		roomWarningsDialogDecorationBackground: "@theme_bg_color",
+		roomWarningsDialogHeaderBackground:     "none",
+		roomWarningsDialogContentBackground:    "none",
+		roomWarningsCurrentInfoForeground:      "@insensitive_fg_color",
 
 		rosterGroupBackground:        "#F5F5F4",
 		rosterGroupForeground:        "#1C1917",
@@ -195,6 +207,15 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		roomOverlayBackground:             "#000000",
 		roomOverlayContentForeground:      "#333333",
 
+		roomWarningForeground:                  "#744210",
+		roomWarningBackground:                  "#FEFCBF",
+		roomWarningBorder:                      "#D69E2E",
+		roomWarningsDialogBackground:           "none",
+		roomWarningsDialogDecorationBackground: "@theme_bg_color",
+		roomWarningsDialogHeaderBackground:     "none",
+		roomWarningsDialogContentBackground:    "none",
+		roomWarningsCurrentInfoForeground:      "@insensitive_fg_color",
+
 		rosterGroupBackground:        "#1C1917",
 		rosterGroupForeground:        "#FAFAF9",
 		rosterOccupantRoleForeground: "#E7E5E4",
@@ -219,9 +240,6 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		occupantStatusExtendedAwayBorder:     "#D97706",
 
 		roomSubjectForeground: "#666666",
-		roomWarningForeground: "#744210",
-		roomWarningBackground: "#FEFCBF",
-		roomWarningBorder:     "#D69E2E",
 
 		infoBarDefaultBorderColor:          "@theme_bg_color",
 		infoBarTypeInfoBackgroundStart:     "rgba(8,145,178,1)",

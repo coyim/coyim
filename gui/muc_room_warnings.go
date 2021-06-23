@@ -6,8 +6,23 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+type roomViewWarningIconType string
+
+const (
+	roomViewWarningIconDefault            roomViewWarningIconType = "warning_default"
+	roomViewWarningIconNotEncrypted       roomViewWarningIconType = "not_encrypted"
+	roomViewWarningIconPartiallyAnonymous roomViewWarningIconType = "partially_anonymous"
+	roomViewWarningIconNotAnonymous       roomViewWarningIconType = "not_anonymous"
+	roomViewWarningIconPubliclyLogged     roomViewWarningIconType = "publicly_logged"
+)
+
+func (icon roomViewWarningIconType) name() string {
+	return string(icon)
+}
+
 func (v *roomView) addRoomWarningsBasedOnInfo(info data.RoomDiscoInfo) {
 	v.warnings.add(
+		roomViewWarningIconNotEncrypted,
 		i18n.Local("Communication in this room is not encrypted"),
 		i18n.Local("Please be aware that communication in chat rooms "+
 			"is not encrypted - anyone that can intercept communication between you and "+
@@ -19,12 +34,14 @@ func (v *roomView) addRoomWarningsBasedOnInfo(info data.RoomDiscoInfo) {
 	switch info.AnonymityLevel {
 	case "semi":
 		v.warnings.add(
+			roomViewWarningIconPartiallyAnonymous,
 			i18n.Local("This room is partially anonymous"),
 			i18n.Local("This means that only moderators can connect "+
 				"your nickname with your real username (your JID)."),
 		)
 	case "no":
 		v.warnings.add(
+			roomViewWarningIconNotAnonymous,
 			i18n.Local("This room is not anonymous"),
 			i18n.Local("This means that any person in this room "+
 				"can connect your nickname with your real username (your JID)."),
@@ -36,6 +53,7 @@ func (v *roomView) addRoomWarningsBasedOnInfo(info data.RoomDiscoInfo) {
 
 	if info.Logged {
 		v.warnings.add(
+			roomViewWarningIconPubliclyLogged,
 			i18n.Local("This room is publicly logged"),
 			i18n.Local("This means that everything you and the "+
 				"others in the room say or do can be made public on a website."),
@@ -44,12 +62,14 @@ func (v *roomView) addRoomWarningsBasedOnInfo(info data.RoomDiscoInfo) {
 }
 
 type roomViewWarning struct {
+	icon        roomViewWarningIconType
 	title       string
 	description string
 }
 
-func newRoomViewWarning(title, description string) *roomViewWarning {
+func newRoomViewWarning(icon roomViewWarningIconType, title, description string) *roomViewWarning {
 	return &roomViewWarning{
+		icon,
 		title,
 		description,
 	}
@@ -91,6 +111,7 @@ type roomViewWarnings struct {
 	currentWarningIndex int
 
 	dialog             gtki.Window `gtk-widget:"room-warnings-dialog"`
+	currentIcon        gtki.Image  `gtk-widget:"room-warnings-current-icon"`
 	currentTitle       gtki.Label  `gtk-widget:"room-warnings-current-title"`
 	currentDescription gtki.Label  `gtk-widget:"room-warnings-current-description"`
 	currentInfo        gtki.Label  `gtk-widget:"room-warnings-current-info"`
@@ -173,27 +194,30 @@ func (vw *roomViewWarnings) moveRight() {
 }
 
 // add MUST be called from the UI thread
-func (vw *roomViewWarnings) add(title, description string) {
-	w := newRoomViewWarning(title, description)
+func (vw *roomViewWarnings) add(icon roomViewWarningIconType, title, description string) {
+	w := newRoomViewWarning(icon, title, description)
 	vw.warnings = append(vw.warnings, w)
 	vw.refresh()
 }
 
 // refresh MUST be called from the UI thread
 func (vw *roomViewWarnings) refresh() {
+	warningIcon := roomViewWarningIconDefault
 	warningTitle := ""
 	warningDescription := ""
 	warningInfo := ""
 
 	if warning, ok := vw.warningByIndex(vw.currentWarningIndex); ok {
+		warningIcon = warning.icon
 		warningTitle = warning.title
 		warningDescription = warning.description
-		warningInfo = i18n.Localf("Warning %d of %d", vw.currentWarningIndex+1, vw.total())
+		warningInfo = i18n.Localf("Warning %[1]d of %[2]d", vw.currentWarningIndex+1, vw.total())
 	}
 
 	vw.currentTitle.SetText(warningTitle)
 	vw.currentDescription.SetText(warningDescription)
 	vw.currentInfo.SetText(warningInfo)
+	vw.currentIcon.SetFromPixbuf(getMUCIconPixbuf(warningIcon.name()))
 }
 
 func (vw *roomViewWarnings) warningByIndex(idx int) (*roomViewWarning, bool) {

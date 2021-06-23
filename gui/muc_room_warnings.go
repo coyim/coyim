@@ -6,7 +6,7 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-func (v *roomView) showRoomWarnings(info data.RoomDiscoInfo) {
+func (v *roomView) addRoomWarningsBasedOnInfo(info data.RoomDiscoInfo) {
 	v.warnings.add(
 		i18n.Local("Communication in this room is not encrypted"),
 		i18n.Local("Please be aware that communication in chat rooms "+
@@ -65,11 +65,17 @@ func (v *roomView) newRoomViewWarningsInfoBar() *roomViewWarningsInfoBar {
 	}
 
 	showWarningsButton, _ := g.gtk.ButtonNewWithLabel(i18n.Local("Details"))
-	showWarningsButton.Connect("clicked", v.showWarnings)
+	showWarningsButton.Connect("clicked", func() {
+		v.warnings.show()
+	})
 
 	ib.addActionWidget(showWarningsButton, gtki.RESPONSE_NONE)
 
 	return ib
+}
+
+func (wi *roomViewWarningsInfoBar) hide() {
+	wi.infoBar.SetVisible(false)
 }
 
 type roomViewWarningsDirection string
@@ -167,10 +173,6 @@ func (vw *roomViewWarnings) refresh() {
 	vw.currentTitle.SetText(warningTitle)
 	vw.currentDescription.SetText(warningDescription)
 	vw.currentInfo.SetText(warningInfo)
-}
-
-func (wi *roomViewWarningsInfoBar) hide() {
-	wi.infoBar.SetVisible(false)
 }
 
 func (vw *roomViewWarnings) warningByIndex(idx int) (*roomViewWarning, bool) {

@@ -155,7 +155,7 @@ func (v *roomView) roomDiscoInfoReceivedEvent(di data.RoomDiscoInfo) {
 	v.loadingViewOverlay.hide()
 
 	v.warnings.clear()
-	v.showRoomWarnings(di)
+	v.addRoomWarningsBasedOnInfo(di)
 	v.privacityWarningBox.PackStart(v.warningsInfoBar.view(), true, false, 0)
 }
 
@@ -203,10 +203,6 @@ func (v *roomView) disableRoomView() {
 		v.account.removeRoomView(v.roomID())
 		v.warningsInfoBar.hide()
 	})
-}
-
-func (v *roomView) showWarnings() {
-	v.warnings.show()
 }
 
 func (v *roomView) onDestroyWindow() {

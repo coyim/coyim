@@ -123,38 +123,6 @@
           </packing>
         </child>
         <child type="overlay">
-          <object class="GtkOverlay" id="room-messages-overlay">
-            <property name="hexpand">True</property>
-            <property name="vexpand">True</property>
-            <child>
-              <object class="GtkBox" id="room-messages-overlay-box">
-                <property name="visible">True</property>
-                <property name="hexpand">True</property>
-                <property name="vexpand">True</property>
-                <property name="orientation">vertical</property>
-                <child>
-                  <object class="GtkBox" id="room-messages-box">
-                    <property name="visible">True</property>
-                    <property name="halign">end</property>
-                    <property name="orientation">vertical</property>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="index">-1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="index">2</property>
-          </packing>
-        </child>
-        <child type="overlay">
           <object class="GtkOverlay" id="room-notifications-overlay">
             <property name="visible">True</property>
             <child>

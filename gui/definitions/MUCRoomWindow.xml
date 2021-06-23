@@ -1,6 +1,6 @@
 <interface>
   <object class="GtkWindow" id="room-window">
-    <property name="width_request">800</property>
+    <property name="width_request">900</property>
     <property name="height_request">600</property>
     <property name="window_position">center</property>
     <property name="gravity">center</property>

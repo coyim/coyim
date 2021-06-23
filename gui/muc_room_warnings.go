@@ -29,26 +29,26 @@ func (v *roomView) addRoomWarningsBasedOnInfo(info data.RoomDiscoInfo) {
 	v.warnings.add(
 		roomViewWarningIconNotEncrypted,
 		i18n.Local("Communication in this room is not encrypted"),
-		i18n.Local("Please be aware that communication in chat rooms "+
-			"is not encrypted - anyone that can intercept communication between you and "+
-			"the server - and the server itself - will be able to see what you are saying "+
-			"in this chat room. Only join this room and communicate here if you trust the "+
-			"server to not be hostile."),
+		i18n.Local("Please be aware that communication in chat rooms is not encrypted - "+
+			"anyone that can intercept communication between you and the server - "+
+			"and the server itself - will be able to see what you are saying in this "+
+			"chat room. Only join this room and communicate here if you trust the server "+
+			"to not be hostile."),
 	)
 
 	switch info.AnonymityLevel {
 	case "semi":
 		v.warnings.add(
 			roomViewWarningIconPartiallyAnonymous,
-			i18n.Local("This room is partially anonymous"),
-			i18n.Local("This means that only moderators can connect "+
-				"your nickname with your real username (your JID)."),
+			i18n.Local("Partially anonymous room"),
+			i18n.Local("This room is partially anonymous. This means that only moderators "+
+				"can connect your nickname with your real username (your JID)."),
 		)
 	case "no":
 		v.warnings.add(
 			roomViewWarningIconNotAnonymous,
-			i18n.Local("This room is not anonymous"),
-			i18n.Local("This means that any person in this room "+
+			i18n.Local("Non-anonymous room"),
+			i18n.Local("This room is not anonymous. This means that any person in this room "+
 				"can connect your nickname with your real username (your JID)."),
 		)
 	default:
@@ -59,8 +59,8 @@ func (v *roomView) addRoomWarningsBasedOnInfo(info data.RoomDiscoInfo) {
 	if info.Logged {
 		v.warnings.add(
 			roomViewWarningIconPubliclyLogged,
-			i18n.Local("This room is publicly logged"),
-			i18n.Local("This means that everything you and the "+
+			i18n.Local("Publicly logged room"),
+			i18n.Local("This room is publicly logged, meaning that everything you and the "+
 				"others in the room say or do can be made public on a website."),
 		)
 	}

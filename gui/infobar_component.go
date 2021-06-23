@@ -95,7 +95,10 @@ func (ib *infoBarComponent) isClosable() bool {
 }
 
 func (ib *infoBarComponent) onClose(f func()) {
-	ib.onCloseCallback = f
+	if f != nil {
+		ib.onCloseCallback = f
+		ib.setClosable(true)
+	}
 }
 
 func (ib *infoBarComponent) view() gtki.InfoBar {

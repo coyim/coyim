@@ -130,22 +130,6 @@ func (s *mucStylesProvider) setRoomWarningsStyles(dialog gtki.Window) {
 	})
 }
 
-func (s *mucStylesProvider) setRoomWarningsBoxStyle(b gtki.Box) {
-	s.setBoxStyle(b, style{
-		"padding": "12px",
-	})
-}
-
-func (s *mucStylesProvider) setRoomWarningsMessageBoxStyle(b gtki.Box) {
-	s.setBoxStyle(b, style{
-		"color":            s.colors.roomWarningForeground,
-		"background-color": s.colors.roomWarningBackground,
-		"border":           s.border(1, "solid", s.colors.roomWarningBorder),
-		"border-radius":    "4px",
-		"padding":          "10px",
-	})
-}
-
 func (s *mucStylesProvider) setRoomMessagesBoxStyle(b gtki.Box) {
 	s.setBoxStyle(b, style{
 		"background-color": s.colors.roomMessagesBackground,
@@ -156,12 +140,6 @@ func (s *mucStylesProvider) setRoomMessagesBoxStyle(b gtki.Box) {
 func (s *mucStylesProvider) setLabelBoldStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
 		"font-weight": "bold",
-	})
-}
-
-func (s *mucStylesProvider) setRoomOverlayMessagesBoxStyle(b gtki.Box) {
-	s.setBoxStyle(b, style{
-		"background-color": s.rgba(0, 0, 0, 0.5),
 	})
 }
 

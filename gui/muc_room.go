@@ -47,9 +47,6 @@ type roomView struct {
 
 	window                 gtki.Window   `gtk-widget:"room-window"`
 	overlay                gtki.Overlay  `gtk-widget:"room-overlay"`
-	messagesOverlay        gtki.Overlay  `gtk-widget:"room-messages-overlay"`
-	messagesOverlayBox     gtki.Box      `gtk-widget:"room-messages-overlay-box"`
-	messagesBox            gtki.Box      `gtk-widget:"room-messages-box"`
 	privacityWarningBox    gtki.Box      `gtk-widget:"room-privacity-warnings-box"`
 	loadingNotificationBox gtki.Box      `gtk-widget:"room-loading-notification-box"`
 	content                gtki.Box      `gtk-widget:"room-main-box"`
@@ -58,7 +55,7 @@ type roomView struct {
 
 	notifications *roomNotifications
 
-	warnings           *roomViewWarningsOverlay
+	warnings           *roomViewWarnings
 	warningsInfoBar    *roomViewWarningsInfoBar
 	loadingViewOverlay *roomViewLoadingOverlay
 
@@ -96,7 +93,7 @@ func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
 	view.roster = view.newRoomViewRoster()
 	view.conv = view.newRoomViewConversation()
 
-	view.warnings = view.newRoomViewWarningsOverlay()
+	view.warnings = view.newRoomViewWarnings()
 	view.warningsInfoBar = view.newRoomViewWarningsInfoBar()
 	view.loadingViewOverlay = view.newRoomViewLoadingOverlay()
 
@@ -209,19 +206,7 @@ func (v *roomView) disableRoomView() {
 }
 
 func (v *roomView) showWarnings() {
-	mucStyles.setRoomMessagesBoxStyle(v.messagesBox)
-
 	v.warnings.show()
-	v.showNotificationsOverlay()
-}
-
-func (v *roomView) showNotificationsOverlay() {
-	mucStyles.setRoomOverlayMessagesBoxStyle(v.messagesOverlayBox)
-	v.messagesOverlay.Show()
-}
-
-func (v *roomView) closeNotificationsOverlay() {
-	v.messagesOverlay.Hide()
 }
 
 func (v *roomView) onDestroyWindow() {

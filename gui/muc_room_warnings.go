@@ -169,67 +169,8 @@ func (vw *roomViewWarnings) refresh() {
 	vw.currentInfo.SetText(warningInfo)
 }
 
-type roomViewWarningsOverlay struct {
-	warnings []*roomViewWarning
-	onClose  func()
-
-	box      gtki.Box      `gtk-widget:"warningsBox"`
-	revealer gtki.Revealer `gtk-widget:"revealer"`
-}
-
-func (v *roomView) newRoomViewWarningsOverlay() *roomViewWarningsOverlay {
-	o := &roomViewWarningsOverlay{
-		onClose: v.closeNotificationsOverlay,
-	}
-
-	builder := newBuilder("MUCRoomWarningsOverlay")
-	panicOnDevError(builder.bindObjects(o))
-
-	builder.ConnectSignals(map[string]interface{}{
-		"on_close": o.close,
-	})
-
-	mucStyles.setRoomWarningsBoxStyle(o.box)
-
-	v.messagesBox.Add(o.revealer)
-
-	return o
-}
-
-func (o *roomViewWarningsOverlay) add(text string) {
-	w := newRoomViewWarning(text)
-	o.warnings = append(o.warnings, w)
-
-	mucStyles.setRoomWarningsMessageBoxStyle(w.bar)
-
-	o.box.PackStart(w.bar, false, false, 5)
-
-	o.box.ShowAll()
-}
-
-func (o *roomViewWarningsOverlay) show() {
-	o.revealer.SetRevealChild(true)
-}
-
 func (wi *roomViewWarningsInfoBar) hide() {
 	wi.infoBar.SetVisible(false)
-}
-
-func (o *roomViewWarningsOverlay) hide() {
-	o.revealer.SetRevealChild(false)
-}
-
-func (o *roomViewWarningsOverlay) close() {
-	o.hide()
-	o.onClose()
-}
-
-func (o *roomViewWarningsOverlay) clear() {
-	warnings := o.warnings
-	for _, w := range warnings {
-		o.box.Remove(w.bar)
-	}
-	o.warnings = nil
 }
 
 func (vw *roomViewWarnings) warningByIndex(idx int) (*roomViewWarning, bool) {

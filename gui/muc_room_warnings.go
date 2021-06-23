@@ -245,6 +245,7 @@ func (vw *roomViewWarnings) clear() {
 // show MUST be called from the UI thread
 func (vw *roomViewWarnings) show() {
 	vw.dialog.Show()
+	vw.refresh()
 }
 
 func simpleWindowShortcutCall(fn func()) func(gtki.Window) {

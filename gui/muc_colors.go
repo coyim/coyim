@@ -28,9 +28,6 @@ type mucColorSet struct {
 	roomOverlayBackground             string
 	roomOverlayContentForeground      string
 
-	roomWarningForeground                  string
-	roomWarningBackground                  string
-	roomWarningBorder                      string
 	roomWarningsDialogBackground           string
 	roomWarningsDialogDecorationBackground string
 	roomWarningsDialogHeaderBackground     string
@@ -122,9 +119,6 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		roomOverlayBackground:             "#000000",
 		roomOverlayContentForeground:      "@theme_fg_color",
 
-		roomWarningForeground:                  "#744210",
-		roomWarningBackground:                  "#FEFCBF",
-		roomWarningBorder:                      "#D69E2E",
 		roomWarningsDialogBackground:           "none",
 		roomWarningsDialogDecorationBackground: "@theme_bg_color",
 		roomWarningsDialogHeaderBackground:     "none",
@@ -210,9 +204,6 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		roomOverlayBackground:             "#000000",
 		roomOverlayContentForeground:      "#333333",
 
-		roomWarningForeground:                  "#744210",
-		roomWarningBackground:                  "#FEFCBF",
-		roomWarningBorder:                      "#D69E2E",
 		roomWarningsDialogBackground:           "none",
 		roomWarningsDialogDecorationBackground: "@theme_bg_color",
 		roomWarningsDialogHeaderBackground:     "none",

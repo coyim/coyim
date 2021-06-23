@@ -90,6 +90,46 @@ func (s *mucStylesProvider) setRoomToolbarNameLabelDisabledStyle(l gtki.Label) {
 	})
 }
 
+func (s *mucStylesProvider) setRoomWarningsStyles(dialog gtki.Window) {
+	s.setWidgetStyles(dialog, styles{
+		".warnings-dialog": style{
+			"background": s.colors.roomWarningsDialogBackground,
+			"border":     "none",
+		},
+		".warnings-dialog decoration": style{
+			"background":    s.colors.roomWarningsDialogDecorationBackground,
+			"border-radius": "16px",
+			"border":        "none",
+			"box-shadow":    s.boxShadow("0 12px 20px", s.rgba(0, 0, 0, 0.15)),
+		},
+		".warnings-dialog .warnings-dialog-header": style{
+			"border":        "none",
+			"background":    s.colors.roomWarningsDialogHeaderBackground,
+			"text-shadow":   "none",
+			"box-shadow":    "none",
+			"border-radius": "16px 16px 0 0",
+			"padding":       "12px 12px 0 12px",
+		},
+		".warnings-dialog .warnings-dialog-content": style{
+			"border":        "none",
+			"background":    s.colors.roomWarningsDialogContentBackground,
+			"border-radius": "0 0 16px 16px",
+		},
+		".warnings-dialog .warning-title": style{
+			"font-size":   "large",
+			"font-weight": "bold",
+		},
+		".warnings-dialog .warning-description": style{
+			"font-size": "medium",
+		},
+		".warnings-dialog .warning-current-info": style{
+			"font-size":  "small",
+			"font-style": "italic",
+			"color":      s.colors.roomWarningsCurrentInfoForeground,
+		},
+	})
+}
+
 func (s *mucStylesProvider) setRoomWarningsBoxStyle(b gtki.Box) {
 	s.setBoxStyle(b, style{
 		"padding": "12px",

@@ -141,7 +141,17 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 		v.selfOccupantAffiliationRoleUpdatedEvent(t.selfAffiliationRoleUpdate)
 	case selfOccupantRoleUpdatedEvent:
 		v.selfOccupantRoleUpdatedEvent(t.selfRoleUpdate)
+	case occupantSelfJoinedEvent:
+		v.selfOccupantJoinedEvent()
 	}
+}
+
+func (v *roomView) selfOccupantJoinedEvent() {
+	doInUIThread(func() {
+		v.warningsInfoBar.onClose(func() {
+			v.warningsInfoBar.hide()
+		})
+	})
 }
 
 func (v *roomView) requestRoomDiscoInfo() {

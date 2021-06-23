@@ -1,15 +1,12 @@
 package gui
 
 import (
-	"sync"
-
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type roomViewWarning struct {
 	text string
-	lock sync.Mutex
 
 	bar     gtki.Box   `gtk-widget:"warning-infobar"`
 	message gtki.Label `gtk-widget:"message"`

@@ -85,6 +85,10 @@ func (ib *infoBarComponent) initStyleAndIcon() {
 		ib.icon.SetFromPixbuf(getMUCIconPixbuf(icoName))
 		ib.icon.Show()
 	}
+
+	if actions, err := ib.infoBar.GetActionArea(); err == nil {
+		actions.SetProperty("margin", 0)
+	}
 }
 
 // setClosable MUST be called from the UI thread

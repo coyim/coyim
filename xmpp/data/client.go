@@ -120,7 +120,7 @@ type ClientMessage struct {
 	// but string is much more convenient.
 	Subject    *Subject    `xml:",omitempty"`
 	Body       string      `xml:"body"`
-	Thread     string      `xml:"thread"`
+	Thread     string      `xml:"thread,omitempty"`
 	Delay      *Delay      `xml:"delay,omitempty"`
 	Encryption *Encryption `xml:"encryption,omitempty"`
 

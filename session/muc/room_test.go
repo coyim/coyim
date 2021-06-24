@@ -84,11 +84,11 @@ func (s *MucSuite) Test_Room_Publish(c *C) {
 
 func (s *MucSuite) Test_Room_History(c *C) {
 	r := NewRoom(jid.ParseBare("foo@bar.com"))
-	roomHistory := r.GetHistory()
-	c.Assert(roomHistory.GetHistory(), HasLen, 0)
+	c.Assert(r.HasHistory(), Equals, false)
 
 	r.AddHistoryMessage("juanito", "test message", time.Now())
-	roomHistory = r.GetHistory()
+	c.Assert(r.HasHistory(), Equals, true)
+	roomHistory := r.GetHistory()
 	c.Assert(roomHistory.GetHistory(), HasLen, 1)
 
 }

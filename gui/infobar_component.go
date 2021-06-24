@@ -50,32 +50,41 @@ func (u *gtkUI) newInfoBarComponent(text string, messageType gtki.MessageType) *
 		messageType: messageType,
 	}
 
+	ib.initBuilder()
+	ib.initDefaults()
+	ib.initStyleAndIcon()
+
+	return ib
+}
+
+func (ib *infoBarComponent) initBuilder() {
 	builder := newBuilder("InfoBar")
 	panicOnDevError(builder.bindObjects(ib))
 
 	builder.ConnectSignals(map[string]interface{}{
 		"handle-response": func(info gtki.InfoBar, response gtki.ResponseType) {
-			if response != gtki.RESPONSE_CLOSE {
-				return
-			}
-
-			if ib.canBeClosed && ib.onCloseCallback != nil {
-				ib.onCloseCallback()
+			if response == gtki.RESPONSE_CLOSE {
+				if ib.canBeClosed && ib.onCloseCallback != nil {
+					ib.onCloseCallback()
+				}
 			}
 		},
 	})
+}
 
+func (ib *infoBarComponent) initDefaults() {
 	ib.titleLabel.SetText(ib.text)
 	ib.infoBar.SetMessageType(ib.messageType)
+}
+
+func (ib *infoBarComponent) initStyleAndIcon() {
 	mucStyles.setInfoBarStyle(ib.infoBar)
 
-	tp := infoBarTypeForMessageType(messageType)
+	tp := infoBarTypeForMessageType(ib.messageType)
 	if icoName, ok := infoBarIconNames[tp]; ok {
 		ib.icon.SetFromPixbuf(getMUCIconPixbuf(icoName))
 		ib.icon.Show()
 	}
-
-	return ib
 }
 
 // setClosable MUST be called from the UI thread

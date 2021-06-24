@@ -258,6 +258,7 @@ func infoBarTypeColorsFromSet(tp infoBarType, c mucColorSet) infoBarColorInfo {
 	return infoBarColorInfo{
 		background:             fmt.Sprintf("linear-gradient(0deg, %s 0%%, %s 100%%)", bgStart, bgStop),
 		titleColor:             tc,
+		borderColor:            colorTransparent,
 		buttonBackground:       c.infoBarButtonBackground,
 		buttonColor:            c.infoBarButtonForeground,
 		buttonHoverBackground:  c.infoBarButtonHoverBackground,

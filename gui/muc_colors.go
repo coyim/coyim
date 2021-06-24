@@ -5,6 +5,16 @@ import (
 	"strings"
 )
 
+const (
+	colorBlack                      = "#000000"
+	colorWhite                      = "#FFFFFF"
+	colorTransparent                = "transparent"
+	colorThemeBackground            = "@theme_bg_color"
+	colorThemeForeground            = "@theme_fg_color"
+	colorThemeInsensitiveBackground = "@insensitive_bg_color"
+	colorThemeInsensitiveForeground = "@insensitive_fg_color"
+)
+
 type mucColorSet struct {
 	warningForeground       string
 	warningBackground       string
@@ -105,25 +115,25 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		nicknameForeground:      "#395BA3",
 		subjectForeground:       "#000080",
 		infoMessageForeground:   "#395BA3",
-		messageForeground:       "#000000",
+		messageForeground:       colorBlack,
 		errorForeground:         cs.errorForeground,
 		configurationForeground: "#9a04bf",
 
 		roomMessagesBackground:     "@theme_base_color",
-		roomNameDisabledForeground: "@insensitive_fg_color",
-		roomSubjectForeground:      "@insensitive_fg_color",
+		roomNameDisabledForeground: colorThemeInsensitiveForeground,
+		roomSubjectForeground:      colorThemeInsensitiveForeground,
 
-		roomOverlaySolidBackground:        "@theme_bg_color",
-		roomOverlayContentSolidBackground: "transparent",
-		roomOverlayContentBackground:      "@theme_bg_color",
-		roomOverlayBackground:             "#000000",
-		roomOverlayContentForeground:      "@theme_fg_color",
+		roomOverlaySolidBackground:        colorThemeBackground,
+		roomOverlayContentSolidBackground: colorTransparent,
+		roomOverlayContentBackground:      colorThemeBackground,
+		roomOverlayBackground:             colorBlack,
+		roomOverlayContentForeground:      colorThemeForeground,
 
 		roomWarningsDialogBackground:           "none",
-		roomWarningsDialogDecorationBackground: "@theme_bg_color",
+		roomWarningsDialogDecorationBackground: colorThemeBackground,
 		roomWarningsDialogHeaderBackground:     "none",
 		roomWarningsDialogContentBackground:    "none",
-		roomWarningsCurrentInfoForeground:      "@insensitive_fg_color",
+		roomWarningsCurrentInfoForeground:      colorThemeInsensitiveForeground,
 
 		rosterGroupBackground:        "#F5F5F4",
 		rosterGroupForeground:        "#1C1917",
@@ -148,7 +158,7 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		occupantStatusExtendedAwayBackground: "#FFFBEB",
 		occupantStatusExtendedAwayBorder:     "#D97706",
 
-		infoBarDefaultBorderColor:          "@theme_bg_color",
+		infoBarDefaultBorderColor:          colorThemeBackground,
 		infoBarTypeInfoBackgroundStart:     "#3F6212",
 		infoBarTypeInfoBackgroundStop:      "#4D7C0F",
 		infoBarTypeInfoTitle:               "#ECFEFF",
@@ -165,11 +175,11 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		infoBarTypeOtherBackgroundStop:     "#0369A1",
 		infoBarTypeOtherTitle:              "#F0FDFA",
 		infoBarButtonBackground:            "rgba(0,0,0,0.25)",
-		infoBarButtonForeground:            "#FFFFFF",
+		infoBarButtonForeground:            colorWhite,
 		infoBarButtonHoverBackground:       "rgba(0,0,0,0.35)",
-		infoBarButtonHoverForeground:       "#FFFFFF",
+		infoBarButtonHoverForeground:       colorWhite,
 		infoBarButtonActiveBackground:      "rgba(0,0,0,0.45)",
-		infoBarButtonActiveForeground:      "#FFFFFF",
+		infoBarButtonActiveForeground:      colorWhite,
 
 		entryErrorBackground:   "#FFF5F6",
 		entryErrorBorderShadow: "#FF7F50",
@@ -187,28 +197,28 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		errorForeground:         cs.errorForeground,
 		someoneJoinedForeground: "#297316",
 		someoneLeftForeground:   "#731629",
-		timestampForeground:     "@insensitive_fg_color",
+		timestampForeground:     colorThemeInsensitiveForeground,
 		nicknameForeground:      "#395BA3",
 		subjectForeground:       "#000080",
 		infoMessageForeground:   "#E34267",
-		messageForeground:       "#000000",
+		messageForeground:       colorBlack,
 		configurationForeground: "#9a04bf",
 
 		roomMessagesBackground:     "@theme_base_color",
-		roomNameDisabledForeground: "@insensitive_fg_color",
-		roomSubjectForeground:      "@insensitive_fg_color",
+		roomNameDisabledForeground: colorThemeInsensitiveForeground,
+		roomSubjectForeground:      colorThemeInsensitiveForeground,
 
 		roomOverlaySolidBackground:        "@theme_base_color",
-		roomOverlayContentSolidBackground: "transparent",
+		roomOverlayContentSolidBackground: colorTransparent,
 		roomOverlayContentBackground:      "@theme_base_color",
-		roomOverlayBackground:             "#000000",
+		roomOverlayBackground:             colorBlack,
 		roomOverlayContentForeground:      "#333333",
 
 		roomWarningsDialogBackground:           "none",
-		roomWarningsDialogDecorationBackground: "@theme_bg_color",
+		roomWarningsDialogDecorationBackground: colorThemeBackground,
 		roomWarningsDialogHeaderBackground:     "none",
 		roomWarningsDialogContentBackground:    "none",
-		roomWarningsCurrentInfoForeground:      "@insensitive_fg_color",
+		roomWarningsCurrentInfoForeground:      colorThemeInsensitiveForeground,
 
 		rosterGroupBackground:        "#1C1917",
 		rosterGroupForeground:        "#FAFAF9",
@@ -233,7 +243,7 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		occupantStatusExtendedAwayBackground: "#FFFBEB",
 		occupantStatusExtendedAwayBorder:     "#D97706",
 
-		infoBarDefaultBorderColor:          "@theme_bg_color",
+		infoBarDefaultBorderColor:          colorThemeBackground,
 		infoBarTypeInfoBackgroundStart:     "#3F6212",
 		infoBarTypeInfoBackgroundStop:      "#4D7C0F",
 		infoBarTypeInfoTitle:               "#ECFEFF",
@@ -250,11 +260,11 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		infoBarTypeOtherBackgroundStop:     "#0369A1",
 		infoBarTypeOtherTitle:              "#F0FDFA",
 		infoBarButtonBackground:            "rgba(0,0,0,0.25)",
-		infoBarButtonForeground:            "#FFFFFF",
+		infoBarButtonForeground:            colorWhite,
 		infoBarButtonHoverBackground:       "rgba(0,0,0,0.35)",
-		infoBarButtonHoverForeground:       "#FFFFFF",
+		infoBarButtonHoverForeground:       colorWhite,
 		infoBarButtonActiveBackground:      "rgba(0,0,0,0.45)",
-		infoBarButtonActiveForeground:      "#FFFFFF",
+		infoBarButtonActiveForeground:      colorWhite,
 
 		entryErrorBackground:   "#FFF5F6",
 		entryErrorBorderShadow: "#FF7F50",

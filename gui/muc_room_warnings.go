@@ -137,12 +137,8 @@ func (vw *roomViewWarnings) initBuilder() {
 	panicOnDevError(builder.bindObjects(vw))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_warning_go_previous_clicked": func() {
-			vw.move(roomViewWarningsPreviousDirection)
-		},
-		"on_warning_go_next_clicked": func() {
-			vw.move(roomViewWarningsNextDirection)
-		},
+		"on_warning_go_previous_clicked": vw.moveLeft,
+		"on_warning_go_next_clicked":     vw.moveRight,
 	})
 }
 

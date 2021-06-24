@@ -139,7 +139,7 @@ func (*Conn) Send(string, string, bool) error {
 }
 
 // SendMessage implements the XMPP connection interface
-func (*Conn) SendMessage(*data.Message) error {
+func (*Conn) SendMessage(*data.ClientMessage) error {
 	return nil
 }
 

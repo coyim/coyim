@@ -102,7 +102,7 @@ type Reading interface {
 // Sending allows for sending of different kinds of data over the XMPP connection
 type Sending interface {
 	Send(string, string, bool) error
-	SendMessage(*data.Message) error
+	SendMessage(*data.ClientMessage) error
 	SendIQ(string, string, interface{}) (<-chan data.Stanza, data.Cookie, error)
 	SendIQReply(string, string, string, interface{}) error
 	SendInitialStreamHeader() error

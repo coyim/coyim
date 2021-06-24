@@ -1307,7 +1307,7 @@ func (s *ConnectionXMPPSuite) Test_conn_SendMessage_withoutID(c *C) {
 	out := &mockConnIOReaderWriter{}
 	cc := &conn{out: out}
 
-	m := &data.Message{}
+	m := &data.ClientMessage{}
 
 	e := cc.SendMessage(m)
 
@@ -1319,7 +1319,7 @@ func (s *ConnectionXMPPSuite) Test_conn_SendMessage_withID(c *C) {
 	out := &mockConnIOReaderWriter{}
 	cc := &conn{out: out}
 
-	m := &data.Message{ID: "hello"}
+	m := &data.ClientMessage{ID: "hello"}
 
 	e := cc.SendMessage(m)
 

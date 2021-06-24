@@ -286,7 +286,7 @@ func getRealJidBasedOnItem(item *xmppData.MUCUserItem) (jid.Full, bool) {
 }
 
 func (m *mucManager) sendMessage(to, from, body string) error {
-	msg := &xmppData.Message{
+	msg := &xmppData.ClientMessage{
 		To:   to,
 		From: from,
 		Body: body,

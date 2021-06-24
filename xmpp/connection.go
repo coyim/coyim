@@ -385,7 +385,7 @@ func (c *conn) Send(to, msg string, otr bool) error {
 }
 
 // SendMessage sends a message to the intended recipient.
-func (c *conn) SendMessage(m *data.Message) error {
+func (c *conn) SendMessage(m *data.ClientMessage) error {
 	if m.ID == "" {
 		m.ID = strconv.FormatUint(uint64(c.getCookie()), 10)
 	}
@@ -396,7 +396,7 @@ func (c *conn) SendMessage(m *data.Message) error {
 	return err
 }
 
-func messageToByteArray(m *data.Message) []byte {
+func messageToByteArray(m *data.ClientMessage) []byte {
 	var outb bytes.Buffer
 
 	_ = xml.NewEncoder(&outb).Encode(m)

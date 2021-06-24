@@ -34,7 +34,7 @@ type infoBarComponent struct {
 	text            string
 	messageType     gtki.MessageType
 	canBeClosed     bool
-	onCloseCallback func()
+	onCloseCallback func() // onCloseCallback will be called from the UI thread
 
 	infoBar    gtki.InfoBar `gtk-widget:"infobar"`
 	timeBox    gtki.Box     `gtk-widget:"time-box"`

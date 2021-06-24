@@ -147,10 +147,8 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 }
 
 func (v *roomView) selfOccupantJoinedEvent() {
-	doInUIThread(func() {
-		v.warningsInfoBar.onClose(func() {
-			v.warningsInfoBar.hide()
-		})
+	v.warningsInfoBar.onClose(func() {
+		v.warningsInfoBar.hide()
 	})
 }
 

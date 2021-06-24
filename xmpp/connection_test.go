@@ -1312,7 +1312,7 @@ func (s *ConnectionXMPPSuite) Test_conn_SendMessage_withoutID(c *C) {
 	e := cc.SendMessage(m)
 
 	c.Assert(e, IsNil)
-	c.Assert(string(out.Written()), Matches, `<message xmlns="jabber:client" from="" id=".+" to="" type=""><body></body></message>`)
+	c.Assert(string(out.Written()), Matches, `<message xmlns="jabber:client" from="" id=".+" to="" type=""></message>`)
 }
 
 func (s *ConnectionXMPPSuite) Test_conn_SendMessage_withID(c *C) {
@@ -1324,7 +1324,7 @@ func (s *ConnectionXMPPSuite) Test_conn_SendMessage_withID(c *C) {
 	e := cc.SendMessage(m)
 
 	c.Assert(e, IsNil)
-	c.Assert(string(out.Written()), Matches, `<message xmlns="jabber:client" from="" id="hello" to="" type=""><body></body></message>`)
+	c.Assert(string(out.Written()), Matches, `<message xmlns="jabber:client" from="" id="hello" to="" type=""></message>`)
 }
 
 func (s *ConnectionXMPPSuite) Test_conn_ReadStanzas_returnsOnStreamClose(c *C) {

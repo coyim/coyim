@@ -97,13 +97,17 @@ func (s *mucStylesProvider) setRoomToolbarNameLabelDisabledStyle(l gtki.Label) {
 }
 
 const (
-	roomWarningDialogSelector          = ".warnings-dialog"
-	roomWarningDialogDecoratorSelector = ".warnings-dialog decoration"
-	roomWarningDialogHeaderSelector    = ".warnings-dialog .warnings-dialog-header"
-	roomWarningDialogContentSelector   = ".warnings-dialog .warnings-dialog-content"
-	roomWarningTitleSelector           = ".warnings-dialog .warning-title"
-	roomWarningDescriptionSelector     = ".warnings-dialog .warning-description"
-	roomWarningCurrentInfoSelector     = ".warnings-dialog .warning-current-info"
+	roomWarningDialogSelector            = ".warnings-dialog"
+	roomWarningDialogDecoratorSelector   = ".warnings-dialog decoration"
+	roomWarningDialogCloseSelector       = ".warnings-dialog .warnings-dialog-close"
+	roomWarningDialogCloseHoverSelector  = ".warnings-dialog .warnings-dialog-close:hover"
+	roomWarningDialogCloseActiveSelector = ".warnings-dialog .warnings-dialog-close:active"
+	roomWarningDialogHeaderSelector      = ".warnings-dialog .warnings-dialog-header"
+	roomWarningDialogContentSelector     = ".warnings-dialog .warnings-dialog-content"
+	roomWarningContent                   = ".warnings-dialog .warning-content"
+	roomWarningTitleSelector             = ".warnings-dialog .warning-title"
+	roomWarningDescriptionSelector       = ".warnings-dialog .warning-description"
+	roomWarningCurrentInfoSelector       = ".warnings-dialog .warning-current-info"
 )
 
 func (s *mucStylesProvider) setRoomWarningsStyles(dialog gtki.Window) {
@@ -118,6 +122,23 @@ func (s *mucStylesProvider) setRoomWarningsStyles(dialog gtki.Window) {
 			"border":        "none",
 			"box-shadow":    s.boxShadow("0 12px 20px", s.rgba(0, 0, 0, 0.15)),
 		},
+		roomWarningDialogCloseSelector: style{
+			"background": "none",
+			"border":     "none",
+			"box-shadow": "none",
+			"padding":    "2px",
+		},
+		roomWarningDialogCloseHoverSelector: style{
+			"background": "none",
+			"border":     "none",
+			"box-shadow": "none",
+		},
+		roomWarningDialogCloseActiveSelector: style{
+			"background": "none",
+			"border":     "none",
+			"box-shadow": "none",
+			"outline":    "none",
+		},
 		roomWarningDialogHeaderSelector: style{
 			"border":        "none",
 			"background":    s.colors.roomWarningsDialogHeaderBackground,
@@ -130,6 +151,9 @@ func (s *mucStylesProvider) setRoomWarningsStyles(dialog gtki.Window) {
 			"border":        "none",
 			"background":    s.colors.roomWarningsDialogContentBackground,
 			"border-radius": "0 0 16px 16px",
+		},
+		roomWarningContent: style{
+			"padding": "50px 12px 12px 12px",
 		},
 		roomWarningTitleSelector: style{
 			"font-size":   "large",

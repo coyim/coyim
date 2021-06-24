@@ -1,5 +1,4 @@
 <interface>
-  <requires lib="gtk+" version="3.20"/>
   <object class="GtkWindow" id="room-warnings-dialog">
     <property name="width_request">560</property>
     <property name="height_request">300</property>
@@ -12,13 +11,11 @@
       <object class="GtkHeaderBar"></object>
     </child>
     <child>
-      <object class="GtkBox">
+      <object class="GtkOverlay">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="border_width">12</property>
             <property name="spacing">24</property>
             <child>
               <object class="GtkButtonBox">
@@ -29,6 +26,7 @@
                 <child>
                   <object class="GtkButton">
                     <property name="visible">True</property>
+                    <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="tooltip_text" translatable="yes">Go to previous [Ctrl + left]</property>
                     <property name="relief">none</property>
@@ -64,7 +62,6 @@
                 <child>
                   <object class="GtkImage" id="room-warnings-current-icon">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="pixel_size">64</property>
                     <property name="icon_name">dialog-warning-symbolic</property>
                   </object>
@@ -140,6 +137,7 @@
                 <child>
                   <object class="GtkButton">
                     <property name="visible">True</property>
+                    <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="tooltip_text" translatable="yes">Go to next [Ctrl + right]</property>
                     <property name="relief">none</property>
@@ -170,14 +168,30 @@
             </style>
           </object>
           <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
+            <property name="index">-1</property>
           </packing>
         </child>
-        <style>
-          <class name="warnings-dialog-content"/>
-        </style>
+        <child type="overlay">
+          <object class="GtkButton">
+            <property name="visible">True</property>
+            <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Close dialog</property>
+            <property name="halign">end</property>
+            <property name="valign">start</property>
+            <property name="border_width">12</property>
+            <signal name="clicked" handler="on_dialog_close" swapped="no"/>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="pixel_size">32</property>
+                <property name="icon_name">window-close-symbolic</property>
+              </object>
+            </child>
+            <style>
+              <class name="warnings-dialog-close"/>
+            </style>
+          </object>
+        </child>
       </object>
     </child>
     <style>

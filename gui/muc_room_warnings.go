@@ -139,6 +139,7 @@ func (vw *roomViewWarnings) initBuilder() {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_warning_go_previous_clicked": vw.moveLeft,
 		"on_warning_go_next_clicked":     vw.moveRight,
+		"on_dialog_close":                vw.close,
 	})
 }
 
@@ -245,6 +246,11 @@ func (vw *roomViewWarnings) clear() {
 func (vw *roomViewWarnings) show() {
 	vw.dialog.Show()
 	vw.refresh()
+}
+
+// close MUST be called from the UI thread
+func (vw *roomViewWarnings) close() {
+	vw.dialog.Hide()
 }
 
 func simpleWindowShortcutCall(fn func()) func(gtki.Window) {

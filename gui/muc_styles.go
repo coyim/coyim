@@ -26,25 +26,25 @@ func initMUCStyles(c mucColorSet) {
 func (s *mucStylesProvider) setScrolledWindowStyle(msw gtki.ScrolledWindow) {
 	updateWithStyle(msw, providerWithStyle("scrolledwindow", style{
 		"border":           "none",
-		"background-color": "@theme_base_color",
+		"background-color": colorThemeBase,
 	}))
 }
 
 func (s *mucStylesProvider) setMessageViewBoxStyle(b gtki.Box) {
 	s.setBoxStyle(b, style{
-		"background-color": "@theme_base_color",
+		"background-color": colorThemeBase,
 	})
 }
 
 func (s *mucStylesProvider) setRoomWindowStyle(w gtki.Window) {
 	s.setWidgetStyle(w, "window", style{
-		"background-color": "@theme_base_color",
+		"background-color": colorThemeBase,
 	})
 }
 
 func (s *mucStylesProvider) setRoomToolbarLobyStyle(b gtki.Box) {
 	s.setBoxStyle(b, style{
-		"background-color": "@theme_bg_color",
+		"background-color": colorThemeBackground,
 	})
 }
 
@@ -55,18 +55,24 @@ func (s *mucStylesProvider) setRoomLoadingInfoBarLabelStyle(l gtki.Label) {
 	})
 }
 
+const (
+	rosterInfoPanelSelector        = ".roster-info-panel"
+	rosterOccupantNickNameSelector = ".occupant-nickname"
+	rosterStatusMessageSelector    = ".status-message"
+)
+
 func (s *mucStylesProvider) setRoomRosterInfoStyle(b gtki.Box) {
 	s.setWidgetStyles(b, styles{
-		".roster-info-panel": style{
-			"background-color": "@theme_bg_color",
+		rosterInfoPanelSelector: style{
+			"background-color": colorThemeBackground,
 		},
-		".occupant-nickname": style{
+		rosterOccupantNickNameSelector: style{
 			"font-weight": "bold",
 			"font-size":   "large",
 		},
-		".status-message": style{
+		rosterStatusMessageSelector: style{
 			"font-style": "italic",
-			"color":      "@insensitive_fg_color",
+			"color":      colorThemeInsensitiveForeground,
 		},
 	})
 }
@@ -90,19 +96,29 @@ func (s *mucStylesProvider) setRoomToolbarNameLabelDisabledStyle(l gtki.Label) {
 	})
 }
 
+const (
+	roomWarningDialogSelector          = ".warnings-dialog"
+	roomWarningDialogDecoratorSelector = ".warnings-dialog decoration"
+	roomWarningDialogHeaderSelector    = ".warnings-dialog .warnings-dialog-header"
+	roomWarningDialogContentSelector   = ".warnings-dialog .warnings-dialog-content"
+	roomWarningTitleSelector           = ".warnings-dialog .warning-title"
+	roomWarningDescriptionSelector     = ".warnings-dialog .warning-description"
+	roomWarningCurrentInfoSelector     = ".warnings-dialog .warning-current-info"
+)
+
 func (s *mucStylesProvider) setRoomWarningsStyles(dialog gtki.Window) {
 	s.setWidgetStyles(dialog, styles{
-		".warnings-dialog": style{
+		roomWarningDialogSelector: style{
 			"background": s.colors.roomWarningsDialogBackground,
 			"border":     "none",
 		},
-		".warnings-dialog decoration": style{
+		roomWarningDialogDecoratorSelector: style{
 			"background":    s.colors.roomWarningsDialogDecorationBackground,
 			"border-radius": "16px",
 			"border":        "none",
 			"box-shadow":    s.boxShadow("0 12px 20px", s.rgba(0, 0, 0, 0.15)),
 		},
-		".warnings-dialog .warnings-dialog-header": style{
+		roomWarningDialogHeaderSelector: style{
 			"border":        "none",
 			"background":    s.colors.roomWarningsDialogHeaderBackground,
 			"text-shadow":   "none",
@@ -110,19 +126,19 @@ func (s *mucStylesProvider) setRoomWarningsStyles(dialog gtki.Window) {
 			"border-radius": "16px 16px 0 0",
 			"padding":       "12px 12px 0 12px",
 		},
-		".warnings-dialog .warnings-dialog-content": style{
+		roomWarningDialogContentSelector: style{
 			"border":        "none",
 			"background":    s.colors.roomWarningsDialogContentBackground,
 			"border-radius": "0 0 16px 16px",
 		},
-		".warnings-dialog .warning-title": style{
+		roomWarningTitleSelector: style{
 			"font-size":   "large",
 			"font-weight": "bold",
 		},
-		".warnings-dialog .warning-description": style{
+		roomWarningDescriptionSelector: style{
 			"font-size": "medium",
 		},
-		".warnings-dialog .warning-current-info": style{
+		roomWarningCurrentInfoSelector: style{
 			"font-size":  "small",
 			"font-style": "italic",
 			"color":      s.colors.roomWarningsCurrentInfoForeground,
@@ -252,7 +268,7 @@ func (s *mucStylesProvider) setRoomDialogErrorComponentHeaderStyle(l gtki.Label)
 func (s *mucStylesProvider) setRoomBanListViewStyles(b gtki.Box) {
 	s.setWidgetStyles(b, styles{
 		".state": style{
-			"background-color": "@theme_base_color",
+			"background-color": colorThemeBase,
 		},
 		".state-title": style{
 			"font-weight": "bold",
@@ -260,7 +276,7 @@ func (s *mucStylesProvider) setRoomBanListViewStyles(b gtki.Box) {
 		},
 		".state-description": style{
 			"font-style": "italic",
-			"color":      "@insensitive_fg_color",
+			"color":      colorThemeInsensitiveForeground,
 		},
 	})
 }

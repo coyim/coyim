@@ -9,6 +9,7 @@ const (
 	colorBlack                      = "#000000"
 	colorWhite                      = "#FFFFFF"
 	colorTransparent                = "transparent"
+	colorThemeBase                  = "@theme_base_color"
 	colorThemeBackground            = "@theme_bg_color"
 	colorThemeForeground            = "@theme_fg_color"
 	colorThemeInsensitiveBackground = "@insensitive_bg_color"
@@ -119,7 +120,7 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		errorForeground:         cs.errorForeground,
 		configurationForeground: "#9a04bf",
 
-		roomMessagesBackground:     "@theme_base_color",
+		roomMessagesBackground:     colorThemeBase,
 		roomNameDisabledForeground: colorThemeInsensitiveForeground,
 		roomSubjectForeground:      colorThemeInsensitiveForeground,
 
@@ -204,13 +205,13 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		messageForeground:       colorBlack,
 		configurationForeground: "#9a04bf",
 
-		roomMessagesBackground:     "@theme_base_color",
+		roomMessagesBackground:     colorThemeBase,
 		roomNameDisabledForeground: colorThemeInsensitiveForeground,
 		roomSubjectForeground:      colorThemeInsensitiveForeground,
 
-		roomOverlaySolidBackground:        "@theme_base_color",
+		roomOverlaySolidBackground:        colorThemeBase,
 		roomOverlayContentSolidBackground: colorTransparent,
-		roomOverlayContentBackground:      "@theme_base_color",
+		roomOverlayContentBackground:      colorThemeBase,
 		roomOverlayBackground:             colorBlack,
 		roomOverlayContentForeground:      "#333333",
 

@@ -114,22 +114,19 @@ var (
 	}
 
 	infoBarButtonCloseCommonStyle = style{
-		"padding":     "0",
-		"background":  "none",
-		"border":      "none",
-		"box-shadow":  "none",
-		"text-shadow": "none",
-		"outline":     "none",
+		"border-radius": "200px",
+		"border":        "none",
+		"box-shadow":    "none",
+		"text-shadow":   "none",
+		"outline":       "none",
 	}
 
 	infoBarButtonCloseHoverCommonStyle = style{
-		"background": "none",
 		"border":     "none",
 		"box-shadow": "none",
 	}
 
 	infoBarButtonCloseActiveCommonStyle = style{
-		"background": "none",
 		"border":     "none",
 		"box-shadow": "none",
 		"outline":    "none",
@@ -177,6 +174,21 @@ func (ibst *infoBarStyle) childStyles() styles {
 		"color":      ibst.colors.buttonActiveColor,
 	})
 
+	infoBarButtonCloseStyle := mergeStyles(infoBarButtonCloseCommonStyle, style{
+		"background": ibst.colors.buttonBackground,
+		"color":      ibst.colors.buttonColor,
+	})
+
+	infoBarButtonCloseHoverStyle := mergeStyles(infoBarButtonCloseHoverCommonStyle, style{
+		"background": ibst.colors.buttonHoverBackground,
+		"color":      ibst.colors.buttonHoverColor,
+	})
+
+	infoBarButtonCloseActiveStyle := mergeStyles(infoBarButtonCloseActiveCommonStyle, style{
+		"background": ibst.colors.buttonActiveBackground,
+		"color":      ibst.colors.buttonActiveColor,
+	})
+
 	return styles{
 		infoBarRevealerBoxSelector:         infoBarRevealerBoxCommonStyle,
 		infoBarContentSelector:             infoBarContentCommonStyle,
@@ -185,9 +197,9 @@ func (ibst *infoBarStyle) childStyles() styles {
 		infoBarActionsButtonLabelSelector:  infoBarActionsButtonLabelCommonStyle,
 		infoBarActionsButtonHoverSelector:  infoBarActionsButtonHoverStyle,
 		infoBarActionsButtonActiveSelector: infoBarActionsButtonActiveStyle,
-		infoBarButtonCloseSelector:         infoBarButtonCloseCommonStyle,
-		infoBarButtonCloseHoverSelector:    infoBarButtonCloseHoverCommonStyle,
-		infoBarButtonCloseActiveSelector:   infoBarButtonCloseActiveCommonStyle,
+		infoBarButtonCloseSelector:         infoBarButtonCloseStyle,
+		infoBarButtonCloseHoverSelector:    infoBarButtonCloseHoverStyle,
+		infoBarButtonCloseActiveSelector:   infoBarButtonCloseActiveStyle,
 	}
 }
 

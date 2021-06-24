@@ -17,42 +17,42 @@ var timeTranslators []timeTranslator
 func getTimeTranslators() []timeTranslator {
 	if len(timeTranslators) == 0 {
 		timeTranslators = []timeTranslator{
-			timeTranslator{
+			{
 				0, 0, 0,
 				checkTimeToday,
 				func(t time.Time) string {
 					return i18n.Local("Today")
 				},
 			},
-			timeTranslator{
+			{
 				-1, 0, 0,
 				checkTimeAfter,
 				func(t time.Time) string {
 					return i18n.Local("Yesterday")
 				},
 			},
-			timeTranslator{
+			{
 				-2, 0, 0,
 				checkTimeAfter,
 				func(t time.Time) string {
 					return i18n.Local("Two days ago")
 				},
 			},
-			timeTranslator{
+			{
 				-3, 0, 0,
 				checkTimeAfter,
 				func(t time.Time) string {
 					return i18n.Local("Three days ago")
 				},
 			},
-			timeTranslator{
+			{
 				-4, 0, 0,
 				checkTimeAfter,
 				func(t time.Time) string {
 					return i18n.Local("Four days ago")
 				},
 			},
-			timeTranslator{
+			{
 				0, -1, 0,
 				checkTimeAfter,
 				func(t time.Time) string {

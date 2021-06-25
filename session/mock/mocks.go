@@ -142,7 +142,7 @@ func (*SessionMock) SendMUCMessage(to, from, body string) error {
 }
 
 // UpdateRoomSubject is the implementation for Session interface
-func (*SessionMock) UpdateRoomSubject(to, from, subject string) error {
+func (*SessionMock) UpdateRoomSubject(roomID jid.Bare, actor, subject string) error {
 	return nil
 }
 

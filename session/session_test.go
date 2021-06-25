@@ -1626,7 +1626,7 @@ func (s *SessionSuite) Test_session_UpdateRoomSubject(c *C) {
 		published = append(published, ev)
 	})
 
-	res := sess.UpdateRoomSubject("to@foo.com", "from@bar.com", "It's a new subject for this room")
+	res := sess.UpdateRoomSubject(jid.ParseBare("to@foo.com"), "from@bar.com", "It's a new subject for this room")
 
 	c.Assert(res, IsNil)
 	c.Assert(hook.Entries, HasLen, 0)

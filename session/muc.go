@@ -302,10 +302,10 @@ func (m *mucManager) sendMessage(to, from, body string) error {
 	return nil
 }
 
-func (m *mucManager) updateRoomSubject(to, from, subject string) error {
+func (m *mucManager) updateRoomSubject(roomID jid.Bare, actor, subject string) error {
 	err := m.conn().SendMessage(&xmppData.ClientMessage{
-		To:   to,
-		From: from,
+		To:   roomID.String(),
+		From: actor,
 		Subject: &xmppData.Subject{
 			Text: subject,
 		},

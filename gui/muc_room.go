@@ -141,15 +141,7 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 		v.selfOccupantAffiliationRoleUpdatedEvent(t.selfAffiliationRoleUpdate)
 	case selfOccupantRoleUpdatedEvent:
 		v.selfOccupantRoleUpdatedEvent(t.selfRoleUpdate)
-	case occupantSelfJoinedEvent:
-		v.selfOccupantJoinedEvent()
 	}
-}
-
-func (v *roomView) selfOccupantJoinedEvent() {
-	v.warningsInfoBar.onClose(func() {
-		v.warningsInfoBar.hide()
-	})
 }
 
 func (v *roomView) requestRoomDiscoInfo() {
@@ -425,11 +417,18 @@ func (v *roomView) switchToLobbyView() {
 	}
 	setFieldLabel(v.lobby.cancelButton, l)
 
+	v.warningsInfoBar.onClose(nil)
+
 	v.lobby.show()
 }
 
 func (v *roomView) switchToMainView() {
 	v.initRoomMain()
+
+	v.warningsInfoBar.onClose(func() {
+		v.warningsInfoBar.hide()
+	})
+
 	v.main.show()
 }
 

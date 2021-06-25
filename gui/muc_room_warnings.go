@@ -251,6 +251,11 @@ func (vw *roomViewWarnings) total() int {
 // clear MUST be called from the UI thread
 func (vw *roomViewWarnings) clear() {
 	vw.warnings = nil
+	vw.reset()
+}
+
+// reset MUST be called from the UI thread
+func (vw *roomViewWarnings) reset() {
 	vw.currentWarningIndex = 0
 	vw.refresh()
 }
@@ -264,6 +269,7 @@ func (vw *roomViewWarnings) show() {
 // close MUST be called from the UI thread
 func (vw *roomViewWarnings) close() {
 	vw.dialog.Hide()
+	vw.reset()
 }
 
 func simpleWindowShortcutCall(fn func()) func(gtki.Window) {

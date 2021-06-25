@@ -29,8 +29,8 @@ func (v *roomView) addRoomWarningsBasedOnInfo(info data.RoomDiscoInfo) {
 	v.warnings.add(
 		roomViewWarningIconNotEncrypted,
 		i18n.Local("Communication in this room is not encrypted"),
-		i18n.Local("Please be aware that communication in chat rooms is not encrypted - "+
-			"anyone that can intercept communication between you and the server - "+
+		i18n.Local("Please be aware that communication in chat rooms is not encrypted. "+
+			"Anyone that can intercept communication between you and the server - "+
 			"and the server itself - will be able to see what you are saying in this "+
 			"chat room. Only join this room and communicate here if you trust the server "+
 			"to not be hostile."),

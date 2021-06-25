@@ -29,6 +29,7 @@ type mucColorSet struct {
 	errorForeground                        string
 	configurationForeground                string
 	roomMessagesBackground                 string
+	roomMessagesBoxShadow                  string
 	roomNameDisabledForeground             string
 	roomSubjectForeground                  string
 	roomOverlaySolidBackground             string
@@ -36,8 +37,10 @@ type mucColorSet struct {
 	roomOverlayContentBackground           string
 	roomOverlayBackground                  string
 	roomOverlayContentForeground           string
+	roomOverlayContentBoxShadow            string
 	roomWarningsDialogBackground           string
 	roomWarningsDialogDecorationBackground string
+	roomWarningsDialogDecorationShadow     string
 	roomWarningsDialogHeaderBackground     string
 	roomWarningsDialogContentBackground    string
 	roomWarningsCurrentInfoForeground      string
@@ -113,6 +116,7 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		errorForeground:                        colorFormat(cs.errorForeground, 1),
 		configurationForeground:                colorFormat("9A04BF", 1),
 		roomMessagesBackground:                 colorThemeBase,
+		roomMessagesBoxShadow:                  colorFormat("000000", 0.35),
 		roomNameDisabledForeground:             colorThemeInsensitiveForeground,
 		roomSubjectForeground:                  colorThemeInsensitiveForeground,
 		roomOverlaySolidBackground:             colorThemeBackground,
@@ -120,8 +124,10 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		roomOverlayContentBackground:           colorThemeBackground,
 		roomOverlayBackground:                  colorFormat("000000", 1),
 		roomOverlayContentForeground:           colorThemeForeground,
+		roomOverlayContentBoxShadow:            colorFormat("000000", 0.5),
 		roomWarningsDialogBackground:           colorNone,
 		roomWarningsDialogDecorationBackground: colorThemeBackground,
+		roomWarningsDialogDecorationShadow:     colorFormat("000000", 0.15),
 		roomWarningsDialogHeaderBackground:     colorNone,
 		roomWarningsDialogContentBackground:    colorNone,
 		roomWarningsCurrentInfoForeground:      colorThemeInsensitiveForeground,
@@ -191,6 +197,7 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		messageForeground:                      colorFormat("000000", 1),
 		configurationForeground:                colorFormat("9a04bf", 1),
 		roomMessagesBackground:                 colorThemeBase,
+		roomMessagesBoxShadow:                  colorFormat("000000", 0.35),
 		roomNameDisabledForeground:             colorThemeInsensitiveForeground,
 		roomSubjectForeground:                  colorThemeInsensitiveForeground,
 		roomOverlaySolidBackground:             colorThemeBase,
@@ -198,8 +205,10 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		roomOverlayContentBackground:           colorThemeBase,
 		roomOverlayBackground:                  colorFormat("000000", 1),
 		roomOverlayContentForeground:           colorFormat("333333", 1),
+		roomOverlayContentBoxShadow:            colorFormat("000000", 0.5),
 		roomWarningsDialogBackground:           colorNone,
 		roomWarningsDialogDecorationBackground: colorThemeBackground,
+		roomWarningsDialogDecorationShadow:     colorFormat("000000", 0.15),
 		roomWarningsDialogHeaderBackground:     colorNone,
 		roomWarningsDialogContentBackground:    colorNone,
 		roomWarningsCurrentInfoForeground:      colorThemeInsensitiveForeground,

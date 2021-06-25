@@ -137,15 +137,18 @@ func getTodayFromStart() time.Time {
 }
 
 func checkTimeToday(t time.Time, tt timeTranslator) bool {
-	return areTheSameDates(t, time.Now())
+	return sameDate(t, time.Now())
 }
 
 func checkTimeAfter(t time.Time, tt timeTranslator) bool {
 	return t.After(getTodayFromStart().AddDate(tt.yearIndex, tt.monthIndex, tt.dayIndex))
 }
 
-func areTheSameDates(d1, d2 time.Time) bool {
-	return d1.Year() == d2.Year() && d1.Month() == d2.Month() && d1.Day() == d2.Day()
+func sameDate(d1, d2 time.Time) bool {
+	t1y, t1m, t1d := d1.In(time.UTC).Date()
+	t2y, t2m, t2d := d2.In(time.UTC).Date()
+
+	return t1d == t2d && t1m == t2m && t1y == t2y
 }
 
 func elapsedFriendlyTime(t time.Time) string {

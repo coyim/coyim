@@ -1,14 +1,18 @@
 <interface>
   <object class="GtkWindow" id="room-warnings-dialog">
-    <property name="width_request">560</property>
-    <property name="height_request">300</property>
+    <property name="width_request">640</property>
+    <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
     <property name="default_width">640</property>
+    <property name="default_height">400</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
     <child type="titlebar">
-      <object class="GtkHeaderBar"></object>
+      <object class="GtkHeaderBar">
+        <property name="title" translatable="yes">Security properties warnings</property>
+        <property name="show_close_button">True</property>
+      </object>
     </child>
     <child>
       <object class="GtkOverlay">
@@ -16,26 +20,34 @@
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <property name="border_width">24</property>
+            <property name="orientation">vertical</property>
             <property name="spacing">24</property>
             <child>
-              <object class="GtkButtonBox">
+              <object class="GtkBox">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
-                <property name="homogeneous">True</property>
-                <property name="layout_style">expand</property>
+                <property name="border_width">24</property>
+                <property name="spacing">24</property>
                 <child>
-                  <object class="GtkButton">
+                  <object class="GtkBox">
+                    <property name="width_request">64</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="tooltip_text" translatable="yes">Go to previous [Ctrl + left]</property>
-                    <property name="relief">none</property>
-                    <signal name="clicked" handler="on_warning_go_previous_clicked" swapped="no"/>
+                    <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkImage">
+                      <object class="GtkImage" id="room-warnings-current-icon">
                         <property name="visible">True</property>
-                        <property name="icon_name">go-previous-symbolic</property>
+                        <property name="halign">center</property>
+                        <property name="valign">start</property>
+                        <property name="pixel_size">64</property>
+                        <property name="icon_name">dialog-warning-symbolic</property>
                       </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>
@@ -44,9 +56,63 @@
                     <property name="position">0</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">12</property>
+                    <child>
+                      <object class="GtkLabel" id="room-warnings-current-title">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Communication in this room is not encrypted</property>
+                        <property name="wrap">True</property>
+                        <property name="selectable">True</property>
+                        <property name="track_visited_links">False</property>
+                        <property name="xalign">0</property>
+                        <property name="yalign">0</property>
+                        <style>
+                          <class name="warning-title"/>
+                        </style>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="room-warnings-current-description">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Please be aware that communication in chat rooms is not encrypted - anyone that can intercept communication between you and the server - and the server itself - will be able to see what you are saying in this chat room. Only join this room and communicate here if you trust the server to not be hostile.</property>
+                        <property name="wrap">True</property>
+                        <property name="selectable">True</property>
+                        <property name="max_width_chars">50</property>
+                        <property name="track_visited_links">False</property>
+                        <property name="xalign">0</property>
+                        <property name="yalign">0</property>
+                        <style>
+                          <class name="warning-description"/>
+                        </style>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <style>
+                  <class name="warning-content"/>
+                </style>
               </object>
               <packing>
-                <property name="expand">False</property>
+                <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="position">0</property>
               </packing>
@@ -54,16 +120,11 @@
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
-                <property name="valign">center</property>
-                <property name="hexpand">True</property>
-                <property name="vexpand">True</property>
                 <property name="orientation">vertical</property>
-                <property name="spacing">24</property>
+                <property name="spacing">12</property>
                 <child>
-                  <object class="GtkImage" id="room-warnings-current-icon">
+                  <object class="GtkSeparator">
                     <property name="visible">True</property>
-                    <property name="pixel_size">64</property>
-                    <property name="icon_name">dialog-warning-symbolic</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -72,14 +133,78 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="room-warnings-current-title">
+                  <object class="GtkBox">
                     <property name="visible">True</property>
-                    <property name="justify">center</property>
-                    <property name="wrap">True</property>
-                    <property name="selectable">True</property>
-                    <style>
-                      <class name="warning-title"/>
-                    </style>
+                    <property name="spacing">24</property>
+                    <child>
+                      <object class="GtkLabel" id="room-warnings-current-info">
+                        <property name="visible">True</property>
+                        <property name="valign">center</property>
+                        <property name="wrap">True</property>
+                        <property name="selectable">True</property>
+                        <property name="track_visited_links">False</property>
+                        <property name="xalign">0</property>
+                        <property name="yalign">0</property>
+                        <style>
+                          <class name="warning-current-info"/>
+                        </style>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButtonBox" id="room-warnings-move-buttons">
+                        <property name="visible">True</property>
+                        <property name="spacing">12</property>
+                        <child>
+                          <object class="GtkButton" id="room-warnings-move-previous-button">
+                            <property name="visible">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Go to previous [Ctrl + left]</property>
+                            <signal name="clicked" handler="on_warning_go_previous_clicked" swapped="no"/>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="visible">True</property>
+                                <property name="icon_name">go-previous-symbolic</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="room-warnings-move-next-button">
+                            <property name="visible">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Go to next [Ctrl + right]</property>
+                            <signal name="clicked" handler="on_warning_go_next_clicked" swapped="no"/>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="visible">True</property>
+                                <property name="pixel_size">16</property>
+                                <property name="icon_name">go-next-symbolic</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -87,80 +212,11 @@
                     <property name="position">1</property>
                   </packing>
                 </child>
-                <child>
-                  <object class="GtkLabel" id="room-warnings-current-description">
-                    <property name="visible">True</property>
-                    <property name="justify">center</property>
-                    <property name="wrap">True</property>
-                    <property name="selectable">True</property>
-                    <property name="xalign">0.5</property>
-                    <property name="yalign">0.5</property>
-                    <style>
-                      <class name="warning-description"/>
-                    </style>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="room-warnings-current-info">
-                    <property name="visible">True</property>
-                    <property name="justify">center</property>
-                    <property name="wrap">True</property>
-                    <property name="selectable">True</property>
-                    <style>
-                      <class name="warning-current-info"/>
-                    </style>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">3</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButtonBox">
-                <property name="visible">True</property>
-                <property name="orientation">vertical</property>
-                <property name="homogeneous">True</property>
-                <property name="layout_style">expand</property>
-                <child>
-                  <object class="GtkButton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="tooltip_text" translatable="yes">Go to next [Ctrl + right]</property>
-                    <property name="relief">none</property>
-                    <signal name="clicked" handler="on_warning_go_next_clicked" swapped="no"/>
-                    <child>
-                      <object class="GtkImage">
-                        <property name="visible">True</property>
-                        <property name="pixel_size">16</property>
-                        <property name="icon_name">go-next-symbolic</property>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <style>
@@ -183,7 +239,6 @@
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
-                <property name="pixel_size">32</property>
                 <property name="icon_name">window-close-symbolic</property>
               </object>
             </child>

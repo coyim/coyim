@@ -1603,6 +1603,37 @@ func (s *SessionSuite) Test_session_SendMUCMessage_works(c *C) {
 	c.Assert(string(mockIn.write), Matches, `<message xmlns="jabber:client" from="from@bar.com" id="[0-9]+" to="to@foo.com" type="groupchat"><body>hello there</body></message>`)
 }
 
+func (s *SessionSuite) Test_session_UpdateRoomSubject(c *C) {
+	l, hook := test.NewNullLogger()
+	l.SetLevel(log.DebugLevel)
+
+	mockIn := &mockConnIOReaderWriter{}
+	conn := xmpp.NewConn(
+		xml.NewDecoder(mockIn),
+		mockIn,
+		"some@one.org/foo",
+	)
+
+	sess := &session{
+		conn:   conn,
+		log:    l,
+		config: &config.ApplicationConfig{},
+	}
+
+	published := []interface{}{}
+
+	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev interface{}) {
+		published = append(published, ev)
+	})
+
+	res := sess.UpdateRoomSubject("to@foo.com", "from@bar.com", "It's a new subject for this room")
+
+	c.Assert(res, IsNil)
+	c.Assert(hook.Entries, HasLen, 0)
+	c.Assert(published, HasLen, 0)
+	c.Assert(string(mockIn.write), Matches, `<message xmlns="jabber:client" from="from@bar.com" id="[0-9]+" to="to@foo.com" type="groupchat"><subject>It's a new subject for this room</subject></message>`)
+}
+
 func (s *SessionSuite) Test_session_CommandManager_accessors(c *C) {
 	sess := &session{}
 	sess.SetCommandManager(nil)

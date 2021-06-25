@@ -141,6 +141,11 @@ func (*SessionMock) SendMUCMessage(to, from, body string) error {
 	return nil
 }
 
+// UpdateRoomSubject is the implementation for Session interface
+func (*SessionMock) UpdateRoomSubject(to, from, subject string) error {
+	return nil
+}
+
 // GetRoomBanList is the implementation for Session interface
 func (*SessionMock) GetRoomBanList(jid.Bare) (<-chan muc.RoomBanList, <-chan error) {
 	return nil, nil

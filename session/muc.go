@@ -302,6 +302,24 @@ func (m *mucManager) sendMessage(to, from, body string) error {
 	return nil
 }
 
+func (m *mucManager) updateRoomSubject(to, from, subject string) error {
+	err := m.conn().SendMessage(&xmppData.ClientMessage{
+		To:   to,
+		From: from,
+		Subject: &xmppData.Subject{
+			Text: subject,
+		},
+		Type: "groupchat",
+	})
+
+	if err != nil {
+		m.log.WithError(err).Error("The message could not be send")
+		return err
+	}
+
+	return nil
+}
+
 func (m *mucManager) retrieveRoomID(from string, who string) jid.Bare {
 	roomID, ok := jid.TryParseBare(from)
 	if !ok {

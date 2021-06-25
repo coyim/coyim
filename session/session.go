@@ -1001,3 +1001,8 @@ func (s *session) SendMUCMessage(to, from, body string) error {
 
 	return s.muc.sendMessage(to, from, body)
 }
+
+// UpdateRoomSubject is used to update the subject of the room
+func (s *session) UpdateRoomSubject(to, from, subject string) error {
+	return s.muc.updateRoomSubject(to, from, subject)
+}

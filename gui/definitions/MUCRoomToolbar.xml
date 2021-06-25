@@ -1,6 +1,14 @@
 <interface>
   <object class="GtkMenu" id="room-menu">
     <child>
+      <object class="GtkMenuItem" id="security-properties-menu-item">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Security properties</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="on_show_security_properties" swapped="no"/>
+      </object>
+    </child>
+    <child>
       <object class="GtkMenuItem" id="modify-ban-list-menu-item">
         <property name="visible">True</property>
         <property name="label" translatable="yes">Modify ban list</property>
@@ -26,14 +34,6 @@
         <property name="label" translatable="yes">Leave room</property>
         <property name="use_underline">True</property>
         <signal name="activate" handler="on_leave_room" swapped="no"/>
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="security-properties-menu-item">
-        <property name="visible">True</property>
-        <property name="label" translatable="yes">Security properties</property>
-        <property name="use_underline">True</property>
-        <signal name="activate" handler="on_show_security_properties" swapped="no"/>
       </object>
     </child>
   </object>

@@ -24,25 +24,7 @@ type Room struct {
 	discussionHistory *data.DiscussionHistory
 
 	// Configuration options:
-
-	MaxHistoryFetch       int
-	AllowPrivateMessages  string // This can be 'anyone', 'participants', 'moderators', 'none'
-	AllowInvites          bool
-	ChangeSubject         bool
-	EnableLogging         bool
-	GetMemberList         []string // This is a list of the roles that can get the member list, 'moderator', 'participant' or 'visitor'
-	Language              string
-	PubSub                string
-	MaxUsers              int
-	MembersOnly           bool
-	ModeratedRoom         bool
-	PasswordProtectedRoom bool
-	PersistentRoom        bool
-	PresenceBroadcast     []string // This is a list of the roles for which presence is broadcast, 'moderator', 'participant' or 'visitor'
-	PublicRoom            bool
-	Description           string
-	Name                  string
-	Whois                 string // This can either be 'moderators' or 'anyone'
+	properties *RoomListing
 }
 
 // NewRoom returns a newly created room

@@ -118,6 +118,8 @@ type roomViewWarnings struct {
 	currentTitle       gtki.Label  `gtk-widget:"room-warnings-current-title"`
 	currentDescription gtki.Label  `gtk-widget:"room-warnings-current-description"`
 	currentInfo        gtki.Label  `gtk-widget:"room-warnings-current-info"`
+	movePreviousButton gtki.Button `gtk-widget:"room-warnings-move-previous-button"`
+	moveNextButton     gtki.Button `gtk-widget:"room-warnings-move-next-button"`
 }
 
 func (v *roomView) newRoomViewWarnings() *roomViewWarnings {
@@ -169,20 +171,15 @@ func (vw *roomViewWarnings) move(direction roomViewWarningsDirection) {
 	switch direction {
 	case roomViewWarningsPreviousDirection:
 		newCurrentWarningIndex = vw.currentWarningIndex - 1
-		if newCurrentWarningIndex < firstWarningIndex {
-			newCurrentWarningIndex = lastWarningIndex
-		}
-
 	case roomViewWarningsNextDirection:
 		newCurrentWarningIndex = vw.currentWarningIndex + 1
-		if newCurrentWarningIndex > lastWarningIndex {
-			newCurrentWarningIndex = firstWarningIndex
-		}
 	}
 
-	vw.currentWarningIndex = newCurrentWarningIndex
-
-	vw.refresh()
+	if newCurrentWarningIndex >= firstWarningIndex &&
+		newCurrentWarningIndex <= lastWarningIndex {
+		vw.currentWarningIndex = newCurrentWarningIndex
+		vw.refresh()
+	}
 }
 
 func (vw *roomViewWarnings) moveLeft() {
@@ -202,6 +199,12 @@ func (vw *roomViewWarnings) add(icon roomViewWarningIconType, title, description
 
 // refresh MUST be called from the UI thread
 func (vw *roomViewWarnings) refresh() {
+	vw.refreshCurrentWarningContent()
+	vw.refreshMoveButtons()
+}
+
+// refreshCurrentWarningContent MUST be called from the UI thread
+func (vw *roomViewWarnings) refreshCurrentWarningContent() {
 	warningIcon := roomViewWarningIconDefault
 	warningTitle := ""
 	warningDescription := ""
@@ -218,6 +221,16 @@ func (vw *roomViewWarnings) refresh() {
 	vw.currentDescription.SetText(warningDescription)
 	vw.currentInfo.SetText(warningInfo)
 	vw.currentIcon.SetFromPixbuf(getMUCIconPixbuf(warningIcon.name()))
+}
+
+// refreshMoveButtons MUST be called from the UI thread
+func (vw *roomViewWarnings) refreshMoveButtons() {
+	totalWarnings := vw.total()
+	firstWarningIndex := 0
+	lastWarningIndex := totalWarnings - 1
+
+	vw.movePreviousButton.SetSensitive(vw.currentWarningIndex > firstWarningIndex)
+	vw.moveNextButton.SetSensitive(vw.currentWarningIndex < lastWarningIndex)
 }
 
 func (vw *roomViewWarnings) warningByIndex(idx int) (*roomViewWarning, bool) {

@@ -105,10 +105,13 @@ func (v *mucJoinRoomView) beforeJoiningRoom() {
 }
 
 func (v *mucJoinRoomView) onJoinSuccess(a *account, roomID jid.Bare, roomInfo *muc.RoomListing) {
+	roomData := newRoomViewData()
+	roomData.onBackToPreviousStep = v.returnToJoinRoomView
+	roomData.roomProperties = roomInfo
 	doInUIThread(func() {
 		v.spinner.hide()
 		v.dialog.Hide()
-		v.u.joinRoom(a, roomID, v.returnToJoinRoomView)
+		v.u.joinRoom(a, roomID, roomData)
 	})
 }
 

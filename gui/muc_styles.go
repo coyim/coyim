@@ -342,11 +342,10 @@ func (s *mucStylesProvider) rgba(r, g, b uint8, a float64) string {
 }
 
 func (s *mucStylesProvider) hexToRGBA(hex string, a float64) string {
-	rgb, err := s.colors.hexToRGB(hex)
+	rgb, err := colorHexToRGB(hex)
 	if err != nil {
 		return s.rgba(0, 0, 0, 0.5)
 	}
-
 	return s.rgba(rgb.red, rgb.green, rgb.blue, a)
 }
 

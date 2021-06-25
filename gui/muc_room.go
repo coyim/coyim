@@ -18,6 +18,7 @@ type roomViewDataProvider interface {
 type roomViewData struct {
 	passsword            string
 	onBackToPreviousStep func()
+	roomProperties       *muc.RoomListing
 }
 
 func (rvd *roomViewData) passwordProvider() string {

@@ -26,6 +26,7 @@ func (u *gtkUI) joinRoom(a *account, roomID jid.Bare, rvd *roomViewData) {
 
 func (u *gtkUI) joinRoomWithData(a *account, roomID jid.Bare, d roomViewDataProvider) {
 	v := u.getOrCreateRoomView(a, roomID)
+	v.room.UpdateProperties(d.roomProperties())
 
 	if v.isOpen() {
 		v.present()

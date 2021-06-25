@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/session/muc"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/xmpp/jid"
@@ -207,6 +208,10 @@ func (crd *mucCreateRoomData) passwordProvider() string {
 }
 
 func (crd *mucCreateRoomData) backToPreviousStep() func() {
+	return nil
+}
+
+func (crd *mucCreateRoomData) roomProperties() *muc.RoomListing {
 	return nil
 }
 

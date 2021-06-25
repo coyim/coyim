@@ -106,14 +106,14 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 	return mucColorSet{
 		warningForeground:                      colorFormat(cs.warningForeground, 1),
 		warningBackground:                      colorFormat(cs.warningBackground, 1),
+		errorForeground:                        colorFormat(cs.errorForeground, 1),
 		someoneJoinedForeground:                colorFormat("297316", 1),
 		someoneLeftForeground:                  colorFormat("731629", 1),
-		timestampForeground:                    colorFormat("AAB7B8", 1),
+		timestampForeground:                    colorThemeInsensitiveForeground,
 		nicknameForeground:                     colorFormat("395BA3", 1),
 		subjectForeground:                      colorFormat("000080", 1),
 		infoMessageForeground:                  colorFormat("395BA3", 1),
 		messageForeground:                      colorFormat("000000", 1),
-		errorForeground:                        colorFormat(cs.errorForeground, 1),
 		configurationForeground:                colorFormat("9A04BF", 1),
 		roomMessagesBackground:                 colorThemeBase,
 		roomMessagesBoxShadow:                  colorFormat("000000", 0.35),
@@ -185,9 +185,9 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 	cs := u.defaultDarkColorSet()
 
 	return mucColorSet{
-		warningForeground:                      cs.warningForeground,
-		warningBackground:                      cs.warningBackground,
-		errorForeground:                        cs.errorForeground,
+		warningForeground:                      colorFormat(cs.warningForeground, 1),
+		warningBackground:                      colorFormat(cs.warningBackground, 1),
+		errorForeground:                        colorFormat(cs.errorForeground, 1),
 		someoneJoinedForeground:                colorFormat("297316", 1),
 		someoneLeftForeground:                  colorFormat("731629", 1),
 		timestampForeground:                    colorThemeInsensitiveForeground,

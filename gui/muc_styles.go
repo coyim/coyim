@@ -337,16 +337,12 @@ func (s *mucStylesProvider) border(size int, style, color string) string {
 	return fmt.Sprintf("%dpx %s %s", size, style, color)
 }
 
-func (s *mucStylesProvider) rgba(r, g, b uint8, a float64) string {
-	return fmt.Sprintf("rgba(%d, %d, %d, %f)", r, g, b, a)
-}
-
-func (s *mucStylesProvider) hexToRGBA(hex string, a float64) string {
-	rgb, err := colorHexToRGB(hex)
+func (s *mucStylesProvider) hexToRGBA(hex string, alpha float64) string {
+	color, err := colorHexToRGB(hex)
 	if err != nil {
-		return s.rgba(0, 0, 0, 0.5)
+		return colorFallback.formatWithAlpha(alpha)
 	}
-	return s.rgba(rgb.red, rgb.green, rgb.blue, a)
+	return color.formatWithAlpha(alpha)
 }
 
 func (s *mucStylesProvider) boxShadow(shadowStyle, color string) string {

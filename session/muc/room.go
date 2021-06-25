@@ -114,3 +114,8 @@ func (r *Room) GetHistory() *data.DiscussionHistory {
 func (r *Room) AddHistoryMessage(nickname, message string, timestamp time.Time) {
 	r.discussionHistory.AddMessage(nickname, message, timestamp)
 }
+
+// UpdateProperties updates the room properties
+func (r *Room) UpdateProperties(properties *RoomListing) {
+	r.properties = properties
+}

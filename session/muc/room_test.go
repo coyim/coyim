@@ -92,3 +92,16 @@ func (s *MucSuite) Test_Room_History(c *C) {
 	c.Assert(roomHistory.GetHistory(), HasLen, 1)
 
 }
+
+func (s *MucSuite) Test_Room_UpdateProperties(c *C) {
+	r := NewRoom(jid.ParseBare("foo@bar.com"))
+	c.Assert(r.properties, IsNil)
+
+	r.UpdateProperties(&RoomListing{
+		Service: jid.Parse("foo@bla.org"),
+		Name:    "bla bla",
+	})
+
+	c.Assert(r.properties.Service, Equals, jid.Parse("foo@bla.org"))
+	c.Assert(r.properties.Name, Equals, "bla bla")
+}

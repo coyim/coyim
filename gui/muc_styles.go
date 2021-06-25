@@ -117,7 +117,7 @@ func (s *mucStylesProvider) setRoomWarningsStyles(dialog gtki.Window) {
 			"background":    s.colors.roomWarningsDialogDecorationBackground,
 			"border-radius": "16px",
 			"border":        "none",
-			"box-shadow":    s.boxShadow("0 12px 20px", s.rgba(0, 0, 0, 0.15)),
+			"box-shadow":    s.boxShadow("0 12px 20px", s.colors.roomWarningsDialogDecorationShadow),
 		},
 		roomWarningDialogCloseSelector: style{
 			"border-radius": "200px",
@@ -153,7 +153,7 @@ func (s *mucStylesProvider) setRoomWarningsStyles(dialog gtki.Window) {
 func (s *mucStylesProvider) setRoomMessagesBoxStyle(b gtki.Box) {
 	s.setBoxStyle(b, style{
 		"background-color": s.colors.roomMessagesBackground,
-		"box-shadow":       s.boxShadow("0 10px 20px", s.rgba(0, 0, 0, 0.35)),
+		"box-shadow":       s.boxShadow("0 10px 20px", s.colors.roomMessagesBoxShadow),
 	})
 }
 
@@ -179,7 +179,7 @@ func (s *mucStylesProvider) setRoomLoadingViewOverlayContentBoxStyle(b gtki.Box)
 		"color":            s.colors.roomOverlayContentForeground,
 		"border-radius":    "12px",
 		"padding":          "18px 24px",
-		"box-shadow":       s.boxShadow("0 10px 20px", s.rgba(0, 0, 0, 0.5)),
+		"box-shadow":       s.boxShadow("0 10px 20px", s.colors.roomOverlayContentBoxShadow),
 	})
 }
 

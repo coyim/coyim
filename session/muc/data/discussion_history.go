@@ -110,8 +110,8 @@ func (dh *DiscussionHistory) addNewMessagesGroup(date time.Time) *DelayedMessage
 }
 
 func sameDate(d1, d2 time.Time) bool {
-	t1y, t1m, t1d := d1.In(time.UTC).Date()
-	t2y, t2m, t2d := d2.In(time.UTC).Date()
+	t1y, t1m, t1d := d1.In(time.Local).Date()
+	t2y, t2m, t2d := d2.In(time.Local).Date()
 
 	return t1d == t2d && t1m == t2m && t1y == t2y
 }

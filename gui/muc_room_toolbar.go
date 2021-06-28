@@ -12,6 +12,8 @@ const (
 )
 
 type roomViewToolbar struct {
+	roomView *roomView
+
 	view                       gtki.Box        `gtk-widget:"room-view-toolbar"`
 	roomNameLabel              gtki.Label      `gtk-widget:"room-name-label"`
 	roomStatusIcon             gtki.Image      `gtk-widget:"room-status-icon"`
@@ -28,40 +30,42 @@ type roomViewToolbar struct {
 }
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
-	t := &roomViewToolbar{}
+	t := &roomViewToolbar{
+		roomView: v,
+	}
 
-	t.initBuilder(v)
-	t.initDefaults(v)
-	t.initSubscribers(v)
+	t.initBuilder()
+	t.initDefaults()
+	t.initSubscribers()
 
 	return t
 }
 
-func (t *roomViewToolbar) initBuilder(v *roomView) {
+func (t *roomViewToolbar) initBuilder() {
 	builder := newBuilder("MUCRoomToolbar")
 	panicOnDevError(builder.bindObjects(t))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_leave_room":               v.onLeaveRoom,
-		"on_destroy_room":             v.onDestroyRoom,
-		"on_show_security_properties": v.showWarnings,
-		"on_modify_ban_list":          v.onModifyBanList,
+		"on_leave_room":               t.roomView.onLeaveRoom,
+		"on_destroy_room":             t.roomView.onDestroyRoom,
+		"on_show_security_properties": t.roomView.showWarnings,
+		"on_modify_ban_list":          t.roomView.onModifyBanList,
 		"on_toggle_room_subject":      t.onToggleRoomSubject,
 	})
 }
 
-func (t *roomViewToolbar) initDefaults(v *roomView) {
+func (t *roomViewToolbar) initDefaults() {
 	t.roomStatusIcon.SetFromPixbuf(getMUCIconPixbuf("room"))
 
-	t.roomNameLabel.SetText(v.roomID().String())
+	t.roomNameLabel.SetText(t.roomView.roomID().String())
 	mucStyles.setRoomToolbarNameLabelStyle(t.roomNameLabel)
 
-	t.displayRoomSubject(v.room.GetSubject())
+	t.displayRoomSubject(t.roomView.room.GetSubject())
 	mucStyles.setRoomToolbarSubjectLabelStyle(t.roomSubjectLabel)
 }
 
-func (t *roomViewToolbar) initSubscribers(v *roomView) {
-	v.subscribe("toolbar", func(ev roomViewEvent) {
+func (t *roomViewToolbar) initSubscribers() {
+	t.roomView.subscribe("toolbar", func(ev roomViewEvent) {
 		switch e := ev.(type) {
 		case subjectReceivedEvent:
 			t.subjectReceivedEvent(e.subject)
@@ -72,7 +76,7 @@ func (t *roomViewToolbar) initSubscribers(v *roomView) {
 		case selfOccupantRemovedEvent:
 			t.selfOccupantRemovedEvent()
 		case occupantSelfJoinedEvent:
-			t.selfOccupantJoinedEvent(v.room.SelfOccupant().Affiliation)
+			t.selfOccupantJoinedEvent()
 		case selfOccupantRoleUpdatedEvent:
 			t.selfOccupantRoleUpdatedEvent(e.selfRoleUpdate.New)
 		case selfOccupantAffiliationUpdatedEvent:
@@ -114,9 +118,9 @@ func (t *roomViewToolbar) selfOccupantAffiliationUpdatedEvent(affiliation data.A
 	}
 }
 
-func (t *roomViewToolbar) selfOccupantJoinedEvent(affiliation data.Affiliation) {
+func (t *roomViewToolbar) selfOccupantJoinedEvent() {
 	doInUIThread(func() {
-		t.updateMenuActionsBasedOn(affiliation)
+		t.updateMenuActionsBasedOn(t.roomView.room.SelfOccupant().Affiliation)
 	})
 }
 

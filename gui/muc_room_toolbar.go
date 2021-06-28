@@ -12,7 +12,8 @@ const (
 )
 
 type roomViewToolbar struct {
-	roomView *roomView
+	roomView          *roomView
+	updateRoomSubject func(subject string)
 
 	view                       gtki.Box            `gtk-widget:"room-view-toolbar"`
 	roomNameLabel              gtki.Label          `gtk-widget:"room-name-label"`
@@ -35,7 +36,8 @@ type roomViewToolbar struct {
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
 	t := &roomViewToolbar{
-		roomView: v,
+		roomView:          v,
+		updateRoomSubject: v.updateSubjectRoom,
 	}
 
 	t.initBuilder()
@@ -57,6 +59,7 @@ func (t *roomViewToolbar) initBuilder() {
 		"on_toggle_room_subject":      t.onToggleRoomSubject,
 		"on_edit_room_subject":        t.onEditRoomSubject,
 		"on_cancel_room_subject_edit": t.onCancelEditSubject,
+		"on_apply_room_subject_edit":  t.onApplyEditSubject,
 	})
 }
 
@@ -129,6 +132,7 @@ func (t *roomViewToolbar) selfOccupantAffiliationUpdatedEvent(affiliation data.A
 
 func (t *roomViewToolbar) selfOccupantJoinedEvent() {
 	doInUIThread(func() {
+		t.showEditSubjectButton()
 		t.updateMenuActionsBasedOn(t.roomView.room.SelfOccupant().Affiliation)
 	})
 }
@@ -181,6 +185,12 @@ func (t *roomViewToolbar) onCancelEditSubject() {
 	t.toggleEditSubjectComponents(true)
 }
 
+// onApplyEditSubject MUST be called from the UI thread
+func (t *roomViewToolbar) onApplyEditSubject() {
+	t.updateRoomSubject(getTextViewText(t.roomSubjectTextView))
+	t.toggleEditSubjectComponents(true)
+}
+
 // onShowRoomSubject MUST be called from the UI thread
 func (t *roomViewToolbar) onShowRoomSubject() {
 	t.roomSubjectRevealer.SetRevealChild(true)
@@ -200,4 +210,11 @@ func (t *roomViewToolbar) toggleEditSubjectComponents(v bool) {
 	t.roomSubjectScrolledWindow.SetVisible(!v)
 	t.roomSubjectEditButton.SetVisible(v)
 	t.roomSubjectButtonBox.SetVisible(!v)
+}
+
+func (t *roomViewToolbar) showEditSubjectButton() {
+	if t.roomView.room.SelfOccupant().Role.IsModerator() ||
+		t.roomView.room.AnyoneCanChangeSubject() {
+		t.roomSubjectEditButton.SetVisible(true)
+	}
 }

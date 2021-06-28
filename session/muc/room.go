@@ -87,6 +87,11 @@ func (r *Room) GetSubject() string {
 	return r.subject
 }
 
+// HasSubject returns true if the room has subject
+func (r *Room) HasSubject() bool {
+	return r.subject != ""
+}
+
 // UpdateSubject updates the room subject and returns a boolean
 // indicating if the subject was updated (true) or not (false)
 func (r *Room) UpdateSubject(s string) bool {
@@ -123,4 +128,10 @@ func (r *Room) UpdateProperties(properties *RoomListing) {
 // AnyoneCanChangeSubject returns the value of OccupantCanChangeSubject property
 func (r *Room) AnyoneCanChangeSubject() bool {
 	return r.properties.OccupantsCanChangeSubject
+}
+
+// CanChangeSubject returns true if self occupant in the room is a moderator
+// or the room property `OccupantsCanChangeSubject` is true
+func (r *Room) CanChangeSubject() bool {
+	return r.selfOccupant.Role.IsModerator() || r.AnyoneCanChangeSubject()
 }

@@ -47,8 +47,10 @@ func (s *MucSuite) Test_Room_SelfOccupantNickname(c *C) {
 
 func (s *MucSuite) Test_Room_UpdateSubject(c *C) {
 	r := NewRoom(jid.ParseBare("foo@bar.com"))
+	c.Assert(r.HasSubject(), Equals, false)
 
 	c.Assert(r.UpdateSubject("one"), Equals, false)
+	c.Assert(r.HasSubject(), Equals, true)
 
 	c.Assert(r.UpdateSubject("two"), Equals, true)
 	c.Assert(r.GetSubject(), Equals, "two")
@@ -118,4 +120,19 @@ func (s *MucSuite) Test_Room_AnyoneCanChangeSubject(c *C) {
 
 	r.properties.OccupantsCanChangeSubject = true
 	c.Assert(r.AnyoneCanChangeSubject(), Equals, true)
+}
+
+func (s *MucSuite) Test_Room_CanChangeSubject(c *C) {
+	r := NewRoom(jid.ParseBare("foo@bar.com"))
+	r.AddSelfOccupant(newTestOccupant(&data.OwnerAffiliation{}, &data.VisitorRole{}))
+
+	r.UpdateProperties(&RoomListing{
+		Service: jid.Parse("foo@bla.org"),
+		Name:    "bla bla",
+	})
+
+	c.Assert(r.CanChangeSubject(), Equals, false)
+
+	r.properties.OccupantsCanChangeSubject = true
+	c.Assert(r.CanChangeSubject(), Equals, true)
 }

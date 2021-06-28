@@ -414,6 +414,17 @@ func (v *roomView) onOccupantRoleUpdateError(nickname string, newRole data.Role)
 	})
 }
 
+func (v *roomView) updateSubjectRoom(s string) {
+	err := v.account.session.UpdateRoomSubject(v.roomID(), v.room.SelfOccupant().RealJid.String(), s)
+	if err != nil {
+		doInUIThread(func() {
+			v.notifications.error(roomNotificationOptions{message: i18n.Local("The room subject couldn't be updated."), closeable: true})
+		})
+		return
+	}
+	v.notifications.info(roomNotificationOptions{message: i18n.Local("The room subject has been updated."), showTime: true, closeable: true})
+}
+
 func (v *roomView) switchToLobbyView() {
 	v.initRoomLobby()
 

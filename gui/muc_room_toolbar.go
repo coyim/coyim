@@ -14,19 +14,23 @@ const (
 type roomViewToolbar struct {
 	roomView *roomView
 
-	view                       gtki.Box        `gtk-widget:"room-view-toolbar"`
-	roomNameLabel              gtki.Label      `gtk-widget:"room-name-label"`
-	roomStatusIcon             gtki.Image      `gtk-widget:"room-status-icon"`
-	roomMenuButton             gtki.MenuButton `gtk-widget:"room-menu-button"`
-	roomSubjectButton          gtki.Button     `gtk-widget:"room-subject-button"`
-	roomSubjectButtonImage     gtki.Image      `gtk-widget:"room-subject-button-image"`
-	roomSubjectRevealer        gtki.Revealer   `gtk-widget:"room-subject-revealer"`
-	roomSubjectLabel           gtki.Label      `gtk-widget:"room-subject-label"`
-	securityPropertiesMenuItem gtki.MenuItem   `gtk-widget:"security-properties-menu-item"`
-	configureRoomMenuItem      gtki.MenuItem   `gtk-widget:"room-configuration-menu-item"`
-	modifyBanMenuItem          gtki.MenuItem   `gtk-widget:"modify-ban-list-menu-item"`
-	destroyRoomMenuItem        gtki.MenuItem   `gtk-widget:"destroy-room-menu-item"`
-	leaveRoomMenuItem          gtki.MenuItem   `gtk-widget:"leave-room-menu-item"`
+	view                       gtki.Box            `gtk-widget:"room-view-toolbar"`
+	roomNameLabel              gtki.Label          `gtk-widget:"room-name-label"`
+	roomStatusIcon             gtki.Image          `gtk-widget:"room-status-icon"`
+	roomMenuButton             gtki.MenuButton     `gtk-widget:"room-menu-button"`
+	roomSubjectButton          gtki.Button         `gtk-widget:"room-subject-button"`
+	roomSubjectButtonImage     gtki.Image          `gtk-widget:"room-subject-button-image"`
+	roomSubjectRevealer        gtki.Revealer       `gtk-widget:"room-subject-revealer"`
+	roomSubjectLabel           gtki.Label          `gtk-widget:"room-subject-label"`
+	roomSubjectScrolledWindow  gtki.ScrolledWindow `gtk-widget:"room-subject-editable-content"`
+	roomSubjectTextView        gtki.TextView       `gtk-widget:"room-subject-textview"`
+	roomSubjectEditButton      gtki.Button         `gtk-widget:"room-edit-subject-button"`
+	roomSubjectButtonBox       gtki.Box            `gtk-widget:"room-edit-subject-buttons-box"`
+	securityPropertiesMenuItem gtki.MenuItem       `gtk-widget:"security-properties-menu-item"`
+	configureRoomMenuItem      gtki.MenuItem       `gtk-widget:"room-configuration-menu-item"`
+	modifyBanMenuItem          gtki.MenuItem       `gtk-widget:"modify-ban-list-menu-item"`
+	destroyRoomMenuItem        gtki.MenuItem       `gtk-widget:"destroy-room-menu-item"`
+	leaveRoomMenuItem          gtki.MenuItem       `gtk-widget:"leave-room-menu-item"`
 }
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
@@ -51,6 +55,8 @@ func (t *roomViewToolbar) initBuilder() {
 		"on_show_security_properties": t.roomView.showWarnings,
 		"on_modify_ban_list":          t.roomView.onModifyBanList,
 		"on_toggle_room_subject":      t.onToggleRoomSubject,
+		"on_edit_room_subject":        t.onEditRoomSubject,
+		"on_cancel_room_subject_edit": t.onCancelEditSubject,
 	})
 }
 
@@ -59,6 +65,9 @@ func (t *roomViewToolbar) initDefaults() {
 
 	t.roomNameLabel.SetText(t.roomView.roomID().String())
 	mucStyles.setRoomToolbarNameLabelStyle(t.roomNameLabel)
+
+	tb, _ := g.gtk.TextBufferNew(nil)
+	t.roomSubjectTextView.SetBuffer(tb)
 
 	t.displayRoomSubject(t.roomView.room.GetSubject())
 	mucStyles.setRoomToolbarSubjectLabelStyle(t.roomSubjectLabel)
@@ -159,6 +168,19 @@ func (t *roomViewToolbar) onToggleRoomSubject() {
 	}
 }
 
+// onEditRoomSubject MUST be called from the UI thread
+func (t *roomViewToolbar) onEditRoomSubject() {
+	t.toggleEditSubjectComponents(false)
+
+	bf, _ := t.roomSubjectTextView.GetBuffer()
+	bf.SetText(t.roomSubjectLabel.GetLabel())
+}
+
+// onCancelEditSubject MUST be called from the UI thread
+func (t *roomViewToolbar) onCancelEditSubject() {
+	t.toggleEditSubjectComponents(true)
+}
+
 // onShowRoomSubject MUST be called from the UI thread
 func (t *roomViewToolbar) onShowRoomSubject() {
 	t.roomSubjectRevealer.SetRevealChild(true)
@@ -171,4 +193,11 @@ func (t *roomViewToolbar) onHideRoomSubject() {
 	t.roomSubjectRevealer.SetRevealChild(false)
 	t.roomSubjectButton.SetTooltipText(i18n.Local("Show room subject"))
 	t.roomSubjectButtonImage.SetFromIconName(roomSubjectHiddenIconName, gtki.ICON_SIZE_BUTTON)
+}
+
+func (t *roomViewToolbar) toggleEditSubjectComponents(v bool) {
+	t.roomSubjectLabel.SetVisible(v)
+	t.roomSubjectScrolledWindow.SetVisible(!v)
+	t.roomSubjectEditButton.SetVisible(v)
+	t.roomSubjectButtonBox.SetVisible(!v)
 }

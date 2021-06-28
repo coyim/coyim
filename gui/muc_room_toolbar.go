@@ -70,7 +70,6 @@ func (t *roomViewToolbar) initDefaults() {
 	tb, _ := g.gtk.TextBufferNew(nil)
 	t.roomSubjectTextView.SetBuffer(tb)
 
-	t.displayRoomSubject(t.roomView.room.GetSubject())
 	mucStyles.setRoomToolbarSubjectLabelStyle(t.roomSubjectLabel)
 }
 
@@ -101,6 +100,7 @@ func (t *roomViewToolbar) initSubscribers() {
 func (t *roomViewToolbar) subjectReceivedEvent(subject string) {
 	doInUIThread(func() {
 		t.displayRoomSubject(subject)
+		t.handleSubjectComponents()
 	})
 }
 
@@ -130,7 +130,6 @@ func (t *roomViewToolbar) selfOccupantAffiliationUpdatedEvent(affiliation data.A
 
 func (t *roomViewToolbar) selfOccupantJoinedEvent() {
 	doInUIThread(func() {
-		t.showEditSubjectButton()
 		t.updateMenuActionsBasedOn(t.roomView.room.SelfOccupant().Affiliation)
 	})
 }
@@ -153,12 +152,6 @@ func (t *roomViewToolbar) disable() {
 // displayRoomSubject MUST be called from the UI thread
 func (t *roomViewToolbar) displayRoomSubject(subject string) {
 	t.roomSubjectLabel.SetText(subject)
-	t.roomSubjectRevealer.SetRevealChild(false)
-
-	t.roomSubjectButton.Hide()
-	if subject != "" {
-		t.roomSubjectButton.Show()
-	}
 }
 
 // onToggleRoomSubject MUST be called from the UI thread
@@ -210,9 +203,15 @@ func (t *roomViewToolbar) toggleEditSubjectComponents(v bool) {
 	t.roomSubjectButtonBox.SetVisible(!v)
 }
 
-func (t *roomViewToolbar) showEditSubjectButton() {
-	if t.roomView.room.SelfOccupant().Role.IsModerator() ||
-		t.roomView.room.AnyoneCanChangeSubject() {
-		t.roomSubjectEditButton.SetVisible(true)
+// handleSubjectComponents MUST be called from the UI thread
+func (t *roomViewToolbar) handleSubjectComponents() {
+	t.roomSubjectButton.Hide()
+	if t.roomView.room.HasSubject() {
+		t.roomSubjectButton.Show()
+	}
+
+	if t.roomView.room.CanChangeSubject() {
+		t.toggleEditSubjectComponents(t.roomView.room.HasSubject())
+		t.roomSubjectButton.Show()
 	}
 }

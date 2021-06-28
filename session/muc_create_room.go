@@ -28,7 +28,7 @@ var (
 // CreateInstantRoom will create a room "instantly" accepting the default configuration of the room
 // For more information see XEP-0045 v1.32.0, section: 10.1.2
 func (s *session) CreateInstantRoom(roomID jid.Bare) (<-chan bool, <-chan error) {
-	c := s.newCreateMUCInstantRoomContext(roomID)
+	c := s.muc.newCreateMUCInstantRoomContext(roomID)
 	return c.createInstantRoom()
 }
 
@@ -37,9 +37,9 @@ type createMUCInstantRoomContext struct {
 	resultChannel chan bool
 }
 
-func (s *session) newCreateMUCInstantRoomContext(roomID jid.Bare) *createMUCInstantRoomContext {
+func (m *mucManager) newCreateMUCInstantRoomContext(roomID jid.Bare) *createMUCInstantRoomContext {
 	return &createMUCInstantRoomContext{
-		createMUCRoomContext: s.newCreateMUCRoomContext(roomID),
+		createMUCRoomContext: m.newCreateMUCRoomContext(roomID),
 	}
 }
 
@@ -62,7 +62,7 @@ func (c *createMUCInstantRoomContext) sendIQForInstantRoom() (<-chan data.Stanza
 
 // CreateReservedRoom will reserve a room and request the configuration form for it
 func (s *session) CreateReservedRoom(roomID jid.Bare) (<-chan *muc.RoomConfigForm, <-chan error) {
-	c := s.newCreateMUCReservedRoomContext(roomID)
+	c := s.muc.newCreateMUCReservedRoomContext(roomID)
 	return c.createReservedRoom()
 }
 
@@ -71,9 +71,9 @@ type createMUCReservedRoomContext struct {
 	configFormChannel chan *muc.RoomConfigForm
 }
 
-func (s *session) newCreateMUCReservedRoomContext(roomID jid.Bare) *createMUCReservedRoomContext {
+func (m *mucManager) newCreateMUCReservedRoomContext(roomID jid.Bare) *createMUCReservedRoomContext {
 	return &createMUCReservedRoomContext{
-		createMUCRoomContext: s.newCreateMUCRoomContext(roomID),
+		createMUCRoomContext: m.newCreateMUCRoomContext(roomID),
 		configFormChannel:    make(chan *muc.RoomConfigForm),
 	}
 }
@@ -127,12 +127,12 @@ type createMUCRoomContext struct {
 	log          coylog.Logger
 }
 
-func (s *session) newCreateMUCRoomContext(roomID jid.Bare) *createMUCRoomContext {
+func (m *mucManager) newCreateMUCRoomContext(roomID jid.Bare) *createMUCRoomContext {
 	c := &createMUCRoomContext{
 		roomID:       roomID,
 		errorChannel: make(chan error),
-		conn:         s.conn,
-		log:          s.log.WithField("where", "createRoomContext"),
+		conn:         m.conn(),
+		log:          m.log.WithField("where", "createRoomContext"),
 	}
 
 	return c

@@ -12,8 +12,7 @@ const (
 )
 
 type roomViewToolbar struct {
-	roomView          *roomView
-	updateRoomSubject func(subject string)
+	roomView *roomView
 
 	view                       gtki.Box            `gtk-widget:"room-view-toolbar"`
 	roomNameLabel              gtki.Label          `gtk-widget:"room-name-label"`
@@ -36,8 +35,7 @@ type roomViewToolbar struct {
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
 	t := &roomViewToolbar{
-		roomView:          v,
-		updateRoomSubject: v.updateSubjectRoom,
+		roomView: v,
 	}
 
 	t.initBuilder()
@@ -187,7 +185,7 @@ func (t *roomViewToolbar) onCancelEditSubject() {
 
 // onApplyEditSubject MUST be called from the UI thread
 func (t *roomViewToolbar) onApplyEditSubject() {
-	t.updateRoomSubject(getTextViewText(t.roomSubjectTextView))
+	t.roomView.updateSubjectRoom(getTextViewText(t.roomSubjectTextView))
 	t.toggleEditSubjectComponents(true)
 }
 

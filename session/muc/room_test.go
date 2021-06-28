@@ -105,3 +105,17 @@ func (s *MucSuite) Test_Room_UpdateProperties(c *C) {
 	c.Assert(r.properties.Service, Equals, jid.Parse("foo@bla.org"))
 	c.Assert(r.properties.Name, Equals, "bla bla")
 }
+
+func (s *MucSuite) Test_Room_AnyoneCanChangeSubject(c *C) {
+	r := NewRoom(jid.ParseBare("foo@bar.com"))
+
+	r.UpdateProperties(&RoomListing{
+		Service: jid.Parse("foo@bla.org"),
+		Name:    "bla bla",
+	})
+
+	c.Assert(r.AnyoneCanChangeSubject(), Equals, false)
+
+	r.properties.OccupantsCanChangeSubject = true
+	c.Assert(r.AnyoneCanChangeSubject(), Equals, true)
+}

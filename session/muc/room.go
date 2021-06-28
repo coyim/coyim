@@ -119,3 +119,8 @@ func (r *Room) AddHistoryMessage(nickname, message string, timestamp time.Time) 
 func (r *Room) UpdateProperties(properties *RoomListing) {
 	r.properties = properties
 }
+
+// AnyoneCanChangeSubject returns the value of OccupantCanChangeSubject property
+func (r *Room) AnyoneCanChangeSubject() bool {
+	return r.properties.OccupantsCanChangeSubject
+}

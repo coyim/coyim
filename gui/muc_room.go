@@ -442,9 +442,7 @@ func (v *roomView) switchToLobbyView() {
 func (v *roomView) switchToMainView() {
 	v.initRoomMain()
 
-	v.warningsInfoBar.onClose(func() {
-		v.warningsInfoBar.hide()
-	})
+	v.warningsInfoBar.onClose(v.warningsInfoBar.hide)
 
 	v.main.show()
 }

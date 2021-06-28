@@ -12,7 +12,8 @@ const (
 )
 
 type roomViewToolbar struct {
-	roomView *roomView
+	roomView         *roomView
+	isEditingSubject bool
 
 	view                       gtki.Box            `gtk-widget:"room-view-toolbar"`
 	roomNameLabel              gtki.Label          `gtk-widget:"room-name-label"`
@@ -165,15 +166,26 @@ func (t *roomViewToolbar) onToggleRoomSubject() {
 
 // onEditRoomSubject MUST be called from the UI thread
 func (t *roomViewToolbar) onEditRoomSubject() {
+	t.isEditingSubject = true
 	t.toggleEditSubjectComponents(false)
 
-	bf, _ := t.roomSubjectTextView.GetBuffer()
-	bf.SetText(t.roomSubjectLabel.GetLabel())
+	setTextViewText(t.roomSubjectTextView, t.roomSubjectLabel.GetLabel())
 }
 
 // onCancelEditSubject MUST be called from the UI thread
 func (t *roomViewToolbar) onCancelEditSubject() {
-	t.toggleEditSubjectComponents(true)
+	if t.isEditingSubject {
+		t.toggleEditSubjectComponents(true)
+		return
+	}
+
+	t.resetSubjectComponents()
+}
+
+// resetSubjectComponents MUST be called from the UI thread
+func (t *roomViewToolbar) resetSubjectComponents() {
+	setTextViewText(t.roomSubjectTextView, "")
+	t.onToggleRoomSubject()
 }
 
 // onApplyEditSubject MUST be called from the UI thread

@@ -52,6 +52,7 @@ func (v *mucCreateRoomView) createInstantRoom(ca *account, roomID jid.Bare, errH
 
 	onSuccess := func() {
 		v.onCreateRoomFinished(ca, roomID, d, func() {
+			v.success.updateJoinRoomData(d)
 			v.showSuccessView(ca, roomID)
 			v.dialog.ShowAll()
 		})

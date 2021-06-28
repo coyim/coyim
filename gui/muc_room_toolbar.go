@@ -21,10 +21,10 @@ type roomViewToolbar struct {
 	roomSubjectRevealer        gtki.Revealer   `gtk-widget:"room-subject-revealer"`
 	roomSubjectLabel           gtki.Label      `gtk-widget:"room-subject-label"`
 	roomMenu                   gtki.Menu       `gtk-widget:"room-menu"`
-	modifyBanMenuItem          gtki.MenuItem   `gtk-widget:"modify-ban-list-menu-item"`
-	leaveRoomMenuItem          gtki.MenuItem   `gtk-widget:"leave-room-menu-item"`
 	securityPropertiesMenuItem gtki.MenuItem   `gtk-widget:"security-properties-menu-item"`
+	modifyBanMenuItem          gtki.MenuItem   `gtk-widget:"modify-ban-list-menu-item"`
 	destroyRoomMenuItem        gtki.MenuItem   `gtk-widget:"destroy-room-menu-item"`
+	leaveRoomMenuItem          gtki.MenuItem   `gtk-widget:"leave-room-menu-item"`
 }
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {

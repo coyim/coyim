@@ -21,6 +21,7 @@ type roomViewToolbar struct {
 	roomSubjectRevealer        gtki.Revealer   `gtk-widget:"room-subject-revealer"`
 	roomSubjectLabel           gtki.Label      `gtk-widget:"room-subject-label"`
 	securityPropertiesMenuItem gtki.MenuItem   `gtk-widget:"security-properties-menu-item"`
+	configureRoomMenuItem      gtki.MenuItem   `gtk-widget:"room-configuration-menu-item"`
 	modifyBanMenuItem          gtki.MenuItem   `gtk-widget:"modify-ban-list-menu-item"`
 	destroyRoomMenuItem        gtki.MenuItem   `gtk-widget:"destroy-room-menu-item"`
 	leaveRoomMenuItem          gtki.MenuItem   `gtk-widget:"leave-room-menu-item"`
@@ -120,6 +121,7 @@ func (t *roomViewToolbar) selfOccupantJoinedEvent(affiliation data.Affiliation) 
 }
 
 func (t *roomViewToolbar) updateMenuActionsBasedOn(affiliation data.Affiliation) {
+	t.configureRoomMenuItem.SetVisible(affiliation.IsOwner())
 	t.destroyRoomMenuItem.SetVisible(affiliation.IsOwner())
 
 	showAdminActions := affiliation.IsOwner() || affiliation.IsAdmin()

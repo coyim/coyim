@@ -4,8 +4,16 @@
       <object class="GtkMenuItem" id="security-properties-menu-item">
         <property name="visible">True</property>
         <property name="label" translatable="yes">Security properties</property>
-        <property name="use_underline">True</property>
+        <property name="use_underline">T  e</property>
         <signal name="activate" handler="on_show_security_properties" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="room-configuration-menu-item">
+        <property name="visible">False</property>
+        <property name="label" translatable="yes">Configure room</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="on_configure_room" swapped="no"/>
       </object>
     </child>
     <child>

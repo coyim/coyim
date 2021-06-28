@@ -20,7 +20,6 @@ type roomViewToolbar struct {
 	roomSubjectButtonImage     gtki.Image      `gtk-widget:"room-subject-button-image"`
 	roomSubjectRevealer        gtki.Revealer   `gtk-widget:"room-subject-revealer"`
 	roomSubjectLabel           gtki.Label      `gtk-widget:"room-subject-label"`
-	roomMenu                   gtki.Menu       `gtk-widget:"room-menu"`
 	securityPropertiesMenuItem gtki.MenuItem   `gtk-widget:"security-properties-menu-item"`
 	modifyBanMenuItem          gtki.MenuItem   `gtk-widget:"modify-ban-list-menu-item"`
 	destroyRoomMenuItem        gtki.MenuItem   `gtk-widget:"destroy-room-menu-item"`

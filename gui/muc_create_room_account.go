@@ -118,7 +118,14 @@ func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, 
 		})
 	}
 
-	rca := v.u.newRoomConfigAssistant(ca, roomID, cf, v.autoJoin, onSuccess, onCancel)
+	rca := v.u.newRoomConfigAssistant(&roomConfigData{
+		account:                ca,
+		roomID:                 roomID,
+		configForm:             cf,
+		autoJoinRoomAfterSaved: v.autoJoin,
+		doAfterConfigSaved:     onSuccess,
+		doAfterConfigCanceled:  onCancel,
+	})
 	rca.showAssistant()
 }
 

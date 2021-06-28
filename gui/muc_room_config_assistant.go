@@ -32,32 +32,34 @@ type roomConfigAssistant struct {
 	log coylog.Logger
 }
 
-func (u *gtkUI) newRoomConfigAssistant(ca *account, roomID jid.Bare, form *muc.RoomConfigForm, autoJoin bool, onSuccess func(autoJoin bool), onCancel func()) *roomConfigAssistant {
+func (u *gtkUI) newRoomConfigAssistant(data *roomConfigData) *roomConfigAssistant {
+	data.ensureRequiredFields()
+
 	rc := &roomConfigAssistant{
 		u:        u,
-		account:  ca,
-		roomID:   roomID,
-		autoJoin: autoJoin,
+		account:  data.account,
+		roomID:   data.roomID,
+		autoJoin: data.autoJoinRoomAfterSaved,
 		log: u.log.WithFields(log.Fields{
-			"room":  roomID,
+			"room":  data.roomID,
 			"where": "configureRoomAssistant",
 		}),
 	}
 
 	rc.onSuccess = func(aj bool) {
-		if onSuccess != nil {
-			onSuccess(aj)
+		if data.doAfterConfigSaved != nil {
+			data.doAfterConfigSaved(aj)
 		}
 	}
 
 	rc.onCancel = func() {
-		if onCancel != nil {
-			onCancel()
+		if data.doAfterConfigCanceled != nil {
+			data.doAfterConfigCanceled()
 		}
 	}
 
 	rc.initBuilder()
-	rc.initRoomConfigComponent(form)
+	rc.initRoomConfigComponent(data.configForm)
 	rc.initRoomConfigPages()
 	rc.initDefaults()
 	rc.initSidebarNavigation()

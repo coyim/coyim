@@ -2,10 +2,43 @@ package gui
 
 import (
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
+	"github.com/coyim/coyim/xmpp/jid"
 	"golang.org/x/text/language"
 	"golang.org/x/text/language/display"
 )
+
+type roomConfigData struct {
+	account                *account
+	roomID                 jid.Bare
+	configForm             *muc.RoomConfigForm
+	autoJoinRoomAfterSaved bool
+	doAfterConfigSaved     func(autoJoin bool)
+	doAfterConfigCanceled  func()
+}
+
+func (rcd *roomConfigData) hasAccount() bool {
+	return rcd.account != nil
+}
+
+func (rcd *roomConfigData) hasRoomID() bool {
+	return rcd.roomID != nil
+}
+
+func (rcd *roomConfigData) hasConfigForm() bool {
+	return rcd.configForm != nil
+}
+
+func (rcd *roomConfigData) hasRequiredFields() bool {
+	return rcd.hasAccount() && rcd.hasRoomID() && rcd.hasConfigForm()
+}
+
+func (rcd *roomConfigData) ensureRequiredFields() {
+	if !rcd.hasRequiredFields() {
+		panic("Developer error: account, roomID and configForm should never be nil")
+	}
+}
 
 type roomConfigChangedTypes []data.RoomConfigType
 

@@ -92,7 +92,7 @@ var (
 
 	infoBarContentCommonStyle = style{
 		"text-shadow": "none",
-		"padding":     "0",
+		"padding":     "0px 12px",
 		"background":  "none",
 	}
 

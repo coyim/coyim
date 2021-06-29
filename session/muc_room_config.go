@@ -1,6 +1,7 @@
 package session
 
 import (
+	"encoding/xml"
 	"errors"
 
 	"github.com/coyim/coyim/session/muc"
@@ -19,6 +20,25 @@ var (
 	// ErrRoomConfigCancelResponse represents an invalid response for a room configuration cancel request
 	ErrRoomConfigCancelResponse = errors.New("invalid response for room configuration cancel request")
 )
+
+const mucRequestGetRoomConfigForm mucRequestType = "getRoomConfigForm"
+
+func (s *session) GetRoomConfigurationForm(roomID jid.Bare) (<-chan *muc.RoomConfigForm, <-chan error) {
+	fc := make(chan *muc.RoomConfigForm)
+
+	req := s.muc.newMUCRoomRequest(roomID, mucRequestGetRoomConfigForm, func(response []byte) error {
+		cf := &data.MUCRoomConfiguration{}
+		if err := xml.Unmarshal(response, cf); err != nil {
+			return err
+		}
+		fc <- muc.NewRoomConfigForm(cf.Form)
+		return nil
+	})
+
+	go req.get(data.MUCRoomConfiguration{})
+
+	return fc, req.errorChannel
+}
 
 func (s *session) SubmitRoomConfigurationForm(roomID jid.Bare, form *muc.RoomConfigForm) (<-chan bool, <-chan error) {
 	log := log.WithFields(log.Fields{

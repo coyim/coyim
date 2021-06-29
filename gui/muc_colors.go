@@ -69,18 +69,23 @@ type mucColorSet struct {
 	infoBarTypeInfoBackgroundStart         string
 	infoBarTypeInfoBackgroundStop          string
 	infoBarTypeInfoTitle                   string
+	infoBarTypeInfoTime                    string
 	infoBarTypeWarningBackgroundStart      string
 	infoBarTypeWarningBackgroundStop       string
 	infoBarTypeWarningTitle                string
+	infoBarTypeWarningTime                 string
 	infoBarTypeQuestionBackgroundStart     string
 	infoBarTypeQuestionBackgroundStop      string
 	infoBarTypeQuestionTitle               string
+	infoBarTypeQuestionTime                string
 	infoBarTypeErrorBackgroundStart        string
 	infoBarTypeErrorBackgroundStop         string
 	infoBarTypeErrorTitle                  string
+	infoBarTypeErrorTime                   string
 	infoBarTypeOtherBackgroundStart        string
 	infoBarTypeOtherBackgroundStop         string
 	infoBarTypeOtherTitle                  string
+	infoBarTypeOtherTime                   string
 	infoBarButtonBackground                string
 	infoBarButtonForeground                string
 	infoBarButtonHoverBackground           string
@@ -156,18 +161,23 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		infoBarTypeInfoBackgroundStart:         colorFormat("3F6212", 1),
 		infoBarTypeInfoBackgroundStop:          colorFormat("4D7C0F", 1),
 		infoBarTypeInfoTitle:                   colorFormat("ECFEFF", 1),
+		infoBarTypeInfoTime:                    colorFormat("ECFEFF", 10.5),
 		infoBarTypeWarningBackgroundStart:      colorFormat("C39507", 1),
 		infoBarTypeWarningBackgroundStop:       colorFormat("DEAD14", 1),
 		infoBarTypeWarningTitle:                colorFormat("FFF7ED", 1),
+		infoBarTypeWarningTime:                 colorFormat("FFF7ED", 0.35),
 		infoBarTypeQuestionBackgroundStart:     colorFormat("EA580C", 1),
 		infoBarTypeQuestionBackgroundStop:      colorFormat("F97316", 1),
 		infoBarTypeQuestionTitle:               colorFormat("FEFCE8", 1),
+		infoBarTypeQuestionTime:                colorFormat("FEFCE8", 0.35),
 		infoBarTypeErrorBackgroundStart:        colorFormat("B91C1C", 1),
 		infoBarTypeErrorBackgroundStop:         colorFormat("CB2323", 1),
 		infoBarTypeErrorTitle:                  colorFormat("FFF1F2", 1),
+		infoBarTypeErrorTime:                   colorFormat("FFF1F2", 0.35),
 		infoBarTypeOtherBackgroundStart:        colorFormat("075985", 1),
 		infoBarTypeOtherBackgroundStop:         colorFormat("0369A1", 1),
 		infoBarTypeOtherTitle:                  colorFormat("F0FDFA", 1),
+		infoBarTypeOtherTime:                   colorFormat("F0FDFA", 0.35),
 		infoBarButtonBackground:                colorFormat("000000", 0.25),
 		infoBarButtonForeground:                colorFormat("FFFFFF", 1),
 		infoBarButtonHoverBackground:           colorFormat("000000", 0.35),
@@ -237,18 +247,23 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		infoBarTypeInfoBackgroundStart:         colorFormat("3F6212", 1),
 		infoBarTypeInfoBackgroundStop:          colorFormat("4D7C0F", 1),
 		infoBarTypeInfoTitle:                   colorFormat("ECFEFF", 1),
+		infoBarTypeInfoTime:                    colorFormat("ECFEFF", 0.35),
 		infoBarTypeWarningBackgroundStart:      colorFormat("C39507", 1),
 		infoBarTypeWarningBackgroundStop:       colorFormat("DEAD14", 1),
 		infoBarTypeWarningTitle:                colorFormat("FFF7ED", 1),
+		infoBarTypeWarningTime:                 colorFormat("FFF7ED", 0.35),
 		infoBarTypeQuestionBackgroundStart:     colorFormat("EA580C", 1),
 		infoBarTypeQuestionBackgroundStop:      colorFormat("F97316", 1),
 		infoBarTypeQuestionTitle:               colorFormat("FEFCE8", 1),
+		infoBarTypeQuestionTime:                colorFormat("FEFCE8", 0.35),
 		infoBarTypeErrorBackgroundStart:        colorFormat("B91C1C", 1),
 		infoBarTypeErrorBackgroundStop:         colorFormat("CB2323", 1),
 		infoBarTypeErrorTitle:                  colorFormat("FFF1F2", 1),
+		infoBarTypeErrorTime:                   colorFormat("FFF1F2", 0.35),
 		infoBarTypeOtherBackgroundStart:        colorFormat("075985", 1),
 		infoBarTypeOtherBackgroundStop:         colorFormat("0369A1", 1),
 		infoBarTypeOtherTitle:                  colorFormat("F0FDFA", 1),
+		infoBarTypeOtherTime:                   colorFormat("F0FDFA", 0.35),
 		infoBarButtonBackground:                colorFormat("000000", 0.25),
 		infoBarButtonForeground:                colorFormat("FFFFFF", 1),
 		infoBarButtonHoverBackground:           colorFormat("000000", 0.35),

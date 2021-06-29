@@ -318,15 +318,6 @@ func (s *mucStylesProvider) setEntryErrorStyle(e gtki.Entry) {
 		},
 	})
 }
-
-func (s *mucStylesProvider) setNotificationTimeLabelStyle(l gtki.Label) {
-	s.setLabelStyle(l, style{
-		"font-style": "italic",
-		"font-size":  "12px",
-		"opacity":    "0.7",
-	})
-}
-
 func (s *mucStylesProvider) setErrorLabelStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
 		"color": s.colors.entryErrorBorder,

@@ -24,6 +24,7 @@ var infoBarClassNames = map[infoBarType]string{
 type infoBarColorInfo struct {
 	background             string
 	titleColor             string
+	timeColor              string
 	borderColor            string
 	buttonBackground       string
 	buttonColor            string
@@ -66,6 +67,7 @@ const (
 	infoBarRevealerBoxSelector         = "revealer > box"
 	infoBarContentSelector             = ".content"
 	infoBarTitleSelector               = ".title"
+	infoBarTimeSelector                = ".time"
 	infoBarActionsButtonSelector       = ".actions button"
 	infoBarActionsButtonLabelSelector  = ".actions button label"
 	infoBarActionsButtonHoverSelector  = ".actions button:hover"
@@ -97,6 +99,12 @@ var (
 	}
 
 	infoBarTitleCommonStyle = style{
+		"text-shadow": "none",
+	}
+
+	infoBarTimeCommonStyle = style{
+		"font-style":  "italic",
+		"font-size":   "x-small",
 		"text-shadow": "none",
 	}
 
@@ -159,6 +167,10 @@ func (ibst *infoBarStyle) childStyles() styles {
 		"color": ibst.colors.titleColor,
 	})
 
+	infoBarTimeStyle := mergeStyles(infoBarTimeCommonStyle, style{
+		"color": ibst.colors.timeColor,
+	})
+
 	infoBarActionsButtonStyle := mergeStyles(infoBarActionsButtonCommonStyle, style{
 		"background": ibst.colors.buttonBackground,
 		"color":      ibst.colors.buttonColor,
@@ -193,6 +205,7 @@ func (ibst *infoBarStyle) childStyles() styles {
 		infoBarRevealerBoxSelector:         infoBarRevealerBoxCommonStyle,
 		infoBarContentSelector:             infoBarContentCommonStyle,
 		infoBarTitleSelector:               infoBarTitleStyle,
+		infoBarTimeSelector:                infoBarTimeStyle,
 		infoBarActionsButtonSelector:       infoBarActionsButtonStyle,
 		infoBarActionsButtonLabelSelector:  infoBarActionsButtonLabelCommonStyle,
 		infoBarActionsButtonHoverSelector:  infoBarActionsButtonHoverStyle,
@@ -231,33 +244,39 @@ func (s *mucStylesProvider) setInfoBarStyle(ib gtki.InfoBar) {
 func infoBarTypeColorsFromSet(tp infoBarType, c mucColorSet) infoBarColorInfo {
 	bgStart := c.infoBarTypeOtherBackgroundStart
 	bgStop := c.infoBarTypeOtherBackgroundStop
-	tc := c.infoBarTypeOtherTitle
+	titleColor := c.infoBarTypeOtherTitle
+	timeColor := c.infoBarTypeOtherTime
 
 	switch tp {
 	case infoBarTypeInfo:
 		bgStart = c.infoBarTypeInfoBackgroundStart
 		bgStop = c.infoBarTypeInfoBackgroundStop
-		tc = c.infoBarTypeInfoTitle
+		titleColor = c.infoBarTypeInfoTitle
+		timeColor = c.infoBarTypeInfoTime
 
 	case infoBarTypeWarning:
 		bgStart = c.infoBarTypeWarningBackgroundStart
 		bgStop = c.infoBarTypeWarningBackgroundStop
-		tc = c.infoBarTypeWarningTitle
+		titleColor = c.infoBarTypeWarningTitle
+		timeColor = c.infoBarTypeWarningTime
 
 	case infoBarTypeQuestion:
 		bgStart = c.infoBarTypeQuestionBackgroundStart
 		bgStop = c.infoBarTypeQuestionBackgroundStop
-		tc = c.infoBarTypeQuestionTitle
+		titleColor = c.infoBarTypeQuestionTitle
+		timeColor = c.infoBarTypeQuestionTime
 
 	case infoBarTypeError:
 		bgStart = c.infoBarTypeErrorBackgroundStart
 		bgStop = c.infoBarTypeErrorBackgroundStop
-		tc = c.infoBarTypeErrorTitle
+		titleColor = c.infoBarTypeErrorTitle
+		timeColor = c.infoBarTypeErrorTime
 	}
 
 	return infoBarColorInfo{
 		background:             fmt.Sprintf("linear-gradient(0deg, %s 0%%, %s 100%%)", bgStart, bgStop),
-		titleColor:             tc,
+		titleColor:             titleColor,
+		timeColor:              timeColor,
 		borderColor:            colorTransparent,
 		buttonBackground:       c.infoBarButtonBackground,
 		buttonColor:            c.infoBarButtonForeground,

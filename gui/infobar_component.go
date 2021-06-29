@@ -77,7 +77,6 @@ func (ib *infoBarComponent) initDefaults() {
 
 func (ib *infoBarComponent) initStyleAndIcon() {
 	mucStyles.setInfoBarStyle(ib.infoBar)
-	mucStyles.setNotificationTimeLabelStyle(ib.time)
 
 	tp := infoBarTypeForMessageType(ib.messageType)
 	if icoName, ok := infoBarIconNames[tp]; ok {

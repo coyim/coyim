@@ -175,8 +175,11 @@ func (v *roomView) roomConfigRequestTimeoutEvent() {
 
 // selfOccupantAffiliationUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantAffiliationUpdatedEvent(selfAffiliationUpdate data.SelfAffiliationUpdate) {
-	m := getMUCNotificationMessageFrom(selfAffiliationUpdate)
-	v.notifications.info(roomNotificationOptions{message: m, showTime: true, closeable: true})
+	v.notifications.info(roomNotificationOptions{
+		message:   getMUCNotificationMessageFrom(selfAffiliationUpdate),
+		showTime:  true,
+		closeable: true,
+	})
 
 	if selfAffiliationUpdate.New.IsBanned() {
 		v.disableRoomView()
@@ -185,13 +188,21 @@ func (v *roomView) selfOccupantAffiliationUpdatedEvent(selfAffiliationUpdate dat
 
 // selfOccupantAffiliationRoleUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) {
-	m := getSelfAffiliationRoleUpdateMessage(selfAffiliationRoleUpdate)
-	v.notifications.info(roomNotificationOptions{message: m, showTime: true, closeable: true})
+	v.notifications.info(roomNotificationOptions{
+		message:   getSelfAffiliationRoleUpdateMessage(selfAffiliationRoleUpdate),
+		showTime:  true,
+		closeable: true,
+	})
 }
 
 // selfOccupantRoleUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleUpdate) {
-	v.notifications.info(roomNotificationOptions{message: getSelfRoleUpdateMessage(selfRoleUpdate), showTime: true, closeable: true})
+	v.notifications.info(roomNotificationOptions{
+		message:   getSelfRoleUpdateMessage(selfRoleUpdate),
+		showTime:  true,
+		closeable: true,
+	})
+
 	if selfRoleUpdate.New.IsNone() {
 		v.disableRoomView()
 	}
@@ -199,7 +210,12 @@ func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleUpdate) 
 
 // selfOccupantRemovedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantRemovedEvent() {
-	v.notifications.info(roomNotificationOptions{message: i18n.Local("You have been removed from this room because it's now a members only room."), showTime: true, closeable: true})
+	v.notifications.info(roomNotificationOptions{
+		message:   i18n.Local("You have been removed from this room because it's now a members only room."),
+		showTime:  true,
+		closeable: true,
+	})
+
 	v.disableRoomView()
 }
 
@@ -304,8 +320,12 @@ func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, pas
 			v.log.Info("The room has been destroyed")
 			v.publishDestroyEvent(reason, alternativeRoomID, password)
 			doInUIThread(func() {
-				v.notifications.info(roomNotificationOptions{message: i18n.Local("The room has been destroyed"), showTime: true, closeable: true})
 				v.loadingViewOverlay.hide()
+
+				v.notifications.info(roomNotificationOptions{
+					message:   i18n.Local("The room has been destroyed"),
+					closeable: true,
+				})
 			})
 		case err := <-ec:
 			v.log.WithError(err).Error("An error occurred when trying to destroy the room")
@@ -342,14 +362,20 @@ func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, newAffiliation 
 
 func (v *roomView) onOccupantAffiliationUpdateSuccess(o *muc.Occupant, previousAffiliation, affiliation data.Affiliation) {
 	doInUIThread(func() {
-		v.notifications.info(roomNotificationOptions{message: getAffiliationUpdateSuccessMessage(o.Nickname, previousAffiliation, affiliation), showTime: true, closeable: true})
+		v.notifications.info(roomNotificationOptions{
+			message:   getAffiliationUpdateSuccessMessage(o.Nickname, previousAffiliation, affiliation),
+			closeable: true,
+		})
 		v.loadingViewOverlay.hide()
 	})
 }
 
 func (v *roomView) onBannedListUpdated() {
 	doInUIThread(func() {
-		v.notifications.info(roomNotificationOptions{message: i18n.Local("The banned list has been updated"), showTime: true, closeable: true})
+		v.notifications.info(roomNotificationOptions{
+			message:   i18n.Local("The banned list has been updated"),
+			closeable: true,
+		})
 	})
 }
 
@@ -358,7 +384,11 @@ func (v *roomView) onOccupantAffiliationUpdateError(nickname string, newAffiliat
 
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
-		v.notifications.info(roomNotificationOptions{message: messages.notificationMessage, showTime: true, closeable: true})
+
+		v.notifications.info(roomNotificationOptions{
+			message:   messages.notificationMessage,
+			closeable: true,
+		})
 
 		dr := createDialogErrorComponent(
 			messages.errorDialogTitle,
@@ -393,7 +423,11 @@ func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, newRole data.Role, rea
 func (v *roomView) onOccupantRoleUpdateSuccess(nickname string, previousRole, newRole data.Role) {
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
-		v.notifications.info(roomNotificationOptions{message: getRoleUpdateSuccessMessage(nickname, previousRole, newRole), showTime: true, closeable: true})
+
+		v.notifications.info(roomNotificationOptions{
+			message:   getRoleUpdateSuccessMessage(nickname, previousRole, newRole),
+			closeable: true,
+		})
 	})
 }
 
@@ -402,7 +436,11 @@ func (v *roomView) onOccupantRoleUpdateError(nickname string, newRole data.Role)
 
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
-		v.notifications.error(roomNotificationOptions{message: messages.notificationMessage, showTime: true, closeable: true})
+
+		v.notifications.error(roomNotificationOptions{
+			message:   messages.notificationMessage,
+			closeable: true,
+		})
 
 		dr := createDialogErrorComponent(
 			messages.errorDialogTitle,
@@ -424,7 +462,11 @@ func (v *roomView) updateSubjectRoom(s string, onSuccess func()) {
 	}
 	doInUIThread(func() {
 		onSuccess()
-		v.notifications.info(roomNotificationOptions{message: i18n.Local("The room subject has been updated."), showTime: true, closeable: true})
+
+		v.notifications.info(roomNotificationOptions{
+			message:   i18n.Local("The room subject has been updated."),
+			closeable: true,
+		})
 	})
 }
 

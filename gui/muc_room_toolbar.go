@@ -80,7 +80,7 @@ func (t *roomViewToolbar) initSubscribers() {
 		case subjectReceivedEvent:
 			t.subjectReceivedEvent(e.subject)
 		case subjectUpdatedEvent:
-			t.subjectReceivedEvent(e.subject)
+			t.subjectUpdatedEvent(e.subject)
 		case roomDestroyedEvent:
 			t.roomDestroyedEvent()
 		case selfOccupantRemovedEvent:
@@ -99,9 +99,13 @@ func (t *roomViewToolbar) initSubscribers() {
 }
 
 func (t *roomViewToolbar) subjectReceivedEvent(subject string) {
+	t.subjectUpdatedEvent(subject)
+	doInUIThread(t.handleSubjectComponents)
+}
+
+func (t *roomViewToolbar) subjectUpdatedEvent(subject string) {
 	doInUIThread(func() {
 		t.displayRoomSubject(subject)
-		t.handleSubjectComponents()
 	})
 }
 

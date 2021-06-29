@@ -4,6 +4,7 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
+// getOrCreateRoomView MUST be called from the UI thread
 func (u *gtkUI) getOrCreateRoomView(a *account, roomID jid.Bare) *roomView {
 	v, exists := a.getRoomView(roomID)
 	if !exists {
@@ -24,6 +25,7 @@ func (u *gtkUI) joinRoom(a *account, roomID jid.Bare, rvd *roomViewData) {
 	u.joinRoomWithData(a, roomID, rvd)
 }
 
+// joinRoomWithData MUST be called from the UI thread
 func (u *gtkUI) joinRoomWithData(a *account, roomID jid.Bare, d roomViewDataProvider) {
 	v := u.getOrCreateRoomView(a, roomID)
 	v.room.UpdateProperties(d.roomProperties())

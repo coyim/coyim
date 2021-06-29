@@ -179,6 +179,7 @@ func (v *mucJoinRoomView) validateFieldsAndGetBareIfOk() (jid.Bare, bool) {
 	return jid.NewBare(local, chatServiceName), true
 }
 
+// tryJoinRoom MUST be called from the UI thread
 func (v *mucJoinRoomView) tryJoinRoom(done func()) {
 	if v.roomFormComponent.isValid() {
 		c := v.newJoinRoomContext(v.roomFormComponent.currentAccount(), v.roomFormComponent.currentRoomID(), done)

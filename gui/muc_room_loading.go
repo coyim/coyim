@@ -58,3 +58,10 @@ func (lo *roomViewLoadingOverlay) onOccupantRoleUpdate(role data.Role) {
 	lo.setTransparent()
 	lo.show()
 }
+
+// onRoomConfigurationRequest MUST be called from the UI thread
+func (lo *roomViewLoadingOverlay) onRoomConfigurationRequest() {
+	lo.setTitle(i18n.Local("Loading room configuration..."))
+	lo.setTransparent()
+	lo.show()
+}

@@ -76,6 +76,41 @@ func (rcd *roomConfigData) ensureRequiredFields() {
 	}
 }
 
+// onConfigureRoom MUST be called from the UI thread
+func (v *roomView) onConfigureRoom() {
+	v.loadingViewOverlay.onRoomConfigurationRequest()
+
+	fc, ec := v.account.session.GetRoomConfigurationForm(v.room.ID)
+	go func() {
+		select {
+		case f := <-fc:
+			doInUIThread(func() {
+				v.u.launchRoomConfigView(roomConfigScenarioSubsequent, &roomConfigData{
+					account:    v.account,
+					roomID:     v.room.ID,
+					configForm: f,
+					doAfterConfigSaved: func(autoJoin bool) {
+						v.notifications.info(roomNotificationOptions{
+							message:   i18n.Local("The room configuration changed."),
+							closeable: true,
+						})
+					},
+					doNotAskForConfirmationOnCancel: true,
+				})
+			})
+		case err := <-ec:
+			v.log.WithError(err).Error("An error occurred when retrieving the Room Configuration Form")
+			doInUIThread(func() {
+				v.notifications.error(roomNotificationOptions{
+					message:   i18n.Local("Unable to open the room configuration. Please, try again."),
+					closeable: true,
+				})
+			})
+		}
+		doInUIThread(v.loadingViewOverlay.hide)
+	}()
+}
+
 type roomConfigChangedTypes []data.RoomConfigType
 
 func (c roomConfigChangedTypes) contains(k data.RoomConfigType) bool {

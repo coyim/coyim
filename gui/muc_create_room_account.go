@@ -113,10 +113,8 @@ func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, 
 	}
 
 	onCancel := func() {
-		doInUIThread(func() {
-			v.cancelConfiguration(ca, roomID, nil)
-			v.u.mucShowCreateRoomForm(createRoomData)
-		})
+		v.cancelConfiguration(ca, roomID, nil)
+		v.u.mucShowCreateRoomForm(createRoomData)
 	}
 
 	rca := v.u.newRoomConfigAssistant(&roomConfigData{

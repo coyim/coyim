@@ -36,12 +36,10 @@ type infoBarComponent struct {
 	canBeClosed     bool
 	onCloseCallback func() // onCloseCallback will be called from the UI thread
 
-	infoBar    gtki.InfoBar `gtk-widget:"infobar"`
-	timeBox    gtki.Box     `gtk-widget:"time-box"`
-	iconTime   gtki.Image   `gtk-widget:"icon-time"`
-	timeLabel  gtki.Label   `gtk-widget:"time-label"`
-	titleLabel gtki.Label   `gtk-widget:"title-label"`
-	icon       gtki.Image   `gtk-widget:"icon-image"`
+	infoBar gtki.InfoBar `gtk-widget:"infobar"`
+	time    gtki.Label   `gtk-widget:"time-label"`
+	title   gtki.Label   `gtk-widget:"title-label"`
+	icon    gtki.Image   `gtk-widget:"icon-image"`
 }
 
 func (u *gtkUI) newInfoBarComponent(text string, messageType gtki.MessageType) *infoBarComponent {
@@ -73,12 +71,13 @@ func (ib *infoBarComponent) initBuilder() {
 }
 
 func (ib *infoBarComponent) initDefaults() {
-	ib.titleLabel.SetText(ib.text)
+	ib.title.SetText(ib.text)
 	ib.infoBar.SetMessageType(ib.messageType)
 }
 
 func (ib *infoBarComponent) initStyleAndIcon() {
 	mucStyles.setInfoBarStyle(ib.infoBar)
+	mucStyles.setNotificationTimeLabelStyle(ib.time)
 
 	tp := infoBarTypeForMessageType(ib.messageType)
 	if icoName, ok := infoBarIconNames[tp]; ok {
@@ -116,20 +115,36 @@ func (ib *infoBarComponent) view() gtki.InfoBar {
 	return ib.infoBar
 }
 
-func (ib *infoBarComponent) setTickerTime(t time.Time) {
-	ticker := time.NewTicker(1 * time.Second)
+const infoBarTimeFormat = "January 2, 2006 at 15:04:05"
 
-	go func() {
-		for {
-			<-ticker.C
+func (ib *infoBarComponent) setTime(t time.Time) {
+	friendlyTime := formatTimeWithLayout(t, infoBarTimeFormat)
+	ib.time.SetTooltipText(friendlyTime)
+
+	ib.refreshElapsedTime(t)
+
+	go ib.tickNotificationTime(t)
+}
+
+// tickNotificationTime MUST NOT be called from the UI thread
+func (ib *infoBarComponent) tickNotificationTime(t time.Time) {
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
 			doInUIThread(func() {
-				ib.timeLabel.SetText(elapsedFriendlyTime(t))
+				ib.refreshElapsedTime(t)
 			})
 		}
-	}()
+	}
+}
 
-	ib.timeLabel.SetText(elapsedFriendlyTime(t))
-	ib.timeBox.Show()
+// refreshElapsedTime MUST be called from the UI thread
+func (ib *infoBarComponent) refreshElapsedTime(t time.Time) {
+	ib.time.SetText(elapsedFriendlyTime(t))
+	ib.time.Show()
 }
 
 func infoBarTypeForMessageType(mt gtki.MessageType) infoBarType {

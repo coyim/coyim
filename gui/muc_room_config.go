@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"fmt"
+
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
@@ -24,18 +26,16 @@ const (
 func (u *gtkUI) launchRoomConfigView(scenario roomConfigScenario, data *roomConfigData) {
 	data.ensureRequiredFields()
 
-	if initializer, ok := u.getRoomConfigViewFor(scenario); ok {
-		view := initializer(data)
-		view.launchRoomConfigView()
-	}
-}
-
-func (u *gtkUI) getRoomConfigViewFor(scenario roomConfigScenario) (func(data *roomConfigData) hasRoomConfigComponentView, bool) {
+	var view hasRoomConfigComponentView
 	switch scenario {
 	case roomConfigScenarioCreate, roomConfigScenarioSubsequent:
-		return u.newRoomConfigAssistant, true
+		view = u.newRoomConfigAssistant(data)
+	default:
+		panic(fmt.Sprintf("developer error: trying to launch a not defined "+
+			"room config view for scenario \"%v\"", scenario))
 	}
-	return nil, false
+
+	view.launchRoomConfigView()
 }
 
 type roomConfigData struct {

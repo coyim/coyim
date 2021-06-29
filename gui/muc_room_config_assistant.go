@@ -32,7 +32,7 @@ type roomConfigAssistant struct {
 	log coylog.Logger
 }
 
-func (u *gtkUI) newRoomConfigAssistant(data *roomConfigData) hasRoomConfigComponentView {
+func (u *gtkUI) newRoomConfigAssistant(data *roomConfigData) *roomConfigAssistant {
 	rc := &roomConfigAssistant{
 		u:                               u,
 		account:                         data.account,

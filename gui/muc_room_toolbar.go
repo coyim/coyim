@@ -193,8 +193,12 @@ func (t *roomViewToolbar) resetSubjectComponents() {
 
 // onApplyEditSubject MUST be called from the UI thread
 func (t *roomViewToolbar) onApplyEditSubject() {
-	t.roomView.updateSubjectRoom(getTextViewText(t.roomSubjectTextView))
-	t.toggleEditSubjectComponents(true)
+	newSubject := getTextViewText(t.roomSubjectTextView)
+	t.roomView.updateSubjectRoom(newSubject,
+		func() {
+			t.roomSubjectLabel.SetText(newSubject)
+			t.toggleEditSubjectComponents(true)
+		})
 }
 
 // onRoomSubectChanged MUST be called from the UI thread

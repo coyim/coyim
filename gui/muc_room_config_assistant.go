@@ -12,9 +12,10 @@ import (
 )
 
 type roomConfigAssistant struct {
-	u       *gtkUI
-	account *account
-	roomID  jid.Bare
+	u                  *gtkUI
+	account            *account
+	roomID             jid.Bare
+	roomConfigScenario roomConfigScenario
 
 	roomConfigComponent *mucRoomConfigComponent
 	navigation          *roomConfigAssistantNavigation
@@ -37,6 +38,7 @@ func (u *gtkUI) newRoomConfigAssistant(data *roomConfigData) *roomConfigAssistan
 		u:                               u,
 		account:                         data.account,
 		roomID:                          data.roomID,
+		roomConfigScenario:              data.roomConfigScenario,
 		autoJoin:                        data.autoJoinRoomAfterSaved,
 		doAfterConfigSaved:              data.doAfterConfigSaved,
 		doAfterConfigCanceled:           data.doAfterConfigCanceled,
@@ -112,7 +114,14 @@ func (rc *roomConfigAssistant) refreshButtonLabels() {
 	buttons := getButtonsForAssistantHeader(rc.assistant)
 
 	buttons.updateButtonLabelByName("last", i18n.Local("Summary"))
-	buttons.updateButtonLabelByName("apply", i18n.Local("Create Room"))
+	buttons.updateButtonLabelByName("apply", rc.applyLabelBasedOnCurrentScenario())
+}
+
+func (rc *roomConfigAssistant) applyLabelBasedOnCurrentScenario() string {
+	if rc.roomConfigScenario == roomConfigScenarioCreate {
+		return i18n.Local("Create Room")
+	}
+	return i18n.Local("Update Configuration")
 }
 
 // hideBottomActionArea MUST be called from the UI thread

@@ -2,7 +2,6 @@ package gui
 
 import (
 	"fmt"
-	"sync"
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
@@ -87,7 +86,7 @@ func (rc *roomConfigAssistant) setCurrentPage(pageID mucRoomConfigPageID) {
 }
 
 func (rc *roomConfigAssistant) initRoomConfigPages() {
-	assignDefaultCurrentPageOnce := sync.Once{}
+	notAssignedDefaultCurrentPage := true
 
 	for _, p := range rc.roomConfigComponent.pages {
 		ap := newRoomConfigAssistantPage(p)
@@ -100,10 +99,11 @@ func (rc *roomConfigAssistant) initRoomConfigPages() {
 			rc.assistant.SetPageType(ap.page, gtki.ASSISTANT_PAGE_CONFIRM)
 		}
 
-		assignDefaultCurrentPageOnce.Do(func() {
+		if notAssignedDefaultCurrentPage {
+			notAssignedDefaultCurrentPage = false
 			rc.currentPageIndex = p.pageID
 			rc.currentPage = p
-		})
+		}
 	}
 }
 

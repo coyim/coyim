@@ -105,6 +105,7 @@ func (t *roomViewToolbar) subjectReceivedEvent(subject string) {
 func (t *roomViewToolbar) subjectUpdatedEvent(subject string) {
 	doInUIThread(func() {
 		t.displayRoomSubject(subject)
+		t.handleSubjectButtonVisibility()
 	})
 }
 
@@ -229,13 +230,18 @@ func (t *roomViewToolbar) toggleEditSubjectComponents(v bool) {
 
 // handleSubjectComponents MUST be called from the UI thread
 func (t *roomViewToolbar) handleSubjectComponents() {
-	t.roomSubjectButton.Hide()
-	if t.roomView.room.HasSubject() {
-		t.roomSubjectButton.Show()
-	}
+	t.handleSubjectButtonVisibility()
 
 	if t.roomView.room.CanChangeSubject() {
 		t.toggleEditSubjectComponents(t.roomView.room.HasSubject())
+		t.roomSubjectButton.Show()
+	}
+}
+
+// handleSubjectButtonVisibility MUST be called from the UI thread
+func (t *roomViewToolbar) handleSubjectButtonVisibility() {
+	t.roomSubjectButton.Hide()
+	if t.roomView.room.HasSubject() {
 		t.roomSubjectButton.Show()
 	}
 }

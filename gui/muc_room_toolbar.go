@@ -52,15 +52,16 @@ func (t *roomViewToolbar) initBuilder() {
 	panicOnDevError(builder.bindObjects(t))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_leave_room":               t.roomView.onLeaveRoom,
-		"on_destroy_room":             t.roomView.onDestroyRoom,
-		"on_show_security_properties": t.roomView.showWarnings,
-		"on_modify_ban_list":          t.roomView.onModifyBanList,
-		"on_toggle_room_subject":      t.onToggleRoomSubject,
 		"on_edit_room_subject":        t.onEditRoomSubject,
 		"on_cancel_room_subject_edit": t.onCancelEditSubject,
 		"on_apply_room_subject_edit":  t.onApplyEditSubject,
 		"on_subject_changed":          t.onRoomSubectChanged,
+		"on_toggle_room_subject":      t.onToggleRoomSubject,
+		"on_show_security_properties": t.roomView.showWarnings,
+		"on_configure_room":           t.roomView.onConfigureRoom,
+		"on_modify_ban_list":          t.roomView.onModifyBanList,
+		"on_destroy_room":             t.roomView.onDestroyRoom,
+		"on_leave_room":               t.roomView.onLeaveRoom,
 	})
 }
 

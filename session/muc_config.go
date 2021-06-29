@@ -90,7 +90,9 @@ func (m *mucManager) onRoomConfigUpdate(roomID jid.Bare, currConfig, prevConfig 
 
 	// Some XMPP clients sends an update room configuration even when nothing has changed
 	// We do this validation to avoid publish and room configuration change event when nothing has changed.
-	if len(changes) > 0 {
+	room, ok := m.roomManager.GetRoom(roomID)
+	if len(changes) > 0 && ok {
+		room.UpdateProperties(&currConfig)
 		m.roomConfigChanged(roomID, changes, currConfig)
 	}
 }

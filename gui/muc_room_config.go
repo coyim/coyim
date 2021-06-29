@@ -14,8 +14,8 @@ type roomConfigData struct {
 	roomID                 jid.Bare
 	configForm             *muc.RoomConfigForm
 	autoJoinRoomAfterSaved bool
-	doAfterConfigSaved     func(autoJoin bool)
-	doAfterConfigCanceled  func()
+	doAfterConfigSaved     func(autoJoin bool) // doAfterConfigSaved will be called from the UI thread
+	doAfterConfigCanceled  func()              // doAfterConfigCanceled will be called from the UI thread
 }
 
 func (rcd *roomConfigData) hasAccount() bool {

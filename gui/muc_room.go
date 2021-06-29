@@ -331,10 +331,11 @@ func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, pas
 			v.log.WithError(err).Error("An error occurred when trying to destroy the room")
 			doInUIThread(func() {
 				v.loadingViewOverlay.hide()
-				dr := createDestroyDialogError(
-					func() {
-						v.tryDestroyRoom(reason, alternativeRoomID, password)
-					})
+
+				dr := createDestroyDialogError(func() {
+					v.tryDestroyRoom(reason, alternativeRoomID, password)
+				})
+
 				dr.updateErrorMessage(err)
 				dr.show()
 			})
@@ -362,11 +363,12 @@ func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, newAffiliation 
 
 func (v *roomView) onOccupantAffiliationUpdateSuccess(o *muc.Occupant, previousAffiliation, affiliation data.Affiliation) {
 	doInUIThread(func() {
+		v.loadingViewOverlay.hide()
+
 		v.notifications.info(roomNotificationOptions{
 			message:   getAffiliationUpdateSuccessMessage(o.Nickname, previousAffiliation, affiliation),
 			closeable: true,
 		})
-		v.loadingViewOverlay.hide()
 	})
 }
 

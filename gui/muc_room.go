@@ -387,7 +387,7 @@ func (v *roomView) onOccupantAffiliationUpdateError(nickname string, newAffiliat
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
 
-		v.notifications.info(roomNotificationOptions{
+		v.notifications.error(roomNotificationOptions{
 			message:   messages.notificationMessage,
 			closeable: true,
 		})

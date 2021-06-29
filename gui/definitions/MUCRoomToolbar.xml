@@ -45,6 +45,9 @@
       </object>
     </child>
   </object>
+  <object class="GtkTextBuffer" id="room-subject-textview-buffer">
+    <signal name="changed" handler="on_subject_changed" swapped="no"/>
+  </object>
   <object class="GtkBox" id="room-view-toolbar">
     <property name="visible">True</property>
     <property name="hexpand">True</property>
@@ -268,6 +271,7 @@
                         <property name="right_margin">6</property>
                         <property name="top_margin">6</property>
                         <property name="bottom_margin">6</property>
+                        <property name="buffer">room-subject-textview-buffer</property>
                       </object>
                     </child>
                   </object>
@@ -286,7 +290,7 @@
                         <property name="label" translatable="yes">Edit subject</property>
                         <property name="visible">False</property>
                         <property name="focus_on_click">False</property>
-                        <property name="receives_default">True</property>                        
+                        <property name="receives_default">True</property>
                         <property name="valign">center</property>
                         <signal name="clicked" handler="on_edit_room_subject" swapped="no"/>
                       </object>
@@ -316,7 +320,8 @@
                         <child>
                           <object class="GtkButton" id="room-edit-subject-apply-button">
                             <property name="label" translatable="yes">Apply</property>
-                            <property name="visible">True</property>                            
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="receives_default">True</property>
                             <signal name="clicked" handler="on_apply_room_subject_edit" swapped="no"/>
                           </object>

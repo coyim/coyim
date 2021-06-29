@@ -27,6 +27,7 @@ type roomViewToolbar struct {
 	roomSubjectTextView        gtki.TextView       `gtk-widget:"room-subject-textview"`
 	roomSubjectEditButton      gtki.Button         `gtk-widget:"room-edit-subject-button"`
 	roomSubjectButtonBox       gtki.Box            `gtk-widget:"room-edit-subject-buttons-box"`
+	roomSubjectApplyButton     gtki.Button         `gtk-widget:"room-edit-subject-apply-button"`
 	securityPropertiesMenuItem gtki.MenuItem       `gtk-widget:"security-properties-menu-item"`
 	configureRoomMenuItem      gtki.MenuItem       `gtk-widget:"room-configuration-menu-item"`
 	modifyBanMenuItem          gtki.MenuItem       `gtk-widget:"modify-ban-list-menu-item"`
@@ -59,6 +60,7 @@ func (t *roomViewToolbar) initBuilder() {
 		"on_edit_room_subject":        t.onEditRoomSubject,
 		"on_cancel_room_subject_edit": t.onCancelEditSubject,
 		"on_apply_room_subject_edit":  t.onApplyEditSubject,
+		"on_subject_changed":          t.onRoomSubectChanged,
 	})
 }
 
@@ -67,9 +69,6 @@ func (t *roomViewToolbar) initDefaults() {
 
 	t.roomNameLabel.SetText(t.roomView.roomID().String())
 	mucStyles.setRoomToolbarNameLabelStyle(t.roomNameLabel)
-
-	tb, _ := g.gtk.TextBufferNew(nil)
-	t.roomSubjectTextView.SetBuffer(tb)
 
 	mucStyles.setRoomToolbarSubjectLabelStyle(t.roomSubjectLabel)
 }
@@ -196,6 +195,11 @@ func (t *roomViewToolbar) resetSubjectComponents() {
 func (t *roomViewToolbar) onApplyEditSubject() {
 	t.roomView.updateSubjectRoom(getTextViewText(t.roomSubjectTextView))
 	t.toggleEditSubjectComponents(true)
+}
+
+// onRoomSubectChanged MUST be called from the UI thread
+func (t *roomViewToolbar) onRoomSubectChanged() {
+	t.roomSubjectApplyButton.SetSensitive(t.roomView.room.GetSubject() != getTextViewText(t.roomSubjectTextView))
 }
 
 // onShowRoomSubject MUST be called from the UI thread

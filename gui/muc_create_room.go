@@ -5,7 +5,7 @@ import (
 	"sync"
 
 	"github.com/coyim/coyim/coylog"
-	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/session/muc/data"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/xmpp/jid"
@@ -211,7 +211,7 @@ func (crd *mucCreateRoomData) backToPreviousStep() func() {
 	return nil
 }
 
-func (crd *mucCreateRoomData) roomProperties() *muc.RoomListing {
+func (crd *mucCreateRoomData) roomProperties() *data.RoomDiscoInfo {
 	return nil
 }
 

@@ -13,13 +13,13 @@ import (
 type roomViewDataProvider interface {
 	passwordProvider() string
 	backToPreviousStep() func()
-	roomProperties() *muc.RoomListing
+	roomProperties() *data.RoomDiscoInfo
 }
 
 type roomViewData struct {
 	passsword            string
 	onBackToPreviousStep func()
-	properties           *muc.RoomListing
+	properties           *data.RoomDiscoInfo
 }
 
 func newRoomViewData() *roomViewData {
@@ -34,7 +34,7 @@ func (rvd *roomViewData) backToPreviousStep() func() {
 	return rvd.onBackToPreviousStep
 }
 
-func (rvd *roomViewData) roomProperties() *muc.RoomListing {
+func (rvd *roomViewData) roomProperties() *data.RoomDiscoInfo {
 	return rvd.properties
 }
 

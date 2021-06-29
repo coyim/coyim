@@ -24,7 +24,7 @@ type Room struct {
 	discussionHistory *data.DiscussionHistory
 
 	// Configuration options:
-	properties *RoomListing
+	properties *data.RoomDiscoInfo
 }
 
 // NewRoom returns a newly created room
@@ -121,7 +121,7 @@ func (r *Room) AddHistoryMessage(nickname, message string, timestamp time.Time) 
 }
 
 // UpdateProperties updates the room properties
-func (r *Room) UpdateProperties(properties *RoomListing) {
+func (r *Room) UpdateProperties(properties *data.RoomDiscoInfo) {
 	r.properties = properties
 }
 

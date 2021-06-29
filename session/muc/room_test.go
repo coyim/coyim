@@ -99,26 +99,28 @@ func (s *MucSuite) Test_Room_UpdateProperties(c *C) {
 	r := NewRoom(jid.ParseBare("foo@bar.com"))
 	c.Assert(r.properties, IsNil)
 
-	r.UpdateProperties(&RoomListing{
-		Service: jid.Parse("foo@bla.org"),
-		Name:    "bla bla",
+	r.UpdateProperties(&data.RoomDiscoInfo{
+		Language:           "en",
+		AllowsRegistration: true,
 	})
 
-	c.Assert(r.properties.Service, Equals, jid.Parse("foo@bla.org"))
-	c.Assert(r.properties.Name, Equals, "bla bla")
+	c.Assert(r.properties.Language, Equals, "en")
+	c.Assert(r.properties.AllowsRegistration, Equals, true)
 }
 
 func (s *MucSuite) Test_Room_AnyoneCanChangeSubject(c *C) {
 	r := NewRoom(jid.ParseBare("foo@bar.com"))
 
-	r.UpdateProperties(&RoomListing{
-		Service: jid.Parse("foo@bla.org"),
-		Name:    "bla bla",
-	})
+	rp := &data.RoomDiscoInfo{
+		Language:                  "en",
+		OccupantsCanChangeSubject: false,
+	}
+	r.UpdateProperties(rp)
 
 	c.Assert(r.AnyoneCanChangeSubject(), Equals, false)
 
-	r.properties.OccupantsCanChangeSubject = true
+	rp.OccupantsCanChangeSubject = true
+	r.UpdateProperties(rp)
 	c.Assert(r.AnyoneCanChangeSubject(), Equals, true)
 }
 
@@ -126,13 +128,15 @@ func (s *MucSuite) Test_Room_CanChangeSubject(c *C) {
 	r := NewRoom(jid.ParseBare("foo@bar.com"))
 	r.AddSelfOccupant(newTestOccupant(&data.OwnerAffiliation{}, &data.VisitorRole{}))
 
-	r.UpdateProperties(&RoomListing{
-		Service: jid.Parse("foo@bla.org"),
-		Name:    "bla bla",
-	})
+	rp := &data.RoomDiscoInfo{
+		Language:                  "en",
+		OccupantsCanChangeSubject: false,
+	}
+	r.UpdateProperties(rp)
 
 	c.Assert(r.CanChangeSubject(), Equals, false)
 
-	r.properties.OccupantsCanChangeSubject = true
+	rp.OccupantsCanChangeSubject = true
+	r.UpdateProperties(rp)
 	c.Assert(r.CanChangeSubject(), Equals, true)
 }

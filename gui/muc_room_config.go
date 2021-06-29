@@ -24,6 +24,7 @@ const (
 )
 
 func (u *gtkUI) launchRoomConfigView(scenario roomConfigScenario, data *roomConfigData) {
+	data.setScenario(scenario)
 	data.ensureRequiredFields()
 
 	var view hasRoomConfigComponentView
@@ -39,6 +40,7 @@ func (u *gtkUI) launchRoomConfigView(scenario roomConfigScenario, data *roomConf
 }
 
 type roomConfigData struct {
+	roomConfigScenario              roomConfigScenario
 	account                         *account
 	roomID                          jid.Bare
 	configForm                      *muc.RoomConfigForm
@@ -46,6 +48,10 @@ type roomConfigData struct {
 	doAfterConfigSaved              func(autoJoin bool) // doAfterConfigSaved will be called from the UI thread
 	doAfterConfigCanceled           func()              // doAfterConfigCanceled will be called from the UI thread
 	doNotAskForConfirmationOnCancel bool
+}
+
+func (rcd *roomConfigData) setScenario(scenario roomConfigScenario) {
+	rcd.roomConfigScenario = scenario
 }
 
 func (rcd *roomConfigData) hasAccount() bool {

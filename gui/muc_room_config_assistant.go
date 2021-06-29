@@ -27,6 +27,7 @@ type roomConfigAssistant struct {
 
 	currentPageIndex mucRoomConfigPageID
 	currentPage      *roomConfigPage
+	parentWindow     gtki.Window
 
 	assistant gtki.Assistant `gtk-widget:"room-config-assistant"`
 
@@ -43,6 +44,7 @@ func (u *gtkUI) newRoomConfigAssistant(data *roomConfigData) *roomConfigAssistan
 		doAfterConfigSaved:              data.doAfterConfigSaved,
 		doAfterConfigCanceled:           data.doAfterConfigCanceled,
 		doNotAskForConfirmationOnCancel: data.doNotAskForConfirmationOnCancel,
+		parentWindow:                    data.parentWindow,
 		log: u.log.WithFields(log.Fields{
 			"room":  data.roomID,
 			"where": "configureRoomAssistant",
@@ -101,6 +103,10 @@ func (rc *roomConfigAssistant) initRoomConfigPages() {
 
 func (rc *roomConfigAssistant) initDefaults() {
 	rc.assistant.SetTitle(i18n.Localf("Configuration for room [%s]", rc.roomID))
+	if rc.parentWindow != nil {
+		rc.assistant.SetTransientFor(rc.parentWindow)
+	}
+
 	removeMarginFromAssistantPages(rc.assistant)
 }
 

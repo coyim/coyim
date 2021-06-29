@@ -9,6 +9,35 @@ import (
 	"golang.org/x/text/language/display"
 )
 
+type hasRoomConfigComponentView interface {
+	canConfigureRoom() bool
+	launchRoomConfigView()
+}
+
+type roomConfigScenario int
+
+const (
+	roomConfigScenarioCreate roomConfigScenario = iota
+	roomConfigScenarioSubsequent
+)
+
+func (u *gtkUI) launchRoomConfigView(scenario roomConfigScenario, data *roomConfigData) {
+	data.ensureRequiredFields()
+
+	if initializer, ok := u.getRoomConfigViewFor(scenario); ok {
+		view := initializer(data)
+		view.launchRoomConfigView()
+	}
+}
+
+func (u *gtkUI) getRoomConfigViewFor(scenario roomConfigScenario) (func(data *roomConfigData) hasRoomConfigComponentView, bool) {
+	switch scenario {
+	case roomConfigScenarioCreate, roomConfigScenarioSubsequent:
+		return u.newRoomConfigAssistant, true
+	}
+	return nil, false
+}
+
 type roomConfigData struct {
 	account                         *account
 	roomID                          jid.Bare

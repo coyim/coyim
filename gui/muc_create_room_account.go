@@ -117,7 +117,7 @@ func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, 
 		v.u.mucShowCreateRoomForm(createRoomData)
 	}
 
-	rca := v.u.newRoomConfigAssistant(&roomConfigData{
+	v.u.launchRoomConfigView(roomConfigScenarioCreate, &roomConfigData{
 		account:                ca,
 		roomID:                 roomID,
 		configForm:             cf,
@@ -125,8 +125,6 @@ func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, 
 		doAfterConfigSaved:     onSuccess,
 		doAfterConfigCanceled:  onCancel,
 	})
-
-	rca.showAssistant()
 }
 
 // cancelConfiguration IS SAFE to be called from the UI thread

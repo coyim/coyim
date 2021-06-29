@@ -32,9 +32,7 @@ type roomConfigAssistant struct {
 	log coylog.Logger
 }
 
-func (u *gtkUI) newRoomConfigAssistant(data *roomConfigData) *roomConfigAssistant {
-	data.ensureRequiredFields()
-
+func (u *gtkUI) newRoomConfigAssistant(data *roomConfigData) hasRoomConfigComponentView {
 	rc := &roomConfigAssistant{
 		u:                               u,
 		account:                         data.account,
@@ -254,4 +252,14 @@ func (rc *roomConfigAssistant) pageByIndex(pageID mucRoomConfigPageID) *roomConf
 		return page
 	}
 	panic(fmt.Sprintf("developer error: unsupported room config assistant page \"%d\"", pageID))
+}
+
+// canConfigureRoom implements the "markAsComponentToConfigureARoom" interface
+func (rc *roomConfigAssistant) canConfigureRoom() bool {
+	return true
+}
+
+// launchRoomConfigView implements the "markAsComponentToConfigureARoom" interface
+func (rc *roomConfigAssistant) launchRoomConfigView() {
+	rc.showAssistant()
 }

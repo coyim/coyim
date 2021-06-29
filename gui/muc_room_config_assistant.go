@@ -19,9 +19,9 @@ type roomConfigAssistant struct {
 	roomConfigComponent *mucRoomConfigComponent
 	navigation          *roomConfigAssistantNavigation
 
-	autoJoin  bool
-	onSuccess func(autoJoin bool)
-	onCancel  func()
+	autoJoin              bool
+	doAfterConfigSaved    func(autoJoin bool) // doAfterConfigSaved will be called from the UI thread
+	doAfterConfigCanceled func()              // doAfterConfigCanceled will be called from the UI thread
 
 	currentPageIndex mucRoomConfigPageID
 	currentPage      *roomConfigPage
@@ -35,26 +35,16 @@ func (u *gtkUI) newRoomConfigAssistant(data *roomConfigData) *roomConfigAssistan
 	data.ensureRequiredFields()
 
 	rc := &roomConfigAssistant{
-		u:        u,
-		account:  data.account,
-		roomID:   data.roomID,
-		autoJoin: data.autoJoinRoomAfterSaved,
+		u:                     u,
+		account:               data.account,
+		roomID:                data.roomID,
+		autoJoin:              data.autoJoinRoomAfterSaved,
+		doAfterConfigSaved:    data.doAfterConfigSaved,
+		doAfterConfigCanceled: data.doAfterConfigCanceled,
 		log: u.log.WithFields(log.Fields{
 			"room":  data.roomID,
 			"where": "configureRoomAssistant",
 		}),
-	}
-
-	rc.onSuccess = func(aj bool) {
-		if data.doAfterConfigSaved != nil {
-			data.doAfterConfigSaved(aj)
-		}
-	}
-
-	rc.onCancel = func() {
-		if data.doAfterConfigCanceled != nil {
-			data.doAfterConfigCanceled()
-		}
 	}
 
 	rc.initBuilder()
@@ -188,9 +178,17 @@ func (rc *roomConfigAssistant) onCancelClicked() {
 
 // cancelConfiguration MUST be called from the UI thread
 func (rc *roomConfigAssistant) cancelConfiguration() {
-	rc.destroyAssistant()
 	rc.onCancel()
 	rc.roomConfigComponent.cancelConfiguration(rc.onCancelError)
+}
+
+// onCancel MUST be called from the UI thread
+func (rc *roomConfigAssistant) onCancel() {
+	rc.destroyAssistant()
+
+	if rc.doAfterConfigCanceled != nil {
+		rc.doAfterConfigCanceled()
+	}
 }
 
 // onCancelError MUST be called from the UI thread
@@ -218,8 +216,11 @@ func (rc *roomConfigAssistant) onApplyClicked() {
 
 // onApplySuccess MUST be called from the UI thread
 func (rc *roomConfigAssistant) onApplySuccess() {
-	rc.onSuccess(rc.roomConfigComponent.autoJoin)
 	rc.destroyAssistant()
+
+	if rc.doAfterConfigSaved != nil {
+		rc.doAfterConfigSaved(rc.roomConfigComponent.autoJoin)
+	}
 }
 
 // destroyAssistant MUST be called from the UI thread

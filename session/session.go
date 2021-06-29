@@ -223,11 +223,6 @@ func retrieveMessageTime(stanza *data.ClientMessage) time.Time {
 func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 	s.log.WithField("stanza", fmt.Sprintf("%#v", stanza)).Debug("receivedClientMessage()")
 
-	if stanza.MUCUser != nil {
-		s.log.WithField("room", stanza.From).Debug("A MUC message has been received")
-		return true
-	}
-
 	if stanza.Body == "" && len(stanza.Extensions) > 0 {
 		s.processExtensions(stanza)
 		return true
@@ -256,6 +251,11 @@ func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 			s.log.WithField("error", stanza.Error).WithField("peer", peer.NoResource()).Error("Error reported from peer")
 		}
 
+		return true
+	}
+
+	if stanza.MUCUser != nil {
+		s.log.WithField("room", stanza.From).Debug("A MUC message has been received")
 		return true
 	}
 

@@ -179,7 +179,6 @@ func (rc *roomConfigAssistant) onCancelClicked() {
 // cancelConfiguration MUST be called from the UI thread
 func (rc *roomConfigAssistant) cancelConfiguration() {
 	rc.onCancel()
-	rc.roomConfigComponent.cancelConfiguration(rc.onCancelError)
 }
 
 // onCancel MUST be called from the UI thread

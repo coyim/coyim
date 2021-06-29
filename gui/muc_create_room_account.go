@@ -114,6 +114,7 @@ func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, 
 
 	onCancel := func() {
 		doInUIThread(func() {
+			v.cancelConfiguration(ca, roomID, nil)
 			v.u.mucShowCreateRoomForm(createRoomData)
 		})
 	}
@@ -126,7 +127,27 @@ func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, 
 		doAfterConfigSaved:     onSuccess,
 		doAfterConfigCanceled:  onCancel,
 	})
+
 	rca.showAssistant()
+}
+
+// cancelConfiguration IS SAFE to be called from the UI thread
+func (v *mucCreateRoomView) cancelConfiguration(ca *account, roomID jid.Bare, onError func(error)) {
+	sc, ec := ca.session.DestroyRoom(roomID, "", nil, "")
+
+	go func() {
+		select {
+		case <-sc:
+			// do nothing
+		case err := <-ec:
+			v.log(ca, roomID).WithError(err).Error("An error occurred when trying to cancel the room configuration")
+			if onError != nil {
+				doInUIThread(func() {
+					onError(err)
+				})
+			}
+		}
+	}()
 }
 
 // onCreateRoomFinished MUST NOT be called from the UI thread

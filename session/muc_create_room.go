@@ -14,15 +14,6 @@ import (
 var (
 	// ErrInvalidReserveRoomRequest is an invalid room reservation request error
 	ErrInvalidReserveRoomRequest = errors.New("invalid reserve room request")
-
-	// ErrInvalidInformationQueryRequest is an invalid information query request error
-	ErrInvalidInformationQueryRequest = errors.New("invalid information query request")
-
-	// ErrUnexpectedResponse is an unexpected response from the server error
-	ErrUnexpectedResponse = errors.New("received an unexpected response from the server")
-
-	// ErrInformationQueryResponse contains an error received in the information query response
-	ErrInformationQueryResponse = errors.New("received an error from the server")
 )
 
 // CreateInstantRoom will create a room "instantly" accepting the default configuration of the room

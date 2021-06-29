@@ -7,6 +7,7 @@ import (
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
+	"github.com/coyim/gotk3adapter/gtki"
 	"golang.org/x/text/language"
 	"golang.org/x/text/language/display"
 )
@@ -48,6 +49,7 @@ type roomConfigData struct {
 	doAfterConfigSaved              func(autoJoin bool) // doAfterConfigSaved will be called from the UI thread
 	doAfterConfigCanceled           func()              // doAfterConfigCanceled will be called from the UI thread
 	doNotAskForConfirmationOnCancel bool
+	parentWindow                    gtki.Window
 }
 
 func (rcd *roomConfigData) setScenario(scenario roomConfigScenario) {
@@ -96,6 +98,7 @@ func (v *roomView) onConfigureRoom() {
 						})
 					},
 					doNotAskForConfirmationOnCancel: true,
+					parentWindow:                    v.window,
 				})
 			})
 		case err := <-ec:

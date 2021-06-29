@@ -19,9 +19,10 @@ type roomConfigAssistant struct {
 	roomConfigComponent *mucRoomConfigComponent
 	navigation          *roomConfigAssistantNavigation
 
-	autoJoin              bool
-	doAfterConfigSaved    func(autoJoin bool) // doAfterConfigSaved will be called from the UI thread
-	doAfterConfigCanceled func()              // doAfterConfigCanceled will be called from the UI thread
+	autoJoin                        bool
+	doAfterConfigSaved              func(autoJoin bool) // doAfterConfigSaved will be called from the UI thread
+	doAfterConfigCanceled           func()              // doAfterConfigCanceled will be called from the UI thread
+	doNotAskForConfirmationOnCancel bool
 
 	currentPageIndex mucRoomConfigPageID
 	currentPage      *roomConfigPage
@@ -35,12 +36,13 @@ func (u *gtkUI) newRoomConfigAssistant(data *roomConfigData) *roomConfigAssistan
 	data.ensureRequiredFields()
 
 	rc := &roomConfigAssistant{
-		u:                     u,
-		account:               data.account,
-		roomID:                data.roomID,
-		autoJoin:              data.autoJoinRoomAfterSaved,
-		doAfterConfigSaved:    data.doAfterConfigSaved,
-		doAfterConfigCanceled: data.doAfterConfigCanceled,
+		u:                               u,
+		account:                         data.account,
+		roomID:                          data.roomID,
+		autoJoin:                        data.autoJoinRoomAfterSaved,
+		doAfterConfigSaved:              data.doAfterConfigSaved,
+		doAfterConfigCanceled:           data.doAfterConfigCanceled,
+		doNotAskForConfirmationOnCancel: data.doNotAskForConfirmationOnCancel,
 		log: u.log.WithFields(log.Fields{
 			"room":  data.roomID,
 			"where": "configureRoomAssistant",
@@ -172,8 +174,12 @@ func (rc *roomConfigAssistant) disableAssistant() {
 
 // onCancelClicked MUST be called from the UI thread
 func (rc *roomConfigAssistant) onCancelClicked() {
-	cv := rc.newRoomConfigAssistantCancelView()
-	cv.show()
+	if rc.doNotAskForConfirmationOnCancel {
+		rc.onCancel()
+	} else {
+		cv := rc.newRoomConfigAssistantCancelView()
+		cv.show()
+	}
 }
 
 // cancelConfiguration MUST be called from the UI thread

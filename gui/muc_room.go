@@ -458,7 +458,10 @@ func (v *roomView) updateSubjectRoom(s string, onSuccess func()) {
 	err := v.account.session.UpdateRoomSubject(v.roomID(), v.room.SelfOccupant().RealJid.String(), s)
 	if err != nil {
 		doInUIThread(func() {
-			v.notifications.error(roomNotificationOptions{message: i18n.Local("The room subject couldn't be updated."), closeable: true})
+			v.notifications.error(roomNotificationOptions{
+				message:   i18n.Local("The room subject couldn't be updated."),
+				closeable: true,
+			})
 		})
 		return
 	}

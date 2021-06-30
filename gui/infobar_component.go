@@ -117,10 +117,11 @@ func (ib *infoBarComponent) view() gtki.InfoBar {
 const infoBarTimeFormat = "January 2, 2006 at 15:04:05"
 
 func (ib *infoBarComponent) setTime(t time.Time) {
+	ib.refreshElapsedTime(t)
+	ib.time.Show()
+
 	friendlyTime := formatTimeWithLayout(t, infoBarTimeFormat)
 	ib.time.SetTooltipText(friendlyTime)
-
-	ib.refreshElapsedTime(t)
 
 	go ib.tickNotificationTime(t)
 }
@@ -143,7 +144,6 @@ func (ib *infoBarComponent) tickNotificationTime(t time.Time) {
 // refreshElapsedTime MUST be called from the UI thread
 func (ib *infoBarComponent) refreshElapsedTime(t time.Time) {
 	ib.time.SetText(elapsedFriendlyTime(t))
-	ib.time.Show()
 }
 
 func infoBarTypeForMessageType(mt gtki.MessageType) infoBarType {

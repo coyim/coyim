@@ -100,6 +100,8 @@ func (t *roomViewToolbar) initSubscribers() {
 			t.subjectReceivedEvent(e.subject)
 		case subjectUpdatedEvent:
 			t.subjectUpdatedEvent(e.subject)
+		case roomConfigChangedEvent:
+			t.onRoomConfigChanged()
 		case roomDestroyedEvent:
 			t.roomDestroyedEvent()
 		case selfOccupantRemovedEvent:
@@ -130,10 +132,12 @@ func (t *roomViewToolbar) subjectUpdatedEvent(subject string) {
 		doInUIThread(t.onHideRoomSubject)
 	}
 }
-	doInUIThread(func() {
-		t.displayRoomSubject(subject)
-		t.handleSubjectButtonVisibility()
-	})
+
+func (t *roomViewToolbar) onRoomConfigChanged() {
+	doInUIThread(t.handleEditSubjectComponents)
+	if !t.roomView.room.CanChangeSubject() {
+		doInUIThread(t.onHideRoomSubject)
+	}
 }
 
 func (t *roomViewToolbar) roomDestroyedEvent() {

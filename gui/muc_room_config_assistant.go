@@ -80,7 +80,7 @@ func (rc *roomConfigAssistant) setCurrentPage(pageID mucRoomConfigPageID) {
 }
 
 func (rc *roomConfigAssistant) initRoomConfigPages() {
-	notAssignedDefaultCurrentPage := true
+	assignedDefaultCurrentPage := false
 
 	for _, p := range rc.roomConfigComponent.pages {
 		ap := newRoomConfigAssistantPage(p)
@@ -93,8 +93,8 @@ func (rc *roomConfigAssistant) initRoomConfigPages() {
 			rc.assistant.SetPageType(ap.page, gtki.ASSISTANT_PAGE_CONFIRM)
 		}
 
-		if notAssignedDefaultCurrentPage {
-			notAssignedDefaultCurrentPage = false
+		if !assignedDefaultCurrentPage {
+			assignedDefaultCurrentPage = true
 			rc.currentPageIndex = p.pageID
 			rc.currentPage = p
 		}

@@ -393,9 +393,10 @@ func (v *roomView) onOccupantAffiliationUpdateError(nickname string, newAffiliat
 		})
 
 		dr := createDialogErrorComponent(dialogErrorOptions{
-			title:   messages.errorDialogTitle,
-			header:  messages.errorDialogHeader,
-			message: messages.errorDialogMessage,
+			title:        messages.errorDialogTitle,
+			header:       messages.errorDialogHeader,
+			message:      messages.errorDialogMessage,
+			parentWindow: v.window,
 		})
 
 		dr.show()
@@ -445,9 +446,10 @@ func (v *roomView) onOccupantRoleUpdateError(nickname string, newRole data.Role)
 		})
 
 		dr := createDialogErrorComponent(dialogErrorOptions{
-			title:   messages.errorDialogTitle,
-			header:  messages.errorDialogHeader,
-			message: messages.errorDialogMessage,
+			title:        messages.errorDialogTitle,
+			header:       messages.errorDialogHeader,
+			message:      messages.errorDialogMessage,
+			parentWindow: v.window,
 		})
 
 		dr.show()

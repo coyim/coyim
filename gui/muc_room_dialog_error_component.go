@@ -5,9 +5,10 @@ import (
 )
 
 type dialogErrorOptions struct {
-	title   string
-	header  string
-	message string
+	title        string
+	header       string
+	message      string
+	parentWindow gtki.Window
 }
 
 // dialogErrorComponent is shown after an error occurred.
@@ -19,13 +20,16 @@ type dialogErrorComponent struct {
 	dialog       gtki.Dialog `gtk-widget:"room-error-dialog"`
 	headerLabel  gtki.Label  `gtk-widget:"room-error-dialog-header"`
 	messageLabel gtki.Label  `gtk-widget:"room-error-dialog-message"`
+
+	parentWindow gtki.Window
 }
 
 func createDialogErrorComponent(options dialogErrorOptions) *dialogErrorComponent {
 	d := &dialogErrorComponent{
-		title:   options.title,
-		header:  options.header,
-		message: options.message,
+		title:        options.title,
+		header:       options.header,
+		message:      options.message,
+		parentWindow: options.parentWindow,
 	}
 
 	d.initBuilder()
@@ -49,6 +53,10 @@ func (d *dialogErrorComponent) initDefaults() {
 	d.dialog.SetTitle(d.title)
 	d.headerLabel.SetText(d.header)
 	d.messageLabel.SetText(d.message)
+
+	if d.parentWindow != nil {
+		d.dialog.SetTransientFor(d.parentWindow)
+	}
 }
 
 // onOkClicked MUST be called from the UI thread

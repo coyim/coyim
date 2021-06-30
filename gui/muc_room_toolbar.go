@@ -134,9 +134,21 @@ func (t *roomViewToolbar) subjectUpdatedEvent(subject string) {
 }
 
 func (t *roomViewToolbar) onRoomConfigChanged() {
-	doInUIThread(t.handleEditSubjectComponents)
+	doInUIThread(t.onEditSubjectContextChanged)
+}
+
+// onEditSubjectContextChanged MUST be called from the UI thread
+func (t *roomViewToolbar) onEditSubjectContextChanged() {
+	t.handleEditSubjectComponents()
 	if !t.roomView.room.CanChangeSubject() {
-		doInUIThread(t.onHideRoomSubject)
+		t.onHideRoomSubject()
+		if getTextViewText(t.roomSubjectTextView) != "" {
+			setTextViewText(t.roomSubjectTextView, "")
+			t.roomView.notifications.warning(roomNotificationOptions{
+				message:   i18n.Local("You are no longer allowed to continue updating the room subject."),
+				closeable: true,
+			})
+		}
 	}
 }
 
@@ -149,6 +161,8 @@ func (t *roomViewToolbar) selfOccupantRemovedEvent() {
 }
 
 func (t *roomViewToolbar) selfOccupantRoleUpdatedEvent(role data.Role) {
+	doInUIThread(t.onEditSubjectContextChanged)
+
 	if role.IsNone() {
 		doInUIThread(t.disable)
 	}

@@ -211,11 +211,11 @@ func (rc *roomConfigAssistant) onCancel() {
 
 // onCancelError MUST be called from the UI thread
 func (rc *roomConfigAssistant) onCancelError(err error) {
-	dr := createDialogErrorComponent(
-		i18n.Local("Cancel room settings"),
-		i18n.Local("We were unable to cancel the room configuration"),
-		i18n.Local("An error occurred while trying to cancel the configuration of the room."),
-	)
+	dr := createDialogErrorComponent(dialogErrorOptions{
+		title:   i18n.Local("Cancel room settings"),
+		header:  i18n.Local("We were unable to cancel the room configuration"),
+		message: i18n.Local("An error occurred while trying to cancel the configuration of the room."),
+	})
 
 	dr.setParent(rc.assistant)
 	dr.show()

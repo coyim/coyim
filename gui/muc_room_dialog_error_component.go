@@ -4,6 +4,12 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+type dialogErrorOptions struct {
+	title   string
+	header  string
+	message string
+}
+
 // dialogErrorComponent is shown after an error occurred.
 type dialogErrorComponent struct {
 	title   string
@@ -15,11 +21,11 @@ type dialogErrorComponent struct {
 	messageLabel gtki.Label  `gtk-widget:"room-error-dialog-message"`
 }
 
-func createDialogErrorComponent(title, header, message string) *dialogErrorComponent {
+func createDialogErrorComponent(options dialogErrorOptions) *dialogErrorComponent {
 	d := &dialogErrorComponent{
-		title:   title,
-		header:  header,
-		message: message,
+		title:   options.title,
+		header:  options.header,
+		message: options.message,
 	}
 
 	d.initBuilder()

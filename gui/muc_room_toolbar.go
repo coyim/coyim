@@ -11,6 +11,25 @@ const (
 	roomSubjectHiddenIconName = "go-down-symbolic"
 )
 
+const (
+	showSubjectButton = iota
+	showEditSubjectButton
+	showEditSubjectComponent
+	showSubjectLabel
+)
+
+type editSubjectContext struct {
+	canChangeSubject bool
+	existsSubject    bool
+}
+
+var editSubjectComponentRules = map[editSubjectContext][]bool{
+	{true /*canChangeSubject*/, true /*existsSubject*/}:   {true /*showSubjectButton*/, true /*showEditSubjectButton*/, false /*showEditSubjectComponent*/, true /*showSubjectLabel*/},
+	{true /*canChangeSubject*/, false /*existsSubject*/}:  {true /*showSubjectButton*/, false /*showEditSubjectButton*/, true /*showEditSubjectComponent*/, false /*showSubjectLabel*/},
+	{false /*canChangeSubject*/, true /*existsSubject*/}:  {true /*showSubjectButton*/, false /*showEditSubjectButton*/, false /*showEditSubjectComponent*/, true /*showSubjectLabel*/},
+	{false /*canChangeSubject*/, false /*existsSubject*/}: {false /*showSubjectButton*/, false /*showEditSubjectButton*/, false /*showEditSubjectComponent*/, false /*showSubjectLabel*/},
+}
+
 type roomViewToolbar struct {
 	roomView         *roomView
 	isEditingSubject bool
@@ -99,11 +118,18 @@ func (t *roomViewToolbar) initSubscribers() {
 }
 
 func (t *roomViewToolbar) subjectReceivedEvent(subject string) {
-	t.subjectUpdatedEvent(subject)
-	doInUIThread(t.handleSubjectComponents)
+	doInUIThread(func() {
+		t.displayRoomSubject(subject)
+		t.handleEditSubjectComponents()
+	})
 }
 
 func (t *roomViewToolbar) subjectUpdatedEvent(subject string) {
+	t.subjectReceivedEvent(subject)
+	if !t.roomView.room.HasSubject() {
+		doInUIThread(t.onHideRoomSubject)
+	}
+}
 	doInUIThread(func() {
 		t.displayRoomSubject(subject)
 		t.handleSubjectButtonVisibility()
@@ -229,20 +255,23 @@ func (t *roomViewToolbar) toggleEditSubjectComponents(v bool) {
 	t.roomSubjectButtonBox.SetVisible(!v)
 }
 
-// handleSubjectComponents MUST be called from the UI thread
-func (t *roomViewToolbar) handleSubjectComponents() {
-	t.handleSubjectButtonVisibility()
+// handleEditSubjectComponents MUST be called from the UI thread
+func (t *roomViewToolbar) handleEditSubjectComponents() {
+	rules, ok := editSubjectComponentRules[editSubjectContext{
+		t.roomView.room.CanChangeSubject(),
+		t.roomView.room.HasSubject(),
+	}]
 
-	if t.roomView.room.CanChangeSubject() {
-		t.toggleEditSubjectComponents(t.roomView.room.HasSubject())
-		t.roomSubjectButton.Show()
+	if ok {
+		t.roomSubjectButton.SetVisible(rules[showSubjectButton])
+		t.roomSubjectEditButton.SetVisible(rules[showEditSubjectButton])
+		t.SetVisibleEditSubjectComponent(rules[showEditSubjectComponent])
+		t.roomSubjectLabel.SetVisible(rules[showSubjectLabel])
 	}
 }
 
-// handleSubjectButtonVisibility MUST be called from the UI thread
-func (t *roomViewToolbar) handleSubjectButtonVisibility() {
-	t.roomSubjectButton.Hide()
-	if t.roomView.room.HasSubject() {
-		t.roomSubjectButton.Show()
-	}
+// SetVisibleEditSubjectComponent MUST be called from the UI thread
+func (t *roomViewToolbar) SetVisibleEditSubjectComponent(v bool) {
+	t.roomSubjectScrolledWindow.SetVisible(v)
+	t.roomSubjectButtonBox.SetVisible(v)
 }

@@ -484,7 +484,7 @@ func (v *roomView) switchToLobbyView() {
 	}
 	setFieldLabel(v.lobby.cancelButton, l)
 
-	v.warningsInfoBar.onClose(nil)
+	v.warningsInfoBar.whenRequestedToClose(nil)
 
 	v.lobby.show()
 }
@@ -492,7 +492,7 @@ func (v *roomView) switchToLobbyView() {
 func (v *roomView) switchToMainView() {
 	v.initRoomMain()
 
-	v.warningsInfoBar.onClose(v.warningsInfoBar.hide)
+	v.warningsInfoBar.whenRequestedToClose(v.warningsInfoBar.hide)
 
 	v.main.show()
 }

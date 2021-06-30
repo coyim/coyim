@@ -60,23 +60,19 @@ func (rn *roomNotifications) error(n roomNotificationOptions) {
 
 func (rn *roomNotifications) newNotification(n roomNotificationOptions) {
 	nb := rn.u.newNotificationBar(n.message, n.messageType)
+
 	if n.showTime {
 		nb = rn.u.newNotificationBarWithTime(n.message, n.messageType)
 	}
 
-	nb.setClosable(n.closeable)
-	rn.add(nb)
-
-	rn.roomView.onNewNotificationAdded()
-}
-
-func (rn *roomNotifications) add(nb *notificationBar) {
-	if nb.isClosable() {
-		nb.onClose(func() {
+	if n.closeable {
+		nb.whenRequestedToClose(func() {
 			rn.remove(nb)
 		})
 	}
+
 	rn.notifications.add(nb)
+	rn.roomView.onNewNotificationAdded()
 }
 
 func (rn *roomNotifications) remove(nb *notificationBar) {

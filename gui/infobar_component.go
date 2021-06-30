@@ -31,10 +31,9 @@ var infoBarIconNames = map[infoBarType]string{
 }
 
 type infoBarComponent struct {
-	text            string
-	messageType     gtki.MessageType
-	canBeClosed     bool
-	onCloseCallback func() // onCloseCallback will be called from the UI thread
+	text                   string
+	messageType            gtki.MessageType
+	doWhenRequestedToClose func() // doWhenRequestedToClose will be called from the UI thread
 
 	infoBar gtki.InfoBar `gtk-widget:"infobar"`
 	time    gtki.Label   `gtk-widget:"time-label"`
@@ -62,8 +61,8 @@ func (ib *infoBarComponent) initBuilder() {
 	builder.ConnectSignals(map[string]interface{}{
 		"handle-response": func(info gtki.InfoBar, response gtki.ResponseType) {
 			if response == gtki.RESPONSE_CLOSE {
-				if ib.canBeClosed && ib.onCloseCallback != nil {
-					ib.onCloseCallback()
+				if ib.doWhenRequestedToClose != nil {
+					ib.doWhenRequestedToClose()
 				}
 			}
 		},
@@ -89,9 +88,14 @@ func (ib *infoBarComponent) initStyleAndIcon() {
 	}
 }
 
-// setClosable MUST be called from the UI thread
-func (ib *infoBarComponent) setClosable(v bool) {
-	ib.canBeClosed = v
+// whenRequestedToClose MUST be called from the UI thread
+func (ib *infoBarComponent) whenRequestedToClose(doWhenClose func()) {
+	ib.doWhenRequestedToClose = doWhenClose
+	ib.showCloseButton(ib.doWhenRequestedToClose != nil)
+}
+
+// showCloseButton MUST be called from the UI thread
+func (ib *infoBarComponent) showCloseButton(v bool) {
 	ib.infoBar.SetShowCloseButton(v)
 }
 
@@ -99,15 +103,6 @@ func (ib *infoBarComponent) setClosable(v bool) {
 func (ib *infoBarComponent) addActionWidget(w gtki.Widget, responseType gtki.ResponseType) {
 	ib.infoBar.AddActionWidget(w, responseType)
 	ib.infoBar.ShowAll()
-}
-
-func (ib *infoBarComponent) isClosable() bool {
-	return ib.canBeClosed
-}
-
-func (ib *infoBarComponent) onClose(f func()) {
-	ib.onCloseCallback = f
-	ib.setClosable(f != nil)
 }
 
 func (ib *infoBarComponent) view() gtki.InfoBar {

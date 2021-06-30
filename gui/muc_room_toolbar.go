@@ -230,6 +230,7 @@ func (t *roomViewToolbar) onApplyEditSubject() {
 		func() {
 			t.roomSubjectLabel.SetText(newSubject)
 			t.toggleEditSubjectComponents(true)
+			setTextViewText(t.roomSubjectTextView, "")
 		})
 }
 

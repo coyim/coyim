@@ -16,6 +16,7 @@ const (
 	showEditSubjectButton
 	showEditSubjectComponent
 	showSubjectLabel
+	showSubjectButtonsContainer
 )
 
 type editSubjectContext struct {
@@ -24,34 +25,35 @@ type editSubjectContext struct {
 }
 
 var editSubjectComponentRules = map[editSubjectContext][]bool{
-	{true /*canChangeSubject*/, true /*existsSubject*/}:   {true /*showSubjectButton*/, true /*showEditSubjectButton*/, false /*showEditSubjectComponent*/, true /*showSubjectLabel*/},
-	{true /*canChangeSubject*/, false /*existsSubject*/}:  {true /*showSubjectButton*/, false /*showEditSubjectButton*/, true /*showEditSubjectComponent*/, false /*showSubjectLabel*/},
-	{false /*canChangeSubject*/, true /*existsSubject*/}:  {true /*showSubjectButton*/, false /*showEditSubjectButton*/, false /*showEditSubjectComponent*/, true /*showSubjectLabel*/},
-	{false /*canChangeSubject*/, false /*existsSubject*/}: {false /*showSubjectButton*/, false /*showEditSubjectButton*/, false /*showEditSubjectComponent*/, false /*showSubjectLabel*/},
+	{true /*canChangeSubject*/, true /*existsSubject*/}:   {true /*showSubjectButton*/, true /*showEditSubjectButton*/, false /*showEditSubjectComponent*/, true /*showSubjectLabel*/, true /*showSubjectButtonsContainer*/},
+	{true /*canChangeSubject*/, false /*existsSubject*/}:  {true /*showSubjectButton*/, false /*showEditSubjectButton*/, true /*showEditSubjectComponent*/, false /*showSubjectLabel*/, true /*showSubjectButtonsContainer*/},
+	{false /*canChangeSubject*/, true /*existsSubject*/}:  {true /*showSubjectButton*/, false /*showEditSubjectButton*/, false /*showEditSubjectComponent*/, true /*showSubjectLabel*/, false /*showSubjectButtonsContainer*/},
+	{false /*canChangeSubject*/, false /*existsSubject*/}: {false /*showSubjectButton*/, false /*showEditSubjectButton*/, false /*showEditSubjectComponent*/, false /*showSubjectLabel*/, false /*showSubjectButtonsContainer*/},
 }
 
 type roomViewToolbar struct {
 	roomView         *roomView
 	isEditingSubject bool
 
-	view                       gtki.Box            `gtk-widget:"room-view-toolbar"`
-	roomNameLabel              gtki.Label          `gtk-widget:"room-name-label"`
-	roomStatusIcon             gtki.Image          `gtk-widget:"room-status-icon"`
-	roomMenuButton             gtki.MenuButton     `gtk-widget:"room-menu-button"`
-	roomSubjectButton          gtki.Button         `gtk-widget:"room-subject-button"`
-	roomSubjectButtonImage     gtki.Image          `gtk-widget:"room-subject-button-image"`
-	roomSubjectRevealer        gtki.Revealer       `gtk-widget:"room-subject-revealer"`
-	roomSubjectLabel           gtki.Label          `gtk-widget:"room-subject-label"`
-	roomSubjectScrolledWindow  gtki.ScrolledWindow `gtk-widget:"room-subject-editable-content"`
-	roomSubjectTextView        gtki.TextView       `gtk-widget:"room-subject-textview"`
-	roomSubjectEditButton      gtki.Button         `gtk-widget:"room-edit-subject-button"`
-	roomSubjectButtonBox       gtki.Box            `gtk-widget:"room-edit-subject-buttons-box"`
-	roomSubjectApplyButton     gtki.Button         `gtk-widget:"room-edit-subject-apply-button"`
-	securityPropertiesMenuItem gtki.MenuItem       `gtk-widget:"security-properties-menu-item"`
-	configureRoomMenuItem      gtki.MenuItem       `gtk-widget:"room-configuration-menu-item"`
-	modifyBanMenuItem          gtki.MenuItem       `gtk-widget:"modify-ban-list-menu-item"`
-	destroyRoomMenuItem        gtki.MenuItem       `gtk-widget:"destroy-room-menu-item"`
-	leaveRoomMenuItem          gtki.MenuItem       `gtk-widget:"leave-room-menu-item"`
+	view                        gtki.Box            `gtk-widget:"room-view-toolbar"`
+	roomNameLabel               gtki.Label          `gtk-widget:"room-name-label"`
+	roomStatusIcon              gtki.Image          `gtk-widget:"room-status-icon"`
+	roomMenuButton              gtki.MenuButton     `gtk-widget:"room-menu-button"`
+	roomSubjectButton           gtki.Button         `gtk-widget:"room-subject-button"`
+	roomSubjectButtonImage      gtki.Image          `gtk-widget:"room-subject-button-image"`
+	roomSubjectRevealer         gtki.Revealer       `gtk-widget:"room-subject-revealer"`
+	roomSubjectLabel            gtki.Label          `gtk-widget:"room-subject-label"`
+	roomSubjectScrolledWindow   gtki.ScrolledWindow `gtk-widget:"room-subject-editable-content"`
+	roomSubjectTextView         gtki.TextView       `gtk-widget:"room-subject-textview"`
+	roomSubjectButtonsContainer gtki.Box            `gtk-widget:"room-edit-subject-buttons-container"`
+	roomSubjectEditButton       gtki.Button         `gtk-widget:"room-edit-subject-button"`
+	roomSubjectButtonBox        gtki.Box            `gtk-widget:"room-edit-subject-buttons-box"`
+	roomSubjectApplyButton      gtki.Button         `gtk-widget:"room-edit-subject-apply-button"`
+	securityPropertiesMenuItem  gtki.MenuItem       `gtk-widget:"security-properties-menu-item"`
+	configureRoomMenuItem       gtki.MenuItem       `gtk-widget:"room-configuration-menu-item"`
+	modifyBanMenuItem           gtki.MenuItem       `gtk-widget:"modify-ban-list-menu-item"`
+	destroyRoomMenuItem         gtki.MenuItem       `gtk-widget:"destroy-room-menu-item"`
+	leaveRoomMenuItem           gtki.MenuItem       `gtk-widget:"leave-room-menu-item"`
 }
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
@@ -142,7 +144,7 @@ func (t *roomViewToolbar) onEditSubjectContextChanged() {
 	t.handleEditSubjectComponents()
 	if !t.roomView.room.CanChangeSubject() {
 		if !t.roomView.room.HasSubject() {
-		t.onHideRoomSubject()
+			t.onHideRoomSubject()
 		}
 		if getTextViewText(t.roomSubjectTextView) != "" {
 			setTextViewText(t.roomSubjectTextView, "")
@@ -288,6 +290,7 @@ func (t *roomViewToolbar) handleEditSubjectComponents() {
 		t.roomSubjectEditButton.SetVisible(rules[showEditSubjectButton])
 		t.SetVisibleEditSubjectComponent(rules[showEditSubjectComponent])
 		t.roomSubjectLabel.SetVisible(rules[showSubjectLabel])
+		t.roomSubjectButtonsContainer.SetVisible(rules[showSubjectButtonsContainer])
 	}
 }
 

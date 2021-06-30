@@ -282,7 +282,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkBox" id="room-edit-subject-buttons-container">
                     <property name="visible">True</property>
                     <property name="halign">end</property>
                     <child>

@@ -141,7 +141,9 @@ func (t *roomViewToolbar) onRoomConfigChanged() {
 func (t *roomViewToolbar) onEditSubjectContextChanged() {
 	t.handleEditSubjectComponents()
 	if !t.roomView.room.CanChangeSubject() {
+		if !t.roomView.room.HasSubject() {
 		t.onHideRoomSubject()
+		}
 		if getTextViewText(t.roomSubjectTextView) != "" {
 			setTextViewText(t.roomSubjectTextView, "")
 			t.roomView.notifications.warning(roomNotificationOptions{

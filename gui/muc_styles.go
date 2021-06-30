@@ -165,7 +165,7 @@ func (s *mucStylesProvider) setLabelBoldStyle(l gtki.Label) {
 
 func (s *mucStylesProvider) setRoomLoadingViewOverlayTransparentStyle(b gtki.Box) {
 	s.setBoxStyle(b, style{
-		"background-color": s.hexToRGBA(s.colors.roomOverlayBackground, 0.5),
+		"background-color": s.colors.roomOverlayBackground,
 	})
 }
 
@@ -326,14 +326,6 @@ func (s *mucStylesProvider) setErrorLabelStyle(l gtki.Label) {
 
 func (s *mucStylesProvider) border(size int, style, color string) string {
 	return fmt.Sprintf("%dpx %s %s", size, style, color)
-}
-
-func (s *mucStylesProvider) hexToRGBA(hex string, alpha float64) string {
-	color, err := colorHexToRGB(hex)
-	if err != nil {
-		return colorFallback.formatWithAlpha(alpha)
-	}
-	return color.formatWithAlpha(alpha)
 }
 
 func (s *mucStylesProvider) boxShadow(shadowStyle, color string) string {

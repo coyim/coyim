@@ -13,7 +13,7 @@ import (
 type mucRequestType string
 
 func (rt mucRequestType) String() string {
-	return fmt.Sprintf("%s", rt)
+	return fmt.Sprintf("%s", string(rt))
 }
 
 type informationQueryType string
@@ -24,7 +24,7 @@ const (
 )
 
 func (qt informationQueryType) String() string {
-	return fmt.Sprintf("%s", qt)
+	return fmt.Sprintf("%s", string(qt))
 }
 
 type mucRequest struct {

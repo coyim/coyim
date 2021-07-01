@@ -5,7 +5,9 @@ import (
 	"errors"
 
 	"github.com/coyim/coyim/session/muc"
+	mucData "github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/data"
+	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
 )
@@ -23,6 +25,12 @@ var (
 
 const mucRequestGetRoomConfigForm mucRequestType = "getRoomConfigForm"
 
+var affiliationsToRequest = []mucData.Affiliation{
+	&mucData.OwnerAffiliation{},
+	&mucData.AdminAffiliation{},
+	&mucData.OutcastAffiliation{},
+}
+
 func (s *session) GetRoomConfigurationForm(roomID jid.Bare) (<-chan *muc.RoomConfigForm, <-chan error) {
 	fc := make(chan *muc.RoomConfigForm)
 
@@ -31,13 +39,79 @@ func (s *session) GetRoomConfigurationForm(roomID jid.Bare) (<-chan *muc.RoomCon
 		if err := xml.Unmarshal(response, cf); err != nil {
 			return err
 		}
-		fc <- muc.NewRoomConfigForm(cf.Form)
+		rcf := muc.NewRoomConfigForm(cf.Form)
+		s.muc.addOccupantsIntoRoomConfigForm(roomID, rcf)
+		fc <- rcf
 		return nil
 	})
 
 	go req.get(data.MUCRoomConfiguration{})
 
 	return fc, req.errorChannel
+}
+
+func (m *mucManager) addOccupantsIntoRoomConfigForm(roomID jid.Bare, rcf *muc.RoomConfigForm) {
+	for _, a := range affiliationsToRequest {
+		rc, err := m.requestRoomOccupantsByAffiliation(roomID, a)
+		select {
+		case items := <-rc:
+			occ, err := parseMUCItemsToRoomOccupantItems(items)
+			if err != nil {
+				m.log.WithError(err).WithField("affiliation", a).Error("cannot parse MUCItems to OccupantItems")
+				continue
+			}
+			rcf.UpdateRoomOccupantsByAffiliation(a, occ)
+		case e := <-err:
+			m.log.WithError(e).WithField("affiliation", a).Error("cannot retrieve occupants")
+			continue
+		}
+	}
+}
+
+func parseMUCItemsToRoomOccupantItems(items []xmppData.MUCItem) ([]*muc.RoomOccupantItem, error) {
+	list := []*muc.RoomOccupantItem{}
+	for _, itm := range items {
+		affiliation, err := mucData.AffiliationFromString(itm.Affiliation)
+		if err != nil {
+			return nil, err
+		}
+
+		list = append(list, &muc.RoomOccupantItem{
+			Jid:         jid.Parse(itm.Jid),
+			Affiliation: affiliation,
+			Reason:      itm.Reason,
+		})
+	}
+
+	return list, nil
+}
+
+const mucRequestRoomOccupantsByAffiliation mucRequestType = "requestRoomOccupantsByAffiliation"
+
+func (m *mucManager) requestRoomOccupantsByAffiliation(roomID jid.Bare, a mucData.Affiliation) (<-chan []xmppData.MUCItem, <-chan error) {
+	oc := make(chan []xmppData.MUCItem)
+	req := m.newMUCRoomRequest(roomID, mucRequestRoomOccupantsByAffiliation, func(response []byte) error {
+		var list xmppData.MUCAdmin
+		if err := xml.Unmarshal(response, &list); err != nil {
+			m.log.WithError(err).Error("failed to unmarshall the response of room's occupants list")
+			return err
+		}
+
+		oc <- list.Items
+		return nil
+	})
+
+	go req.get(newRoomOccupantsRequestQueryByAffiliation(a))
+
+	return oc, req.errorChannel
+}
+
+func newRoomOccupantsRequestQueryByAffiliation(affiliation mucData.Affiliation) xmppData.MUCAdmin {
+	return xmppData.MUCAdmin{
+		Items: []xmppData.MUCItem{
+			{Affiliation: affiliation.Name()},
+		},
+	}
 }
 
 func (s *session) SubmitRoomConfigurationForm(roomID jid.Bare, form *muc.RoomConfigForm) (<-chan bool, <-chan error) {

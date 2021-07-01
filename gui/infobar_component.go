@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"sync"
 	"time"
 
 	"github.com/coyim/coyim/i18n"
@@ -36,6 +37,7 @@ type infoBarComponent struct {
 	messageType            gtki.MessageType
 	doWhenRequestedToClose func() // doWhenRequestedToClose will be called from the UI thread
 	tickerCancelChannel    chan bool
+	tickerCancelLock       sync.Mutex
 
 	infoBar gtki.InfoBar `gtk-widget:"infobar"`
 	time    gtki.Label   `gtk-widget:"time-label"`
@@ -125,7 +127,9 @@ func (ib *infoBarComponent) setTime(t time.Time) {
 
 // tickNotificationTime MUST NOT be called from the UI thread
 func (ib *infoBarComponent) tickNotificationTime(t time.Time) {
+	ib.tickerCancelLock.Lock()
 	ib.tickerCancelChannel = make(chan bool)
+	ib.tickerCancelLock.Unlock()
 
 	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
@@ -144,6 +148,9 @@ func (ib *infoBarComponent) tickNotificationTime(t time.Time) {
 
 // closeActiveTickerChannel MUST NOT be called from the UI thread
 func (ib *infoBarComponent) closeActiveTickerChannel() {
+	ib.tickerCancelLock.Lock()
+	defer ib.tickerCancelLock.Unlock()
+
 	if ib.tickerCancelChannel != nil {
 		close(ib.tickerCancelChannel)
 	}

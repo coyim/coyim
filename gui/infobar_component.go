@@ -34,6 +34,7 @@ type infoBarComponent struct {
 	text                   string
 	messageType            gtki.MessageType
 	doWhenRequestedToClose func() // doWhenRequestedToClose will be called from the UI thread
+	tickerCancelChannel    chan bool
 
 	infoBar gtki.InfoBar `gtk-widget:"infobar"`
 	time    gtki.Label   `gtk-widget:"time-label"`
@@ -64,6 +65,8 @@ func (ib *infoBarComponent) initBuilder() {
 				if ib.doWhenRequestedToClose != nil {
 					ib.doWhenRequestedToClose()
 				}
+
+				go ib.closeActiveTickerChannel()
 			}
 		},
 	})
@@ -123,6 +126,8 @@ func (ib *infoBarComponent) setTime(t time.Time) {
 
 // tickNotificationTime MUST NOT be called from the UI thread
 func (ib *infoBarComponent) tickNotificationTime(t time.Time) {
+	ib.tickerCancelChannel = make(chan bool)
+
 	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
 
@@ -132,7 +137,16 @@ func (ib *infoBarComponent) tickNotificationTime(t time.Time) {
 			doInUIThread(func() {
 				ib.refreshElapsedTime(t)
 			})
+		case <-ib.tickerCancelChannel:
+			return
 		}
+	}
+}
+
+// closeActiveTickerChannel MUST NOT be called from the UI thread
+func (ib *infoBarComponent) closeActiveTickerChannel() {
+	if ib.tickerCancelChannel != nil {
+		close(ib.tickerCancelChannel)
 	}
 }
 

@@ -1,6 +1,8 @@
 package session
 
 import (
+	"fmt"
+
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/xmpp/data"
 	xi "github.com/coyim/coyim/xmpp/interfaces"
@@ -10,8 +12,8 @@ import (
 
 type mucRequestType string
 
-func (rt mucRequestType) string() string {
-	return string(rt)
+func (rt mucRequestType) String() string {
+	return fmt.Sprintf("%s", rt)
 }
 
 type informationQueryType string
@@ -21,8 +23,8 @@ const (
 	informationQueryTypeSet informationQueryType = "set"
 )
 
-func (qt informationQueryType) string() string {
-	return string(qt)
+func (qt informationQueryType) String() string {
+	return fmt.Sprintf("%s", qt)
 }
 
 type mucRequest struct {
@@ -41,7 +43,7 @@ func (m *mucManager) newMUCRoomRequest(roomID jid.Bare, requestType mucRequestTy
 		onResponse:   onResponse,
 		log: m.log.WithFields(log.Fields{
 			"where":       "mucRequest",
-			"requestType": requestType.string(),
+			"requestType": requestType.String(),
 		}),
 	}
 }
@@ -55,7 +57,7 @@ func (r *mucRequest) set(query interface{}) {
 }
 
 func (r *mucRequest) send(queryType informationQueryType, query interface{}) {
-	reply, _, err := r.conn.SendIQ(r.roomID.String(), queryType.string(), query)
+	reply, _, err := r.conn.SendIQ(r.roomID.String(), queryType.String(), query)
 	if err != nil {
 		r.error(ErrUnexpectedResponse)
 		return

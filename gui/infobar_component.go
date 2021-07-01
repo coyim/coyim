@@ -3,6 +3,7 @@ package gui
 import (
 	"time"
 
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -112,13 +113,11 @@ func (ib *infoBarComponent) view() gtki.InfoBar {
 	return ib.infoBar
 }
 
-const infoBarTimeFormat = "January 2, 2006 at 15:04:05"
-
 func (ib *infoBarComponent) setTime(t time.Time) {
 	ib.refreshElapsedTime(t)
 	ib.time.Show()
 
-	friendlyTime := formatTimeWithLayout(t, infoBarTimeFormat)
+	friendlyTime := formatTimeWithLayout(t, i18n.Local("January 2, 2006 at 15:04:05"))
 	ib.time.SetTooltipText(friendlyTime)
 
 	go ib.tickNotificationTime(t)

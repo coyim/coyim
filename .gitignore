@@ -51,3 +51,4 @@ version_generated.go
 .zanata
 
 .build-tools
+__debug_bin

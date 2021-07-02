@@ -8,9 +8,20 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+type listEntryValidator func(string) bool
+
+func listEntryNumberValidator(v string) bool {
+	if v != "" {
+		_, err := strconv.Atoi(v)
+		return err == nil
+	}
+	return true
+}
+
 type roomConfigFormFieldListEntry struct {
 	*roomConfigFormField
-	value *muc.RoomConfigFieldListValue
+	value     *muc.RoomConfigFieldListValue
+	validator listEntryValidator
 
 	list  gtki.ComboBox `gtk-widget:"room-config-field-list"`
 	entry gtki.Entry    `gtk-widget:"room-config-field-list-entry"`
@@ -18,8 +29,8 @@ type roomConfigFormFieldListEntry struct {
 	optionsModel gtki.ListStore
 }
 
-func newRoomConfigFormFieldListEntry(fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldListValue) hasRoomConfigFormField {
-	field := &roomConfigFormFieldListEntry{value: value}
+func newRoomConfigFormFieldListEntry(fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldListValue, validator listEntryValidator) hasRoomConfigFormField {
+	field := &roomConfigFormFieldListEntry{value: value, validator: validator}
 	field.roomConfigFormField = newRoomConfigFormField(fieldInfo, "MUCRoomConfigFormFieldListEntry")
 
 	panicOnDevError(field.builder.bindObjects(field))
@@ -64,9 +75,8 @@ func (f *roomConfigFormFieldListEntry) updateFieldValue() {
 // isValid implements the hasRoomConfigFormField interface
 func (f *roomConfigFormFieldListEntry) isValid() bool {
 	v := f.currentValue()
-	if v != "" {
-		_, err := strconv.Atoi(v)
-		return err == nil
+	if f.validator != nil {
+		return f.validator(v)
 	}
 	return true
 }

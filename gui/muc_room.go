@@ -153,7 +153,7 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 func (v *roomView) requestRoomDiscoInfo() {
 	v.loadingViewOverlay.onRoomDiscoInfoLoad()
 	v.roomInfoErrorBar.Hide()
-	go v.account.session.GetRoomInformation(v.roomID())
+	go v.account.session.RefreshRoomProperties(v.roomID())
 }
 
 // roomDiscoInfoReceivedEvent MUST be called from the UI thread

@@ -190,10 +190,11 @@ func getKnownLanguages() *languageSelectorValues {
 	return knownLanguagesValues
 }
 
+var systemLangNamer = systemLanguageNamer()
+
 func supportedLanguageDescription(langCode string) string {
 	langTag := language.Make(langCode)
 
-	systemLangNamer := systemLanguageNamer()
 	systemLangName := systemLangNamer.Name(langTag)
 	systemLangTag := systemDefaultLanguage()
 

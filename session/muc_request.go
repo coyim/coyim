@@ -13,7 +13,7 @@ import (
 type mucRequestType string
 
 func (rt mucRequestType) String() string {
-	return fmt.Sprintf("%s", string(rt))
+	return string(rt)
 }
 
 type informationQueryType string
@@ -24,7 +24,7 @@ const (
 )
 
 func (qt informationQueryType) String() string {
-	return fmt.Sprintf("%s", string(qt))
+	return string(qt)
 }
 
 type mucRequest struct {
@@ -43,7 +43,7 @@ func (m *mucManager) newMUCRoomRequest(roomID jid.Bare, requestType mucRequestTy
 		onResponse:   onResponse,
 		log: m.log.WithFields(log.Fields{
 			"where":       "mucRequest",
-			"requestType": requestType.String(),
+			"requestType": fmt.Sprintf("%s", requestType),
 		}),
 	}
 }
@@ -57,7 +57,7 @@ func (r *mucRequest) set(query interface{}) {
 }
 
 func (r *mucRequest) send(queryType informationQueryType, query interface{}) {
-	reply, _, err := r.conn.SendIQ(r.roomID.String(), queryType.String(), query)
+	reply, _, err := r.conn.SendIQ(fmt.Sprintf("%s", r.roomID), fmt.Sprintf("%s", queryType), query)
 	if err != nil {
 		r.error(ErrUnexpectedResponse)
 		return

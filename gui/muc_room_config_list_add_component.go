@@ -166,14 +166,23 @@ func (la *mucRoomConfigListAddComponent) areAllFormsFilled() bool {
 // refresh MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) refresh() {
 	la.removeAllButton.SetSensitive(la.hasItems())
-
 	la.enableApplyIfConditionsAreMet()
+	la.refreshApplyButtonLabel()
+}
 
-	if len(la.formItems) > 1 || (len(la.formItems) == 1 && la.form.isFilled()) {
-		la.applyButton.SetLabel(i18n.Local("Add all"))
-	} else {
-		la.applyButton.SetLabel(i18n.Local("Add"))
+func (la *mucRoomConfigListAddComponent) refreshApplyButtonLabel() {
+	applyButtonLabel := i18n.Local("Add")
+	if la.hasMoreThanOneListItem() {
+		applyButtonLabel = i18n.Local("Add all")
 	}
+	la.applyButton.SetLabel(applyButtonLabel)
+}
+
+func (la *mucRoomConfigListAddComponent) hasMoreThanOneListItem() bool {
+	totalItems := len(la.formItems)
+	hasItemTyped := la.form.isFilled()
+
+	return totalItems > 1 || (totalItems == 1 && hasItemTyped)
 }
 
 // enableApplyIfConditionsAreMet MUST be called from the UI thread

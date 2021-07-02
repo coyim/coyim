@@ -87,10 +87,9 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, onError fun
 	sc := make(chan bool)
 	ec := make(chan error)
 
-	onErrorFinal := onError
-	onError = func(err error) {
-		if onErrorFinal != nil {
-			onErrorFinal(err)
+	onErrorFinal := func(err error) {
+		if onError != nil {
+			onError(err)
 		}
 	}
 
@@ -104,9 +103,9 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, onError fun
 		select {
 		case <-sc:
 			if v.configureRoom {
-				v.instantiatePersistentRoom(ca, roomID, onError)
+				v.instantiatePersistentRoom(ca, roomID, onErrorFinal)
 			} else {
-				v.createInstantRoom(ca, roomID, onError)
+				v.createInstantRoom(ca, roomID, onErrorFinal)
 			}
 		case err := <-ec:
 			onError(err)

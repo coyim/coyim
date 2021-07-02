@@ -2,7 +2,6 @@ package gui
 
 import (
 	"errors"
-	"sync"
 
 	"github.com/coyim/coyim/i18n"
 
@@ -17,22 +16,22 @@ type roomConfigListForm struct {
 	formView gtki.Box   `gtk-widget:"room-config-list-form"`
 	jidEntry gtki.Entry `gtk-widget:"room-config-list-jid"`
 
-	doAfterFieldChanged []func() // Each function will be called from the UI thread
-	fieldChandedLock    sync.Mutex
-
-	doAfterFieldActivate []func() // Each function will be called from the UI thread
-	fieldActivateLock    sync.Mutex
+	doAfterFieldChanged  *callbacksSet // Each function will be called from the UI thread
+	doAfterFieldActivate *callbacksSet // Each function will be called from the UI thread
 }
 
 func newRoomConfigListForm(onFieldChanged, onFieldActivate func()) *roomConfigListForm {
-	f := &roomConfigListForm{}
+	f := &roomConfigListForm{
+		doAfterFieldChanged:  newCallbacksSet(),
+		doAfterFieldActivate: newCallbacksSet(),
+	}
 
 	if onFieldChanged != nil {
-		f.onFieldChanged(onFieldChanged)
+		f.doAfterFieldChanged.add(onFieldChanged)
 	}
 
 	if onFieldActivate != nil {
-		f.onFieldActivate(onFieldActivate)
+		f.doAfterFieldActivate.add(onFieldActivate)
 	}
 
 	f.initBuilder()
@@ -52,16 +51,12 @@ func (f *roomConfigListForm) initBuilder() {
 
 // afterFieldChanged MUST be called from the UI thread
 func (f *roomConfigListForm) afterFieldChanged() {
-	for _, fn := range f.doAfterFieldChanged {
-		fn()
-	}
+	f.doAfterFieldChanged.invokeAll()
 }
 
 // afterFieldActivate MUST be called from the UI thread
 func (f *roomConfigListForm) afterFieldActivate() {
-	for _, fn := range f.doAfterFieldActivate {
-		fn()
-	}
+	f.doAfterFieldActivate.invokeAll()
 }
 
 // jid MUST be called from the UI thread
@@ -88,20 +83,6 @@ func (f *roomConfigListForm) resetAndFocusJidEntry() {
 // focusJidEntry MUST be called from the UI thread
 func (f *roomConfigListForm) focusJidEntry() {
 	f.jidEntry.GrabFocus()
-}
-
-func (f *roomConfigListForm) onFieldChanged(fn func()) {
-	f.fieldChandedLock.Lock()
-	defer f.fieldChandedLock.Unlock()
-
-	f.doAfterFieldChanged = append(f.doAfterFieldChanged, fn)
-}
-
-func (f *roomConfigListForm) onFieldActivate(fn func()) {
-	f.fieldActivateLock.Lock()
-	defer f.fieldActivateLock.Unlock()
-
-	f.doAfterFieldActivate = append(f.doAfterFieldActivate, fn)
 }
 
 func (f *roomConfigListForm) friendlyErrorMessage(err error) string {

@@ -40,7 +40,7 @@ func (lfi *mucRoomConfigListFormItem) initListAdd(onAdd func(jid string)) {
 			lfi.form.resetAndFocusJidEntry()
 		})
 
-		lfi.form.onFieldChanged(func() {
+		lfi.form.doAfterFieldChanged.add(func() {
 			lfi.addButton.SetSensitive(lfi.form.isFilled())
 		})
 

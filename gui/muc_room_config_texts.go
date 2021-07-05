@@ -6,6 +6,7 @@ import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
+	log "github.com/sirupsen/logrus"
 )
 
 func initMUCRoomConfigTexts() {
@@ -276,7 +277,7 @@ func initMUCRoomConfigOccupantFieldTexts() {
 	}
 }
 
-func getAffiliationTexts(a data.Affiliation) roomConfigOccupantFieldText {
+func getFieldTextByAffiliation(a data.Affiliation) roomConfigOccupantFieldText {
 	switch {
 	case a.IsOwner():
 		return roomConfigOccupantFieldTexts[affiliationOwner]
@@ -285,5 +286,7 @@ func getAffiliationTexts(a data.Affiliation) roomConfigOccupantFieldText {
 	case a.IsBanned():
 		return roomConfigOccupantFieldTexts[affiliationBanned]
 	}
-	panic(fmt.Sprintf("Received an unexpected affiliation: %s", a.Name()))
+	log.Warningf("Received an unexpected affiliation: %s", a.Name())
+	return roomConfigOccupantFieldText{}
+
 }

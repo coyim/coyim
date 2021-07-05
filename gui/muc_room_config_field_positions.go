@@ -12,6 +12,7 @@ const positionsListJidColumnIndex = 0
 
 type roomConfigPositions struct {
 	affiliation                     data.Affiliation
+	occupantsByAffiliation          func(affiliation data.Affiliation) []*muc.RoomOccupantItem
 	updatePositionListByAffiliation func(affiliation data.Affiliation, occupants []*muc.RoomOccupantItem)
 
 	content                  gtki.Box              `gtk-widget:"room-config-positions-content"`
@@ -27,15 +28,18 @@ type roomConfigPositions struct {
 	positionsListController *mucRoomConfigListController
 }
 
-func newRoomConfigPositions(affiliation data.Affiliation, updatePositionListByAffiliation func(affiliation data.Affiliation, occupants []*muc.RoomOccupantItem)) hasRoomConfigFormField {
+func newRoomConfigPositions(affiliation data.Affiliation, occupantsByAffiliation func(data.Affiliation) []*muc.RoomOccupantItem, updatePositionListByAffiliation func(affiliation data.Affiliation, occupants []*muc.RoomOccupantItem)) hasRoomConfigFormField {
 	field := &roomConfigPositions{
 		affiliation:                     affiliation,
+		occupantsByAffiliation:          occupantsByAffiliation,
 		updatePositionListByAffiliation: updatePositionListByAffiliation,
 	}
 
 	field.initBuilder()
 	field.initDefaults()
 	field.initPositionsLists(nil)
+	field.initOccupantList()
+
 	return field
 }
 
@@ -55,6 +59,14 @@ func (p *roomConfigPositions) initDefaults() {
 func (p *roomConfigPositions) initPositionLabels() {
 	p.header.SetText(getAffiliationTexts(p.affiliation).headerLabel)
 	p.description.SetText(getAffiliationTexts(p.affiliation).descriptionLabel)
+}
+
+func (p *roomConfigPositions) initOccupantList() {
+	jids := []string{}
+	for _, o := range p.occupantsByAffiliation(p.affiliation) {
+		jids = append(jids, o.Jid.String())
+	}
+	p.positionsListController.listComponent.addListItems(jids)
 }
 
 func (p *roomConfigPositions) initPositionsLists(parent gtki.Window) {

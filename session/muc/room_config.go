@@ -126,16 +126,17 @@ func (rco *roomConfigOccupants) getAll() []*RoomOccupantItem {
 
 // RoomConfigForm represents a room configuration form
 type RoomConfigForm struct {
-	knownFields    map[RoomConfigFieldType]*RoomConfigFormField
-	unknownFields  []*RoomConfigFormField
-	occupants      map[data.Affiliation][]*RoomOccupantItem
+	knownFields   map[RoomConfigFieldType]*RoomConfigFormField
+	unknownFields []*RoomConfigFormField
+
+	occupants      *roomConfigOccupants
 	occupantsMutex sync.Mutex
 }
 
 // NewRoomConfigForm creates a new room configuration form instance
 func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 	cf := &RoomConfigForm{
-		occupants:   map[data.Affiliation][]*RoomOccupantItem{},
+		occupants:   &roomConfigOccupants{},
 		knownFields: map[RoomConfigFieldType]*RoomConfigFormField{},
 	}
 
@@ -189,7 +190,7 @@ func (rcf *RoomConfigForm) UpdateRoomOccupantsByAffiliation(a data.Affiliation, 
 	rcf.occupantsMutex.Lock()
 	defer rcf.occupantsMutex.Unlock()
 
-	rcf.occupants[a] = occupants
+	rcf.occupants.updateByAffiliation(a, occupants)
 }
 
 // ConfigureRoomAsPersistent configures the persistent field to true if exists in the room configuration form
@@ -200,22 +201,19 @@ func (rcf *RoomConfigForm) ConfigureRoomAsPersistent() {
 }
 
 // GetOccupantsByAffiliation returns all occupants in the room configuration form based on a given affiliation
-func (rcf *RoomConfigForm) GetOccupantsByAffiliation(a data.Affiliation) (accounts []*RoomOccupantItem) {
+func (rcf *RoomConfigForm) GetOccupantsByAffiliation(a data.Affiliation) []*RoomOccupantItem {
 	rcf.occupantsMutex.Lock()
 	defer rcf.occupantsMutex.Unlock()
 
-	return append(accounts, rcf.occupants[a]...)
+	return rcf.occupants.getByAffiliation(a)
 }
 
 // GetRoomOccupantsToUpdate returns all occupants in the room configuration form
-func (rcf *RoomConfigForm) GetRoomOccupantsToUpdate() (accounts []*RoomOccupantItem) {
+func (rcf *RoomConfigForm) GetRoomOccupantsToUpdate() []*RoomOccupantItem {
 	rcf.occupantsMutex.Lock()
 	defer rcf.occupantsMutex.Unlock()
 
-	for _, v := range rcf.occupants {
-		accounts = append(accounts, v...)
-	}
-	return accounts
+	return rcf.occupants.getAll()
 }
 
 // GetFormData returns a representation of the room config FORM_TYPE as described in the

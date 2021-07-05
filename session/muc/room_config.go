@@ -85,6 +85,45 @@ const (
 	publicList = "public_list"
 )
 
+type roomConfigOccupants struct {
+	owners []*RoomOccupantItem
+	admins []*RoomOccupantItem
+	banned []*RoomOccupantItem
+}
+
+func (rco *roomConfigOccupants) updateByAffiliation(a data.Affiliation, occupants []*RoomOccupantItem) {
+	switch {
+	case a.IsOwner():
+		rco.owners = occupants
+	case a.IsAdmin():
+		rco.admins = occupants
+	case a.IsBanned():
+		rco.banned = occupants
+	}
+}
+
+func (rco *roomConfigOccupants) getByAffiliation(a data.Affiliation) []*RoomOccupantItem {
+	switch {
+	case a.IsOwner():
+		return rco.owners
+	case a.IsAdmin():
+		return rco.admins
+	case a.IsBanned():
+		return rco.banned
+	}
+	return nil
+}
+
+func (rco *roomConfigOccupants) getAll() []*RoomOccupantItem {
+	occupants := []*RoomOccupantItem{}
+
+	occupants = append(occupants, rco.owners...)
+	occupants = append(occupants, rco.admins...)
+	occupants = append(occupants, rco.banned...)
+
+	return occupants
+}
+
 // RoomConfigForm represents a room configuration form
 type RoomConfigForm struct {
 	knownFields    map[RoomConfigFieldType]*RoomConfigFormField

@@ -12,7 +12,7 @@ const positionsListJidColumnIndex = 0
 
 type roomConfigPositions struct {
 	affiliation                     data.Affiliation
-	occupantsByAffiliation          func(affiliation data.Affiliation) []*muc.RoomOccupantItem
+	originalOccupantsList           []*muc.RoomOccupantItem
 	updatePositionListByAffiliation func(affiliation data.Affiliation, occupants []*muc.RoomOccupantItem)
 
 	content                  gtki.Box              `gtk-widget:"room-config-positions-content"`
@@ -31,7 +31,7 @@ type roomConfigPositions struct {
 func newRoomConfigPositions(affiliation data.Affiliation, occupantsByAffiliation func(data.Affiliation) []*muc.RoomOccupantItem, updatePositionListByAffiliation func(affiliation data.Affiliation, occupants []*muc.RoomOccupantItem)) hasRoomConfigFormField {
 	field := &roomConfigPositions{
 		affiliation:                     affiliation,
-		occupantsByAffiliation:          occupantsByAffiliation,
+		originalOccupantsList:           occupantsByAffiliation(affiliation),
 		updatePositionListByAffiliation: updatePositionListByAffiliation,
 	}
 
@@ -63,7 +63,7 @@ func (p *roomConfigPositions) initPositionLabels() {
 
 func (p *roomConfigPositions) initOccupantList() {
 	jids := []string{}
-	for _, o := range p.occupantsByAffiliation(p.affiliation) {
+	for _, o := range p.originalOccupantsList {
 		jids = append(jids, o.Jid.String())
 	}
 	p.positionsListController.listComponent.addListItems(jids)
@@ -105,6 +105,19 @@ func (p *roomConfigPositions) updateOccupantListCellForString(controller *mucRoo
 }
 
 func (p *roomConfigPositions) updateFieldValue() {
+	currentModelList := p.currentOccupantList()
+	modifiedList := currentModelList
+	for _, ci := range p.originalOccupantsList {
+		if !currentModelList.IncludesJid(ci.Jid.String()) {
+			ci.Affiliation = &data.NoneAffiliation{}
+			modifiedList = append(modifiedList, ci)
+		}
+	}
+
+	p.updatePositionListByAffiliation(p.affiliation, modifiedList)
+}
+
+func (p *roomConfigPositions) currentOccupantList() muc.RoomOccupantItemList {
 	positionsList := []*muc.RoomOccupantItem{}
 	for _, item := range p.positionsListController.listItems() {
 		positionsList = append(positionsList, &muc.RoomOccupantItem{
@@ -112,7 +125,7 @@ func (p *roomConfigPositions) updateFieldValue() {
 			Affiliation: p.affiliation,
 		})
 	}
-	p.updatePositionListByAffiliation(p.affiliation, positionsList)
+	return positionsList
 }
 
 func (p *roomConfigPositions) showValidationErrors() {}

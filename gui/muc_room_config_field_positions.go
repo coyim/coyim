@@ -53,8 +53,8 @@ func (p *roomConfigPositions) initDefaults() {
 }
 
 func (p *roomConfigPositions) initPositionLabels() {
-	p.header.SetText(roomConfigOccupantFieldTexts[p.affiliation].headerLabel)
-	p.description.SetText(roomConfigOccupantFieldTexts[p.affiliation].descriptionLabel)
+	p.header.SetText(getAffiliationTexts(p.affiliation).headerLabel)
+	p.description.SetText(getAffiliationTexts(p.affiliation).descriptionLabel)
 }
 
 func (p *roomConfigPositions) initPositionsLists(parent gtki.Window) {
@@ -68,8 +68,8 @@ func (p *roomConfigPositions) initOwnersListController(parent gtki.Window) {
 		removeOccupantLabel:    p.positionsRemoveLabel,
 		occupantsTreeView:      p.positionsList,
 		parentWindow:           parent,
-		addOccupantDialogTitle: roomConfigOccupantFieldTexts[p.affiliation].dialogTitle,
-		addOccupantDescription: roomConfigOccupantFieldTexts[p.affiliation].dialogDescription,
+		addOccupantDialogTitle: getAffiliationTexts(p.affiliation).dialogTitle,
+		addOccupantDescription: getAffiliationTexts(p.affiliation).dialogDescription,
 		onListUpdated:          p.refreshContentLists,
 	})
 }

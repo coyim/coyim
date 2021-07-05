@@ -243,27 +243,47 @@ type roomConfigOccupantFieldText struct {
 	dialogDescription string
 }
 
-var roomConfigOccupantFieldTexts map[data.Affiliation]roomConfigOccupantFieldText
+type affiliation int
+
+const (
+	affiliationOwner affiliation = iota
+	affiliationAdmin
+	affiliationBanned
+)
+
+var roomConfigOccupantFieldTexts map[affiliation]roomConfigOccupantFieldText
 
 func initMUCRoomConfigOccupantFieldTexts() {
-	roomConfigOccupantFieldTexts = map[data.Affiliation]roomConfigOccupantFieldText{
-		&data.OwnerAffiliation{}: {
+	roomConfigOccupantFieldTexts = map[affiliation]roomConfigOccupantFieldText{
+		affiliationOwner: {
 			headerLabel:       i18n.Local("Owners"),
 			descriptionLabel:  i18n.Local("Owners will always be moderators in a room. They can give or take away any position or role and control any aspect of the room."),
 			dialogTitle:       i18n.Local("Owners"),
 			dialogDescription: i18n.Local("Here you can add one or more new owners to the room. You will have to use the account address of the user in order to make them an owner. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
 		},
-		&data.AdminAffiliation{}: {
+		affiliationAdmin: {
 			headerLabel:       i18n.Local("Administrators"),
 			descriptionLabel:  i18n.Local("A room administrator will automatically become a moderator when entering the room. They can't change the room configuration or destroy the room."),
 			dialogTitle:       i18n.Local("Administrators"),
 			dialogDescription: i18n.Local("Here you can add one or more new administrators to the room. You will have to use the account address of the user in order to make them an administrator. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
 		},
-		&data.OutcastAffiliation{}: {
+		affiliationBanned: {
 			headerLabel:       i18n.Local("Banned people"),
 			descriptionLabel:  i18n.Local("A banned person will not be able to join the room."),
 			dialogTitle:       i18n.Local("Ban people"),
 			dialogDescription: i18n.Local("Here you can add one or more people who will not be able to join this room. You will have to use the account address of the user in order to ban them. This address can either be a simple one, such as user@example.org or a full one, such as user@example.org/abcdef."),
 		},
 	}
+}
+
+func getAffiliationTexts(a data.Affiliation) roomConfigOccupantFieldText {
+	switch {
+	case a.IsOwner():
+		return roomConfigOccupantFieldTexts[affiliationOwner]
+	case a.IsAdmin():
+		return roomConfigOccupantFieldTexts[affiliationAdmin]
+	case a.IsBanned():
+		return roomConfigOccupantFieldTexts[affiliationBanned]
+	}
+	panic(fmt.Sprintf("Received an unexpected affiliation: %s", a.Name()))
 }

@@ -34,9 +34,9 @@ func newRoomConfigSummaryOccupantField(label string, affiliation data.Affiliatio
 	}
 
 	field.initBuilder()
+	field.initOccupantsModel()
 
 	field.fieldLabel.SetText(label)
-	field.handleFieldValue()
 
 	return field
 }
@@ -49,22 +49,26 @@ func (f *roomConfigSummaryOccupantField) initBuilder() {
 	})
 }
 
-func (f *roomConfigSummaryOccupantField) handleFieldValue() {
+func (f *roomConfigSummaryOccupantField) initOccupantsModel() {
 	f.listModel, _ = g.gtk.ListStoreNew(
 		// occupant jid
 		glibi.TYPE_STRING,
 	)
 
 	f.fieldListValues.SetModel(f.listModel)
+}
 
+// handleFieldValue MUST be called from the UI thread
+func (f *roomConfigSummaryOccupantField) handleFieldValue() {
 	occupants := f.occupantsByAffiliation(f.affiliation)
 	setLabelText(f.fieldValueLabel, summaryTotalPositionsText(len(occupants)))
 	f.fieldListValueButton.SetVisible(len(occupants) > 0)
 
-	f.initListContent()
+	f.printOccupantsView()
 }
 
-func (f *roomConfigSummaryOccupantField) initListContent() {
+// refreshOccupantsView MUST be called from the UI thread
+func (f *roomConfigSummaryOccupantField) printOccupantsView() {
 	f.listModel.Clear()
 
 	for _, o := range f.occupantsByAffiliation(f.affiliation) {

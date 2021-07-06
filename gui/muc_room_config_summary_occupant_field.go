@@ -7,6 +7,10 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+const (
+	roomConfigSummaryOccupantJidIndex int = iota
+)
+
 type roomConfigSummaryOccupantField struct {
 	affiliation            data.Affiliation
 	occupantsByAffiliation func(data.Affiliation) []*muc.RoomOccupantItem
@@ -46,7 +50,11 @@ func (f *roomConfigSummaryOccupantField) initBuilder() {
 }
 
 func (f *roomConfigSummaryOccupantField) handleFieldValue() {
-	f.listModel, _ = g.gtk.ListStoreNew(glibi.TYPE_STRING)
+	f.listModel, _ = g.gtk.ListStoreNew(
+		// occupant jid
+		glibi.TYPE_STRING,
+	)
+
 	f.fieldListValues.SetModel(f.listModel)
 
 	occupants := f.occupantsByAffiliation(f.affiliation)
@@ -61,7 +69,7 @@ func (f *roomConfigSummaryOccupantField) initListContent() {
 
 	for _, o := range f.occupantsByAffiliation(f.affiliation) {
 		iter := f.listModel.Append()
-		f.listModel.SetValue(iter, 0, o.Jid.String())
+		f.listModel.SetValue(iter, roomConfigSummaryOccupantJidIndex, o.Jid.String())
 	}
 }
 

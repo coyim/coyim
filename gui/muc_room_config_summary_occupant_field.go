@@ -61,7 +61,7 @@ func (f *roomConfigSummaryOccupantField) initListContent() {
 
 	for _, o := range f.occupantsByAffiliation(f.affiliation) {
 		iter := f.listModel.Append()
-		f.listModel.SetValue(iter, 0, configOptionToFriendlyMessage(o.Jid.String(), o.Jid.String()))
+		f.listModel.SetValue(iter, 0, o.Jid.String())
 	}
 }
 

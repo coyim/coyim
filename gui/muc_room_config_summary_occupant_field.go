@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/gotk3adapter/glibi"
@@ -24,14 +23,15 @@ type roomConfigSummaryOccupantField struct {
 	listModel gtki.ListStore
 }
 
-func newRoomConfigSummaryOccupantField(affiliation data.Affiliation, occupantsByAffiliation func(data.Affiliation) []*muc.RoomOccupantItem) hasRoomConfigFormField {
+func newRoomConfigSummaryOccupantField(label string, affiliation data.Affiliation, occupantsByAffiliation func(data.Affiliation) []*muc.RoomOccupantItem) hasRoomConfigFormField {
 	field := &roomConfigSummaryOccupantField{
 		affiliation:            affiliation,
 		occupantsByAffiliation: occupantsByAffiliation,
 	}
 
 	field.initBuilder()
-	field.initDefaults()
+
+	field.fieldLabel.SetText(label)
 	field.handleFieldValue()
 
 	return field
@@ -43,17 +43,6 @@ func (f *roomConfigSummaryOccupantField) initBuilder() {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_show_list": f.onShowList,
 	})
-}
-
-func (f *roomConfigSummaryOccupantField) initDefaults() {
-	fieldLabel := i18n.Local("Owners")
-	switch {
-	case f.affiliation.IsAdmin():
-		fieldLabel = i18n.Local("Administrators")
-	case f.affiliation.IsBanned():
-		fieldLabel = i18n.Local("Banned")
-	}
-	setLabelText(f.fieldLabel, fieldLabel)
 }
 
 func (f *roomConfigSummaryOccupantField) handleFieldValue() {

@@ -200,14 +200,6 @@ func (rcf *RoomConfigForm) ConfigureRoomAsPersistent() {
 	}
 }
 
-// GetOccupantsByAffiliation returns all occupants in the room configuration form based on a given affiliation
-func (rcf *RoomConfigForm) GetOccupantsByAffiliation(a data.Affiliation) []*RoomOccupantItem {
-	rcf.occupantsMutex.Lock()
-	defer rcf.occupantsMutex.Unlock()
-
-	return rcf.occupants.getByAffiliation(a)
-}
-
 func (rcf *RoomConfigForm) OwnersList() RoomOccupantItemList {
 	return rcf.occupants.owners
 }

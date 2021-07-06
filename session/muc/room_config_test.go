@@ -465,10 +465,9 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetOccupantsByAffiliation(c *C)
 		},
 	})
 
-	c.Assert(s.rcf.GetOccupantsByAffiliation(ownerAffiliation), HasLen, 3)
-	c.Assert(s.rcf.GetOccupantsByAffiliation(adminAffiliation), HasLen, 1)
-	c.Assert(s.rcf.GetOccupantsByAffiliation(outcastAffiliation), HasLen, 1)
-	c.Assert(s.rcf.GetOccupantsByAffiliation(&data.MemberAffiliation{}), IsNil)
+	c.Assert(s.rcf.OwnersList(), HasLen, 3)
+	c.Assert(s.rcf.AdminsList(), HasLen, 1)
+	c.Assert(s.rcf.BanList(), HasLen, 1)
 }
 
 func (s *MucRoomConfigSuite) Test_RoomConfigForm_ConfigureRoomAsPersistent(c *C) {

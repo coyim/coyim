@@ -243,13 +243,84 @@
                 <property name="orientation">vertical</property>
                 <property name="spacing">12</property>
                 <child>
-                  <object class="GtkLabel" id="room-subject-label">
+                  <object class="GtkBox">
                     <property name="visible">True</property>
-                    <property name="wrap">True</property>
-                    <property name="selectable">True</property>
-                    <property name="track_visited_links">False</property>
-                    <property name="xalign">0</property>
-                    <property name="yalign">0</property>
+                    <property name="valign">center</property>
+                    <property name="spacing">12</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="valign">center</property>
+                        <property name="spacing">12</property>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="visible">True</property>
+                            <property name="valign">center</property>
+                            <property name="spacing">12</property>
+                            <child>
+                              <object class="GtkLabel" id="room-subject-label">
+                                <property name="visible">True</property>
+                                <property name="wrap">True</property>
+                                <property name="selectable">True</property>
+                                <property name="track-visited-links">False</property>
+                                <property name="xalign">0</property>
+                                <property name="yalign">0</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="position">2</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="valign">start</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkButton" id="room-edit-subject-button">
+                            <property name="visible">False</property>
+                            <property name="focus_on_click">False</property>
+                            <property name="receives_default">True</property>
+                            <property name="valign">center</property>
+                            <property name="relief">none</property>
+                            <property name="tooltip_text" translatable="yes">Edit subject</property>
+                            <signal name="clicked" handler="on_edit_room_subject" swapped="no"/>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="visible">True</property>
+                                <property name="valign">center</property>
+                                <property name="icon_name">document-edit-symbolic</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -285,55 +356,30 @@
                   <object class="GtkBox" id="room-edit-subject-buttons-container">
                     <property name="visible">True</property>
                     <property name="halign">end</property>
+                    <property name="spacing">12</property>
                     <child>
-                      <object class="GtkButton" id="room-edit-subject-button">
-                        <property name="label" translatable="yes">Edit subject</property>
-                        <property name="visible">False</property>
-                        <property name="focus_on_click">False</property>
+                      <object class="GtkButton" id="room-edit-subject-cancel-button">
+                        <property name="label" translatable="yes">Cancel</property>
+                        <property name="visible">True</property>
                         <property name="receives_default">True</property>
-                        <property name="valign">center</property>
-                        <signal name="clicked" handler="on_edit_room_subject" swapped="no"/>
+                        <signal name="clicked" handler="on_cancel_room_subject_edit" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="expand">False</property>
+                        <property name="expand">True</property>
                         <property name="fill">True</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkBox" id="room-edit-subject-buttons-box">
-                        <property name="visible">False</property>
-                        <property name="spacing">12</property>
-                        <child>
-                          <object class="GtkButton" id="room-edit-subject-cancel-button">
-                            <property name="label" translatable="yes">Cancel</property>
-                            <property name="visible">True</property>
-                            <property name="receives_default">True</property>
-                            <signal name="clicked" handler="on_cancel_room_subject_edit" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="room-edit-subject-apply-button">
-                            <property name="label" translatable="yes">Apply</property>
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="receives_default">True</property>
-                            <signal name="clicked" handler="on_apply_room_subject_edit" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
+                      <object class="GtkButton" id="room-edit-subject-apply-button">
+                        <property name="label" translatable="yes">Apply</property>
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="receives_default">True</property>
+                        <signal name="clicked" handler="on_apply_room_subject_edit" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="expand">False</property>
+                        <property name="expand">True</property>
                         <property name="fill">True</property>
                         <property name="position">1</property>
                       </packing>

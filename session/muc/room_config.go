@@ -216,14 +216,17 @@ func (rcf *RoomConfigForm) ConfigureRoomAsPersistent() {
 	}
 }
 
+// OwnersList returns the occupant list with owner affiliation
 func (rcf *RoomConfigForm) OwnersList() RoomOccupantItemList {
 	return rcf.occupants.owners
 }
 
+// AdminsList returns the occupant list with admin affiliation
 func (rcf *RoomConfigForm) AdminsList() RoomOccupantItemList {
 	return rcf.occupants.admins
 }
 
+// BanList returns the occupant list with banned affiliation
 func (rcf *RoomConfigForm) BanList() RoomOccupantItemList {
 	return rcf.occupants.banned
 }

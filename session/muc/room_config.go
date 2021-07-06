@@ -193,6 +193,30 @@ func (rcf *RoomConfigForm) UpdateRoomOccupantsByAffiliation(a data.Affiliation, 
 	rcf.occupants.updateByAffiliation(a, occupants)
 }
 
+// SetOwnerList sets the OwnerList
+func (rcf *RoomConfigForm) SetOwnerList(occupants RoomOccupantItemList) {
+	rcf.occupantsMutex.Lock()
+	defer rcf.occupantsMutex.Unlock()
+
+	rcf.occupants.updateByAffiliation(&data.OwnerAffiliation{}, occupants)
+}
+
+// SetAdminList sets the AdminList
+func (rcf *RoomConfigForm) SetAdminList(occupants RoomOccupantItemList) {
+	rcf.occupantsMutex.Lock()
+	defer rcf.occupantsMutex.Unlock()
+
+	rcf.occupants.updateByAffiliation(&data.AdminAffiliation{}, occupants)
+}
+
+// SetBanList sets the BanList
+func (rcf *RoomConfigForm) SetBanList(occupants RoomOccupantItemList) {
+	rcf.occupantsMutex.Lock()
+	defer rcf.occupantsMutex.Unlock()
+
+	rcf.occupants.updateByAffiliation(&data.OutcastAffiliation{}, occupants)
+}
+
 // ConfigureRoomAsPersistent configures the persistent field to true if exists in the room configuration form
 func (rcf *RoomConfigForm) ConfigureRoomAsPersistent() {
 	if f, ok := rcf.knownFields[RoomConfigFieldIsPersistent]; ok {

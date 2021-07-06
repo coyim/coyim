@@ -60,11 +60,22 @@ func (m *mucManager) addOccupantsIntoRoomConfigForm(roomID jid.Bare, rcf *muc.Ro
 				m.log.WithError(err).WithField("affiliation", a).Error("cannot parse MUCItems to OccupantItems")
 				continue
 			}
-			rcf.UpdateRoomOccupantsByAffiliation(a, occ)
+			setOccupantList(a, rcf, occ)
 		case e := <-err:
 			m.log.WithError(e).WithField("affiliation", a).Error("cannot retrieve occupants")
 			continue
 		}
+	}
+}
+
+func setOccupantList(a mucData.Affiliation, rcf *muc.RoomConfigForm, occ muc.RoomOccupantItemList) {
+	switch {
+	case a.IsOwner():
+		rcf.SetOwnerList(occ)
+	case a.IsAdmin():
+		rcf.SetAdminList(occ)
+	case a.IsBanned():
+		rcf.SetBanList(occ)
 	}
 }
 

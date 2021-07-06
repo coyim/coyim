@@ -429,7 +429,7 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_getKnownFieldValue(c *C) {
 
 func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetOccupantsByAffiliation(c *C) {
 	ownerAffiliation := &data.OwnerAffiliation{}
-	s.rcf.UpdateRoomOccupantsByAffiliation(ownerAffiliation, []*RoomOccupantItem{
+	s.rcf.SetOwnerList([]*RoomOccupantItem{
 		{
 			Jid:         jid.Parse("jid"),
 			Affiliation: ownerAffiliation,
@@ -448,7 +448,7 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetOccupantsByAffiliation(c *C)
 	})
 
 	adminAffiliation := &data.AdminAffiliation{}
-	s.rcf.UpdateRoomOccupantsByAffiliation(adminAffiliation, []*RoomOccupantItem{
+	s.rcf.SetAdminList([]*RoomOccupantItem{
 		{
 			Jid:         jid.Parse("batman@cave.org"),
 			Affiliation: adminAffiliation,
@@ -457,7 +457,7 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetOccupantsByAffiliation(c *C)
 	})
 
 	outcastAffiliation := &data.OutcastAffiliation{}
-	s.rcf.UpdateRoomOccupantsByAffiliation(outcastAffiliation, []*RoomOccupantItem{
+	s.rcf.SetBanList([]*RoomOccupantItem{
 		{
 			Jid:         jid.Parse("robin"),
 			Affiliation: outcastAffiliation,

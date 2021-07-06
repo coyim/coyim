@@ -2,7 +2,6 @@ package gui
 
 import (
 	"github.com/coyim/coyim/session/muc"
-	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -12,8 +11,7 @@ const (
 )
 
 type roomConfigSummaryOccupantField struct {
-	affiliation            data.Affiliation
-	occupantsByAffiliation func(data.Affiliation) []*muc.RoomOccupantItem
+	retrieveOccupantList func() muc.RoomOccupantItemList
 
 	widget                    gtki.Box        `gtk-widget:"room-config-field-box"`
 	field                     gtki.ListBoxRow `gtk-widget:"room-config-field"`
@@ -27,10 +25,9 @@ type roomConfigSummaryOccupantField struct {
 	listModel gtki.ListStore
 }
 
-func newRoomConfigSummaryOccupantField(label string, affiliation data.Affiliation, occupantsByAffiliation func(data.Affiliation) []*muc.RoomOccupantItem) hasRoomConfigFormField {
+func newRoomConfigSummaryOccupantField(label string, retrieveOccupantList func() muc.RoomOccupantItemList) hasRoomConfigFormField {
 	field := &roomConfigSummaryOccupantField{
-		affiliation:            affiliation,
-		occupantsByAffiliation: occupantsByAffiliation,
+		retrieveOccupantList: retrieveOccupantList,
 	}
 
 	field.initBuilder()
@@ -60,7 +57,7 @@ func (f *roomConfigSummaryOccupantField) initOccupantsModel() {
 
 // handleFieldValue MUST be called from the UI thread
 func (f *roomConfigSummaryOccupantField) handleFieldValue() {
-	occupants := f.occupantsByAffiliation(f.affiliation)
+	occupants := f.retrieveOccupantList()
 	setLabelText(f.fieldValueLabel, summaryTotalPositionsText(len(occupants)))
 	f.fieldListValueButton.SetVisible(len(occupants) > 0)
 
@@ -71,7 +68,7 @@ func (f *roomConfigSummaryOccupantField) handleFieldValue() {
 func (f *roomConfigSummaryOccupantField) printOccupantsView() {
 	f.listModel.Clear()
 
-	for _, o := range f.occupantsByAffiliation(f.affiliation) {
+	for _, o := range f.retrieveOccupantList() {
 		iter := f.listModel.Append()
 		f.listModel.SetValue(iter, roomConfigSummaryOccupantJidIndex, o.Jid.String())
 	}

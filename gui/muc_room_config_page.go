@@ -262,9 +262,9 @@ func (p *roomConfigPage) otherPageSummaryFields() []hasRoomConfigFormField {
 
 func (p *roomConfigPage) initOccupantsSummaryFields() {
 	fields := []hasRoomConfigFormField{
-		newRoomConfigSummaryOccupantField(i18n.Local("Owners"), &data.OwnerAffiliation{}, p.form.GetOccupantsByAffiliation),
-		newRoomConfigSummaryOccupantField(i18n.Local("Administrators"), &data.AdminAffiliation{}, p.form.GetOccupantsByAffiliation),
-		newRoomConfigSummaryOccupantField(i18n.Local("Banned"), &data.OutcastAffiliation{}, p.form.GetOccupantsByAffiliation),
+		newRoomConfigSummaryOccupantField(i18n.Local("Owners"), p.form.OwnersList),
+		newRoomConfigSummaryOccupantField(i18n.Local("Administrators"), p.form.AdminsList),
+		newRoomConfigSummaryOccupantField(i18n.Local("Banned"), p.form.BanList),
 	}
 	p.addField(newRoomConfigSummaryFieldContainer(fields))
 }

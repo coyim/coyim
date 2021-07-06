@@ -12,7 +12,7 @@ const positionsListJidColumnIndex = 0
 
 type roomConfigPositions struct {
 	affiliation                     data.Affiliation
-	originalOccupantsList           []*muc.RoomOccupantItem
+	originalOccupantsList           muc.RoomOccupantItemList
 	updatePositionListByAffiliation func(affiliation data.Affiliation, occupants []*muc.RoomOccupantItem)
 
 	content                  gtki.Box              `gtk-widget:"room-config-positions-content"`
@@ -28,10 +28,10 @@ type roomConfigPositions struct {
 	positionsListController *mucRoomConfigListController
 }
 
-func newRoomConfigPositions(affiliation data.Affiliation, occupantsByAffiliation func(data.Affiliation) []*muc.RoomOccupantItem, updatePositionListByAffiliation func(affiliation data.Affiliation, occupants []*muc.RoomOccupantItem)) hasRoomConfigFormField {
+func newRoomConfigPositions(affiliation data.Affiliation, occupantsList muc.RoomOccupantItemList, updatePositionListByAffiliation func(affiliation data.Affiliation, occupants []*muc.RoomOccupantItem)) hasRoomConfigFormField {
 	field := &roomConfigPositions{
 		affiliation:                     affiliation,
-		originalOccupantsList:           occupantsByAffiliation(affiliation),
+		originalOccupantsList:           occupantsList,
 		updatePositionListByAffiliation: updatePositionListByAffiliation,
 	}
 

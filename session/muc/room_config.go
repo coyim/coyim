@@ -208,6 +208,18 @@ func (rcf *RoomConfigForm) GetOccupantsByAffiliation(a data.Affiliation) []*Room
 	return rcf.occupants.getByAffiliation(a)
 }
 
+func (rcf *RoomConfigForm) OwnersList() RoomOccupantItemList {
+	return rcf.occupants.owners
+}
+
+func (rcf *RoomConfigForm) AdminsList() RoomOccupantItemList {
+	return rcf.occupants.admins
+}
+
+func (rcf *RoomConfigForm) BanList() RoomOccupantItemList {
+	return rcf.occupants.banned
+}
+
 // GetRoomOccupantsToUpdate returns all occupants in the room configuration form
 func (rcf *RoomConfigForm) GetRoomOccupantsToUpdate() []*RoomOccupantItem {
 	rcf.occupantsMutex.Lock()

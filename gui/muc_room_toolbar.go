@@ -46,13 +46,12 @@ type roomViewToolbar struct {
 	roomSubjectTextView         gtki.TextView       `gtk-widget:"room-subject-textview"`
 	roomSubjectButtonsContainer gtki.Box            `gtk-widget:"room-edit-subject-buttons-container"`
 	roomSubjectEditButton       gtki.Button         `gtk-widget:"room-edit-subject-button"`
-	// roomSubjectButtonBox        gtki.Box            `gtk-widget:"room-edit-subject-buttons-box"`
-	roomSubjectApplyButton     gtki.Button   `gtk-widget:"room-edit-subject-apply-button"`
-	securityPropertiesMenuItem gtki.MenuItem `gtk-widget:"security-properties-menu-item"`
-	configureRoomMenuItem      gtki.MenuItem `gtk-widget:"room-configuration-menu-item"`
-	modifyBanMenuItem          gtki.MenuItem `gtk-widget:"modify-ban-list-menu-item"`
-	destroyRoomMenuItem        gtki.MenuItem `gtk-widget:"destroy-room-menu-item"`
-	leaveRoomMenuItem          gtki.MenuItem `gtk-widget:"leave-room-menu-item"`
+	roomSubjectApplyButton      gtki.Button         `gtk-widget:"room-edit-subject-apply-button"`
+	securityPropertiesMenuItem  gtki.MenuItem       `gtk-widget:"security-properties-menu-item"`
+	configureRoomMenuItem       gtki.MenuItem       `gtk-widget:"room-configuration-menu-item"`
+	modifyBanMenuItem           gtki.MenuItem       `gtk-widget:"modify-ban-list-menu-item"`
+	destroyRoomMenuItem         gtki.MenuItem       `gtk-widget:"destroy-room-menu-item"`
+	leaveRoomMenuItem           gtki.MenuItem       `gtk-widget:"leave-room-menu-item"`
 }
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {

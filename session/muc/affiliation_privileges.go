@@ -4,28 +4,28 @@ import (
 	"github.com/coyim/coyim/session/muc/data"
 )
 
-type affilitionNumberType int
+type affiliationNumberType int
 
 const (
-	affilitionTypeOutcast affilitionNumberType = iota
-	affilitionTypeNone
-	affilitionTypeMember
-	affilitionTypeAdmin
-	affilitionTypeOwner
+	affiliationTypeOutcast affiliationNumberType = iota
+	affiliationTypeNone
+	affiliationTypeMember
+	affiliationTypeAdmin
+	affiliationTypeOwner
 )
 
-func affiliationNumberTypeFrom(a data.Affiliation) affilitionNumberType {
+func affiliationNumberTypeFrom(a data.Affiliation) affiliationNumberType {
 	switch {
 	case a.IsOwner():
-		return affilitionTypeOwner
+		return affiliationTypeOwner
 	case a.IsAdmin():
-		return affilitionTypeAdmin
+		return affiliationTypeAdmin
 	case a.IsMember():
-		return affilitionTypeMember
+		return affiliationTypeMember
 	case a.IsNone():
-		return affilitionTypeNone
+		return affiliationTypeNone
 	}
-	return affilitionTypeOutcast
+	return affiliationTypeOutcast
 }
 
 const (

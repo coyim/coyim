@@ -15,14 +15,14 @@ const (
 	AffiliationNone = "none"
 )
 
-type affilitionNumberType int
+type affiliationNumberType int
 
 const (
-	affilitionTypeOutcast affilitionNumberType = iota
-	affilitionTypeNone
-	affilitionTypeMember
-	affilitionTypeAdmin
-	affilitionTypeOwner
+	affiliationTypeOutcast affiliationNumberType = iota
+	affiliationTypeNone
+	affiliationTypeMember
+	affiliationTypeAdmin
+	affiliationTypeOwner
 )
 
 var affiliationLowerThan = [][]bool{
@@ -63,8 +63,8 @@ type Affiliation interface {
 	Name() string
 	// IsDifferentFrom returns true if the caller affiliation is different from the affiliation passed as argument
 	IsDifferentFrom(Affiliation) bool
-	// affiliationTypeAsNumber returns an int value indicating the affiliation number through a AffilitionNumberType
-	affiliationTypeAsNumber() affilitionNumberType
+	// affiliationTypeAsNumber returns an int value indicating the affiliation number through a AffiliationNumberType
+	affiliationTypeAsNumber() affiliationNumberType
 }
 
 // NoneAffiliation is a representation of MUC's "none" affiliation
@@ -228,28 +228,28 @@ func (a *OwnerAffiliation) IsDifferentFrom(a1 Affiliation) bool {
 }
 
 // affiliationTypeAsNumber implements Affiliation interface
-func (*NoneAffiliation) affiliationTypeAsNumber() affilitionNumberType {
-	return affilitionTypeNone
+func (*NoneAffiliation) affiliationTypeAsNumber() affiliationNumberType {
+	return affiliationTypeNone
 }
 
 // affiliationTypeAsNumber implements Affiliation interface
-func (*OutcastAffiliation) affiliationTypeAsNumber() affilitionNumberType {
-	return affilitionTypeOutcast
+func (*OutcastAffiliation) affiliationTypeAsNumber() affiliationNumberType {
+	return affiliationTypeOutcast
 }
 
 // affiliationTypeAsNumber implements Affiliation interface
-func (*MemberAffiliation) affiliationTypeAsNumber() affilitionNumberType {
-	return affilitionTypeMember
+func (*MemberAffiliation) affiliationTypeAsNumber() affiliationNumberType {
+	return affiliationTypeMember
 }
 
 // affiliationTypeAsNumber implements Affiliation interface
-func (*AdminAffiliation) affiliationTypeAsNumber() affilitionNumberType {
-	return affilitionTypeAdmin
+func (*AdminAffiliation) affiliationTypeAsNumber() affiliationNumberType {
+	return affiliationTypeAdmin
 }
 
 // affiliationTypeAsNumber implements Affiliation interface
-func (*OwnerAffiliation) affiliationTypeAsNumber() affilitionNumberType {
-	return affilitionTypeOwner
+func (*OwnerAffiliation) affiliationTypeAsNumber() affiliationNumberType {
+	return affiliationTypeOwner
 }
 
 // AffiliationFromString returns an Affiliation from the given string, or an error if the string doesn't match a known affiliation type

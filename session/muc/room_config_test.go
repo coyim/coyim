@@ -465,9 +465,27 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetOccupantsByAffiliation(c *C)
 		},
 	})
 
+	noneAffiliation := &data.NoneAffiliation{}
+	s.rcf.UpdateRemovedOccupantList([]*RoomOccupantItem{
+		{
+			Jid:         jid.Parse("pablo"),
+			Affiliation: noneAffiliation,
+			Reason:      "foo",
+		},
+	})
+
+	s.rcf.UpdateRemovedOccupantList([]*RoomOccupantItem{
+		{
+			Jid:         jid.Parse("pablito"),
+			Affiliation: noneAffiliation,
+			Reason:      "something",
+		},
+	})
+
 	c.Assert(s.rcf.OwnersList(), HasLen, 3)
 	c.Assert(s.rcf.AdminsList(), HasLen, 1)
 	c.Assert(s.rcf.BanList(), HasLen, 1)
+	c.Assert(s.rcf.OccupantsWithoutAffiliation(), HasLen, 2)
 }
 
 func (s *MucRoomConfigSuite) Test_RoomConfigForm_ConfigureRoomAsPersistent(c *C) {

@@ -171,6 +171,14 @@ func (rcf *RoomConfigForm) SetBanList(banned RoomOccupantItemList) {
 	rcf.banned = banned
 }
 
+// UpdateRemovedOccupantList updates the list of occupants with none affiliation
+func (rcf *RoomConfigForm) UpdateRemovedOccupantList(occupantsRemoved RoomOccupantItemList) {
+	rcf.occupantsMutex.Lock()
+	defer rcf.occupantsMutex.Unlock()
+
+	rcf.none = append(rcf.none, occupantsRemoved...)
+}
+
 // ConfigureRoomAsPersistent configures the persistent field to true if exists in the room configuration form
 func (rcf *RoomConfigForm) ConfigureRoomAsPersistent() {
 	if f, ok := rcf.knownFields[RoomConfigFieldIsPersistent]; ok {
@@ -191,6 +199,11 @@ func (rcf *RoomConfigForm) AdminsList() RoomOccupantItemList {
 // BanList returns the occupant list with banned affiliation
 func (rcf *RoomConfigForm) BanList() RoomOccupantItemList {
 	return rcf.banned
+}
+
+// OccupantsWithoutAffiliation returns the occupant list with none affiliation
+func (rcf *RoomConfigForm) OccupantsWithoutAffiliation() RoomOccupantItemList {
+	return rcf.none
 }
 
 // GetRoomOccupantsToUpdate returns all occupants in the room configuration form

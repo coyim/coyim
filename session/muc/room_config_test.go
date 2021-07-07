@@ -431,9 +431,10 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetOccupantsByAffiliation(c *C)
 	ownerAffiliation := &data.OwnerAffiliation{}
 	s.rcf.SetOwnerList([]*RoomOccupantItem{
 		{
-			Jid:         jid.Parse("jid"),
-			Affiliation: ownerAffiliation,
-			Reason:      "bla",
+			Jid:           jid.Parse("jid"),
+			Affiliation:   ownerAffiliation,
+			Reason:        "bla",
+			MustBeUpdated: true,
 		},
 		{
 			Jid:         jid.Parse("jid@foo.org"),
@@ -441,18 +442,20 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetOccupantsByAffiliation(c *C)
 			Reason:      "foo",
 		},
 		{
-			Jid:         jid.Parse("1234"),
-			Affiliation: ownerAffiliation,
-			Reason:      "foo123",
+			Jid:           jid.Parse("1234"),
+			Affiliation:   ownerAffiliation,
+			Reason:        "foo123",
+			MustBeUpdated: true,
 		},
 	})
 
 	adminAffiliation := &data.AdminAffiliation{}
 	s.rcf.SetAdminList([]*RoomOccupantItem{
 		{
-			Jid:         jid.Parse("batman@cave.org"),
-			Affiliation: adminAffiliation,
-			Reason:      "boom",
+			Jid:           jid.Parse("batman@cave.org"),
+			Affiliation:   adminAffiliation,
+			Reason:        "boom",
+			MustBeUpdated: true,
 		},
 	})
 
@@ -502,7 +505,7 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetConfiguredPassword(c *C) {
 
 func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetRoomOccupantsToUpdate(c *C) {
 	roomOccupants := s.rcf.GetRoomOccupantsToUpdate()
-	c.Assert(roomOccupants, HasLen, 7)
+	c.Assert(roomOccupants, HasLen, 5)
 
 	owners := []*RoomOccupantItem{}
 	ownerAffiliation := &data.OwnerAffiliation{}
@@ -513,19 +516,16 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetRoomOccupantsToUpdate(c *C) 
 	}
 	c.Assert(owners, DeepEquals, []*RoomOccupantItem{
 		{
-			Jid:         jid.Parse("jid"),
-			Affiliation: ownerAffiliation,
-			Reason:      "bla",
+			Jid:           jid.Parse("jid"),
+			Affiliation:   ownerAffiliation,
+			Reason:        "bla",
+			MustBeUpdated: true,
 		},
 		{
-			Jid:         jid.Parse("jid@foo.org"),
-			Affiliation: ownerAffiliation,
-			Reason:      "foo",
-		},
-		{
-			Jid:         jid.Parse("1234"),
-			Affiliation: ownerAffiliation,
-			Reason:      "foo123",
+			Jid:           jid.Parse("1234"),
+			Affiliation:   ownerAffiliation,
+			Reason:        "foo123",
+			MustBeUpdated: true,
 		},
 	})
 
@@ -538,9 +538,10 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetRoomOccupantsToUpdate(c *C) 
 	}
 	c.Assert(admins, DeepEquals, []*RoomOccupantItem{
 		{
-			Jid:         jid.Parse("batman@cave.org"),
-			Affiliation: adminAffiliation,
-			Reason:      "boom",
+			Jid:           jid.Parse("batman@cave.org"),
+			Affiliation:   adminAffiliation,
+			Reason:        "boom",
+			MustBeUpdated: true,
 		},
 	})
 
@@ -551,13 +552,7 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetRoomOccupantsToUpdate(c *C) 
 			banned = append(banned, o)
 		}
 	}
-	c.Assert(banned, DeepEquals, []*RoomOccupantItem{
-		{
-			Jid:         jid.Parse("robin"),
-			Affiliation: outcastAffiliation,
-			Reason:      "123456",
-		},
-	})
+	c.Assert(len(banned), Equals, 0)
 }
 
 func (s *MucRoomConfigSuite) Test_RoomConfigForm_updateValueOfPasswordProtectedField(c *C) {
@@ -569,5 +564,4 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_updateValueOfPasswordProtectedF
 
 	s.rcf.updateValueOfPasswordProtectedField()
 	c.Assert(field.Value(), DeepEquals, []string{"false"})
-
 }

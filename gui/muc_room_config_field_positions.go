@@ -109,16 +109,21 @@ func (p *roomConfigPositions) updateOccupantListCellForString(controller *mucRoo
 }
 
 func (p *roomConfigPositions) updateFieldValue() {
-	currentModelList := p.currentOccupantList()
-	modifiedList := currentModelList
-	for _, ci := range p.originalOccupantsList {
-		if !currentModelList.IncludesJid(ci.Jid.String()) {
-			ci.Affiliation = &data.NoneAffiliation{}
-			modifiedList = append(modifiedList, ci)
+	p.refreshOccupantLists(p.currentOccupantList())
 		}
-	}
 
-	p.setOccupantList(modifiedList)
+func (p *roomConfigPositions) refreshOccupantLists(currentList muc.RoomOccupantItemList) {
+	occupantsList := muc.RoomOccupantItemList{}
+	for _, oi := range currentList {
+		oi.IsNew = p.isNewOccupant(oi)
+		occupantsList = append(occupantsList, oi)
+	}
+	p.setOccupantList(occupantsList)
+
+}
+
+func (p *roomConfigPositions) isNewOccupant(o *muc.RoomOccupantItem) bool {
+	return !p.originalOccupantsList.IncludesJid(o.Jid)
 }
 
 func (p *roomConfigPositions) currentOccupantList() muc.RoomOccupantItemList {

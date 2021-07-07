@@ -4,7 +4,6 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/coyim/coyim/session/muc/data"
 	xmppData "github.com/coyim/coyim/xmpp/data"
 )
 
@@ -85,58 +84,21 @@ const (
 	publicList = "public_list"
 )
 
-type roomConfigOccupants struct {
-	owners []*RoomOccupantItem
-	admins []*RoomOccupantItem
-	banned []*RoomOccupantItem
-}
-
-func (rco *roomConfigOccupants) updateByAffiliation(a data.Affiliation, occupants []*RoomOccupantItem) {
-	switch {
-	case a.IsOwner():
-		rco.owners = occupants
-	case a.IsAdmin():
-		rco.admins = occupants
-	case a.IsBanned():
-		rco.banned = occupants
-	}
-}
-
-func (rco *roomConfigOccupants) getByAffiliation(a data.Affiliation) []*RoomOccupantItem {
-	switch {
-	case a.IsOwner():
-		return rco.owners
-	case a.IsAdmin():
-		return rco.admins
-	case a.IsBanned():
-		return rco.banned
-	}
-	return nil
-}
-
-func (rco *roomConfigOccupants) getAll() []*RoomOccupantItem {
-	occupants := []*RoomOccupantItem{}
-
-	occupants = append(occupants, rco.owners...)
-	occupants = append(occupants, rco.admins...)
-	occupants = append(occupants, rco.banned...)
-
-	return occupants
-}
-
 // RoomConfigForm represents a room configuration form
 type RoomConfigForm struct {
 	knownFields   map[RoomConfigFieldType]*RoomConfigFormField
 	unknownFields []*RoomConfigFormField
 
-	occupants      *roomConfigOccupants
+	owners         RoomOccupantItemList
+	admins         RoomOccupantItemList
+	banned         RoomOccupantItemList
+	none           RoomOccupantItemList
 	occupantsMutex sync.Mutex
 }
 
 // NewRoomConfigForm creates a new room configuration form instance
 func NewRoomConfigForm(form *xmppData.Form) *RoomConfigForm {
 	cf := &RoomConfigForm{
-		occupants:   &roomConfigOccupants{},
 		knownFields: map[RoomConfigFieldType]*RoomConfigFormField{},
 	}
 
@@ -186,27 +148,27 @@ func (rcf *RoomConfigForm) GetUnknownFields() []*RoomConfigFormField {
 }
 
 // SetOwnerList sets the OwnerList
-func (rcf *RoomConfigForm) SetOwnerList(occupants RoomOccupantItemList) {
+func (rcf *RoomConfigForm) SetOwnerList(owners RoomOccupantItemList) {
 	rcf.occupantsMutex.Lock()
 	defer rcf.occupantsMutex.Unlock()
 
-	rcf.occupants.updateByAffiliation(&data.OwnerAffiliation{}, occupants)
+	rcf.owners = owners
 }
 
 // SetAdminList sets the AdminList
-func (rcf *RoomConfigForm) SetAdminList(occupants RoomOccupantItemList) {
+func (rcf *RoomConfigForm) SetAdminList(admins RoomOccupantItemList) {
 	rcf.occupantsMutex.Lock()
 	defer rcf.occupantsMutex.Unlock()
 
-	rcf.occupants.updateByAffiliation(&data.AdminAffiliation{}, occupants)
+	rcf.admins = admins
 }
 
 // SetBanList sets the BanList
-func (rcf *RoomConfigForm) SetBanList(occupants RoomOccupantItemList) {
+func (rcf *RoomConfigForm) SetBanList(banned RoomOccupantItemList) {
 	rcf.occupantsMutex.Lock()
 	defer rcf.occupantsMutex.Unlock()
 
-	rcf.occupants.updateByAffiliation(&data.OutcastAffiliation{}, occupants)
+	rcf.banned = banned
 }
 
 // ConfigureRoomAsPersistent configures the persistent field to true if exists in the room configuration form
@@ -218,25 +180,30 @@ func (rcf *RoomConfigForm) ConfigureRoomAsPersistent() {
 
 // OwnersList returns the occupant list with owner affiliation
 func (rcf *RoomConfigForm) OwnersList() RoomOccupantItemList {
-	return rcf.occupants.owners
+	return rcf.owners
 }
 
 // AdminsList returns the occupant list with admin affiliation
 func (rcf *RoomConfigForm) AdminsList() RoomOccupantItemList {
-	return rcf.occupants.admins
+	return rcf.admins
 }
 
 // BanList returns the occupant list with banned affiliation
 func (rcf *RoomConfigForm) BanList() RoomOccupantItemList {
-	return rcf.occupants.banned
+	return rcf.banned
 }
 
 // GetRoomOccupantsToUpdate returns all occupants in the room configuration form
-func (rcf *RoomConfigForm) GetRoomOccupantsToUpdate() []*RoomOccupantItem {
+func (rcf *RoomConfigForm) GetRoomOccupantsToUpdate() RoomOccupantItemList {
 	rcf.occupantsMutex.Lock()
 	defer rcf.occupantsMutex.Unlock()
 
-	return rcf.occupants.getAll()
+	roomAffiliations := RoomOccupantItemList{}
+	roomAffiliations = append(roomAffiliations, rcf.owners...)
+	roomAffiliations = append(roomAffiliations, rcf.admins...)
+	roomAffiliations = append(roomAffiliations, rcf.banned...)
+	roomAffiliations = append(roomAffiliations, rcf.none...)
+	return roomAffiliations
 }
 
 // GetFormData returns a representation of the room config FORM_TYPE as described in the

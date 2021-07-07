@@ -502,7 +502,7 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetConfiguredPassword(c *C) {
 
 func (s *MucRoomConfigSuite) Test_RoomConfigForm_GetRoomOccupantsToUpdate(c *C) {
 	roomOccupants := s.rcf.GetRoomOccupantsToUpdate()
-	c.Assert(roomOccupants, HasLen, 5)
+	c.Assert(roomOccupants, HasLen, 7)
 
 	owners := []*RoomOccupantItem{}
 	ownerAffiliation := &data.OwnerAffiliation{}

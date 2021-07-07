@@ -3616,6 +3616,17 @@ ICA8L2NoaWxkPgogIDwvb2JqZWN0Pgo8L2ludGVyZmFjZT4K
 `,
 	},
 
+	"/definitions/InfoBarHighlightAttributes.xml": {
+		local:   "definitions/InfoBarHighlightAttributes.xml",
+		size:    171,
+		modtime: 1489449600,
+		compressed: `
+PGludGVyZmFjZT4KICA8b2JqZWN0IGNsYXNzPSJHdGtMYWJlbCIgaWQ9ImxhYmVsV2l0aEZvbnRXZWln
+aHQiPgogICAgPGF0dHJpYnV0ZXM+CiAgICAgIDxhdHRyaWJ1dGUgbmFtZT0id2VpZ2h0IiB2YWx1ZT0i
+Ym9sZCIvPgogICAgPC9hdHRyaWJ1dGVzPgogIDwvb2JqZWN0Pgo8L2ludGVyZmFjZT4K
+`,
+	},
+
 	"/definitions/LoadingOverlay.xml": {
 		local:   "definitions/LoadingOverlay.xml",
 		size:    4563,

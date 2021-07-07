@@ -1,0 +1,7 @@
+<interface>
+  <object class="GtkLabel" id="labelWithFontWeight">
+    <attributes>
+      <attribute name="weight" value="bold"/>
+    </attributes>
+  </object>
+</interface>

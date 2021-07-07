@@ -11,9 +11,10 @@ import (
 const positionsListJidColumnIndex = 0
 
 type roomConfigPositions struct {
-	affiliation           data.Affiliation
-	originalOccupantsList muc.RoomOccupantItemList
-	setOccupantList       func(occupants muc.RoomOccupantItemList)
+	affiliation               data.Affiliation
+	originalOccupantsList     muc.RoomOccupantItemList
+	setOccupantList           func(occupants muc.RoomOccupantItemList)
+	updateRemovedOccupantList func(occupantsToRemove muc.RoomOccupantItemList)
 
 	content                  gtki.Box              `gtk-widget:"room-config-positions-content"`
 	header                   gtki.Label            `gtk-widget:"room-config-position-header"`
@@ -28,11 +29,14 @@ type roomConfigPositions struct {
 	positionsListController *mucRoomConfigListController
 }
 
-func newRoomConfigPositions(affiliation data.Affiliation, occupantsList muc.RoomOccupantItemList, setOccupantList func(occupants muc.RoomOccupantItemList)) hasRoomConfigFormField {
+func newRoomConfigPositions(affiliation data.Affiliation, occupantsList muc.RoomOccupantItemList,
+	setOccupantList func(occupants muc.RoomOccupantItemList),
+	updateRemovedOccupantList func(occupantsToRemove muc.RoomOccupantItemList)) hasRoomConfigFormField {
 	field := &roomConfigPositions{
-		affiliation:           affiliation,
-		originalOccupantsList: occupantsList,
-		setOccupantList:       setOccupantList,
+		affiliation:               affiliation,
+		originalOccupantsList:     occupantsList,
+		setOccupantList:           setOccupantList,
+		updateRemovedOccupantList: updateRemovedOccupantList,
 	}
 
 	field.initBuilder()

@@ -13,6 +13,11 @@ type RoomOccupantItem struct {
 	IsNew       bool
 }
 
+// ChangeAffiliationToNone changes an occupant's affiliation to none
+func (roi *RoomOccupantItem) ChangeAffiliationToNone() {
+	roi.Affiliation = &data.NoneAffiliation{}
+}
+
 // RoomOccupantItemList represents a list of room occupant items
 type RoomOccupantItemList []*RoomOccupantItem
 

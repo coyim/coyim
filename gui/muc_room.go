@@ -366,8 +366,10 @@ func (v *roomView) onOccupantAffiliationUpdateSuccess(o *muc.Occupant, previousA
 		v.loadingViewOverlay.hide()
 
 		v.notifications.info(roomNotificationOptions{
-			message:   getAffiliationUpdateSuccessMessage(o.Nickname, previousAffiliation, affiliation),
-			closeable: true,
+			message:           getAffiliationUpdateSuccessMessage(nicknameHighlightToken, previousAffiliation, affiliation),
+			highlightNickname: true,
+			nickname:          o.Nickname,
+			closeable:         true,
 		})
 	})
 }
@@ -428,21 +430,25 @@ func (v *roomView) onOccupantRoleUpdateSuccess(nickname string, previousRole, ne
 		v.loadingViewOverlay.hide()
 
 		v.notifications.info(roomNotificationOptions{
-			message:   getRoleUpdateSuccessMessage(nickname, previousRole, newRole),
-			closeable: true,
+			message:           getRoleUpdateSuccessMessage(nicknameHighlightToken, previousRole, newRole),
+			highlightNickname: true,
+			nickname:          nickname,
+			closeable:         true,
 		})
 	})
 }
 
 func (v *roomView) onOccupantRoleUpdateError(nickname string, newRole data.Role) {
-	messages := getRoleUpdateFailureMessage(nickname, newRole)
+	messages := getRoleUpdateFailureMessage(nicknameHighlightToken, newRole)
 
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
 
 		v.notifications.error(roomNotificationOptions{
-			message:   messages.notificationMessage,
-			closeable: true,
+			message:           messages.notificationMessage,
+			highlightNickname: true,
+			nickname:          nickname,
+			closeable:         true,
 		})
 
 		dr := createDialogErrorComponent(dialogErrorOptions{

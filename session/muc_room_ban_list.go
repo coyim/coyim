@@ -11,6 +11,11 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+var (
+	// ErrRoomAffiliationsUpdate occurred when the room affiliation list couldn't be updated
+	ErrRoomAffiliationsUpdate = errors.New("list affiliation couldn't be updated")
+)
+
 // GetRoomBanList can be used to request the banned users list from the given room.
 func (s *session) GetRoomBanList(roomID jid.Bare) (<-chan muc.RoomBanList, <-chan error) {
 	lc := make(chan muc.RoomBanList)
@@ -171,7 +176,7 @@ func (m *mucManager) modifyOccupantAffiliation(roomID jid.Bare, occupantAffiliat
 
 	reply, ok := iq.Value.(*xmppData.ClientIQ)
 	if !ok || reply.Type != "result" {
-		return errors.New("the client iq reply is not the expected")
+		return ErrRoomAffiliationsUpdate
 	}
 
 	return nil

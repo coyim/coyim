@@ -7,10 +7,10 @@ import (
 
 // RoomOccupantItem contains information related with occupants to be configured in a room with a specific affiliation
 type RoomOccupantItem struct {
-	Jid         jid.Any
-	Affiliation data.Affiliation
-	Reason      string
-	IsNew       bool
+	Jid           jid.Any
+	Affiliation   data.Affiliation
+	Reason        string
+	MustBeUpdated bool
 }
 
 // ChangeAffiliationToNone changes an occupant's affiliation to none

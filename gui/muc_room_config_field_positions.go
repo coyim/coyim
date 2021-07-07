@@ -115,7 +115,7 @@ func (p *roomConfigPositions) updateFieldValue() {
 func (p *roomConfigPositions) refreshOccupantLists(currentList muc.RoomOccupantItemList) {
 	occupantsList := muc.RoomOccupantItemList{}
 	for _, oi := range currentList {
-		oi.IsNew = p.isNewOccupant(oi)
+		oi.MustBeUpdated = p.isNewOccupant(oi)
 		occupantsList = append(occupantsList, oi)
 	}
 	p.setOccupantList(occupantsList)
@@ -124,6 +124,7 @@ func (p *roomConfigPositions) refreshOccupantLists(currentList muc.RoomOccupantI
 	for _, oi := range p.originalOccupantsList {
 		if !currentList.IncludesJid(oi.Jid) {
 			oi.ChangeAffiliationToNone()
+			oi.MustBeUpdated = true
 			deletedOccupantsList = append(deletedOccupantsList, oi)
 		}
 	}

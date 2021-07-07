@@ -30,3 +30,14 @@ func (l RoomOccupantItemList) IncludesJid(id jid.Any) bool {
 	}
 	return false
 }
+
+// retrieveOccupantsToUpdate extracts occupants from list when MustBeUpdated attribute is true
+func (l RoomOccupantItemList) retrieveOccupantsToUpdate() RoomOccupantItemList {
+	extracted := RoomOccupantItemList{}
+	for _, o := range l {
+		if o.MustBeUpdated {
+			extracted = append(extracted, o)
+		}
+	}
+	return extracted
+}

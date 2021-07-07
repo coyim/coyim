@@ -270,11 +270,13 @@ func (p *roomConfigPage) initOccupantsSummaryFields() {
 }
 
 func (p *roomConfigPage) initOccupants() {
-	p.addField(newRoomConfigPositions(&data.OwnerAffiliation{}, p.form.OwnersList(), p.form.SetOwnerList, p.form.UpdateRemovedOccupantList))
+	p.addField(newRoomConfigPositions(&data.OwnerAffiliation{}, p.form.OwnersList(), p.form.SetOwnerList, p.form.UpdateRemovedOccupantList, func() {
+		p.notifyError(i18n.Local("The room must have at least one owner"))
+	}))
 	p.content.Add(createSeparator(gtki.HorizontalOrientation))
-	p.addField(newRoomConfigPositions(&data.AdminAffiliation{}, p.form.AdminsList(), p.form.SetAdminList, p.form.UpdateRemovedOccupantList))
+	p.addField(newRoomConfigPositions(&data.AdminAffiliation{}, p.form.AdminsList(), p.form.SetAdminList, p.form.UpdateRemovedOccupantList, func() {}))
 	p.content.Add(createSeparator(gtki.HorizontalOrientation))
-	p.addField(newRoomConfigPositions(&data.OutcastAffiliation{}, p.form.BanList(), p.form.SetBanList, p.form.UpdateRemovedOccupantList))
+	p.addField(newRoomConfigPositions(&data.OutcastAffiliation{}, p.form.BanList(), p.form.SetBanList, p.form.UpdateRemovedOccupantList, func() {}))
 }
 
 func (p *roomConfigPage) addField(field hasRoomConfigFormField) {

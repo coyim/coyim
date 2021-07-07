@@ -15,6 +15,7 @@ type roomConfigPositions struct {
 	originalOccupantsList     muc.RoomOccupantItemList
 	setOccupantList           func(occupants muc.RoomOccupantItemList)
 	updateRemovedOccupantList func(occupantsToRemove muc.RoomOccupantItemList)
+	showErrorNotification     func()
 
 	content                  gtki.Box              `gtk-widget:"room-config-positions-content"`
 	header                   gtki.Label            `gtk-widget:"room-config-position-header"`
@@ -31,12 +32,14 @@ type roomConfigPositions struct {
 
 func newRoomConfigPositions(affiliation data.Affiliation, occupantsList muc.RoomOccupantItemList,
 	setOccupantList func(occupants muc.RoomOccupantItemList),
-	updateRemovedOccupantList func(occupantsToRemove muc.RoomOccupantItemList)) hasRoomConfigFormField {
+	updateRemovedOccupantList func(occupantsToRemove muc.RoomOccupantItemList),
+	showErrorNotification func()) hasRoomConfigFormField {
 	field := &roomConfigPositions{
 		affiliation:               affiliation,
 		originalOccupantsList:     occupantsList,
 		setOccupantList:           setOccupantList,
 		updateRemovedOccupantList: updateRemovedOccupantList,
+		showErrorNotification:     showErrorNotification,
 	}
 
 	field.initBuilder()
@@ -146,7 +149,11 @@ func (p *roomConfigPositions) currentOccupantList() muc.RoomOccupantItemList {
 	return positionsList
 }
 
-func (p *roomConfigPositions) showValidationErrors() {}
+func (p *roomConfigPositions) showValidationErrors() {
+	if p.showErrorNotification != nil {
+		p.showErrorNotification()
+	}
+}
 
 func (p *roomConfigPositions) fieldWidget() gtki.Widget {
 	return p.content
@@ -157,5 +164,5 @@ func (p *roomConfigPositions) refreshContent() {
 }
 
 func (p *roomConfigPositions) isValid() bool {
-	return true
+	return !(p.affiliation.IsOwner() && len(p.originalOccupantsList) != 0 && len(p.currentOccupantList()) == 0)
 }

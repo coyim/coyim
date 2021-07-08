@@ -175,7 +175,7 @@ func (v *roomView) roomConfigRequestTimeoutEvent() {
 
 // selfOccupantAffiliationUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantAffiliationUpdatedEvent(selfAffiliationUpdate data.SelfAffiliationUpdate) {
-	update, an, ok := tokenizeActorNicknameFromSelfAffiliationUpdate(selfAffiliationUpdate)
+	update, an, ok := setActorNicknameOnSelfAffiliationUpdate(selfAffiliationUpdate)
 
 	v.notifications.info(roomNotificationOptions{
 		message:           getMUCNotificationMessageFrom(update),
@@ -192,7 +192,7 @@ func (v *roomView) selfOccupantAffiliationUpdatedEvent(selfAffiliationUpdate dat
 
 // selfOccupantAffiliationRoleUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) {
-	update, an, ok := tokenizeActorNicknameFromSelfAffiliationRoleUpdate(selfAffiliationRoleUpdate)
+	update, an, ok := setActorNicknameOnAffiliationRoleUpdate(selfAffiliationRoleUpdate)
 
 	v.notifications.info(roomNotificationOptions{
 		message:           getSelfAffiliationRoleUpdateMessage(update),
@@ -205,7 +205,7 @@ func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUp
 
 // selfOccupantRoleUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleUpdate) {
-	update, an, ok := tokenizeActorNicknameFromSelfRoleUpdate(selfRoleUpdate)
+	update, an, ok := setActorNicknameOnSelfRoleUpdate(selfRoleUpdate)
 
 	v.notifications.info(roomNotificationOptions{
 		message:           getSelfRoleUpdateMessage(update),
@@ -220,8 +220,8 @@ func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleUpdate) 
 	}
 }
 
-func tokenizeActorNicknameFromSelfAffiliationUpdate(selfAffiliationUpdate data.SelfAffiliationUpdate) (data.SelfAffiliationUpdate, string, bool) {
-	if an, ok := actorNicknameFromSelfAffiliationUpdate(selfAffiliationUpdate); ok {
+func setActorNicknameOnSelfAffiliationUpdate(selfAffiliationUpdate data.SelfAffiliationUpdate) (data.SelfAffiliationUpdate, string, bool) {
+	if an, ok := actorNicknameFromSelfUpdate(selfAffiliationUpdate.Actor); ok {
 		update := data.SelfAffiliationUpdate{}
 
 		update.Nickname = selfAffiliationUpdate.Nickname
@@ -240,8 +240,8 @@ func tokenizeActorNicknameFromSelfAffiliationUpdate(selfAffiliationUpdate data.S
 	return selfAffiliationUpdate, "", false
 }
 
-func tokenizeActorNicknameFromSelfAffiliationRoleUpdate(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) (data.AffiliationRoleUpdate, string, bool) {
-	if an, ok := actorNicknameFromSelfAffiliationRoleUpdate(selfAffiliationRoleUpdate); ok {
+func setActorNicknameOnAffiliationRoleUpdate(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) (data.AffiliationRoleUpdate, string, bool) {
+	if an, ok := actorNicknameFromSelfUpdate(selfAffiliationRoleUpdate.Actor); ok {
 		update := data.AffiliationRoleUpdate{}
 
 		update.Nickname = selfAffiliationRoleUpdate.Nickname
@@ -262,8 +262,8 @@ func tokenizeActorNicknameFromSelfAffiliationRoleUpdate(selfAffiliationRoleUpdat
 	return selfAffiliationRoleUpdate, "", false
 }
 
-func tokenizeActorNicknameFromSelfRoleUpdate(selfRoleUpdate data.RoleUpdate) (data.RoleUpdate, string, bool) {
-	if an, ok := actorNicknameFromSelfRoleUpdate(selfRoleUpdate); ok {
+func setActorNicknameOnSelfRoleUpdate(selfRoleUpdate data.RoleUpdate) (data.RoleUpdate, string, bool) {
+	if an, ok := actorNicknameFromSelfUpdate(selfRoleUpdate.Actor); ok {
 		update := data.RoleUpdate{}
 
 		update.Nickname = selfRoleUpdate.Nickname
@@ -280,18 +280,6 @@ func tokenizeActorNicknameFromSelfRoleUpdate(selfRoleUpdate data.RoleUpdate) (da
 		return update, an, ok
 	}
 	return selfRoleUpdate, "", false
-}
-
-func actorNicknameFromSelfAffiliationUpdate(u data.SelfAffiliationUpdate) (string, bool) {
-	return actorNicknameFromSelfUpdate(u.Actor)
-}
-
-func actorNicknameFromSelfAffiliationRoleUpdate(u data.AffiliationRoleUpdate) (string, bool) {
-	return actorNicknameFromSelfUpdate(u.Actor)
-}
-
-func actorNicknameFromSelfRoleUpdate(u data.RoleUpdate) (string, bool) {
-	return actorNicknameFromSelfUpdate(u.Actor)
 }
 
 func actorNicknameFromSelfUpdate(actor *data.Actor) (string, bool) {

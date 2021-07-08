@@ -210,11 +210,11 @@ func (s *mucStylesProvider) setRoomConfigSummarySectionLabelStyle(l gtki.Label) 
 	})
 }
 
-func (s *mucStylesProvider) setRoomConfigSummarySectionLinkButtonStyle(b gtki.LinkButton) {
-	s.setWidgetStyles(b, styles{
+func (s *mucStylesProvider) setRoomConfigSummaryStyle(a gtki.Assistant) {
+	s.setWidgetStyles(a, styles{
 		"button.link": {
 			"padding":   "0px",
-			"font-size": "medium",
+			"font-size": "large",
 		},
 	})
 }

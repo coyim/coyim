@@ -108,6 +108,8 @@ func (rc *roomConfigAssistant) initDefaults() {
 	}
 
 	removeMarginFromAssistantPages(rc.assistant)
+
+	mucStyles.setRoomConfigSummaryStyle(rc.assistant)
 }
 
 func (rc *roomConfigAssistant) initSidebarNavigation() {

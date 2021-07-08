@@ -84,7 +84,6 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID mucRoomConfigPageID) *room
 		roomConfigComponent: c,
 		title:               configPageDisplayTitle(pageID),
 		pageID:              pageID,
-		loadingOverlay:      c.u.newLoadingOverlayComponent(),
 		doAfterRefresh:      newCallbacksSet(),
 		form:                c.form,
 		log: c.log.WithFields(log.Fields{
@@ -109,8 +108,10 @@ func (p *roomConfigPage) initBuilder() {
 	})
 
 	p.notifications = p.u.newNotificationsComponent()
-	p.loadingOverlay = p.u.newLoadingOverlayComponent()
 	p.notificationsArea.Add(p.notifications.contentBox())
+
+	p.loadingOverlay = p.u.newLoadingOverlayComponent()
+	p.page.AddOverlay(p.loadingOverlay.overlay)
 }
 
 func (p *roomConfigPage) initDefaults() {

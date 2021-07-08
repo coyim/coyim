@@ -175,10 +175,14 @@ func (v *roomView) roomConfigRequestTimeoutEvent() {
 
 // selfOccupantAffiliationUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantAffiliationUpdatedEvent(selfAffiliationUpdate data.SelfAffiliationUpdate) {
+	update, an, ok := tokenizeActorNicknameFromSelfAffiliationUpdate(selfAffiliationUpdate)
+
 	v.notifications.info(roomNotificationOptions{
-		message:   getMUCNotificationMessageFrom(selfAffiliationUpdate),
-		showTime:  true,
-		closeable: true,
+		message:           getMUCNotificationMessageFrom(update),
+		highlightNickname: ok,
+		nickname:          an,
+		showTime:          true,
+		closeable:         true,
 	})
 
 	if selfAffiliationUpdate.New.IsBanned() {
@@ -188,24 +192,113 @@ func (v *roomView) selfOccupantAffiliationUpdatedEvent(selfAffiliationUpdate dat
 
 // selfOccupantAffiliationRoleUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) {
+	update, an, ok := tokenizeActorNicknameFromSelfAffiliationRoleUpdate(selfAffiliationRoleUpdate)
+
 	v.notifications.info(roomNotificationOptions{
-		message:   getSelfAffiliationRoleUpdateMessage(selfAffiliationRoleUpdate),
-		showTime:  true,
-		closeable: true,
+		message:           getSelfAffiliationRoleUpdateMessage(update),
+		highlightNickname: ok,
+		nickname:          an,
+		showTime:          true,
+		closeable:         true,
 	})
 }
 
 // selfOccupantRoleUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleUpdate) {
+	update, an, ok := tokenizeActorNicknameFromSelfRoleUpdate(selfRoleUpdate)
+
 	v.notifications.info(roomNotificationOptions{
-		message:   getSelfRoleUpdateMessage(selfRoleUpdate),
-		showTime:  true,
-		closeable: true,
+		message:           getSelfRoleUpdateMessage(update),
+		highlightNickname: ok,
+		nickname:          an,
+		showTime:          true,
+		closeable:         true,
 	})
 
 	if selfRoleUpdate.New.IsNone() {
 		v.disableRoomView()
 	}
+}
+
+func tokenizeActorNicknameFromSelfAffiliationUpdate(selfAffiliationUpdate data.SelfAffiliationUpdate) (data.SelfAffiliationUpdate, string, bool) {
+	if an, ok := actorNicknameFromSelfAffiliationUpdate(selfAffiliationUpdate); ok {
+		update := data.SelfAffiliationUpdate{}
+
+		update.Nickname = selfAffiliationUpdate.Nickname
+		update.Reason = selfAffiliationUpdate.Reason
+		update.New = selfAffiliationUpdate.New
+		update.Previous = selfAffiliationUpdate.Previous
+
+		update.Actor = &data.Actor{
+			Nickname:    nicknameHighlightToken,
+			Affiliation: selfAffiliationUpdate.Actor.Affiliation,
+			Role:        selfAffiliationUpdate.Actor.Role,
+		}
+
+		return update, an, ok
+	}
+	return selfAffiliationUpdate, "", false
+}
+
+func tokenizeActorNicknameFromSelfAffiliationRoleUpdate(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) (data.AffiliationRoleUpdate, string, bool) {
+	if an, ok := actorNicknameFromSelfAffiliationRoleUpdate(selfAffiliationRoleUpdate); ok {
+		update := data.AffiliationRoleUpdate{}
+
+		update.Nickname = selfAffiliationRoleUpdate.Nickname
+		update.Reason = selfAffiliationRoleUpdate.Reason
+		update.NewAffiliation = selfAffiliationRoleUpdate.NewAffiliation
+		update.PreviousAffiliation = selfAffiliationRoleUpdate.PreviousAffiliation
+		update.NewRole = selfAffiliationRoleUpdate.NewRole
+		update.PreviousRole = selfAffiliationRoleUpdate.PreviousRole
+
+		update.Actor = &data.Actor{
+			Nickname:    nicknameHighlightToken,
+			Affiliation: selfAffiliationRoleUpdate.Actor.Affiliation,
+			Role:        selfAffiliationRoleUpdate.Actor.Role,
+		}
+
+		return update, an, ok
+	}
+	return selfAffiliationRoleUpdate, "", false
+}
+
+func tokenizeActorNicknameFromSelfRoleUpdate(selfRoleUpdate data.RoleUpdate) (data.RoleUpdate, string, bool) {
+	if an, ok := actorNicknameFromSelfRoleUpdate(selfRoleUpdate); ok {
+		update := data.RoleUpdate{}
+
+		update.Nickname = selfRoleUpdate.Nickname
+		update.Reason = selfRoleUpdate.Reason
+		update.New = selfRoleUpdate.New
+		update.Previous = selfRoleUpdate.Previous
+
+		update.Actor = &data.Actor{
+			Nickname:    nicknameHighlightToken,
+			Affiliation: selfRoleUpdate.Actor.Affiliation,
+			Role:        selfRoleUpdate.Actor.Role,
+		}
+
+		return update, an, ok
+	}
+	return selfRoleUpdate, "", false
+}
+
+func actorNicknameFromSelfAffiliationUpdate(u data.SelfAffiliationUpdate) (string, bool) {
+	return actorNicknameFromSelfUpdate(u.Actor)
+}
+
+func actorNicknameFromSelfAffiliationRoleUpdate(u data.AffiliationRoleUpdate) (string, bool) {
+	return actorNicknameFromSelfUpdate(u.Actor)
+}
+
+func actorNicknameFromSelfRoleUpdate(u data.RoleUpdate) (string, bool) {
+	return actorNicknameFromSelfUpdate(u.Actor)
+}
+
+func actorNicknameFromSelfUpdate(actor *data.Actor) (string, bool) {
+	if actor != nil {
+		return actor.Nickname, true
+	}
+	return "", false
 }
 
 // selfOccupantRemovedEvent MUST be called from the UI thread

@@ -39,6 +39,11 @@ func (f *roomConfigFormFieldPassword) initDefaults() {
 	f.confirmEntry.SetSensitive(!f.entry.GetVisibility())
 	mucStyles.setErrorLabelStyle(f.passwordMatchErrorLabel)
 	mucStyles.setEntryErrorStyle(f.confirmEntry)
+
+	if f.value.Text() != "" {
+		setEntryText(f.entry, f.value.Text())
+		setEntryText(f.confirmEntry, f.value.Text())
+	}
 }
 
 func (f *roomConfigFormFieldPassword) setPassword(p string) {

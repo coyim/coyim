@@ -6,7 +6,7 @@
       <object class="GtkOverlay">
         <property name="visible">True</property>
         <child>
-          <object class="GtkBox" id="room-config-page">            
+          <object class="GtkBox" id="room-config-page">
             <property name="orientation">vertical</property>
             <property name="hexpand">True</property>
             <child>
@@ -28,7 +28,7 @@
                     <property name="visible">True</property>
                     <child>
                       <object class="GtkBox">
-                        <property name="visible">True</property>                        
+                        <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <property name="spacing">24</property>
                         <property name="border_width">24</property>

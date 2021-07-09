@@ -175,7 +175,7 @@ func (v *roomView) roomConfigRequestTimeoutEvent() {
 
 // selfOccupantAffiliationUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantAffiliationUpdatedEvent(selfAffiliationUpdate data.SelfAffiliationUpdate) {
-	update, an, ok := setActorNicknameOnSelfAffiliationUpdate(selfAffiliationUpdate)
+	update, an, ok := selfOccupantAffiliationUpdatedHighlightActor(selfAffiliationUpdate)
 
 	v.notifications.info(roomNotificationOptions{
 		message:           getMUCNotificationMessageFrom(update),
@@ -192,7 +192,7 @@ func (v *roomView) selfOccupantAffiliationUpdatedEvent(selfAffiliationUpdate dat
 
 // selfOccupantAffiliationRoleUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) {
-	update, an, ok := setActorNicknameOnAffiliationRoleUpdate(selfAffiliationRoleUpdate)
+	update, an, ok := selfOccupantAffiliationRoleUpdatedHighlightActor(selfAffiliationRoleUpdate)
 
 	v.notifications.info(roomNotificationOptions{
 		message:           getSelfAffiliationRoleUpdateMessage(update),
@@ -205,7 +205,7 @@ func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUp
 
 // selfOccupantRoleUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleUpdate) {
-	update, an, ok := setActorNicknameOnSelfRoleUpdate(selfRoleUpdate)
+	update, an, ok := selfOccupantRoleUpdatedHighlightActor(selfRoleUpdate)
 
 	v.notifications.info(roomNotificationOptions{
 		message:           getSelfRoleUpdateMessage(update),
@@ -220,66 +220,52 @@ func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleUpdate) 
 	}
 }
 
-func setActorNicknameOnSelfAffiliationUpdate(selfAffiliationUpdate data.SelfAffiliationUpdate) (data.SelfAffiliationUpdate, string, bool) {
-	if an, ok := actorNicknameFromSelfUpdate(selfAffiliationUpdate.Actor); ok {
-		update := data.SelfAffiliationUpdate{}
+func selfOccupantAffiliationUpdatedHighlightActor(u data.SelfAffiliationUpdate) (data.SelfAffiliationUpdate, string, bool) {
+	update := u
+	origNickname, ok := actorNicknameFromSelfUpdate(u.Actor)
 
-		update.Nickname = selfAffiliationUpdate.Nickname
-		update.Reason = selfAffiliationUpdate.Reason
-		update.New = selfAffiliationUpdate.New
-		update.Previous = selfAffiliationUpdate.Previous
-
+	if ok {
+		actor := update.Actor
 		update.Actor = &data.Actor{
 			Nickname:    nicknameHighlightToken,
-			Affiliation: selfAffiliationUpdate.Actor.Affiliation,
-			Role:        selfAffiliationUpdate.Actor.Role,
+			Affiliation: actor.Affiliation,
+			Role:        actor.Role,
 		}
-
-		return update, an, ok
 	}
-	return selfAffiliationUpdate, "", false
+
+	return update, origNickname, ok
 }
 
-func setActorNicknameOnAffiliationRoleUpdate(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) (data.AffiliationRoleUpdate, string, bool) {
-	if an, ok := actorNicknameFromSelfUpdate(selfAffiliationRoleUpdate.Actor); ok {
-		update := data.AffiliationRoleUpdate{}
+func selfOccupantAffiliationRoleUpdatedHighlightActor(u data.AffiliationRoleUpdate) (data.AffiliationRoleUpdate, string, bool) {
+	update := u
+	origNickname, ok := actorNicknameFromSelfUpdate(u.Actor)
 
-		update.Nickname = selfAffiliationRoleUpdate.Nickname
-		update.Reason = selfAffiliationRoleUpdate.Reason
-		update.NewAffiliation = selfAffiliationRoleUpdate.NewAffiliation
-		update.PreviousAffiliation = selfAffiliationRoleUpdate.PreviousAffiliation
-		update.NewRole = selfAffiliationRoleUpdate.NewRole
-		update.PreviousRole = selfAffiliationRoleUpdate.PreviousRole
-
+	if ok {
+		actor := update.Actor
 		update.Actor = &data.Actor{
 			Nickname:    nicknameHighlightToken,
-			Affiliation: selfAffiliationRoleUpdate.Actor.Affiliation,
-			Role:        selfAffiliationRoleUpdate.Actor.Role,
+			Affiliation: actor.Affiliation,
+			Role:        actor.Role,
 		}
-
-		return update, an, ok
 	}
-	return selfAffiliationRoleUpdate, "", false
+
+	return update, origNickname, ok
 }
 
-func setActorNicknameOnSelfRoleUpdate(selfRoleUpdate data.RoleUpdate) (data.RoleUpdate, string, bool) {
-	if an, ok := actorNicknameFromSelfUpdate(selfRoleUpdate.Actor); ok {
-		update := data.RoleUpdate{}
+func selfOccupantRoleUpdatedHighlightActor(u data.RoleUpdate) (data.RoleUpdate, string, bool) {
+	update := u
+	origNickname, ok := actorNicknameFromSelfUpdate(u.Actor)
 
-		update.Nickname = selfRoleUpdate.Nickname
-		update.Reason = selfRoleUpdate.Reason
-		update.New = selfRoleUpdate.New
-		update.Previous = selfRoleUpdate.Previous
-
+	if ok {
+		actor := update.Actor
 		update.Actor = &data.Actor{
 			Nickname:    nicknameHighlightToken,
-			Affiliation: selfRoleUpdate.Actor.Affiliation,
-			Role:        selfRoleUpdate.Actor.Role,
+			Affiliation: actor.Affiliation,
+			Role:        actor.Role,
 		}
-
-		return update, an, ok
 	}
-	return selfRoleUpdate, "", false
+
+	return update, origNickname, ok
 }
 
 func actorNicknameFromSelfUpdate(actor *data.Actor) (string, bool) {

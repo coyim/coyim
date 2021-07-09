@@ -92,7 +92,7 @@ func (m *mucManager) onRoomConfigUpdate(roomID jid.Bare, currConfig, prevConfig 
 	// We do this validation to avoid publish and room configuration change event when nothing has changed.
 	room, ok := m.roomManager.GetRoom(roomID)
 	if len(changes) > 0 && ok {
-		room.UpdateProperties(&currConfig)
+		room.SetProperties(&currConfig)
 		m.roomConfigChanged(roomID, changes, currConfig)
 	}
 }

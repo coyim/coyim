@@ -120,8 +120,8 @@ func (r *Room) AddHistoryMessage(nickname, message string, timestamp time.Time) 
 	r.discussionHistory.AddMessage(nickname, message, timestamp)
 }
 
-// UpdateProperties updates the room properties
-func (r *Room) UpdateProperties(properties *data.RoomDiscoInfo) {
+// SetProperties replaces the current room properties by new ones
+func (r *Room) SetProperties(properties *data.RoomDiscoInfo) {
 	r.properties = properties
 }
 

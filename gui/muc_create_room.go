@@ -16,6 +16,7 @@ var (
 	errCreateRoomCheckIfExistsFails = errors.New("room exists failed")
 	errCreateRoomAlreadyExists      = errors.New("room already exists")
 	errCreateRoomFailed             = errors.New("couldn't create the room")
+	errCreateRoomTimeout            = errors.New("timeout trying to create the room")
 )
 
 type mucCreateRoomView struct {

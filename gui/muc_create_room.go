@@ -2,7 +2,9 @@ package gui
 
 import (
 	"errors"
+	"fmt"
 	"sync"
+	"time"
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc/data"
@@ -103,6 +105,7 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, onError fun
 
 		select {
 		case <-sc:
+			fmt.Println("DISCO INFO RECEIVED")
 			if v.configureRoom {
 				v.instantiatePersistentRoom(ca, roomID, onErrorFinal)
 			} else {
@@ -133,8 +136,12 @@ func (v *mucCreateRoomView) instantiatePersistentRoom(ca *account, roomID jid.Ba
 					v.createReservedRoom(ca, roomID, onError)
 				case err := <-ec:
 					ca.log.WithError(err).Error("An error occurred when submitting the configuration form")
+				case <-time.After(10 * time.Second):
+					onError(errCreateRoomTimeout)
 				}
 			}()
+		case <-time.After(10 * time.Second):
+			onError(errCreateRoomTimeout)
 		}
 	}()
 }

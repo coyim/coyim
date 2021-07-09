@@ -2,7 +2,6 @@ package gui
 
 import (
 	"errors"
-	"fmt"
 	"sync"
 	"time"
 
@@ -105,7 +104,6 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, onError fun
 
 		select {
 		case <-sc:
-			fmt.Println("DISCO INFO RECEIVED")
 			if v.configureRoom {
 				v.instantiatePersistentRoom(ca, roomID, onErrorFinal)
 			} else {

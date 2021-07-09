@@ -165,7 +165,7 @@ func (f *mucCreateRoomViewForm) onCreateRoomAlreadyExists() {
 
 // onCreateRoomTimeout MUST be called from the UI thread
 func (f *mucCreateRoomViewForm) onCreateRoomTimeout() {
-	f.notifications.error(i18n.Local("That room already exists, try again with a different name."))
+	f.notifications.error(i18n.Local("We haven't received a response from the server."))
 	f.hideSpinnerAndEnableFields()
 }
 

@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"time"
+
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session"
@@ -99,6 +101,10 @@ func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onErr
 			doInUIThread(func() {
 				onError(err)
 			})
+		case <-time.After(10 * time.Second):
+			doInUIThread(func() {
+				onError(errCreateRoomTimeout)
+			})
 		}
 	}()
 }
@@ -124,6 +130,8 @@ func (c *mucRoomConfigComponent) friendlyConfigErrorMessage(err error) string {
 		return i18n.Local("We can't cancel the room configuration process because either you don't have the permissions for doing it or the location is not available right now. Please try again.")
 	case session.ErrRoomAffiliationsUpdate:
 		return i18n.Local("The list affiliations couldn't be updated. Verify your permissions and try again.")
+	case errCreateRoomTimeout:
+		return i18n.Local("We haven't received a response from the server.")
 	default:
 		return i18n.Localf("Unsupported config error: %s", err)
 	}

@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"time"
+
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 )
@@ -27,6 +29,8 @@ func (a *account) createReservedRoom(roomID jid.Bare, onSuccess func(jid.Bare, *
 			onError(err)
 		case form := <-fc:
 			onSuccess(roomID, form)
+		case <-time.After(10 * time.Second):
+			onError(errCreateRoomTimeout)
 		}
 	}()
 }

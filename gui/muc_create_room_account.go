@@ -29,7 +29,7 @@ func (a *account) createReservedRoom(roomID jid.Bare, onSuccess func(jid.Bare, *
 			onError(err)
 		case form := <-fc:
 			onSuccess(roomID, form)
-		case <-time.After(timeoutThreshold * time.Second):
+		case <-time.After(timeoutThreshold):
 			onError(errCreateRoomTimeout)
 		}
 	}()

@@ -14,7 +14,7 @@ import (
 
 type mucRoomConfigPageID int
 
-const timeoutThreshold = 10
+const timeoutThreshold = 10 * time.Second
 
 const (
 	roomConfigInformationPageIndex mucRoomConfigPageID = iota
@@ -104,7 +104,7 @@ func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onErr
 			doInUIThread(func() {
 				onError(err)
 			})
-		case <-time.After(timeoutThreshold * time.Second):
+		case <-time.After(timeoutThreshold):
 			doInUIThread(func() {
 				onError(errCreateRoomTimeout)
 			})

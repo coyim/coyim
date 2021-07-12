@@ -98,6 +98,11 @@ type MUCServiceUnavailable struct {
 	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-stanzas service-unavailable,omitempty"`
 }
 
+// MUCBadRequest inform user that a bad request error was received
+type MUCBadRequest struct {
+	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-stanzas bad-request,omitempty"`
+}
+
 // MUCRoomDestroyQuery contains query information to destroy a room
 type MUCRoomDestroyQuery struct {
 	XMLName xml.Name       `xml:"http://jabber.org/protocol/muc#owner query"`

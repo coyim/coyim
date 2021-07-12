@@ -77,6 +77,7 @@ type StanzaError struct {
 	MUCRegistrationRequired *MUCRegistrationRequired
 	MUCConflict             *MUCConflict
 	MUCServiceUnavailable   *MUCServiceUnavailable
+	MUCBadRequest           *MUCBadRequest
 }
 
 func anyNotNil(vals ...interface{}) interface{} {
@@ -99,6 +100,7 @@ func (e *StanzaError) AnyMUCError() interface{} {
 		e.MUCRegistrationRequired,
 		e.MUCConflict,
 		e.MUCServiceUnavailable,
+		e.MUCBadRequest,
 	)
 }
 

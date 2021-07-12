@@ -189,8 +189,14 @@ func (c *conn) ChangePassword(username, server, password string) error {
 	if iq.Type == "error" {
 		if iq.Error.MUCNotAllowed != nil {
 			return ErrNotAllowed
-		} else if iq.Error.MUCNotAuthorized != nil {
+		}
+
+		if iq.Error.MUCNotAuthorized != nil {
 			return ErrNotAuthorized
+		}
+
+		if iq.Error.MUCBadRequest != nil {
+			return ErrBadRequest
 		}
 
 		switch iq.Error.Condition.XMLName.Local {

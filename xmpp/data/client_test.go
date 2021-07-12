@@ -66,6 +66,6 @@ func (s *ClientSuite) Test_StanzaError_parsesConditionCorrectly(c *C) {
 	v := &StanzaError{}
 	err := xml.NewDecoder(bytes.NewBuffer([]byte(data))).DecodeElement(v, nil)
 	c.Assert(err, IsNil)
-	c.Assert(v.Condition.XMLName.Space, Equals, "urn:ietf:params:xml:ns:xmpp-stanzas")
-	c.Assert(v.Condition.XMLName.Local, Equals, "bad-request")
+	c.Assert(v.MUCBadRequest.XMLName.Space, Equals, "urn:ietf:params:xml:ns:xmpp-stanzas")
+	c.Assert(v.MUCBadRequest.XMLName.Local, Equals, "bad-request")
 }

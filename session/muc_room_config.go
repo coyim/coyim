@@ -6,7 +6,6 @@ import (
 
 	"github.com/coyim/coyim/session/muc"
 	mucData "github.com/coyim/coyim/session/muc/data"
-	"github.com/coyim/coyim/xmpp/data"
 	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
@@ -35,7 +34,7 @@ func (s *session) GetRoomConfigurationForm(roomID jid.Bare) (<-chan *muc.RoomCon
 	fc := make(chan *muc.RoomConfigForm)
 
 	req := s.muc.newMUCRoomRequest(roomID, mucRequestGetRoomConfigForm, func(response []byte) error {
-		cf := &data.MUCRoomConfiguration{}
+		cf := &xmppData.MUCRoomConfiguration{}
 		if err := xml.Unmarshal(response, cf); err != nil {
 			return err
 		}
@@ -45,7 +44,7 @@ func (s *session) GetRoomConfigurationForm(roomID jid.Bare) (<-chan *muc.RoomCon
 		return nil
 	})
 
-	go req.get(data.MUCRoomConfiguration{})
+	go req.get(xmppData.MUCRoomConfiguration{})
 
 	return fc, req.errorChannel
 }
@@ -135,7 +134,7 @@ func (s *session) SubmitRoomConfigurationForm(roomID jid.Bare, form *muc.RoomCon
 	ec := make(chan *muc.SubmitFormError)
 
 	go func() {
-		reply, _, err := s.conn.SendIQ(roomID.String(), "set", data.MUCRoomConfiguration{
+		reply, _, err := s.conn.SendIQ(roomID.String(), "set", xmppData.MUCRoomConfiguration{
 			Form: form.GetFormData(),
 		})
 
@@ -168,8 +167,8 @@ func (s *session) CancelRoomConfiguration(roomID jid.Bare) <-chan error {
 	ec := make(chan error)
 
 	go func() {
-		reply, _, err := s.conn.SendIQ(roomID.String(), "set", data.MUCRoomConfiguration{
-			Form: &data.Form{
+		reply, _, err := s.conn.SendIQ(roomID.String(), "set", xmppData.MUCRoomConfiguration{
+			Form: &xmppData.Form{
 				Type: "cancel",
 			},
 		})
@@ -193,13 +192,13 @@ func (s *session) CancelRoomConfiguration(roomID jid.Bare) <-chan error {
 	return ec
 }
 
-func validateSubmitFormResponse(reply <-chan data.Stanza) *muc.SubmitFormError {
+func validateSubmitFormResponse(reply <-chan xmppData.Stanza) *muc.SubmitFormError {
 	stanza, ok := <-reply
 	if !ok {
 		return muc.NewSubmitFormError(ErrInformationQueryResponse)
 	}
 
-	iq, ok := stanza.Value.(*data.ClientIQ)
+	iq, ok := stanza.Value.(*xmppData.ClientIQ)
 	if !ok {
 		return muc.NewSubmitFormError(ErrInformationQueryResponse)
 	}
@@ -229,13 +228,13 @@ func validateSubmitFormResponse(reply <-chan data.Stanza) *muc.SubmitFormError {
 	return &muc.SubmitFormError{}
 }
 
-func validateIqResponse(reply <-chan data.Stanza) error {
+func validateIqResponse(reply <-chan xmppData.Stanza) error {
 	stanza, ok := <-reply
 	if !ok {
 		return ErrInformationQueryResponse
 	}
 
-	iq, ok := stanza.Value.(*data.ClientIQ)
+	iq, ok := stanza.Value.(*xmppData.ClientIQ)
 	if !ok {
 		return ErrInformationQueryResponse
 	}

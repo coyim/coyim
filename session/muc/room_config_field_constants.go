@@ -209,7 +209,8 @@ func (sfe *SubmitFormError) Field() RoomConfigFieldType {
 	return sfe.fieldError
 }
 
-// SetFieldErrorBadResponseText search coincidences between the error text received and knwon fields
+// SetFieldErrorBadResponseText tries to identify a known field within the error message of a bad request.
+// It assigns the found known field in fieldError
 func (sfe *SubmitFormError) SetFieldErrorBadResponseText(errorText string) {
 	for key, fieldNames := range roomConfigKnownFields {
 		for _, fieldName := range fieldNames {

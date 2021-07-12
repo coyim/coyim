@@ -125,14 +125,14 @@ func newRoomOccupantsRequestQueryByAffiliation(affiliation mucData.Affiliation) 
 	}
 }
 
-func (s *session) SubmitRoomConfigurationForm(roomID jid.Bare, form *muc.RoomConfigForm) (<-chan bool, <-chan error) {
+func (s *session) SubmitRoomConfigurationForm(roomID jid.Bare, form *muc.RoomConfigForm) (<-chan bool, <-chan muc.SubmitFormError) {
 	log := log.WithFields(log.Fields{
 		"room":  roomID,
 		"where": "SubmitRoomConfigurationForm",
 	})
 
 	sc := make(chan bool)
-	ec := make(chan error)
+	ec := make(chan muc.SubmitFormError)
 
 	go func() {
 		reply, _, err := s.conn.SendIQ(roomID.String(), "set", data.MUCRoomConfiguration{
@@ -141,14 +141,14 @@ func (s *session) SubmitRoomConfigurationForm(roomID jid.Bare, form *muc.RoomCon
 
 		if err != nil {
 			log.WithError(err).Error("An error occurred when trying to send the information query to save the room configuration")
-			ec <- ErrRoomConfigSubmit
+			ec <- muc.NewSubmitFormError(ErrRoomConfigSubmit)
 			return
 		}
 
 		err = validateIqResponse(reply)
 		if err != nil {
 			log.WithError(ErrInformationQueryResponse).Error("An error occurred when trying to read the response from the room configuration request")
-			ec <- ErrRoomConfigSubmitResponse
+			ec <- muc.NewSubmitFormError(ErrRoomConfigSubmitResponse)
 			return
 		}
 

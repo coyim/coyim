@@ -62,7 +62,7 @@ type Rooms interface {
 	CreateInstantRoom(jid.Bare) (<-chan bool, <-chan error)
 	CreateReservedRoom(jid.Bare) (<-chan *muc.RoomConfigForm, <-chan error)
 	GetRoomConfigurationForm(jid.Bare) (<-chan *muc.RoomConfigForm, <-chan error)
-	SubmitRoomConfigurationForm(jid.Bare, *muc.RoomConfigForm) (<-chan bool, <-chan error)
+	SubmitRoomConfigurationForm(jid.Bare, *muc.RoomConfigForm) (<-chan bool, <-chan muc.SubmitFormError)
 	CancelRoomConfiguration(jid.Bare) <-chan error
 	GetChatServices(jid.Domain) (<-chan jid.Domain, <-chan error, func())
 	GetRoomListing(jid.Bare, chan<- *muc.RoomListing)

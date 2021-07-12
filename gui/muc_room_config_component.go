@@ -96,7 +96,8 @@ func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onErr
 		select {
 		case <-rc:
 			doInUIThread(onSuccess)
-		case err := <-ec:
+		case errorResponse := <-ec:
+			err := errorResponse.Error()
 			c.log.WithError(err).Error("An error occurred when submitting the configuration form")
 			doInUIThread(func() {
 				onError(err)

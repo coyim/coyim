@@ -1,6 +1,8 @@
 package muc
 
 import (
+	"errors"
+
 	"github.com/coyim/coyim/session/muc/data"
 	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -564,4 +566,12 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_updateValueOfPasswordProtectedF
 
 	s.rcf.updateValueOfPasswordProtectedField()
 	c.Assert(field.Value(), DeepEquals, []string{"false"})
+}
+
+func (s *MucRoomConfigSuite) Test_SubmitFormError(c *C) {
+	err := errors.New("An error")
+	sfe := NewSubmitFormError(err)
+
+	c.Assert(sfe, Equals, SubmitFormError{err: err})
+	c.Assert(sfe.Error(), Equals, err)
 }

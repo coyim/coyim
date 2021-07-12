@@ -180,3 +180,20 @@ var maxHistoryFetchDefaultOptions = []*RoomConfigFieldOption{
 	newRoomConfigFieldOption(RoomConfigOption100, RoomConfigOption100),
 	newRoomConfigFieldOption(RoomConfigOptionNone, RoomConfigOptionNone),
 }
+
+// SubmitFormError contains information related to a bad request error caused by a room configuration form submitted
+type SubmitFormError struct {
+	err        error
+	fieldError RoomConfigFieldType
+}
+
+// NewSubmitFormError returns a new SubmitFormError with the specified error
+func NewSubmitFormError(err error) SubmitFormError {
+	return SubmitFormError{err: err}
+
+}
+
+// Error returns the error from SubmitFormError
+func (sfe SubmitFormError) Error() error {
+	return sfe.err
+}

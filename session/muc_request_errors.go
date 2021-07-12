@@ -15,6 +15,8 @@ var (
 	ErrInformationQueryResponse = errors.New("received an error from the server")
 	// ErrBadRequestResponse contains an error received in the information query response
 	ErrBadRequestResponse = errors.New("received a bad request error from the server")
+	// ErrInternalServerErrorResponse contains an internal server error received in the information query response
+	ErrInternalServerErrorResponse = errors.New("received an internal server error")
 )
 
 var mucRequestErrorMessages = map[error]string{

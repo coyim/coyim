@@ -219,6 +219,10 @@ func validateSubmitFormResponse(reply <-chan data.Stanza) *muc.SubmitFormError {
 			return sfe
 		}
 
+		if iq.Error.MUCInternalServerError != nil {
+			return muc.NewSubmitFormError(ErrInternalServerErrorResponse)
+		}
+
 		return muc.NewSubmitFormError(ErrUnexpectedResponse)
 	}
 

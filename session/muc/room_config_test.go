@@ -574,4 +574,10 @@ func (s *MucRoomConfigSuite) Test_SubmitFormError(c *C) {
 
 	c.Assert(sfe, DeepEquals, &SubmitFormError{err: err})
 	c.Assert(sfe.Error(), Equals, err)
+
+	sfe.SetFieldErrorBadResponseText("any known field here")
+	c.Assert(sfe.Field(), Equals, RoomConfigFieldUnexpected)
+
+	sfe.SetFieldErrorBadResponseText("any known field here... wait, here is one muc#roomconfig_roomname")
+	c.Assert(sfe.Field(), Equals, RoomConfigFieldName)
 }

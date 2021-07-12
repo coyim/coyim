@@ -1,5 +1,9 @@
 package muc
 
+import (
+	"strings"
+)
+
 // RoomConfigFieldType represents a known field
 type RoomConfigFieldType int
 
@@ -189,11 +193,30 @@ type SubmitFormError struct {
 
 // NewSubmitFormError returns a new SubmitFormError with the specified error
 func NewSubmitFormError(err error) *SubmitFormError {
-	return &SubmitFormError{err: err}
-
+	return &SubmitFormError{
+		err:        err,
+		fieldError: RoomConfigFieldUnexpected,
+	}
 }
 
 // Error returns the error from SubmitFormError
 func (sfe *SubmitFormError) Error() error {
 	return sfe.err
+}
+
+// Field returns specific information about field in bad request error
+func (sfe *SubmitFormError) Field() RoomConfigFieldType {
+	return sfe.fieldError
+}
+
+// SetFieldErrorBadResponseText search coincidences between the error text received and knwon fields
+func (sfe *SubmitFormError) SetFieldErrorBadResponseText(errorText string) {
+	for key, fieldNames := range roomConfigKnownFields {
+		for _, fieldName := range fieldNames {
+			if strings.Contains(errorText, fieldName) {
+				sfe.fieldError = key
+				return
+			}
+		}
+	}
 }

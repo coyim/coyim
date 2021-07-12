@@ -13,6 +13,8 @@ var (
 	ErrUnexpectedResponse = errors.New("received an unexpected response from the server")
 	// ErrInformationQueryResponse contains an error received in the information query response
 	ErrInformationQueryResponse = errors.New("received an error from the server")
+	// ErrBadRequestResponse contains an error received in the information query response
+	ErrBadRequestResponse = errors.New("received a bad request error from the server")
 )
 
 var mucRequestErrorMessages = map[error]string{

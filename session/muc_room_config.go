@@ -145,10 +145,10 @@ func (s *session) SubmitRoomConfigurationForm(roomID jid.Bare, form *muc.RoomCon
 			return
 		}
 
-		err = validateIqResponse(reply)
+		errorResponse := validateSubmitFormResponse(reply)
 		if err != nil {
-			log.WithError(ErrInformationQueryResponse).Error("An error occurred when trying to read the response from the room configuration request")
-			ec <- muc.NewSubmitFormError(ErrRoomConfigSubmitResponse)
+			log.WithError(errorResponse.Error()).Error("An error occurred when trying to read the response from the room configuration request")
+			ec <- errorResponse
 			return
 		}
 
@@ -191,6 +191,38 @@ func (s *session) CancelRoomConfiguration(roomID jid.Bare) <-chan error {
 	}()
 
 	return ec
+}
+
+func validateSubmitFormResponse(reply <-chan data.Stanza) *muc.SubmitFormError {
+	stanza, ok := <-reply
+	if !ok {
+		return muc.NewSubmitFormError(ErrInformationQueryResponse)
+	}
+
+	iq, ok := stanza.Value.(*data.ClientIQ)
+	if !ok {
+		return muc.NewSubmitFormError(ErrInformationQueryResponse)
+	}
+
+	if iq.Type == "error" {
+		if iq.Error.MUCConflict != nil {
+			return muc.NewSubmitFormError(ErrOwnerAffiliationRevokeConflict)
+		}
+
+		if iq.Error.MUCNotAllowed != nil {
+			return muc.NewSubmitFormError(ErrNotAllowedKickOccupant)
+		}
+
+		if iq.Error.MUCBadRequest != nil {
+			sfe := muc.NewSubmitFormError(ErrBadRequestResponse)
+			sfe.SetFieldErrorBadResponseText(iq.Error.Text)
+			return sfe
+		}
+
+		return muc.NewSubmitFormError(ErrUnexpectedResponse)
+	}
+
+	return &muc.SubmitFormError{}
 }
 
 func validateIqResponse(reply <-chan data.Stanza) error {

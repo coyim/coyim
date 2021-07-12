@@ -133,6 +133,8 @@ func (c *mucRoomConfigComponent) friendlyConfigErrorMessage(err error) string {
 		return i18n.Local("We can't cancel the room configuration process because either you don't have the permissions for doing it or the location is not available right now. Please try again.")
 	case session.ErrRoomAffiliationsUpdate:
 		return i18n.Local("The list affiliations couldn't be updated. Verify your permissions and try again.")
+	case session.ErrInternalServerErrorResponse:
+		return i18n.Local("The server had a problem trying to process your request. This could be caused by wrong information entered in the form fields.")
 	case errCreateRoomTimeout:
 		return i18n.Local("We didn't receive a response from the server.")
 	default:

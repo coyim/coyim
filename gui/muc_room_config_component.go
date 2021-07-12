@@ -134,7 +134,7 @@ func (c *mucRoomConfigComponent) friendlyConfigErrorMessage(err error) string {
 	case session.ErrRoomAffiliationsUpdate:
 		return i18n.Local("The list affiliations couldn't be updated. Verify your permissions and try again.")
 	case errCreateRoomTimeout:
-		return i18n.Local("We haven't received a response from the server.")
+		return i18n.Local("We didn't receive a response from the server.")
 	default:
 		return i18n.Localf("Unsupported config error: %s", err)
 	}

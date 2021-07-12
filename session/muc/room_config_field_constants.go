@@ -188,12 +188,12 @@ type SubmitFormError struct {
 }
 
 // NewSubmitFormError returns a new SubmitFormError with the specified error
-func NewSubmitFormError(err error) SubmitFormError {
-	return SubmitFormError{err: err}
+func NewSubmitFormError(err error) *SubmitFormError {
+	return &SubmitFormError{err: err}
 
 }
 
 // Error returns the error from SubmitFormError
-func (sfe SubmitFormError) Error() error {
+func (sfe *SubmitFormError) Error() error {
 	return sfe.err
 }

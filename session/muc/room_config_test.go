@@ -572,6 +572,6 @@ func (s *MucRoomConfigSuite) Test_SubmitFormError(c *C) {
 	err := errors.New("An error")
 	sfe := NewSubmitFormError(err)
 
-	c.Assert(sfe, Equals, SubmitFormError{err: err})
+	c.Assert(sfe, DeepEquals, &SubmitFormError{err: err})
 	c.Assert(sfe.Error(), Equals, err)
 }

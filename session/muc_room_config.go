@@ -125,14 +125,14 @@ func newRoomOccupantsRequestQueryByAffiliation(affiliation mucData.Affiliation) 
 	}
 }
 
-func (s *session) SubmitRoomConfigurationForm(roomID jid.Bare, form *muc.RoomConfigForm) (<-chan bool, <-chan muc.SubmitFormError) {
+func (s *session) SubmitRoomConfigurationForm(roomID jid.Bare, form *muc.RoomConfigForm) (<-chan bool, <-chan *muc.SubmitFormError) {
 	log := log.WithFields(log.Fields{
 		"room":  roomID,
 		"where": "SubmitRoomConfigurationForm",
 	})
 
 	sc := make(chan bool)
-	ec := make(chan muc.SubmitFormError)
+	ec := make(chan *muc.SubmitFormError)
 
 	go func() {
 		reply, _, err := s.conn.SendIQ(roomID.String(), "set", data.MUCRoomConfiguration{

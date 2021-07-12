@@ -103,6 +103,11 @@ type MUCBadRequest struct {
 	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-stanzas bad-request,omitempty"`
 }
 
+// MUCInternalServerError inform user that an internal server error was received
+type MUCInternalServerError struct {
+	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-stanzas internal-server-error,omitempty"`
+}
+
 // MUCRoomDestroyQuery contains query information to destroy a room
 type MUCRoomDestroyQuery struct {
 	XMLName xml.Name       `xml:"http://jabber.org/protocol/muc#owner query"`

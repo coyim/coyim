@@ -36,6 +36,8 @@ var (
 	ErrNotAuthorized = errors.New("xmpp: password change not authorized")
 	// ErrBadRequest is an error signaled during password change, when the request is malformed
 	ErrBadRequest = errors.New("xmpp: malformed password change request")
+	// ErrInternalServerError is an error signaled when the server has an internal error
+	ErrInternalServerError = errors.New("xmpp: internal server error")
 	// ErrUnexpectedRequest is an error signaled during password change, when the user is not registered in the server
 	ErrUnexpectedRequest = errors.New("xmpp: user is not registered in the server")
 	// ErrChangePasswordFailed is an error signaled during password change, when it fails
@@ -197,6 +199,10 @@ func (c *conn) ChangePassword(username, server, password string) error {
 
 		if iq.Error.MUCBadRequest != nil {
 			return ErrBadRequest
+		}
+
+		if iq.Error.MUCInternalServerError != nil {
+			return ErrInternalServerError
 		}
 
 		switch iq.Error.Condition.XMLName.Local {

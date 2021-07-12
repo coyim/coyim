@@ -36,15 +36,11 @@ func (v *roomView) newRoomNotifications() *roomNotifications {
 	}
 }
 
-const nicknameHighlightToken = "%NICKNAME%"
-
 type roomNotificationOptions struct {
-	message           string
-	messageType       gtki.MessageType
-	highlightNickname bool
-	nickname          string
-	showTime          bool
-	closeable         bool
+	message     string
+	messageType gtki.MessageType
+	showTime    bool
+	closeable   bool
 }
 
 func (rn *roomNotifications) info(n roomNotificationOptions) {
@@ -73,14 +69,6 @@ func (rn *roomNotifications) newNotification(n roomNotificationOptions) {
 		nb.whenRequestedToClose(func() {
 			rn.remove(nb)
 		})
-	}
-
-	if n.highlightNickname {
-		nb.highlightText(
-			infoBarHighlightFontWeight,
-			nicknameHighlightToken,
-			n.nickname,
-		)
 	}
 
 	rn.notifications.add(nb)

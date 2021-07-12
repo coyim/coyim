@@ -175,14 +175,10 @@ func (v *roomView) roomConfigRequestTimeoutEvent() {
 
 // selfOccupantAffiliationUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantAffiliationUpdatedEvent(selfAffiliationUpdate data.SelfAffiliationUpdate) {
-	update, an, ok := selfOccupantAffiliationUpdatedHighlightActor(selfAffiliationUpdate)
-
 	v.notifications.info(roomNotificationOptions{
-		message:           getMUCNotificationMessageFrom(update),
-		highlightNickname: ok,
-		nickname:          an,
-		showTime:          true,
-		closeable:         true,
+		message:   getMUCNotificationMessageFrom(selfAffiliationUpdate),
+		showTime:  true,
+		closeable: true,
 	})
 
 	if selfAffiliationUpdate.New.IsBanned() {
@@ -192,87 +188,24 @@ func (v *roomView) selfOccupantAffiliationUpdatedEvent(selfAffiliationUpdate dat
 
 // selfOccupantAffiliationRoleUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) {
-	update, an, ok := selfOccupantAffiliationRoleUpdatedHighlightActor(selfAffiliationRoleUpdate)
-
 	v.notifications.info(roomNotificationOptions{
-		message:           getSelfAffiliationRoleUpdateMessage(update),
-		highlightNickname: ok,
-		nickname:          an,
-		showTime:          true,
-		closeable:         true,
+		message:   getSelfAffiliationRoleUpdateMessage(selfAffiliationRoleUpdate),
+		showTime:  true,
+		closeable: true,
 	})
 }
 
 // selfOccupantRoleUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleUpdate) {
-	update, an, ok := selfOccupantRoleUpdatedHighlightActor(selfRoleUpdate)
-
 	v.notifications.info(roomNotificationOptions{
-		message:           getSelfRoleUpdateMessage(update),
-		highlightNickname: ok,
-		nickname:          an,
-		showTime:          true,
-		closeable:         true,
+		message:   getSelfRoleUpdateMessage(selfRoleUpdate),
+		showTime:  true,
+		closeable: true,
 	})
 
 	if selfRoleUpdate.New.IsNone() {
 		v.disableRoomView()
 	}
-}
-
-func selfOccupantAffiliationUpdatedHighlightActor(u data.SelfAffiliationUpdate) (data.SelfAffiliationUpdate, string, bool) {
-	update := u
-	origNickname, ok := actorNicknameFromSelfUpdate(u.Actor)
-
-	if ok {
-		actor := update.Actor
-		update.Actor = &data.Actor{
-			Nickname:    nicknameHighlightToken,
-			Affiliation: actor.Affiliation,
-			Role:        actor.Role,
-		}
-	}
-
-	return update, origNickname, ok
-}
-
-func selfOccupantAffiliationRoleUpdatedHighlightActor(u data.AffiliationRoleUpdate) (data.AffiliationRoleUpdate, string, bool) {
-	update := u
-	origNickname, ok := actorNicknameFromSelfUpdate(u.Actor)
-
-	if ok {
-		actor := update.Actor
-		update.Actor = &data.Actor{
-			Nickname:    nicknameHighlightToken,
-			Affiliation: actor.Affiliation,
-			Role:        actor.Role,
-		}
-	}
-
-	return update, origNickname, ok
-}
-
-func selfOccupantRoleUpdatedHighlightActor(u data.RoleUpdate) (data.RoleUpdate, string, bool) {
-	update := u
-	origNickname, ok := actorNicknameFromSelfUpdate(u.Actor)
-
-	if ok {
-		actor := update.Actor
-		update.Actor = &data.Actor{
-			Nickname:    nicknameHighlightToken,
-			Affiliation: actor.Affiliation,
-			Role:        actor.Role,
-		}
-	}
-
-	return update, origNickname, ok
-}
-
-func actorNicknameFromSelfUpdate(actor *data.Actor) (string, bool) {
-	if actor != nil {
-		return actor.Nickname, true
-	}
-	return "", false
 }
 
 // selfOccupantRemovedEvent MUST be called from the UI thread
@@ -433,10 +366,8 @@ func (v *roomView) onOccupantAffiliationUpdateSuccess(o *muc.Occupant, previousA
 		v.loadingViewOverlay.hide()
 
 		v.notifications.info(roomNotificationOptions{
-			message:           getAffiliationUpdateSuccessMessage(nicknameHighlightToken, previousAffiliation, affiliation),
-			highlightNickname: true,
-			nickname:          o.Nickname,
-			closeable:         true,
+			message:   getAffiliationUpdateSuccessMessage(o.Nickname, previousAffiliation, affiliation),
+			closeable: true,
 		})
 	})
 }
@@ -497,25 +428,21 @@ func (v *roomView) onOccupantRoleUpdateSuccess(nickname string, previousRole, ne
 		v.loadingViewOverlay.hide()
 
 		v.notifications.info(roomNotificationOptions{
-			message:           getRoleUpdateSuccessMessage(nicknameHighlightToken, previousRole, newRole),
-			highlightNickname: true,
-			nickname:          nickname,
-			closeable:         true,
+			message:   getRoleUpdateSuccessMessage(nickname, previousRole, newRole),
+			closeable: true,
 		})
 	})
 }
 
 func (v *roomView) onOccupantRoleUpdateError(nickname string, newRole data.Role) {
-	messages := getRoleUpdateFailureMessage(nicknameHighlightToken, newRole)
+	messages := getRoleUpdateFailureMessage(nickname, newRole)
 
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
 
 		v.notifications.error(roomNotificationOptions{
-			message:           messages.notificationMessage,
-			highlightNickname: true,
-			nickname:          nickname,
-			closeable:         true,
+			message:   messages.notificationMessage,
+			closeable: true,
 		})
 
 		dr := createDialogErrorComponent(dialogErrorOptions{

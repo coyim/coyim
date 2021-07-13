@@ -57,6 +57,7 @@
             <child internal-child="entry">
               <object class="GtkEntry" id="room-config-field-list-entry">
                 <property name="input_purpose">number</property>
+                <signal name="changed" handler="on_field_entry_change" swapped="no"/>
               </object>
             </child>
           </object>

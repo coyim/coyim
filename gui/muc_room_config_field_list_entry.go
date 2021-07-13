@@ -34,6 +34,9 @@ func newRoomConfigFormFieldListEntry(fieldInfo roomConfigFieldTextInfo, value *m
 	field.roomConfigFormField = newRoomConfigFormField(fieldInfo, "MUCRoomConfigFormFieldListEntry")
 
 	panicOnDevError(field.builder.bindObjects(field))
+	field.builder.ConnectSignals(map[string]interface{}{
+		"on_field_entry_change": field.onFieldEntryChanged,
+	})
 
 	field.optionsModel, _ = g.gtk.ListStoreNew(
 		// the option value
@@ -67,6 +70,15 @@ func (f *roomConfigFormFieldListEntry) activateOption(v string) {
 	f.entry.SetText(v)
 }
 
+func (f *roomConfigFormFieldListEntry) onFieldEntryChanged() {
+	if f.isValid() {
+		f.hideValidationErrors()
+		return
+	}
+
+	f.showValidationErrors()
+}
+
 // updateFieldValue MUST be called from the UI thread
 func (f *roomConfigFormFieldListEntry) updateFieldValue() {
 	f.value.SetSelected(f.currentValue())
@@ -86,11 +98,6 @@ const entryDefaultCursorPosition = -1
 // refreshContent implements the hasRoomConfigFormField interface
 func (f *roomConfigFormFieldListEntry) refreshContent() {
 	f.entry.SetPosition(entryDefaultCursorPosition)
-}
-
-// showValidationErrors implements the hasRoomConfigFormField interface
-func (f *roomConfigFormFieldListEntry) showValidationErrors() {
-	f.entry.GrabFocus()
 }
 
 func (f *roomConfigFormFieldListEntry) currentValue() string {

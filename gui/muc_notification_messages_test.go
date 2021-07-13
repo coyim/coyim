@@ -1,8 +1,13 @@
 package gui
 
 import (
+	"fmt"
+	"regexp"
+
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/session/muc/data"
+	"github.com/coyim/gotk3adapter/glib_mock"
 	. "gopkg.in/check.v1"
 )
 
@@ -11,7 +16,28 @@ type MUCNotificationMessagesSuite struct{}
 var _ = Suite(&MUCNotificationMessagesSuite{})
 
 func (s *MUCNotificationMessagesSuite) SetUpSuite(c *C) {
-	initMUCI18n()
+	initMUCNotificationMessagesI18n()
+}
+
+type mucNotificationMessagesMockGlib struct {
+	glib_mock.Mock
+}
+
+func (*mucNotificationMessagesMockGlib) Local(vx string) string {
+	return "[localized] " + removePresentationFormatsFromString(vx)
+}
+
+func (*mucNotificationMessagesMockGlib) Localf(vx string, args ...interface{}) string {
+	return fmt.Sprintf("[localized] "+removePresentationFormatsFromString(vx), args...)
+}
+
+func removePresentationFormatsFromString(s string) string {
+	regex := regexp.MustCompile("{{ [a-z]* \"(.*?)\" }}")
+	return regex.ReplaceAllString(s, "${1}")
+}
+
+func initMUCNotificationMessagesI18n() {
+	i18n.InitLocalization(&mucNotificationMessagesMockGlib{})
 }
 
 func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateMessage_affiliationNone(c *C) {

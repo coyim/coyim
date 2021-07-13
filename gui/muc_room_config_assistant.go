@@ -5,6 +5,7 @@ import (
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -250,10 +251,29 @@ func (rc *roomConfigAssistant) destroyAssistant() {
 }
 
 // onApplyError MUST be called from the UI thread
-func (rc *roomConfigAssistant) onApplyError(err error) {
+func (rc *roomConfigAssistant) onApplyError(sfe *muc.SubmitFormError) {
 	rc.enableAssistant()
 	rc.currentPage.onConfigurationApplyError()
-	rc.currentPage.notifyError(rc.roomConfigComponent.friendlyConfigErrorMessage(err))
+	errorMessage := rc.roomConfigComponent.friendlyConfigErrorMessage(sfe.Error())
+
+	if sfe.Error() == session.ErrBadRequestResponse {
+		pageID := getPageBasedOnField(sfe.Field())
+		rc.currentPage = rc.pageByIndex(pageID)
+		rc.assistant.SetCurrentPage(int(pageID))
+		errorMessage = friendlyConfigErrorMessageWithField(sfe.Field())
+	}
+	rc.currentPage.notifyError(errorMessage)
+}
+
+func getPageBasedOnField(field muc.RoomConfigFieldType) mucRoomConfigPageID {
+	for pageID, fields := range roomConfigPagesFields {
+		for _, f := range fields {
+			if f == field {
+				return pageID
+			}
+		}
+	}
+	return roomConfigOthersPageIndex
 }
 
 // show MUST be called from the UI thread

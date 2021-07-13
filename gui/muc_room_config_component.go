@@ -75,7 +75,7 @@ func (c *mucRoomConfigComponent) updateAutoJoin(v bool) {
 }
 
 // configureRoom IS SAFE to be called from the UI thread
-func (c *mucRoomConfigComponent) configureRoom(onSuccess func(), onError func(error)) {
+func (c *mucRoomConfigComponent) configureRoom(onSuccess func(), onError func(*muc.SubmitFormError)) {
 	rc, ec := c.account.session.UpdateOccupantAffiliations(c.roomID, c.form.GetRoomOccupantsToUpdate())
 
 	go func() {
@@ -85,13 +85,13 @@ func (c *mucRoomConfigComponent) configureRoom(onSuccess func(), onError func(er
 		case err := <-ec:
 			c.log.WithError(err).Error("An error occurred when configurating the occupant affiliations")
 			doInUIThread(func() {
-				onError(err)
+				onError(muc.NewSubmitFormError(err))
 			})
 		}
 	}()
 }
 
-func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onError func(error)) {
+func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onError func(*muc.SubmitFormError)) {
 	rc, ec := c.account.session.SubmitRoomConfigurationForm(c.roomID, c.form)
 
 	go func() {
@@ -99,14 +99,13 @@ func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onErr
 		case <-rc:
 			doInUIThread(onSuccess)
 		case errorResponse := <-ec:
-			err := errorResponse.Error()
-			c.log.WithError(err).Error("An error occurred when submitting the configuration form")
+			c.log.WithError(errorResponse.Error()).Error("An error occurred when submitting the configuration form")
 			doInUIThread(func() {
-				onError(err)
+				onError(errorResponse)
 			})
 		case <-time.After(timeoutThreshold):
 			doInUIThread(func() {
-				onError(errCreateRoomTimeout)
+				onError(muc.NewSubmitFormError(errCreateRoomTimeout))
 			})
 		}
 	}()
@@ -140,6 +139,14 @@ func (c *mucRoomConfigComponent) friendlyConfigErrorMessage(err error) string {
 	default:
 		return i18n.Localf("Unsupported config error: %s", err)
 	}
+}
+
+func friendlyConfigErrorMessageWithField(field muc.RoomConfigFieldType) string {
+	switch field {
+	case muc.RoomConfigFieldVoiceRequestMinInteval:
+		return i18n.Local("The server couldn't process your request, because we have a problem with information entered in \"Minimum interval between voice requests\".")
+	}
+	return i18n.Local("The server couldn't process your request, please verify the information entered in the form.")
 }
 
 func configOptionToFriendlyMessage(o, defaultLabel string) string {

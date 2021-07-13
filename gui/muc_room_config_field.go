@@ -19,6 +19,7 @@ type roomConfigFormField struct {
 	builder *builder
 
 	widget      gtki.Box   `gtk-widget:"room-config-field-box"`
+	icon        gtki.Image `gtk-widget:"icon-image"`
 	label       gtki.Label `gtk-widget:"room-config-field-label"`
 	description gtki.Label `gtk-widget:"room-config-field-description"`
 }
@@ -29,6 +30,7 @@ func newRoomConfigFormField(fieldInfo roomConfigFieldTextInfo, template string) 
 	field.builder = newBuilder(template)
 	panicOnDevError(field.builder.bindObjects(field))
 
+	field.icon.SetFromPixbuf(getMUCIconPixbuf(infoBarErrorIconName))
 	field.label.SetText(fieldInfo.displayLabel)
 
 	description := fieldInfo.displayDescription

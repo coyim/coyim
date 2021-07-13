@@ -11,6 +11,10 @@ type MUCRoomConfigListAddComponentSuite struct{}
 
 var _ = Suite(&MUCRoomConfigListAddComponentSuite{})
 
+func (s *MUCRoomConfigListAddComponentSuite) SetUpSuite(c *C) {
+	initMUCI18n()
+}
+
 type jidEntryMock struct {
 	defaultText string
 	*gtk_mock.MockEntry

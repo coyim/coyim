@@ -10,9 +10,11 @@ type MUCNotificationMessagesSuite struct{}
 
 var _ = Suite(&MUCNotificationMessagesSuite{})
 
-func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateMessage_affiliationNone(c *C) {
-	initMUCRoomConversationDisplayI18n()
+func (s *MUCNotificationMessagesSuite) SetUpSuite(c *C) {
+	initMUCI18n()
+}
 
+func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateMessage_affiliationNone(c *C) {
 	au := data.AffiliationUpdate{
 		Nickname: "batman",
 		New:      newTestAffiliationFromString(data.AffiliationNone),
@@ -46,8 +48,6 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateMessage_affiliatio
 }
 
 func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateMessage_affiliationOutcast(c *C) {
-	initMUCRoomConversationDisplayI18n()
-
 	au := data.AffiliationUpdate{
 		Nickname: "alice",
 		New:      newTestAffiliationFromString(data.AffiliationOutcast),
@@ -67,8 +67,6 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateMessage_affiliatio
 }
 
 func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateMessage_affiliationAdded(c *C) {
-	initMUCRoomConversationDisplayI18n()
-
 	au := data.AffiliationUpdate{
 		Nickname: "juanito",
 		New:      newTestAffiliationFromString(data.AffiliationMember),
@@ -89,8 +87,6 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateMessage_affiliatio
 }
 
 func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateMessage_affiliationChanged(c *C) {
-	initMUCRoomConversationDisplayI18n()
-
 	au := data.AffiliationUpdate{
 		Nickname: "thor",
 		New:      newTestAffiliationFromString(data.AffiliationAdmin),
@@ -287,8 +283,6 @@ func (*MUCNotificationMessagesSuite) Test_getMUCNotificationMessageFrom_roleUpda
 }
 
 func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpdateMessage_affiliationRemoved(c *C) {
-	initMUCRoomConversationDisplayI18n()
-
 	aru := data.AffiliationRoleUpdate{
 		Nickname:            "007",
 		NewAffiliation:      newTestAffiliationFromString(data.AffiliationNone),
@@ -311,8 +305,6 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpdateMessage_affili
 }
 
 func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpdateMessage_affiliationAdded(c *C) {
-	initMUCRoomConversationDisplayI18n()
-
 	aru := data.AffiliationRoleUpdate{
 		Nickname:            "alice",
 		NewAffiliation:      newTestAffiliationFromString(data.AffiliationAdmin),
@@ -375,8 +367,6 @@ func (*MUCNotificationMessagesSuite) Test_getMUCNotificationMessageFrom_affiliat
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affiliationRemoved(c *C) {
-	initMUCRoomConversationDisplayI18n()
-
 	sau := data.SelfAffiliationUpdate{
 		AffiliationUpdate: data.AffiliationUpdate{
 			New:      newTestAffiliationFromString(data.AffiliationNone),
@@ -410,8 +400,6 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affili
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affiliationAdded(c *C) {
-	initMUCRoomConversationDisplayI18n()
-
 	sau := data.SelfAffiliationUpdate{
 		AffiliationUpdate: data.AffiliationUpdate{
 			New:      newTestAffiliationFromString(data.AffiliationAdmin),
@@ -448,8 +436,6 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affili
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affiliationChanged(c *C) {
-	initMUCRoomConversationDisplayI18n()
-
 	sau := data.SelfAffiliationUpdate{
 		AffiliationUpdate: data.AffiliationUpdate{
 			New:      newTestAffiliationFromString(data.AffiliationAdmin),
@@ -471,8 +457,6 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affili
 }
 
 func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateSuccessMessage(c *C) {
-	initMUCRoomConversationDisplayI18n()
-
 	nickname := "Juan"
 	owner := newTestAffiliationFromString(data.AffiliationOwner)
 	admin := newTestAffiliationFromString(data.AffiliationAdmin)
@@ -512,8 +496,6 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateSuccessMessage(c *
 }
 
 func (*MUCNotificationMessagesSuite) Test_getRoleUpdateSuccessMessage(c *C) {
-	initMUCRoomConversationDisplayI18n()
-
 	moderator := newTestRoleFromString(data.RoleModerator)
 	participant := newTestRoleFromString(data.RoleParticipant)
 	visitor := newTestRoleFromString(data.RoleVisitor)
@@ -536,8 +518,6 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateSuccessMessage(c *C) {
 }
 
 func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateFailureMessage(c *C) {
-	initMUCRoomConversationDisplayI18n()
-
 	owner := newTestAffiliationFromString(data.AffiliationOwner)
 	admin := newTestAffiliationFromString(data.AffiliationAdmin)
 	member := newTestAffiliationFromString(data.AffiliationMember)
@@ -577,8 +557,6 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateFailureMessage(c *
 }
 
 func (*MUCNotificationMessagesSuite) Test_getRoleUpdateFailureMessage(c *C) {
-	initMUCRoomConversationDisplayI18n()
-
 	moderator := newTestRoleFromString(data.RoleModerator)
 	participant := newTestRoleFromString(data.RoleParticipant)
 	visitor := newTestRoleFromString(data.RoleVisitor)
@@ -610,8 +588,6 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateFailureMessage(c *C) {
 }
 
 func (*MUCNotificationMessagesSuite) Test_getRoleRemoveFailureMessage(c *C) {
-	initMUCRoomConversationDisplayI18n()
-
 	messages := getRoleRemoveFailureMessage("foo", newTestAffiliationFromString(data.AffiliationOwner), nil)
 	c.Assert(messages.notificationMessage, Equals, "[localized] foo couldn't be expelled.")
 	c.Assert(messages.errorDialogTitle, Equals, "[localized] Expelling failed")
@@ -632,8 +608,6 @@ func (*MUCNotificationMessagesSuite) Test_getRoleRemoveFailureMessage(c *C) {
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affiliationOutcast(c *C) {
-	initMUCRoomConversationDisplayI18n()
-
 	sau := data.SelfAffiliationUpdate{
 		AffiliationUpdate: data.AffiliationUpdate{
 			New: newTestAffiliationFromString(data.AffiliationOutcast),

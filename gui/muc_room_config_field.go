@@ -31,7 +31,9 @@ func newRoomConfigFormField(fieldInfo roomConfigFieldTextInfo, template string) 
 	panicOnDevError(field.builder.bindObjects(field))
 
 	field.icon.SetFromPixbuf(getMUCIconPixbuf(infoBarErrorIconName))
+
 	field.label.SetText(fieldInfo.displayLabel)
+	mucStyles.setErrorLabelClass(field.label)
 
 	description := fieldInfo.displayDescription
 	field.description.SetText(description)
@@ -59,7 +61,20 @@ func (f *roomConfigFormField) isValid() bool {
 }
 
 // showValidationErrors implements the hasRoomConfigFormField interface
-func (f *roomConfigFormField) showValidationErrors() {}
+func (f *roomConfigFormField) showValidationErrors() {
+	sc, _ := f.label.GetStyleContext()
+	sc.AddClass("label-error")
+
+	f.icon.Show()
+}
+
+// hideValidationErrors MUST be called from the UI thread
+func (f *roomConfigFormField) hideValidationErrors() {
+	sc, _ := f.label.GetStyleContext()
+	sc.RemoveClass("label-error")
+
+	f.icon.Hide()
+}
 
 var (
 	errRoomConfigFieldNotSupported = errors.New("room configuration form field not supported")

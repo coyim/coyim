@@ -318,9 +318,18 @@ func (s *mucStylesProvider) setEntryErrorStyle(e gtki.Entry) {
 		},
 	})
 }
+
 func (s *mucStylesProvider) setErrorLabelStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
 		"color": s.colors.entryErrorBorder,
+	})
+}
+
+func (s *mucStylesProvider) setErrorLabelClass(l gtki.Label) {
+	s.setWidgetStyles(l, styles{
+		".label-error": style{
+			"color": s.colors.entryErrorBorder,
+		},
 	})
 }
 

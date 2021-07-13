@@ -145,7 +145,7 @@ func (s *session) SubmitRoomConfigurationForm(roomID jid.Bare, form *muc.RoomCon
 		}
 
 		errorResponse := validateSubmitFormResponse(reply)
-		if err != nil {
+		if errorResponse.Error() != nil {
 			log.WithError(errorResponse.Error()).Error("An error occurred when trying to read the response from the room configuration request")
 			ec <- errorResponse
 			return

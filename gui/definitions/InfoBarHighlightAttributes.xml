@@ -1,7 +1,20 @@
 <interface>
-  <object class="GtkLabel" id="labelWithFontWeight">
+  <object class="GtkLabel" id="labelNickname">
     <attributes>
       <attribute name="weight" value="bold"/>
+      <attribute name="underline" value="True"/>
+    </attributes>
+  </object>
+  <object class="GtkLabel" id="labelAffiliation">
+    <attributes>
+      <attribute name="weight" value="bold"/>
+      <attribute name="underline" value="True"/>
+    </attributes>
+  </object>
+   <object class="GtkLabel" id="labelRole">
+    <attributes>
+      <attribute name="weight" value="bold"/>
+      <attribute name="underline" value="True"/>
     </attributes>
   </object>
 </interface>

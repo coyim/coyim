@@ -20,9 +20,9 @@ type roomConfigFormFieldList struct {
 	optionsModel gtki.ListStore
 }
 
-func newRoomConfigFormFieldList(fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldListValue) hasRoomConfigFormField {
+func newRoomConfigFormFieldList(ft muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldListValue) hasRoomConfigFormField {
 	field := &roomConfigFormFieldList{value: value}
-	field.roomConfigFormField = newRoomConfigFormField(fieldInfo, "MUCRoomConfigFormFieldList")
+	field.roomConfigFormField = newRoomConfigFormField(ft, fieldInfo, "MUCRoomConfigFormFieldList")
 
 	panicOnDevError(field.builder.bindObjects(field))
 

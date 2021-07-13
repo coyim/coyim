@@ -136,6 +136,11 @@ func (f *roomConfigSummaryField) isValid() bool {
 
 func (f *roomConfigSummaryField) showValidationErrors() {}
 
+// fieldKey implements the hasRoomConfigFormField interface
+func (f *roomConfigSummaryField) fieldKey() muc.RoomConfigFieldType {
+	return muc.RoomConfigFieldUnexpected
+}
+
 func summaryPasswordText(v string) string {
 	if v != "" {
 		return i18n.Local("**********")

@@ -14,9 +14,9 @@ type roomConfigFormFieldLanguage struct {
 	languageEntry gtki.Entry        `gtk-widget:"room-language-entry"`
 }
 
-func newRoomConfigFormFieldLanguage(fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldTextValue) *roomConfigFormFieldLanguage {
+func newRoomConfigFormFieldLanguage(ft muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldTextValue) *roomConfigFormFieldLanguage {
 	field := &roomConfigFormFieldLanguage{value: value}
-	field.roomConfigFormField = newRoomConfigFormField(fieldInfo, "MUCRoomConfigFormFieldLanguage")
+	field.roomConfigFormField = newRoomConfigFormField(ft, fieldInfo, "MUCRoomConfigFormFieldLanguage")
 
 	panicOnDevError(field.builder.bindObjects(field))
 

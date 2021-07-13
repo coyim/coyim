@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -60,3 +61,8 @@ func (fc *roomConfigFormFieldAdvancedOptionsContainer) isValid() bool {
 
 // showValidationErrors implements the hasRoomConfigFormField interface
 func (fc *roomConfigFormFieldAdvancedOptionsContainer) showValidationErrors() {}
+
+// fieldKey implements the hasRoomConfigFormField interface
+func (fc *roomConfigFormFieldAdvancedOptionsContainer) fieldKey() muc.RoomConfigFieldType {
+	return muc.RoomConfigFieldUnexpected
+}

@@ -29,9 +29,9 @@ type roomConfigFormFieldListEntry struct {
 	optionsModel gtki.ListStore
 }
 
-func newRoomConfigFormFieldListEntry(fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldListValue, validator listEntryValidator) hasRoomConfigFormField {
+func newRoomConfigFormFieldListEntry(ft muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldListValue, validator listEntryValidator) hasRoomConfigFormField {
 	field := &roomConfigFormFieldListEntry{value: value, validator: validator}
-	field.roomConfigFormField = newRoomConfigFormField(fieldInfo, "MUCRoomConfigFormFieldListEntry")
+	field.roomConfigFormField = newRoomConfigFormField(ft, fieldInfo, "MUCRoomConfigFormFieldListEntry")
 
 	panicOnDevError(field.builder.bindObjects(field))
 	field.builder.ConnectSignals(map[string]interface{}{

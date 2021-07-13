@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -56,6 +57,11 @@ func (fc *roomConfigFormFieldBooleanContainer) isValid() bool {
 
 // showValidationErrors implements the hasRoomConfigFormField interface
 func (fc *roomConfigFormFieldBooleanContainer) showValidationErrors() {}
+
+// fieldKey implements the hasRoomConfigFormField interface
+func (fc *roomConfigFormFieldBooleanContainer) fieldKey() muc.RoomConfigFieldType {
+	return muc.RoomConfigFieldUnexpected
+}
 
 func createSeparator(orientation gtki.Orientation) gtki.Separator {
 	sep, _ := g.gtk.SeparatorNew(orientation)

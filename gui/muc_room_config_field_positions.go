@@ -166,3 +166,8 @@ func (p *roomConfigPositions) refreshContent() {
 func (p *roomConfigPositions) isValid() bool {
 	return !(p.affiliation.IsOwner() && len(p.originalOccupantsList) != 0 && len(p.currentOccupantList()) == 0)
 }
+
+// fieldKey implements the hasRoomConfigFormField interface
+func (p *roomConfigPositions) fieldKey() muc.RoomConfigFieldType {
+	return muc.RoomConfigFieldUnexpected
+}

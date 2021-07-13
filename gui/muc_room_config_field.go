@@ -8,6 +8,7 @@ import (
 )
 
 type hasRoomConfigFormField interface {
+	fieldKey() muc.RoomConfigFieldType
 	fieldWidget() gtki.Widget
 	refreshContent()
 	updateFieldValue()
@@ -16,6 +17,7 @@ type hasRoomConfigFormField interface {
 }
 
 type roomConfigFormField struct {
+	field   muc.RoomConfigFieldType
 	builder *builder
 
 	widget      gtki.Box   `gtk-widget:"room-config-field-box"`
@@ -24,8 +26,8 @@ type roomConfigFormField struct {
 	description gtki.Label `gtk-widget:"room-config-field-description"`
 }
 
-func newRoomConfigFormField(fieldInfo roomConfigFieldTextInfo, template string) *roomConfigFormField {
-	field := &roomConfigFormField{}
+func newRoomConfigFormField(ft muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, template string) *roomConfigFormField {
+	field := &roomConfigFormField{field: ft}
 
 	field.builder = newBuilder(template)
 	panicOnDevError(field.builder.bindObjects(field))
@@ -68,6 +70,11 @@ func (f *roomConfigFormField) showValidationErrors() {
 	f.icon.Show()
 }
 
+// fieldKey implements the hasRoomConfigFormField interface
+func (f *roomConfigFormField) fieldKey() muc.RoomConfigFieldType {
+	return f.field
+}
+
 // hideValidationErrors MUST be called from the UI thread
 func (f *roomConfigFormField) hideValidationErrors() {
 	sc, _ := f.label.GetStyleContext()
@@ -83,15 +90,15 @@ var (
 func roomConfigFormUnknownFieldFactory(fieldInfo roomConfigFieldTextInfo, fieldTypeValue interface{}) (hasRoomConfigFormField, error) {
 	switch valueHandler := fieldTypeValue.(type) {
 	case *muc.RoomConfigFieldTextValue:
-		return newRoomConfigFormTextField(fieldInfo, valueHandler), nil
+		return newRoomConfigFormTextField(muc.RoomConfigFieldUnexpected, fieldInfo, valueHandler), nil
 	case *muc.RoomConfigFieldTextMultiValue:
-		return newRoomConfigFormTextMulti(fieldInfo, valueHandler), nil
+		return newRoomConfigFormTextMulti(muc.RoomConfigFieldUnexpected, fieldInfo, valueHandler), nil
 	case *muc.RoomConfigFieldBooleanValue:
-		return newRoomConfigFormFieldBoolean(fieldInfo, valueHandler), nil
+		return newRoomConfigFormFieldBoolean(muc.RoomConfigFieldUnexpected, fieldInfo, valueHandler), nil
 	case *muc.RoomConfigFieldListValue:
-		return newRoomConfigFormFieldList(fieldInfo, valueHandler), nil
+		return newRoomConfigFormFieldList(muc.RoomConfigFieldUnexpected, fieldInfo, valueHandler), nil
 	case *muc.RoomConfigFieldListMultiValue:
-		return newRoomConfigFieldListMulti(fieldInfo, valueHandler), nil
+		return newRoomConfigFieldListMulti(muc.RoomConfigFieldUnexpected, fieldInfo, valueHandler), nil
 	}
 
 	return nil, errRoomConfigFieldNotSupported
@@ -102,13 +109,13 @@ func roomConfigFormFieldFactory(fieldType muc.RoomConfigFieldType, fieldInfo roo
 	case *muc.RoomConfigFieldTextValue:
 		return roomConfigFormTextFieldFactory(fieldType, valueHandler)
 	case *muc.RoomConfigFieldTextMultiValue:
-		return newRoomConfigFormTextMulti(fieldInfo, valueHandler), nil
+		return newRoomConfigFormTextMulti(fieldType, fieldInfo, valueHandler), nil
 	case *muc.RoomConfigFieldBooleanValue:
-		return newRoomConfigFormFieldBoolean(fieldInfo, valueHandler), nil
+		return newRoomConfigFormFieldBoolean(fieldType, fieldInfo, valueHandler), nil
 	case *muc.RoomConfigFieldListValue:
 		return roomConfigFormListFieldFactory(fieldType, valueHandler)
 	case *muc.RoomConfigFieldListMultiValue:
-		return newRoomConfigFieldListMulti(fieldInfo, valueHandler), nil
+		return newRoomConfigFieldListMulti(fieldType, fieldInfo, valueHandler), nil
 	}
 
 	return nil, errRoomConfigFieldNotSupported
@@ -117,18 +124,18 @@ func roomConfigFormFieldFactory(fieldType muc.RoomConfigFieldType, fieldInfo roo
 func roomConfigFormTextFieldFactory(ft muc.RoomConfigFieldType, value *muc.RoomConfigFieldTextValue) (hasRoomConfigFormField, error) {
 	switch ft {
 	case muc.RoomConfigFieldDescription:
-		return newRoomConfigFieldDescription(roomConfigFieldsTexts[ft], value), nil
+		return newRoomConfigFieldDescription(ft, roomConfigFieldsTexts[ft], value), nil
 	case muc.RoomConfigFieldLanguage:
-		return newRoomConfigFormFieldLanguage(roomConfigFieldsTexts[ft], value), nil
+		return newRoomConfigFormFieldLanguage(ft, roomConfigFieldsTexts[ft], value), nil
 	case muc.RoomConfigFieldPassword:
-		return newRoomConfigFormFieldPassword(roomConfigFieldsTexts[ft], value), nil
+		return newRoomConfigFormFieldPassword(ft, roomConfigFieldsTexts[ft], value), nil
 	}
-	return newRoomConfigFormTextField(roomConfigFieldsTexts[ft], value), nil
+	return newRoomConfigFormTextField(ft, roomConfigFieldsTexts[ft], value), nil
 }
 
 func roomConfigFormListFieldFactory(ft muc.RoomConfigFieldType, value *muc.RoomConfigFieldListValue) (hasRoomConfigFormField, error) {
 	if ft == muc.RoomConfigFieldMaxOccupantsNumber || ft == muc.RoomConfigFieldMaxHistoryFetch {
-		return newRoomConfigFormFieldListEntry(roomConfigFieldsTexts[ft], value, listEntryNumberValidator), nil
+		return newRoomConfigFormFieldListEntry(ft, roomConfigFieldsTexts[ft], value, listEntryNumberValidator), nil
 	}
-	return newRoomConfigFormFieldList(roomConfigFieldsTexts[ft], value), nil
+	return newRoomConfigFormFieldList(ft, roomConfigFieldsTexts[ft], value), nil
 }

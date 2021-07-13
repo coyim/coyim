@@ -93,3 +93,8 @@ func (f *roomConfigSummaryOccupantField) isValid() bool {
 }
 
 func (f *roomConfigSummaryOccupantField) showValidationErrors() {}
+
+// fieldKey implements the hasRoomConfigFormField interface
+func (f *roomConfigSummaryOccupantField) fieldKey() muc.RoomConfigFieldType {
+	return muc.RoomConfigFieldUnexpected
+}

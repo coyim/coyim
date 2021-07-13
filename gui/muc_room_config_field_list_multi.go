@@ -20,9 +20,9 @@ type roomConfigFieldListMulti struct {
 	list gtki.TreeView `gtk-widget:"room-config-field-treeview"`
 }
 
-func newRoomConfigFieldListMulti(fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldListMultiValue) hasRoomConfigFormField {
+func newRoomConfigFieldListMulti(ft muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldListMultiValue) hasRoomConfigFormField {
 	field := &roomConfigFieldListMulti{value: value}
-	field.roomConfigFormField = newRoomConfigFormField(fieldInfo, "MUCRoomConfigFormFieldListMulti")
+	field.roomConfigFormField = newRoomConfigFormField(ft, fieldInfo, "MUCRoomConfigFormFieldListMulti")
 
 	field.initBuilder()
 	field.initModel()

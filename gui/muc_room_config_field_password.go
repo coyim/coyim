@@ -16,9 +16,9 @@ type roomConfigFormFieldPassword struct {
 	passwordMatchErrorLabel gtki.Label  `gtk-widget:"password-match-error"`
 }
 
-func newRoomConfigFormFieldPassword(fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldTextValue) *roomConfigFormFieldPassword {
+func newRoomConfigFormFieldPassword(ft muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldTextValue) *roomConfigFormFieldPassword {
 	field := &roomConfigFormFieldPassword{value: value}
-	field.roomConfigFormField = newRoomConfigFormField(fieldInfo, "MUCRoomConfigFormFieldPassword")
+	field.roomConfigFormField = newRoomConfigFormField(ft, fieldInfo, "MUCRoomConfigFormFieldPassword")
 
 	field.initBuilder()
 	field.initDefaults()

@@ -27,6 +27,7 @@ import (
 	. "gopkg.in/check.v1"
 
 	"github.com/prashantv/gostub"
+	mck "github.com/stretchr/testify/mock"
 )
 
 type SessionSuite struct{}
@@ -950,21 +951,21 @@ func (s *SessionSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAbout
 }
 
 type mockConvManager struct {
-	getConversationWith    func(jid.Any) (otrclient.Conversation, bool)
-	ensureConversationWith func(jid.Any, []byte) (otrclient.Conversation, bool)
-	terminateAll           func()
+	mck.Mock
 }
 
 func (mcm *mockConvManager) GetConversationWith(peer jid.Any) (otrclient.Conversation, bool) {
-	return mcm.getConversationWith(peer)
+	args := mcm.Called(peer)
+	return args.Get(0).(otrclient.Conversation), args.Bool(1)
 }
 
 func (mcm *mockConvManager) EnsureConversationWith(peer jid.Any, msg []byte) (otrclient.Conversation, bool) {
-	return mcm.ensureConversationWith(peer, msg)
+	args := mcm.Called(peer, msg)
+	return args.Get(0).(otrclient.Conversation), args.Bool(1)
 }
 
 func (mcm *mockConvManager) TerminateAll() {
-	mcm.terminateAll()
+	_ = mcm.Called()
 }
 
 type mockConv struct {
@@ -1065,9 +1066,7 @@ func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncr
 		return false
 	}
 
-	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
-		return mc, false
-	}
+	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
@@ -1086,6 +1085,8 @@ func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncr
 		c.Assert(t.Encrypted, Equals, false)
 		return true
 	})
+
+	mcm.AssertExpectations(c)
 }
 
 func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(c *C) {
@@ -1100,9 +1101,8 @@ func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(
 	mc := &mockConv{}
 	mc.receive = func(s []byte) ([]byte, error) { return s, nil }
 	mc.isEncrypted = func() bool { return true }
-	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
-		return mc, false
-	}
+
+	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
@@ -1121,6 +1121,8 @@ func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(
 		c.Assert(t.Encrypted, Equals, true)
 		return true
 	})
+
+	mcm.AssertExpectations(c)
 }
 
 type convManagerWithoutConversation struct{}
@@ -1400,9 +1402,7 @@ func (s *SessionSuite) Test_session_receivedClientMessage_works(c *C) {
 		return false
 	}
 
-	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
-		return mc, false
-	}
+	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
@@ -1418,6 +1418,8 @@ func (s *SessionSuite) Test_session_receivedClientMessage_works(c *C) {
 
 	c.Assert(res, Equals, true)
 	c.Assert(hook.Entries, HasLen, 1)
+
+	mcm.AssertExpectations(c)
 }
 
 func (s *SessionSuite) Test_session_receivedClientMessage_processesEncryptionTag(c *C) {
@@ -1441,9 +1443,7 @@ func (s *SessionSuite) Test_session_receivedClientMessage_processesEncryptionTag
 		return false
 	}
 
-	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
-		return mc, false
-	}
+	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
@@ -1462,6 +1462,7 @@ func (s *SessionSuite) Test_session_receivedClientMessage_processesEncryptionTag
 
 	c.Assert(res, Equals, true)
 	c.Assert(hook.Entries, HasLen, 2)
+	mcm.AssertExpectations(c)
 }
 
 func (s *SessionSuite) Test_session_receivedClientMessage_handlesRegularErrorType(c *C) {
@@ -2379,9 +2380,8 @@ func (s *SessionSuite) Test_receiveClientMessage_logsConversationReceivalError(c
 	mc := &mockConv{}
 	mc.receive = func(s []byte) ([]byte, error) { return nil, errors.New("marker error") }
 	mc.isEncrypted = func() bool { return true }
-	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
-		return mc, false
-	}
+
+	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
@@ -2395,6 +2395,7 @@ func (s *SessionSuite) Test_receiveClientMessage_logsConversationReceivalError(c
 	c.Assert(hook.Entries[0].Message, Equals, "While processing message from peer")
 	c.Assert(hook.Entries[0].Data["peer"], Equals, "someone@some.org/something")
 	c.Assert(hook.Entries[0].Data["error"], ErrorMatches, "marker error")
+	mcm.AssertExpectations(c)
 }
 
 func (s *SessionSuite) Test_receiveClientMessage_handlesNewOTRKeys(c *C) {
@@ -2413,9 +2414,8 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesNewOTRKeys(c *C) {
 	mc.eh = eh
 	mc.receive = func(s []byte) ([]byte, error) { return nil, nil }
 	mc.isEncrypted = func() bool { return true }
-	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
-		return mc, false
-	}
+
+	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
@@ -2435,6 +2435,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesNewOTRKeys(c *C) {
 		c.Assert(t.Type, Equals, events.OTRNewKeys)
 		return true
 	})
+	mcm.AssertExpectations(c)
 }
 
 func (s *SessionSuite) Test_receiveClientMessage_handlesRenewedOTRKeys(c *C) {
@@ -2453,9 +2454,8 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesRenewedOTRKeys(c *C) {
 	mc.eh = eh
 	mc.receive = func(s []byte) ([]byte, error) { return nil, nil }
 	mc.isEncrypted = func() bool { return true }
-	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
-		return mc, false
-	}
+
+	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
@@ -2475,6 +2475,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesRenewedOTRKeys(c *C) {
 		c.Assert(t.Type, Equals, events.OTRRenewedKeys)
 		return true
 	})
+	mcm.AssertExpectations(c)
 }
 
 func (s *SessionSuite) Test_receiveClientMessage_handlesConversationEnded(c *C) {
@@ -2498,9 +2499,8 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesConversationEnded(c *C) 
 	mc.eh = eh
 	mc.receive = func(s []byte) ([]byte, error) { return nil, nil }
 	mc.isEncrypted = func() bool { return true }
-	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
-		return mc, false
-	}
+
+	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
@@ -2530,6 +2530,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesConversationEnded(c *C) 
 	c.Assert(hook.Entries[1].Level, Equals, log.InfoLevel)
 	c.Assert(hook.Entries[1].Message, Equals, "Peer has ended the secure conversation. You should do likewise")
 	c.Assert(hook.Entries[1].Data["peer"], DeepEquals, jid.Parse("someone@some.org/something"))
+	mcm.AssertExpectations(c)
 }
 
 func (s *SessionSuite) Test_receiveClientMessage_handlesConversationEnded_withAutoTearDownFailing(c *C) {
@@ -2554,9 +2555,8 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesConversationEnded_withAu
 	mc.receive = func(s []byte) ([]byte, error) { return nil, nil }
 	mc.endEncryptedChat = func() error { return errors.New("another marker error") }
 	mc.isEncrypted = func() bool { return true }
-	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
-		return mc, false
-	}
+
+	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
@@ -2591,6 +2591,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesConversationEnded_withAu
 	c.Assert(hook.Entries[2].Message, Equals, "Unable to automatically tear down OTR conversation with peer")
 	c.Assert(hook.Entries[2].Data["peer"], DeepEquals, jid.Parse("someone@some.org/something"))
 	c.Assert(hook.Entries[2].Data["error"], ErrorMatches, "another marker error")
+	mcm.AssertExpectations(c)
 }
 
 func (s *SessionSuite) Test_receiveClientMessage_handlesConversationEnded_withAutoTearDownSucceeding(c *C) {
@@ -2614,9 +2615,8 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesConversationEnded_withAu
 	mc.eh = eh
 	mc.receive = func(s []byte) ([]byte, error) { return nil, nil }
 	mc.isEncrypted = func() bool { return true }
-	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
-		return mc, false
-	}
+
+	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
@@ -2650,6 +2650,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesConversationEnded_withAu
 	c.Assert(hook.Entries[2].Level, Equals, log.InfoLevel)
 	c.Assert(hook.Entries[2].Message, Equals, "Secure session with peer has been automatically ended. Messages will be sent in the clear until another OTR session is established.")
 	c.Assert(hook.Entries[2].Data["peer"], DeepEquals, jid.Parse("someone@some.org/something"))
+	mcm.AssertExpectations(c)
 }
 
 func (s *SessionSuite) Test_receiveClientMessage_handlesSMPSecretNeeded(c *C) {
@@ -2670,9 +2671,8 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesSMPSecretNeeded(c *C) {
 	mc.eh = eh
 	mc.receive = func(s []byte) ([]byte, error) { return nil, nil }
 	mc.isEncrypted = func() bool { return true }
-	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
-		return mc, false
-	}
+
+	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
@@ -2695,6 +2695,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesSMPSecretNeeded(c *C) {
 	})
 
 	c.Assert(hook.Entries, HasLen, 1)
+	mcm.AssertExpectations(c)
 }
 
 func (s *SessionSuite) Test_receiveClientMessage_handlesSMPFailed(c *C) {
@@ -2715,9 +2716,8 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesSMPFailed(c *C) {
 	mc.eh = eh
 	mc.receive = func(s []byte) ([]byte, error) { return nil, nil }
 	mc.isEncrypted = func() bool { return true }
-	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
-		return mc, false
-	}
+
+	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
@@ -2740,6 +2740,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesSMPFailed(c *C) {
 	})
 
 	c.Assert(hook.Entries, HasLen, 1)
+	mcm.AssertExpectations(c)
 }
 
 func (s *SessionSuite) Test_receiveClientMessage_handlesSMPComplete(c *C) {
@@ -2769,9 +2770,8 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesSMPComplete(c *C) {
 	mc.eh = eh
 	mc.receive = func(s []byte) ([]byte, error) { return nil, nil }
 	mc.isEncrypted = func() bool { return true }
-	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
-		return mc, false
-	}
+
+	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
@@ -2802,6 +2802,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesSMPComplete(c *C) {
 		Fingerprint: nil,
 		Tag:         "SMP",
 	})
+	mcm.AssertExpectations(c)
 }
 
 func (s *SessionSuite) Test_session_Timeout(c *C) {
@@ -3842,15 +3843,13 @@ func (s *SessionSuite) Test_session_Close_closesTheConnectionAndTerminatesConnec
 		wantToBeOnline: false,
 		convManager:    cm,
 	}
-	called := false
-	cm.terminateAll = func() {
-		called = true
-	}
+
+	cm.On("TerminateAll").Return().Once()
 
 	sess.Close()
 	c.Assert(sess.conn, IsNil)
 	c.Assert(sess.connStatus, Equals, DISCONNECTED)
-	c.Assert(called, Equals, true)
+	cm.AssertExpectations(c)
 }
 
 func (s *SessionSuite) Test_session_connectionLost_closes(c *C) {
@@ -3922,9 +3921,8 @@ func (s *SessionSuite) Test_session_EncryptAndSendTo_sendsMessageThroughOTR(c *C
 		vals = v
 		return 42, errors.New("marker error")
 	}
-	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
-		return mc, false
-	}
+
+	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
 	trace, delayed, e := sess.EncryptAndSendTo(jid.Parse("some@two.org/bla"), "allo over there")
 	c.Assert(string(vals), Equals, "allo over there")
@@ -3932,4 +3930,5 @@ func (s *SessionSuite) Test_session_EncryptAndSendTo_sendsMessageThroughOTR(c *C
 	c.Assert(delayed, Equals, false)
 	c.Assert(e, ErrorMatches, "marker error")
 	c.Assert(hook.Entries, HasLen, 0)
+	mcm.AssertExpectations(c)
 }

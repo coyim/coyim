@@ -115,7 +115,7 @@ func runClient() {
 		gliba.Real,
 		gdka.Real,
 		pangoa.Real,
-		nil,
+		extraGraphics,
 	)
 
 	i18n.InitLocalization(gliba.Real)

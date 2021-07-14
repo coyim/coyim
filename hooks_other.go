@@ -7,6 +7,7 @@ import (
 )
 
 var hooks = noHooks
+var extraGraphics interface{} = nil
 
 func noHooks() gui.OSHooks {
 	return &gui.NoHooks{}

@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 
 	. "gopkg.in/check.v1"
+
+	"github.com/prashantv/gostub"
 )
 
 type UtilsSuite struct{}
@@ -62,11 +64,7 @@ func (s *UtilsSuite) Test_FindFile_returnsTheSecondFileIfTheFirstDoesntExist(c *
 
 func (s *UtilsSuite) Test_XdgCacheDir(c *C) {
 	home := os.Getenv("HOME")
-	oldEnv := os.Getenv("XDG_CACHE_HOME")
-	defer func() {
-		os.Setenv("XDG_CACHE_HOME", oldEnv)
-	}()
-	os.Setenv("XDG_CACHE_HOME", "")
+	defer gostub.New().SetEnv("XDG_CACHE_HOME", "").Reset()
 
 	dir := XdgCacheDir()
 	c.Assert(dir, Equals, filepath.Join(home, ".cache"))
@@ -74,22 +72,14 @@ func (s *UtilsSuite) Test_XdgCacheDir(c *C) {
 
 func (s *UtilsSuite) Test_XdgDataHome(c *C) {
 	home := os.Getenv("HOME")
-	oldEnv := os.Getenv("XDG_DATA_HOME")
-	defer func() {
-		os.Setenv("XDG_DATA_HOME", oldEnv)
-	}()
-	os.Setenv("XDG_DATA_HOME", "")
+	defer gostub.New().SetEnv("XDG_DATA_HOME", "").Reset()
 
 	dir := XdgDataHome()
 	c.Assert(dir, Equals, filepath.Join(home, ".local/share"))
 }
 
 func (s *UtilsSuite) Test_XdgDataDirs(c *C) {
-	oldEnv := os.Getenv("XDG_DATA_DIRS")
-	defer func() {
-		os.Setenv("XDG_DATA_DIRS", oldEnv)
-	}()
-	os.Setenv("XDG_DATA_DIRS", "one:two: three")
+	defer gostub.New().SetEnv("XDG_DATA_DIRS", "one:two: three").Reset()
 
 	dirs := XdgDataDirs()
 	c.Assert(dirs, DeepEquals, []string{"one", "two", " three"})

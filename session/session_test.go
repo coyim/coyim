@@ -25,6 +25,8 @@ import (
 	"github.com/coyim/otr3"
 
 	. "gopkg.in/check.v1"
+
+	"github.com/prashantv/gostub"
 )
 
 type SessionSuite struct{}
@@ -920,10 +922,7 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *C) {
 }
 
 func (s *SessionSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAboutThem(c *C) {
-	tickInterval = time.Millisecond
-	defer func() {
-		tickInterval = time.Second
-	}()
+	defer gostub.Stub(&tickInterval, time.Millisecond).Reset()
 
 	now := time.Now()
 	timeouts := map[data.Cookie]time.Time{

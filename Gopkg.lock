@@ -85,6 +85,14 @@
   revision = "417d73d89c37578dc532ff40df46a61478659b17"
 
 [[projects]]
+  digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  pruneopts = "UT"
+  revision = "8991bc29aa16c548c550c7ff78260e27b9ab7c73"
+  version = "v1.1.1"
+
+[[projects]]
   digest = "1:57fa4c058c21ce25d0b7272518dd746065117abf6cc706158b0d361202024520"
   name = "github.com/godbus/dbus"
   packages = ["."]
@@ -163,6 +171,22 @@
   revision = "a10e7caefd8e0d600cea437f5c3613aeb1553d56"
 
 [[projects]]
+  digest = "1:0028cb19b2e4c3112225cd871870f2d9cf49b9b4276531f03438a88e94be86fe"
+  name = "github.com/pmezard/go-difflib"
+  packages = ["difflib"]
+  pruneopts = "UT"
+  revision = "792786c7400a136282c1664665ae0a8db921c6c2"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:ee2feded4e2d1b0f973bd7f7b0151c7f705853bbb36f5c42b8f149fc3bb091ab"
+  name = "github.com/prashantv/gostub"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "24ed9cdea43de1d52ea20cab2b7a38e7ed6886b3"
+  version = "v1.0.0"
+
+[[projects]]
   digest = "1:1705716d33e69b9567ec6fd8e318a6e60869838b60643e54d0301bed8ac427d1"
   name = "github.com/sirupsen/logrus"
   packages = [
@@ -172,6 +196,25 @@
   pruneopts = "UT"
   revision = "60c74ad9be0d874af0ab0daef6ab07c5c5911f0d"
   version = "v1.6.0"
+
+[[projects]]
+  digest = "1:86ff4af7b6bb3d27c2e89b5ef8c139678acff1cad74a3c5235fc5af6b94fcc9e"
+  name = "github.com/stretchr/objx"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "35313a95ee26395aa17d366c71a2ccf788fa69b6"
+  version = "v0.3.0"
+
+[[projects]]
+  digest = "1:e5992fcc545f44348e54526599ceb97d83da86754f1f1faa8c96de047b523300"
+  name = "github.com/stretchr/testify"
+  packages = [
+    "assert",
+    "mock",
+  ]
+  pruneopts = "UT"
+  revision = "acba37e5db06f0093b465a7d47822bf13644b66c"
+  version = "v1.7.0"
 
 [[projects]]
   digest = "1:577b99fc55ee19cbf1ffd072808c91ced78cd732bd9d0517bec9b90e532069cb"
@@ -292,6 +335,14 @@
   revision = "8fa46927fb4f5b54d48bde78c6c08db205b2298c"
 
 [[projects]]
+  branch = "v3"
+  digest = "1:107a619d3c3bcca214b2b7db810a5dffcd74b5d0262813cb2986e063fae2722f"
+  name = "gopkg.in/yaml.v3"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "496545a6307b2a7d7a710fd516e5e16e8ab62dbc"
+
+[[projects]]
   branch = "master"
   digest = "1:b5ead2120cd278858a83be14ef551f54295da350033dbc3f227fe0298b880256"
   name = "howett.net/plist"
@@ -319,6 +370,7 @@
     "github.com/coyim/gotk3adapter/pangoi",
     "github.com/coyim/gotk3extra",
     "github.com/coyim/gotk3osx",
+    "github.com/coyim/gotk3osx/access",
     "github.com/coyim/otr3",
     "github.com/godbus/dbus",
     "github.com/golang-collections/collections/set",
@@ -326,8 +378,10 @@
     "github.com/hydrogen18/stalecucumber",
     "github.com/kardianos/osext",
     "github.com/miekg/dns",
+    "github.com/prashantv/gostub",
     "github.com/sirupsen/logrus",
     "github.com/sirupsen/logrus/hooks/test",
+    "github.com/stretchr/testify/mock",
     "github.com/xdg/stringprep",
     "golang.org/x/crypto/pbkdf2",
     "golang.org/x/crypto/scrypt",

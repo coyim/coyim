@@ -257,12 +257,22 @@ func (rc *roomConfigAssistant) onApplyError(sfe *muc.SubmitFormError) {
 	errorMessage := rc.roomConfigComponent.friendlyConfigErrorMessage(sfe.Error())
 
 	if sfe.Error() == session.ErrBadRequestResponse {
-		pageID := getPageBasedOnField(sfe.Field())
-		rc.currentPage = rc.pageByIndex(pageID)
-		rc.assistant.SetCurrentPage(int(pageID))
+		rc.onBadRequestError(sfe)
 		errorMessage = friendlyConfigErrorMessageWithField(sfe.Field())
 	}
 	rc.currentPage.notifyError(errorMessage)
+}
+
+// onBadRequestError MUST be called from the UI thread
+func (rc *roomConfigAssistant) onBadRequestError(sfe *muc.SubmitFormError) {
+	pageID := getPageBasedOnField(sfe.Field())
+	rc.currentPage = rc.pageByIndex(pageID)
+	rc.assistant.SetCurrentPage(int(pageID))
+	for _, f := range rc.currentPage.fields {
+		if f.fieldKey() == sfe.Field() {
+			f.showValidationErrors()
+		}
+	}
 }
 
 func getPageBasedOnField(field muc.RoomConfigFieldType) mucRoomConfigPageID {

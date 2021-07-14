@@ -85,15 +85,17 @@ type Graphics struct {
 	glib  glibi.Glib
 	gdk   gdki.Gdk
 	pango pangoi.Pango
+	extra interface{}
 }
 
 // CreateGraphics creates a Graphic represention from the given arguments
-func CreateGraphics(gtkVal gtki.Gtk, glibVal glibi.Glib, gdkVal gdki.Gdk, pangoVal pangoi.Pango) Graphics {
+func CreateGraphics(gtkVal gtki.Gtk, glibVal glibi.Glib, gdkVal gdki.Gdk, pangoVal pangoi.Pango, extra interface{}) Graphics {
 	return Graphics{
 		gtk:   gtkVal,
 		glib:  glibVal,
 		gdk:   gdkVal,
 		pango: pangoVal,
+		extra: extra,
 	}
 }
 

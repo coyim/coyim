@@ -227,6 +227,7 @@ func (s *MainSuite) Test_createGTK_works(c *C) {
 		mg,
 		&gdk_mock.Mock{},
 		&pango_mock.Mock{},
+		nil,
 	))
 	c.Assert(res, Not(IsNil))
 }

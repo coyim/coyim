@@ -2,8 +2,7 @@
 
 package gui
 
-import "github.com/coyim/gotk3osx"
-import "github.com/coyim/gotk3adapter/gdka"
+import "github.com/coyim/gotk3osx/access"
 
 // CreateOSX will return os hooks for OS X
 func CreateOSX() OSHooks {
@@ -11,7 +10,7 @@ func CreateOSX() OSHooks {
 }
 
 type osxHooks struct {
-	app *gotk3osx.GtkosxApplication
+	app access.Application
 	ui  *gtkUI
 }
 
@@ -22,9 +21,9 @@ func (h *osxHooks) BeforeMainWindow(ui *gtkUI) {
 
 // AfterInit implements the OSHooks interface
 func (h *osxHooks) AfterInit() {
-	h.app, _ = gotk3osx.GetGtkosxApplication()
+	h.app, _ = g.extra.(access.GTKOSX).GetApplication()
 	h.app.Ready()
 
 	p := coyimIcon.GetPixbuf()
-	h.app.SetDockIconPixbuf(gdka.UnwrapPixbuf(p))
+	h.app.SetDockIconPixbuf(p)
 }

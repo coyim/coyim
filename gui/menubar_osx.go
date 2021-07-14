@@ -2,7 +2,6 @@
 
 package gui
 
-import "github.com/coyim/gotk3adapter/gtka"
 import "github.com/coyim/gotk3adapter/gtki"
 
 func (u *gtkUI) initializeMenus() {
@@ -10,7 +9,7 @@ func (u *gtkUI) initializeMenus() {
 	mb.ShowAll()
 
 	app := u.hooks.(*osxHooks).app
-	app.SetMenuBar(gtka.UnwrapMenuShell(mb))
+	app.SetMenuBar(mb)
 	app.SetHelpMenu(nil)
 	app.SetWindowMenu(nil)
 
@@ -18,9 +17,9 @@ func (u *gtkUI) initializeMenus() {
 	prefsMenuItem := u.mainBuilder.getObj("preferencesMenuItem").(gtki.MenuItem)
 	sepMenuItem, _ := g.gtk.SeparatorMenuItemNew()
 
-	app.InsertAppMenuItem(gtka.UnwrapWidget(aboutMenuItem), 0)
-	app.InsertAppMenuItem(gtka.UnwrapWidget(sepMenuItem), 1)
-	app.InsertAppMenuItem(gtka.UnwrapWidget(prefsMenuItem), 2)
+	app.InsertAppMenuItem(aboutMenuItem, 0)
+	app.InsertAppMenuItem(sepMenuItem, 1)
+	app.InsertAppMenuItem(prefsMenuItem, 2)
 
 	mb.SetNoShowAll(true)
 	mb.Hide()

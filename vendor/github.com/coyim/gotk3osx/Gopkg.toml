@@ -34,5 +34,5 @@
   version = "0.4.0"
 
 [[constraint]]
-  branch = "master"
+  branch = "main"
   name = "github.com/coyim/gotk3adapter"

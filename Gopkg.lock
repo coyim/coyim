@@ -64,11 +64,14 @@
 
 [[projects]]
   branch = "main"
-  digest = "1:0ca31016a5289103991213d0ff3199c66e4b7a7d7f5f501e9105f49479292069"
+  digest = "1:664cd1a82c3f8f35fb39bfd8c1dbe18b6215685b11e0cacc40ed1e2fb03b78d7"
   name = "github.com/coyim/gotk3osx"
-  packages = ["."]
+  packages = [
+    ".",
+    "access",
+  ]
   pruneopts = "UT"
-  revision = "0bc104b9d83d107422dfcb1c4981938e74f6e8a7"
+  revision = "103a96c439454ffce5407328bb6756b62be5760f"
 
 [[projects]]
   branch = "main"
@@ -314,6 +317,7 @@
     "github.com/coyim/gotk3adapter/pango_mock",
     "github.com/coyim/gotk3adapter/pangoa",
     "github.com/coyim/gotk3adapter/pangoi",
+    "github.com/coyim/gotk3extra",
     "github.com/coyim/gotk3osx",
     "github.com/coyim/otr3",
     "github.com/godbus/dbus",

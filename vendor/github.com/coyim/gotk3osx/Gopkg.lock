@@ -2,8 +2,8 @@
 
 
 [[projects]]
-  branch = "master"
-  digest = "1:9c9d81fa613b66940e489690ff5978f582f4a34a7ce58ef8dd6aceda3e2bf288"
+  branch = "main"
+  digest = "1:5c0d21629fe204ea368c4b3a0235d0567180c38c5291b6839ed901bae90ada0a"
   name = "github.com/coyim/gotk3adapter"
   packages = [
     "gdka",
@@ -14,7 +14,15 @@
     "gtki",
   ]
   pruneopts = "UT"
-  revision = "728d69a7102fc174d4d7ef16eaf527e2601f0c69"
+  revision = "3695120a4a7d10fd715cd678d64693048eb4a11b"
+
+[[projects]]
+  branch = "main"
+  digest = "1:db13ae5521261d81944c7ba3360825d4b0eff8340b89f227e983cf1a6d230f07"
+  name = "github.com/coyim/gotk3extra"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "d105301177fe43b4c0af9b3b69e7dc66bc07abba"
 
 [[projects]]
   digest = "1:ddf66fdcdb1ec703fa6316f0735dc287290f6e0123037f59972f5fe9202e09d4"
@@ -34,6 +42,8 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/coyim/gotk3adapter/gdka",
+    "github.com/coyim/gotk3adapter/gdki",
     "github.com/coyim/gotk3adapter/gtka",
     "github.com/coyim/gotk3adapter/gtki",
     "github.com/gotk3/gotk3/gdk",

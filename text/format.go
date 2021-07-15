@@ -115,6 +115,8 @@ func parseNextFormattedFragment(txt string) (f Fragment, rest string, more bool,
 	if !ok2 {
 		return nil, "", false, false
 	}
+
+	// TODO: could fail
 	if rest2[0] == '{' {
 		f2, rest3, ok3 := parseFormattedText(rest2[1:])
 		ok3 = ok3
@@ -167,10 +169,10 @@ func (tf *fragmentWithFormat) Format() (txt string, formatName *string) {
 func ParseWithFormat(txt string) (FormattedText, bool) {
 	result := FormattedText{}
 
-	f, rest, more, ok := parseNext(txt)
-	if f != nil {
-		result = append(result, f)
-	}
+	f := Fragment(nil)
+	rest := txt
+	more := true
+	ok := true
 
 	for more && ok {
 		f, rest, more, ok = parseNext(rest)
@@ -189,19 +191,15 @@ func ParseWithFormat(txt string) (FormattedText, bool) {
 // Join will generate a final text, making the text into one segment, and calculating all
 // indices and lengths for format strings
 func (ft FormattedText) Join() (text string, starts []int, lengths []int, formats []string) {
-	result := make([]string, len(ft))
-	curIndex := 0
-	for ix, frag := range ft {
+	for _, frag := range ft {
 		txt, frm := frag.Format()
-		result[ix] = txt
 		if frm != nil {
-			starts = append(starts, curIndex)
+			starts = append(starts, len(text))
 			lengths = append(lengths, len(txt))
 			formats = append(formats, *frm)
 		}
-		curIndex += len(txt)
+		text = text + txt
 	}
 
-	text = strings.Join(result, "")
 	return
 }

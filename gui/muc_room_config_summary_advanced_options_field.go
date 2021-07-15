@@ -62,7 +62,9 @@ func (f *roomConfigSummaryAdvancedOptionsField) fieldWidget() gtki.Widget {
 }
 
 func (f *roomConfigSummaryAdvancedOptionsField) refreshContent() {
-	f.advancedOptionsContent.Hide()
+	for _, field := range f.advancedOptions {
+		field.refreshContent()
+	}
 }
 
 func (f *roomConfigSummaryAdvancedOptionsField) updateFieldValue() {}

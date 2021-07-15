@@ -78,13 +78,25 @@ func parseNextFormattedFragment(txt string) (f Fragment, rest string, more bool,
 	return nil, "", false, false
 }
 
+func parseNextEscapeOrFormattedFragment(txt string) (f Fragment, rest string, more bool, ok bool) {
+	if txt == "" {
+		return &textFragment{"$"}, "", false, false
+	}
+
+	if txt[0] == '$' {
+		return &textFragment{"$"}, txt[1:], len(txt) > 1, true
+	}
+
+	return parseNextFormattedFragment(txt)
+}
+
 func parseNext(txt string) (f Fragment, rest string, more bool, ok bool) {
 	if txt == "" {
 		return nil, "", false, true
 	}
 
 	if txt[0] == '$' {
-		return parseNextFormattedFragment(txt[1:])
+		return parseNextEscapeOrFormattedFragment(txt[1:])
 	}
 
 	ix := 0
@@ -102,7 +114,6 @@ func ParseWithFormat(txt string) (FormattedText, bool) {
 	result := FormattedText{}
 
 	f, rest, more, ok := parseNext(txt)
-	ok = ok
 	if f != nil {
 		result = append(result, f)
 	}
@@ -113,6 +124,10 @@ func ParseWithFormat(txt string) (FormattedText, bool) {
 			result = append(result, f)
 		}
 
+	}
+
+	if !ok {
+		return FormattedText{&textFragment{txt}}, false
 	}
 
 	return result, true

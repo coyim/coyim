@@ -149,94 +149,74 @@ func (s *FormatSuite) Test_ParseWithFormat_failsOnMissingFormattingText(c *C) {
 
 func (s *FormatSuite) Test_Join_simpleText(c *C) {
 	res, _ := ParseWithFormat("hello world")
-	txt, st, l, f := res.Join()
+	txt, formats := res.Join()
 
 	c.Assert(txt, Equals, "hello world")
-	c.Assert(st, HasLen, 0)
-	c.Assert(l, HasLen, 0)
-	c.Assert(f, HasLen, 0)
+	c.Assert(formats, HasLen, 0)
 }
 
 func (s *FormatSuite) Test_Join_moreThanOneTextFragment(c *C) {
 	res, _ := ParseWithFormat("hello world")
 	res2 := append(res, res...)
-	txt, st, l, f := res2.Join()
+	txt, formats := res2.Join()
 
 	c.Assert(txt, Equals, "hello worldhello world")
-	c.Assert(st, HasLen, 0)
-	c.Assert(l, HasLen, 0)
-	c.Assert(f, HasLen, 0)
+	c.Assert(formats, HasLen, 0)
 }
 
 func (s *FormatSuite) Test_Join_withASimpleFormat(c *C) {
 	res, _ := ParseWithFormat("hello world, $nick{Luke} - what's up?")
 
-	txt, st, l, f := res.Join()
+	txt, formats := res.Join()
 
 	c.Assert(txt, Equals, "hello world, Luke - what's up?")
 
-	c.Assert(st, HasLen, 1)
-	c.Assert(st[0], Equals, 13)
-
-	c.Assert(l, HasLen, 1)
-	c.Assert(l[0], Equals, 4)
-
-	c.Assert(f, HasLen, 1)
-	c.Assert(f[0], Equals, "nick")
+	c.Assert(formats, HasLen, 1)
+	c.Assert(formats[0], Equals, Formatting{
+		13, 4, "nick",
+	})
 }
 
 func (s *FormatSuite) Test_Join_withASimpleFormatAtStart(c *C) {
 	res, _ := ParseWithFormat("$nick{Luke} - what's up?")
 
-	txt, st, l, f := res.Join()
+	txt, formats := res.Join()
 
 	c.Assert(txt, Equals, "Luke - what's up?")
 
-	c.Assert(st, HasLen, 1)
-	c.Assert(st[0], Equals, 0)
-
-	c.Assert(l, HasLen, 1)
-	c.Assert(l[0], Equals, 4)
-
-	c.Assert(f, HasLen, 1)
-	c.Assert(f[0], Equals, "nick")
+	c.Assert(formats, HasLen, 1)
+	c.Assert(formats[0], Equals, Formatting{
+		0, 4, "nick",
+	})
 }
 
 func (s *FormatSuite) Test_Join_withASimpleFormatAtEnd(c *C) {
 	res, _ := ParseWithFormat("hello world, $nick{Luke}")
 
-	txt, st, l, f := res.Join()
+	txt, formats := res.Join()
 
 	c.Assert(txt, Equals, "hello world, Luke")
 
-	c.Assert(st, HasLen, 1)
-	c.Assert(st[0], Equals, 13)
-
-	c.Assert(l, HasLen, 1)
-	c.Assert(l[0], Equals, 4)
-
-	c.Assert(f, HasLen, 1)
-	c.Assert(f[0], Equals, "nick")
+	c.Assert(formats, HasLen, 1)
+	c.Assert(formats[0], Equals, Formatting{
+		13, 4, "nick",
+	})
 }
 
 func (s *FormatSuite) Test_Join_withMoreThanOneFormatAndEscapes(c *C) {
 	res, _ := ParseWithFormat("hello and welcome $$42$$, $role{foo{$}bar$$} - you are $nick{someone}")
 
-	txt, st, l, f := res.Join()
+	txt, formats := res.Join()
 
 	c.Assert(txt, Equals, "hello and welcome $42$, foo{}bar$ - you are someone")
 
-	c.Assert(st, HasLen, 2)
-	c.Assert(st[0], Equals, 24)
-	c.Assert(st[1], Equals, 44)
-
-	c.Assert(l, HasLen, 2)
-	c.Assert(l[0], Equals, 9)
-	c.Assert(l[1], Equals, 7)
-
-	c.Assert(f, HasLen, 2)
-	c.Assert(f[0], Equals, "role")
-	c.Assert(f[1], Equals, "nick")
+	c.Assert(formats, HasLen, 2)
+	c.Assert(formats[0], Equals, Formatting{
+		24, 9, "role",
+	})
+	c.Assert(formats[1], Equals, Formatting{
+		44, 7, "nick",
+	})
 }
 
 // Incorrect escape inside of brackets

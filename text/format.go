@@ -50,13 +50,7 @@ type textFragment struct {
 }
 
 func genTextFragment(txt ...string) Fragment {
-	res := []string{}
-	for _, val := range txt {
-		if val != "" {
-			res = append(res, val)
-		}
-	}
-	return &textFragment{strings.Join(res, "")}
+	return &textFragment{strings.Join(txt, "")}
 }
 
 // Fragment is one of any type of text fragments - either formatted or unformatted
@@ -80,6 +74,7 @@ func isFormatNameCharacter(r rune) bool {
 func parseFormatName(txt string) (formatName, rest string, ok bool) {
 	ix := 0
 	rstxt := []rune(txt)
+	// TODO: this should check against the end of the slice as well
 	for isFormatNameCharacter(rstxt[ix]) {
 		ix++
 	}
@@ -165,18 +160,14 @@ func (tf *fragmentWithFormat) Format() (txt string, formatName *string) {
 // ParseWithFormat parses the given text following the description in the package documentation
 // It return false if the format is incorrect. In this case it will return a
 // one-slice formatted text containing the original text.
-func ParseWithFormat(txt string) (FormattedText, bool) {
-	result := FormattedText{}
-
+func ParseWithFormat(txt string) (result FormattedText, ok bool) {
 	f := Fragment(nil)
 	rest := txt
-	ok := true
+	ok = true
 
 	for rest != "" && ok {
 		f, rest, ok = parseNext(rest)
-		if f != nil {
-			result = append(result, f)
-		}
+		result = append(result, f)
 	}
 
 	if !ok {
@@ -186,15 +177,25 @@ func ParseWithFormat(txt string) (FormattedText, bool) {
 	return result, true
 }
 
+// Formatting contains the information about one specific formatting
+// instruction
+type Formatting struct {
+	Start  int
+	Length int
+	Format string
+}
+
 // Join will generate a final text, making the text into one segment, and calculating all
 // indices and lengths for format strings
-func (ft FormattedText) Join() (text string, starts []int, lengths []int, formats []string) {
+func (ft FormattedText) Join() (text string, formats []Formatting) {
 	for _, frag := range ft {
 		txt, frm := frag.Format()
 		if frm != nil {
-			starts = append(starts, len(text))
-			lengths = append(lengths, len(txt))
-			formats = append(formats, *frm)
+			formats = append(formats, Formatting{
+				Start:  len(text),
+				Length: len(txt),
+				Format: *frm,
+			})
 		}
 		text = text + txt
 	}

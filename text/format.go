@@ -56,7 +56,9 @@ func genTextFragment(txt ...string) Fragment {
 }
 
 // Fragment is one of any type of text fragments - either formatted or unformatted
-type Fragment interface{}
+type Fragment interface {
+	Format() (txt string, formatName *string)
+}
 
 // FormattedText is a slice of fragments
 type FormattedText []Fragment
@@ -74,7 +76,7 @@ func parseFormatName(txt string) (formatName, rest string, ok bool) {
 	for isFormatNameCharacter(rstxt[ix]) {
 		ix++
 	}
-	return string(rstxt[0:ix]), string(rstxt[ix:]), true
+	return string(rstxt[0:ix]), string(rstxt[ix:]), ix > 0
 }
 
 func parseFormattedText(txt string) (f Fragment, rest string, ok bool) {
@@ -85,11 +87,13 @@ func parseFormattedText(txt string) (f Fragment, rest string, ok bool) {
 	for ix < len(txt) && !end {
 		switch txt[ix] {
 		case '$':
-			if ix+1 < len(txt) && txt[ix+1] == '}' {
-				result = append(result, txt[currentStart:ix])
-				result = append(result, "}")
-				currentStart = ix + 2
-				ix++
+			if ix+1 < len(txt) {
+				if txt[ix+1] == '}' || txt[ix+1] == '$' {
+					result = append(result, txt[currentStart:ix])
+					result = append(result, string(txt[ix+1]))
+					currentStart = ix + 2
+					ix++
+				}
 			}
 			ix++
 		case '}':
@@ -104,7 +108,9 @@ func parseFormattedText(txt string) (f Fragment, rest string, ok bool) {
 
 func parseNextFormattedFragment(txt string) (f Fragment, rest string, more bool, ok bool) {
 	formatName, rest2, ok2 := parseFormatName(txt)
-	ok2 = ok2
+	if !ok2 {
+		return nil, "", false, false
+	}
 	if rest2[0] == '{' {
 		f2, rest3, ok3 := parseFormattedText(rest2[1:])
 		ok3 = ok3
@@ -142,6 +148,15 @@ func parseNext(txt string) (f Fragment, rest string, more bool, ok bool) {
 	return genTextFragment(txt[0:ix]), txt[ix:], true, true
 }
 
+func (tf *textFragment) Format() (txt string, formatName *string) {
+	return tf.text, nil
+}
+
+func (tf *fragmentWithFormat) Format() (txt string, formatName *string) {
+	tt, _ := tf.fragment.Format()
+	return tt, &tf.format
+}
+
 // ParseWithFormat parses the given text following the description in the package documentation
 // It return false if the format is incorrect. In this case it will return a
 // one-slice formatted text containing the original text.
@@ -170,5 +185,19 @@ func ParseWithFormat(txt string) (FormattedText, bool) {
 // Join will generate a final text, making the text into one segment, and calculating all
 // indices and lengths for format strings
 func (ft FormattedText) Join() (text string, starts []int, lengths []int, formats []string) {
-	return "", nil, nil, nil
+	result := make([]string, len(ft))
+	curIndex := 0
+	for ix, frag := range ft {
+		txt, frm := frag.Format()
+		result[ix] = txt
+		if frm != nil {
+			starts = append(starts, curIndex)
+			lengths = append(lengths, len(txt))
+			formats = append(formats, *frm)
+		}
+		curIndex += len(txt)
+	}
+
+	text = strings.Join(result, "")
+	return
 }

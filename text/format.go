@@ -61,6 +61,9 @@ func genTextFragment(txt ...string) Fragment {
 
 // Fragment is one of any type of text fragments - either formatted or unformatted
 type Fragment interface {
+	// Format will return the unformatted text, and an optional format name
+	// If formatName is nil, the text will be unformatted. If not nil
+	// the string will determine the name of the format
 	Format() (txt string, formatName *string)
 }
 
@@ -110,38 +113,34 @@ func parseFormattedText(txt string) (f Fragment, rest string, ok bool) {
 	return genTextFragment(result...), txt[ix+1:], true
 }
 
-func parseNextFormattedFragment(txt string) (f Fragment, rest string, more bool, ok bool) {
+func parseNextFormattedFragment(txt string) (f Fragment, rest string, ok bool) {
 	formatName, rest2, ok2 := parseFormatName(txt)
 	if !ok2 {
-		return nil, "", false, false
+		return nil, "", false
 	}
 
 	// TODO: could fail
 	if rest2[0] == '{' {
 		f2, rest3, ok3 := parseFormattedText(rest2[1:])
 		ok3 = ok3
-		return &fragmentWithFormat{formatName, f2}, rest3, true, true
+		return &fragmentWithFormat{formatName, f2}, rest3, true
 	}
-	return nil, "", false, false
+	return nil, "", false
 }
 
-func parseNextEscapeOrFormattedFragment(txt string) (f Fragment, rest string, more bool, ok bool) {
+func parseNextEscapeOrFormattedFragment(txt string) (f Fragment, rest string, ok bool) {
 	if txt == "" {
-		return genTextFragment("$"), "", false, false
+		return genTextFragment("$"), "", false
 	}
 
 	if txt[0] == '$' {
-		return genTextFragment("$"), txt[1:], len(txt) > 1, true
+		return genTextFragment("$"), txt[1:], true
 	}
 
 	return parseNextFormattedFragment(txt)
 }
 
-func parseNext(txt string) (f Fragment, rest string, more bool, ok bool) {
-	if txt == "" {
-		return nil, "", false, true
-	}
-
+func parseNext(txt string) (f Fragment, rest string, ok bool) {
 	if txt[0] == '$' {
 		return parseNextEscapeOrFormattedFragment(txt[1:])
 	}
@@ -151,7 +150,7 @@ func parseNext(txt string) (f Fragment, rest string, more bool, ok bool) {
 		ix++
 	}
 
-	return genTextFragment(txt[0:ix]), txt[ix:], true, true
+	return genTextFragment(txt[0:ix]), txt[ix:], true
 }
 
 func (tf *textFragment) Format() (txt string, formatName *string) {
@@ -171,11 +170,10 @@ func ParseWithFormat(txt string) (FormattedText, bool) {
 
 	f := Fragment(nil)
 	rest := txt
-	more := true
 	ok := true
 
-	for more && ok {
-		f, rest, more, ok = parseNext(rest)
+	for rest != "" && ok {
+		f, rest, ok = parseNext(rest)
 		if f != nil {
 			result = append(result, f)
 		}

@@ -43,6 +43,24 @@ type textFragment struct {
 	text string
 }
 
+type compositeFragment struct {
+	text []string
+}
+
+func genTextFragment(txt ...string) Fragment {
+	res := []string{}
+	for _, val := range txt {
+		if val != "" {
+			res = append(res, val)
+		}
+	}
+
+	if len(res) == 1 {
+		return &textFragment{res[0]}
+	}
+	return &compositeFragment{res}
+}
+
 // Fragment is one of any type of text fragments - either formatted or unformatted
 type Fragment interface{}
 
@@ -65,26 +83,49 @@ func parseFormatName(txt string) (formatName, rest string, ok bool) {
 	return string(rstxt[0:ix]), string(rstxt[ix:]), true
 }
 
+func parseFormattedText(txt string) (f Fragment, rest string, ok bool) {
+	currentStart := 0
+	ix := 0
+	result := []string{}
+	end := false
+	for ix < len(txt) && !end {
+		switch txt[ix] {
+		case '$':
+			if ix+1 < len(txt) && txt[ix+1] == '}' {
+				result = append(result, txt[currentStart:ix])
+				result = append(result, "}")
+				currentStart = ix + 2
+				ix++
+			}
+			ix++
+		case '}':
+			result = append(result, txt[currentStart:ix])
+			end = true
+		default:
+			ix++
+		}
+	}
+	return genTextFragment(result...), txt[ix+1:], true
+}
+
 func parseNextFormattedFragment(txt string) (f Fragment, rest string, more bool, ok bool) {
 	formatName, rest2, ok2 := parseFormatName(txt)
 	ok2 = ok2
 	if rest2[0] == '{' {
-		ix := 1
-		for ix < len(rest2) && rest2[ix] != '}' {
-			ix++
-		}
-		return &fragmentWithFormat{formatName, &textFragment{rest2[1:ix]}}, rest2[ix+1:], true, true
+		f2, rest3, ok3 := parseFormattedText(rest2[1:])
+		ok3 = ok3
+		return &fragmentWithFormat{formatName, f2}, rest3, true, true
 	}
 	return nil, "", false, false
 }
 
 func parseNextEscapeOrFormattedFragment(txt string) (f Fragment, rest string, more bool, ok bool) {
 	if txt == "" {
-		return &textFragment{"$"}, "", false, false
+		return genTextFragment("$"), "", false, false
 	}
 
 	if txt[0] == '$' {
-		return &textFragment{"$"}, txt[1:], len(txt) > 1, true
+		return genTextFragment("$"), txt[1:], len(txt) > 1, true
 	}
 
 	return parseNextFormattedFragment(txt)
@@ -104,7 +145,7 @@ func parseNext(txt string) (f Fragment, rest string, more bool, ok bool) {
 		ix++
 	}
 
-	return &textFragment{txt[0:ix]}, txt[ix:], true, true
+	return genTextFragment(txt[0:ix]), txt[ix:], true, true
 }
 
 // ParseWithFormat parses the given text following the description in the package documentation
@@ -118,16 +159,15 @@ func ParseWithFormat(txt string) (FormattedText, bool) {
 		result = append(result, f)
 	}
 
-	for more {
+	for more && ok {
 		f, rest, more, ok = parseNext(rest)
 		if f != nil {
 			result = append(result, f)
 		}
-
 	}
 
 	if !ok {
-		return FormattedText{&textFragment{txt}}, false
+		return FormattedText{genTextFragment(txt)}, false
 	}
 
 	return result, true

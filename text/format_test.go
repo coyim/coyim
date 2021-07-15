@@ -80,7 +80,54 @@ func (s *FormatSuite) Test_ParseWithFormat_parsesATextWithFailedEscape(c *C) {
 	c.Assert(res, DeepEquals, FormattedText{&textFragment{"hmm $"}})
 }
 
-// Escapes of ending brackets
+func (s *FormatSuite) Test_ParseWithFormat_parsesATextWithEscapeOfEndingBracket(c *C) {
+	res, ok := ParseWithFormat("hello $role{admin$}foo}")
+	c.Assert(ok, Equals, true)
+	c.Assert(res, DeepEquals, FormattedText{
+		&textFragment{"hello "},
+		&fragmentWithFormat{
+			"role",
+			&compositeFragment{
+				[]string{
+					"admin",
+					"}",
+					"foo",
+				},
+			},
+		},
+	})
+
+	res, ok = ParseWithFormat("hello $role{$}foo}")
+	c.Assert(ok, Equals, true)
+	c.Assert(res, DeepEquals, FormattedText{
+		&textFragment{"hello "},
+		&fragmentWithFormat{
+			"role",
+			&compositeFragment{
+				[]string{
+					"}",
+					"foo",
+				},
+			},
+		},
+	})
+
+	res, ok = ParseWithFormat("hello $role{stf$}}")
+	c.Assert(ok, Equals, true)
+	c.Assert(res, DeepEquals, FormattedText{
+		&textFragment{"hello "},
+		&fragmentWithFormat{
+			"role",
+			&compositeFragment{
+				[]string{
+					"stf",
+					"}",
+				},
+			},
+		},
+	})
+}
+
 // Incorrect escape inside of brackets
 // Failure of parsing the format
 //  - no format name / invalid format name

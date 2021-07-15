@@ -34,6 +34,10 @@ import "strings"
     as before, but if followed by [, the next value would be a zero-indexed value, followed only by a ]. No escapes would be necessary.
     Only zero or positive digits would be possible. An example: "hello $nick[1] - your role is $role[0] or $role{bla}"
   - With this extension, it might be necessary to also return an error or boolean from the `Join()` method.
+  - To make it more robust, the `Format()` method should take a `[]string` with the arguments, and return a `bool` to indicate failure in
+    interpolation.
+  - The implementation would simply be to add a new struct `interpolationFragment` that just contains an `index int` and
+    implements `Format()` in the obvious way.
 */
 
 type fragmentWithFormat struct {

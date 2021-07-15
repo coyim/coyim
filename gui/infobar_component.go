@@ -76,7 +76,7 @@ func (ib *infoBarComponent) initBuilder() {
 }
 
 func (ib *infoBarComponent) initDefaults() {
-	formatter := newPresentationTextFormatter(ib.text)
+	formatter := newInfobarHighlightFormatter(ib.text)
 	formatter.formatLabel(ib.title)
 
 	ib.infoBar.SetMessageType(ib.messageType)

@@ -41,3 +41,15 @@ func newInfoBarHighlightAttributes(tp infoBarHighlightType) pangoi.PangoAttrList
 
 	return nil
 }
+
+type infobarHighlightFormatter struct {
+	text string
+}
+
+func newInfobarHighlightFormatter(text string) *infobarHighlightFormatter {
+	return &infobarHighlightFormatter{text}
+}
+
+func (f *infobarHighlightFormatter) formatLabel(label gtki.Label) {
+	label.SetText(f.text)
+}

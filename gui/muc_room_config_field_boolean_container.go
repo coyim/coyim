@@ -6,13 +6,13 @@ import (
 )
 
 type roomConfigFormFieldBooleanContainer struct {
-	fields []*roomConfigFormFieldBoolean
+	fields []hasRoomConfigFormField
 
 	widget  gtki.Box     `gtk-widget:"room-config-field-box"`
 	content gtki.ListBox `gtk-widget:"room-config-boolean-fields-content"`
 }
 
-func newRoomConfigFormFieldBooleanContainer(f []*roomConfigFormFieldBoolean) hasRoomConfigFormField {
+func newRoomConfigFormFieldBooleanContainer(f []hasRoomConfigFormField) hasRoomConfigFormField {
 	field := &roomConfigFormFieldBooleanContainer{
 		fields: f,
 	}
@@ -29,10 +29,10 @@ func (fc *roomConfigFormFieldBooleanContainer) initBuilder() {
 }
 
 func (fc *roomConfigFormFieldBooleanContainer) initDefaults() {
-	fc.content.Add(fc.fields[0].widget)
+	fc.content.Add(fc.fields[0].fieldWidget())
 	for _, f := range fc.fields[1:] {
 		fc.content.Add(createSeparator(gtki.HorizontalOrientation))
-		fc.content.Add(f.widget)
+		fc.content.Add(f.fieldWidget())
 	}
 }
 

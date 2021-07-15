@@ -143,7 +143,7 @@ func (p *roomConfigPage) initIntroPage() {
 
 func (p *roomConfigPage) initKnownFields() {
 	if knownFields, ok := roomConfigPagesFields[p.pageID]; ok {
-		booleanFields := []*roomConfigFormFieldBoolean{}
+		booleanFields := []hasRoomConfigFormField{}
 		for _, kf := range knownFields {
 			if knownField, ok := p.form.GetKnownField(kf); ok {
 				field, err := roomConfigFormFieldFactory(kf, roomConfigFieldsTexts[kf], knownField.ValueType())
@@ -159,13 +159,14 @@ func (p *roomConfigPage) initKnownFields() {
 			}
 		}
 		if len(booleanFields) > 0 {
+			p.appendFields(booleanFields...)
 			p.addField(newRoomConfigFormFieldBooleanContainer(booleanFields))
 		}
 	}
 }
 
 func (p *roomConfigPage) initUnknownFields() {
-	booleanFields := []*roomConfigFormFieldBoolean{}
+	booleanFields := []hasRoomConfigFormField{}
 	for _, ff := range p.form.GetUnknownFields() {
 		field, err := roomConfigFormUnknownFieldFactory(newRoomConfigFieldTextInfo(ff.Label, ff.Description), ff.ValueType())
 		if err != nil {
@@ -179,12 +180,17 @@ func (p *roomConfigPage) initUnknownFields() {
 		p.addField(field)
 	}
 	if len(booleanFields) > 0 {
+		p.appendFields(booleanFields...)
 		p.addField(newRoomConfigFormFieldBooleanContainer(booleanFields))
 	}
 }
 
+func (p *roomConfigPage) appendFields(fields ...hasRoomConfigFormField) {
+	p.fields = append(p.fields, fields...)
+}
+
 func (p *roomConfigPage) initAdvancedOptionsFields() {
-	booleanFields := []*roomConfigFormFieldBoolean{}
+	booleanFields := []hasRoomConfigFormField{}
 	advancedFields := []hasRoomConfigFormField{}
 	for _, aff := range roomConfigAdvancedFields {
 		if knownField, ok := p.form.GetKnownField(aff); ok {
@@ -205,6 +211,7 @@ func (p *roomConfigPage) initAdvancedOptionsFields() {
 	}
 
 	if len(advancedFields) > 0 {
+		p.appendFields(advancedFields...)
 		p.addField(newRoomConfigFormFieldAdvancedOptionsContainer(advancedFields))
 	}
 }
@@ -281,7 +288,7 @@ func (p *roomConfigPage) initOccupants() {
 }
 
 func (p *roomConfigPage) addField(field hasRoomConfigFormField) {
-	p.fields = append(p.fields, field)
+	p.appendFields(field)
 	p.content.Add(field.fieldWidget())
 	p.doAfterRefresh.add(field.refreshContent)
 }

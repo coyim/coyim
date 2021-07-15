@@ -35,7 +35,7 @@
 
 [[projects]]
   branch = "main"
-  digest = "1:8f3ad4a7b3a528d0fc5c25ba0218ef887212481e7820485926143615eb9dd6fa"
+  digest = "1:263eac67e6208ceceecdae39425130c6b25d0c9fee333c86d69dab760a75fef1"
   name = "github.com/coyim/gotk3adapter"
   packages = [
     "gdk_mock",
@@ -52,15 +52,15 @@
     "pangoi",
   ]
   pruneopts = "UT"
-  revision = "3695120a4a7d10fd715cd678d64693048eb4a11b"
+  revision = "fe67a12227815cde25230b47abb1e89a90f0a41d"
 
 [[projects]]
   branch = "main"
-  digest = "1:db13ae5521261d81944c7ba3360825d4b0eff8340b89f227e983cf1a6d230f07"
+  digest = "1:4b88adf6e9d53954f60d0e0da8558b6643d66512c249ae742292757bf3b01531"
   name = "github.com/coyim/gotk3extra"
   packages = ["."]
   pruneopts = "UT"
-  revision = "d105301177fe43b4c0af9b3b69e7dc66bc07abba"
+  revision = "0ab27a0aeb814dccac55271b5dc67aad74d77623"
 
 [[projects]]
   branch = "main"
@@ -368,7 +368,6 @@
     "github.com/coyim/gotk3adapter/pango_mock",
     "github.com/coyim/gotk3adapter/pangoa",
     "github.com/coyim/gotk3adapter/pangoi",
-    "github.com/coyim/gotk3extra",
     "github.com/coyim/gotk3osx",
     "github.com/coyim/gotk3osx/access",
     "github.com/coyim/otr3",

@@ -1,9 +1,8 @@
 package gui
 
 import (
-	"github.com/coyim/gotk3adapter/gtka"
 	"github.com/coyim/gotk3adapter/gtki"
-	"github.com/coyim/gotk3extra"
+	"github.com/coyim/gotk3adapter/pangoi"
 )
 
 type infoBarHighlightType int
@@ -20,7 +19,7 @@ type infoBarHighlightAttributes struct {
 	labelRole        gtki.Label `gtk-widget:"labelRole"`
 }
 
-func newInfoBarHighlightAttributes(tp infoBarHighlightType) *gotk3extra.PangoAttrList {
+func newInfoBarHighlightAttributes(tp infoBarHighlightType) pangoi.PangoAttrList {
 	ibh := &infoBarHighlightAttributes{}
 
 	builder := newBuilder("InfoBarHighlightAttributes")
@@ -37,7 +36,7 @@ func newInfoBarHighlightAttributes(tp infoBarHighlightType) *gotk3extra.PangoAtt
 	}
 
 	if highlightLabel != nil {
-		return gotk3extra.LabelGetAttributes(gtka.UnwrapLabel(highlightLabel))
+		return highlightLabel.GetPangoAttributes()
 	}
 
 	return nil

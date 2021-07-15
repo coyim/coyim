@@ -8,9 +8,8 @@ import (
 	"text/template"
 	"text/template/parse"
 
-	"github.com/coyim/gotk3adapter/gtka"
 	"github.com/coyim/gotk3adapter/gtki"
-	"github.com/coyim/gotk3extra"
+	"github.com/coyim/gotk3adapter/pangoi"
 )
 
 const (
@@ -199,22 +198,23 @@ func (f *presentationTextFormatter) formatLabel(label gtki.Label) {
 
 	label.SetText(fmt.Sprintf(textFormat, f))
 
-	allAttributes := gotk3extra.PangoAttrListNew()
+	pangoAttrList := g.pango.PangoAttrListNew()
 
 	for _, format := range f.formats {
 		if highlightType, ok := presentationFormatsHighlight[format.typ]; ok {
 			copy := newInfoBarHighlightAttributes(highlightType)
-			copyAttributesTo(allAttributes, copy, format.startIndex(), format.endIndex())
+			copyAttributesTo(pangoAttrList, copy, format.startIndex(), format.endIndex())
 		}
 	}
 
-	gotk3extra.LabelSetAttributes(gtka.UnwrapLabel(label), allAttributes)
+	label.SetPangoAttributes(pangoAttrList)
 }
 
-func copyAttributesTo(toAttrList, fromAttrList *gotk3extra.PangoAttrList, startIndex, endIndex int) {
-	for _, attr := range gotk3extra.PangoGetAttributesFromList(fromAttrList) {
-		attr.StartIndex(uint(startIndex))
-		attr.EndIndex(uint(endIndex))
-		toAttrList.Insert(attr)
+func copyAttributesTo(toAttrList, fromAttrList pangoi.PangoAttrList, startIndex, endIndex int) {
+	for _, attr := range fromAttrList.GetAttributes() {
+		attr.SetStartIndex(startIndex)
+		attr.SetEndIndex(endIndex)
+
+		toAttrList.InsertPangoAttribute(attr)
 	}
 }

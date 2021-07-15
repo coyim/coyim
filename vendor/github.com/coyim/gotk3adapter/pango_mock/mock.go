@@ -7,3 +7,7 @@ type Mock struct{}
 func (*Mock) AsFontDescription(v interface{}) pangoi.FontDescription {
 	return nil
 }
+
+func (*Mock) PangoAttrListNew() pangoi.PangoAttrList {
+	return nil
+}

@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/text"
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/coyim/gotk3adapter/pangoi"
 )
@@ -51,5 +52,30 @@ func newInfobarHighlightFormatter(text string) *infobarHighlightFormatter {
 }
 
 func (f *infobarHighlightFormatter) formatLabel(label gtki.Label) {
-	label.SetText(f.text)
+	if formatted, ok := text.ParseWithFormat(f.text); ok {
+		text, formats := formatted.Join()
+		label.SetText(text)
+
+		pangoAttrList := g.pango.PangoAttrListNew()
+
+		for _, format := range formats {
+			if highlightType, ok := presentationFormatsHighlight[format.Format]; ok {
+				copy := newInfoBarHighlightAttributes(highlightType)
+				copyAttributesTo(pangoAttrList, copy, format.Start, format.Start+format.Length)
+			}
+		}
+
+		label.SetPangoAttributes(pangoAttrList)
+	} else {
+		label.SetText(f.text)
+	}
+}
+
+func copyAttributesTo(toAttrList, fromAttrList pangoi.PangoAttrList, startIndex, endIndex int) {
+	for _, attr := range fromAttrList.GetAttributes() {
+		attr.SetStartIndex(startIndex)
+		attr.SetEndIndex(endIndex)
+
+		toAttrList.InsertPangoAttribute(attr)
+	}
 }

@@ -51,6 +51,18 @@ func newInfobarHighlightFormatter(text string) *infobarHighlightFormatter {
 	return &infobarHighlightFormatter{text}
 }
 
+const (
+	highlightFormatNickname    = "nickname"
+	highlightFormatAffiliation = "affiliation"
+	highlightFormatRole        = "role"
+)
+
+var highlightFormats = map[string]infoBarHighlightType{
+	highlightFormatNickname:    infoBarHighlightNickname,
+	highlightFormatAffiliation: infoBarHighlightAffiliation,
+	highlightFormatRole:        infoBarHighlightRole,
+}
+
 func (f *infobarHighlightFormatter) formatLabel(label gtki.Label) {
 	if formatted, ok := text.ParseWithFormat(f.text); ok {
 		text, formats := formatted.Join()
@@ -59,7 +71,7 @@ func (f *infobarHighlightFormatter) formatLabel(label gtki.Label) {
 		pangoAttrList := g.pango.PangoAttrListNew()
 
 		for _, format := range formats {
-			if highlightType, ok := presentationFormatsHighlight[format.Format]; ok {
+			if highlightType, ok := highlightFormats[format.Format]; ok {
 				copy := newInfoBarHighlightAttributes(highlightType)
 				copyAttributesTo(pangoAttrList, copy, format.Start, format.Start+format.Length)
 			}

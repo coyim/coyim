@@ -87,13 +87,7 @@ func (s *FormatSuite) Test_ParseWithFormat_parsesATextWithEscapeOfEndingBracket(
 		&textFragment{"hello "},
 		&fragmentWithFormat{
 			"role",
-			&compositeFragment{
-				[]string{
-					"admin",
-					"}",
-					"foo",
-				},
-			},
+			&textFragment{"admin}foo"},
 		},
 	})
 
@@ -103,12 +97,7 @@ func (s *FormatSuite) Test_ParseWithFormat_parsesATextWithEscapeOfEndingBracket(
 		&textFragment{"hello "},
 		&fragmentWithFormat{
 			"role",
-			&compositeFragment{
-				[]string{
-					"}",
-					"foo",
-				},
-			},
+			&textFragment{"}foo"},
 		},
 	})
 
@@ -118,12 +107,7 @@ func (s *FormatSuite) Test_ParseWithFormat_parsesATextWithEscapeOfEndingBracket(
 		&textFragment{"hello "},
 		&fragmentWithFormat{
 			"role",
-			&compositeFragment{
-				[]string{
-					"stf",
-					"}",
-				},
-			},
+			&textFragment{"stf}"},
 		},
 	})
 }

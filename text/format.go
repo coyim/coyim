@@ -1,5 +1,7 @@
 package text
 
+import "strings"
+
 /*
   Simple idea - taking input as text, returning formatted text.  Formatted text is first returned as a slice of
   interface Fragment. Each fragment can be just the simple form, or it can be formatted. This also allows for the
@@ -43,10 +45,6 @@ type textFragment struct {
 	text string
 }
 
-type compositeFragment struct {
-	text []string
-}
-
 func genTextFragment(txt ...string) Fragment {
 	res := []string{}
 	for _, val := range txt {
@@ -54,11 +52,7 @@ func genTextFragment(txt ...string) Fragment {
 			res = append(res, val)
 		}
 	}
-
-	if len(res) == 1 {
-		return &textFragment{res[0]}
-	}
-	return &compositeFragment{res}
+	return &textFragment{strings.Join(res, "")}
 }
 
 // Fragment is one of any type of text fragments - either formatted or unformatted

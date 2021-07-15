@@ -16,6 +16,8 @@ type hasRoomConfigFormField interface {
 	showValidationErrors()
 }
 
+const fieldErrorIconName = "field_error"
+
 type roomConfigFormField struct {
 	field   muc.RoomConfigFieldType
 	builder *builder
@@ -32,7 +34,7 @@ func newRoomConfigFormField(ft muc.RoomConfigFieldType, fieldInfo roomConfigFiel
 	field.builder = newBuilder(template)
 	panicOnDevError(field.builder.bindObjects(field))
 
-	field.icon.SetFromPixbuf(getMUCIconPixbuf(infoBarErrorIconName))
+	field.icon.SetFromPixbuf(getMUCIconPixbuf(fieldErrorIconName))
 
 	field.label.SetText(fieldInfo.displayLabel)
 	mucStyles.setErrorLabelClass(field.label)

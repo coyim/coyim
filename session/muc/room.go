@@ -23,8 +23,7 @@ type Room struct {
 	observers         *roomObservers
 	discussionHistory *data.DiscussionHistory
 
-	// Configuration options:
-	properties *data.RoomDiscoInfo
+	properties data.RoomDiscoInfo
 }
 
 // NewRoom returns a newly created room
@@ -121,8 +120,8 @@ func (r *Room) AddHistoryMessage(nickname, message string, timestamp time.Time) 
 }
 
 // SetProperties replaces the current room properties by new ones
-func (r *Room) SetProperties(properties *data.RoomDiscoInfo) {
-	r.properties = properties
+func (r *Room) SetProperties(p data.RoomDiscoInfo) {
+	r.properties = p
 }
 
 // AnyoneCanChangeSubject returns the value of OccupantCanChangeSubject property

@@ -49,7 +49,7 @@ func getAffiliationChangedSuccessMessage(nickname string, affiliation data.Affil
 func getRoleUpdateSuccessMessage(nickname string, previousRole, newRole data.Role) string {
 	switch {
 	case newRole.IsNone():
-		return i18n.Localf("$nickname{%s} was temporarily removed from the room.", nickname)
+		return i18n.Localf("$nickname{%s} was $role{temporarily removed} from the room.", nickname)
 	case previousRole.IsNone():
 		return getRoleAddedSuccessMessage(nickname, newRole)
 	}
@@ -59,27 +59,27 @@ func getRoleUpdateSuccessMessage(nickname string, previousRole, newRole data.Rol
 func getRoleAddedSuccessMessage(nickname string, newRole data.Role) string {
 	switch {
 	case newRole.IsModerator():
-		return i18n.Localf("The role of $nickname{%s} was changed to moderator.", nickname)
+		return i18n.Localf("The role of $nickname{%s} was changed to $role{moderator}.", nickname)
 	case newRole.IsParticipant():
-		return i18n.Localf("The role of $nickname{%s} was changed to participant.", nickname)
+		return i18n.Localf("The role of $nickname{%s} was changed to $role{participant}.", nickname)
 	}
-	return i18n.Localf("The role of $nickname{%s} was changed to visitor.", nickname)
+	return i18n.Localf("The role of $nickname{%s} was changed to $role{visitor}.", nickname)
 }
 
 func getRoleChangedSuccessMessage(nickname string, previousRole, newRole data.Role) string {
 	switch {
 	case previousRole.IsModerator() && newRole.IsParticipant():
-		return i18n.Localf("The role of $nickname{%s} was changed from moderator to participant.", nickname)
+		return i18n.Localf("The role of $nickname{%s} was changed from $role{moderator} to $role{participant}.", nickname)
 	case previousRole.IsModerator() && newRole.IsVisitor():
-		return i18n.Localf("The role of $nickname{%s} was changed from moderator to visitor.", nickname)
+		return i18n.Localf("The role of $nickname{%s} was changed from $role{moderator} to $role{visitor}.", nickname)
 	case previousRole.IsParticipant() && newRole.IsModerator():
-		return i18n.Localf("The role of $nickname{%s} was changed from participant to moderator.", nickname)
+		return i18n.Localf("The role of $nickname{%s} was changed from $role{participant} to $role{moderator}.", nickname)
 	case previousRole.IsParticipant() && newRole.IsVisitor():
-		return i18n.Localf("The role of $nickname{%s} was changed from participant to visitor.", nickname)
+		return i18n.Localf("The role of $nickname{%s} was changed from $role{participant} to $role{visitor}.", nickname)
 	case previousRole.IsVisitor() && newRole.IsModerator():
-		return i18n.Localf("The role of $nickname{%s} was changed from visitor to moderator.", nickname)
+		return i18n.Localf("The role of $nickname{%s} was changed from $role{visitor} to $role{moderator}.", nickname)
 	case previousRole.IsVisitor() && newRole.IsParticipant():
-		return i18n.Localf("The role of $nickname{%s} was changed from visitor to participant.", nickname)
+		return i18n.Localf("The role of $nickname{%s} was changed from $role{visitor} to $role{participant}.", nickname)
 	}
 	return i18n.Localf("The role of $nickname{%s} was changed.", nickname)
 }

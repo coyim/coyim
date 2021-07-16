@@ -527,20 +527,20 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateSuccessMessage(c *C) {
 	visitor := newTestRoleFromString(data.RoleVisitor)
 	none := newTestRoleFromString(data.RoleNone)
 
-	c.Assert(getRoleUpdateSuccessMessage("Maria", moderator, none), Equals, "[localized] $nickname{Maria} was temporarily removed from the room.")
-	c.Assert(getRoleUpdateSuccessMessage("Carlos", participant, none), Equals, "[localized] $nickname{Carlos} was temporarily removed from the room.")
-	c.Assert(getRoleUpdateSuccessMessage("Mauricio", visitor, none), Equals, "[localized] $nickname{Mauricio} was temporarily removed from the room.")
+	c.Assert(getRoleUpdateSuccessMessage("Maria", moderator, none), Equals, "[localized] $nickname{Maria} was $role{temporarily removed} from the room.")
+	c.Assert(getRoleUpdateSuccessMessage("Carlos", participant, none), Equals, "[localized] $nickname{Carlos} was $role{temporarily removed} from the room.")
+	c.Assert(getRoleUpdateSuccessMessage("Mauricio", visitor, none), Equals, "[localized] $nickname{Mauricio} was $role{temporarily removed} from the room.")
 
-	c.Assert(getRoleUpdateSuccessMessage("Jose", none, moderator), Equals, "[localized] The role of $nickname{Jose} was changed to moderator.")
-	c.Assert(getRoleUpdateSuccessMessage("Alberto", none, participant), Equals, "[localized] The role of $nickname{Alberto} was changed to participant.")
-	c.Assert(getRoleUpdateSuccessMessage("Juan", none, visitor), Equals, "[localized] The role of $nickname{Juan} was changed to visitor.")
+	c.Assert(getRoleUpdateSuccessMessage("Jose", none, moderator), Equals, "[localized] The role of $nickname{Jose} was changed to $role{moderator}.")
+	c.Assert(getRoleUpdateSuccessMessage("Alberto", none, participant), Equals, "[localized] The role of $nickname{Alberto} was changed to $role{participant}.")
+	c.Assert(getRoleUpdateSuccessMessage("Juan", none, visitor), Equals, "[localized] The role of $nickname{Juan} was changed to $role{visitor}.")
 
-	c.Assert(getRoleUpdateSuccessMessage("Alberto", moderator, participant), Equals, "[localized] The role of $nickname{Alberto} was changed from moderator to participant.")
-	c.Assert(getRoleUpdateSuccessMessage("Alberto", moderator, visitor), Equals, "[localized] The role of $nickname{Alberto} was changed from moderator to visitor.")
-	c.Assert(getRoleUpdateSuccessMessage("Alberto", participant, moderator), Equals, "[localized] The role of $nickname{Alberto} was changed from participant to moderator.")
-	c.Assert(getRoleUpdateSuccessMessage("Carlos", participant, visitor), Equals, "[localized] The role of $nickname{Carlos} was changed from participant to visitor.")
-	c.Assert(getRoleUpdateSuccessMessage("Carlos", visitor, participant), Equals, "[localized] The role of $nickname{Carlos} was changed from visitor to participant.")
-	c.Assert(getRoleUpdateSuccessMessage("Juan", visitor, moderator), Equals, "[localized] The role of $nickname{Juan} was changed from visitor to moderator.")
+	c.Assert(getRoleUpdateSuccessMessage("Alberto", moderator, participant), Equals, "[localized] The role of $nickname{Alberto} was changed from $role{moderator} to $role{participant}.")
+	c.Assert(getRoleUpdateSuccessMessage("Alberto", moderator, visitor), Equals, "[localized] The role of $nickname{Alberto} was changed from $role{moderator} to $role{visitor}.")
+	c.Assert(getRoleUpdateSuccessMessage("Alberto", participant, moderator), Equals, "[localized] The role of $nickname{Alberto} was changed from $role{participant} to $role{moderator}.")
+	c.Assert(getRoleUpdateSuccessMessage("Carlos", participant, visitor), Equals, "[localized] The role of $nickname{Carlos} was changed from $role{participant} to $role{visitor}.")
+	c.Assert(getRoleUpdateSuccessMessage("Carlos", visitor, participant), Equals, "[localized] The role of $nickname{Carlos} was changed from $role{visitor} to $role{participant}.")
+	c.Assert(getRoleUpdateSuccessMessage("Juan", visitor, moderator), Equals, "[localized] The role of $nickname{Juan} was changed from $role{visitor} to $role{moderator}.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateFailureMessage(c *C) {

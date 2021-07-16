@@ -49,7 +49,7 @@ func getAffiliationChangedSuccessMessage(nickname string, affiliation data.Affil
 func getRoleUpdateSuccessMessage(nickname string, previousRole, newRole data.Role) string {
 	switch {
 	case newRole.IsNone():
-		return i18n.Localf("$nickname{%s} was $role{temporarily removed} from the room.", nickname)
+		return i18n.Localf("$nickname{%s} was temporarily removed from the room.", nickname)
 	case previousRole.IsNone():
 		return getRoleAddedSuccessMessage(nickname, newRole)
 	}

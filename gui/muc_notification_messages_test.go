@@ -527,9 +527,9 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateSuccessMessage(c *C) {
 	visitor := newTestRoleFromString(data.RoleVisitor)
 	none := newTestRoleFromString(data.RoleNone)
 
-	c.Assert(getRoleUpdateSuccessMessage("Maria", moderator, none), Equals, "[localized] $nickname{Maria} was $role{temporarily removed} from the room.")
-	c.Assert(getRoleUpdateSuccessMessage("Carlos", participant, none), Equals, "[localized] $nickname{Carlos} was $role{temporarily removed} from the room.")
-	c.Assert(getRoleUpdateSuccessMessage("Mauricio", visitor, none), Equals, "[localized] $nickname{Mauricio} was $role{temporarily removed} from the room.")
+	c.Assert(getRoleUpdateSuccessMessage("Maria", moderator, none), Equals, "[localized] $nickname{Maria} was temporarily removed from the room.")
+	c.Assert(getRoleUpdateSuccessMessage("Carlos", participant, none), Equals, "[localized] $nickname{Carlos} was temporarily removed from the room.")
+	c.Assert(getRoleUpdateSuccessMessage("Mauricio", visitor, none), Equals, "[localized] $nickname{Mauricio} was temporarily removed from the room.")
 
 	c.Assert(getRoleUpdateSuccessMessage("Jose", none, moderator), Equals, "[localized] The role of $nickname{Jose} was changed to $role{moderator}.")
 	c.Assert(getRoleUpdateSuccessMessage("Alberto", none, participant), Equals, "[localized] The role of $nickname{Alberto} was changed to $role{participant}.")

@@ -491,34 +491,34 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateSuccessMessage(c *
 	none := newTestAffiliationFromString(data.AffiliationNone)
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, member, none), Equals,
-		"[localized] $nickname{Juan} is not a member anymore.")
+		"[localized] $nickname{Juan} is not $affiliation{a member} anymore.")
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, admin, none), Equals,
-		"[localized] $nickname{Juan} is not an administrator anymore.")
+		"[localized] $nickname{Juan} is not $affiliation{an administrator} anymore.")
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, owner, none), Equals,
-		"[localized] $nickname{Juan} is not an owner anymore.")
+		"[localized] $nickname{Juan} is not $affiliation{an owner} anymore.")
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, none, member), Equals,
-		"[localized] The position of $nickname{Juan} was changed to member.")
+		"[localized] The position of $nickname{Juan} was changed to $affiliation{member}.")
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, none, admin), Equals,
-		"[localized] The position of $nickname{Juan} was changed to administrator.")
+		"[localized] The position of $nickname{Juan} was changed to $affiliation{administrator}.")
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, none, owner), Equals,
-		"[localized] The position of $nickname{Juan} was changed to owner.")
+		"[localized] The position of $nickname{Juan} was changed to $affiliation{owner}.")
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, none, outcast), Equals,
-		"[localized] $nickname{Juan} has been banned from the room.")
+		"[localized] $nickname{Juan} has been $affiliation{banned} from the room.")
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, member, outcast), Equals,
-		"[localized] $nickname{Juan} has been banned from the room.")
+		"[localized] $nickname{Juan} has been $affiliation{banned} from the room.")
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, admin, outcast), Equals,
-		"[localized] $nickname{Juan} has been banned from the room.")
+		"[localized] $nickname{Juan} has been $affiliation{banned} from the room.")
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, owner, outcast), Equals,
-		"[localized] $nickname{Juan} has been banned from the room.")
+		"[localized] $nickname{Juan} has been $affiliation{banned} from the room.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getRoleUpdateSuccessMessage(c *C) {

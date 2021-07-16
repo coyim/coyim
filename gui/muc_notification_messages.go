@@ -18,25 +18,25 @@ func getAffiliationUpdateSuccessMessage(nickname string, previousAffiliation, af
 func getAffiliationRemovedSuccessMessage(nickname string, previousAffiliation data.Affiliation) string {
 	switch {
 	case previousAffiliation.IsOwner():
-		return i18n.Localf("$nickname{%s} is not an owner anymore.", nickname)
+		return i18n.Localf("$nickname{%s} is not $affiliation{an owner} anymore.", nickname)
 	case previousAffiliation.IsAdmin():
-		return i18n.Localf("$nickname{%s} is not an administrator anymore.", nickname)
+		return i18n.Localf("$nickname{%s} is not $affiliation{an administrator} anymore.", nickname)
 	case previousAffiliation.IsMember():
-		return i18n.Localf("$nickname{%s} is not a member anymore.", nickname)
+		return i18n.Localf("$nickname{%s} is not $affiliation{a member} anymore.", nickname)
 	}
-	return i18n.Localf("$nickname{%s} is not banned anymore.", nickname)
+	return i18n.Localf("$nickname{%s} is not $affiliation{banned} anymore.", nickname)
 }
 
 func getAffiliationChangedSuccessMessage(nickname string, affiliation data.Affiliation) string {
 	switch {
 	case affiliation.IsOwner():
-		return i18n.Localf("The position of $nickname{%s} was changed to owner.", nickname)
+		return i18n.Localf("The position of $nickname{%s} was changed to $affiliation{owner}.", nickname)
 	case affiliation.IsAdmin():
-		return i18n.Localf("The position of $nickname{%s} was changed to administrator.", nickname)
+		return i18n.Localf("The position of $nickname{%s} was changed to $affiliation{administrator}.", nickname)
 	case affiliation.IsMember():
-		return i18n.Localf("The position of $nickname{%s} was changed to member.", nickname)
+		return i18n.Localf("The position of $nickname{%s} was changed to $affiliation{member}.", nickname)
 	case affiliation.IsBanned():
-		return i18n.Localf("$nickname{%s} has been banned from the room.", nickname)
+		return i18n.Localf("$nickname{%s} has been $affiliation{banned} from the room.", nickname)
 	}
 	return i18n.Localf("The position of $nickname{%s} was changed.", nickname)
 }

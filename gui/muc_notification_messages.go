@@ -18,27 +18,27 @@ func getAffiliationUpdateSuccessMessage(nickname string, previousAffiliation, af
 func getAffiliationRemovedSuccessMessage(nickname string, previousAffiliation data.Affiliation) string {
 	switch {
 	case previousAffiliation.IsOwner():
-		return i18n.Localf("%s is not an owner anymore.", nickname)
+		return i18n.Localf("$nickname{%s} is not an owner anymore.", nickname)
 	case previousAffiliation.IsAdmin():
-		return i18n.Localf("%s is not an administrator anymore.", nickname)
+		return i18n.Localf("$nickname{%s} is not an administrator anymore.", nickname)
 	case previousAffiliation.IsMember():
-		return i18n.Localf("%s is not a member anymore.", nickname)
+		return i18n.Localf("$nickname{%s} is not a member anymore.", nickname)
 	}
-	return i18n.Localf("%s is not banned anymore.", nickname)
+	return i18n.Localf("$nickname{%s} is not banned anymore.", nickname)
 }
 
 func getAffiliationChangedSuccessMessage(nickname string, affiliation data.Affiliation) string {
 	switch {
 	case affiliation.IsOwner():
-		return i18n.Localf("The position of %s was changed to owner.", nickname)
+		return i18n.Localf("The position of $nickname{%s} was changed to owner.", nickname)
 	case affiliation.IsAdmin():
-		return i18n.Localf("The position of %s was changed to administrator.", nickname)
+		return i18n.Localf("The position of $nickname{%s} was changed to administrator.", nickname)
 	case affiliation.IsMember():
-		return i18n.Localf("The position of %s was changed to member.", nickname)
+		return i18n.Localf("The position of $nickname{%s} was changed to member.", nickname)
 	case affiliation.IsBanned():
-		return i18n.Localf("%s has been banned from the room.", nickname)
+		return i18n.Localf("$nickname{%s} has been banned from the room.", nickname)
 	}
-	return i18n.Localf("The position of %s was changed.", nickname)
+	return i18n.Localf("The position of $nickname{%s} was changed.", nickname)
 }
 
 // getRoleUpdateSuccessMessage returns a friendly notification message for the role update process
@@ -49,7 +49,7 @@ func getAffiliationChangedSuccessMessage(nickname string, affiliation data.Affil
 func getRoleUpdateSuccessMessage(nickname string, previousRole, newRole data.Role) string {
 	switch {
 	case newRole.IsNone():
-		return i18n.Localf("%s was temporarily removed from the room.", nickname)
+		return i18n.Localf("$nickname{%s} was temporarily removed from the room.", nickname)
 	case previousRole.IsNone():
 		return getRoleAddedSuccessMessage(nickname, newRole)
 	}
@@ -59,29 +59,29 @@ func getRoleUpdateSuccessMessage(nickname string, previousRole, newRole data.Rol
 func getRoleAddedSuccessMessage(nickname string, newRole data.Role) string {
 	switch {
 	case newRole.IsModerator():
-		return i18n.Localf("The role of %s was changed to moderator.", nickname)
+		return i18n.Localf("The role of $nickname{%s} was changed to moderator.", nickname)
 	case newRole.IsParticipant():
-		return i18n.Localf("The role of %s was changed to participant.", nickname)
+		return i18n.Localf("The role of $nickname{%s} was changed to participant.", nickname)
 	}
-	return i18n.Localf("The role of %s was changed to visitor.", nickname)
+	return i18n.Localf("The role of $nickname{%s} was changed to visitor.", nickname)
 }
 
 func getRoleChangedSuccessMessage(nickname string, previousRole, newRole data.Role) string {
 	switch {
 	case previousRole.IsModerator() && newRole.IsParticipant():
-		return i18n.Localf("The role of %s was changed from moderator to participant.", nickname)
+		return i18n.Localf("The role of $nickname{%s} was changed from moderator to participant.", nickname)
 	case previousRole.IsModerator() && newRole.IsVisitor():
-		return i18n.Localf("The role of %s was changed from moderator to visitor.", nickname)
+		return i18n.Localf("The role of $nickname{%s} was changed from moderator to visitor.", nickname)
 	case previousRole.IsParticipant() && newRole.IsModerator():
-		return i18n.Localf("The role of %s was changed from participant to moderator.", nickname)
+		return i18n.Localf("The role of $nickname{%s} was changed from participant to moderator.", nickname)
 	case previousRole.IsParticipant() && newRole.IsVisitor():
-		return i18n.Localf("The role of %s was changed from participant to visitor.", nickname)
+		return i18n.Localf("The role of $nickname{%s} was changed from participant to visitor.", nickname)
 	case previousRole.IsVisitor() && newRole.IsModerator():
-		return i18n.Localf("The role of %s was changed from visitor to moderator.", nickname)
+		return i18n.Localf("The role of $nickname{%s} was changed from visitor to moderator.", nickname)
 	case previousRole.IsVisitor() && newRole.IsParticipant():
-		return i18n.Localf("The role of %s was changed from visitor to participant.", nickname)
+		return i18n.Localf("The role of $nickname{%s} was changed from visitor to participant.", nickname)
 	}
-	return i18n.Localf("The role of %s was changed.", nickname)
+	return i18n.Localf("The role of $nickname{%s} was changed.", nickname)
 }
 
 type updateFailureMessages struct {

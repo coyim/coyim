@@ -97,7 +97,7 @@ func getAffiliationUpdateFailureMessage(nickname string, newAffiliation data.Aff
 	}
 
 	return &updateFailureMessages{
-		notificationMessage: i18n.Localf("The position of %s couldn't be changed.", nickname),
+		notificationMessage: i18n.Localf("The position of $nickname{%s} couldn't be changed.", nickname),
 		errorDialogTitle:    i18n.Local("Changing the position failed"),
 		errorDialogHeader:   i18n.Localf("The position of %s couldn't be changed", nickname),
 		errorDialogMessage:  getAffiliationFailureErrorMessage(nickname, newAffiliation, err),
@@ -106,7 +106,7 @@ func getAffiliationUpdateFailureMessage(nickname string, newAffiliation data.Aff
 
 func getBannedFailureMessage(nickname string, newAffiliation data.Affiliation, err error) *updateFailureMessages {
 	return &updateFailureMessages{
-		notificationMessage: i18n.Localf("%s couldn't be banned.", nickname),
+		notificationMessage: i18n.Localf("$nickname{%s} couldn't be banned.", nickname),
 		errorDialogTitle:    i18n.Local("Banning failed"),
 		errorDialogHeader:   i18n.Localf("%s couldn't be banned", nickname),
 		errorDialogMessage:  getAffiliationFailureErrorMessage(nickname, newAffiliation, err),
@@ -140,7 +140,7 @@ func getRoleUpdateFailureMessage(nickname string, newRole data.Role) *updateFail
 	}
 
 	return &updateFailureMessages{
-		notificationMessage: i18n.Localf("The role of %s couldn't be changed.", nickname),
+		notificationMessage: i18n.Localf("The role of $nickname{%s} couldn't be changed.", nickname),
 		errorDialogTitle:    i18n.Local("Changing the role failed"),
 		errorDialogHeader:   i18n.Localf("The role of %s couldn't be changed", nickname),
 		errorDialogMessage:  getUpdateRoleFailureErrorMessage(nickname, newRole),
@@ -161,7 +161,7 @@ func getUpdateRoleFailureErrorMessage(nickname string, newRole data.Role) string
 
 func getRoleRemoveFailureMessage(nickname string, actorAffiliation data.Affiliation, err error) *updateFailureMessages {
 	return &updateFailureMessages{
-		notificationMessage: i18n.Localf("%s couldn't be expelled.", nickname),
+		notificationMessage: i18n.Localf("$nickname{%s} couldn't be expelled.", nickname),
 		errorDialogTitle:    i18n.Local("Expelling failed"),
 		errorDialogHeader:   i18n.Localf("%s couldn't be expelled", nickname),
 		errorDialogMessage:  getRoleRemoveFailureMessageBasedOnError(nickname, actorAffiliation, err),

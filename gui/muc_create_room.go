@@ -111,6 +111,8 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, onError fun
 			}
 		case err := <-ec:
 			onError(err)
+		case <-time.After(timeoutThreshold):
+			onError(errCreateRoomTimeout)
 		case <-v.cancel:
 		}
 	}()

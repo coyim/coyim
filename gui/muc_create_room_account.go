@@ -16,6 +16,8 @@ func (a *account) createInstantRoom(roomID jid.Bare, onSuccess func(), onError f
 			onError(err)
 		case <-rc:
 			onSuccess()
+		case <-time.After(timeoutThreshold):
+			onError(errCreateRoomTimeout)
 		}
 	}()
 }

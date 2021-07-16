@@ -400,29 +400,29 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affili
 		},
 	}
 
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] You are not an administrator anymore.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] You are not $affiliation{an administrator} anymore.")
 
 	sau.Reason = "you are funny"
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] You are not an administrator anymore. The reason given was: you are funny.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] You are not $affiliation{an administrator} anymore. The reason given was: you are funny.")
 
 	sau.Previous = newTestAffiliationFromString(data.AffiliationOwner)
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] You are not an owner anymore. The reason given was: you are funny.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] You are not $affiliation{an owner} anymore. The reason given was: you are funny.")
 
 	sau.Reason = ""
 	sau.Previous = newTestAffiliationFromString(data.AffiliationMember)
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] You are not a member anymore.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] You are not $affiliation{a member} anymore.")
 
 	sau.Actor = newTestActor("robin", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] The owner $nickname{robin} changed your position; you are not a member anymore.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] The owner $nickname{robin} changed your position; you are not $affiliation{a member} anymore.")
 
 	sau.Reason = "you are funny"
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] The owner $nickname{robin} changed your position; you are not a member anymore. The reason given was: you are funny.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] The owner $nickname{robin} changed your position; you are not $affiliation{a member} anymore. The reason given was: you are funny.")
 
 	sau.Previous = newTestAffiliationFromString(data.AffiliationOwner)
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] The owner $nickname{robin} changed your position; you are not an owner anymore. The reason given was: you are funny.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] The owner $nickname{robin} changed your position; you are not $affiliation{an owner} anymore. The reason given was: you are funny.")
 
 	sau.Previous = newTestAffiliationFromString(data.AffiliationMember)
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] The owner $nickname{robin} changed your position; you are not a member anymore. The reason given was: you are funny.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] The owner $nickname{robin} changed your position; you are not $affiliation{a member} anymore. The reason given was: you are funny.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affiliationAdded(c *C) {
@@ -433,32 +433,32 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affili
 		},
 	}
 
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] You are now an administrator.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] You are now $affiliation{an administrator}.")
 
 	sau.Reason = "estás encopetao"
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] You are now an administrator. The reason given was: estás encopetao.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] You are now $affiliation{an administrator}. The reason given was: estás encopetao.")
 
 	sau.Reason = ""
 	sau.AffiliationUpdate.New = newTestAffiliationFromString(data.AffiliationMember)
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] You are now a member.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] You are now $affiliation{a member}.")
 
 	sau.Reason = "you dance very well"
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] You are now a member. The reason given was: you dance very well.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] You are now $affiliation{a member}. The reason given was: you dance very well.")
 
 	sau.Reason = ""
 	sau.AffiliationUpdate.New = newTestAffiliationFromString(data.AffiliationOwner)
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] You are now an owner.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] You are now $affiliation{an owner}.")
 
 	sau.Reason = "the day is cool"
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] You are now an owner. The reason given was: the day is cool.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] You are now $affiliation{an owner}. The reason given was: the day is cool.")
 
 	sau.Reason = ""
 	sau.AffiliationUpdate.New = newTestAffiliationFromString(data.AffiliationAdmin)
 	sau.Actor = newTestActor("paco", newTestAffiliationFromString(data.AffiliationAdmin), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] The administrator $nickname{paco} changed your position; you are now an administrator.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] The administrator $nickname{paco} changed your position; you are now $affiliation{an administrator}.")
 
 	sau.Reason = "you are funny"
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] The administrator $nickname{paco} changed your position; you are now an administrator. The reason given was: you are funny.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] The administrator $nickname{paco} changed your position; you are now $affiliation{an administrator}. The reason given was: you are funny.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affiliationChanged(c *C) {
@@ -469,17 +469,17 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affili
 		},
 	}
 
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] Your position was changed from member to administrator.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] Your position was changed from $affiliation{member} to $affiliation{administrator}.")
 
 	sau.Reason = "you are loco"
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] Your position was changed from member to administrator. The reason given was: you are loco.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] Your position was changed from $affiliation{member} to $affiliation{administrator}. The reason given was: you are loco.")
 
 	sau.Reason = ""
 	sau.Actor = newTestActor("chapulin", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] The owner $nickname{chapulin} changed your position from member to administrator.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] The owner $nickname{chapulin} changed your position from $affiliation{member} to $affiliation{administrator}.")
 
 	sau.Reason = "you are locote"
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] The owner $nickname{chapulin} changed your position from member to administrator. The reason given was: you are locote.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] The owner $nickname{chapulin} changed your position from $affiliation{member} to $affiliation{administrator}. The reason given was: you are locote.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateSuccessMessage(c *C) {
@@ -640,17 +640,17 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affili
 		},
 	}
 
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] You have been banned from the room.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] You have been $affiliation{banned} from the room.")
 
 	sau.Reason = "it's so cold"
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] You have been banned from the room. The reason given was: it's so cold.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] You have been $affiliation{banned} from the room. The reason given was: it's so cold.")
 
 	sau.Reason = ""
 	sau.Actor = newTestActor("calvin", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] The owner $nickname{calvin} banned you from the room.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] The owner $nickname{calvin} $affiliation{banned} you from the room.")
 
 	sau.Reason = "it isn't cool"
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] The owner $nickname{calvin} banned you from the room. The reason given was: it isn't cool.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] The owner $nickname{calvin} $affiliation{banned} you from the room. The reason given was: it isn't cool.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_affiliationRemoved(c *C) {
@@ -662,17 +662,17 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_af
 		PreviousRole:        newTestRoleFromString(data.RoleModerator),
 	}
 
-	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] You are not an administrator anymore. [localized] As a result, your role was changed from moderator to visitor.")
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] You are not $affiliation{an administrator} anymore. [localized] As a result, your role was changed from moderator to visitor.")
 
 	saru.Reason = "he is an assassin"
-	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] [localized] You are not an administrator anymore. [localized] As a result, your role was changed from moderator to visitor. The reason given was: he is an assassin.")
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] [localized] You are not $affiliation{an administrator} anymore. [localized] As a result, your role was changed from moderator to visitor. The reason given was: he is an assassin.")
 
 	saru.Reason = ""
 	saru.Actor = newTestActor("the enemy", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] The owner $nickname{the enemy} changed your position; you are not an administrator anymore. [localized] As a result, your role was changed from moderator to visitor.")
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] The owner $nickname{the enemy} changed your position; you are not $affiliation{an administrator} anymore. [localized] As a result, your role was changed from moderator to visitor.")
 
 	saru.Reason = "bla"
-	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] [localized] The owner $nickname{the enemy} changed your position; you are not an administrator anymore. [localized] As a result, your role was changed from moderator to visitor. The reason given was: bla.")
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] [localized] The owner $nickname{the enemy} changed your position; you are not $affiliation{an administrator} anymore. [localized] As a result, your role was changed from moderator to visitor. The reason given was: bla.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_affiliationAdded(c *C) {
@@ -684,17 +684,17 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_af
 		PreviousRole:        newTestRoleFromString(data.RoleVisitor),
 	}
 
-	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] Your position was changed to administrator. [localized] As a result, your role was changed from visitor to moderator.")
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] Your position was changed to $affiliation{administrator}. [localized] As a result, your role was changed from visitor to moderator.")
 
 	saru.Reason = "she is lost in the world of wonders"
-	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] [localized] Your position was changed to administrator. [localized] As a result, your role was changed from visitor to moderator. The reason given was: she is lost in the world of wonders.")
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] [localized] Your position was changed to $affiliation{administrator}. [localized] As a result, your role was changed from visitor to moderator. The reason given was: she is lost in the world of wonders.")
 
 	saru.Reason = ""
 	saru.Actor = newTestActor("rabbit", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] The owner $nickname{rabbit} changed your position to administrator. [localized] As a result, your role was changed from visitor to moderator.")
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] The owner $nickname{rabbit} changed your position to $affiliation{administrator}. [localized] As a result, your role was changed from visitor to moderator.")
 
 	saru.Reason = "she is lost in the world of wonders"
-	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] [localized] The owner $nickname{rabbit} changed your position to administrator. [localized] As a result, your role was changed from visitor to moderator. The reason given was: she is lost in the world of wonders.")
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] [localized] The owner $nickname{rabbit} changed your position to $affiliation{administrator}. [localized] As a result, your role was changed from visitor to moderator. The reason given was: she is lost in the world of wonders.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_affiliationUpdated(c *C) {
@@ -706,17 +706,17 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_af
 		PreviousRole:        newTestRoleFromString(data.RoleVisitor),
 	}
 
-	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] Your position was changed from member to administrator. [localized] As a result, your role was changed from visitor to moderator.")
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] Your position was changed from $affiliation{member} to $affiliation{administrator}. [localized] As a result, your role was changed from visitor to moderator.")
 
 	saru.Reason = "you are a powerfull Saiyajin"
-	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] [localized] Your position was changed from member to administrator. [localized] As a result, your role was changed from visitor to moderator. The reason given was: you are a powerfull Saiyajin.")
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] [localized] Your position was changed from $affiliation{member} to $affiliation{administrator}. [localized] As a result, your role was changed from visitor to moderator. The reason given was: you are a powerfull Saiyajin.")
 
 	saru.Reason = ""
 	saru.Actor = newTestActor("vegeta", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] The owner $nickname{vegeta} changed your position from member to administrator. [localized] As a result, your role was changed from visitor to moderator.")
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] The owner $nickname{vegeta} changed your position from $affiliation{member} to $affiliation{administrator}. [localized] As a result, your role was changed from visitor to moderator.")
 
 	saru.Reason = "he is the prince of the Saiyajins"
-	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] [localized] The owner $nickname{vegeta} changed your position from member to administrator. [localized] As a result, your role was changed from visitor to moderator. The reason given was: he is the prince of the Saiyajins.")
+	c.Assert(getSelfAffiliationRoleUpdateMessage(saru), Equals, "[localized] [localized] [localized] The owner $nickname{vegeta} changed your position from $affiliation{member} to $affiliation{administrator}. [localized] As a result, your role was changed from visitor to moderator. The reason given was: he is the prince of the Saiyajins.")
 }
 
 func newTestActor(nickname string, affiliation data.Affiliation, role data.Role) *data.Actor {

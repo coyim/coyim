@@ -124,13 +124,8 @@ func (r *Room) SetProperties(p data.RoomDiscoInfo) {
 	r.properties = p
 }
 
-// AnyoneCanChangeSubject returns the value of OccupantCanChangeSubject property
-func (r *Room) AnyoneCanChangeSubject() bool {
-	return r.properties.OccupantsCanChangeSubject
-}
-
-// CanChangeSubject returns true if self occupant in the room is a moderator
-// or the room property `OccupantsCanChangeSubject` is true
-func (r *Room) CanChangeSubject() bool {
-	return r.selfOccupant.Role.IsModerator() || r.AnyoneCanChangeSubject()
+// SubjectCanBeChanged returns true if the subject of the room can be changed,
+// specifically by the self occupant of the room.
+func (r *Room) SubjectCanBeChanged() bool {
+	return r.selfOccupant.Role.IsModerator() || r.properties.OccupantsCanChangeSubject
 }

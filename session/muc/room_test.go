@@ -108,20 +108,6 @@ func (s *MucSuite) Test_Room_SetProperties(c *C) {
 	c.Assert(r.properties.AllowsRegistration, Equals, true)
 }
 
-func (s *MucSuite) Test_Room_AnyoneCanChangeSubject(c *C) {
-	r := NewRoom(jid.ParseBare("foo@bar.com"))
-
-	r.SetProperties(data.RoomDiscoInfo{
-		Language:                  "en",
-		OccupantsCanChangeSubject: false,
-	})
-
-	c.Assert(r.AnyoneCanChangeSubject(), Equals, false)
-
-	r.properties.OccupantsCanChangeSubject = true
-	c.Assert(r.AnyoneCanChangeSubject(), Equals, true)
-}
-
 func (s *MucSuite) Test_Room_CanChangeSubject(c *C) {
 	r := NewRoom(jid.ParseBare("foo@bar.com"))
 	r.AddSelfOccupant(newTestOccupant(&data.OwnerAffiliation{}, &data.VisitorRole{}))
@@ -131,8 +117,8 @@ func (s *MucSuite) Test_Room_CanChangeSubject(c *C) {
 		OccupantsCanChangeSubject: false,
 	})
 
-	c.Assert(r.CanChangeSubject(), Equals, false)
+	c.Assert(r.SubjectCanBeChanged(), Equals, false)
 
 	r.properties.OccupantsCanChangeSubject = true
-	c.Assert(r.CanChangeSubject(), Equals, true)
+	c.Assert(r.SubjectCanBeChanged(), Equals, true)
 }

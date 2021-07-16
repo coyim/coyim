@@ -140,7 +140,7 @@ func (t *roomViewToolbar) onRoomConfigChanged() {
 // onEditSubjectContextChanged MUST be called from the UI thread
 func (t *roomViewToolbar) onEditSubjectContextChanged() {
 	t.handleEditSubjectComponents()
-	if !t.roomView.room.CanChangeSubject() {
+	if !t.roomView.room.SubjectCanBeChanged() {
 		if !t.roomView.room.HasSubject() {
 			t.onHideRoomSubject()
 		}
@@ -279,7 +279,7 @@ func (t *roomViewToolbar) toggleEditSubjectComponents(v bool) {
 // handleEditSubjectComponents MUST be called from the UI thread
 func (t *roomViewToolbar) handleEditSubjectComponents() {
 	rules, ok := editSubjectComponentRules[editSubjectContext{
-		t.roomView.room.CanChangeSubject(),
+		t.roomView.room.SubjectCanBeChanged(),
 		t.roomView.room.HasSubject(),
 	}]
 

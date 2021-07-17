@@ -147,6 +147,30 @@ func (s *FormatSuite) Test_ParseWithFormat_failsOnMissingFormattingText(c *C) {
 	})
 }
 
+func (s *FormatSuite) Test_ParseWithFormat_failsOnFormatNameAtEnd(c *C) {
+	res, ok := ParseWithFormat("hello $rol")
+	c.Assert(ok, Equals, false)
+	c.Assert(res, DeepEquals, FormattedText{
+		&textFragment{"hello $rol"},
+	})
+}
+
+func (s *FormatSuite) Test_ParseWithFormat_failsOnNoEndingBrace(c *C) {
+	res, ok := ParseWithFormat("hello $role{bla")
+	c.Assert(ok, Equals, false)
+	c.Assert(res, DeepEquals, FormattedText{
+		&textFragment{"hello $role{bla"},
+	})
+}
+
+func (s *FormatSuite) Test_ParseWithFormat_incorrectEscapeInsideOfBrackets(c *C) {
+	res, ok := ParseWithFormat("hello $role{bl$a} foo")
+	c.Assert(ok, Equals, false)
+	c.Assert(res, DeepEquals, FormattedText{
+		&textFragment{"hello $role{bl$a} foo"},
+	})
+}
+
 func (s *FormatSuite) Test_Join_simpleText(c *C) {
 	res, _ := ParseWithFormat("hello world")
 	txt, formats := res.Join()
@@ -218,7 +242,3 @@ func (s *FormatSuite) Test_Join_withMoreThanOneFormatAndEscapes(c *C) {
 		44, 7, "nick",
 	})
 }
-
-// Incorrect escape inside of brackets
-// Failure of parsing the format
-//  - no ending brace

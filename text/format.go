@@ -73,12 +73,13 @@ func isFormatNameCharacter(r rune) bool {
 
 func parseFormatName(txt string) (formatName, rest string, ok bool) {
 	ix := 0
-	rstxt := []rune(txt)
-	// TODO: this should check against the end of the slice as well
-	for isFormatNameCharacter(rstxt[ix]) {
+	for ix < len(txt) && isFormatNameCharacter(rune(txt[ix])) {
 		ix++
 	}
-	return string(rstxt[0:ix]), string(rstxt[ix:]), ix > 0
+	if ix == len(txt) {
+		return "", "", false
+	}
+	return txt[0:ix], txt[ix:], ix > 0
 }
 
 func parseFormattedText(txt string) (f Fragment, rest string, ok bool) {
@@ -95,6 +96,8 @@ func parseFormattedText(txt string) (f Fragment, rest string, ok bool) {
 					result = append(result, string(txt[ix+1]))
 					currentStart = ix + 2
 					ix++
+				} else {
+					return nil, "", false
 				}
 			}
 			ix++
@@ -105,6 +108,9 @@ func parseFormattedText(txt string) (f Fragment, rest string, ok bool) {
 			ix++
 		}
 	}
+	if ix == len(txt) {
+		return nil, "", false
+	}
 	return genTextFragment(result...), txt[ix+1:], true
 }
 
@@ -114,11 +120,9 @@ func parseNextFormattedFragment(txt string) (f Fragment, rest string, ok bool) {
 		return nil, "", false
 	}
 
-	// TODO: could fail
 	if rest2[0] == '{' {
 		f2, rest3, ok3 := parseFormattedText(rest2[1:])
-		ok3 = ok3
-		return &fragmentWithFormat{formatName, f2}, rest3, true
+		return &fragmentWithFormat{formatName, f2}, rest3, ok3
 	}
 	return nil, "", false
 }

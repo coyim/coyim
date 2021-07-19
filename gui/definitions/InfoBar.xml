@@ -1,9 +1,11 @@
 <interface>
   <object class="GtkInfoBar" id="infobar">
     <property name="visible">True</property>
+    <property name="revealed">False</property>
     <signal name="response" handler="handle-response" swapped="no"/>
     <child internal-child="action_area">
       <object class="GtkButtonBox" id="actions">
+        <property name="no_show_all">True</property>
         <property name="valign">center</property>
         <property name="margin_right">12</property>
         <property name="spacing">6</property>

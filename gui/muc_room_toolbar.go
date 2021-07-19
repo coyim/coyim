@@ -78,7 +78,6 @@ func (t *roomViewToolbar) initBuilder() {
 		"on_toggle_room_subject":      t.onToggleRoomSubject,
 		"on_show_security_properties": t.roomView.showWarnings,
 		"on_configure_room":           t.roomView.onConfigureRoom,
-		"on_modify_ban_list":          t.roomView.onModifyBanList,
 		"on_destroy_room":             t.roomView.onDestroyRoom,
 		"on_leave_room":               t.roomView.onLeaveRoom,
 	})

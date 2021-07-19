@@ -117,6 +117,7 @@ func (ib *infoBarComponent) view() gtki.InfoBar {
 	return ib.infoBar
 }
 
+// setTime MUST be called from the UI thread
 func (ib *infoBarComponent) setTime(t time.Time) {
 	ib.refreshElapsedTime(t)
 	ib.time.Show()

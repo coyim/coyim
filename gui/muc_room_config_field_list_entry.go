@@ -1,27 +1,14 @@
 package gui
 
 import (
-	"strconv"
-
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-type listEntryValidator func(string) bool
-
-func listEntryNumberValidator(v string) bool {
-	if v != "" {
-		_, err := strconv.Atoi(v)
-		return err == nil
-	}
-	return true
-}
-
 type roomConfigFormFieldListEntry struct {
 	*roomConfigFormField
-	value     *muc.RoomConfigFieldListValue
-	validator listEntryValidator
+	value *muc.RoomConfigFieldListValue
 
 	list  gtki.ComboBox `gtk-widget:"room-config-field-list"`
 	entry gtki.Entry    `gtk-widget:"room-config-field-list-entry"`
@@ -29,8 +16,8 @@ type roomConfigFormFieldListEntry struct {
 	optionsModel gtki.ListStore
 }
 
-func newRoomConfigFormFieldListEntry(ft muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldListValue, validator listEntryValidator) hasRoomConfigFormField {
-	field := &roomConfigFormFieldListEntry{value: value, validator: validator}
+func newRoomConfigFormFieldListEntry(ft muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldListValue) hasRoomConfigFormField {
+	field := &roomConfigFormFieldListEntry{value: value}
 	field.roomConfigFormField = newRoomConfigFormField(ft, fieldInfo, "MUCRoomConfigFormFieldListEntry")
 
 	panicOnDevError(field.builder.bindObjects(field))
@@ -87,9 +74,12 @@ func (f *roomConfigFormFieldListEntry) updateFieldValue() {
 // isValid implements the hasRoomConfigFormField interface
 func (f *roomConfigFormFieldListEntry) isValid() bool {
 	v := f.currentValue()
-	if f.validator != nil {
-		return f.validator(v)
+
+	validator, ok := roomConfigFieldValidator[f.field]
+	if ok {
+		return validator(v)
 	}
+
 	return true
 }
 

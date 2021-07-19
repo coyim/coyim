@@ -51,7 +51,6 @@ type roomView struct {
 	loadingNotificationBox gtki.Box      `gtk-widget:"room-loading-notification-box"`
 	content                gtki.Box      `gtk-widget:"room-main-box"`
 	notificationsArea      gtki.Revealer `gtk-widget:"room-notifications-revealer"`
-	roomInfoErrorBar       gtki.InfoBar  `gtk-widget:"room-info-error-bar"`
 
 	notifications *roomNotifications
 
@@ -108,8 +107,7 @@ func (v *roomView) initBuilderAndSignals() {
 	panicOnDevError(v.builder.bindObjects(v))
 
 	v.builder.ConnectSignals(map[string]interface{}{
-		"on_destroy_window":       v.onDestroyWindow,
-		"on_room_info_load_retry": v.requestRoomDiscoInfo,
+		"on_destroy_window": v.onDestroyWindow,
 	})
 }
 
@@ -146,7 +144,8 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 
 func (v *roomView) requestRoomDiscoInfo() {
 	v.loadingViewOverlay.onRoomDiscoInfoLoad()
-	v.roomInfoErrorBar.Hide()
+	v.notifications.clearErrors()
+
 	go v.account.session.RefreshRoomProperties(v.roomID())
 }
 
@@ -166,7 +165,17 @@ func (v *roomView) roomConfigRequestTimeoutEvent() {
 	v.loadingViewOverlay.hide()
 	v.warnings.clear()
 
-	v.roomInfoErrorBar.Show()
+	v.notifications.error(roomNotificationOptions{
+		message: i18n.Local("Loading the room information took longer than usual, " +
+			"perhaps the connection to the server was lost. Do you want to try again?"),
+		actions: roomNotificationActions{{
+			label:        i18n.Local("Yes, try again"),
+			responseType: gtki.RESPONSE_YES,
+			signals: map[string]interface{}{
+				"clicked": v.requestRoomDiscoInfo,
+			},
+		}},
+	})
 }
 
 // selfOccupantAffiliationUpdatedEvent MUST be called from the UI thread

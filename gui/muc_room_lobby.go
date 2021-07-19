@@ -89,6 +89,8 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 		switch t := ev.(type) {
 		case roomDiscoInfoReceivedEvent:
 			l.roomDiscoInfoReceivedEvent(t.info, v.passwordProvider)
+		case roomConfigRequestTimeoutEvent:
+			l.roomConfigRequestTimeoutEvent()
 		case occupantSelfJoinedEvent:
 			l.finishJoinRequest()
 		case nicknameConflictEvent:
@@ -117,6 +119,14 @@ func (l *roomViewLobby) roomDiscoInfoReceivedEvent(di data.RoomDiscoInfo, passwo
 			setFieldVisibility(l.passwordEntry, true)
 			setEntryText(l.passwordEntry, passwordProvider())
 		}
+	})
+}
+
+func (l *roomViewLobby) roomConfigRequestTimeoutEvent() {
+	l.isReadyToJoinRoom = false
+	doInUIThread(func() {
+		disableField(l.nicknameEntry)
+		disableField(l.passwordEntry)
 	})
 }
 

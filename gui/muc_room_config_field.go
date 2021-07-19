@@ -2,6 +2,7 @@ package gui
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -140,4 +141,14 @@ func roomConfigFormListFieldFactory(ft muc.RoomConfigFieldType, value *muc.RoomC
 		return newRoomConfigFormFieldListEntry(ft, roomConfigFieldsTexts[ft], value, listEntryNumberValidator), nil
 	}
 	return newRoomConfigFormFieldList(ft, roomConfigFieldsTexts[ft], value), nil
+}
+
+var numberValidator = func(v string) bool {
+	_, err := strconv.Atoi(v)
+	return err == nil
+}
+
+var roomConfigFieldValidator = map[muc.RoomConfigFieldType]func(string) bool{
+	muc.RoomConfigFieldMaxOccupantsNumber:     numberValidator,
+	muc.RoomConfigFieldVoiceRequestMinInteval: numberValidator,
 }

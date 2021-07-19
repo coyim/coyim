@@ -59,7 +59,7 @@
                     <child>
                       <object class="GtkImage" id="room-config-field-list-button-image">
                         <property name="visible">True</property>
-                        <property name="icon_name">pan-down-symbolic</property>
+                        <property name="icon_name">pan-up-symbolic</property>
                       </object>
                     </child>
                   </object>

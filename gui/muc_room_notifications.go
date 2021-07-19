@@ -87,6 +87,10 @@ func (rn *roomNotifications) notificationsBox() gtki.Widget {
 	return rn.notifications.contentBox()
 }
 
+func (rn *roomNotifications) clearErrors() {
+	rn.notifications.clearErrors()
+}
+
 func (rn *roomNotifications) clearAll() {
 	rn.notifications.clearAll()
 }

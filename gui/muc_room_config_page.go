@@ -85,7 +85,7 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID mucRoomConfigPageID) *room
 		title:               configPageDisplayTitle(pageID),
 		pageID:              pageID,
 		doAfterRefresh:      newCallbacksSet(),
-		form:                c.form,
+		form:                c.data.configForm,
 		log: c.log.WithFields(log.Fields{
 			"page": pageID,
 		}),
@@ -222,8 +222,10 @@ func (p *roomConfigPage) initSummary() {
 	p.initSummaryFields(roomConfigPermissionsPageIndex)
 	p.initSummaryFields(roomConfigPositionsPageIndex)
 	p.initSummaryFields(roomConfigOthersPageIndex)
-	p.autojoinCheckButton.SetActive(p.roomConfigComponent.autoJoin)
-	p.autojoinContent.Show()
+	if p.roomConfigComponent.data.roomConfigScenario == roomConfigScenarioCreate {
+		p.autojoinCheckButton.SetActive(p.roomConfigComponent.data.autoJoinRoomAfterSaved)
+		p.autojoinContent.Show()
+	}
 }
 
 func (p *roomConfigPage) initSummaryFields(pageID mucRoomConfigPageID) {

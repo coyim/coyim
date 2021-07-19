@@ -53,7 +53,7 @@ func (u *gtkUI) newRoomConfigAssistant(data *roomConfigData) *roomConfigAssistan
 	}
 
 	rc.initBuilder()
-	rc.initRoomConfigComponent(data.configForm)
+	rc.initRoomConfigComponent(data)
 	rc.initRoomConfigPages()
 	rc.initDefaults()
 	rc.initSidebarNavigation()
@@ -72,8 +72,8 @@ func (rc *roomConfigAssistant) initBuilder() {
 	})
 }
 
-func (rc *roomConfigAssistant) initRoomConfigComponent(form *muc.RoomConfigForm) {
-	rc.roomConfigComponent = rc.u.newMUCRoomConfigComponent(rc.account, rc.roomID, form, rc.autoJoin, rc.setCurrentPage, rc.assistant)
+func (rc *roomConfigAssistant) initRoomConfigComponent(data *roomConfigData) {
+	rc.roomConfigComponent = rc.u.newMUCRoomConfigComponent(rc.account, data, rc.autoJoin, rc.setCurrentPage, rc.assistant)
 }
 
 func (rc *roomConfigAssistant) setCurrentPage(pageID mucRoomConfigPageID) {

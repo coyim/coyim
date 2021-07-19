@@ -7,7 +7,6 @@ import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/session/muc"
-	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 	log "github.com/sirupsen/logrus"
 )
@@ -37,24 +36,22 @@ var roomConfigPages = []mucRoomConfigPageID{
 type mucRoomConfigComponent struct {
 	u              *gtkUI
 	account        *account
-	form           *muc.RoomConfigForm
-	roomID         jid.Bare
+	data           *roomConfigData
 	autoJoin       bool
 	setCurrentPage func(indexPage mucRoomConfigPageID)
 	pages          []*roomConfigPage
 	log            coylog.Logger
 }
 
-func (u *gtkUI) newMUCRoomConfigComponent(account *account, roomID jid.Bare, f *muc.RoomConfigForm, autoJoin bool, setCurrentPage func(indexPage mucRoomConfigPageID), parent gtki.Window) *mucRoomConfigComponent {
+func (u *gtkUI) newMUCRoomConfigComponent(account *account, data *roomConfigData, autoJoin bool, setCurrentPage func(indexPage mucRoomConfigPageID), parent gtki.Window) *mucRoomConfigComponent {
 	c := &mucRoomConfigComponent{
 		u:              u,
 		account:        account,
-		roomID:         roomID,
-		form:           f,
+		data:           data,
 		autoJoin:       autoJoin,
 		setCurrentPage: setCurrentPage,
 		log: u.log.WithFields(log.Fields{
-			"room":  roomID,
+			"room":  data.roomID,
 			"where": "roomConfigComponent",
 		}),
 	}
@@ -76,7 +73,7 @@ func (c *mucRoomConfigComponent) updateAutoJoin(v bool) {
 
 // configureRoom IS SAFE to be called from the UI thread
 func (c *mucRoomConfigComponent) configureRoom(onSuccess func(), onError func(*muc.SubmitFormError)) {
-	rc, ec := c.account.session.UpdateOccupantAffiliations(c.roomID, c.form.GetRoomOccupantsToUpdate())
+	rc, ec := c.account.session.UpdateOccupantAffiliations(c.data.roomID, c.data.configForm.GetRoomOccupantsToUpdate())
 
 	go func() {
 		select {
@@ -92,7 +89,7 @@ func (c *mucRoomConfigComponent) configureRoom(onSuccess func(), onError func(*m
 }
 
 func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onError func(*muc.SubmitFormError)) {
-	rc, ec := c.account.session.SubmitRoomConfigurationForm(c.roomID, c.form)
+	rc, ec := c.account.session.SubmitRoomConfigurationForm(c.data.roomID, c.data.configForm)
 
 	go func() {
 		select {

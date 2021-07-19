@@ -17,10 +17,35 @@ func newRoomConfigFormTextField(ft muc.RoomConfigFieldType, fieldInfo roomConfig
 	field.roomConfigFormField = newRoomConfigFormField(ft, fieldInfo, "MUCRoomConfigFormFieldText")
 
 	panicOnDevError(field.builder.bindObjects(field))
+	field.builder.ConnectSignals(map[string]interface{}{
+		"on_field_entry_change": field.onFieldEntryChanged,
+	})
 
 	field.entry.SetText(value.Text())
 
 	return field
+}
+
+// updateFieldValue MUST be called from the UI thread
+func (f *roomConfigFormFieldText) onFieldEntryChanged() {
+	if f.isValid() {
+		f.hideValidationErrors()
+		return
+	}
+
+	f.showValidationErrors()
+}
+
+// isValid implements the hasRoomConfigFormField interface
+func (f *roomConfigFormFieldText) isValid() bool {
+	v := getEntryText(f.entry)
+
+	validator, ok := roomConfigFieldValidator[f.field]
+	if ok {
+		return validator(v)
+	}
+
+	return true
 }
 
 // updateFieldValue MUST be called from the UI thread

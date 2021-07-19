@@ -156,7 +156,9 @@ func (v *roomView) roomDiscoInfoReceivedEvent(di data.RoomDiscoInfo) {
 
 	v.warnings.clear()
 	v.addRoomWarningsBasedOnInfo(di)
-	v.privacityWarningBox.PackStart(v.warningsInfoBar.view(), true, false, 0)
+
+	v.privacityWarningBox.Add(v.warningsInfoBar.view())
+	v.warningsInfoBar.reveal()
 }
 
 // roomConfigRequestTimeoutEvent MUST be called from the UI thread

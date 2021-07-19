@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/coyim/coyim/session/muc"
+	mucData "github.com/coyim/coyim/session/muc/data"
 	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
@@ -77,4 +78,29 @@ func newRoomOccupantAffiliationQuery(item *muc.RoomOccupantItem) xmppData.MUCAdm
 			},
 		},
 	}
+}
+
+// GetRoomOccupantsByAffiliation retrieves an occupant list based on a given affiliation
+func (s *session) GetRoomOccupantsByAffiliation(roomID jid.Bare, a mucData.Affiliation) (<-chan []*muc.RoomOccupantItem, <-chan error) {
+	occupantItems := make(chan []*muc.RoomOccupantItem)
+	errorChannel := make(chan error)
+
+	rc, ec := s.muc.requestRoomOccupantsByAffiliation(roomID, a)
+	go func() {
+		select {
+		case items := <-rc:
+			occ, err := parseMUCItemsToRoomOccupantItems(items)
+			if err != nil {
+				s.muc.log.WithError(err).WithField("affiliation", a).Error("cannot parse MUCItems to OccupantItems")
+				errorChannel <- err
+				return
+			}
+			occupantItems <- occ
+		case err := <-ec:
+			s.muc.log.WithError(err).WithField("affiliation", a).Error("cannot retrieve occupants")
+			errorChannel <- err
+		}
+	}()
+
+	return occupantItems, errorChannel
 }

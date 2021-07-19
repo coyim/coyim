@@ -151,6 +151,11 @@ func (*SessionMock) UpdateOccupantAffiliations(jid.Bare, []*muc.RoomOccupantItem
 	return nil, nil
 }
 
+// GetRoomOccupantsByAffiliation is the implementation for Session interface
+func (*SessionMock) GetRoomOccupantsByAffiliation(roomID jid.Bare, a mdata.Affiliation) (<-chan []*muc.RoomOccupantItem, <-chan error) {
+	return nil, nil
+}
+
 // SendPing is the implementation for Session interface
 func (*SessionMock) SendPing() {}
 

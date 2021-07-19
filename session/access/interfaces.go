@@ -75,6 +75,7 @@ type Rooms interface {
 	SendMUCMessage(to, from, body string) error
 	UpdateRoomSubject(roomID jid.Bare, actor, subject string) error
 	UpdateOccupantAffiliations(jid.Bare, []*muc.RoomOccupantItem) (<-chan bool, <-chan error)
+	GetRoomOccupantsByAffiliation(roomID jid.Bare, a mdata.Affiliation) (<-chan []*muc.RoomOccupantItem, <-chan error)
 }
 
 // Connection contains the connection related functionality

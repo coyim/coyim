@@ -21,7 +21,6 @@ type roomConfigAssistant struct {
 	roomConfigComponent *mucRoomConfigComponent
 	navigation          *roomConfigAssistantNavigation
 
-	autoJoin                        bool
 	doAfterConfigSaved              func(autoJoin bool) // doAfterConfigSaved will be called from the UI thread
 	doAfterConfigCanceled           func()              // doAfterConfigCanceled will be called from the UI thread
 	doNotAskForConfirmationOnCancel bool
@@ -41,7 +40,6 @@ func (u *gtkUI) newRoomConfigAssistant(data *roomConfigData) *roomConfigAssistan
 		account:                         data.account,
 		roomID:                          data.roomID,
 		roomConfigScenario:              data.roomConfigScenario,
-		autoJoin:                        data.autoJoinRoomAfterSaved,
 		doAfterConfigSaved:              data.doAfterConfigSaved,
 		doAfterConfigCanceled:           data.doAfterConfigCanceled,
 		doNotAskForConfirmationOnCancel: data.doNotAskForConfirmationOnCancel,
@@ -73,7 +71,7 @@ func (rc *roomConfigAssistant) initBuilder() {
 }
 
 func (rc *roomConfigAssistant) initRoomConfigComponent(data *roomConfigData) {
-	rc.roomConfigComponent = rc.u.newMUCRoomConfigComponent(rc.account, data, rc.autoJoin, rc.setCurrentPage, rc.assistant)
+	rc.roomConfigComponent = rc.u.newMUCRoomConfigComponent(rc.account, data, rc.setCurrentPage, rc.assistant)
 }
 
 func (rc *roomConfigAssistant) setCurrentPage(pageID mucRoomConfigPageID) {
@@ -241,7 +239,7 @@ func (rc *roomConfigAssistant) onApplySuccess() {
 	rc.destroyAssistant()
 
 	if rc.doAfterConfigSaved != nil {
-		rc.doAfterConfigSaved(rc.roomConfigComponent.autoJoin)
+		rc.doAfterConfigSaved(rc.roomConfigComponent.data.autoJoinRoomAfterSaved)
 	}
 }
 

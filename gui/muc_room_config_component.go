@@ -37,18 +37,16 @@ type mucRoomConfigComponent struct {
 	u              *gtkUI
 	account        *account
 	data           *roomConfigData
-	autoJoin       bool
 	setCurrentPage func(indexPage mucRoomConfigPageID)
 	pages          []*roomConfigPage
 	log            coylog.Logger
 }
 
-func (u *gtkUI) newMUCRoomConfigComponent(account *account, data *roomConfigData, autoJoin bool, setCurrentPage func(indexPage mucRoomConfigPageID), parent gtki.Window) *mucRoomConfigComponent {
+func (u *gtkUI) newMUCRoomConfigComponent(account *account, data *roomConfigData, setCurrentPage func(indexPage mucRoomConfigPageID), parent gtki.Window) *mucRoomConfigComponent {
 	c := &mucRoomConfigComponent{
 		u:              u,
 		account:        account,
 		data:           data,
-		autoJoin:       autoJoin,
 		setCurrentPage: setCurrentPage,
 		log: u.log.WithFields(log.Fields{
 			"room":  data.roomID,
@@ -68,7 +66,7 @@ func (c *mucRoomConfigComponent) initConfigPages(parent gtki.Window) {
 }
 
 func (c *mucRoomConfigComponent) updateAutoJoin(v bool) {
-	c.autoJoin = v
+	c.data.autoJoinRoomAfterSaved = v
 }
 
 // configureRoom IS SAFE to be called from the UI thread

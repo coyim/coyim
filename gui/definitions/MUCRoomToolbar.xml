@@ -17,10 +17,10 @@
       </object>
     </child>
     <child>
-      <object class="GtkMenuItem" id="modify-ban-list-menu-item">
+      <object class="GtkMenuItem" id="modify-position-lists-menu-item">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">Modify ban list</property>
-        <signal name="activate" handler="on_modify_ban_list" swapped="no"/>
+        <property name="label" translatable="yes">Modify position lists</property>
+        <signal name="activate" handler="on_modify_position_lists" swapped="no"/>
       </object>
     </child>
     <child>

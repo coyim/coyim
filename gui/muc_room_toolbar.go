@@ -49,7 +49,7 @@ type roomViewToolbar struct {
 	roomSubjectApplyButton      gtki.Button         `gtk-widget:"room-edit-subject-apply-button"`
 	securityPropertiesMenuItem  gtki.MenuItem       `gtk-widget:"security-properties-menu-item"`
 	configureRoomMenuItem       gtki.MenuItem       `gtk-widget:"room-configuration-menu-item"`
-	modifyBanMenuItem           gtki.MenuItem       `gtk-widget:"modify-ban-list-menu-item"`
+	modifyPositionListsMenuItem gtki.MenuItem       `gtk-widget:"modify-position-lists-menu-item"`
 	destroyRoomMenuItem         gtki.MenuItem       `gtk-widget:"destroy-room-menu-item"`
 	leaveRoomMenuItem           gtki.MenuItem       `gtk-widget:"leave-room-menu-item"`
 }
@@ -78,6 +78,7 @@ func (t *roomViewToolbar) initBuilder() {
 		"on_toggle_room_subject":      t.onToggleRoomSubject,
 		"on_show_security_properties": t.roomView.showWarnings,
 		"on_configure_room":           t.roomView.onConfigureRoom,
+		"on_modify_position_lists":    t.roomView.onRoomPositionsView,
 		"on_destroy_room":             t.roomView.onDestroyRoom,
 		"on_leave_room":               t.roomView.onLeaveRoom,
 	})
@@ -190,7 +191,7 @@ func (t *roomViewToolbar) updateMenuActionsBasedOn(affiliation data.Affiliation)
 	t.destroyRoomMenuItem.SetVisible(affiliation.IsOwner())
 
 	showAdminActions := affiliation.IsOwner() || affiliation.IsAdmin()
-	t.modifyBanMenuItem.SetVisible(showAdminActions)
+	t.modifyPositionListsMenuItem.SetVisible(showAdminActions)
 }
 
 // disable MUST be called from UI Thread

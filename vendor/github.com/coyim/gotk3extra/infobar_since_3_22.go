@@ -1,7 +1,9 @@
+// +build !gtk_3_6,!gtk_3_8,!gtk_3_10,!gtk_3_12,!gtk_3_14,!gtk_3_16,!gtk_3_18,!gtk_3_20
+
 package gotk3extra
 
 // #include <gtk/gtk.h>
-// #include "infobar.go.h"
+// #include "infobar_since_3_22.go.h"
 import "C"
 import (
 	"unsafe"

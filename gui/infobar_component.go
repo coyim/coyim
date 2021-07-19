@@ -110,6 +110,17 @@ func (ib *infoBarComponent) showCloseButton(v bool) {
 // addActionWidget MUST be called from the UI thread
 func (ib *infoBarComponent) addActionWidget(w gtki.Widget, responseType gtki.ResponseType) {
 	ib.infoBar.AddActionWidget(w, responseType)
+	ib.showAll()
+}
+
+// reveal MUST be called from the UI thread
+func (ib *infoBarComponent) reveal() {
+	ib.showAll()
+	g.gtk.InfoBarSetRevealed(ib.infoBar, true)
+}
+
+// showAll MUST be called from the UI thread
+func (ib *infoBarComponent) showAll() {
 	ib.infoBar.ShowAll()
 }
 

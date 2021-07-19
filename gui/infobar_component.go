@@ -107,6 +107,16 @@ func (ib *infoBarComponent) showCloseButton(v bool) {
 	ib.infoBar.SetShowCloseButton(v)
 }
 
+// addAction MUST be called from the UI thread
+func (ib *infoBarComponent) addAction(label string, responseType gtki.ResponseType, signals map[string]interface{}) {
+	action, _ := g.gtk.ButtonNewWithLabel(label)
+	for signal, handler := range signals {
+		action.Connect(signal, handler)
+	}
+
+	ib.addActionWidget(action, responseType)
+}
+
 // addActionWidget MUST be called from the UI thread
 func (ib *infoBarComponent) addActionWidget(w gtki.Widget, responseType gtki.ResponseType) {
 	ib.infoBar.AddActionWidget(w, responseType)

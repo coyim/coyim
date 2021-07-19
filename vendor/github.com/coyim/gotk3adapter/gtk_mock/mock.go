@@ -240,3 +240,10 @@ func (*Mock) StatusIconNewFromPixbuf(pixbuf gdki.Pixbuf) (gtki.StatusIcon, error
 func (*Mock) GetWidgetBuildableName(widget gtki.Widget) (string, error) {
 	return "", nil
 }
+
+func (*Mock) InfoBarSetRevealed(infobar gtki.InfoBar, setting bool) {
+}
+
+func (*Mock) InfoBarGetRevealed(infobar gtki.InfoBar) bool {
+	return false
+}

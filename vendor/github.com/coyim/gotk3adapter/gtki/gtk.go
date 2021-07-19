@@ -68,6 +68,9 @@ type Gtk interface {
 	StatusIconNewFromPixbuf(pixbuf gdki.Pixbuf) (StatusIcon, error)
 
 	GetWidgetBuildableName(Widget) (string, error)
+
+	InfoBarSetRevealed(InfoBar, bool)
+	InfoBarGetRevealed(InfoBar) bool
 }
 
 func AssertGtk(_ Gtk) {}

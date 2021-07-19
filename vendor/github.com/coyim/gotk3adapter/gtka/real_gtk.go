@@ -235,3 +235,11 @@ func (*RealGtk) StatusIconNewFromIconName(iconName string) (gtki.StatusIcon, err
 func (*RealGtk) StatusIconNewFromPixbuf(pixbuf gdki.Pixbuf) (gtki.StatusIcon, error) {
 	return WrapStatusIcon(gotk3extra.StatusIconNewFromPixbuf(gdka.UnwrapPixbuf(pixbuf)))
 }
+
+func (*RealGtk) InfoBarSetRevealed(infobar gtki.InfoBar, setting bool) {
+	gotk3extra.InfoBarSetRevealed(UnwrapInfoBar(infobar), setting)
+}
+
+func (*RealGtk) InfoBarGetRevealed(infobar gtki.InfoBar) bool {
+	return gotk3extra.InfoBarGetRevealed(UnwrapInfoBar(infobar))
+}

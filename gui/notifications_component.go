@@ -40,8 +40,10 @@ func (n *notificationsComponent) add(nb *notificationBar) {
 
 	n.notifications = append(n.notifications, nb)
 
-	n.box.PackStart(nb.view(), true, false, 0)
+	n.box.Add(nb.view())
 	n.box.ShowAll()
+
+	nb.reveal()
 }
 
 // remove MUST be called from the ui thread

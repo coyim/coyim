@@ -36,11 +36,20 @@ func (v *roomView) newRoomNotifications() *roomNotifications {
 	}
 }
 
+type roomNotificationAction struct {
+	label        string
+	responseType gtki.ResponseType
+	signals      map[string]interface{}
+}
+
+type roomNotificationActions []roomNotificationAction
+
 type roomNotificationOptions struct {
 	message     string
 	messageType gtki.MessageType
 	showTime    bool
 	closeable   bool
+	actions     roomNotificationActions
 }
 
 func (rn *roomNotifications) info(n roomNotificationOptions) {
@@ -69,6 +78,10 @@ func (rn *roomNotifications) newNotification(n roomNotificationOptions) {
 		nb.whenRequestedToClose(func() {
 			rn.remove(nb)
 		})
+	}
+
+	for _, action := range n.actions {
+		nb.addAction(action.label, action.responseType, action.signals)
 	}
 
 	rn.notifications.add(nb)

@@ -74,8 +74,6 @@ type Rooms interface {
 	NewRoom(jid.Bare) *muc.Room
 	SendMUCMessage(to, from, body string) error
 	UpdateRoomSubject(roomID jid.Bare, actor, subject string) error
-	GetRoomBanList(jid.Bare) (<-chan muc.RoomBanList, <-chan error)
-	ModifyRoomBanList(jid.Bare, []*muc.RoomBanListItem) (<-chan bool, <-chan error)
 	UpdateOccupantAffiliations(jid.Bare, []*muc.RoomOccupantItem) (<-chan bool, <-chan error)
 }
 

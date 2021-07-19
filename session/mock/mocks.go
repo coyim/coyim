@@ -146,16 +146,6 @@ func (*SessionMock) UpdateRoomSubject(roomID jid.Bare, actor, subject string) er
 	return nil
 }
 
-// GetRoomBanList is the implementation for Session interface
-func (*SessionMock) GetRoomBanList(jid.Bare) (<-chan muc.RoomBanList, <-chan error) {
-	return nil, nil
-}
-
-// ModifyRoomBanList is the implementation for Session interface
-func (*SessionMock) ModifyRoomBanList(jid.Bare, []*muc.RoomBanListItem) (<-chan bool, <-chan error) {
-	return nil, nil
-}
-
 // UpdateOccupantAffiliations is the implementation for Session interface
 func (*SessionMock) UpdateOccupantAffiliations(jid.Bare, []*muc.RoomOccupantItem) (<-chan bool, <-chan error) {
 	return nil, nil

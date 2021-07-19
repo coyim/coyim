@@ -64,23 +64,21 @@ var highlightFormats = map[string]infoBarHighlightType{
 }
 
 func (f *infobarHighlightFormatter) formatLabel(label gtki.Label) {
-	if formatted, ok := text.ParseWithFormat(f.text); ok {
-		text, formats := formatted.Join()
-		label.SetText(text)
+	formatted, _ := text.ParseWithFormat(f.text)
 
-		pangoAttrList := g.pango.PangoAttrListNew()
+	text, formats := formatted.Join()
+	label.SetText(text)
 
-		for _, format := range formats {
-			if highlightType, ok := highlightFormats[format.Format]; ok {
-				copy := newInfoBarHighlightAttributes(highlightType)
-				copyAttributesTo(pangoAttrList, copy, format.Start, format.Start+format.Length)
-			}
+	pangoAttrList := g.pango.PangoAttrListNew()
+
+	for _, format := range formats {
+		if highlightType, ok := highlightFormats[format.Format]; ok {
+			copy := newInfoBarHighlightAttributes(highlightType)
+			copyAttributesTo(pangoAttrList, copy, format.Start, format.Start+format.Length)
 		}
-
-		label.SetPangoAttributes(pangoAttrList)
-	} else {
-		label.SetText(f.text)
 	}
+
+	label.SetPangoAttributes(pangoAttrList)
 }
 
 func copyAttributesTo(toAttrList, fromAttrList pangoi.PangoAttrList, startIndex, endIndex int) {

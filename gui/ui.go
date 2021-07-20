@@ -83,6 +83,8 @@ type gtkUI struct {
 	hooks OSHooks
 
 	mainBuilder *builder
+
+	ouit *outsideUIThread
 }
 
 // Graphics represent the graphic configuration
@@ -124,9 +126,17 @@ func argsWithApplicationName() *[]string {
 // NewGTK returns a new client for a GTK ui
 func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx Graphics, hooks OSHooks) UI {
 	runtime.LockOSThread()
+
+	inuit := &inUIThread{g: gx}
+	outuit := &outsideUIThread{
+		doInUIThread: func(f func(*inUIThread)) {
+			_, _ = inuit.g.glib.IdleAdd(func() { f(inuit) })
+		},
+	}
+
 	coyimVersion = version
 	g = gx
-	initSignals()
+	initSignals(inuit)
 
 	//*.mo files should be in ./i18n/locale_code.utf8/LC_MESSAGES/
 	g.glib.InitI18n(localizationDomain, "./i18n")
@@ -143,6 +153,8 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 		deNotify:    newDesktopNotifications(),
 		log:         log.StandardLogger().WithField("component", "gui"),
 		hooks:       hooks,
+
+		ouit: outuit,
 	}
 
 	ret.initMUC()

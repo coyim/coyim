@@ -16,3 +16,23 @@ func assertInUIThread() {
 func doInUIThread(f func()) {
 	_, _ = g.glib.IdleAdd(f)
 }
+
+type inUIThread struct {
+	g Graphics
+}
+
+func (i *inUIThread) assertInUIThread() Graphics {
+	return i.g
+}
+
+type outsideUIThread struct {
+	doInUIThread func(func(*inUIThread))
+}
+
+func (*outsideUIThread) assertInUIThread() Graphics {
+	panic("This function has to be called from the UI thread")
+}
+
+type uiThread interface {
+	assertInUIThread() Graphics
+}

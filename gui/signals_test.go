@@ -24,8 +24,8 @@ func (*mockGlibSignalNew) SignalNew(v1 string) (glibi.Signal, error) {
 }
 
 func (*SignalsSuite) Test_initSignals_willInitTheSignals(c *C) {
-	g = Graphics{glib: &mockGlibSignalNew{}}
-	initSignals()
+	g := Graphics{glib: &mockGlibSignalNew{}}
+	initSignals(&inUIThread{g})
 	c.Assert(accountChangedSignal.(*mockSignal).name, Equals, "coyim-account-changed")
 	c.Assert(enableWindow.(*mockSignal).name, Equals, "enable")
 	c.Assert(disableWindow.(*mockSignal).name, Equals, "disable")

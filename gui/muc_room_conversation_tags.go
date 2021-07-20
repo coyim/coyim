@@ -238,3 +238,96 @@ func (c *roomViewConversation) newMUCTableStyleTags(u *gtkUI) gtki.TextTagTable 
 
 	return table
 }
+
+// applyTagColors MUST be called from the UI thread
+func (c *roomViewConversation) applyTagColors(tagName conversationTag, tag gtki.TextTag, cs mucColorSet) {
+	colors := conversationTagColorDefinition(tagName, cs)
+	colors.applyToTag(tag)
+}
+
+type conversationTagColor struct {
+	foreground string
+	background string
+}
+
+// applyToTag MUST be called from the UI thread
+func (tc *conversationTagColor) applyToTag(tag gtki.TextTag) {
+	tc.applyTagColor("foreground", tc.foreground, tag)
+	tc.applyTagColor("background", tc.background, tag)
+}
+
+// applyTagColor MUST be called from the UI thread
+func (tc *conversationTagColor) applyTagColor(property, color string, tag gtki.TextTag) {
+	if color != "" {
+		tag.SetProperty(property, color)
+	}
+}
+
+var defaultConversationTagColor = &conversationTagColor{}
+
+func conversationTagColorDefinition(tagName conversationTag, cs mucColorSet) *conversationTagColor {
+	switch tagName {
+	case conversationTagWarning:
+		return &conversationTagColor{
+			foreground: cs.warningForeground,
+		}
+
+	case conversationTagInfo:
+		return &conversationTagColor{
+			foreground: cs.infoMessageForeground,
+		}
+
+	case conversationTagSomeoneLeftRoom:
+		return &conversationTagColor{
+			foreground: cs.someoneLeftForeground,
+		}
+
+	case conversationTagSomeoneJoinedRoom:
+		return &conversationTagColor{
+			foreground: cs.someoneJoinedForeground,
+		}
+
+	case conversationTagTimestamp:
+		return &conversationTagColor{
+			foreground: cs.timestampForeground,
+		}
+
+	case conversationTagNickname:
+		return &conversationTagColor{
+			foreground: cs.nicknameForeground,
+		}
+
+	case conversationTagRoomSubject:
+		return &conversationTagColor{
+			foreground: cs.subjectForeground,
+		}
+
+	case conversationTagMessage:
+		return &conversationTagColor{
+			foreground: cs.messageForeground,
+		}
+
+	case conversationTagDateGroup:
+		return &conversationTagColor{
+			foreground: cs.infoMessageForeground,
+		}
+
+	case conversationTagError:
+		return &conversationTagColor{
+			foreground: cs.errorForeground,
+		}
+
+	case conversationTagRoomConfigChange:
+		return &conversationTagColor{
+			foreground: cs.configurationForeground,
+		}
+
+	case conversationTagPassword:
+		return &conversationTagColor{
+			foreground: cs.warningForeground,
+			background: cs.warningBackground,
+		}
+	}
+
+	return defaultConversationTagColor
+}

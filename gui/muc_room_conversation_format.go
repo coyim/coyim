@@ -17,42 +17,42 @@ func (c *roomViewConversation) displayCurrentTimestamp() {
 
 // displayTimestamp MUST be called from the UI thread
 func (c *roomViewConversation) displayTimestamp(timestamp time.Time) {
-	c.addTextWithTag(i18n.Localf("[%s] ", formatTimestamp(timestamp)), "timestamp")
+	c.addTextWithTag(i18n.Localf("[%s] ", formatTimestamp(timestamp)), conversationTagTimestamp)
 }
 
 // displayNotificationWhenOccupantJoinedRoom MUST be called from the UI thread
 func (c *roomViewConversation) displayNotificationWhenOccupantJoinedRoom(nickname string) {
-	c.displayTextLineWithTimestamp(i18n.Localf("%s joined the room", nickname), "joinedRoom")
+	c.displayTextLineWithTimestamp(i18n.Localf("%s joined the room", nickname), conversationTagSomeoneJoinedRoom)
 }
 
 // displayNotificationWhenOccupantLeftTheRoom MUST be called from the UI thread
 func (c *roomViewConversation) displayNotificationWhenOccupantLeftTheRoom(nickname string) {
-	c.displayTextLineWithTimestamp(i18n.Localf("%s left the room", nickname), "leftRoom")
+	c.displayTextLineWithTimestamp(i18n.Localf("%s left the room", nickname), conversationTagSomeoneLeftRoom)
 }
 
 // displayNickname MUST be called from the UI thread
 func (c *roomViewConversation) displayNickname(nickname string) {
-	c.addTextWithTag(i18n.Localf("%s: ", nickname), "nickname")
+	c.addTextWithTag(i18n.Localf("%s: ", nickname), conversationTagNickname)
 }
 
 // displayRoomSubject MUST be called from the UI thread
 func (c *roomViewConversation) displayRoomSubject(subject string) {
-	c.displayTextLineWithTimestamp(subject, "subject")
+	c.displayTextLineWithTimestamp(subject, conversationTagRoomSubject)
 }
 
 // displayMessage MUST be called from the UI thread
 func (c *roomViewConversation) displayMessage(message string) {
-	c.addTextWithTag(message, "message")
+	c.addTextWithTag(message, conversationTagMessage)
 }
 
 // displayInfoMessage MUST be called from the UI thread
 func (c *roomViewConversation) displayInfoMessage(message string) {
-	c.addTextWithTag(message, "infoMessage")
+	c.addTextWithTag(message, conversationTagInfo)
 }
 
 // displayConfigurationMessage MUST be called from the UI thread
 func (c *roomViewConversation) displayConfigurationMessage(message string) {
-	c.addTextWithTag(message, "configuration")
+	c.addTextWithTag(message, conversationTagRoomConfigChange)
 }
 
 // displayLiveMessage MUST be called from the UI thread
@@ -72,7 +72,7 @@ func (c *roomViewConversation) displayDiscussionHistoryDate(d time.Time) {
 
 	c.chatTextView.SetJustification(gtki.JUSTIFY_CENTER)
 
-	c.addTextWithTag(timeToFriendlyString(d), "groupdate")
+	c.addTextWithTag(timeToFriendlyString(d), conversationTagDateGroup)
 	c.addNewLine()
 }
 
@@ -109,17 +109,19 @@ func (c *roomViewConversation) displayNewConfigurationMessage(message string) {
 
 // displayWarningMessage MUST be called from the UI thread
 func (c *roomViewConversation) displayWarningMessage(message string) {
-	c.displayTextLineWithTimestamp(message, "warning")
+	c.displayTextLineWithTimestamp(message, conversationTagWarning)
 }
 
 // displayErrorMessage MUST be called from the UI thread
 func (c *roomViewConversation) displayErrorMessage(message string) {
-	c.displayTextLineWithTimestamp(message, "error")
+	c.displayTextLineWithTimestamp(message, conversationTagError)
 }
+
+const conversationDividerText = "――――――――――――――――――――"
 
 // displayDivider MUST be called from the UI thread
 func (c *roomViewConversation) displayDivider() {
-	c.addTextWithTag("――――――――――――――――――――", "divider")
+	c.addTextWithTag(conversationDividerText, conversationTagDivider)
 	c.addNewLine()
 }
 
@@ -138,9 +140,9 @@ func (c *roomViewConversation) displayNotificationWhenRoomDestroyed(reason strin
 
 func (c *roomViewConversation) displayAlternativeRoomInfoWithPassword(message, password string) {
 	c.displayCurrentTimestamp()
-	c.addTextWithTag(i18n.Localf("%s , with this password: \"", message), "warning")
+	c.addTextWithTag(i18n.Localf("%s , with this password: \"", message), conversationTagWarning)
 	c.addTextWithTag(i18n.Localf("%s", password), "password")
-	c.addTextWithTag(i18n.Local("\"."), "warning")
+	c.addTextWithTag(i18n.Local("\"."), conversationTagWarning)
 	c.addNewLine()
 }
 
@@ -158,7 +160,7 @@ func (c *roomViewConversation) displayAlternativeRoomInfo(reason string, alterna
 			return
 		}
 	}
-	c.displayTextLineWithTimestamp(i18n.Localf("%s.", message), "warning")
+	c.displayTextLineWithTimestamp(i18n.Localf("%s.", message), conversationTagWarning)
 }
 
 func formatTimestamp(t time.Time) string {

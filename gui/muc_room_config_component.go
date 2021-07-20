@@ -128,7 +128,9 @@ func (c *mucRoomConfigComponent) friendlyConfigErrorMessage(err error) string {
 	case session.ErrRoomAffiliationsUpdate:
 		return i18n.Local("The list affiliations couldn't be updated. Verify your permissions and try again.")
 	case session.ErrInternalServerErrorResponse:
-		return i18n.Local("The server had a problem trying to process your request. This could be caused by wrong information entered in the form fields.")
+		// When configuring a room, if there is a problem with a value entered in the form, Openfire returns an Internal Server Error.
+		// This message is meant for this situation.
+		return i18n.Local("The settings couldn't be changed. Please, verify the information in the form.")
 	case errCreateRoomTimeout:
 		return i18n.Local("We didn't receive a response from the server.")
 	}

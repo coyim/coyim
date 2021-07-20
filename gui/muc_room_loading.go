@@ -65,3 +65,10 @@ func (lo *roomViewLoadingOverlay) onRoomConfigurationRequest() {
 	lo.setTransparent()
 	lo.show()
 }
+
+// onRoomPositionsRequest MUST be called from the UI thread
+func (lo *roomViewLoadingOverlay) onRoomPositionsRequest() {
+	lo.setTitle(i18n.Local("Looking occupants by affiliation..."))
+	lo.setTransparent()
+	lo.show()
+}

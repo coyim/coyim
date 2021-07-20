@@ -126,7 +126,7 @@ func (c *roomViewConversation) displayDivider() {
 }
 
 // displayTextLineWithTimestamp MUST be called from the UI thread
-func (c *roomViewConversation) displayTextLineWithTimestamp(text string, tag string) {
+func (c *roomViewConversation) displayTextLineWithTimestamp(text string, tag conversationTag) {
 	c.displayCurrentTimestamp()
 	c.addTextWithTag(text, tag)
 	c.addNewLine()

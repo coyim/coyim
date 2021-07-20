@@ -39,7 +39,7 @@ func (c *roomViewConversation) addText(text string) {
 }
 
 // addTextWithTag MUST be called from the UI thread
-func (c *roomViewConversation) addTextWithTag(text string, tag string) {
+func (c *roomViewConversation) addTextWithTag(text string, tag conversationTag) {
 	b := c.getTextBuffer()
-	b.InsertWithTagByName(b.GetEndIter(), text, tag)
+	b.InsertWithTagByName(b.GetEndIter(), text, string(tag))
 }

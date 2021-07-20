@@ -5,24 +5,26 @@ import (
 	"github.com/coyim/gotk3adapter/pangoi"
 )
 
+type conversationTag string
+
 const (
-	conversationTagTimestamp         = "timestamp"
-	conversationTagMessage           = "message"
-	conversationTagNickname          = "nickname"
-	conversationTagSomeoneLeftRoom   = "occupantLeftRoom"
-	conversationTagSomeoneJoinedRoom = "occupantJoinedRoom"
-	conversationTagRoomSubject       = "subject"
-	conversationTagRoomConfigChange  = "roomConfigChange"
-	conversationTagDateGroup         = "dateGroup"
-	conversationTagDivider           = "divider"
-	conversationTagPassword          = "password"
-	conversationTagInfo              = "info"
-	conversationTagWarning           = "warning"
-	conversationTagError             = "error"
+	conversationTagTimestamp         conversationTag = "timestamp"
+	conversationTagMessage           conversationTag = "message"
+	conversationTagNickname          conversationTag = "nickname"
+	conversationTagSomeoneLeftRoom   conversationTag = "occupantLeftRoom"
+	conversationTagSomeoneJoinedRoom conversationTag = "occupantJoinedRoom"
+	conversationTagRoomSubject       conversationTag = "subject"
+	conversationTagRoomConfigChange  conversationTag = "roomConfigChange"
+	conversationTagDateGroup         conversationTag = "dateGroup"
+	conversationTagDivider           conversationTag = "divider"
+	conversationTagPassword          conversationTag = "password"
+	conversationTagInfo              conversationTag = "info"
+	conversationTagWarning           conversationTag = "warning"
+	conversationTagError             conversationTag = "error"
 )
 
-func (c *roomViewConversation) createConversationTag(name string, properties map[string]interface{}) gtki.TextTag {
-	tag, _ := g.gtk.TextTagNew(name)
+func (c *roomViewConversation) createConversationTag(name conversationTag, properties map[string]interface{}) gtki.TextTag {
+	tag, _ := g.gtk.TextTagNew(string(name))
 	for attribute, value := range properties {
 		_ = tag.SetProperty(attribute, value)
 	}

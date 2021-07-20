@@ -24,6 +24,22 @@ const (
 	conversationTagError             conversationTag = "error"
 )
 
+var uniqueHighlightFormatName = func(format string) conversationTag {
+	return conversationTag(fmt.Sprintf("f%s", format))
+}
+
+var (
+	conversationTagFormatNickame     conversationTag = uniqueHighlightFormatName(highlightFormatNickname)
+	conversationTagFormatAffiliation conversationTag = uniqueHighlightFormatName(highlightFormatAffiliation)
+	conversationTagFormatRole        conversationTag = uniqueHighlightFormatName(highlightFormatRole)
+)
+
+var conversationTagFormats = map[conversationTag]bool{
+	conversationTagFormatNickame:     true,
+	conversationTagFormatAffiliation: true,
+	conversationTagFormatRole:        true,
+}
+
 const converstationLineSpacing = 12
 
 var conversationTagsPropertiesRegistry = map[conversationTag]pangoAttributes{
@@ -72,27 +88,6 @@ var conversationTagsPropertiesRegistry = map[conversationTag]pangoAttributes{
 	conversationTagError: {
 		"style": pangoFontStyleNormal,
 	},
-}
-
-func (c *roomViewConversation) createConversationTag(name conversationTag, properties pangoAttributes) gtki.TextTag {
-	tag, _ := g.gtk.TextTagNew(string(name))
-	for attribute, value := range properties {
-		_ = tag.SetProperty(attribute, value)
-	}
-	return tag
-}
-
-var uniqueHighlightFormatName = func(format string) conversationTag {
-	return conversationTag(fmt.Sprintf("f%s", format))
-}
-
-var (
-	conversationTagFormatNickame     conversationTag = uniqueHighlightFormatName(highlightFormatNickname)
-	conversationTagFormatAffiliation conversationTag = uniqueHighlightFormatName(highlightFormatAffiliation)
-	conversationTagFormatRole        conversationTag = uniqueHighlightFormatName(highlightFormatRole)
-)
-
-var conversationTagFormats = map[conversationTag]pangoAttributes{
 	conversationTagFormatNickame: {
 		"weight": pangoFontWeightBold,
 		"style":  pangoFontStyleItalic,
@@ -107,12 +102,12 @@ var conversationTagFormats = map[conversationTag]pangoAttributes{
 	},
 }
 
-// createTextFormatTags MUST be called from the UI thread
-func (c *roomViewConversation) createTextFormatTags(table gtki.TextTagTable) {
-	for tagFormat, properties := range conversationTagFormats {
-		tag := c.createConversationTag(tagFormat, pangoAttributesNormalize(properties))
-		table.Add(tag)
+func (c *roomViewConversation) createConversationTag(name conversationTag, properties pangoAttributes) gtki.TextTag {
+	tag, _ := g.gtk.TextTagNew(string(name))
+	for attribute, value := range properties {
+		_ = tag.SetProperty(attribute, value)
 	}
+	return tag
 }
 
 func (c *roomViewConversation) newMUCTableStyleTags(u *gtkUI) gtki.TextTagTable {
@@ -124,8 +119,6 @@ func (c *roomViewConversation) newMUCTableStyleTags(u *gtkUI) gtki.TextTagTable 
 		c.applyTagColors(tagName, tag, cs)
 		table.Add(tag)
 	}
-
-	c.createTextFormatTags(table)
 
 	return table
 }

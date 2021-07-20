@@ -189,6 +189,11 @@ func (c *roomViewConversation) displayFormattedMessage(formatted text.FormattedT
 
 			lastDisplayedIndex = textFormatSize
 		}
+
+		restOfTheText := message[lastDisplayedIndex:]
+		if restOfTheText != "" {
+			c.displayInfoMessage(restOfTheText)
+		}
 	} else {
 		c.displayInfoMessage(message)
 	}

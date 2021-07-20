@@ -25,7 +25,7 @@ const (
 	conversationTagError             conversationTag = "error"
 )
 
-func (c *roomViewConversation) createConversationTag(name conversationTag, properties map[string]interface{}) gtki.TextTag {
+func (c *roomViewConversation) createConversationTag(name conversationTag, properties pangoAttributes) gtki.TextTag {
 	tag, _ := g.gtk.TextTagNew(string(name))
 	for attribute, value := range properties {
 		_ = tag.SetProperty(attribute, value)
@@ -34,41 +34,41 @@ func (c *roomViewConversation) createConversationTag(name conversationTag, prope
 }
 
 func (c *roomViewConversation) createWarningTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag(conversationTagWarning, map[string]interface{}{
+	return c.createConversationTag(conversationTagWarning, pangoAttributes{
 		"foreground": cs.warningForeground,
 	})
 }
 
 func (c *roomViewConversation) createInfoMessageTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag(conversationTagInfo, map[string]interface{}{
+	return c.createConversationTag(conversationTagInfo, pangoAttributes{
 		"foreground": cs.infoMessageForeground,
 		"style":      pangoi.STYLE_ITALIC,
 	})
 }
 
 func (c *roomViewConversation) createLeftRoomTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag(conversationTagSomeoneLeftRoom, map[string]interface{}{
+	return c.createConversationTag(conversationTagSomeoneLeftRoom, pangoAttributes{
 		"foreground": cs.someoneLeftForeground,
 		"style":      pangoi.STYLE_ITALIC,
 	})
 }
 
 func (c *roomViewConversation) createJoinedRoomTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag(conversationTagSomeoneJoinedRoom, map[string]interface{}{
+	return c.createConversationTag(conversationTagSomeoneJoinedRoom, pangoAttributes{
 		"foreground": cs.someoneJoinedForeground,
 		"style":      pangoi.STYLE_ITALIC,
 	})
 }
 
 func (c *roomViewConversation) createTimestampTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag(conversationTagTimestamp, map[string]interface{}{
+	return c.createConversationTag(conversationTagTimestamp, pangoAttributes{
 		"foreground": cs.timestampForeground,
 		"style":      pangoi.STYLE_NORMAL,
 	})
 }
 
 func (c *roomViewConversation) createNicknameTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag(conversationTagNickname, map[string]interface{}{
+	return c.createConversationTag(conversationTagNickname, pangoAttributes{
 		"foreground": cs.nicknameForeground,
 		"style":      pangoi.STYLE_NORMAL,
 		"weight":     pangoi.WEIGHT_BOLD,
@@ -76,21 +76,21 @@ func (c *roomViewConversation) createNicknameTag(cs mucColorSet) gtki.TextTag {
 }
 
 func (c *roomViewConversation) createSubjectTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag(conversationTagRoomSubject, map[string]interface{}{
+	return c.createConversationTag(conversationTagRoomSubject, pangoAttributes{
 		"foreground": cs.subjectForeground,
 		"style":      pangoi.STYLE_ITALIC,
 	})
 }
 
 func (c *roomViewConversation) createMessageTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag(conversationTagMessage, map[string]interface{}{
+	return c.createConversationTag(conversationTagMessage, pangoAttributes{
 		"foreground": cs.messageForeground,
 		"style":      pangoi.STYLE_NORMAL,
 	})
 }
 
 func (c *roomViewConversation) createGroupDateTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag(conversationTagDateGroup, map[string]interface{}{
+	return c.createConversationTag(conversationTagDateGroup, pangoAttributes{
 		"justification":      pangoi.JUSTIFY_CENTER,
 		"pixels-above-lines": 12,
 		"pixels-below-lines": 12,
@@ -100,7 +100,7 @@ func (c *roomViewConversation) createGroupDateTag(cs mucColorSet) gtki.TextTag {
 }
 
 func (c *roomViewConversation) createDividerTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag(conversationTagDivider, map[string]interface{}{
+	return c.createConversationTag(conversationTagDivider, pangoAttributes{
 		"justification":      pangoi.JUSTIFY_CENTER,
 		"pixels-above-lines": 12,
 		"pixels-below-lines": 12,
@@ -108,20 +108,20 @@ func (c *roomViewConversation) createDividerTag(cs mucColorSet) gtki.TextTag {
 }
 
 func (c *roomViewConversation) createErrorTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag(conversationTagError, map[string]interface{}{
+	return c.createConversationTag(conversationTagError, pangoAttributes{
 		"foreground": cs.errorForeground,
 	})
 }
 
 func (c *roomViewConversation) createConfigurationChangeTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag(conversationTagRoomConfigChange, map[string]interface{}{
+	return c.createConversationTag(conversationTagRoomConfigChange, pangoAttributes{
 		"foreground": cs.configurationForeground,
 		"style":      pangoi.STYLE_ITALIC,
 	})
 }
 
 func (c *roomViewConversation) createPasswordTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag(conversationTagPassword, map[string]interface{}{
+	return c.createConversationTag(conversationTagPassword, pangoAttributes{
 		"foreground": cs.warningForeground,
 		"background": cs.warningBackground,
 	})
@@ -137,7 +137,7 @@ var (
 	conversationTagFormatRole        conversationTag = uniqueHighlightFormatName(highlightFormatRole)
 )
 
-var conversationTagFormats = map[conversationTag]map[string]interface{}{
+var conversationTagFormats = map[conversationTag]pangoAttributes{
 	conversationTagFormatNickame: {
 		"weight": pangoFontWeightBold,
 		"style":  pangoFontStyleItalic,

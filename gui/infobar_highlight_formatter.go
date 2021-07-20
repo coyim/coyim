@@ -57,7 +57,13 @@ const (
 	highlightFormatRole        = "role"
 )
 
-var highlightFormats = map[string]infoBarHighlightType{
+var highlightFormats = []string{
+	highlightFormatNickname,
+	highlightFormatAffiliation,
+	highlightFormatRole,
+}
+
+var infoBarHighlightFormats = map[string]infoBarHighlightType{
 	highlightFormatNickname:    infoBarHighlightNickname,
 	highlightFormatAffiliation: infoBarHighlightAffiliation,
 	highlightFormatRole:        infoBarHighlightRole,
@@ -72,7 +78,7 @@ func (f *infobarHighlightFormatter) formatLabel(label gtki.Label) {
 	pangoAttrList := g.pango.PangoAttrListNew()
 
 	for _, format := range formats {
-		if highlightType, ok := highlightFormats[format.Format]; ok {
+		if highlightType, ok := infoBarHighlightFormats[format.Format]; ok {
 			copy := newInfoBarHighlightAttributes(highlightType)
 			copyAttributesTo(pangoAttrList, copy, format.Start, format.Start+format.Length)
 		}

@@ -361,17 +361,17 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationRoleUpdateMessage_affili
 		PreviousRole:        newTestRoleFromString(data.RoleVisitor),
 	}
 
-	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "[localized] [localized] The position of Pegassus was changed from owner to administrator. [localized] As a result, their role was changed from visitor to moderator.")
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "[localized] [localized] The position of $nickname{Pegassus} was changed from $affiliation{owner} to $affiliation{administrator}. [localized] As a result, their role was changed from visitor to moderator.")
 
 	aru.Reason = "he is a silver warrior"
-	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "[localized] [localized] [localized] The position of Pegassus was changed from owner to administrator. [localized] As a result, their role was changed from visitor to moderator. The reason given was: he is a silver warrior.")
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "[localized] [localized] [localized] The position of $nickname{Pegassus} was changed from $affiliation{owner} to $affiliation{administrator}. [localized] As a result, their role was changed from visitor to moderator. The reason given was: he is a silver warrior.")
 
 	aru.Reason = ""
 	aru.Actor = newTestActor("Ikki", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "[localized] [localized] The owner Ikki changed the position of Pegassus from owner to administrator. [localized] As a result, their role was changed from visitor to moderator.")
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "[localized] [localized] The owner $nickname{Ikki} changed the position of $nickname{Pegassus} from $affiliation{owner} to $affiliation{administrator}. [localized] As a result, their role was changed from visitor to moderator.")
 
 	aru.Reason = "he has the phoenix flame"
-	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "[localized] [localized] [localized] The owner Ikki changed the position of Pegassus from owner to administrator. [localized] As a result, their role was changed from visitor to moderator. The reason given was: he has the phoenix flame.")
+	c.Assert(getAffiliationRoleUpdateMessage(aru), Equals, "[localized] [localized] [localized] The owner $nickname{Ikki} changed the position of $nickname{Pegassus} from $affiliation{owner} to $affiliation{administrator}. [localized] As a result, their role was changed from visitor to moderator. The reason given was: he has the phoenix flame.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getMUCNotificationMessageFrom_affiliationRoleUpdate(c *C) {

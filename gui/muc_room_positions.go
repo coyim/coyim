@@ -4,7 +4,9 @@ import (
 	"sync"
 
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -106,7 +108,75 @@ func (rp *roomPositionsView) initDefaults() {
 	mucStyles.setRoomConfigPageStyle(rp.content)
 }
 
+// requestOccupantsByAffiliation MUST NOT be called from the UI thread
+func (rp *roomPositionsView) requestOccupantsByAffiliation(a data.Affiliation, onSuccess func(muc.RoomOccupantItemList), onError func()) {
+	rc, ec := rp.roomView.account.session.GetRoomOccupantsByAffiliation(rp.roomView.roomID(), a)
+
+	select {
+	case ol := <-rc:
+		onSuccess(ol)
+	case <-ec:
+		onError()
+	}
+}
+
+func (rp *roomPositionsView) requestRoomPositions(onSuccess func(), onError func()) {
+	rp.requestOccupantsByAffiliation(&data.OwnerAffiliation{},
+		func(items muc.RoomOccupantItemList) {
+			rp.roomPositions.setOwnerList(items)
+
+			rp.addPositionComponent(newRoomConfigPositions(&data.OwnerAffiliation{}, rp.roomPositions.ownersList(),
+				rp.roomPositions.setOwnerList, rp.roomPositions.updateRemovedOccupantList, func() {}))
+		},
+		onError)
+
+	rp.requestOccupantsByAffiliation(&data.AdminAffiliation{},
+		func(items muc.RoomOccupantItemList) {
+			rp.roomPositions.setAdminList(items)
+
+			rp.addPositionComponent(newRoomConfigPositions(&data.AdminAffiliation{}, rp.roomPositions.adminsList(),
+				rp.roomPositions.setAdminList, rp.roomPositions.updateRemovedOccupantList, func() {}))
+		},
+		onError)
+
+	rp.requestOccupantsByAffiliation(&data.OutcastAffiliation{},
+		func(items muc.RoomOccupantItemList) {
+			rp.roomPositions.setBanList(items)
+
+			rp.addPositionComponent(newRoomConfigPositions(&data.OutcastAffiliation{}, rp.roomPositions.bannedList(),
+				rp.roomPositions.setBanList, rp.roomPositions.updateRemovedOccupantList, func() {}))
+		},
+		onError)
+
+	onSuccess()
+}
+
+func (rp *roomPositionsView) addPositionComponent(positionComponent hasRoomConfigFormField) {
+	rp.content.Add(positionComponent.fieldWidget())
+	positionComponent.refreshContent()
+}
+
 // show MUST be called from the UI thread
 func (rp *roomPositionsView) show() {
-	rp.dialog.Show()
+	rp.roomView.loadingViewOverlay.onRoomPositionsRequest()
+
+	go func() {
+		rp.requestRoomPositions(
+			func() {
+				doInUIThread(func() {
+					rp.roomView.loadingViewOverlay.hide()
+					rp.dialog.Show()
+				})
+			},
+			func() {
+				doInUIThread(func() {
+					rp.roomView.loadingViewOverlay.hide()
+					rp.roomView.notifications.error(roomNotificationOptions{
+						message:   i18n.Local("We couldn't get the occupants by affiliation"),
+						closeable: true,
+					})
+				})
+			},
+		)
+	}()
 }

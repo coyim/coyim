@@ -800,17 +800,17 @@ func getAffiliationRoleUpdateMessageForAffiliation(affiliationRoleUpdate data.Af
 func getAffiliationRoleUpdateMessageForRole(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
 	switch {
 	case affiliationRoleUpdate.PreviousRole.IsVisitor() && affiliationRoleUpdate.NewRole.IsParticipant():
-		return i18n.Local("As a result, their role was changed from visitor to participant.")
+		return i18n.Local("As a result, their role was changed from $role{visitor} to $role{participant}.")
 	case affiliationRoleUpdate.PreviousRole.IsVisitor() && affiliationRoleUpdate.NewRole.IsModerator():
-		return i18n.Local("As a result, their role was changed from visitor to moderator.")
+		return i18n.Local("As a result, their role was changed from $role{visitor} to $role{moderator}.")
 	case affiliationRoleUpdate.PreviousRole.IsParticipant() && affiliationRoleUpdate.NewRole.IsVisitor():
-		return i18n.Local("As a result, their role was changed from participant to visitor.")
+		return i18n.Local("As a result, their role was changed from $role{participant} to $role{visitor}.")
 	case affiliationRoleUpdate.PreviousRole.IsParticipant() && affiliationRoleUpdate.NewRole.IsModerator():
-		return i18n.Local("As a result, their role was changed from participant to moderator.")
+		return i18n.Local("As a result, their role was changed from $role{participant} to $role{moderator}.")
 	case affiliationRoleUpdate.PreviousRole.IsModerator() && affiliationRoleUpdate.NewRole.IsVisitor():
-		return i18n.Local("As a result, their role was changed from moderator to visitor.")
+		return i18n.Local("As a result, their role was changed from $role{moderator} to $role{visitor}.")
 	case affiliationRoleUpdate.PreviousRole.IsModerator() && affiliationRoleUpdate.NewRole.IsParticipant():
-		return i18n.Local("As a result, their role was changed from moderator to participant.")
+		return i18n.Local("As a result, their role was changed from $role{moderator} to $role{participant}.")
 	}
 	return i18n.Local("As a result, their role was also changed.")
 }

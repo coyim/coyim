@@ -185,10 +185,20 @@ func (c *roomViewConversation) displayFormattedMessage(formatted text.FormattedT
 
 			textFormatSize := format.Start + format.Length
 			textFormat := message[format.Start:textFormatSize]
-			c.displayInfoMessage(textFormat)
+			c.displayMessageFormatting(textFormat, format)
 
 			lastDisplayedIndex = textFormatSize
 		}
+	} else {
+		c.displayInfoMessage(message)
+	}
+}
+
+// displayMessageFormatting MUST be called from the UI thread
+func (c *roomViewConversation) displayMessageFormatting(message string, format text.Formatting) {
+	formatID := uniqueHighlightFormatName(format.Format)
+	if _, isDefined := conversationTagFormats[formatID]; isDefined {
+		c.addTextWithTag(message, formatID)
 	} else {
 		c.displayInfoMessage(message)
 	}

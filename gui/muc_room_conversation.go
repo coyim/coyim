@@ -170,6 +170,8 @@ func (c *roomViewConversation) displayOccupantUpdateMessageFor(update interface{
 	} else {
 		c.displayInfoMessage(message)
 	}
+
+	c.addNewLine()
 }
 
 // displayFormattedMessage MUST be called from the UI thread

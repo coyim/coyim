@@ -843,16 +843,16 @@ func getAffiliationRoleUpateForAffiliationRemoved(affiliationRoleUpdate data.Aff
 func getAffiliationRoleUpateForAffiliationRemovedWithoutActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
 	switch {
 	case affiliationRoleUpdate.PreviousAffiliation.IsOwner():
-		return i18n.Localf("%s is not an owner anymore.",
+		return i18n.Localf("$nickname{%s} is not $affiliation{an owner} anymore.",
 			affiliationRoleUpdate.Nickname)
 	case affiliationRoleUpdate.PreviousAffiliation.IsAdmin():
-		return i18n.Localf("%s is not an administrator anymore.",
+		return i18n.Localf("$nickname{%s} is not $affiliation{an administrator} anymore.",
 			affiliationRoleUpdate.Nickname)
 	case affiliationRoleUpdate.PreviousAffiliation.IsMember():
-		return i18n.Localf("%s is not a member anymore.",
+		return i18n.Localf("$nickname{%s} is not $affiliation{a member} anymore.",
 			affiliationRoleUpdate.Nickname)
 	}
-	return i18n.Localf("%s is not banned anymore.",
+	return i18n.Localf("$nickname{%s} is $affiliation{not banned} anymore.",
 		affiliationRoleUpdate.Nickname)
 }
 
@@ -869,19 +869,19 @@ func getAffiliationRoleUpateForAffiliationRemovedWithActor(affiliationRoleUpdate
 func getAffiliationRoleUpateForAffiliationRemovedWithOwnerActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
 	switch {
 	case affiliationRoleUpdate.PreviousAffiliation.IsOwner():
-		return i18n.Localf("The owner %[1]s changed the position of %[2]s; %[2]s is not an owner anymore.",
+		return i18n.Localf("The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is not $affiliation{an owner} anymore.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	case affiliationRoleUpdate.PreviousAffiliation.IsAdmin():
-		return i18n.Localf("The owner %[1]s changed the position of %[2]s; %[2]s is not an administrator anymore.",
+		return i18n.Localf("The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is not $affiliation{an administrator} anymore.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	case affiliationRoleUpdate.PreviousAffiliation.IsMember():
-		return i18n.Localf("The owner %[1]s changed the position of %[2]s; %[2]s is not a member anymore.",
+		return i18n.Localf("The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is not $affiliation{a member} anymore.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	}
-	return i18n.Localf("The owner %[1]s changed the position of %[2]s; %[2]s is not banned anymore.",
+	return i18n.Localf("The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is $affiliation{not banned} anymore.",
 		affiliationRoleUpdate.Actor.Nickname,
 		affiliationRoleUpdate.Nickname)
 }
@@ -889,19 +889,19 @@ func getAffiliationRoleUpateForAffiliationRemovedWithOwnerActor(affiliationRoleU
 func getAffiliationRoleUpateForAffiliationRemovedWithAdminActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
 	switch {
 	case affiliationRoleUpdate.PreviousAffiliation.IsOwner():
-		return i18n.Localf("The administrator %[1]s changed the position of %[2]s; %[2]s is not an owner anymore.",
+		return i18n.Localf("The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is not $affiliation{an owner} anymore.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	case affiliationRoleUpdate.PreviousAffiliation.IsAdmin():
-		return i18n.Localf("The administrator %[1]s changed the position of %[2]s; %[2]s is not an administrator anymore.",
+		return i18n.Localf("The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is not $affiliation{an administrator} anymore.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	case affiliationRoleUpdate.PreviousAffiliation.IsMember():
-		return i18n.Localf("The administrator %[1]s changed the position of %[2]s; %[2]s is not a member anymore.",
+		return i18n.Localf("The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is not $affiliation{a member} anymore.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	}
-	return i18n.Localf("The administrator %[1]s changed the position of %[2]s; %[2]s is not banned anymore.",
+	return i18n.Localf("The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is $affiliation{not banned} anymore.",
 		affiliationRoleUpdate.Actor.Nickname,
 		affiliationRoleUpdate.Nickname)
 }
@@ -909,19 +909,19 @@ func getAffiliationRoleUpateForAffiliationRemovedWithAdminActor(affiliationRoleU
 func getAffiliationRoleUpateForAffiliationRemovedForActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
 	switch {
 	case affiliationRoleUpdate.PreviousAffiliation.IsOwner():
-		return i18n.Localf("%[1]s changed the position of %[2]s; %[2]s is not an owner anymore.",
+		return i18n.Localf("$nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is not $affiliation{an owner} anymore.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	case affiliationRoleUpdate.PreviousAffiliation.IsAdmin():
-		return i18n.Localf("%[1]s changed the position of %[2]s; %[2]s is not an administrator anymore.",
+		return i18n.Localf("$nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is not $affiliation{an administrator} anymore.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	case affiliationRoleUpdate.PreviousAffiliation.IsMember():
-		return i18n.Localf("%[1]s changed the position of %[2]s; %[2]s is not a member anymore.",
+		return i18n.Localf("$nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is not $affiliation{a member} anymore.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	}
-	return i18n.Localf("%[1]s changed the position of %[2]s; %[2]s is not banned anymore.",
+	return i18n.Localf("$nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is $affiliation{not banned} anymore.",
 		affiliationRoleUpdate.Actor.Nickname,
 		affiliationRoleUpdate.Nickname)
 }
@@ -936,16 +936,16 @@ func getAffiliationRoleUpdateForAffiliationAdded(affiliationRoleUpdate data.Affi
 func getAffiliationRoleUpdateForAffiliationAddedWithoutActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
 	switch {
 	case affiliationRoleUpdate.NewAffiliation.IsOwner():
-		return i18n.Localf("The position of %s was changed to owner.",
+		return i18n.Localf("The position of $nickname{%s} was changed to $affiliation{owner}.",
 			affiliationRoleUpdate.Nickname)
 	case affiliationRoleUpdate.NewAffiliation.IsAdmin():
-		return i18n.Localf("The position of %s was changed to administrator.",
+		return i18n.Localf("The position of $nickname{%s} was changed to $affiliation{administrator}.",
 			affiliationRoleUpdate.Nickname)
 	case affiliationRoleUpdate.NewAffiliation.IsMember():
-		return i18n.Localf("The position of %s was changed to member.",
+		return i18n.Localf("The position of $nickname{%s} was changed to $affiliation{member}.",
 			affiliationRoleUpdate.Nickname)
 	}
-	return i18n.Localf("The position of %s was changed.",
+	return i18n.Localf("The position of $nickname{%s} was changed.",
 		affiliationRoleUpdate.Nickname)
 }
 
@@ -962,19 +962,19 @@ func getAffiliationRoleUpdateForAffiliationAddedWithActor(affiliationRoleUpdate 
 func getAffiliationRoleUpdateForAffiliationAddedWithOwnerActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
 	switch {
 	case affiliationRoleUpdate.NewAffiliation.IsOwner():
-		return i18n.Localf("The owner %[1]s changed the position of %[2]s to owner.",
+		return i18n.Localf("The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} to $affiliation{owner}.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	case affiliationRoleUpdate.NewAffiliation.IsAdmin():
-		return i18n.Localf("The owner %[1]s changed the position of %[2]s to administrator.",
+		return i18n.Localf("The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} to $affiliation{administrator}.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	case affiliationRoleUpdate.NewAffiliation.IsMember():
-		return i18n.Localf("The owner %[1]s changed the position of %[2]s to member.",
+		return i18n.Localf("The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} to $affiliation{member}.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	}
-	return i18n.Localf("The owner %[1]s changed the position of %[2]s.",
+	return i18n.Localf("The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}.",
 		affiliationRoleUpdate.Actor.Nickname,
 		affiliationRoleUpdate.Nickname)
 }
@@ -982,19 +982,19 @@ func getAffiliationRoleUpdateForAffiliationAddedWithOwnerActor(affiliationRoleUp
 func getAffiliationRoleUpdateForAffiliationAddedWithAdminActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
 	switch {
 	case affiliationRoleUpdate.NewAffiliation.IsOwner():
-		return i18n.Localf("The administrator %[1]s changed the position of %[2]s to owner.",
+		return i18n.Localf("The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} to $affiliation{owner}.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	case affiliationRoleUpdate.NewAffiliation.IsAdmin():
-		return i18n.Localf("The administrator %[1]s changed the position of %[2]s to administrator.",
+		return i18n.Localf("The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} to $affiliation{administrator}.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	case affiliationRoleUpdate.NewAffiliation.IsMember():
-		return i18n.Localf("The administrator %[1]s changed the position of %[2]s to member.",
+		return i18n.Localf("The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} to $affiliation{member}.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	}
-	return i18n.Localf("The administrator %[1]s changed the position of %[2]s.",
+	return i18n.Localf("The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}.",
 		affiliationRoleUpdate.Actor.Nickname,
 		affiliationRoleUpdate.Nickname)
 }
@@ -1002,19 +1002,19 @@ func getAffiliationRoleUpdateForAffiliationAddedWithAdminActor(affiliationRoleUp
 func getAffiliationRoleUpdateForAffiliationAddedForActor(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
 	switch {
 	case affiliationRoleUpdate.NewAffiliation.IsOwner():
-		return i18n.Localf("%[1]s changed the position of %[2]s to owner.",
+		return i18n.Localf("$nickname{%[1]s} changed the position of $nickname{%[2]s} to $affiliation{owner}.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	case affiliationRoleUpdate.NewAffiliation.IsAdmin():
-		return i18n.Localf("%[1]s changed the position of %[2]s to administrator.",
+		return i18n.Localf("$nickname{%[1]s} changed the position of $nickname{%[2]s} to $affiliation{administrator}.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	case affiliationRoleUpdate.NewAffiliation.IsMember():
-		return i18n.Localf("%[1]s changed the position of %[2]s to member.",
+		return i18n.Localf("$nickname{%[1]s} changed the position of $nickname{%[2]s} to $affiliation{member}.",
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	}
-	return i18n.Localf("%[1]s changed the position of %[2]s.",
+	return i18n.Localf("$nickname{%[1]s} changed the position of $nickname{%[2]s}.",
 		affiliationRoleUpdate.Actor.Nickname,
 		affiliationRoleUpdate.Nickname)
 }

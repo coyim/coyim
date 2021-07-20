@@ -139,23 +139,26 @@ var (
 
 var conversationTagFormats = map[conversationTag]map[string]interface{}{
 	conversationTagFormatNickame: {
-		"weight": pangoi.WEIGHT_BOLD,
-		"style":  pangoi.STYLE_ITALIC,
+		"foreground": "blue",
+		"weight":     pangoFontWeightBold,
+		"style":      pangoFontStyleItalic,
 	},
 	conversationTagFormatAffiliation: {
-		"weight": pangoi.WEIGHT_BOLD,
-		"style":  pangoi.STYLE_ITALIC,
+		"foreground": "red",
+		"weight":     pangoFontWeightBold,
+		"style":      pangoFontStyleItalic,
 	},
 	conversationTagFormatRole: {
-		"weight": pangoi.WEIGHT_BOLD,
-		"style":  pangoi.STYLE_ITALIC,
+		"foreground": "orange",
+		"weight":     pangoFontWeightBold,
+		"style":      pangoFontStyleItalic,
 	},
 }
 
 // createTextFormatTags MUST be called from the UI thread
 func (c *roomViewConversation) createTextFormatTags(table gtki.TextTagTable) {
 	for tagFormat, properties := range conversationTagFormats {
-		tag := c.createConversationTag(tagFormat, properties)
+		tag := c.createConversationTag(tagFormat, pangoAttributesNormalize(properties))
 		table.Add(tag)
 	}
 }

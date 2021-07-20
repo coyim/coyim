@@ -13,7 +13,7 @@ const (
 	conversationTagSomeoneJoinedRoom = "occupantJoinedRoom"
 	conversationTagRoomSubject       = "subject"
 	conversationTagRoomConfigChange  = "roomConfigChange"
-	conversationTagDateGroup         = "date-group"
+	conversationTagDateGroup         = "dateGroup"
 	conversationTagDivider           = "divider"
 	conversationTagPassword          = "password"
 	conversationTagInfo              = "info"

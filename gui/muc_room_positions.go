@@ -101,11 +101,20 @@ func (v *roomView) newRoomPositionsView() *roomPositionsView {
 func (rp *roomPositionsView) initBuilder() {
 	builder := newBuilder("MUCRoomPositionsDialog")
 	panicOnDevError(builder.bindObjects(rp))
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_cancel": rp.onCancel,
+	})
 }
 
 func (rp *roomPositionsView) initDefaults() {
 	rp.dialog.SetTransientFor(rp.roomView.mainWindow())
 	mucStyles.setRoomConfigPageStyle(rp.content)
+}
+
+// onCancel MUST be called from the UI thread
+func (rp *roomPositionsView) onCancel() {
+	rp.dialog.Destroy()
 }
 
 // requestOccupantsByAffiliation MUST NOT be called from the UI thread

@@ -6,6 +6,7 @@ import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc/data"
+	"github.com/coyim/coyim/text"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -143,35 +144,60 @@ func (c *roomViewConversation) roomDestroyedEvent(reason string, alternative jid
 
 func (c *roomViewConversation) occupantAffiliationRoleUpdatedEvent(affiliationRoleUpdate data.AffiliationRoleUpdate) {
 	doInUIThread(func() {
-		c.displayNewInfoMessage(getMUCNotificationMessageFrom(affiliationRoleUpdate))
+		c.displayOccupantUpdateMessageFor(affiliationRoleUpdate)
 	})
 }
 
 func (c *roomViewConversation) occupantAffiliationEvent(affiliationUpdate data.AffiliationUpdate) {
 	doInUIThread(func() {
-		c.displayNewInfoMessage(getMUCNotificationMessageFrom(affiliationUpdate))
+		c.displayOccupantUpdateMessageFor(affiliationUpdate)
 	})
 }
 
-// selfOccupantAffiliationEvent MUST be called from the UI thread
+func (c *roomViewConversation) occupantRoleEvent(roleUpdate data.RoleUpdate) {
+	doInUIThread(func() {
+		c.displayOccupantUpdateMessageFor(roleUpdate)
+	})
+}
+
+// displayOccupantUpdateMessage MUST be called from the UI thread
+func (c *roomViewConversation) displayOccupantUpdateMessageFor(update interface{}) {
+	c.displayCurrentTimestamp()
+
+	message := getMUCNotificationMessageFrom(update)
+	if formatted, ok := text.ParseWithFormat(message); ok {
+		c.displayFormattedMessage(formatted)
+	} else {
+		c.displayInfoMessage(message)
+	}
+}
+
+// displayFormattedMessage MUST be called from the UI thread
+func (c *roomViewConversation) displayFormattedMessage(formatted text.FormattedText) {
+	message, formats := formatted.Join()
+	if len(formats) > 0 {
+		lastDisplayedIndex := 0
+		for _, format := range formats {
+			previousTextBeforeFormat := message[lastDisplayedIndex:format.Start]
+			c.displayInfoMessage(previousTextBeforeFormat)
+
+			textFormatSize := format.Start + format.Length
+			textFormat := message[format.Start:textFormatSize]
+			c.displayInfoMessage(textFormat)
+
+			lastDisplayedIndex = textFormatSize
+		}
+	} else {
+		c.displayInfoMessage(message)
+	}
+}
+
 func (c *roomViewConversation) selfOccupantAffiliationEvent(affiliationUpdate data.AffiliationUpdate) {
 	c.occupantAffiliationEvent(affiliationUpdate)
 
 	if affiliationUpdate.New.IsBanned() {
 		doInUIThread(c.onSelfOccupantBanned)
 	}
-}
-
-// onSelfOccupantBanned MUST be called from the UI thread
-func (c *roomViewConversation) onSelfOccupantBanned() {
-	c.updateNotificationMessage(i18n.Local("You can't send messages because you have been banned."))
-	c.disableSendCapabilities()
-}
-
-func (c *roomViewConversation) occupantRoleEvent(roleUpdate data.RoleUpdate) {
-	doInUIThread(func() {
-		c.displayNewInfoMessage(getMUCNotificationMessageFrom(roleUpdate))
-	})
 }
 
 func (c *roomViewConversation) selfOccupantRoleEvent(roleUpdate data.RoleUpdate) {
@@ -183,6 +209,12 @@ func (c *roomViewConversation) selfOccupantRoleEvent(roleUpdate data.RoleUpdate)
 	case roleUpdate.New.IsVisitor():
 		doInUIThread(c.onSelfOccupantVoiceRevoked)
 	}
+}
+
+// onSelfOccupantBanned MUST be called from the UI thread
+func (c *roomViewConversation) onSelfOccupantBanned() {
+	c.updateNotificationMessage(i18n.Local("You can't send messages because you have been banned."))
+	c.disableSendCapabilities()
 }
 
 // onSelfOccupantKicked MUST be called from the UI thread

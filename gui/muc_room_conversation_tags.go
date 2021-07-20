@@ -139,19 +139,16 @@ var (
 
 var conversationTagFormats = map[conversationTag]map[string]interface{}{
 	conversationTagFormatNickame: {
-		"foreground": "blue",
-		"weight":     pangoFontWeightBold,
-		"style":      pangoFontStyleItalic,
+		"weight": pangoFontWeightBold,
+		"style":  pangoFontStyleItalic,
 	},
 	conversationTagFormatAffiliation: {
-		"foreground": "red",
-		"weight":     pangoFontWeightBold,
-		"style":      pangoFontStyleItalic,
+		"weight": pangoFontWeightBold,
+		"style":  pangoFontStyleItalic,
 	},
 	conversationTagFormatRole: {
-		"foreground": "orange",
-		"weight":     pangoFontWeightBold,
-		"style":      pangoFontStyleItalic,
+		"weight": pangoFontWeightBold,
+		"style":  pangoFontStyleItalic,
 	},
 }
 

@@ -5,16 +5,6 @@ import (
 	"github.com/coyim/gotk3adapter/pangoi"
 )
 
-func (c *roomViewConversation) initTagsAndTextBuffers(v *roomView) {
-	c.tags = c.newMUCTableStyleTags(v.u)
-
-	cb, _ := g.gtk.TextBufferNew(c.tags)
-	c.chatTextView.SetBuffer(cb)
-
-	mb, _ := g.gtk.TextBufferNew(nil)
-	c.messageTextView.SetBuffer(mb)
-}
-
 func (c *roomViewConversation) createConversationTag(name string, properties map[string]interface{}) gtki.TextTag {
 	tag, _ := g.gtk.TextTagNew(name)
 	for attribute, value := range properties {

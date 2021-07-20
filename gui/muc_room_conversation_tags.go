@@ -25,6 +25,56 @@ const (
 	conversationTagError             conversationTag = "error"
 )
 
+const converstationLineSpacing = 12
+
+var conversationTagsPropertiesRegistry = map[conversationTag]pangoAttributes{
+	conversationTagTimestamp: {
+		"style": pangoFontStyleNormal,
+	},
+	conversationTagMessage: {
+		"style": pangoFontStyleNormal,
+	},
+	conversationTagNickname: {
+		"style":  pangoFontStyleNormal,
+		"weight": pangoFontWeightBold,
+	},
+	conversationTagSomeoneLeftRoom: {
+		"style": pangoFontStyleItalic,
+	},
+	conversationTagSomeoneJoinedRoom: {
+		"style": pangoFontStyleItalic,
+	},
+	conversationTagRoomSubject: {
+		"style": pangoFontStyleItalic,
+	},
+	conversationTagRoomConfigChange: {
+		"style": pangoFontStyleItalic,
+	},
+	conversationTagDateGroup: {
+		"justification":      pangoJustifyCenter,
+		"pixels-above-lines": converstationLineSpacing,
+		"pixels-below-lines": converstationLineSpacing,
+		"style":              pangoFontStyleItalic,
+	},
+	conversationTagDivider: {
+		"justification":      pangoJustifyCenter,
+		"pixels-above-lines": converstationLineSpacing,
+		"pixels-below-lines": converstationLineSpacing,
+	},
+	conversationTagPassword: {
+		"style": pangoFontStyleNormal,
+	},
+	conversationTagInfo: {
+		"style": pangoFontStyleItalic,
+	},
+	conversationTagWarning: {
+		"style": pangoFontStyleNormal,
+	},
+	conversationTagError: {
+		"style": pangoFontStyleNormal,
+	},
+}
+
 func (c *roomViewConversation) createConversationTag(name conversationTag, properties pangoAttributes) gtki.TextTag {
 	tag, _ := g.gtk.TextTagNew(string(name))
 	for attribute, value := range properties {

@@ -211,27 +211,13 @@ func (c *roomViewConversation) createTextFormatTags(table gtki.TextTagTable) {
 }
 
 func (c *roomViewConversation) newMUCTableStyleTags(u *gtkUI) gtki.TextTagTable {
-	table, _ := g.gtk.TextTagTableNew()
 	cs := u.currentMUCColorSet()
 
-	tags := []func(mucColorSet) gtki.TextTag{
-		c.createWarningTag,
-		c.createLeftRoomTag,
-		c.createJoinedRoomTag,
-		c.createTimestampTag,
-		c.createNicknameTag,
-		c.createSubjectTag,
-		c.createInfoMessageTag,
-		c.createMessageTag,
-		c.createGroupDateTag,
-		c.createDividerTag,
-		c.createErrorTag,
-		c.createConfigurationChangeTag,
-		c.createPasswordTag,
-	}
-
-	for _, t := range tags {
-		table.Add(t(cs))
+	table, _ := g.gtk.TextTagTableNew()
+	for tagName, properties := range conversationTagsPropertiesRegistry {
+		tag := c.createConversationTag(tagName, pangoAttributesNormalize(properties))
+		c.applyTagColors(tagName, tag, cs)
+		table.Add(tag)
 	}
 
 	c.createTextFormatTags(table)

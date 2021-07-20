@@ -256,8 +256,9 @@ func (rc *roomConfigAssistant) onApplyError(sfe *muc.SubmitFormError) {
 
 	if sfe.Error() == session.ErrBadRequestResponse {
 		rc.onBadRequestError(sfe)
-		errorMessage = friendlyConfigErrorMessageWithField(sfe.Field())
+		errorMessage = i18n.Local("The settings couldn't be changed. Please, verify the information in the form.")
 	}
+
 	rc.currentPage.notifyError(errorMessage)
 }
 

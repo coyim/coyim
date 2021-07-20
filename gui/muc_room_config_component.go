@@ -131,17 +131,8 @@ func (c *mucRoomConfigComponent) friendlyConfigErrorMessage(err error) string {
 		return i18n.Local("The server had a problem trying to process your request. This could be caused by wrong information entered in the form fields.")
 	case errCreateRoomTimeout:
 		return i18n.Local("We didn't receive a response from the server.")
-	default:
-		return i18n.Localf("Unsupported config error: %s", err)
 	}
-}
-
-func friendlyConfigErrorMessageWithField(field muc.RoomConfigFieldType) string {
-	switch field {
-	case muc.RoomConfigFieldVoiceRequestMinInteval:
-		return i18n.Local("The server couldn't process your request, because we have a problem with information entered in \"Minimum interval between voice requests\".")
-	}
-	return i18n.Local("The server couldn't process your request, please verify the information entered in the form.")
+	return i18n.Localf("Unsupported config error: %s", err)
 }
 
 func configOptionToFriendlyMessage(o, defaultLabel string) string {

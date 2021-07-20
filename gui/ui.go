@@ -32,14 +32,20 @@ const (
 )
 
 type gtkUI struct {
-	roster           *roster
-	app              gtki.Application
-	window           gtki.ApplicationWindow `gtk-widget:"mainWindow"`
-	accountsMenu     gtki.MenuItem          `gtk-widget:"AccountsMenu"`
-	searchBox        gtki.Box               `gtk-widget:"search-box"`
-	search           gtki.SearchBar         `gtk-widget:"search-area"`
-	searchEntry      gtki.Entry             `gtk-widget:"search-entry"`
-	notificationArea gtki.Box               `gtk-widget:"notification-area"`
+	roster *roster
+	app    gtki.Application
+	window gtki.ApplicationWindow `gtk-widget:"mainWindow"`
+
+	contactsMenuItem  gtki.MenuItem `gtk-widget:"ContactsMenu"`
+	accountsMenuItem  gtki.MenuItem `gtk-widget:"AccountsMenu"`
+	chatRoomsMenuItem gtki.MenuItem `gtk-widget:"ChatRoomsMenu"`
+	viewMenuItem      gtki.MenuItem `gtk-widget:"ViewMenu"`
+	optionsMenuItem   gtki.MenuItem `gtk-widget:"OptionsMenu"`
+
+	searchBox        gtki.Box       `gtk-widget:"search-box"`
+	search           gtki.SearchBar `gtk-widget:"search-area"`
+	searchEntry      gtki.Entry     `gtk-widget:"search-entry"`
+	notificationArea gtki.Box       `gtk-widget:"notification-area"`
 	viewMenu         *viewMenu
 	optionsMenu      *optionsMenu
 
@@ -771,17 +777,31 @@ func (u *gtkUI) listenToSetShowAdvancedSettings() {
 	}
 }
 
+func (u *gtkUI) setMenuBarSensitive(v bool) {
+	u.contactsMenuItem.SetSensitive(v)
+	u.accountsMenuItem.SetSensitive(v)
+	u.chatRoomsMenuItem.SetSensitive(v)
+	u.viewMenuItem.SetSensitive(v)
+	u.optionsMenuItem.SetSensitive(v)
+}
+
 func (u *gtkUI) initMenuBar() {
 	_, _ = u.window.Connect(accountChangedSignal.String(), func() {
 		doInUIThread(func() {
 			u.buildAccountsMenu()
-			u.accountsMenu.ShowAll()
+			u.accountsMenuItem.ShowAll()
 			u.rosterUpdated()
 		})
 	})
 
 	u.buildAccountsMenu()
-	u.accountsMenu.ShowAll()
+	u.accountsMenuItem.ShowAll()
+
+	u.setMenuBarSensitive(false)
+
+	u.config.WhenLoaded(func(_ *config.ApplicationConfig) {
+		u.setMenuBarSensitive(true)
+	})
 }
 
 func (u *gtkUI) initSearchBar() {

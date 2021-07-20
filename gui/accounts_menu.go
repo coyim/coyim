@@ -50,6 +50,21 @@ func (u *gtkUI) buildStaticAccountsMenu(submenu gtki.Menu) {
 	_, _ = importMenu.Connect("activate", u.runImporter)
 	submenu.Append(importMenu)
 
+	connectAutomaticallyItem.SetSensitive(false)
+	connectAllMenu.SetSensitive(false)
+	disconnectAllMenu.SetSensitive(false)
+	registerAccMenu.SetSensitive(false)
+	addAccMenu.SetSensitive(false)
+	importMenu.SetSensitive(false)
+
+	u.config.WhenLoaded(func(_ *config.ApplicationConfig) {
+		connectAutomaticallyItem.SetSensitive(true)
+		connectAllMenu.SetSensitive(true)
+		disconnectAllMenu.SetSensitive(true)
+		registerAccMenu.SetSensitive(true)
+		addAccMenu.SetSensitive(true)
+		importMenu.SetSensitive(true)
+	})
 }
 
 func (u *gtkUI) buildAccountsMenu() {
@@ -72,5 +87,5 @@ func (u *gtkUI) buildAccountsMenu() {
 
 	submenu.ShowAll()
 
-	u.accountsMenu.SetSubmenu(submenu)
+	u.accountsMenuItem.SetSubmenu(submenu)
 }

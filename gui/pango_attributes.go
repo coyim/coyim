@@ -69,6 +69,27 @@ func pangoFontStyle(style pangoFontStyleType) int {
 	return pangoi.STYLE_NORMAL
 }
 
+type pangoJustifyType int
+
+const (
+	pangoJustifyLeft pangoJustifyType = iota
+	pangoJustifyRight
+	pangoJustifyCenter
+	pangoJustifyFill
+)
+
+func pangoJustification(justification pangoJustifyType) int {
+	switch justification {
+	case pangoJustifyLeft:
+		return pangoi.JUSTIFY_LEFT
+	case pangoJustifyRight:
+		return pangoi.JUSTIFY_RIGHT
+	case pangoJustifyFill:
+		return pangoi.JUSTIFY_FILL
+	}
+	return pangoi.JUSTIFY_CENTER
+}
+
 func pangoAttributesNormalize(properties pangoAttributes) pangoAttributes {
 	ret := pangoAttributes{}
 
@@ -78,6 +99,8 @@ func pangoAttributesNormalize(properties pangoAttributes) pangoAttributes {
 			ret[prop] = pangoFontWeight(tp)
 		case pangoFontStyleType:
 			ret[prop] = pangoFontStyle(tp)
+		case pangoJustifyType:
+			ret[prop] = pangoJustification(tp)
 		default:
 			ret[prop] = value
 		}

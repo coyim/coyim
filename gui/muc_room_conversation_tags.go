@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"fmt"
+
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/coyim/gotk3adapter/pangoi"
 )
@@ -125,6 +127,39 @@ func (c *roomViewConversation) createPasswordTag(cs mucColorSet) gtki.TextTag {
 	})
 }
 
+var uniqueHighlightFormatName = func(format string) conversationTag {
+	return conversationTag(fmt.Sprintf("f%s", format))
+}
+
+var (
+	conversationTagFormatNickame     conversationTag = uniqueHighlightFormatName(highlightFormatNickname)
+	conversationTagFormatAffiliation conversationTag = uniqueHighlightFormatName(highlightFormatAffiliation)
+	conversationTagFormatRole        conversationTag = uniqueHighlightFormatName(highlightFormatRole)
+)
+
+var conversationTagFormats = map[conversationTag]map[string]interface{}{
+	conversationTagFormatNickame: {
+		"weight": pangoi.WEIGHT_BOLD,
+		"style":  pangoi.STYLE_ITALIC,
+	},
+	conversationTagFormatAffiliation: {
+		"weight": pangoi.WEIGHT_BOLD,
+		"style":  pangoi.STYLE_ITALIC,
+	},
+	conversationTagFormatRole: {
+		"weight": pangoi.WEIGHT_BOLD,
+		"style":  pangoi.STYLE_ITALIC,
+	},
+}
+
+// createTextFormatTags MUST be called from the UI thread
+func (c *roomViewConversation) createTextFormatTags(table gtki.TextTagTable) {
+	for tagFormat, properties := range conversationTagFormats {
+		tag := c.createConversationTag(tagFormat, properties)
+		table.Add(tag)
+	}
+}
+
 func (c *roomViewConversation) newMUCTableStyleTags(u *gtkUI) gtki.TextTagTable {
 	table, _ := g.gtk.TextTagTableNew()
 	cs := u.currentMUCColorSet()
@@ -148,6 +183,8 @@ func (c *roomViewConversation) newMUCTableStyleTags(u *gtkUI) gtki.TextTagTable 
 	for _, t := range tags {
 		table.Add(t(cs))
 	}
+
+	c.createTextFormatTags(table)
 
 	return table
 }

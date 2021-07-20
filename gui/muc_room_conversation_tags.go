@@ -211,6 +211,13 @@ func conversationTagColorDefinition(tagName conversationTag, cs mucColorSet) *co
 			foreground: cs.warningForeground,
 			background: cs.warningBackground,
 		}
+
+	case conversationTagFormatNickame,
+		conversationTagFormatAffiliation,
+		conversationTagFormatRole:
+		return &conversationTagColor{
+			foreground: cs.infoMessageForeground,
+		}
 	}
 
 	return defaultConversationTagColor

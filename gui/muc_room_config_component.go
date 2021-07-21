@@ -43,15 +43,21 @@ type mucRoomConfigComponent struct {
 	data           *roomConfigData
 	setCurrentPage func(indexPage mucRoomConfigPageID)
 	pages          []*roomConfigPage
-	log            coylog.Logger
+
+	onValidationErrors   *callbacksSet
+	onNoValidationErrors *callbacksSet
+
+	log coylog.Logger
 }
 
 func (u *gtkUI) newMUCRoomConfigComponent(account *account, data *roomConfigData, setCurrentPage func(indexPage mucRoomConfigPageID), parent gtki.Window) *mucRoomConfigComponent {
 	c := &mucRoomConfigComponent{
-		u:              u,
-		account:        account,
-		data:           data,
-		setCurrentPage: setCurrentPage,
+		u:                    u,
+		account:              account,
+		data:                 data,
+		setCurrentPage:       setCurrentPage,
+		onValidationErrors:   newCallbacksSet(),
+		onNoValidationErrors: newCallbacksSet(),
 		log: u.log.WithFields(log.Fields{
 			"room":  data.roomID,
 			"where": "roomConfigComponent",

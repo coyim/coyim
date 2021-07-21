@@ -71,9 +71,10 @@ type roomConfigPage struct {
 	autojoinContent     gtki.Box         `gtk-widget:"room-config-autojoin-content"`
 	autojoinCheckButton gtki.CheckButton `gtk-widget:"room-config-autojoin"`
 
-	notifications          *notificationsComponent
-	loadingOverlay         *loadingOverlayComponent
-	doAfterRefresh         *callbacksSet
+	notifications  *notificationsComponent
+	loadingOverlay *loadingOverlayComponent
+	doAfterRefresh *callbacksSet
+
 	onShowValidationErrors func()
 	onHideValidationErrors func()
 
@@ -82,14 +83,13 @@ type roomConfigPage struct {
 
 func (c *mucRoomConfigComponent) newConfigPage(pageID mucRoomConfigPageID) *roomConfigPage {
 	p := &roomConfigPage{
-		u:                   c.u,
-		roomConfigComponent: c,
-		title:               configPageDisplayTitle(pageID),
-		pageID:              pageID,
-		doAfterRefresh:      newCallbacksSet(),
-		// CP[WIP]: These functions will be replaced by assitant callbacks
-		onShowValidationErrors: func() {},
-		onHideValidationErrors: func() {},
+		u:                      c.u,
+		roomConfigComponent:    c,
+		title:                  configPageDisplayTitle(pageID),
+		pageID:                 pageID,
+		doAfterRefresh:         newCallbacksSet(),
+		onShowValidationErrors: c.onValidationErrors.invokeAll,
+		onHideValidationErrors: c.onNoValidationErrors.invokeAll,
 		form:                   c.data.configForm,
 		log: c.log.WithFields(log.Fields{
 			"page": pageID,

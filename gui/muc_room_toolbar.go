@@ -189,9 +189,7 @@ func (t *roomViewToolbar) selfOccupantJoinedEvent() {
 func (t *roomViewToolbar) updateMenuActionsBasedOn(affiliation data.Affiliation) {
 	t.configureRoomMenuItem.SetVisible(affiliation.IsOwner())
 	t.destroyRoomMenuItem.SetVisible(affiliation.IsOwner())
-
-	showAdminActions := affiliation.IsOwner() || affiliation.IsAdmin()
-	t.modifyPositionListsMenuItem.SetVisible(showAdminActions)
+	t.modifyPositionListsMenuItem.SetVisible(affiliation.IsAdmin())
 }
 
 // disable MUST be called from UI Thread

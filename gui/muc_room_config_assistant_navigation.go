@@ -37,7 +37,7 @@ func (rcn *roomConfigAssistantNavigation) initBuilder() {
 
 func (rcn *roomConfigAssistantNavigation) initNavigationItems() {
 	for _, p := range rcn.assistant.allPages() {
-		itm := rcn.newRoomConfigAssistantNavigationItem(p.title)
+		itm := rcn.newRoomConfigAssistantNavigationItem(p)
 		rcn.items = append(rcn.items, itm)
 		rcn.navigation.Add(itm.row)
 		rcn.navigation.Add(itm.divider)

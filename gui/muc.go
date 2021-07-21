@@ -47,10 +47,9 @@ func (s *callbacksSet) add(callbacks ...func()) {
 
 func (s *callbacksSet) invokeAll() {
 	s.Lock()
-	callbacks := s.callbacks
-	s.Unlock()
+	defer s.Unlock()
 
-	for _, cb := range callbacks {
+	for _, cb := range s.callbacks {
 		cb()
 	}
 }

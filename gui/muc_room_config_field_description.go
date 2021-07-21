@@ -12,9 +12,9 @@ type roomConfigFieldDescription struct {
 	textView gtki.TextView `gtk-widget:"room-config-text-multi-field-textview"`
 }
 
-func newRoomConfigFieldDescription(ft muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldTextValue) hasRoomConfigFormField {
+func newRoomConfigFieldDescription(ft muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldTextValue, onShowValidationErrors func(), onHideValidationErrors func()) hasRoomConfigFormField {
 	field := &roomConfigFieldDescription{value: value}
-	field.roomConfigFormField = newRoomConfigFormField(ft, fieldInfo, "MUCRoomConfigFormFieldTextMulti")
+	field.roomConfigFormField = newRoomConfigFormField(ft, fieldInfo, "MUCRoomConfigFormFieldTextMulti", onShowValidationErrors, onHideValidationErrors)
 
 	panicOnDevError(field.builder.bindObjects(field))
 

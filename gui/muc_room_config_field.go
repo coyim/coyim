@@ -20,8 +20,10 @@ type hasRoomConfigFormField interface {
 const fieldErrorIconName = "field_error"
 
 type roomConfigFormField struct {
-	field   muc.RoomConfigFieldType
-	builder *builder
+	field                  muc.RoomConfigFieldType
+	builder                *builder
+	onShowValidationErrors func()
+	onHideValidationErrors func()
 
 	widget      gtki.Box   `gtk-widget:"room-config-field-box"`
 	icon        gtki.Image `gtk-widget:"icon-image"`
@@ -29,8 +31,12 @@ type roomConfigFormField struct {
 	description gtki.Label `gtk-widget:"room-config-field-description"`
 }
 
-func newRoomConfigFormField(ft muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, template string) *roomConfigFormField {
-	field := &roomConfigFormField{field: ft}
+func newRoomConfigFormField(ft muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, template string, onShowValidationErrors func(), onHideValidationErrors func()) *roomConfigFormField {
+	field := &roomConfigFormField{
+		field:                  ft,
+		onShowValidationErrors: onShowValidationErrors,
+		onHideValidationErrors: onHideValidationErrors,
+	}
 
 	field.builder = newBuilder(template)
 	panicOnDevError(field.builder.bindObjects(field))
@@ -67,6 +73,8 @@ func (f *roomConfigFormField) isValid() bool {
 
 // showValidationErrors implements the hasRoomConfigFormField interface
 func (f *roomConfigFormField) showValidationErrors() {
+	f.onShowValidationErrors()
+
 	sc, _ := f.label.GetStyleContext()
 	sc.AddClass("label-error")
 
@@ -80,6 +88,8 @@ func (f *roomConfigFormField) fieldKey() muc.RoomConfigFieldType {
 
 // hideValidationErrors MUST be called from the UI thread
 func (f *roomConfigFormField) hideValidationErrors() {
+	f.onHideValidationErrors()
+
 	sc, _ := f.label.GetStyleContext()
 	sc.RemoveClass("label-error")
 
@@ -90,57 +100,57 @@ var (
 	errRoomConfigFieldNotSupported = errors.New("room configuration form field not supported")
 )
 
-func roomConfigFormUnknownFieldFactory(fieldInfo roomConfigFieldTextInfo, fieldTypeValue interface{}) (hasRoomConfigFormField, error) {
+func roomConfigFormUnknownFieldFactory(fieldInfo roomConfigFieldTextInfo, fieldTypeValue interface{}, onShowValidationErrors func(), onHideValidationErrors func()) (hasRoomConfigFormField, error) {
 	switch valueHandler := fieldTypeValue.(type) {
 	case *muc.RoomConfigFieldTextValue:
-		return newRoomConfigFormTextField(muc.RoomConfigFieldUnexpected, fieldInfo, valueHandler), nil
+		return newRoomConfigFormTextField(muc.RoomConfigFieldUnexpected, fieldInfo, valueHandler, onShowValidationErrors, onHideValidationErrors), nil
 	case *muc.RoomConfigFieldTextMultiValue:
-		return newRoomConfigFormTextMulti(muc.RoomConfigFieldUnexpected, fieldInfo, valueHandler), nil
+		return newRoomConfigFormTextMulti(muc.RoomConfigFieldUnexpected, fieldInfo, valueHandler, onShowValidationErrors, onHideValidationErrors), nil
 	case *muc.RoomConfigFieldBooleanValue:
-		return newRoomConfigFormFieldBoolean(muc.RoomConfigFieldUnexpected, fieldInfo, valueHandler), nil
+		return newRoomConfigFormFieldBoolean(muc.RoomConfigFieldUnexpected, fieldInfo, valueHandler, onShowValidationErrors, onHideValidationErrors), nil
 	case *muc.RoomConfigFieldListValue:
-		return newRoomConfigFormFieldList(muc.RoomConfigFieldUnexpected, fieldInfo, valueHandler), nil
+		return newRoomConfigFormFieldList(muc.RoomConfigFieldUnexpected, fieldInfo, valueHandler, onShowValidationErrors, onHideValidationErrors), nil
 	case *muc.RoomConfigFieldListMultiValue:
-		return newRoomConfigFieldListMulti(muc.RoomConfigFieldUnexpected, fieldInfo, valueHandler), nil
+		return newRoomConfigFieldListMulti(muc.RoomConfigFieldUnexpected, fieldInfo, valueHandler, onShowValidationErrors, onHideValidationErrors), nil
 	}
 
 	return nil, errRoomConfigFieldNotSupported
 }
 
-func roomConfigFormFieldFactory(fieldType muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, fieldTypeValue interface{}) (hasRoomConfigFormField, error) {
+func roomConfigFormFieldFactory(fieldType muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, fieldTypeValue interface{}, onShowValidationErrors func(), onHideValidationErrors func()) (hasRoomConfigFormField, error) {
 	switch valueHandler := fieldTypeValue.(type) {
 	case *muc.RoomConfigFieldTextValue:
-		return roomConfigFormTextFieldFactory(fieldType, valueHandler)
+		return roomConfigFormTextFieldFactory(fieldType, valueHandler, onShowValidationErrors, onHideValidationErrors)
 	case *muc.RoomConfigFieldTextMultiValue:
-		return newRoomConfigFormTextMulti(fieldType, fieldInfo, valueHandler), nil
+		return newRoomConfigFormTextMulti(fieldType, fieldInfo, valueHandler, onShowValidationErrors, onHideValidationErrors), nil
 	case *muc.RoomConfigFieldBooleanValue:
-		return newRoomConfigFormFieldBoolean(fieldType, fieldInfo, valueHandler), nil
+		return newRoomConfigFormFieldBoolean(fieldType, fieldInfo, valueHandler, onShowValidationErrors, onHideValidationErrors), nil
 	case *muc.RoomConfigFieldListValue:
-		return roomConfigFormListFieldFactory(fieldType, valueHandler)
+		return roomConfigFormListFieldFactory(fieldType, valueHandler, onShowValidationErrors, onHideValidationErrors)
 	case *muc.RoomConfigFieldListMultiValue:
-		return newRoomConfigFieldListMulti(fieldType, fieldInfo, valueHandler), nil
+		return newRoomConfigFieldListMulti(fieldType, fieldInfo, valueHandler, onShowValidationErrors, onHideValidationErrors), nil
 	}
 
 	return nil, errRoomConfigFieldNotSupported
 }
 
-func roomConfigFormTextFieldFactory(ft muc.RoomConfigFieldType, value *muc.RoomConfigFieldTextValue) (hasRoomConfigFormField, error) {
+func roomConfigFormTextFieldFactory(ft muc.RoomConfigFieldType, value *muc.RoomConfigFieldTextValue, onShowValidationErrors func(), onHideValidationErrors func()) (hasRoomConfigFormField, error) {
 	switch ft {
 	case muc.RoomConfigFieldDescription:
-		return newRoomConfigFieldDescription(ft, roomConfigFieldsTexts[ft], value), nil
+		return newRoomConfigFieldDescription(ft, roomConfigFieldsTexts[ft], value, onShowValidationErrors, onHideValidationErrors), nil
 	case muc.RoomConfigFieldLanguage:
-		return newRoomConfigFormFieldLanguage(ft, roomConfigFieldsTexts[ft], value), nil
+		return newRoomConfigFormFieldLanguage(ft, roomConfigFieldsTexts[ft], value, onShowValidationErrors, onHideValidationErrors), nil
 	case muc.RoomConfigFieldPassword:
-		return newRoomConfigFormFieldPassword(ft, roomConfigFieldsTexts[ft], value), nil
+		return newRoomConfigFormFieldPassword(ft, roomConfigFieldsTexts[ft], value, onShowValidationErrors, onHideValidationErrors), nil
 	}
-	return newRoomConfigFormTextField(ft, roomConfigFieldsTexts[ft], value), nil
+	return newRoomConfigFormTextField(ft, roomConfigFieldsTexts[ft], value, onShowValidationErrors, onHideValidationErrors), nil
 }
 
-func roomConfigFormListFieldFactory(ft muc.RoomConfigFieldType, value *muc.RoomConfigFieldListValue) (hasRoomConfigFormField, error) {
+func roomConfigFormListFieldFactory(ft muc.RoomConfigFieldType, value *muc.RoomConfigFieldListValue, onShowValidationErrors func(), onHideValidationErrors func()) (hasRoomConfigFormField, error) {
 	if ft == muc.RoomConfigFieldMaxOccupantsNumber || ft == muc.RoomConfigFieldMaxHistoryFetch {
-		return newRoomConfigFormFieldListEntry(ft, roomConfigFieldsTexts[ft], value), nil
+		return newRoomConfigFormFieldListEntry(ft, roomConfigFieldsTexts[ft], value, onShowValidationErrors, onHideValidationErrors), nil
 	}
-	return newRoomConfigFormFieldList(ft, roomConfigFieldsTexts[ft], value), nil
+	return newRoomConfigFormFieldList(ft, roomConfigFieldsTexts[ft], value, onShowValidationErrors, onHideValidationErrors), nil
 }
 
 var numberValidator = func(v string) bool {

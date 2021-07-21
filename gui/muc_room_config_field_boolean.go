@@ -14,9 +14,9 @@ type roomConfigFormFieldBoolean struct {
 	toggle gtki.Switch     `gtk-widget:"room-config-field-boolean"`
 }
 
-func newRoomConfigFormFieldBoolean(fieldType muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldBooleanValue) hasRoomConfigFormField {
+func newRoomConfigFormFieldBoolean(fieldType muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldBooleanValue, onShowValidationErrors func(), onHideValidationErrors func()) hasRoomConfigFormField {
 	field := &roomConfigFormFieldBoolean{value: value}
-	field.roomConfigFormField = newRoomConfigFormField(fieldType, fieldInfo, "MUCRoomConfigFormFieldBoolean")
+	field.roomConfigFormField = newRoomConfigFormField(fieldType, fieldInfo, "MUCRoomConfigFormFieldBoolean", onShowValidationErrors, onHideValidationErrors)
 
 	panicOnDevError(field.builder.bindObjects(field))
 

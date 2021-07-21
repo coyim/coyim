@@ -12,9 +12,9 @@ type roomConfigFormFieldText struct {
 	entry gtki.Entry `gtk-widget:"room-config-text-field-entry"`
 }
 
-func newRoomConfigFormTextField(ft muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldTextValue) *roomConfigFormFieldText {
+func newRoomConfigFormTextField(ft muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, value *muc.RoomConfigFieldTextValue, onShowValidationErrors func(), onHideValidationErrors func()) *roomConfigFormFieldText {
 	field := &roomConfigFormFieldText{value: value}
-	field.roomConfigFormField = newRoomConfigFormField(ft, fieldInfo, "MUCRoomConfigFormFieldText")
+	field.roomConfigFormField = newRoomConfigFormField(ft, fieldInfo, "MUCRoomConfigFormFieldText", onShowValidationErrors, onHideValidationErrors)
 
 	panicOnDevError(field.builder.bindObjects(field))
 	field.builder.ConnectSignals(map[string]interface{}{
@@ -26,7 +26,7 @@ func newRoomConfigFormTextField(ft muc.RoomConfigFieldType, fieldInfo roomConfig
 	return field
 }
 
-// updateFieldValue MUST be called from the UI thread
+// onFieldEntryChanged MUST be called from the UI thread
 func (f *roomConfigFormFieldText) onFieldEntryChanged() {
 	if f.isValid() {
 		f.hideValidationErrors()

@@ -71,9 +71,11 @@ type roomConfigPage struct {
 	autojoinContent     gtki.Box         `gtk-widget:"room-config-autojoin-content"`
 	autojoinCheckButton gtki.CheckButton `gtk-widget:"room-config-autojoin"`
 
-	notifications  *notificationsComponent
-	loadingOverlay *loadingOverlayComponent
-	doAfterRefresh *callbacksSet
+	notifications          *notificationsComponent
+	loadingOverlay         *loadingOverlayComponent
+	doAfterRefresh         *callbacksSet
+	onShowValidationErrors func()
+	onHideValidationErrors func()
 
 	log coylog.Logger
 }
@@ -85,7 +87,10 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID mucRoomConfigPageID) *room
 		title:               configPageDisplayTitle(pageID),
 		pageID:              pageID,
 		doAfterRefresh:      newCallbacksSet(),
-		form:                c.data.configForm,
+		// CP[WIP]: These functions will be replaced by assitant callbacks
+		onShowValidationErrors: func() {},
+		onHideValidationErrors: func() {},
+		form:                   c.data.configForm,
 		log: c.log.WithFields(log.Fields{
 			"page": pageID,
 		}),
@@ -146,7 +151,7 @@ func (p *roomConfigPage) initKnownFields() {
 		booleanFields := []hasRoomConfigFormField{}
 		for _, kf := range knownFields {
 			if knownField, ok := p.form.GetKnownField(kf); ok {
-				field, err := roomConfigFormFieldFactory(kf, roomConfigFieldsTexts[kf], knownField.ValueType())
+				field, err := roomConfigFormFieldFactory(kf, roomConfigFieldsTexts[kf], knownField.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
 				if err != nil {
 					p.log.WithError(err).Error("Room configuration form field not supported")
 					continue
@@ -168,7 +173,7 @@ func (p *roomConfigPage) initKnownFields() {
 func (p *roomConfigPage) initUnknownFields() {
 	booleanFields := []hasRoomConfigFormField{}
 	for _, ff := range p.form.GetUnknownFields() {
-		field, err := roomConfigFormUnknownFieldFactory(newRoomConfigFieldTextInfo(ff.Label, ff.Description), ff.ValueType())
+		field, err := roomConfigFormUnknownFieldFactory(newRoomConfigFieldTextInfo(ff.Label, ff.Description), ff.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
 		if err != nil {
 			p.log.WithError(err).Error("Room configuration form field not supported")
 			continue
@@ -194,7 +199,7 @@ func (p *roomConfigPage) initAdvancedOptionsFields() {
 	advancedFields := []hasRoomConfigFormField{}
 	for _, aff := range roomConfigAdvancedFields {
 		if knownField, ok := p.form.GetKnownField(aff); ok {
-			field, err := roomConfigFormFieldFactory(aff, roomConfigFieldsTexts[aff], knownField.ValueType())
+			field, err := roomConfigFormFieldFactory(aff, roomConfigFieldsTexts[aff], knownField.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
 			if err != nil {
 				p.log.WithError(err).Error("Room configuration form field not supported")
 				continue

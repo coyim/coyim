@@ -44,6 +44,29 @@ func (rcn *roomConfigAssistantNavigation) initNavigationItems() {
 	}
 }
 
+// disableNavigation MUST be called from the UI thread
+func (rcn *roomConfigAssistantNavigation) disableNavigation() {
+	rcn.forEachItem(func(itm *roomConfigAssistantNavigationItem) {
+		if rcn.assistant.currentPageIndex != itm.pageID() {
+			itm.disable()
+		}
+	})
+}
+
+// enableNavigation MUST be called from the UI thread
+func (rcn *roomConfigAssistantNavigation) enableNavigation() {
+	rcn.forEachItem(func(itm *roomConfigAssistantNavigationItem) {
+		itm.enable()
+	})
+}
+
+// forEachItem MUST be called from the UI thread
+func (rcn *roomConfigAssistantNavigation) forEachItem(fn func(*roomConfigAssistantNavigationItem)) {
+	for _, itm := range rcn.items {
+		fn(itm)
+	}
+}
+
 // onRowSelected MUST be called from the UI thread
 func (rcn *roomConfigAssistantNavigation) onRowSelected(_ gtki.ListBox, r gtki.ListBoxRow) {
 	// Every time a row is selected, we check if it's not a divider or a normal item.

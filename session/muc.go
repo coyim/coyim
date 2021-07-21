@@ -63,8 +63,12 @@ func (m *mucManager) newRoom(roomID jid.Bare) *muc.Room {
 
 func (m *mucManager) addRoomInfo(roomID jid.Bare, rl *muc.RoomListing) {
 	m.roomInfosLock.Lock()
+	defer m.roomInfosLock.Unlock()
+
 	m.roomInfos[roomID] = rl
-	m.roomInfosLock.Unlock()
+	if room, exists := m.roomManager.GetRoom(roomID); exists {
+		room.SetProperties(rl.RoomDiscoInfo)
+	}
 }
 
 func (m *mucManager) getRoomInfo(roomID jid.Bare) (*muc.RoomListing, bool) {

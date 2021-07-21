@@ -43,7 +43,7 @@ func (m *mucManager) newMUCRoomRequest(roomID jid.Bare, requestType mucRequestTy
 		onResponse:   onResponse,
 		log: m.log.WithFields(log.Fields{
 			"where":       "mucRequest",
-			"requestType": fmt.Sprintf("%s", requestType),
+			"requestType": requestType.String(),
 		}),
 	}
 }

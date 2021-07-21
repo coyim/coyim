@@ -27,6 +27,7 @@ type roomConfigAssistant struct {
 
 	currentPageIndex mucRoomConfigPageID
 	currentPage      *roomConfigPage
+	assistantButtons assistantButtons
 	parentWindow     gtki.Window
 
 	assistant gtki.Assistant `gtk-widget:"room-config-assistant"`
@@ -102,6 +103,7 @@ func (rc *roomConfigAssistant) initDefaults() {
 		rc.assistant.SetTransientFor(rc.parentWindow)
 	}
 
+	rc.assistantButtons = getButtonsForAssistantHeader(rc.assistant)
 	removeMarginFromAssistantPages(rc.assistant)
 
 	mucStyles.setRoomConfigSummaryStyle(rc.assistant)
@@ -114,10 +116,8 @@ func (rc *roomConfigAssistant) initSidebarNavigation() {
 
 // refreshButtonLabels MUST be called from the UI thread
 func (rc *roomConfigAssistant) refreshButtonLabels() {
-	buttons := getButtonsForAssistantHeader(rc.assistant)
-
-	buttons.updateLastButtonLabel(i18n.Local("Summary"))
-	buttons.updateApplyButtonLabel(rc.applyLabelBasedOnCurrentScenario())
+	rc.assistantButtons.updateLastButtonLabel(i18n.Local("Summary"))
+	rc.assistantButtons.updateApplyButtonLabel(rc.applyLabelBasedOnCurrentScenario())
 }
 
 func (rc *roomConfigAssistant) applyLabelBasedOnCurrentScenario() string {

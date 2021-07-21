@@ -73,6 +73,14 @@ func (rc *roomConfigAssistant) initBuilder() {
 
 func (rc *roomConfigAssistant) initRoomConfigComponent(data *roomConfigData) {
 	rc.roomConfigComponent = rc.u.newMUCRoomConfigComponent(rc.account, data, rc.setCurrentPage, rc.assistant)
+
+	rc.roomConfigComponent.onValidationErrors.add(func() {
+		doInUIThread(rc.disableNavigation)
+	})
+
+	rc.roomConfigComponent.onNoValidationErrors.add(func() {
+		doInUIThread(rc.enableNavigation)
+	})
 }
 
 func (rc *roomConfigAssistant) initRoomConfigPages() {
@@ -146,18 +154,16 @@ func (rc *roomConfigAssistant) updateAssistantPage(pageID mucRoomConfigPageID) {
 		rc.updateContentPage(pageID)
 		rc.navigation.selectPageByIndex(pageID)
 	} else {
+		rc.setCurrentPage(rc.currentPageIndex)
 		rc.navigation.selectPageByIndex(rc.currentPageIndex)
+		rc.disableNavigation()
 	}
 }
 
 // canChangePage MUST be called from the UI thread
 func (rc *roomConfigAssistant) canChangePage() bool {
 	previousPage := rc.pageByIndex(rc.currentPageIndex)
-	if !previousPage.isValid() {
-		rc.setCurrentPage(rc.currentPageIndex)
-		return false
-	}
-	return true
+	return previousPage.isValid()
 }
 
 // updateContentPage MUST be called from the UI thread
@@ -177,6 +183,16 @@ func (rc *roomConfigAssistant) enableAssistant() {
 // disableAssistant MUST be called from the UI thread
 func (rc *roomConfigAssistant) disableAssistant() {
 	rc.assistant.SetSensitive(false)
+}
+
+// enableNavigation MUST be called from the UI thread
+func (rc *roomConfigAssistant) enableNavigation() {
+	rc.navigation.enableNavigation()
+}
+
+// disableNavigation MUST be called from the UI thread
+func (rc *roomConfigAssistant) disableNavigation() {
+	rc.navigation.disableNavigation()
 }
 
 // onCancelClicked MUST be called from the UI thread
@@ -259,6 +275,8 @@ func (rc *roomConfigAssistant) onApplyError(sfe *muc.SubmitFormError) {
 func (rc *roomConfigAssistant) onBadRequestError(sfe *muc.SubmitFormError) {
 	pageID := getPageBasedOnField(sfe.Field())
 	rc.setCurrentPage(pageID)
+
+	rc.disableNavigation()
 
 	for _, f := range rc.currentPage.fields {
 		if f.fieldKey() == sfe.Field() {

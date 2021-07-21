@@ -63,6 +63,20 @@ func (rp *roomPositions) updateRemovedOccupantList(occupantsRemoved muc.RoomOccu
 	rp.none = append(rp.none, occupantsRemoved...)
 }
 
+func (rp *roomPositions) positionsToUpdate() muc.RoomOccupantItemList {
+	rp.Lock()
+	defer rp.Unlock()
+
+	positionsToUpdate := muc.RoomOccupantItemList{}
+	positionsToUpdate = append(positionsToUpdate, rp.owners...)
+	positionsToUpdate = append(positionsToUpdate, rp.admins...)
+	positionsToUpdate = append(positionsToUpdate, rp.banned...)
+	positionsToUpdate = append(positionsToUpdate, rp.none...)
+
+	return positionsToUpdate
+
+}
+
 func (v *roomView) onRoomPositionsView() {
 	rp := v.newRoomPositionsView()
 	rp.show()

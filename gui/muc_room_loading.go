@@ -72,3 +72,10 @@ func (lo *roomViewLoadingOverlay) onRoomPositionsRequest() {
 	lo.setTransparent()
 	lo.show()
 }
+
+// onRoomPositionsUpdate MUST be called from the UI thread
+func (lo *roomViewLoadingOverlay) onRoomPositionsUpdate() {
+	lo.setTitle(i18n.Local("Updating positions list..."))
+	lo.setTransparent()
+	lo.show()
+}

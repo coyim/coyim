@@ -9,7 +9,7 @@ func getDisplayRoomSubjectForNickname(nickname, subject string) string {
 		return i18n.Localf("Someone has updated the room subject to: \"%s\"", subject)
 	}
 
-	return i18n.Localf("%s updated the room subject to: \"%s\"", nickname, subject)
+	return i18n.Localf("%[1]s updated the room subject to: \"%[2]s\"", nickname, subject)
 }
 
 func getDisplayRoomSubject(subject string) string {

@@ -174,8 +174,6 @@ func (tc *conversationTagColor) applyTagColor(property, color string, tag gtki.T
 	}
 }
 
-var defaultConversationTagColor = &conversationTagColor{}
-
 func conversationTagColorDefinition(tagName conversationTag, cs mucColorSet) *conversationTagColor {
 	switch tagName {
 	case conversationTagWarning:
@@ -247,5 +245,5 @@ func conversationTagColorDefinition(tagName conversationTag, cs mucColorSet) *co
 		}
 	}
 
-	return defaultConversationTagColor
+	return &conversationTagColor{}
 }

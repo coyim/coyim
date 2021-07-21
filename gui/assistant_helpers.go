@@ -11,6 +11,11 @@ func findAssistantHeaderContainer(a gtki.Assistant) gtki.Container {
 	return parentBox.(gtki.Container)
 }
 
+const (
+	assistantButtonLastName  = "last"
+	assistantButtonApplyName = "apply"
+)
+
 type assistantButtons map[string]gtki.Button
 
 // getButtonsForAssistantHeader MUST be called from the UI thread
@@ -26,6 +31,16 @@ func getButtonsForAssistantHeader(a gtki.Assistant) assistantButtons {
 	}
 
 	return result
+}
+
+// updateLastButtonLabel MUST be called from the UI thread
+func (list assistantButtons) updateLastButtonLabel(label string) {
+	list.updateButtonLabelByName(assistantButtonLastName, label)
+}
+
+// updateApplyButtonLabel MUST be called from the UI thread
+func (list assistantButtons) updateApplyButtonLabel(label string) {
+	list.updateButtonLabelByName(assistantButtonApplyName, label)
 }
 
 // updateButtonLabelByName MUST be called from the UI thread

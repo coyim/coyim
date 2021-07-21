@@ -120,8 +120,8 @@ func (rc *roomConfigAssistant) initSidebarNavigation() {
 func (rc *roomConfigAssistant) refreshButtonLabels() {
 	buttons := getButtonsForAssistantHeader(rc.assistant)
 
-	buttons.updateButtonLabelByName("last", i18n.Local("Summary"))
-	buttons.updateButtonLabelByName("apply", rc.applyLabelBasedOnCurrentScenario())
+	buttons.updateLastButtonLabel(i18n.Local("Summary"))
+	buttons.updateApplyButtonLabel(rc.applyLabelBasedOnCurrentScenario())
 }
 
 func (rc *roomConfigAssistant) applyLabelBasedOnCurrentScenario() string {

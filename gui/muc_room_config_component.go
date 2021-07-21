@@ -13,6 +13,10 @@ import (
 
 type mucRoomConfigPageID int
 
+func (pageID mucRoomConfigPageID) index() int {
+	return int(pageID)
+}
+
 const timeoutThreshold = 10 * time.Second
 
 const (

@@ -74,10 +74,6 @@ func (rc *roomConfigAssistant) initRoomConfigComponent(data *roomConfigData) {
 	rc.roomConfigComponent = rc.u.newMUCRoomConfigComponent(rc.account, data, rc.setCurrentPage, rc.assistant)
 }
 
-func (rc *roomConfigAssistant) setCurrentPage(pageID mucRoomConfigPageID) {
-	doInUIThread(func() { rc.assistant.SetCurrentPage(int(pageID)) })
-}
-
 func (rc *roomConfigAssistant) initRoomConfigPages() {
 	assignedDefaultCurrentPage := false
 
@@ -158,18 +154,15 @@ func (rc *roomConfigAssistant) updateAssistantPage(pageID mucRoomConfigPageID) {
 func (rc *roomConfigAssistant) canChangePage() bool {
 	previousPage := rc.pageByIndex(rc.currentPageIndex)
 	if !previousPage.isValid() {
-		rc.assistant.SetCurrentPage(int(rc.currentPageIndex))
+		rc.setCurrentPage(rc.currentPageIndex)
 		return false
 	}
 	return true
 }
 
 // updateContentPage MUST be called from the UI thread
-func (rc *roomConfigAssistant) updateContentPage(indexPage mucRoomConfigPageID) {
-	rc.currentPageIndex = indexPage
-	rc.currentPage = rc.pageByIndex(rc.currentPageIndex)
-
-	rc.assistant.SetCurrentPage(int(rc.currentPageIndex))
+func (rc *roomConfigAssistant) updateContentPage(pageID mucRoomConfigPageID) {
+	rc.setCurrentPage(pageID)
 	rc.currentPage.refresh()
 
 	rc.refreshButtonLabels()
@@ -265,13 +258,20 @@ func (rc *roomConfigAssistant) onApplyError(sfe *muc.SubmitFormError) {
 // onBadRequestError MUST be called from the UI thread
 func (rc *roomConfigAssistant) onBadRequestError(sfe *muc.SubmitFormError) {
 	pageID := getPageBasedOnField(sfe.Field())
-	rc.currentPage = rc.pageByIndex(pageID)
-	rc.assistant.SetCurrentPage(int(pageID))
+	rc.setCurrentPage(pageID)
+
 	for _, f := range rc.currentPage.fields {
 		if f.fieldKey() == sfe.Field() {
 			f.showValidationErrors()
 		}
 	}
+}
+
+// setCurrentPage MUST be called from the UI thread
+func (rc *roomConfigAssistant) setCurrentPage(pageID mucRoomConfigPageID) {
+	rc.currentPageIndex = pageID
+	rc.currentPage = rc.pageByIndex(rc.currentPageIndex)
+	rc.assistant.SetCurrentPage(rc.currentPageIndex.index())
 }
 
 func getPageBasedOnField(field muc.RoomConfigFieldType) mucRoomConfigPageID {

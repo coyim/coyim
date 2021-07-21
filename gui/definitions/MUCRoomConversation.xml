@@ -21,6 +21,7 @@
                 <property name="visible">True</property>
                 <property name="pixels_below_lines">4</property>
                 <property name="pixels_inside_wrap">2</property>
+                <property name="editable">False</property>
                 <property name="wrap_mode">word</property>
                 <property name="left_margin">12</property>
                 <property name="right_margin">12</property>

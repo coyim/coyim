@@ -25,20 +25,22 @@ const (
 	conversationTagUnd               conversationTag = ""
 )
 
-var uniqueHighlightFormatName = func(format string) conversationTag {
-	return conversationTag(fmt.Sprintf("f%s", format))
+const formattingTagText = "%sFormatting"
+
+func formattingTagName(format string) conversationTag {
+	return conversationTag(fmt.Sprintf(formattingTagText, format))
 }
 
 var (
-	conversationTagFormatNickame     conversationTag = uniqueHighlightFormatName(highlightFormatNickname)
-	conversationTagFormatAffiliation conversationTag = uniqueHighlightFormatName(highlightFormatAffiliation)
-	conversationTagFormatRole        conversationTag = uniqueHighlightFormatName(highlightFormatRole)
+	conversationTagFormatNickame     conversationTag = formattingTagName(highlightFormatNickname)
+	conversationTagFormatAffiliation conversationTag = formattingTagName(highlightFormatAffiliation)
+	conversationTagFormatRole        conversationTag = formattingTagName(highlightFormatRole)
 )
 
 type conversationTagsFormatsList []conversationTag
 
 func (list conversationTagsFormatsList) tagForFormat(format string) (conversationTag, bool) {
-	ids := []conversationTag{conversationTag(format), uniqueHighlightFormatName(format)}
+	ids := []conversationTag{conversationTag(format), formattingTagName(format)}
 	for _, id := range ids {
 		if list.includes(id) {
 			return id, true

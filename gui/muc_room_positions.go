@@ -11,8 +11,6 @@ import (
 )
 
 type roomPositions struct {
-	owners muc.RoomOccupantItemList
-	admins muc.RoomOccupantItemList
 	banned muc.RoomOccupantItemList
 	none   muc.RoomOccupantItemList
 
@@ -21,28 +19,6 @@ type roomPositions struct {
 
 func newRoomPositions() *roomPositions {
 	return &roomPositions{}
-}
-
-func (rp *roomPositions) ownersList() muc.RoomOccupantItemList {
-	return rp.owners
-}
-
-func (rp *roomPositions) setOwnerList(owners muc.RoomOccupantItemList) {
-	rp.Lock()
-	defer rp.Unlock()
-
-	rp.owners = owners
-}
-
-func (rp *roomPositions) adminsList() muc.RoomOccupantItemList {
-	return rp.admins
-}
-
-func (rp *roomPositions) setAdminList(admins muc.RoomOccupantItemList) {
-	rp.Lock()
-	defer rp.Unlock()
-
-	rp.admins = admins
 }
 
 func (rp *roomPositions) bannedList() muc.RoomOccupantItemList {
@@ -68,8 +44,6 @@ func (rp *roomPositions) positionsToUpdate() muc.RoomOccupantItemList {
 	defer rp.Unlock()
 
 	positionsToUpdate := muc.RoomOccupantItemList{}
-	positionsToUpdate = append(positionsToUpdate, rp.owners...)
-	positionsToUpdate = append(positionsToUpdate, rp.admins...)
 	positionsToUpdate = append(positionsToUpdate, rp.banned...)
 	positionsToUpdate = append(positionsToUpdate, rp.none...)
 
@@ -179,24 +153,6 @@ func (rp *roomPositionsView) requestOccupantsByAffiliation(a data.Affiliation, o
 }
 
 func (rp *roomPositionsView) requestRoomPositions(onSuccess func(), onError func()) {
-	rp.requestOccupantsByAffiliation(&data.OwnerAffiliation{},
-		func(items muc.RoomOccupantItemList) {
-			rp.roomPositions.setOwnerList(items)
-
-			rp.addPositionComponent(newRoomConfigPositions(&data.OwnerAffiliation{}, rp.roomPositions.ownersList(),
-				rp.roomPositions.setOwnerList, rp.roomPositions.updateRemovedOccupantList, func() {}))
-		},
-		onError)
-
-	rp.requestOccupantsByAffiliation(&data.AdminAffiliation{},
-		func(items muc.RoomOccupantItemList) {
-			rp.roomPositions.setAdminList(items)
-
-			rp.addPositionComponent(newRoomConfigPositions(&data.AdminAffiliation{}, rp.roomPositions.adminsList(),
-				rp.roomPositions.setAdminList, rp.roomPositions.updateRemovedOccupantList, func() {}))
-		},
-		onError)
-
 	rp.requestOccupantsByAffiliation(&data.OutcastAffiliation{},
 		func(items muc.RoomOccupantItemList) {
 			rp.roomPositions.setBanList(items)

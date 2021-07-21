@@ -165,37 +165,34 @@ func (c *roomViewConversation) displayOccupantUpdateMessageFor(update interface{
 	c.displayCurrentTimestamp()
 
 	message := getMUCNotificationMessageFrom(update)
-	if formatted, ok := text.ParseWithFormat(message); ok {
-		c.displayFormattedMessage(formatted)
-	} else {
-		c.displayInfoMessage(message)
-	}
+	c.displayFormattedMessage(message, c.displayInfoMessage)
 
 	c.addNewLine()
 }
 
 // displayFormattedMessage MUST be called from the UI thread
-func (c *roomViewConversation) displayFormattedMessage(formatted text.FormattedText) {
-	message, formats := formatted.Join()
-	if len(formats) > 0 {
+func (c *roomViewConversation) displayFormattedMessage(message string, displayMessage func(string)) {
+	if formatted, ok := text.ParseWithFormat(message); ok {
+		text, formats := formatted.Join()
+
 		lastDisplayedIndex := 0
 		for _, format := range formats {
-			previousTextBeforeFormat := message[lastDisplayedIndex:format.Start]
-			c.displayInfoMessage(previousTextBeforeFormat)
+			previousTextBeforeFormat := text[lastDisplayedIndex:format.Start]
+			displayMessage(previousTextBeforeFormat)
 
 			textFormatSize := format.Start + format.Length
-			textFormat := message[format.Start:textFormatSize]
+			textFormat := text[format.Start:textFormatSize]
 			c.displayMessageFormatting(textFormat, format)
 
 			lastDisplayedIndex = textFormatSize
 		}
 
-		restOfTheText := message[lastDisplayedIndex:]
+		restOfTheText := text[lastDisplayedIndex:]
 		if restOfTheText != "" {
-			c.displayInfoMessage(restOfTheText)
+			displayMessage(restOfTheText)
 		}
 	} else {
-		c.displayInfoMessage(message)
+		displayMessage(message)
 	}
 }
 

@@ -35,7 +35,7 @@ func (*RoomOccupantsSuite) Test_RoomOccupants_IncludesJid(c *C) {
 	c.Assert(roil.IncludesJid(jid.Parse("odd@one.out")), Equals, false)
 }
 
-func (s *MucRoomConfigSuite) Test_RoomConfigForm_extractOccupantsToUpdate(c *C) {
+func (s *MucRoomConfigSuite) Test_RoomConfigForm_retrieveOccupantsToUpdate(c *C) {
 	occupantsList := RoomOccupantItemList{
 		&RoomOccupantItem{
 			Jid:         jid.Parse("batman@cave.org"),
@@ -49,5 +49,5 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_extractOccupantsToUpdate(c *C) 
 			MustBeUpdated: true,
 		},
 	}
-	c.Assert(len(occupantsList.retrieveOccupantsToUpdate()), Equals, 1)
+	c.Assert(occupantsList.retrieveOccupantsToUpdate(), HasLen, 1)
 }

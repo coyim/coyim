@@ -90,8 +90,9 @@ const (
 )
 
 type roomPositionsView struct {
-	roomView      *roomView
-	roomPositions *roomPositions
+	roomView              *roomView
+	roomPositions         *roomPositions
+	onUpdateOccupantLists *callbacksSet
 
 	dialog  gtki.Window `gtk-widget:"positions-window"`
 	content gtki.Box    `gtk-widget:"content"`
@@ -101,9 +102,10 @@ type roomPositionsView struct {
 
 func (v *roomView) newRoomPositionsView() *roomPositionsView {
 	rp := &roomPositionsView{
-		roomView:      v,
-		roomPositions: newRoomPositions(),
-		log:           v.log.WithField("where", "roomPositionsView"),
+		roomView:              v,
+		roomPositions:         newRoomPositions(),
+		onUpdateOccupantLists: newCallbacksSet(),
+		log:                   v.log.WithField("where", "roomPositionsView"),
 	}
 
 	rp.initBuilder()
@@ -177,6 +179,7 @@ func (rp *roomPositionsView) requestRoomPositions(onSuccess func(), onError func
 func (rp *roomPositionsView) addPositionComponent(positionComponent hasRoomConfigFormField) {
 	rp.content.Add(positionComponent.fieldWidget())
 	positionComponent.refreshContent()
+	rp.onUpdateOccupantLists.add(positionComponent.updateFieldValue)
 }
 
 // show MUST be called from the UI thread

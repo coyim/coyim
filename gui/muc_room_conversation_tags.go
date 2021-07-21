@@ -102,6 +102,7 @@ var conversationTagsPropertiesRegistry = map[conversationTag]pangoAttributes{
 	},
 }
 
+// createConversationTag MUST be called from the UI thread
 func (c *roomViewConversation) createConversationTag(name conversationTag, properties pangoAttributes) gtki.TextTag {
 	tag, _ := g.gtk.TextTagNew(string(name))
 	for attribute, value := range properties {
@@ -110,6 +111,7 @@ func (c *roomViewConversation) createConversationTag(name conversationTag, prope
 	return tag
 }
 
+// newMUCTableStyleTags MUST be called from the UI thread
 func (c *roomViewConversation) newMUCTableStyleTags(u *gtkUI) gtki.TextTagTable {
 	cs := u.currentMUCColorSet()
 

@@ -61,11 +61,11 @@ func (f *roomConfigSummaryOccupantField) handleFieldValue() {
 	setLabelText(f.fieldValueLabel, summaryTotalPositionsText(len(occupants)))
 	f.fieldListValueButton.SetVisible(len(occupants) > 0)
 
-	f.printOccupantsView()
+	f.populateOccupantsModel()
 }
 
-// refreshOccupantsView MUST be called from the UI thread
-func (f *roomConfigSummaryOccupantField) printOccupantsView() {
+// populateOccupantsModel MUST be called from the UI thread
+func (f *roomConfigSummaryOccupantField) populateOccupantsModel() {
 	f.listModel.Clear()
 
 	for _, o := range f.retrieveOccupantList() {

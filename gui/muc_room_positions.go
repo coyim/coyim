@@ -119,6 +119,7 @@ func (rp *roomPositionsView) initBuilder() {
 	panicOnDevError(builder.bindObjects(rp))
 
 	builder.ConnectSignals(map[string]interface{}{
+		"on_apply":  rp.onApply,
 		"on_cancel": rp.onCancel,
 	})
 }
@@ -131,6 +132,38 @@ func (rp *roomPositionsView) initDefaults() {
 // onCancel MUST be called from the UI thread
 func (rp *roomPositionsView) onCancel() {
 	rp.dialog.Destroy()
+}
+
+// onCancel MUST be called from the UI thread
+func (rp *roomPositionsView) onApply() {
+	rp.onUpdateOccupantLists.invokeAll()
+
+	doInUIThread(func() {
+		rp.dialog.Destroy()
+		rp.roomView.loadingViewOverlay.onRoomPositionsUpdate()
+	})
+
+	rc, ec := rp.roomView.account.session.UpdateOccupantAffiliations(rp.roomView.roomID(), rp.roomPositions.positionsToUpdate())
+	go func() {
+		select {
+		case <-rc:
+			doInUIThread(func() {
+				rp.roomView.notifications.info(roomNotificationOptions{
+					message:   i18n.Local("The positions list has been updated."),
+					closeable: true,
+				})
+				rp.roomView.loadingViewOverlay.hide()
+			})
+		case <-ec:
+			doInUIThread(func() {
+				rp.roomView.notifications.error(roomNotificationOptions{
+					message:   i18n.Local("The positions list couldn't be updated."),
+					closeable: true,
+				})
+				rp.roomView.loadingViewOverlay.hide()
+			})
+		}
+	}()
 }
 
 // requestOccupantsByAffiliation MUST NOT be called from the UI thread

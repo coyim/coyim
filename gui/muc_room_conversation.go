@@ -198,9 +198,8 @@ func (c *roomViewConversation) displayFormattedMessage(message string, displayMe
 
 // displayMessageFormatting MUST be called from the UI thread
 func (c *roomViewConversation) displayMessageFormatting(message string, format text.Formatting) {
-	formatID := uniqueHighlightFormatName(format.Format)
-	if _, isDefined := conversationTagFormats[formatID]; isDefined {
-		c.addTextWithTag(message, formatID)
+	if tag, ok := conversationTagFormats.tagForFormat(format.Format); ok {
+		c.addTextWithTag(message, tag)
 	} else {
 		c.displayInfoMessage(message)
 	}

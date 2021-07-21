@@ -22,6 +22,7 @@ const (
 	conversationTagInfo              conversationTag = "info"
 	conversationTagWarning           conversationTag = "warning"
 	conversationTagError             conversationTag = "error"
+	conversationTagUnd               conversationTag = ""
 )
 
 var uniqueHighlightFormatName = func(format string) conversationTag {
@@ -34,10 +35,32 @@ var (
 	conversationTagFormatRole        conversationTag = uniqueHighlightFormatName(highlightFormatRole)
 )
 
-var conversationTagFormats = map[conversationTag]bool{
-	conversationTagFormatNickame:     true,
-	conversationTagFormatAffiliation: true,
-	conversationTagFormatRole:        true,
+type conversationTagsFormatsList []conversationTag
+
+func (list conversationTagsFormatsList) tagForFormat(format string) (conversationTag, bool) {
+	ids := []conversationTag{conversationTag(format), uniqueHighlightFormatName(format)}
+	for _, id := range ids {
+		if list.includes(id) {
+			return id, true
+		}
+	}
+	return conversationTagUnd, false
+}
+
+func (list conversationTagsFormatsList) includes(format conversationTag) bool {
+	for _, f := range list {
+		if f == format {
+			return true
+		}
+	}
+	return false
+}
+
+var conversationTagFormats = conversationTagsFormatsList{
+	conversationTagFormatNickame,
+	conversationTagFormatAffiliation,
+	conversationTagFormatRole,
+	conversationTagPassword,
 }
 
 const converstationLineSpacing = 12

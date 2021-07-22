@@ -68,14 +68,14 @@ func (lo *roomViewLoadingOverlay) onRoomConfigurationRequest() {
 
 // onRoomPositionsRequest MUST be called from the UI thread
 func (lo *roomViewLoadingOverlay) onRoomPositionsRequest() {
-	lo.setTitle(i18n.Local("Looking occupants by affiliation..."))
+	lo.setTitle(i18n.Local("Loading room positions..."))
 	lo.setTransparent()
 	lo.show()
 }
 
 // onRoomPositionsUpdate MUST be called from the UI thread
 func (lo *roomViewLoadingOverlay) onRoomPositionsUpdate() {
-	lo.setTitle(i18n.Local("Updating positions list..."))
+	lo.setTitle(i18n.Local("Saving room positions..."))
 	lo.setTransparent()
 	lo.show()
 }

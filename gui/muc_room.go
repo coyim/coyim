@@ -139,6 +139,8 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 		v.selfOccupantAffiliationRoleUpdatedEvent(t.selfAffiliationRoleUpdate)
 	case selfOccupantRoleUpdatedEvent:
 		v.selfOccupantRoleUpdatedEvent(t.selfRoleUpdate)
+	case selfOccupantDisconnectedEvent:
+		v.selfOccupantDisconnectedEvent()
 	}
 }
 
@@ -211,6 +213,17 @@ func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleUpdate) 
 	if selfRoleUpdate.New.IsNone() {
 		v.disableRoomView()
 	}
+}
+
+// selfOccupantDisconnectedEvent MUST be called from the UI thread
+func (v *roomView) selfOccupantDisconnectedEvent() {
+	v.notifications.error(roomNotificationOptions{
+		message:   i18n.Local("Lost the communication with the server"),
+		showTime:  true,
+		closeable: true,
+	})
+
+	v.disableRoomView()
 }
 
 // selfOccupantRemovedEvent MUST be called from the UI thread
@@ -588,6 +601,11 @@ func (v *roomView) publishOccupantRoleUpdatedEvent(roleUpdate data.RoleUpdate) {
 // publishSelfOccupantRoleUpdatedEvent MUST NOT be called from the UI thread
 func (v *roomView) publishSelfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleUpdate) {
 	v.publishEvent(selfOccupantRoleUpdatedEvent{selfRoleUpdate})
+}
+
+// publishSelfOccupantRoleUpdatedEvent MUST NOT be called from the UI thread
+func (v *roomView) publishSelfOccupantDisconnectedEvent() {
+	v.publishEvent(selfOccupantDisconnectedEvent{})
 }
 
 // mainWindow MUST be called from the UI thread

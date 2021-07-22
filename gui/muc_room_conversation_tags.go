@@ -132,6 +132,26 @@ type conversationTagColor struct {
 	background string
 }
 
+// applyToProperties MUST be called from the UI thread
+func (tc *conversationTagColor) applyToProperties(properties pangoAttributes) pangoAttributes {
+	ret := properties.copy()
+
+	if tc != nil {
+		colors := map[string]string{
+			"foreground": tc.foreground,
+			"background": tc.background,
+		}
+
+		for color, value := range colors {
+			if value != "" {
+				ret[color] = value
+			}
+		}
+	}
+
+	return ret
+}
+
 // applyToTag MUST be called from the UI thread
 func (tc *conversationTagColor) applyToTag(tag gtki.TextTag) {
 	tc.applyTagColor("foreground", tc.foreground, tag)

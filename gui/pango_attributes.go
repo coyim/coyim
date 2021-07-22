@@ -6,6 +6,22 @@ import (
 
 type pangoAttributes map[string]interface{}
 
+func (atts pangoAttributes) copy() pangoAttributes {
+	ret := pangoAttributes{}
+	for attr, value := range atts {
+		ret[attr] = value
+	}
+	return ret
+}
+
+func (atts pangoAttributes) merge(atts2 pangoAttributes) pangoAttributes {
+	ret := atts.copy()
+	for attr, value := range atts2 {
+		ret[attr] = value
+	}
+	return ret
+}
+
 type pangoFontWeightType int
 
 const (

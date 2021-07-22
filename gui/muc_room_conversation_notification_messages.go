@@ -114,7 +114,7 @@ func messageForSomeoneWhoJoinedTheRoom(nickname string) string {
 }
 
 func messageForSomeoneWhoLeftTheRoom(nickname string) string {
-	return i18n.Localf("$nickname{%s} left the room")
+	return i18n.Localf("$nickname{%s} left the room", nickname)
 }
 
 func messageForRoomSubjectUpdate(nickname, subject string) string {

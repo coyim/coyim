@@ -48,13 +48,6 @@ func (s *mucStylesProvider) setRoomToolbarLobyStyle(b gtki.Box) {
 	})
 }
 
-func (s *mucStylesProvider) setRoomLoadingInfoBarLabelStyle(l gtki.Label) {
-	s.setLabelStyle(l, style{
-		"font-size":   "16px",
-		"font-weight": "bold",
-	})
-}
-
 const (
 	rosterInfoPanelSelector        = ".roster-info-panel"
 	rosterOccupantNickNameSelector = ".occupant-nickname"
@@ -150,13 +143,6 @@ func (s *mucStylesProvider) setRoomWarningsStyles(dialog gtki.Window) {
 	})
 }
 
-func (s *mucStylesProvider) setRoomMessagesBoxStyle(b gtki.Box) {
-	s.setBoxStyle(b, style{
-		"background-color": s.colors.roomMessagesBackground,
-		"box-shadow":       s.boxShadow("0 10px 20px", s.colors.roomMessagesBoxShadow),
-	})
-}
-
 func (s *mucStylesProvider) setLabelBoldStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
 		"font-weight": "bold",
@@ -198,30 +184,12 @@ func (s *mucStylesProvider) setRoomLoadingViewOverlayContentSolidStyle(b gtki.Bo
 	})
 }
 
-func (s *mucStylesProvider) setRoomConfigFormHelpLabelStyle(l gtki.Label) {
-	s.setLabelStyle(l, style{
-		"font-style": "italic",
-	})
-}
-
-func (s *mucStylesProvider) setRoomConfigSummarySectionLabelStyle(l gtki.Label) {
-	s.setLabelStyle(l, style{
-		"font-weight": "bold",
-	})
-}
-
 func (s *mucStylesProvider) setRoomConfigSummaryStyle(a gtki.Assistant) {
 	s.setWidgetStyles(a, styles{
 		"button.link": {
 			"padding":   "0px",
 			"font-size": "large",
 		},
-	})
-}
-
-func (s *mucStylesProvider) setRoomConfigSummaryRoomDescriptionLabelStyle(l gtki.Label) {
-	s.setLabelStyle(l, style{
-		"font-style": "italic",
 	})
 }
 
@@ -271,22 +239,6 @@ func (s *mucStylesProvider) setRoomDialogErrorComponentHeaderStyle(l gtki.Label)
 	})
 }
 
-func (s *mucStylesProvider) setRoomBanListViewStyles(b gtki.Box) {
-	s.setWidgetStyles(b, styles{
-		".state": style{
-			"background-color": colorThemeBase,
-		},
-		".state-title": style{
-			"font-weight": "bold",
-			"font-size":   "large",
-		},
-		".state-description": style{
-			"font-style": "italic",
-			"color":      colorThemeInsensitiveForeground,
-		},
-	})
-}
-
 func (s *mucStylesProvider) setWidgetStyles(w gtki.Widget, st styles) {
 	updateWithStyles(w, providerWithStyles(st))
 }
@@ -295,20 +247,12 @@ func (s *mucStylesProvider) setWidgetStyle(w gtki.Widget, se string, st style) {
 	updateWithStyle(w, providerWithStyle(se, st))
 }
 
-func (s *mucStylesProvider) setButtonStyle(b gtki.Button, st style) {
-	s.setWidgetStyle(b, "button", st)
-}
-
 func (s *mucStylesProvider) setLabelStyle(l gtki.Label, st style) {
 	s.setWidgetStyle(l, "label", st)
 }
 
 func (s *mucStylesProvider) setBoxStyle(b gtki.Box, st style) {
 	s.setWidgetStyle(b, "box", st)
-}
-
-func (s *mucStylesProvider) setOverlayStyle(o gtki.Overlay, st style) {
-	s.setWidgetStyle(o, "overlay", st)
 }
 
 func (s *mucStylesProvider) setEntryErrorStyle(e gtki.Entry) {
@@ -333,10 +277,6 @@ func (s *mucStylesProvider) setErrorLabelClass(l gtki.Label) {
 			"color": s.colors.entryErrorBorder,
 		},
 	})
-}
-
-func (s *mucStylesProvider) border(size int, style, color string) string {
-	return fmt.Sprintf("%dpx %s %s", size, style, color)
 }
 
 func (s *mucStylesProvider) boxShadow(shadowStyle, color string) string {

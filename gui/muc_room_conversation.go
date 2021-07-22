@@ -170,6 +170,13 @@ func (c *roomViewConversation) displayOccupantUpdateMessageFor(update interface{
 	c.addNewLine()
 }
 
+// displayFormattedMessageWithTimestamp MUST be called from the UI thread
+func (c *roomViewConversation) displayFormattedMessageWithTimestamp(message string, displayMessage func(string)) {
+	c.displayCurrentTimestamp()
+	c.displayFormattedMessage(message, displayMessage)
+	c.addNewLine()
+}
+
 // displayFormattedMessage MUST be called from the UI thread
 func (c *roomViewConversation) displayFormattedMessage(message string, displayMessage func(string)) {
 	if formatted, ok := text.ParseWithFormat(message); ok {

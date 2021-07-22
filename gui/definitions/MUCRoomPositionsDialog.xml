@@ -10,26 +10,6 @@
       <object class="GtkBox">
         <property name="visible">True</property>
         <property name="orientation">vertical</property>
-        <property name="border_width">24</property>
-        <property name="spacing">24</property>
-        <child>
-          <object class="GtkLabel">
-            <property name="label" translatable="yes">Here you can define who the owners, administrators, members and banned people are.</property>
-            <property name="visible">True</property>
-            <property name="halign">start</property>
-            <property name="wrap">True</property>
-            <property name="xalign">0</property>
-            <property name="yalign">0</property>
-            <style>
-              <class name="config-field-intro"/>
-            </style>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
         <child>
           <object class="GtkScrolledWindow">
             <property name="visible">True</property>
@@ -37,10 +17,41 @@
               <object class="GtkViewport">
                 <property name="visible">True</property>
                 <child>
-                  <object class="GtkBox" id="content">
-                    <property name="orientation">vertical</property>
+                  <object class="GtkBox">
                     <property name="visible">True</property>
+                    <property name="border_width">12</property>
+                    <property name="orientation">vertical</property>
                     <property name="spacing">24</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="halign">start</property>
+                        <property name="label" translatable="yes">Here you can define who the owners, administrators, members and banned people are.</property>
+                        <property name="wrap">True</property>
+                        <property name="xalign">0</property>
+                        <property name="yalign">0</property>
+                        <style>
+                          <class name="config-field-intro"/>
+                        </style>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox" id="content">
+                        <property name="visible">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">24</property>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </object>
                 </child>
               </object>
@@ -49,38 +60,60 @@
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
         </child>
         <child>
-          <object class="GtkButtonBox">
+          <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="halign">end</property>
-            <property name="spacing">12</property>
             <child>
-              <object class="GtkButton" id="cancel-button">
-                <property name="label" translatable="yes">Cancel</property>
+              <object class="GtkButtonBox">
                 <property name="visible">True</property>
-                <property name="receives_default">True</property>
-                <signal name="clicked" handler="on_cancel" swapped="no"/>
+                <property name="halign">end</property>
+                <property name="hexpand">True</property>
+                <property name="border_width">12</property>
+                <property name="spacing">12</property>
+                <child>
+                  <object class="GtkButton" id="cancel-button">
+                    <property name="label" translatable="yes">Cancel</property>
+                    <property name="visible">True</property>
+                    <property name="receives_default">True</property>
+                    <signal name="clicked" handler="on_cancel" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="apply-button">
+                    <property name="label" translatable="yes">Apply</property>
+                    <property name="visible">True</property>
+                    <property name="receives_default">True</property>
+                    <signal name="clicked" handler="on_apply" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
               </object>
               <packing>
-                <property name="expand">True</property>
+                <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="apply-button">
-                <property name="label" translatable="yes">Apply</property>
-                <property name="visible">True</property>
-                <property name="receives_default">True</property>
-                <signal name="clicked" handler="on_apply" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
               </packing>
             </child>
           </object>

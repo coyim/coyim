@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/coylog"
-	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/text"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -395,7 +394,8 @@ func (c *roomViewConversation) selfOccupantRemovedEvent(nickname string) {
 
 func (c *roomViewConversation) occupantRemovedEvent(nickname string) {
 	doInUIThread(func() {
-		c.displayNewInfoMessage(i18n.Localf("%s was removed from this room because it's now a members only room.", nickname))
+		message := messageForMembersOnlyRoom(nickname)
+		c.displayFormattedMessage(message, c.displayInfoMessage)
 	})
 }
 

@@ -133,6 +133,10 @@ func messageForRoomSubject(subject string) string {
 	return i18n.Localf("The room subject is \"%s\"", subject)
 }
 
+func messageForMembersOnlyRoom(nickname string) string {
+	return i18n.Localf("$nickname{%s} was removed from this room because it's now a members only room.", nickname)
+}
+
 type roomDestroyedData struct {
 	reason      string
 	alternative jid.Bare

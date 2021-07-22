@@ -21,8 +21,20 @@ func (c *conn) getCookie() data.Cookie {
 	return data.Cookie(binary.LittleEndian.Uint64(buf[:]))
 }
 
-func (c *conn) cancelInflights() {
+func (c *conn) allInflightCookies() []data.Cookie {
+	c.inflightsMutex.Lock()
+	defer c.inflightsMutex.Unlock()
+
+	allCookies := []data.Cookie{}
 	for cookie := range c.inflights {
+		allCookies = append(allCookies, cookie)
+	}
+
+	return allCookies
+}
+
+func (c *conn) cancelInflights() {
+	for _, cookie := range c.allInflightCookies() {
 		c.Cancel(cookie)
 	}
 }

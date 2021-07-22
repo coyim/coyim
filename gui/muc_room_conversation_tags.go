@@ -127,35 +127,6 @@ var conversationTagsPropertiesRegistry = map[conversationTag]pangoAttributes{
 	},
 }
 
-// createConversationTag MUST be called from the UI thread
-func (c *roomViewConversation) createConversationTag(name conversationTag, properties pangoAttributes) gtki.TextTag {
-	tag, _ := g.gtk.TextTagNew(string(name))
-	for attribute, value := range properties {
-		_ = tag.SetProperty(attribute, value)
-	}
-	return tag
-}
-
-// newMUCTableStyleTags MUST be called from the UI thread
-func (c *roomViewConversation) newMUCTableStyleTags(u *gtkUI) gtki.TextTagTable {
-	cs := u.currentMUCColorSet()
-
-	table, _ := g.gtk.TextTagTableNew()
-	for tagName, properties := range conversationTagsPropertiesRegistry {
-		tag := c.createConversationTag(tagName, pangoAttributesNormalize(properties))
-		c.applyTagColors(tagName, tag, cs)
-		table.Add(tag)
-	}
-
-	return table
-}
-
-// applyTagColors MUST be called from the UI thread
-func (c *roomViewConversation) applyTagColors(tagName conversationTag, tag gtki.TextTag, cs mucColorSet) {
-	colors := conversationTagColorDefinition(tagName, cs)
-	colors.applyToTag(tag)
-}
-
 type conversationTagColor struct {
 	foreground string
 	background string
@@ -172,6 +143,64 @@ func (tc *conversationTagColor) applyTagColor(property, color string, tag gtki.T
 	if color != "" {
 		tag.SetProperty(property, color)
 	}
+}
+
+type conversationTagColors map[conversationTag]*conversationTagColor
+
+func (ctc conversationTagColors) includes(tag conversationTag) bool {
+	_, ok := ctc[tag]
+	return ok
+}
+
+type conversationTags struct {
+	table  gtki.TextTagTable
+	colors conversationTagColors
+}
+
+func (c *roomViewConversation) newConversationTags() *conversationTags {
+	ct := &conversationTags{
+		colors: conversationTagColors{},
+	}
+
+	ct.initTagTable(c.u)
+
+	return ct
+}
+
+func (ct *conversationTags) initTagTable(u *gtkUI) {
+	table, _ := g.gtk.TextTagTableNew()
+	ct.table = table
+
+	cs := u.currentMUCColorSet()
+	for tagName, properties := range conversationTagsPropertiesRegistry {
+		tag := ct.createTag(tagName, pangoAttributesNormalize(properties))
+		ct.applyTagColors(tagName, tag, cs)
+		ct.table.Add(tag)
+	}
+}
+
+// createTag MUST be called from the UI thread
+func (ct *conversationTags) createTag(name conversationTag, properties pangoAttributes) gtki.TextTag {
+	tag, _ := g.gtk.TextTagNew(string(name))
+	for attribute, value := range properties {
+		_ = tag.SetProperty(attribute, value)
+	}
+	return tag
+}
+
+// applyTagColors MUST be called from the UI thread
+func (ct *conversationTags) applyTagColors(tagName conversationTag, tag gtki.TextTag, cs mucColorSet) {
+	c := conversationTagColorDefinition(tagName, cs)
+	c.applyToTag(tag)
+	ct.colors[tagName] = c
+}
+
+func (ct *conversationTags) colorDefinitionFor(tag conversationTag) *conversationTagColor {
+	ret := &conversationTagColor{}
+	if ct.colors.includes(tag) {
+		ret = ct.colors[tag]
+	}
+	return ret
 }
 
 func conversationTagColorDefinition(tagName conversationTag, cs mucColorSet) *conversationTagColor {

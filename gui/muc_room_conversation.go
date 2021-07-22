@@ -13,7 +13,7 @@ import (
 
 type roomViewConversation struct {
 	u                    *gtkUI
-	tags                 gtki.TextTagTable
+	tags                 *conversationTags
 	roomID               jid.Bare
 	account              *account
 	canSendMessages      bool

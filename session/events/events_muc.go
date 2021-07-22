@@ -213,6 +213,9 @@ type MUCSelfOccupantKicked struct {
 	RoleUpdate data.RoleUpdate
 }
 
+// MUCSelfOccupantDisconnected signifies that the self occupant could not be reached by the server
+type MUCSelfOccupantDisconnected struct{}
+
 func (MUCError) markAsMUCEventTypeInterface()                              {}
 func (MUCRoom) markAsMUCEventTypeInterface()                               {}
 func (MUCRoomCreated) markAsMUCEventTypeInterface()                        {}
@@ -244,3 +247,4 @@ func (MUCOccupantAffiliationRoleUpdated) markAsMUCEventTypeInterface()     {}
 func (MUCSelfOccupantAffiliationRoleUpdated) markAsMUCEventTypeInterface() {}
 func (MUCOccupantKicked) markAsMUCEventTypeInterface()                     {}
 func (MUCSelfOccupantKicked) markAsMUCEventTypeInterface()                 {}
+func (MUCSelfOccupantDisconnected) markAsMUCEventTypeInterface()           {}

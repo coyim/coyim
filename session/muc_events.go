@@ -232,3 +232,7 @@ func (m *mucManager) selfOccupantKicked(roomID jid.Bare, roleUpdate data.RoleUpd
 
 	m.publishRoomEvent(roomID, ev)
 }
+
+func (m *mucManager) selfOccupantDisconnected(roomID jid.Bare) {
+	m.publishRoomEvent(roomID, events.MUCSelfOccupantDisconnected{})
+}

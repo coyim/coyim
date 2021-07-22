@@ -319,7 +319,8 @@ func (c *roomViewConversation) messageNotAcceptableEvent() {
 
 func (c *roomViewConversation) subjectUpdatedEvent(nickname, subject string) {
 	doInUIThread(func() {
-		c.displayNewInfoMessage(getDisplayRoomSubjectForNickname(nickname, subject))
+		message := getDisplayRoomSubjectForNickname(nickname, subject)
+		c.displayFormattedMessageWithTimestamp(message, c.displayInfoMessage)
 	})
 }
 

@@ -17,10 +17,10 @@ func (*MUCRoomConversationDisplaySuite) Test_mucRoomConversationDisplay_getDispl
 		"[localized] Someone has updated the room subject to: \"room subject\"")
 
 	c.Assert(getDisplayRoomSubjectForNickname("nick", "new subject"), Equals,
-		"[localized] nick updated the room subject to: \"new subject\"")
+		"[localized] $nickname{nick} updated the room subject to: \"new subject\"")
 
 	c.Assert(getDisplayRoomSubjectForNickname("batman", "the batman cave"), Equals,
-		"[localized] batman updated the room subject to: \"the batman cave\"")
+		"[localized] $nickname{batman} updated the room subject to: \"the batman cave\"")
 }
 
 func (*MUCRoomConversationDisplaySuite) Test_mucRoomConversationDisplay_getDisplayRoomSubject(c *C) {

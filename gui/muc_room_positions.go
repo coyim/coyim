@@ -108,7 +108,7 @@ func (rp *roomPositionsView) onCancel() {
 	rp.dialog.Destroy()
 }
 
-// onCancel MUST be called from the UI thread
+// onApply MUST be called from the UI thread
 func (rp *roomPositionsView) onApply() {
 	rp.onUpdateOccupantLists.invokeAll()
 
@@ -165,6 +165,7 @@ func (rp *roomPositionsView) requestRoomPositions(onSuccess func(), onError func
 	onSuccess()
 }
 
+// addPositionComponent MUST be called from the UI thread
 func (rp *roomPositionsView) addPositionComponent(positionComponent hasRoomConfigFormField) {
 	rp.content.Add(positionComponent.fieldWidget())
 	positionComponent.refreshContent()

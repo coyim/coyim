@@ -22,12 +22,16 @@ func (c *roomViewConversation) displayTimestamp(timestamp time.Time) {
 
 // displayNotificationWhenOccupantJoinedRoom MUST be called from the UI thread
 func (c *roomViewConversation) displayNotificationWhenOccupantJoinedRoom(nickname string) {
-	c.displayTextLineWithTimestamp(i18n.Localf("%s joined the room", nickname), conversationTagSomeoneJoinedRoom)
+	c.displayFormattedMessageWithTimestamp(i18n.Localf("$nickname{%s} joined the room", nickname), func(text string) {
+		c.addTextWithTag(text, conversationTagSomeoneJoinedRoom)
+	})
 }
 
 // displayNotificationWhenOccupantLeftTheRoom MUST be called from the UI thread
 func (c *roomViewConversation) displayNotificationWhenOccupantLeftTheRoom(nickname string) {
-	c.displayTextLineWithTimestamp(i18n.Localf("%s left the room", nickname), conversationTagSomeoneLeftRoom)
+	c.displayFormattedMessageWithTimestamp(i18n.Localf("$nickname{%s} left the room", nickname), func(text string) {
+		c.addTextWithTag(text, conversationTagSomeoneLeftRoom)
+	})
 }
 
 // displayNickname MUST be called from the UI thread

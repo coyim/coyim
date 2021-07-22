@@ -17,6 +17,7 @@ const (
 	noMessagesBecauseForbidden
 	noMessagesBecauseNotAcceptable
 	noMessagesBecauseRoomConfiguration
+	noMessagesBecauseSelfOccupantDisconnected
 
 	roomPubliclyLogged
 	roomNotPubliclyLogged
@@ -30,18 +31,19 @@ var roomConversationTexts map[roomConversationMessageType]string
 
 func initMUCRoomConversationTexts() {
 	roomConversationTexts = map[roomConversationMessageType]string{
-		noMessagesBecauseRoomDestroyed:        i18n.Local("You can't send messages because this room has been destroyed."),
-		noMessagesBecauseSelfOccupantBanned:   i18n.Local("You can't send messages because you have been banned."),
-		noMessagesBecauseSelfOccupantExpelled: i18n.Local("You can't send messages because you were expelled from the room."),
-		noMessagesBecauseSelfOccupantVisitor:  i18n.Local("As a visitor, you can't send messages in a moderated room."),
-		noMessagesBecauseForbidden:            i18n.Local("You are forbidden to send messages to this room."),
-		noMessagesBecauseNotAcceptable:        i18n.Local("Your messages to this room aren't accepted."),
-		noMessagesBecauseRoomConfiguration:    i18n.Local("You can't send messages because the room configuration has been changed."),
-		roomPubliclyLogged:                    i18n.Local("This room is now publicly logged."),
-		roomNotPubliclyLogged:                 i18n.Local("This room is not publicly logged anymore."),
-		roomCanSeeRealJid:                     i18n.Local("Your real JID can now be seen by anyone."),
-		roomCanNotSeeRealJid:                  i18n.Local("Your real JID can now be seen only by moderators."),
-		messageCouldNotBeSent:                 i18n.Local("The message couldn't be sent, please try again"),
+		noMessagesBecauseRoomDestroyed:            i18n.Local("You can't send messages because this room has been destroyed."),
+		noMessagesBecauseSelfOccupantBanned:       i18n.Local("You can't send messages because you have been banned."),
+		noMessagesBecauseSelfOccupantExpelled:     i18n.Local("You can't send messages because you were expelled from the room."),
+		noMessagesBecauseSelfOccupantVisitor:      i18n.Local("As a visitor, you can't send messages in a moderated room."),
+		noMessagesBecauseForbidden:                i18n.Local("You are forbidden to send messages to this room."),
+		noMessagesBecauseNotAcceptable:            i18n.Local("Your messages to this room aren't accepted."),
+		noMessagesBecauseRoomConfiguration:        i18n.Local("You can't send messages because the room configuration has been changed."),
+		roomPubliclyLogged:                        i18n.Local("This room is now publicly logged."),
+		roomNotPubliclyLogged:                     i18n.Local("This room is not publicly logged anymore."),
+		roomCanSeeRealJid:                         i18n.Local("Your real JID can now be seen by anyone."),
+		roomCanNotSeeRealJid:                      i18n.Local("Your real JID can now be seen only by moderators."),
+		messageCouldNotBeSent:                     i18n.Local("The message couldn't be sent, please try again"),
+		noMessagesBecauseSelfOccupantDisconnected: i18n.Local("You can't send messages because you lost connection."),
 	}
 }
 
@@ -99,6 +101,10 @@ func messageForRoomCanNotSeeRealJid() string {
 
 func messageNotSent() string {
 	return messageForType(messageCouldNotBeSent)
+}
+
+func messageForSelfOccupantDisconnected() string {
+	return messageForType(noMessagesBecauseSelfOccupantDisconnected)
 }
 
 func messageForTimestamp(timestamp time.Time) string {

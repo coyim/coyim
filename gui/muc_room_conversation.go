@@ -130,6 +130,8 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.occupantRoleEvent(t.roleUpdate)
 		case selfOccupantRoleUpdatedEvent:
 			c.selfOccupantRoleEvent(t.selfRoleUpdate)
+		case selfOccupantDisconnectedEvent:
+			c.selfOccupantDisconnectedEvent()
 		}
 	})
 }
@@ -178,6 +180,13 @@ func (c *roomViewConversation) selfOccupantRoleEvent(roleUpdate data.RoleUpdate)
 	case roleUpdate.New.IsVisitor():
 		doInUIThread(c.onSelfOccupantVoiceRevoked)
 	}
+}
+
+func (c *roomViewConversation) selfOccupantDisconnectedEvent() {
+	doInUIThread(func() {
+		c.updateNotificationMessage(messageForSelfOccupantDisconnected())
+		c.disableSendCapabilities()
+	})
 }
 
 // onSelfOccupantBanned MUST be called from the UI thread

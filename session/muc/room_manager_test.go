@@ -45,3 +45,15 @@ func (*MucRoomManagerSuite) Test_RoomManager_LeaveRoom(c *C) {
 	ok = rr.LeaveRoom(jid.ParseBare("foo@bar.com"))
 	c.Assert(ok, Equals, true)
 }
+
+func (*MucRoomManagerSuite) Test_RoomManager_GetAllRooms(c *C) {
+	rr := NewRoomManager()
+	_ = rr.AddRoom(&Room{ID: jid.ParseBare("foo@bar.com")})
+	_ = rr.AddRoom(&Room{ID: jid.ParseBare("bat@man.com")})
+
+	c.Assert(rr.GetAllRooms(), HasLen, 2)
+	c.Assert(rr.GetAllRooms(), DeepEquals, []*Room{
+		{ID: jid.ParseBare("foo@bar.com")},
+		{ID: jid.ParseBare("bat@man.com")},
+	})
+}

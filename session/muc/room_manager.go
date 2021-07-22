@@ -31,6 +31,19 @@ func (rm *RoomManager) GetRoom(roomID jid.Bare) (*Room, bool) {
 	return r, ok
 }
 
+// GetAllRooms returns the occupant's active rooms
+func (rm *RoomManager) GetAllRooms() []*Room {
+	rm.lock.RLock()
+	defer rm.lock.RUnlock()
+
+	rooms := []*Room{}
+	for _, v := range rm.rooms {
+		rooms = append(rooms, v)
+	}
+
+	return rooms
+}
+
 // AddRoom adds the room to the manager. If the room is already in the manager, this method will return
 // false
 func (rm *RoomManager) AddRoom(r *Room) bool {

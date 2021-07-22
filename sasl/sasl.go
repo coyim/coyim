@@ -31,6 +31,9 @@ var registry = struct {
 	m: make(map[string]Mechanism),
 }
 
+// Debug controls whether extra debug printing will happen - potentially insecure
+var Debug = false
+
 // RegisterMechanism registers an SASL mechanism for a name
 func RegisterMechanism(name string, m Mechanism) error {
 	registry.Lock()

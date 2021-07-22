@@ -12,6 +12,7 @@ import (
 	"github.com/coyim/coyim/gui"
 	"github.com/coyim/coyim/gui/settings"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/sasl"
 	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/xmpp"
 	"github.com/coyim/gotk3adapter/gdka"
@@ -92,6 +93,8 @@ func main() {
 		printVersion()
 		return
 	}
+
+	sasl.Debug = *config.DebugFlag
 
 	startProfileIfNecessary()
 	defer stopProfileIfNecessary()

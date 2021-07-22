@@ -189,6 +189,15 @@ func (c expectingServerFirstMessage) normalizedPassword(password string) (string
 		strings.NewReader(password), sasl.Stringprep)
 	r := bufio.NewReader(t)
 
+	defer func() {
+		if r := recover(); r != nil {
+			if sasl.Debug {
+				fmt.Println("Normalizing password panicked:", r)
+				fmt.Println("Value that caused the panic:", password)
+			}
+		}
+	}()
+
 	normalized, _, err := r.ReadLine()
 	return string(normalized), err
 }

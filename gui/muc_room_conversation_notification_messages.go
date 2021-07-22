@@ -5,7 +5,7 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-func getDisplayRoomSubjectForNickname(nickname, subject string) string {
+func messageForRoomSubjectUpdate(nickname, subject string) string {
 	if nickname == "" {
 		return i18n.Localf("Someone has updated the room subject to: \"%s\"", subject)
 	}
@@ -13,7 +13,7 @@ func getDisplayRoomSubjectForNickname(nickname, subject string) string {
 	return i18n.Localf("$nickname{%[1]s} updated the room subject to: \"%[2]s\"", nickname, subject)
 }
 
-func getDisplayRoomSubject(subject string) string {
+func messageForRoomSubject(subject string) string {
 	if subject == "" {
 		return i18n.Local("The room does not have a subject")
 	}
@@ -39,7 +39,7 @@ func (d *roomDestroyedData) hasPassword() bool {
 	return d.password != ""
 }
 
-func getDisplayForRoomDestroyed(d *roomDestroyedData) string {
+func messageForRoomDestroyed(d *roomDestroyedData) string {
 	switch {
 	case d.hasReason() && d.hasAlternativeRoom() && d.hasPassword():
 		return i18n.Localf("The room was destroyed. The reason given was \"%[1]s\". "+

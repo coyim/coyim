@@ -140,7 +140,7 @@ func (c *roomViewConversation) displayTextLineWithTimestamp(text string, tag con
 func (c *roomViewConversation) displayNotificationWhenRoomDestroyed(reason string, alternative jid.Bare, password string) {
 	c.displayCurrentTimestamp()
 
-	message := getDisplayForRoomDestroyed(&roomDestroyedData{reason, alternative, password})
+	message := messageForRoomDestroyed(&roomDestroyedData{reason, alternative, password})
 	c.displayFormattedMessage(message, func(m string) {
 		c.addTextWithTag(m, conversationTagWarning)
 	})

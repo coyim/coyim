@@ -12,19 +12,19 @@ func (s *MUCRoomConversationDisplaySuite) SetUpSuite(c *C) {
 	initMUCI18n()
 }
 
-func (*MUCRoomConversationDisplaySuite) Test_mucRoomConversationDisplay_getDisplayRoomSubjectForNickname(c *C) {
-	c.Assert(getDisplayRoomSubjectForNickname("", "room subject"), Equals,
+func (*MUCRoomConversationDisplaySuite) Test_mucRoomConversationDisplay_messageForRoomSubjectUpdate(c *C) {
+	c.Assert(messageForRoomSubjectUpdate("", "room subject"), Equals,
 		"[localized] Someone has updated the room subject to: \"room subject\"")
 
-	c.Assert(getDisplayRoomSubjectForNickname("nick", "new subject"), Equals,
+	c.Assert(messageForRoomSubjectUpdate("nick", "new subject"), Equals,
 		"[localized] $nickname{nick} updated the room subject to: \"new subject\"")
 
-	c.Assert(getDisplayRoomSubjectForNickname("batman", "the batman cave"), Equals,
+	c.Assert(messageForRoomSubjectUpdate("batman", "the batman cave"), Equals,
 		"[localized] $nickname{batman} updated the room subject to: \"the batman cave\"")
 }
 
-func (*MUCRoomConversationDisplaySuite) Test_mucRoomConversationDisplay_getDisplayRoomSubject(c *C) {
-	c.Assert(getDisplayRoomSubject(""), Equals, "[localized] The room does not have a subject")
+func (*MUCRoomConversationDisplaySuite) Test_mucRoomConversationDisplay_messageForRoomSubject(c *C) {
+	c.Assert(messageForRoomSubject(""), Equals, "[localized] The room does not have a subject")
 
-	c.Assert(getDisplayRoomSubject("the batman cave"), Equals, "[localized] The room subject is \"the batman cave\"")
+	c.Assert(messageForRoomSubject("the batman cave"), Equals, "[localized] The room subject is \"the batman cave\"")
 }

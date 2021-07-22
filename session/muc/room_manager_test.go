@@ -51,9 +51,11 @@ func (*MucRoomManagerSuite) Test_RoomManager_GetAllRooms(c *C) {
 	_ = rr.AddRoom(&Room{ID: jid.ParseBare("foo@bar.com")})
 	_ = rr.AddRoom(&Room{ID: jid.ParseBare("bat@man.com")})
 
-	c.Assert(rr.GetAllRooms(), HasLen, 2)
-	c.Assert(rr.GetAllRooms(), DeepEquals, []*Room{
-		{ID: jid.ParseBare("foo@bar.com")},
-		{ID: jid.ParseBare("bat@man.com")},
-	})
+	ar := rr.GetAllRooms()
+
+	c.Assert(ar, HasLen, 2)
+	for _, r := range ar {
+		_, ok := rr.GetRoom(r.ID)
+		c.Assert(ok, Equals, true)
+	}
 }

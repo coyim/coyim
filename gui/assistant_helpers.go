@@ -12,9 +12,19 @@ func findAssistantHeaderContainer(a gtki.Assistant) gtki.Container {
 }
 
 const (
-	assistantButtonLastName  = "last"
-	assistantButtonApplyName = "apply"
+	assistantButtonBackCancelName = "cancel"
+	assistantButtonBackLastName   = "back"
+	assistantButtonLastName       = "last"
+	assistantButtonForwardName    = "forward"
+	assistantButtonApplyName      = "apply"
 )
+
+var assistantNavigationButtons = []string{
+	assistantButtonBackLastName,
+	assistantButtonLastName,
+	assistantButtonForwardName,
+	assistantButtonApplyName,
+}
 
 type assistantButtons map[string]gtki.Button
 
@@ -47,6 +57,24 @@ func (list assistantButtons) updateApplyButtonLabel(label string) {
 func (list assistantButtons) updateButtonLabelByName(name string, label string) {
 	if b, ok := list[name]; ok {
 		b.SetLabel(label)
+	}
+}
+
+// disableNavigationButNotCancel MUST be called from the UI thread
+func (list assistantButtons) disableNavigationButNotCancel() {
+	for _, buttonName := range assistantNavigationButtons {
+		if b, ok := list[buttonName]; ok {
+			b.SetSensitive(false)
+		}
+	}
+}
+
+// enableNavigation MUST be called from the UI thread
+func (list assistantButtons) enableNavigation() {
+	for _, buttonName := range assistantNavigationButtons {
+		if b, ok := list[buttonName]; ok {
+			b.SetSensitive(true)
+		}
 	}
 }
 

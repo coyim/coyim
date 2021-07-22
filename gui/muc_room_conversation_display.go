@@ -24,17 +24,13 @@ func (c *roomViewConversation) displayTimestamp(timestamp time.Time) {
 // displayNotificationWhenOccupantJoinedRoom MUST be called from the UI thread
 func (c *roomViewConversation) displayNotificationWhenOccupantJoinedRoom(nickname string) {
 	message := messageForSomeoneWhoJoinedTheRoom(nickname)
-	c.displayFormattedMessageWithTimestamp(message, func(text string) {
-		c.addTextWithTag(text, conversationTagSomeoneJoinedRoom)
-	})
+	c.displayFormattedMessageWithTimestamp(message, conversationTagSomeoneJoinedRoom)
 }
 
 // displayNotificationWhenOccupantLeftTheRoom MUST be called from the UI thread
 func (c *roomViewConversation) displayNotificationWhenOccupantLeftTheRoom(nickname string) {
 	message := messageForSomeoneWhoLeftTheRoom(nickname)
-	c.displayFormattedMessageWithTimestamp(message, func(text string) {
-		c.addTextWithTag(text, conversationTagSomeoneLeftRoom)
-	})
+	c.displayFormattedMessageWithTimestamp(message, conversationTagSomeoneLeftRoom)
 }
 
 // displayNickname MUST be called from the UI thread
@@ -144,9 +140,7 @@ func (c *roomViewConversation) displayNotificationWhenRoomDestroyed(reason strin
 	c.displayCurrentTimestamp()
 
 	message := messageForRoomDestroyed(&roomDestroyedData{reason, alternative, password})
-	c.displayFormattedMessage(message, func(m string) {
-		c.addTextWithTag(m, conversationTagWarning)
-	})
+	c.displayFormattedMessage(message, conversationTagWarning)
 
 	c.addNewLine()
 
@@ -158,20 +152,24 @@ func (c *roomViewConversation) displayOccupantUpdateMessageFor(update interface{
 	c.displayCurrentTimestamp()
 
 	message := getMUCNotificationMessageFrom(update)
-	c.displayFormattedMessage(message, c.displayInfoMessage)
+	c.displayFormattedMessage(message, conversationTagInfo)
 
 	c.addNewLine()
 }
 
 // displayFormattedMessageWithTimestamp MUST be called from the UI thread
-func (c *roomViewConversation) displayFormattedMessageWithTimestamp(message string, displayMessage func(string)) {
+func (c *roomViewConversation) displayFormattedMessageWithTimestamp(message string, noFormattedTextTag conversationTag) {
 	c.displayCurrentTimestamp()
-	c.displayFormattedMessage(message, displayMessage)
+	c.displayFormattedMessage(message, noFormattedTextTag)
 	c.addNewLine()
 }
 
 // displayFormattedMessage MUST be called from the UI thread
-func (c *roomViewConversation) displayFormattedMessage(message string, displayMessage func(string)) {
+func (c *roomViewConversation) displayFormattedMessage(message string, noFormattedTextTag conversationTag) {
+	displayMessage := func(text string) {
+		c.addTextWithTag(text, noFormattedTextTag)
+	}
+
 	if formatted, ok := text.ParseWithFormat(message); ok {
 		text, formats := formatted.Join()
 

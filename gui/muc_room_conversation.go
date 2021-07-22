@@ -272,7 +272,7 @@ func (c *roomViewConversation) messageNotAcceptableEvent() {
 func (c *roomViewConversation) subjectUpdatedEvent(nickname, subject string) {
 	doInUIThread(func() {
 		message := messageForRoomSubjectUpdate(nickname, subject)
-		c.displayFormattedMessageWithTimestamp(message, c.displayInfoMessage)
+		c.displayFormattedMessageWithTimestamp(message, conversationTagInfo)
 	})
 }
 
@@ -342,7 +342,7 @@ func (c *roomViewConversation) selfOccupantRemovedEvent(nickname string) {
 func (c *roomViewConversation) occupantRemovedEvent(nickname string) {
 	doInUIThread(func() {
 		message := messageForMembersOnlyRoom(nickname)
-		c.displayFormattedMessage(message, c.displayInfoMessage)
+		c.displayFormattedMessage(message, conversationTagInfo)
 	})
 }
 

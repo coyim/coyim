@@ -180,7 +180,7 @@ func (c *roomViewConversation) displayFormattedMessage(message string, noFormatt
 
 			textFormatSize := format.Start + format.Length
 			textFormat := text[format.Start:textFormatSize]
-			c.displayMessageFormatting(textFormat, format)
+			c.displayMessageFormatting(textFormat, format, noFormattedTextTag)
 
 			lastDisplayedIndex = textFormatSize
 		}
@@ -195,9 +195,9 @@ func (c *roomViewConversation) displayFormattedMessage(message string, noFormatt
 }
 
 // displayMessageFormatting MUST be called from the UI thread
-func (c *roomViewConversation) displayMessageFormatting(message string, format text.Formatting) {
+func (c *roomViewConversation) displayMessageFormatting(message string, format text.Formatting, tagToCopyAttributes conversationTag) {
 	if tag, ok := conversationTagFormats.tagForFormat(format.Format); ok {
-		c.addTextWithTag(message, tag)
+		c.addTextWithTag(message, c.tags.createTemporaryTag(tag, tagToCopyAttributes))
 	} else {
 		c.displayInfoMessage(message)
 	}

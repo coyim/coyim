@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -173,13 +174,15 @@ func (ctc conversationTagColors) includes(tag conversationTag) bool {
 }
 
 type conversationTags struct {
-	table  gtki.TextTagTable
-	colors conversationTagColors
+	table         gtki.TextTagTable
+	colors        conversationTagColors
+	temporaryTags map[conversationTag]gtki.TextTag
 }
 
 func (c *roomViewConversation) newConversationTags() *conversationTags {
 	ct := &conversationTags{
-		colors: conversationTagColors{},
+		colors:        conversationTagColors{},
+		temporaryTags: map[conversationTag]gtki.TextTag{},
 	}
 
 	ct.initTagTable(c.u)
@@ -193,7 +196,7 @@ func (ct *conversationTags) initTagTable(u *gtkUI) {
 
 	cs := u.currentMUCColorSet()
 	for tagName, properties := range conversationTagsPropertiesRegistry {
-		tag := ct.createTag(tagName, pangoAttributesNormalize(properties))
+		tag := ct.createTag(tagName, properties)
 		ct.applyTagColors(tagName, tag, cs)
 		ct.table.Add(tag)
 	}
@@ -202,10 +205,34 @@ func (ct *conversationTags) initTagTable(u *gtkUI) {
 // createTag MUST be called from the UI thread
 func (ct *conversationTags) createTag(name conversationTag, properties pangoAttributes) gtki.TextTag {
 	tag, _ := g.gtk.TextTagNew(string(name))
-	for attribute, value := range properties {
+	for attribute, value := range pangoAttributesNormalize(properties) {
 		_ = tag.SetProperty(attribute, value)
 	}
 	return tag
+}
+
+func conversationTagTemporaryName(tag, dependentTag conversationTag) conversationTag {
+	tmpName := fmt.Sprintf("%s_%sTemp", tag, strings.Title(strings.ToLower(string(dependentTag))))
+	return conversationTag(tmpName)
+}
+
+// createTemporaryTag MUST be called from the UI thread
+func (ct *conversationTags) createTemporaryTag(name conversationTag, tagToCopyAttributes conversationTag) conversationTag {
+	tmpTagName := conversationTagTemporaryName(name, tagToCopyAttributes)
+	if _, ok := ct.temporaryTags[tmpTagName]; ok {
+		return tmpTagName
+	}
+
+	colors := ct.colorDefinitionFor(tagToCopyAttributes)
+	colorProperties := colors.applyToProperties(pangoAttributes{})
+
+	properties, _ := conversationTagsPropertiesRegistry[name]
+	tag := ct.createTag(tmpTagName, colorProperties.merge(properties))
+	ct.table.Add(tag)
+
+	ct.temporaryTags[tmpTagName] = tag
+
+	return tmpTagName
 }
 
 // applyTagColors MUST be called from the UI thread

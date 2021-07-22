@@ -116,6 +116,7 @@ func (v *roomView) initDefaults() {
 	v.setTitle(i18n.Localf("%s [%s]", v.roomID(), v.account.Account()))
 
 	mucStyles.setRoomWindowStyle(v.window)
+	mucStyles.setDisableRoomStyle(v.content)
 }
 
 func (v *roomView) initSubscribers() {
@@ -241,7 +242,7 @@ func (v *roomView) selfOccupantRemovedEvent() {
 
 func (v *roomView) disableRoomView() {
 	doInUIThread(func() {
-		mucStyles.setDisableRoomStyle(v.content)
+		addClassStyle("room-disabled", v.content)
 		v.account.removeRoomView(v.roomID())
 		v.warningsInfoBar.hide()
 	})

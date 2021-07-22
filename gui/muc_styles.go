@@ -250,9 +250,11 @@ func (s *mucStylesProvider) setLabelExpanderStyle(l gtki.Label) {
 	})
 }
 
-func (s *mucStylesProvider) setDisableRoomStyle(p gtki.Box) {
-	s.setBoxStyle(p, style{
-		"opacity": "0.5",
+func (s *mucStylesProvider) setDisableRoomStyle(e gtki.Box) {
+	s.setWidgetStyles(e, styles{
+		".room-disabled": style{
+			"opacity": "0.5",
+		},
 	})
 }
 
@@ -355,4 +357,16 @@ func mergeStyles(merge ...style) style {
 	}
 
 	return ret
+}
+
+func addClassStyle(className string, widget gtki.Widget) {
+	sc, _ := widget.GetStyleContext()
+	sc.AddClass(className)
+
+}
+
+func removeClassStyle(className string, widget gtki.Widget) {
+	sc, _ := widget.GetStyleContext()
+	sc.RemoveClass(className)
+
 }

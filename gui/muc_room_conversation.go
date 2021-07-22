@@ -136,7 +136,8 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 
 func (c *roomViewConversation) roomDestroyedEvent(reason string, alternative jid.Bare, password string) {
 	doInUIThread(func() {
-		c.updateNotificationMessage(i18n.Local("You can't send messages because this room has been destroyed."))
+		message := messageForRoomDestroyedEvent()
+		c.updateNotificationMessage(message)
 		c.displayNotificationWhenRoomDestroyed(reason, alternative, password)
 		c.disableSendCapabilities()
 	})
@@ -233,19 +234,22 @@ func (c *roomViewConversation) selfOccupantRoleEvent(roleUpdate data.RoleUpdate)
 
 // onSelfOccupantBanned MUST be called from the UI thread
 func (c *roomViewConversation) onSelfOccupantBanned() {
-	c.updateNotificationMessage(i18n.Local("You can't send messages because you have been banned."))
+	message := messageForSelfOccupantBanned()
+	c.updateNotificationMessage(message)
 	c.disableSendCapabilities()
 }
 
 // onSelfOccupantKicked MUST be called from the UI thread
 func (c *roomViewConversation) onSelfOccupantKicked() {
-	c.updateNotificationMessage(i18n.Local("You can't send messages because you were expelled from the room."))
+	message := messageForSelfOccupantExpelled()
+	c.updateNotificationMessage(message)
 	c.disableSendCapabilities()
 }
 
 // onSelfOccupantVoiceRevoked MUST be called from the UI thread
 func (c *roomViewConversation) onSelfOccupantVoiceRevoked() {
-	c.updateNotificationMessage(i18n.Local("As a visitor, you can't send messages in a moderated room."))
+	message := messageForSelfOccupantVisitor()
+	c.updateNotificationMessage(message)
 	c.disableSendCapabilities()
 }
 
@@ -307,13 +311,15 @@ func (c *roomViewConversation) discussionHistoryEvent(dh *data.DiscussionHistory
 
 func (c *roomViewConversation) messageForbiddenEvent() {
 	doInUIThread(func() {
-		c.displayErrorMessage(i18n.Local("You are forbidden to send messages to this room."))
+		message := messageForSelfOccupantForbidden()
+		c.displayErrorMessage(message)
 	})
 }
 
 func (c *roomViewConversation) messageNotAcceptableEvent() {
 	doInUIThread(func() {
-		c.displayErrorMessage(i18n.Local("Your messages to this room aren't accepted."))
+		message := messageForSelfOccupantNotAcceptable()
+		c.displayErrorMessage(message)
 	})
 }
 
@@ -332,25 +338,29 @@ func (c *roomViewConversation) subjectReceivedEvent(subject string) {
 
 func (c *roomViewConversation) loggingEnabledEvent() {
 	doInUIThread(func() {
-		c.displayWarningMessage(i18n.Local("This room is now publicly logged."))
+		message := messageForRoomPubliclyLogged()
+		c.displayWarningMessage(message)
 	})
 }
 
 func (c *roomViewConversation) loggingDisabledEvent() {
 	doInUIThread(func() {
-		c.displayWarningMessage(i18n.Local("This room is not publicly logged anymore."))
+		message := messageForRoomNotPubliclyLogged()
+		c.displayWarningMessage(message)
 	})
 }
 
 func (c *roomViewConversation) nonAnonymousRoomEvent() {
 	doInUIThread(func() {
-		c.displayNewConfigurationMessage(i18n.Local("Your real JID can now be seen by anyone."))
+		message := messageForRoomCanSeeRealJid()
+		c.displayNewConfigurationMessage(message)
 	})
 }
 
 func (c *roomViewConversation) semiAnonymousRoomEvent() {
 	doInUIThread(func() {
-		c.displayNewConfigurationMessage(i18n.Local("Your real JID can now be seen only by moderators."))
+		message := messageForRoomCanNotSeeRealJid()
+		c.displayNewConfigurationMessage(message)
 	})
 }
 
@@ -377,7 +387,8 @@ func (c *roomViewConversation) roomConfigChangedEvent(changes roomConfigChangedT
 func (c *roomViewConversation) selfOccupantRemovedEvent(nickname string) {
 	c.occupantRemovedEvent(nickname)
 	doInUIThread(func() {
-		c.updateNotificationMessage(i18n.Local("You can't send messages because the room configuration has been changed."))
+		message := messageForSelfOccupantRoomConfiguration()
+		c.updateNotificationMessage(message)
 		c.disableSendCapabilities()
 	})
 }
@@ -459,7 +470,9 @@ func (c *roomViewConversation) onSendMessageFinish() {
 // onSendMessageFailed MUST be called from the UI thread
 func (c *roomViewConversation) onSendMessageFailed(err error) {
 	c.log.WithError(err).Error("Failed to send the message to all occupants")
-	c.displayErrorMessage(i18n.Local("The message couldn't be sent, please try again"))
+
+	message := messageNotSent()
+	c.displayErrorMessage(message)
 }
 
 // onKeyPress MUST be called from the UI thread

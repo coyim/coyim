@@ -151,10 +151,6 @@ func (s *roomViewSubscribers) publish(ev roomViewEvent) {
 	}
 }
 
-func (s *roomViewSubscribers) debug(m string, ev string) {
-	s.log.Debug(m, ev)
-}
-
 func (v *roomView) subscribe(id string, onNotify func(roomViewEvent)) {
 	v.subscribers.subscribe(id, onNotify)
 }
@@ -190,13 +186,5 @@ func (v *roomView) publishSubjectUpdatedEvent(nickname, subject string) {
 func (v *roomView) publishSubjectReceivedEvent(subject string) {
 	v.publishEvent(subjectReceivedEvent{
 		subject: subject,
-	})
-}
-
-func (v *roomView) publishRoomDestroyedEvent(reason string, alternative jid.Bare, password string) {
-	v.publishEvent(roomDestroyedEvent{
-		reason:      reason,
-		alternative: alternative,
-		password:    password,
 	})
 }

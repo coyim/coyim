@@ -45,12 +45,11 @@ type roomView struct {
 	passwordProvider   func() string
 	backToPreviousStep func()
 
-	window                 gtki.Window   `gtk-widget:"room-window"`
-	overlay                gtki.Overlay  `gtk-widget:"room-overlay"`
-	privacityWarningBox    gtki.Box      `gtk-widget:"room-privacity-warnings-box"`
-	loadingNotificationBox gtki.Box      `gtk-widget:"room-loading-notification-box"`
-	content                gtki.Box      `gtk-widget:"room-main-box"`
-	notificationsArea      gtki.Revealer `gtk-widget:"room-notifications-revealer"`
+	window              gtki.Window   `gtk-widget:"room-window"`
+	overlay             gtki.Overlay  `gtk-widget:"room-overlay"`
+	privacityWarningBox gtki.Box      `gtk-widget:"room-privacity-warnings-box"`
+	content             gtki.Box      `gtk-widget:"room-main-box"`
+	notificationsArea   gtki.Revealer `gtk-widget:"room-notifications-revealer"`
 
 	notifications *roomNotifications
 
@@ -271,10 +270,6 @@ func (v *roomView) isSelfOccupantInTheRoom() bool {
 	return v.room.IsSelfOccupantInTheRoom()
 }
 
-func (v *roomView) isSelfOccupantAnOwner() bool {
-	return v.room.IsSelfOccupantAnOwner()
-}
-
 func (v *roomView) present() {
 	if v.isOpen() {
 		v.window.Present()
@@ -385,15 +380,6 @@ func (v *roomView) onOccupantAffiliationUpdateSuccess(o *muc.Occupant, previousA
 
 		v.notifications.info(roomNotificationOptions{
 			message:   getAffiliationUpdateSuccessMessage(o.Nickname, previousAffiliation, affiliation),
-			closeable: true,
-		})
-	})
-}
-
-func (v *roomView) onBannedListUpdated() {
-	doInUIThread(func() {
-		v.notifications.info(roomNotificationOptions{
-			message:   i18n.Local("The banned list has been updated"),
 			closeable: true,
 		})
 	})
@@ -615,8 +601,4 @@ func (v *roomView) mainWindow() gtki.Window {
 
 func (v *roomView) roomID() jid.Bare {
 	return v.room.ID
-}
-
-func (v *roomView) roomDisplayName() string {
-	return v.roomID().Local().String()
 }

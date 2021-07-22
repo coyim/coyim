@@ -1,9 +1,27 @@
 package gui
 
 import (
+	"time"
+
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
 )
+
+func messageForTimestamp(timestamp time.Time) string {
+	return i18n.Localf("[%s] ", formatTimestamp(timestamp))
+}
+
+func messageForNickname(nickname string) string {
+	return i18n.Localf("%s: ", nickname)
+}
+
+func messageForSomeoneWhoJoinedTheRoom(nickname string) string {
+	return i18n.Localf("$nickname{%s} joined the room", nickname)
+}
+
+func messageForSomeoneWhoLeftTheRoom(nickname string) string {
+	return i18n.Localf("$nickname{%s} left the room")
+}
 
 func messageForRoomSubjectUpdate(nickname, subject string) string {
 	if nickname == "" {

@@ -6,8 +6,10 @@ import "github.com/coyim/gotk3adapter/gtki"
 func findAssistantHeaderContainer(a gtki.Assistant) gtki.Container {
 	lbl, _ := g.gtk.LabelNew("")
 	a.AddActionWidget(lbl)
+
 	parentBox, _ := lbl.GetParentX()
 	a.RemoveActionWidget(lbl)
+
 	return parentBox.(gtki.Container)
 }
 
@@ -78,14 +80,21 @@ func (list assistantButtons) enableNavigation() {
 	}
 }
 
+const (
+	assistantActionAreaName     = "action_area"
+	assistantSidebarName        = "sidebar"
+	assistantContentWrapperName = "content_box"
+	assistantContentName        = "content"
+)
+
 // getBottomActionAreaFromAssistant MUST be called from the UI thread
 func getBottomActionAreaFromAssistant(a gtki.Assistant) (gtki.Box, bool) {
-	return findGtkBoxWithID(a.GetChildren(), "action_area")
+	return findGtkBoxWithID(a.GetChildren(), assistantActionAreaName)
 }
 
 // getSidebarFromAssistant MUST be called from the UI thread
 func getSidebarFromAssistant(a gtki.Assistant) (gtki.Box, bool) {
-	return findGtkBoxWithID(a.GetChildren(), "sidebar")
+	return findGtkBoxWithID(a.GetChildren(), assistantSidebarName)
 }
 
 // getPagesFromAssistant MUST be called from the UI thread
@@ -98,10 +107,10 @@ func getPagesFromAssistant(a gtki.Assistant) []gtki.Widget {
 
 // getNotebookFromAssistant MUST be called from the UI thread
 func getNotebookFromAssistant(a gtki.Assistant) (gtki.Notebook, bool) {
-	if content, ok := findGtkBoxWithID(a.GetChildren(), "content_box"); ok {
+	if content, ok := findGtkBoxWithID(a.GetChildren(), assistantContentWrapperName); ok {
 		for _, ch := range content.GetChildren() {
 			if notebook, ok := ch.(gtki.Notebook); ok {
-				if name, _ := g.gtk.GetWidgetBuildableName(notebook); name == "content" {
+				if name, _ := g.gtk.GetWidgetBuildableName(notebook); name == assistantContentName {
 					return notebook, true
 				}
 			}

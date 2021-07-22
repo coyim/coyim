@@ -16,6 +16,7 @@ import (
 	"github.com/coyim/coyim/otrclient"
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/tls"
 	"github.com/coyim/coyim/xmpp"
 	"github.com/coyim/coyim/xmpp/data"
@@ -1740,7 +1741,11 @@ func (s *SessionSuite) Test_session_setStatus_setsConnected(c *C) {
 }
 
 func (s *SessionSuite) Test_session_setStatus_setsDisconnected(c *C) {
-	sess := &session{}
+	sess := &session{
+		muc: &mucManager{
+			roomManager: &muc.RoomManager{},
+		},
+	}
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
@@ -2877,6 +2882,9 @@ func (s *SessionSuite) Test_session_SendPing_timesOut(c *C) {
 	sess := &session{
 		log:        l,
 		connStatus: CONNECTED,
+		muc: &mucManager{
+			roomManager: &muc.RoomManager{},
+		},
 	}
 	sess.conn = conn
 
@@ -3742,6 +3750,9 @@ func (s *SessionSuite) Test_session_Connect_failsOnConnectionFailure(c *C) {
 		wantToBeOnline: true,
 		resource:       "somewhere",
 		r:              roster.New(),
+		muc: &mucManager{
+			roomManager: &muc.RoomManager{},
+		},
 	}
 
 	res := sess.Connect("one", nil)
@@ -3794,6 +3805,9 @@ func (s *SessionSuite) Test_session_Close_setsTheConnectionDisconnectedIfNoConne
 	sess := &session{
 		conn:       nil,
 		connStatus: CONNECTED,
+		muc: &mucManager{
+			roomManager: &muc.RoomManager{},
+		},
 	}
 
 	sess.Close()
@@ -3825,6 +3839,9 @@ func (s *SessionSuite) Test_session_Close_closesTheConnection(c *C) {
 		conn:           cn,
 		connStatus:     CONNECTED,
 		wantToBeOnline: true,
+		muc: &mucManager{
+			roomManager: &muc.RoomManager{},
+		},
 	}
 
 	sess.Close()
@@ -3842,6 +3859,9 @@ func (s *SessionSuite) Test_session_Close_closesTheConnectionAndTerminatesConnec
 		connStatus:     CONNECTED,
 		wantToBeOnline: false,
 		convManager:    cm,
+		muc: &mucManager{
+			roomManager: &muc.RoomManager{},
+		},
 	}
 
 	cm.On("TerminateAll").Return().Once()
@@ -3865,6 +3885,9 @@ func (s *SessionSuite) Test_session_connectionLost_closes(c *C) {
 		conn:           cn,
 		connStatus:     CONNECTED,
 		wantToBeOnline: true,
+		muc: &mucManager{
+			roomManager: &muc.RoomManager{},
+		},
 	}
 
 	observer := make(chan interface{}, 1000)

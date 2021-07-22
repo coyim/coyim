@@ -12,6 +12,7 @@ import (
 )
 
 type roomViewConversation struct {
+	u                    *gtkUI
 	tags                 gtki.TextTagTable
 	roomID               jid.Bare
 	account              *account
@@ -35,6 +36,7 @@ type roomViewConversation struct {
 
 func (v *roomView) newRoomViewConversation() *roomViewConversation {
 	c := &roomViewConversation{
+		u:                    v.u,
 		roomID:               v.room.ID,
 		account:              v.account,
 		selfOccupantNickname: v.room.SelfOccupantNickname,
@@ -48,7 +50,7 @@ func (v *roomView) newRoomViewConversation() *roomViewConversation {
 	c.initBuilder()
 	c.initDefaults(v)
 	c.initSubscribers(v)
-	c.initTagsAndTextBuffers(v)
+	c.initTagsAndTextBuffers()
 
 	return c
 }

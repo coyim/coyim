@@ -3,8 +3,8 @@ package gui
 import "github.com/coyim/gotk3adapter/gtki"
 
 // initTagsAndTextBuffers MUST be called from the UI thread
-func (c *roomViewConversation) initTagsAndTextBuffers(v *roomView) {
-	c.tags = c.newMUCTableStyleTags(v.u)
+func (c *roomViewConversation) initTagsAndTextBuffers() {
+	c.tags = c.newMUCTableStyleTags(c.u)
 
 	cb, _ := g.gtk.TextBufferNew(c.tags)
 	c.chatTextView.SetBuffer(cb)

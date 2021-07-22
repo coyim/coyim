@@ -27,6 +27,7 @@ type roomConfigAssistant struct {
 
 	currentPageIndex mucRoomConfigPageID
 	currentPage      *roomConfigPage
+	assistantPages   map[mucRoomConfigPageID]*roomConfigAssistantPage
 	assistantButtons assistantButtons
 	parentWindow     gtki.Window
 
@@ -84,10 +85,12 @@ func (rc *roomConfigAssistant) initRoomConfigComponent(data *roomConfigData) {
 }
 
 func (rc *roomConfigAssistant) initRoomConfigPages() {
+	rc.assistantPages = map[mucRoomConfigPageID]*roomConfigAssistantPage{}
 	assignedDefaultCurrentPage := false
 
 	for _, p := range rc.roomConfigComponent.pages {
 		ap := newRoomConfigAssistantPage(p)
+		rc.assistantPages[p.pageID] = ap
 
 		rc.assistant.AppendPage(ap.page)
 		rc.assistant.SetPageTitle(ap.page, configPageDisplayTitle(p.pageID))
@@ -188,11 +191,22 @@ func (rc *roomConfigAssistant) disableAssistant() {
 // enableNavigation MUST be called from the UI thread
 func (rc *roomConfigAssistant) enableNavigation() {
 	rc.navigation.enableNavigation()
+	rc.setPageComplete(rc.currentPageIndex, true)
+	rc.assistantButtons.enableNavigation()
 }
 
 // disableNavigation MUST be called from the UI thread
 func (rc *roomConfigAssistant) disableNavigation() {
 	rc.navigation.disableNavigation()
+	rc.setPageComplete(rc.currentPageIndex, false)
+	rc.assistantButtons.disableNavigationButNotCancel()
+}
+
+// setPageComplete MUST be called from the UI thread
+func (rc *roomConfigAssistant) setPageComplete(pageID mucRoomConfigPageID, setting bool) {
+	if p, ok := rc.assistantPages[pageID]; ok {
+		rc.assistant.SetPageComplete(p.page, setting)
+	}
 }
 
 // onCancelClicked MUST be called from the UI thread

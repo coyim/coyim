@@ -5,7 +5,6 @@ import (
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc/data"
-	"github.com/coyim/coyim/text"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -158,58 +157,6 @@ func (c *roomViewConversation) occupantRoleEvent(roleUpdate data.RoleUpdate) {
 	doInUIThread(func() {
 		c.displayOccupantUpdateMessageFor(roleUpdate)
 	})
-}
-
-// displayOccupantUpdateMessage MUST be called from the UI thread
-func (c *roomViewConversation) displayOccupantUpdateMessageFor(update interface{}) {
-	c.displayCurrentTimestamp()
-
-	message := getMUCNotificationMessageFrom(update)
-	c.displayFormattedMessage(message, c.displayInfoMessage)
-
-	c.addNewLine()
-}
-
-// displayFormattedMessageWithTimestamp MUST be called from the UI thread
-func (c *roomViewConversation) displayFormattedMessageWithTimestamp(message string, displayMessage func(string)) {
-	c.displayCurrentTimestamp()
-	c.displayFormattedMessage(message, displayMessage)
-	c.addNewLine()
-}
-
-// displayFormattedMessage MUST be called from the UI thread
-func (c *roomViewConversation) displayFormattedMessage(message string, displayMessage func(string)) {
-	if formatted, ok := text.ParseWithFormat(message); ok {
-		text, formats := formatted.Join()
-
-		lastDisplayedIndex := 0
-		for _, format := range formats {
-			previousTextBeforeFormat := text[lastDisplayedIndex:format.Start]
-			displayMessage(previousTextBeforeFormat)
-
-			textFormatSize := format.Start + format.Length
-			textFormat := text[format.Start:textFormatSize]
-			c.displayMessageFormatting(textFormat, format)
-
-			lastDisplayedIndex = textFormatSize
-		}
-
-		restOfTheText := text[lastDisplayedIndex:]
-		if restOfTheText != "" {
-			displayMessage(restOfTheText)
-		}
-	} else {
-		displayMessage(message)
-	}
-}
-
-// displayMessageFormatting MUST be called from the UI thread
-func (c *roomViewConversation) displayMessageFormatting(message string, format text.Formatting) {
-	if tag, ok := conversationTagFormats.tagForFormat(format.Format); ok {
-		c.addTextWithTag(message, tag)
-	} else {
-		c.displayInfoMessage(message)
-	}
 }
 
 func (c *roomViewConversation) selfOccupantAffiliationEvent(affiliationUpdate data.AffiliationUpdate) {

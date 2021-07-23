@@ -112,10 +112,8 @@ func (rp *roomPositionsView) onCancel() {
 func (rp *roomPositionsView) onApply() {
 	rp.onUpdateOccupantLists.invokeAll()
 
-	doInUIThread(func() {
-		rp.dialog.Destroy()
-		rp.roomView.loadingViewOverlay.onRoomPositionsUpdate()
-	})
+	rp.dialog.Destroy()
+	rp.roomView.loadingViewOverlay.onRoomPositionsUpdate()
 
 	rc, ec := rp.roomView.account.session.UpdateOccupantAffiliations(rp.roomView.roomID(), rp.roomPositions.positionsToUpdate())
 	go func() {
@@ -152,6 +150,7 @@ func (rp *roomPositionsView) requestOccupantsByAffiliation(a data.Affiliation, o
 	}
 }
 
+// requestRoomPositions MUST NOT be called from the UI thread
 func (rp *roomPositionsView) requestRoomPositions(onSuccess func(), onError func()) {
 	rp.requestOccupantsByAffiliation(&data.OutcastAffiliation{},
 		func(items muc.RoomOccupantItemList) {

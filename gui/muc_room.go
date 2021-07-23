@@ -221,7 +221,7 @@ func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleUpdate) 
 func (v *roomView) selfOccupantDisconnectedEvent() {
 	if v.mustNotifyDisconnection {
 		v.notifications.error(roomNotificationOptions{
-			message:   i18n.Local("A communication breakdown occurred, verify your connection."),
+			message:   i18n.Local("The connection to the server has been lost, please verify your connection."),
 			showTime:  true,
 			closeable: true,
 		})

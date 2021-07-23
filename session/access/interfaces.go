@@ -73,7 +73,7 @@ type Rooms interface {
 	UpdateOccupantRole(roomID jid.Bare, occupantNickname string, role mdata.Role, reason string) (<-chan bool, <-chan error)
 	NewRoom(jid.Bare) *muc.Room
 	SendMUCMessage(to, from, body string) error
-	UpdateRoomSubject(roomID jid.Bare, actor, subject string) error
+	UpdateRoomSubject(roomID jid.Bare, from, subject string) error
 	UpdateOccupantAffiliations(jid.Bare, []*muc.RoomOccupantItem) (<-chan bool, <-chan error)
 	GetRoomOccupantsByAffiliation(roomID jid.Bare, a mdata.Affiliation) (<-chan []*muc.RoomOccupantItem, <-chan error)
 }

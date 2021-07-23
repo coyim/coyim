@@ -1,5 +1,14 @@
+GLIB_VERSION=$(shell pkg-config --modversion glib-2.0 | tr . _ | cut -d '_' -f 1-2)
+GLIB_BUILD_TAG="glib_$(GLIB_VERSION)"
+
 GTK_VERSION=$(shell pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
 GTK_BUILD_TAG="gtk_$(GTK_VERSION)"
+
+PANGO_VERSION=$(shell pkg-config --modversion pango | tr . _ | cut -d '_' -f 1-2)
+PANGO_BUILD_TAG="pango_$(PANGO_VERSION)"
+
+CAIRO_VERSION=$(shell pkg-config --modversion cairo | tr . _ | cut -d '_' -f 1-2)
+CAIRO_BUILD_TAG="cairo_$(CAIRO_VERSION)"
 
 GIT_VERSION := $(shell git rev-parse HEAD)
 GIT_SHORT_VERSION := $(shell git rev-parse --short HEAD)
@@ -24,7 +33,7 @@ GCC_IGNORE_DEPRECATED_WARNINGS := CGO_CFLAGS_ALLOW="-Wno-deprecated-declarations
 GO := $(PREF) $(GCC_IGNORE_DEPRECATED_WARNINGS) ${BUILD_RUN_PREFIX} go
 GOBUILD := $(GO) build
 GOTEST := $(GO) test
-TAGS := -tags $(GTK_BUILD_TAG)
+TAGS := -tags $(GLIB_BUILD_TAG),$(GTK_BUILD_TAG),$(PANGO_BUILD_TAG),$(CAIRO_BUILD_TAG)
 
 AUTOGEN := gui/settings/definitions/schemas.go gui/definitions.go
 

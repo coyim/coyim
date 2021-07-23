@@ -23,7 +23,7 @@ const (
 	conversationTagInfo              conversationTag = "info"
 	conversationTagWarning           conversationTag = "warning"
 	conversationTagError             conversationTag = "error"
-	conversationTagUnd               conversationTag = ""
+	conversationTagUndefined         conversationTag = ""
 )
 
 const formattingTagText = "%sFormatting"
@@ -47,7 +47,7 @@ func (list conversationTagsFormatsList) tagForFormat(format string) (conversatio
 			return id, true
 		}
 	}
-	return conversationTagUnd, false
+	return conversationTagUndefined, false
 }
 
 func (list conversationTagsFormatsList) includes(format conversationTag) bool {

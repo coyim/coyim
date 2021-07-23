@@ -7,104 +7,56 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-type roomConversationMessageType int
-
-const (
-	noMessagesBecauseRoomDestroyed roomConversationMessageType = iota
-	noMessagesBecauseSelfOccupantBanned
-	noMessagesBecauseSelfOccupantExpelled
-	noMessagesBecauseSelfOccupantVisitor
-	noMessagesBecauseForbidden
-	noMessagesBecauseNotAcceptable
-	noMessagesBecauseRoomConfiguration
-	noMessagesBecauseSelfOccupantDisconnected
-
-	roomPubliclyLogged
-	roomNotPubliclyLogged
-	roomCanSeeRealJid
-	roomCanNotSeeRealJid
-
-	messageCouldNotBeSent
-)
-
-var roomConversationTexts map[roomConversationMessageType]string
-
-func initMUCRoomConversationTexts() {
-	roomConversationTexts = map[roomConversationMessageType]string{
-		noMessagesBecauseRoomDestroyed:            i18n.Local("You can't send messages because this room has been destroyed."),
-		noMessagesBecauseSelfOccupantBanned:       i18n.Local("You can't send messages because you have been banned."),
-		noMessagesBecauseSelfOccupantExpelled:     i18n.Local("You can't send messages because you were expelled from the room."),
-		noMessagesBecauseSelfOccupantVisitor:      i18n.Local("As a visitor, you can't send messages in a moderated room."),
-		noMessagesBecauseForbidden:                i18n.Local("You are forbidden to send messages to this room."),
-		noMessagesBecauseNotAcceptable:            i18n.Local("Your messages to this room aren't accepted."),
-		noMessagesBecauseRoomConfiguration:        i18n.Local("You can't send messages because the room configuration has been changed."),
-		roomPubliclyLogged:                        i18n.Local("This room is now publicly logged."),
-		roomNotPubliclyLogged:                     i18n.Local("This room is not publicly logged anymore."),
-		roomCanSeeRealJid:                         i18n.Local("Your real JID can now be seen by anyone."),
-		roomCanNotSeeRealJid:                      i18n.Local("Your real JID can now be seen only by moderators."),
-		messageCouldNotBeSent:                     i18n.Local("The message couldn't be sent, please try again"),
-		noMessagesBecauseSelfOccupantDisconnected: i18n.Local("You can't send messages because you lost connection."),
-	}
-}
-
-func messageForType(tp roomConversationMessageType) string {
-	if message, ok := roomConversationTexts[tp]; ok {
-		return message
-	}
-
-	panic("developer error: retrieving message for an unknown conversation event type")
-}
-
 func messageForRoomDestroyedEvent() string {
-	return messageForType(noMessagesBecauseRoomDestroyed)
+	return i18n.Local("You can't send messages because this room has been destroyed.")
 }
 
 func messageForSelfOccupantBanned() string {
-	return messageForType(noMessagesBecauseSelfOccupantBanned)
+	return i18n.Local("You can't send messages because you have been banned.")
 }
 
 func messageForSelfOccupantExpelled() string {
-	return messageForType(noMessagesBecauseSelfOccupantExpelled)
+	return i18n.Local("You can't send messages because you were expelled from the room.")
 }
 
 func messageForSelfOccupantVisitor() string {
-	return messageForType(noMessagesBecauseSelfOccupantVisitor)
+	return i18n.Local("As a visitor, you can't send messages in a moderated room.")
 }
 
 func messageForSelfOccupantForbidden() string {
-	return messageForType(noMessagesBecauseForbidden)
+	return i18n.Local("You are forbidden to send messages to this room.")
 }
 
 func messageForSelfOccupantNotAcceptable() string {
-	return messageForType(noMessagesBecauseNotAcceptable)
+	return i18n.Local("Your messages to this room aren't accepted.")
 }
 
 func messageForSelfOccupantRoomConfiguration() string {
-	return messageForType(noMessagesBecauseRoomConfiguration)
+	return i18n.Local("You can't send messages because the room configuration has been changed.")
 }
 
 func messageForRoomPubliclyLogged() string {
-	return messageForType(roomPubliclyLogged)
+	return i18n.Local("This room is now publicly logged.")
 }
 
 func messageForRoomNotPubliclyLogged() string {
-	return messageForType(roomNotPubliclyLogged)
+	return i18n.Local("This room is not publicly logged anymore.")
 }
 
 func messageForRoomCanSeeRealJid() string {
-	return messageForType(roomCanSeeRealJid)
+	return i18n.Local("Your real JID can now be seen by anyone.")
 }
 
 func messageForRoomCanNotSeeRealJid() string {
-	return messageForType(roomCanNotSeeRealJid)
+	return i18n.Local("Your real JID can now be seen only by moderators.")
 }
 
 func messageNotSent() string {
-	return messageForType(messageCouldNotBeSent)
+	return i18n.Local("The message couldn't be sent, please try again")
 }
 
 func messageForSelfOccupantDisconnected() string {
-	return messageForType(noMessagesBecauseSelfOccupantDisconnected)
+	return i18n.Local("You can't send messages because you lost connection.")
 }
 
 func messageForTimestamp(timestamp time.Time) string {

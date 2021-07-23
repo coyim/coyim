@@ -26,10 +26,8 @@ const (
 	conversationTagUndefined         conversationTag = ""
 )
 
-const formattingTagText = "%sFormatting"
-
 func formattingTagName(format string) conversationTag {
-	return conversationTag(fmt.Sprintf(formattingTagText, format))
+	return conversationTag(fmt.Sprintf("%sFormatting", format))
 }
 
 var (

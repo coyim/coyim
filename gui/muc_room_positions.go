@@ -11,45 +11,64 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type roomPositions struct {
-	banned muc.RoomOccupantItemList
-	none   muc.RoomOccupantItemList
+type roomPositionList struct {
+	list muc.RoomOccupantItemList
+	sync.RWMutex
+}
 
-	sync.Mutex
+func newRoomPositionList() *roomPositionList {
+	return &roomPositionList{}
+}
+
+func (pl *roomPositionList) set(list muc.RoomOccupantItemList) {
+	pl.Lock()
+	defer pl.Unlock()
+
+	pl.list = list
+}
+
+func (pl *roomPositionList) merge(list muc.RoomOccupantItemList) {
+	pl.set(append(pl.positions(), list...))
+}
+
+func (pl *roomPositionList) positions() muc.RoomOccupantItemList {
+	pl.RLock()
+	defer pl.RUnlock()
+
+	ret := muc.RoomOccupantItemList{}
+	for _, itm := range pl.list {
+		ret = append(ret, itm)
+	}
+
+	return ret
+}
+
+type roomPositions struct {
+	banned *roomPositionList
+	none   *roomPositionList
 }
 
 func newRoomPositions() *roomPositions {
-	return &roomPositions{}
+	return &roomPositions{
+		banned: newRoomPositionList(),
+		none:   newRoomPositionList(),
+	}
 }
 
 func (rp *roomPositions) bannedList() muc.RoomOccupantItemList {
-	return rp.banned
+	return rp.banned.positions()
 }
 
-func (rp *roomPositions) setBanList(banned muc.RoomOccupantItemList) {
-	rp.Lock()
-	defer rp.Unlock()
-
-	rp.banned = banned
+func (rp *roomPositions) setBanList(list muc.RoomOccupantItemList) {
+	rp.banned.set(list)
 }
 
-func (rp *roomPositions) updateRemovedOccupantList(occupantsRemoved muc.RoomOccupantItemList) {
-	rp.Lock()
-	defer rp.Unlock()
-
-	rp.none = append(rp.none, occupantsRemoved...)
+func (rp *roomPositions) updateRemovedOccupantList(list muc.RoomOccupantItemList) {
+	rp.none.merge(list)
 }
 
 func (rp *roomPositions) positionsToUpdate() muc.RoomOccupantItemList {
-	rp.Lock()
-	defer rp.Unlock()
-
-	positionsToUpdate := muc.RoomOccupantItemList{}
-	positionsToUpdate = append(positionsToUpdate, rp.banned...)
-	positionsToUpdate = append(positionsToUpdate, rp.none...)
-
-	return positionsToUpdate
-
+	return append(rp.banned.positions(), rp.none.positions()...)
 }
 
 func (v *roomView) onRoomPositionsView() {

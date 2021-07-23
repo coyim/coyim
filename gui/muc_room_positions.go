@@ -99,18 +99,13 @@ func (rp *roomPositionsView) initBuilder() {
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_apply":  rp.onApply,
-		"on_cancel": rp.onCancel,
+		"on_cancel": rp.dialog.Destroy,
 	})
 }
 
 func (rp *roomPositionsView) initDefaults() {
 	rp.dialog.SetTransientFor(rp.roomView.mainWindow())
 	mucStyles.setRoomConfigPageStyle(rp.content)
-}
-
-// onCancel MUST be called from the UI thread
-func (rp *roomPositionsView) onCancel() {
-	rp.dialog.Destroy()
 }
 
 // onApply MUST be called from the UI thread

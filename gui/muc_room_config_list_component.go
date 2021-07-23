@@ -66,19 +66,28 @@ func (cl *mucRoomConfigListComponent) onAddClicked() {
 
 // onRemoveClicked MUST be called from the UI thread
 func (cl *mucRoomConfigListComponent) onRemoveClicked() {
+	cl.removeSelectedItems(cl.getItemsToRemove())
+}
+
+// getItemsToRemove MUST be called from the UI thread
+func (cl *mucRoomConfigListComponent) getItemsToRemove() []gtki.TreeIter {
 	selection, _ := cl.list.GetSelection()
 	selectedRows := selection.GetSelectedRows(cl.listModel)
 
-	currentIndex := len(selectedRows) - 1
-	for currentIndex >= 0 {
-		if iter, err := cl.listModel.GetIter(selectedRows[currentIndex]); err == nil {
-			cl.listModel.Remove(iter)
+	itemsToRemove := []gtki.TreeIter{}
+	for idx := range selectedRows {
+		if iter, err := cl.listModel.GetIter(selectedRows[idx]); err == nil {
+			itemsToRemove = append(itemsToRemove, iter)
 		}
-		currentIndex--
 	}
 
-	if _, ok := cl.listModel.GetIterFirst(); !ok {
-		cl.onNoItems()
+	return itemsToRemove
+}
+
+// removeSelectedItems MUST be called from the UI thread
+func (cl *mucRoomConfigListComponent) removeSelectedItems(itemsToRemove []gtki.TreeIter) {
+	for _, iter := range itemsToRemove {
+		cl.listModel.Remove(iter)
 	}
 }
 

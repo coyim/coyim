@@ -10,8 +10,8 @@ type roomConfigFormFieldListEntry struct {
 	*roomConfigFormField
 	value *muc.RoomConfigFieldListValue
 
-	list  gtki.ComboBox `gtk-widget:"room-config-field-list"`
-	entry gtki.Entry    `gtk-widget:"room-config-field-list-entry"`
+	fieldOptions gtki.ComboBox `gtk-widget:"room-config-field-list"`
+	entry        gtki.Entry    `gtk-widget:"room-config-field-list-entry"`
 
 	optionsModel gtki.ListStore
 }
@@ -32,9 +32,9 @@ func newRoomConfigFormFieldListEntry(ft muc.RoomConfigFieldType, fieldInfo roomC
 		glibi.TYPE_STRING,
 	)
 
-	field.list.SetModel(field.optionsModel)
-	field.list.SetIDColumn(roomConfigFieldListOptionValueIndex)
-	field.list.SetEntryTextColumn(roomConfigFieldListOptionLabelIndex)
+	field.fieldOptions.SetModel(field.optionsModel)
+	field.fieldOptions.SetIDColumn(roomConfigFieldListOptionValueIndex)
+	field.fieldOptions.SetEntryTextColumn(roomConfigFieldListOptionLabelIndex)
 
 	field.initOptions()
 
@@ -91,7 +91,7 @@ func (f *roomConfigFormFieldListEntry) refreshContent() {
 }
 
 func (f *roomConfigFormFieldListEntry) currentValue() string {
-	iter, err := f.list.GetActiveIter()
+	iter, err := f.fieldOptions.GetActiveIter()
 	if err == nil {
 		return getStringValueFromModel(f.optionsModel, iter, roomConfigFieldListOptionValueIndex)
 	}

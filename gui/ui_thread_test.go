@@ -12,11 +12,11 @@ var _ = Suite(&UIThreadSuite{})
 
 type glibIdleAddMock struct {
 	glib_mock.Mock
-	f func(interface{}, ...interface{}) (glibi.SourceHandle, error)
+	f func(interface{}) glibi.SourceHandle
 }
 
-func (v *glibIdleAddMock) IdleAdd(v1 interface{}, v2 ...interface{}) (glibi.SourceHandle, error) {
-	return v.f(v1, v2...)
+func (v *glibIdleAddMock) IdleAdd(v1 interface{}) glibi.SourceHandle {
+	return v.f(v1)
 }
 
 type glibMainDepthMock struct {
@@ -44,10 +44,10 @@ func (*UIThreadSuite) Test_doInUIThread(c *C) {
 	m := &glibIdleAddMock{}
 	g = Graphics{glib: m}
 
-	m.f = func(ff interface{}, vals ...interface{}) (glibi.SourceHandle, error) {
+	m.f = func(ff interface{}) glibi.SourceHandle {
 		ffx := ff.(func())
 		ffx()
-		return glibi.SourceHandle(0), nil
+		return glibi.SourceHandle(0)
 	}
 
 	ran := false

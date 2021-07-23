@@ -40,8 +40,8 @@ func (v *PangoAttrList) GetAttributes() []*PangoAttribute {
 	defer attrs.Free()
 
 	ret := make([]*PangoAttribute, 0, attrs.Length())
-	attrs.Foreach(func(ptr unsafe.Pointer) {
-		ret = append(ret, &PangoAttribute{(*C.PangoAttribute)(ptr)})
+	attrs.Foreach(func(ptr interface{}) {
+		ret = append(ret, &PangoAttribute{(*C.PangoAttribute)(ptr.(unsafe.Pointer))})
 	})
 
 	return ret

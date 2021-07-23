@@ -240,7 +240,7 @@ func (account *account) observeConnectionEvents(u *gtkUI, f func()) {
 
 func (account *account) createCheckConnectionItem(u *gtkUI) gtki.MenuItem {
 	checkConnectionItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Check Connection"))
-	_, _ = checkConnectionItem.Connect("activate", func() {
+	_ = checkConnectionItem.Connect("activate", func() {
 		go account.session.SendPing()
 	})
 	checkConnectionItem.SetSensitive(account.session.IsConnected())
@@ -253,7 +253,7 @@ func (account *account) createCheckConnectionItem(u *gtkUI) gtki.MenuItem {
 
 func (account *account) createConnectItem(u *gtkUI) gtki.MenuItem {
 	connectItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Connect"))
-	_, _ = connectItem.Connect("activate", account.Connect)
+	_ = connectItem.Connect("activate", account.Connect)
 	connectItem.SetSensitive(account.session.IsDisconnected())
 	account.observeConnectionEvents(u, func() {
 		connectItem.SetSensitive(account.session.IsDisconnected())
@@ -263,7 +263,7 @@ func (account *account) createConnectItem(u *gtkUI) gtki.MenuItem {
 
 func (account *account) createDisconnectItem(u *gtkUI) gtki.MenuItem {
 	disconnectItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Disconnect"))
-	_, _ = disconnectItem.Connect("activate", func() {
+	_ = disconnectItem.Connect("activate", func() {
 		account.session.SetWantToBeOnline(false)
 		account.disconnect()
 	})
@@ -281,7 +281,7 @@ func (account *account) createSeparatorItem() gtki.MenuItem {
 
 func (account *account) createConnectionItem(u *gtkUI) gtki.MenuItem {
 	connInfoItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("Connection _information..."))
-	_, _ = connInfoItem.Connect("activate", account.connectionInfo)
+	_ = connInfoItem.Connect("activate", account.connectionInfo)
 	connInfoItem.SetSensitive(account.session.IsConnected())
 	account.observeConnectionEvents(u, func() {
 		connInfoItem.SetSensitive(account.session.IsConnected())
@@ -291,40 +291,40 @@ func (account *account) createConnectionItem(u *gtkUI) gtki.MenuItem {
 
 func (account *account) createEditItem() gtki.MenuItem {
 	editItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Edit..."))
-	_, _ = editItem.Connect("activate", account.edit)
+	_ = editItem.Connect("activate", account.edit)
 	return editItem
 }
 
 func (account *account) createChangePasswordItem(u *gtkUI) gtki.MenuItem {
 	changePasswordItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Change Password..."))
-	_, _ = changePasswordItem.Connect("activate", account.changePassword)
+	_ = changePasswordItem.Connect("activate", account.changePassword)
 	changePasswordItem.SetSensitive(account.session.IsConnected())
 	return changePasswordItem
 }
 
 func (account *account) createRemoveItem() gtki.MenuItem {
 	removeItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Remove"))
-	_, _ = removeItem.Connect("activate", account.remove)
+	_ = removeItem.Connect("activate", account.remove)
 	return removeItem
 }
 
 func (account *account) createConnectAutomaticallyItem() gtki.MenuItem {
 	connectAutomaticallyItem, _ := g.gtk.CheckMenuItemNewWithMnemonic(i18n.Local("Connect _Automatically"))
 	connectAutomaticallyItem.SetActive(account.session.GetConfig().ConnectAutomatically)
-	_, _ = connectAutomaticallyItem.Connect("activate", account.toggleAutoConnect)
+	_ = connectAutomaticallyItem.Connect("activate", account.toggleAutoConnect)
 	return connectAutomaticallyItem
 }
 
 func (account *account) createAlwaysEncryptItem() gtki.MenuItem {
 	alwaysEncryptItem, _ := g.gtk.CheckMenuItemNewWithMnemonic(i18n.Local("Always Encrypt Conversation"))
 	alwaysEncryptItem.SetActive(account.session.GetConfig().AlwaysEncrypt)
-	_, _ = alwaysEncryptItem.Connect("activate", account.toggleAlwaysEncrypt)
+	_ = alwaysEncryptItem.Connect("activate", account.toggleAlwaysEncrypt)
 	return alwaysEncryptItem
 }
 
 func (account *account) createDumpInfoItem(r *roster) gtki.MenuItem {
 	dumpInfoItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("Dump info"))
-	_, _ = dumpInfoItem.Connect("activate", func() {
+	_ = dumpInfoItem.Connect("activate", func() {
 		r.ui.accountManager.debugPeersFor(account)
 	})
 	return dumpInfoItem
@@ -338,7 +338,7 @@ func (account *account) createXMLConsoleItem(parent gtki.Window) gtki.MenuItem {
 	}
 
 	consoleItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("XML Console"))
-	_, _ = consoleItem.Connect("activate", account.xmlConsole.ShowAll)
+	_ = consoleItem.Connect("activate", account.xmlConsole.ShowAll)
 
 	return consoleItem
 }

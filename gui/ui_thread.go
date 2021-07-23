@@ -14,7 +14,7 @@ func assertInUIThread() {
 //1 - https://developer.gnome.org/glib/unstable/glib-The-Main-Event-Loop.html
 //TODO: Try other patterns and expose them as API. Example: http://www.mono-project.com/docs/gui/gtksharp/responsive-applications/
 func doInUIThread(f func()) {
-	_, _ = g.glib.IdleAdd(f)
+	_ = g.glib.IdleAdd(f)
 }
 
 type inUIThread struct {

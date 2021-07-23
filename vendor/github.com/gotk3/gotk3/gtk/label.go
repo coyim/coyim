@@ -39,10 +39,15 @@ func marshalLabel(p uintptr) (interface{}, error) {
 }
 
 func wrapLabel(obj *glib.Object) *Label {
+	if obj == nil {
+		return nil
+	}
+
 	return &Label{Widget{glib.InitiallyUnowned{obj}}}
 }
 
-func WidgetToLabel(widget *Widget) (interface{}, error) {
+// WidgetToLabel is a convience func that casts the given *Widget into a *Label.
+func WidgetToLabel(widget *Widget) (*Label, error) {
 	obj := glib.Take(unsafe.Pointer(widget.GObject))
 	return wrapLabel(obj), nil
 }
@@ -68,8 +73,10 @@ func (v *Label) SetText(str string) {
 
 // TODO:
 // gtk_label_set_text_with_mnemonic().
-// gtk_label_set_attributes().
 // gtk_label_get_attributes().
+func (v *Label) SetAttributes(attributes *pango.AttrList) {
+	C.gtk_label_set_attributes(v.native(), (*C.PangoAttrList)(unsafe.Pointer(attributes.Native())))
+}
 
 // SetMarkup is a wrapper around gtk_label_set_markup().
 func (v *Label) SetMarkup(str string) {

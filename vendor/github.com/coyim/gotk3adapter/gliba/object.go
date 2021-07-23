@@ -146,16 +146,16 @@ func FixupFunction(v interface{}) interface{} {
 	panic("Shouldn't happen")
 }
 
-func (v *Object) Connect(v1 string, v2 interface{}, v3 ...interface{}) (glibi.SignalHandle, error) {
+func (v *Object) Connect(v1 string, v2 interface{}) glibi.SignalHandle {
 	nv2 := FixupFunction(v2)
-	vx1, vx2 := v.Object.Connect(v1, nv2, FixupArray(v3)...)
-	return glibi.SignalHandle(vx1), vx2
+	vx1 := v.Object.Connect(v1, nv2)
+	return glibi.SignalHandle(vx1)
 }
 
-func (v *Object) ConnectAfter(v1 string, v2 interface{}, v3 ...interface{}) (glibi.SignalHandle, error) {
+func (v *Object) ConnectAfter(v1 string, v2 interface{}) glibi.SignalHandle {
 	nv2 := FixupFunction(v2)
-	vx1, vx2 := v.Object.ConnectAfter(v1, nv2, FixupArray(v3)...)
-	return glibi.SignalHandle(vx1), vx2
+	vx1 := v.Object.ConnectAfter(v1, nv2)
+	return glibi.SignalHandle(vx1)
 }
 
 func (v *Object) Emit(v1 string, v2 ...interface{}) (interface{}, error) {

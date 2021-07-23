@@ -6,12 +6,12 @@ type MockObject struct {
 	refCount int
 }
 
-func (*MockObject) Connect(v1 string, v2 interface{}, v3 ...interface{}) (glibi.SignalHandle, error) {
-	return glibi.SignalHandle(0), nil
+func (*MockObject) Connect(v1 string, v2 interface{}) glibi.SignalHandle {
+	return glibi.SignalHandle(0)
 }
 
-func (*MockObject) ConnectAfter(v1 string, v2 interface{}, v3 ...interface{}) (glibi.SignalHandle, error) {
-	return glibi.SignalHandle(0), nil
+func (*MockObject) ConnectAfter(v1 string, v2 interface{}) glibi.SignalHandle {
+	return glibi.SignalHandle(0)
 }
 
 func (*MockObject) Emit(v1 string, v2 ...interface{}) (interface{}, error) {

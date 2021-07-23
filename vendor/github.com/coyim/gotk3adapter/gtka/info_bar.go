@@ -53,7 +53,8 @@ func (v *infoBar) GetMessageType() gtki.MessageType {
 }
 
 func (v *infoBar) GetActionArea() (gtki.Widget, error) {
-	return WrapWidget(v.internal.GetActionArea())
+	o, e := v.internal.GetActionArea()
+	return Wrap(o).(gtki.Widget), e
 }
 
 func (v *infoBar) GetContentArea() (gtki.Box, error) {

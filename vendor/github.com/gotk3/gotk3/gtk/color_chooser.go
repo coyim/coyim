@@ -55,6 +55,10 @@ func marshalColorChooser(p uintptr) (interface{}, error) {
 }
 
 func wrapColorChooser(obj *glib.Object) *ColorChooser {
+	if obj == nil {
+		return nil
+	}
+
 	return &ColorChooser{obj}
 }
 
@@ -131,6 +135,10 @@ func marshalColorChooserDialog(p uintptr) (interface{}, error) {
 }
 
 func wrapColorChooserDialog(obj *glib.Object) *ColorChooserDialog {
+	if obj == nil {
+		return nil
+	}
+
 	dialog := wrapDialog(obj)
 	cc := wrapColorChooser(obj)
 	return &ColorChooserDialog{*dialog, *cc}
@@ -138,9 +146,16 @@ func wrapColorChooserDialog(obj *glib.Object) *ColorChooserDialog {
 
 // ColorChooserDialogNew() is a wrapper around gtk_color_chooser_dialog_new().
 func ColorChooserDialogNew(title string, parent IWindow) (*ColorChooserDialog, error) {
+
 	cstr := C.CString(title)
 	defer C.free(unsafe.Pointer(cstr))
-	c := C.gtk_color_chooser_dialog_new((*C.gchar)(cstr), parent.toWindow())
+
+	var w *C.GtkWindow = nil
+	if parent != nil {
+		w = parent.toWindow()
+	}
+
+	c := C.gtk_color_chooser_dialog_new((*C.gchar)(cstr), w)
 	if c == nil {
 		return nil, nilPtrErr
 	}

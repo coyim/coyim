@@ -339,7 +339,7 @@ func (conv *conversationPane) connectEnterHandler(target gtki.Widget) {
 		target = conv.entry
 	}
 
-	_, _ = target.Connect("key-press-event", func(_ gtki.Widget, ev gdki.Event) bool {
+	_ = target.Connect("key-press-event", func(_ gtki.Widget, ev gdki.Event) bool {
 		evk := g.gdk.EventKeyFrom(ev)
 		ret := false
 

@@ -4,8 +4,8 @@ import "github.com/coyim/gotk3adapter/glibi"
 
 type Mock struct{}
 
-func (*Mock) IdleAdd(f interface{}, args ...interface{}) (glibi.SourceHandle, error) {
-	return glibi.SourceHandle(0), nil
+func (*Mock) IdleAdd(f interface{}) glibi.SourceHandle {
+	return glibi.SourceHandle(0)
 }
 
 func (*Mock) InitI18n(domain string, dir string) {

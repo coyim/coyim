@@ -78,7 +78,7 @@ func (ecd *editContactDialog) initAllGroups(allGroups []string) {
 	for _, gr := range allGroups {
 		menu, _ := g.gtk.MenuItemNewWithLabel(gr)
 		menu.SetVisible(true)
-		_, _ = menu.Connect("activate", func(m gtki.MenuItem) {
+		_ = menu.Connect("activate", func(m gtki.MenuItem) {
 			ecd.addCurrentGroup(m.GetLabel())
 		})
 

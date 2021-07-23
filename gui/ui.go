@@ -130,7 +130,7 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	inuit := &inUIThread{g: gx}
 	outuit := &outsideUIThread{
 		doInUIThread: func(f func(*inUIThread)) {
-			_, _ = inuit.g.glib.IdleAdd(func() { f(inuit) })
+			_ = inuit.g.glib.IdleAdd(func() { f(inuit) })
 		},
 	}
 
@@ -435,7 +435,7 @@ func (u *gtkUI) onActivate() {
 }
 
 func (u *gtkUI) Loop() {
-	_, _ = u.app.Connect("activate", u.onActivate)
+	_ = u.app.Connect("activate", u.onActivate)
 	u.app.Run([]string{})
 }
 
@@ -537,7 +537,7 @@ func (u *gtkUI) setupSystemTray() {
 	si.SetHasTooltip(true)
 	si.SetTitle("CoyIM")
 	si.SetVisible(true)
-	_, _ = si.Connect("activate", func() {
+	_ = si.Connect("activate", func() {
 		if u.window.IsActive() {
 			u.window.Hide()
 		} else {
@@ -577,7 +577,7 @@ func (u *gtkUI) addFeedbackInfoBar() {
 
 	obj = builder.getObj("feedbackButton")
 	button := obj.(gtki.Button)
-	_, _ = button.Connect("clicked", func() {
+	_ = button.Connect("clicked", func() {
 		doInUIThread(u.feedbackDialog)
 	})
 }
@@ -798,7 +798,7 @@ func (u *gtkUI) setMenuBarSensitive(v bool) {
 }
 
 func (u *gtkUI) initMenuBar() {
-	_, _ = u.window.Connect(accountChangedSignal.String(), func() {
+	_ = u.window.Connect(accountChangedSignal.String(), func() {
 		doInUIThread(func() {
 			u.buildAccountsMenu()
 			u.accountsMenuItem.ShowAll()

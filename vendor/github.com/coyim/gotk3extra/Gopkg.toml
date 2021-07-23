@@ -30,5 +30,6 @@
   unused-packages = true
 
 [[constraint]]
+  branch = "master"
   name = "github.com/gotk3/gotk3"
-  version = "0.4.0"
+#  version = "0.4.0"

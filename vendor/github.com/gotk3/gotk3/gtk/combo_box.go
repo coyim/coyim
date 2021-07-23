@@ -5,6 +5,7 @@ package gtk
 import "C"
 import (
 	"errors"
+	"fmt"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
@@ -33,6 +34,7 @@ type ComboBox struct {
 
 	// Interfaces
 	CellLayout
+	CellEditable
 }
 
 // native returns a pointer to the underlying GtkComboBox.
@@ -58,8 +60,13 @@ func marshalComboBox(p uintptr) (interface{}, error) {
 }
 
 func wrapComboBox(obj *glib.Object) *ComboBox {
+	if obj == nil {
+		return nil
+	}
+
 	cl := wrapCellLayout(obj)
-	return &ComboBox{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, *cl}
+	ce := wrapCellEditable(obj)
+	return &ComboBox{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, *cl, *ce}
 }
 
 // ComboBoxNew is a wrapper around gtk_combo_box_new().
@@ -191,13 +198,12 @@ func (v *ComboBox) SetActiveID(id string) bool {
 }
 
 // GetModel is a wrapper around gtk_combo_box_get_model().
-func (v *ComboBox) GetModel() (*TreeModel, error) {
+func (v *ComboBox) GetModel() (ITreeModel, error) {
 	c := C.gtk_combo_box_get_model(v.native())
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapTreeModel(obj), nil
+	return castTreeModel(c)
 }
 
 // SetModel is a wrapper around gtk_combo_box_set_model().
@@ -268,8 +274,11 @@ func (v *ComboBox) GetEntry() (*Entry, error) {
 	if err != nil {
 		return nil, err
 	}
-	obj := glib.Take(unsafe.Pointer(widget.GObject))
-	return wrapEntry(obj), nil
+	entry, ok := widget.(*Entry)
+	if !ok {
+		return nil, fmt.Errorf("expected child to be of type *gtk.Entry, got %T", widget)
+	}
+	return entry, nil
 }
 
 /*
@@ -297,6 +306,10 @@ func marshalComboBoxText(p uintptr) (interface{}, error) {
 }
 
 func wrapComboBoxText(obj *glib.Object) *ComboBoxText {
+	if obj == nil {
+		return nil
+	}
+
 	return &ComboBoxText{*wrapComboBox(obj)}
 }
 

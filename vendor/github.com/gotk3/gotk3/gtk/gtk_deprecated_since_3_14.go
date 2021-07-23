@@ -1,4 +1,4 @@
-// +build gtk_3_6 gtk_3_8 gtk_3_10 gtk_3_12
+// +build gtk_3_6 gtk_3_8 gtk_3_10 gtk_3_12 gtk_deprecated
 
 package gtk
 
@@ -215,6 +215,10 @@ func marshalArrow(p uintptr) (interface{}, error) {
 }
 
 func wrapArrow(obj *glib.Object) *Arrow {
+	if obj == nil {
+		return nil
+	}
+
 	return &Arrow{Misc{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -243,6 +247,10 @@ func marshalAlignment(p uintptr) (interface{}, error) {
 }
 
 func wrapAlignment(obj *glib.Object) *Alignment {
+	if obj == nil {
+		return nil
+	}
+
 	return &Alignment{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -265,6 +273,10 @@ func marshalStatusIcon(p uintptr) (interface{}, error) {
 }
 
 func wrapStatusIcon(obj *glib.Object) *StatusIcon {
+	if obj == nil {
+		return nil
+	}
+
 	return &StatusIcon{obj}
 }
 
@@ -455,7 +467,7 @@ func (v *StatusIcon) GetSize() int {
 
 // PopupAtStatusIcon() is a wrapper around gtk_menu_popup() specific to usage with GtkStatusIcon.
 // gomenu_popup() is defined in menu.go.h, this is a workaround to pass gtk_status_icon_position_menu as the GtkMenuPositionFunc.
-func (v *Menu) PopupAtStatusIcon(statusIcon *StatusIcon, button uint, activateTime uint32) {
+func (v *Menu) PopupAtStatusIcon(statusIcon *StatusIcon, button gdk.Button, activateTime uint32) {
 	C.gotk_menu_popup_at_status_icon(v.native(), statusIcon.native(), C.guint(button), C.guint32(activateTime))
 }
 
@@ -484,6 +496,10 @@ func marshalMisc(p uintptr) (interface{}, error) {
 }
 
 func wrapMisc(obj *glib.Object) *Misc {
+	if obj == nil {
+		return nil
+	}
+
 	return &Misc{Widget{glib.InitiallyUnowned{obj}}}
 }
 

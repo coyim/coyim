@@ -1,4 +1,4 @@
-//+build gtk_3_6 gtk_3_8 gtk_3_10 gtk_3_12 gtk_3_14 gtk_3_16 gtk_3_18 gtk_3_20
+//+build gtk_3_6 gtk_3_8 gtk_3_10 gtk_3_12 gtk_3_14 gtk_3_16 gtk_3_18 gtk_3_20 gtk_deprecated
 
 package gtk
 
@@ -8,6 +8,8 @@ import "C"
 
 import (
 	"unsafe"
+
+	"github.com/gotk3/gotk3/gdk"
 )
 
 /*
@@ -19,7 +21,7 @@ import (
 // gtk_widget_is_composited().
 
 // PopupAtMouse() is a wrapper for gtk_menu_popup(), without the option for a custom positioning function.
-func (v *Menu) PopupAtMouseCursor(parentMenuShell IMenu, parentMenuItem IMenuItem, button int, activateTime uint32) {
+func (v *Menu) PopupAtMouseCursor(parentMenuShell IMenu, parentMenuItem IMenuItem, button gdk.Button, activateTime uint32) {
 	wshell := nullableWidget(parentMenuShell)
 	witem := nullableWidget(parentMenuItem)
 

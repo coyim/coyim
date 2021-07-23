@@ -8,9 +8,9 @@ type RealGlib struct{}
 
 var Real = &RealGlib{}
 
-func (*RealGlib) IdleAdd(f interface{}, args ...interface{}) (glibi.SourceHandle, error) {
-	res, err := glib.IdleAdd(f, args...)
-	return glibi.SourceHandle(res), err
+func (*RealGlib) IdleAdd(f interface{}) glibi.SourceHandle {
+	res := glib.IdleAdd(f)
+	return glibi.SourceHandle(res)
 }
 
 func (*RealGlib) InitI18n(domain string, dir string) {
@@ -82,7 +82,7 @@ func (*RealGlib) MenuNew() glibi.Menu {
 }
 
 func (*RealGlib) MenuItemNew(label, detailed_action string) glibi.MenuItem {
-	return WrapMenuItemSimple(glib.MenuItemNew(label, detailed_action))
+	return WrapMenuItemSimple(glib.MenuItemNewWithLabelAndAction(label, detailed_action))
 }
 
 func (*RealGlib) MenuItemNewSection(label string, section glibi.MenuModel) glibi.MenuItem {

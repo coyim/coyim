@@ -249,7 +249,7 @@ func (r *roster) appendResourcesAsMenuItems(jid jid.WithoutResource, account *ac
 	for _, resource := range peer.Resources() {
 		item, _ := g.gtk.CheckMenuItemNewWithMnemonic(resource.String())
 		rs := resource
-		_, _ = item.Connect("activate",
+		_ = item.Connect("activate",
 			func() {
 				doInUIThread(func() {
 					r.ui.openTargetedConversationView(account, jid.WithResource(rs), true)

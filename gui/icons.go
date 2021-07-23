@@ -1124,11 +1124,11 @@ func (i *icon) createPixBufWithSize(width, height int) (gdki.Pixbuf, error) {
 	}
 
 	w.Add(1)
-	_, _ = pl.Connect("area-prepared", func() {
+	_ = pl.Connect("area-prepared", func() {
 		defer w.Done()
 	})
 
-	_, _ = pl.Connect("size-prepared", func() {
+	_ = pl.Connect("size-prepared", func() {
 		pl.SetSize(width, height)
 	})
 

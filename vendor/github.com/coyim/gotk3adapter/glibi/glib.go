@@ -1,7 +1,7 @@
 package glibi
 
 type Glib interface {
-	IdleAdd(interface{}, ...interface{}) (SourceHandle, error)
+	IdleAdd(interface{}) SourceHandle
 	InitI18n(string, string)
 	Local(string) string
 	MainDepth() int

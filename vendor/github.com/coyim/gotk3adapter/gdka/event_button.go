@@ -26,3 +26,7 @@ func UnwrapEventButton(v gdki.EventButton) *gdk.EventButton {
 	}
 	return v.(*eventButton).EventButton
 }
+
+func (v *eventButton) Button() uint {
+	return uint(v.EventButton.Button())
+}

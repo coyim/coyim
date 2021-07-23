@@ -4,7 +4,9 @@ package glib
 // #include <glib-object.h>
 // #include "glib.go.h"
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+)
 
 /*
  * Linked Lists
@@ -13,8 +15,8 @@ import "unsafe"
 // List is a representation of Glib's GList.
 type List struct {
 	list *C.struct__GList
-	// If set, dataWrap is called every time NthDataWrapped()
-	// or DataWrapped() is called to wrap raw underlying
+	// If set, dataWrap is called every time NthData()
+	// or Data() is called to wrap raw underlying
 	// value into appropriate type.
 	dataWrap func(unsafe.Pointer) interface{}
 }
@@ -51,8 +53,8 @@ func (v *List) native() *C.struct__GList {
 	return v.list
 }
 
-// DataWapper sets wrap functions, which is called during NthDataWrapped()
-// and DataWrapped(). It's used to cast raw C data into appropriate
+// DataWapper sets wrap functions, which is called during NthData()
+// and Data(). It's used to cast raw C data into appropriate
 // Go structures and types every time that data is retreived.
 func (v *List) DataWrapper(fn func(unsafe.Pointer) interface{}) {
 	if v == nil {
@@ -96,7 +98,7 @@ func (v *List) Nth(n uint) *List {
 	return list
 }
 
-// NthDataWrapped acts the same as g_list_nth_data(), but passes
+// NthData acts the same as g_list_nth_data(), but passes
 // retrieved value before returning through wrap function, set by DataWrapper().
 // If no wrap function is set, it returns raw unsafe.Pointer.
 func (v *List) NthData(n uint) interface{} {
@@ -122,12 +124,27 @@ func (v *List) Previous() *List {
 	return v.wrapNewHead(v.native().prev)
 }
 
+// First is a wrapper around g_list_first().
+func (v *List) First() *List {
+	return v.wrapNewHead(C.g_list_first(v.native()))
+}
+
+// Last is a wrapper around g_list_last().
+func (v *List) Last() *List {
+	return v.wrapNewHead(C.g_list_last(v.native()))
+}
+
+// Reverse is a wrapper around g_list_reverse().
+func (v *List) Reverse() *List {
+	return v.wrapNewHead(C.g_list_reverse(v.native()))
+}
+
 // dataRaw is a wrapper around the data struct field
 func (v *List) dataRaw() unsafe.Pointer {
 	return unsafe.Pointer(v.native().data)
 }
 
-// DataWrapped acts the same as data struct field, but passes
+// Data acts the same as data struct field, but passes
 // retrieved value before returning through wrap function, set by DataWrapper().
 // If no wrap function is set, it returns raw unsafe.Pointer.
 func (v *List) Data() interface{} {
@@ -153,3 +170,6 @@ func (v *List) FreeFull(fn func(item interface{})) {
 	v.Foreach(fn)
 	v.Free()
 }
+
+// CompareDataFunc is a representation of GCompareDataFunc
+type CompareDataFunc func(a, b uintptr) int

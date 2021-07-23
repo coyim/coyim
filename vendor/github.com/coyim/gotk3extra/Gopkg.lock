@@ -2,18 +2,21 @@
 
 
 [[projects]]
-  digest = "1:ddf66fdcdb1ec703fa6316f0735dc287290f6e0123037f59972f5fe9202e09d4"
+  branch = "master"
+  digest = "1:7dcdb83e9e8886a7eae886da15a01a97f7a43cbbb6d69f843e2f73e3e6871d8a"
   name = "github.com/gotk3/gotk3"
   packages = [
     "cairo",
     "gdk",
     "glib",
     "gtk",
+    "internal/callback",
+    "internal/closure",
+    "internal/slab",
     "pango",
   ]
   pruneopts = "UT"
-  revision = "f7e85ed33fd290bcfbf4ce56dcdae192647f42c1"
-  version = "v0.4.0"
+  revision = "787972f321b3dc1a41d20262f5eb822402730f93"
 
 [solve-meta]
   analyzer-name = "dep"

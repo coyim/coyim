@@ -1,4 +1,4 @@
-// +build !gtk_3_6,!gtk_3_8,!gtk_3_10,!gtk_3_12,!gtk_3_14,!gtk_3_16,gtk_3_18
+// +build !gtk_3_6,!gtk_3_8,!gtk_3_10,!gtk_3_12,!gtk_3_14,!gtk_3_16
 
 // See: https://developer.gnome.org/gtk3/3.18/api-index-3-18.html
 
@@ -9,11 +9,6 @@ package gtk
 
 // #include <gtk/gtk.h>
 import "C"
-import (
-	"unsafe"
-
-	"github.com/gotk3/gotk3/glib"
-)
 
 /*
  * GtkStack
@@ -27,8 +22,10 @@ import (
  * GtkRadioMenuItem
  */
 
-// TODO
-// gtk_radio_menu_item_join_group().
+// JoinGroup is a wrapper around gtk_radio_menu_item_join_group().
+func (v *RadioMenuItem) JoinGroup(group_source *RadioMenuItem) {
+	C.gtk_radio_menu_item_join_group(v.native(), group_source.native())
+}
 
 /*
  * GtkOverlay
@@ -36,7 +33,7 @@ import (
 
 // ReorderOverlay() is a wrapper around gtk_overlay_reorder_overlay().
 func (v *Overlay) ReorderOverlay(child IWidget, position int) {
-	C.gtk_overlay_reorder_overlay(v.native(), child.toWidget(), C.gint(position))
+	C.gtk_overlay_reorder_overlay(v.native(), child.toWidget(), C.int(position))
 }
 
 // GetOverlayPassThrough() is a wrapper around gtk_overlay_get_overlay_pass_through().
@@ -73,10 +70,34 @@ func (p *Popover) SetDefaultWidget(widget IWidget) {
 }
 
 // GetDefaultWidget is a wrapper around gtk_popover_get_default_widget().
-func (p *Popover) GetDefaultWidget() *Widget {
+func (p *Popover) GetDefaultWidget() (IWidget, error) {
 	w := C.gtk_popover_get_default_widget(p.native())
 	if w == nil {
-		return nil
+		return nil, nil
 	}
-	return &Widget{glib.InitiallyUnowned{glib.Take(unsafe.Pointer(w))}}
+	return castWidget(w)
+}
+
+/*
+ * GtkTextView
+ */
+
+// SetTopMargin is a wrapper around gtk_text_view_set_top_margin().
+func (v *TextView) SetTopMargin(topMargin int) {
+	C.gtk_text_view_set_top_margin(v.native(), C.gint(topMargin))
+}
+
+// GetTopMargin is a wrapper around gtk_text_view_get_top_margin().
+func (v *TextView) GetTopMargin() int {
+	return int(C.gtk_text_view_get_top_margin(v.native()))
+}
+
+// SetBottomMargin is a wrapper around gtk_text_view_set_bottom_margin().
+func (v *TextView) SetBottomMargin(bottomMargin int) {
+	C.gtk_text_view_set_bottom_margin(v.native(), C.gint(bottomMargin))
+}
+
+// GetBottomMargin is a wrapper around gtk_text_view_get_bottom_margin().
+func (v *TextView) GetBottomMargin() int {
+	return int(C.gtk_text_view_get_bottom_margin(v.native()))
 }

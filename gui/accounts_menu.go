@@ -22,32 +22,32 @@ func (u *gtkUI) buildStaticAccountsMenu(submenu gtki.Menu) {
 		connectAutomaticallyItem.SetActive(a.ConnectAutomatically)
 	})
 
-	_, _ = connectAutomaticallyItem.Connect("activate", func() {
+	_ = connectAutomaticallyItem.Connect("activate", func() {
 		u.setConnectAllAutomatically(connectAutomaticallyItem.GetActive())
 	})
 	submenu.Append(connectAutomaticallyItem)
 
 	connectAllMenu, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Connect All"))
-	_, _ = connectAllMenu.Connect("activate", func() { u.connectAllAutomatics(true) })
+	_ = connectAllMenu.Connect("activate", func() { u.connectAllAutomatics(true) })
 	submenu.Append(connectAllMenu)
 
 	disconnectAllMenu, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Disconnect All"))
-	_, _ = disconnectAllMenu.Connect("activate", u.disconnectAll)
+	_ = disconnectAllMenu.Connect("activate", u.disconnectAll)
 	submenu.Append(disconnectAllMenu)
 
 	sep2, _ := g.gtk.SeparatorMenuItemNew()
 	submenu.Append(sep2)
 
 	registerAccMenu, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_New Account"))
-	_, _ = registerAccMenu.Connect("activate", u.showServerSelectionWindow)
+	_ = registerAccMenu.Connect("activate", u.showServerSelectionWindow)
 	submenu.Append(registerAccMenu)
 
 	addAccMenu, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Add Account"))
-	_, _ = addAccMenu.Connect("activate", u.showAddAccountWindow)
+	_ = addAccMenu.Connect("activate", u.showAddAccountWindow)
 	submenu.Append(addAccMenu)
 
 	importMenu, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Import Account"))
-	_, _ = importMenu.Connect("activate", u.runImporter)
+	_ = importMenu.Connect("activate", u.runImporter)
 	submenu.Append(importMenu)
 
 	connectAutomaticallyItem.SetSensitive(false)

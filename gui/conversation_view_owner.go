@@ -115,7 +115,7 @@ func (cvf *ourConversationViewFactory) setWindowEvents(conv *conversationWindow,
 	cp := conv.conversationPane
 
 	inEventHandler := false
-	_, _ = conv.win.Connect("set-focus", func() {
+	_ = conv.win.Connect("set-focus", func() {
 		if !inEventHandler {
 			inEventHandler = true
 			conv.entry.GrabFocus()
@@ -123,16 +123,16 @@ func (cvf *ourConversationViewFactory) setWindowEvents(conv *conversationWindow,
 		}
 	})
 
-	_, _ = conv.win.Connect("focus-in-event", func() {
+	_ = conv.win.Connect("focus-in-event", func() {
 		conv.unsetUrgent()
 	})
 
-	_, _ = conv.win.Connect("delete-event", func() {
+	_ = conv.win.Connect("delete-event", func() {
 		winBox.Remove(cp.widget)
 		conv.win = nil
 	})
 
-	_, _ = conv.win.Connect("notify::is-active", func() {
+	_ = conv.win.Connect("notify::is-active", func() {
 		if conv.win.IsActive() {
 			inEventHandler = true
 			conv.entry.GrabFocus()
@@ -140,11 +140,11 @@ func (cvf *ourConversationViewFactory) setWindowEvents(conv *conversationWindow,
 		}
 	})
 
-	_, _ = conv.win.Connect("hide", func() {
+	_ = conv.win.Connect("hide", func() {
 		conv.onHide()
 	})
 
-	_, _ = conv.win.Connect("show", func() {
+	_ = conv.win.Connect("show", func() {
 		conv.onShow()
 	})
 
@@ -218,7 +218,7 @@ func (cvf *ourConversationViewFactory) createUnifiedConversationView(existing *c
 	cvf.ul.notebook.SetTabLabelText(cp.widget, tabLabel)
 	cvf.ul.itemMap[idx] = csi
 	buffer, _ := csi.history.GetBuffer()
-	_, _ = buffer.Connect("changed", func() {
+	_ = buffer.Connect("changed", func() {
 		cvf.ul.onConversationChanged(csi)
 	})
 	return csi
@@ -280,13 +280,13 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 	updateWithStyle(cp.entryScroll, prov)
 
 	cp.history.SetBuffer(cvf.ui.getTags().createTextBuffer())
-	_, _ = cp.history.Connect("size-allocate", func() {
+	_ = cp.history.Connect("size-allocate", func() {
 		scrollToBottom(cp.scrollHistory)
 	})
 
 	cp.pending.SetBuffer(cvf.ui.getTags().createTextBuffer())
 
-	_, _ = cp.entry.Connect("key-release-event", cp.doPotentialEntryResize)
+	_ = cp.entry.Connect("key-release-event", cp.doPotentialEntryResize)
 
 	cvf.ui.displaySettings.control(cp.history)
 	cvf.ui.displaySettings.shadeBackground(cp.pending)

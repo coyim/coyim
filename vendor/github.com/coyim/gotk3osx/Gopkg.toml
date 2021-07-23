@@ -31,7 +31,7 @@
 
 [[constraint]]
   name = "github.com/gotk3/gotk3"
-  version = "0.4.0"
+  branch = "master"
 
 [[constraint]]
   branch = "main"

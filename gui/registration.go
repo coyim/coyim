@@ -313,7 +313,7 @@ func (u *gtkUI) showServerSelectionWindow() {
 	})
 
 	entry := w.serverBox.GetChild().(gtki.Widget)
-	_, _ = entry.Connect("activate", func() {
+	_ = entry.Connect("activate", func() {
 		w.assistant.SetCurrentPage(1)
 	})
 

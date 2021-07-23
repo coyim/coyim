@@ -8,9 +8,9 @@ package gtk
 // #include "gtk_since_3_14.go.h"
 import "C"
 import (
-	"sync"
 	"unsafe"
 
+	"github.com/gotk3/gotk3/internal/callback"
 	"github.com/gotk3/gotk3/glib"
 )
 
@@ -22,15 +22,23 @@ const (
 	STATE_FLAG_CHECKED StateFlags = C.GTK_STATE_FLAG_CHECKED
 )
 
+// IconLookupFlags is a representation of GTK's GtkIconLookupFlags.
+const (
+	ICON_LOOKUP_FORCE_REGULAR  IconLookupFlags = C.GTK_ICON_LOOKUP_FORCE_REGULAR
+	ICON_LOOKUP_FORCE_SYMBOLIC                 = C.GTK_ICON_LOOKUP_FORCE_SYMBOLIC
+	ICON_LOOKUP_DIR_LTR                        = C.GTK_ICON_LOOKUP_DIR_LTR
+	ICON_LOOKUP_DIR_RTL                        = C.GTK_ICON_LOOKUP_DIR_RTL
+)
+
 /*
  * GtkStack
  */
 
-// TODO:
-// GtkStackTransitionType
-// GTK_STACK_TRANSITION_TYPE_OVER_DOWN_UP
-// GTK_STACK_TRANSITION_TYPE_OVER_LEFT_RIGHT
-// GTK_STACK_TRANSITION_TYPE_OVER_RIGHT_LEFT
+const (
+	STACK_TRANSITION_TYPE_OVER_DOWN_UP    StackTransitionType = C.GTK_STACK_TRANSITION_TYPE_OVER_DOWN_UP
+	STACK_TRANSITION_TYPE_OVER_LEFT_RIGHT                     = C.GTK_STACK_TRANSITION_TYPE_OVER_LEFT_RIGHT
+	STACK_TRANSITION_TYPE_OVER_RIGHT_LEFT                     = C.GTK_STACK_TRANSITION_TYPE_OVER_RIGHT_LEFT
+)
 
 /*
  * GtkListBox
@@ -51,37 +59,15 @@ func (v *ListBox) UnselectAll() {
 	C.gtk_list_box_unselect_all(v.native())
 }
 
-type ListBoxForeachFunc func(box *ListBox, row *ListBoxRow, userData uintptr) int
-
-type listBoxForeachFuncData struct {
-	fn       ListBoxForeachFunc
-	userData uintptr
-}
-
-var (
-	listBoxForeachFuncRegistry = struct {
-		sync.RWMutex
-		next int
-		m    map[int]listBoxForeachFuncData
-	}{
-		next: 1,
-		m:    make(map[int]listBoxForeachFuncData),
-	}
-)
+// ListBoxForeachFunc is a representation of GtkListBoxForeachFunc
+type ListBoxForeachFunc func(box *ListBox, row *ListBoxRow) int
 
 // SelectedForeach is a wrapper around gtk_list_box_selected_foreach().
-func (v *ListBox) SelectedForeach(fn ListBoxForeachFunc, userData uintptr) {
-	listBoxForeachFuncRegistry.Lock()
-	id := listBoxForeachFuncRegistry.next
-	listBoxForeachFuncRegistry.next++
-	listBoxForeachFuncRegistry.m[id] = listBoxForeachFuncData{fn: fn, userData: userData}
-	listBoxForeachFuncRegistry.Unlock()
+func (v *ListBox) SelectedForeach(fn ListBoxForeachFunc) {
+	id := callback.Assign(fn)
+	defer callback.Delete(id)
 
-	C._gtk_list_box_selected_foreach(v.native(), C.gpointer(uintptr(id)))
-
-	listBoxForeachFuncRegistry.Lock()
-	delete(listBoxForeachFuncRegistry.m, id)
-	listBoxForeachFuncRegistry.Unlock()
+	C._gtk_list_box_selected_foreach(v.native(), C.gpointer(id))
 }
 
 // GetSelectedRows is a wrapper around gtk_list_box_get_selected_rows().

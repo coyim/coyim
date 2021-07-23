@@ -110,7 +110,7 @@ func (v *widget) GetName() (string, error) {
 
 func (v *widget) GetParent() (gtki.Widget, error) {
 	parent, err := v.internal.GetParent()
-	return WrapWidget(parent, err)
+	return Wrap(parent).(gtki.Widget), err
 }
 
 func (v *widget) GetParentX() (gtki.Widget, error) {

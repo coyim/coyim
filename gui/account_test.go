@@ -114,10 +114,10 @@ type accountDirectGlibIdleAddMock struct {
 	glib_mock.Mock
 }
 
-func (v *accountDirectGlibIdleAddMock) IdleAdd(v1 interface{}, v2 ...interface{}) (glibi.SourceHandle, error) {
+func (v *accountDirectGlibIdleAddMock) IdleAdd(v1 interface{}) glibi.SourceHandle {
 	ffx := v1.(func())
 	ffx()
-	return glibi.SourceHandle(0), nil
+	return glibi.SourceHandle(0)
 }
 
 type accountMockGtk struct {
@@ -210,12 +210,12 @@ func (v *accountMockCheckMenuItem) SetActive(v1 bool) {
 	v.active = v1
 }
 
-func (v *accountMockMenuItem) Connect(p string, v1 interface{}, v2 ...interface{}) (glibi.SignalHandle, error) {
+func (v *accountMockMenuItem) Connect(p string, v1 interface{}) glibi.SignalHandle {
 	if p == "activate" {
 		v.onActivate = v1
 	}
 
-	return glibi.SignalHandle(0), nil
+	return glibi.SignalHandle(0)
 }
 
 func (v *accountMockMenuItem) SetSensitive(v1 bool) {
@@ -224,12 +224,12 @@ func (v *accountMockMenuItem) SetSensitive(v1 bool) {
 	v.sensitive = v1
 }
 
-func (v *accountMockCheckMenuItem) Connect(p string, v1 interface{}, v2 ...interface{}) (glibi.SignalHandle, error) {
+func (v *accountMockCheckMenuItem) Connect(p string, v1 interface{}) glibi.SignalHandle {
 	if p == "activate" {
 		v.onActivate = v1
 	}
 
-	return glibi.SignalHandle(0), nil
+	return glibi.SignalHandle(0)
 }
 
 type accountMockSeparatorMenuItem struct {

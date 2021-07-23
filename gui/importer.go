@@ -106,7 +106,7 @@ func (u *gtkUI) runImporter() {
 	rend := builder.getObj("import-this-account-renderer")
 	rr := rend.(gtki.CellRendererToggle)
 
-	_, _ = rr.Connect("toggled", func(_ interface{}, path string) {
+	_ = rr.Connect("toggled", func(_ interface{}, path string) {
 		iter, _ := s.GetIterFromString(path)
 		current, _ := valAt(s, iter, 2).(bool)
 		app, _ := valAt(s, iter, 0).(string)
@@ -117,7 +117,7 @@ func (u *gtkUI) runImporter() {
 		_ = s.SetValue(iter, 2, !current)
 	})
 
-	_, _ = w.Connect("response", func(_ interface{}, rid int) {
+	_ = w.Connect("response", func(_ interface{}, rid int) {
 		if gtki.ResponseType(rid) == gtki.RESPONSE_OK {
 			u.doActualImportOf(importSettings, allImports)
 		}

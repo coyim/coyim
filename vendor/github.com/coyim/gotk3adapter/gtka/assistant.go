@@ -49,7 +49,8 @@ func (a *assistant) GetCurrentPage() int {
 }
 
 func (a *assistant) GetNthPage(pageNum int) (gtki.Widget, error) {
-	return WrapWidget(a.internal.GetNthPage(pageNum))
+	obj, e := a.internal.GetNthPage(pageNum)
+	return Wrap(obj).(gtki.Widget), e
 }
 
 func (a *assistant) AppendPage(page gtki.Widget) int {

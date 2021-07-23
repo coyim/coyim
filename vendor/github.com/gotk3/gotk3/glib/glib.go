@@ -14,12 +14,13 @@
 // ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-// Package glib provides Go bindings for GLib 2.  Supports version 2.36
-// and later.
+// Package glib provides Go bindings for GLib 2. It supports version 2.36 and
+// later.
 package glib
 
 // #cgo pkg-config: gio-2.0 glib-2.0 gobject-2.0
 // #include <gio/gio.h>
+// #include <stdlib.h>
 // #include <glib.h>
 // #include <glib-object.h>
 // #include "glib.go.h"
@@ -28,11 +29,12 @@ import "C"
 import (
 	"errors"
 	"fmt"
-	"os"
 	"reflect"
 	"runtime"
-	"sync"
 	"unsafe"
+
+	"github.com/gotk3/gotk3/internal/callback"
+	"github.com/gotk3/gotk3/internal/closure"
 )
 
 /*
@@ -45,6 +47,7 @@ func gbool(b bool) C.gboolean {
 	}
 	return C.gboolean(0)
 }
+
 func gobool(b C.gboolean) bool {
 	if b != 0 {
 		return true
@@ -56,23 +59,7 @@ func gobool(b C.gboolean) bool {
  * Unexported vars
  */
 
-type closureContext struct {
-	rf       reflect.Value
-	userData reflect.Value
-}
-
-var (
-	errNilPtr = errors.New("cgo returned unexpected nil pointer")
-
-	closures = struct {
-		sync.RWMutex
-		m map[*C.GClosure]closureContext
-	}{
-		m: make(map[*C.GClosure]closureContext),
-	}
-
-	signals = make(map[SignalHandle]*C.GClosure)
-)
+var nilPtrErr = errors.New("cgo returned unexpected nil pointer")
 
 /*
  * Constants
@@ -106,6 +93,11 @@ const (
 	TYPE_VARIANT   Type = C.G_TYPE_VARIANT
 )
 
+// IsValue checks whether the passed in type can be used for g_value_init().
+func (t Type) IsValue() bool {
+	return gobool(C._g_type_is_value(C.GType(t)))
+}
+
 // Name is a wrapper around g_type_name().
 func (t Type) Name() string {
 	return C.GoString((*C.char)(C.g_type_name(C.GType(t))))
@@ -137,6 +129,18 @@ func TypeFromName(typeName string) Type {
 func TypeNextBase(leafType, rootType Type) Type {
 	return Type(C.g_type_next_base(C.GType(leafType), C.GType(rootType)))
 }
+
+// SettingsBindFlags is a representation of GLib's GSettingsBindFlags.
+type SettingsBindFlags int
+
+const (
+	SETTINGS_BIND_DEFAULT        SettingsBindFlags = C.G_SETTINGS_BIND_DEFAULT
+	SETTINGS_BIND_GET            SettingsBindFlags = C.G_SETTINGS_BIND_GET
+	SETTINGS_BIND_SET            SettingsBindFlags = C.G_SETTINGS_BIND_SET
+	SETTINGS_BIND_NO_SENSITIVITY SettingsBindFlags = C.G_SETTINGS_BIND_NO_SENSITIVITY
+	SETTINGS_BIND_GET_NO_CHANGES SettingsBindFlags = C.G_SETTINGS_BIND_GET_NO_CHANGES
+	SETTINGS_BIND_INVERT_BOOLEAN SettingsBindFlags = C.G_SETTINGS_BIND_INVERT_BOOLEAN
+)
 
 // UserDirectory is a representation of GLib's GUserDirectory.
 type UserDirectory int
@@ -172,36 +176,38 @@ const (
 // goMarshal is called by the GLib runtime when a closure needs to be invoked.
 // The closure will be invoked with as many arguments as it can take, from 0 to
 // the full amount provided by the call. If the closure asks for more parameters
-// than there are to give, a warning is printed to stderr and the closure is
-// not run.
+// than there are to give, then a runtime panic will occur.
 //
 //export goMarshal
-func goMarshal(closure *C.GClosure, retValue *C.GValue,
-	nParams C.guint, params *C.GValue,
-	invocationHint C.gpointer, marshalData *C.GValue) {
+func goMarshal(
+	gclosure *C.GClosure,
+	retValue *C.GValue,
+	nParams C.guint,
+	params *C.GValue,
+	invocationHint C.gpointer,
+	marshalData *C.GValue) {
 
-	// Get the context associated with this callback closure.
-	closures.RLock()
-	cc := closures.m[closure]
-	closures.RUnlock()
-
-	// Get number of parameters passed in.  If user data was saved with the
-	// closure context, increment the total number of parameters.
-	nGLibParams := int(nParams)
-	nTotalParams := nGLibParams
-	if cc.userData.IsValid() {
-		nTotalParams++
+	// Get the function value associated with this callback closure.
+	fs := closure.Get(unsafe.Pointer(gclosure))
+	if !fs.IsValid() {
+		// Possible data race, bail.
+		return
 	}
 
-	// Get number of parameters from the callback closure.  If this exceeds
-	// the total number of marshaled parameters, a warning will be printed
-	// to stderr, and the callback will not be run.
-	nCbParams := cc.rf.Type().NumIn()
+	fsType := fs.Func.Type()
+
+	// Get number of parameters passed in.
+	nGLibParams := int(nParams)
+	nTotalParams := nGLibParams
+
+	// Reflect may panic, so we defer recover here to re-panic with our trace.
+	defer fs.TryRepanic()
+
+	// Get number of parameters from the callback closure. If this exceeds
+	// the total number of marshaled parameters, trigger a runtime panic.
+	nCbParams := fsType.NumIn()
 	if nCbParams > nTotalParams {
-		fmt.Fprintf(os.Stderr,
-			"too many closure args: have %d, max allowed %d\n",
-			nCbParams, nTotalParams)
-		return
+		fs.Panicf("too many closure args: have %d, max %d", nCbParams, nTotalParams)
 	}
 
 	// Create a slice of reflect.Values as arguments to call the function.
@@ -211,50 +217,73 @@ func goMarshal(closure *C.GClosure, retValue *C.GValue,
 	// Fill beginning of args, up to the minimum of the total number of callback
 	// parameters and parameters from the glib runtime.
 	for i := 0; i < nCbParams && i < nGLibParams; i++ {
-		v := &Value{&gValues[i]}
+		v := Value{&gValues[i]}
+
 		val, err := v.GoValue()
 		if err != nil {
-			fmt.Fprintf(os.Stderr,
-				"no suitable Go value for arg %d: %v\n", i, err)
-			return
+			fs.Panicf("no suitable Go value for arg %d: %v", i, err)
 		}
-		// Parameters that are descendants of GObject come wrapped in another GObject.
-		// For C applications, the default marshaller (g_cclosure_marshal_VOID__VOID in
-		// gmarshal.c in the GTK glib library) 'peeks' into the enclosing object and
-		// passes the wrapped object to the handler. Use the *Object.goValue function
-		// to emulate that for Go signal handlers.
+
+		// Parameters that are descendants of GObject come wrapped in another
+		// GObject. For C applications, the default marshaller
+		// (g_cclosure_marshal_VOID__VOID in gmarshal.c in the GTK glib library)
+		// 'peeks' into the enclosing object and passes the wrapped object to
+		// the handler. Use the *Object.goValue function to emulate that for Go
+		// signal handlers.
 		switch objVal := val.(type) {
 		case *Object:
-			innerVal, err := objVal.goValue()
-			if err != nil {
-				// print warning and leave val unchanged to preserve old
-				// behavior
-				fmt.Fprintf(os.Stderr,
-					"warning: no suitable Go value from object for arg %d: %v\n", i, err)
-			} else {
+			if innerVal, err := objVal.goValue(); err == nil {
 				val = innerVal
 			}
+
+		case *Variant:
+			switch ts := objVal.TypeString(); ts {
+			case "s":
+				val = objVal.GetString()
+			case "b":
+				val = gobool(C.g_variant_get_boolean(objVal.native()))
+			case "d":
+				val = float64(C.g_variant_get_double(objVal.native()))
+			case "n":
+				val = int16(C.g_variant_get_int16(objVal.native()))
+			case "i":
+				val = int32(C.g_variant_get_int32(objVal.native()))
+			case "x":
+				val = int64(C.g_variant_get_int64(objVal.native()))
+			case "y":
+				val = uint8(C.g_variant_get_byte(objVal.native()))
+			case "q":
+				val = uint16(C.g_variant_get_uint16(objVal.native()))
+			case "u":
+				val = uint32(C.g_variant_get_uint32(objVal.native()))
+			case "t":
+				val = uint64(C.g_variant_get_uint64(objVal.native()))
+			default:
+				fs.Panicf("variant conversion not yet implemented for type %s", ts)
+			}
 		}
-		rv := reflect.ValueOf(val)
-		args = append(args, rv.Convert(cc.rf.Type().In(i)))
+
+		args = append(args, reflect.ValueOf(val).Convert(fsType.In(i)))
 	}
 
-	// If non-nil user data was passed in and not all args have been set,
-	// get and set the reflect.Value directly from the GValue.
-	if cc.userData.IsValid() && len(args) < cap(args) {
-		args = append(args, cc.userData.Convert(cc.rf.Type().In(nCbParams-1)))
-	}
-
-	// Call closure with args. If the callback returns one or more
-	// values, save the GValue equivalent of the first.
-	rv := cc.rf.Call(args)
+	// Call closure with args. If the callback returns one or more values, save
+	// the GValue equivalent of the first.
+	rv := fs.Func.Call(args)
 	if retValue != nil && len(rv) > 0 {
-		if g, err := GValue(rv[0].Interface()); err != nil {
-			fmt.Fprintf(os.Stderr,
-				"cannot save callback return value: %v", err)
-		} else {
-			*retValue = *g.native()
+		g, err := GValue(rv[0].Interface())
+		if err != nil {
+			fs.Panicf("cannot save callback return value: %v", err)
 		}
+
+		t, _, err := g.Type()
+		if err != nil {
+			fs.Panicf("cannot determine callback return value: %v", err)
+		}
+
+		// Explicitly copy the return value as it may point to go-owned memory.
+		C.g_value_unset(retValue)
+		C.g_value_init(retValue, C.GType(t))
+		C.g_value_copy(g.native(), retValue)
 	}
 }
 
@@ -271,80 +300,108 @@ func gValueSlice(values *C.GValue, nValues int) (slice []C.GValue) {
  * Main event loop
  */
 
+// Priority is the enumerated type for GLib priority event sources.
+type Priority int
+
+const (
+	PRIORITY_HIGH         Priority = C.G_PRIORITY_HIGH
+	PRIORITY_DEFAULT      Priority = C.G_PRIORITY_DEFAULT // TimeoutAdd
+	PRIORITY_HIGH_IDLE    Priority = C.G_PRIORITY_HIGH_IDLE
+	PRIORITY_DEFAULT_IDLE Priority = C.G_PRIORITY_DEFAULT_IDLE // IdleAdd
+	PRIORITY_LOW          Priority = C.G_PRIORITY_LOW
+)
+
 type SourceHandle uint
 
-// IdleAdd adds an idle source to the default main event loop
-// context.  After running once, the source func will be removed
-// from the main event loop, unless f returns a single bool true.
+// sourceFunc is the callback for g_idle_add_full and g_timeout_add_full that
+// replaces the GClosure API.
 //
-// This function will cause a panic when f eventually runs if the
-// types of args do not match those of f.
-func IdleAdd(f interface{}, args ...interface{}) (SourceHandle, error) {
-	// f must be a func with no parameters.
-	rf := reflect.ValueOf(f)
-	if rf.Type().Kind() != reflect.Func {
-		return 0, errors.New("f is not a function")
+//export sourceFunc
+func sourceFunc(data C.gpointer) C.gboolean {
+	v := callback.Get(uintptr(data))
+	fs := v.(closure.FuncStack)
+
+	rv := fs.Func.Call(nil)
+	if len(rv) == 1 && rv[0].Bool() {
+		return C.TRUE
 	}
 
-	// Create an idle source func to be added to the main loop context.
-	idleSrc := C.g_idle_source_new()
-	if idleSrc == nil {
-		return 0, errNilPtr
-	}
-	return sourceAttach(idleSrc, rf, args...)
+	return C.FALSE
 }
 
-// TimeoutAdd adds an timeout source to the default main event loop
-// context.  After running once, the source func will be removed
-// from the main event loop, unless f returns a single bool true.
-//
-// This function will cause a panic when f eventually runs if the
-// types of args do not match those of f.
-// timeout is in milliseconds
-func TimeoutAdd(timeout uint, f interface{}, args ...interface{}) (SourceHandle, error) {
-	// f must be a func with no parameters.
-	rf := reflect.ValueOf(f)
-	if rf.Type().Kind() != reflect.Func {
-		return 0, errors.New("f is not a function")
-	}
-
-	// Create a timeout source func to be added to the main loop context.
-	timeoutSrc := C.g_timeout_source_new(C.guint(timeout))
-	if timeoutSrc == nil {
-		return 0, errNilPtr
-	}
-
-	return sourceAttach(timeoutSrc, rf, args...)
+//export removeSourceFunc
+func removeSourceFunc(data C.gpointer) {
+	callback.Delete(uintptr(data))
 }
 
-// sourceAttach attaches a source to the default main loop context.
-func sourceAttach(src *C.struct__GSource, rf reflect.Value, args ...interface{}) (SourceHandle, error) {
-	if src == nil {
-		return 0, errNilPtr
+var (
+	_sourceFunc       = (*[0]byte)(C.sourceFunc)
+	_removeSourceFunc = (*[0]byte)(C.removeSourceFunc)
+)
+
+// IdleAdd adds an idle source to the default main event loop context with the
+// DefaultIdle priority. If f is not a function with no parameter, then IdleAdd
+// will panic.
+//
+// After running once, the source func will be removed from the main event loop,
+// unless f returns a single bool true.
+func IdleAdd(f interface{}) SourceHandle {
+	return idleAdd(PRIORITY_DEFAULT_IDLE, f)
+}
+
+// IdleAddPriority adds an idle source to the default main event loop context
+// with the given priority. Its behavior is the same as IdleAdd.
+func IdleAddPriority(priority Priority, f interface{}) SourceHandle {
+	return idleAdd(priority, f)
+}
+
+func idleAdd(priority Priority, f interface{}) SourceHandle {
+	fs := closure.NewIdleFuncStack(f, 2)
+	id := C.gpointer(callback.Assign(fs))
+	h := C.g_idle_add_full(C.gint(priority), _sourceFunc, id, _removeSourceFunc)
+
+	return SourceHandle(h)
+}
+
+// TimeoutAdd adds an timeout source to the default main event loop context.
+// Timeout is in milliseconds. If f is not a function with no parameter, then it
+// will panic.
+//
+// After running once, the source func will be removed from the main event loop,
+// unless f returns a single bool true.
+func TimeoutAdd(milliseconds uint, f interface{}) SourceHandle {
+	return timeoutAdd(milliseconds, false, PRIORITY_DEFAULT, f)
+}
+
+// TimeoutAddPriority is similar to TimeoutAdd with the given priority. Refer to
+// TimeoutAdd for more information.
+func TimeoutAddPriority(milliseconds uint, priority Priority, f interface{}) SourceHandle {
+	return timeoutAdd(milliseconds, false, priority, f)
+}
+
+// TimeoutSecondsAdd is similar to TimeoutAdd, except with seconds granularity.
+func TimeoutSecondsAdd(seconds uint, f interface{}) SourceHandle {
+	return timeoutAdd(seconds, true, PRIORITY_DEFAULT, f)
+}
+
+// TimeoutSecondsAddPriority adds a timeout source with the given priority.
+// Refer to TimeoutSecondsAdd for more information.
+func TimeoutSecondsAddPriority(seconds uint, priority Priority, f interface{}) SourceHandle {
+	return timeoutAdd(seconds, true, priority, f)
+}
+
+func timeoutAdd(time uint, sec bool, priority Priority, f interface{}) SourceHandle {
+	fs := closure.NewIdleFuncStack(f, 2)
+	id := C.gpointer(callback.Assign(fs))
+
+	var h C.guint
+	if sec {
+		h = C.g_timeout_add_seconds_full(C.gint(priority), C.guint(time), _sourceFunc, id, _removeSourceFunc)
+	} else {
+		h = C.g_timeout_add_full(C.gint(priority), C.guint(time), _sourceFunc, id, _removeSourceFunc)
 	}
 
-	// rf must be a func with no parameters.
-	if rf.Type().Kind() != reflect.Func {
-		C.g_source_destroy(src)
-		return 0, errors.New("rf is not a function")
-	}
-
-	// Create a new GClosure from f that invalidates itself when
-	// f returns false.  The error is ignored here, as this will
-	// always be a function.
-	var closure *C.GClosure
-	closure, _ = ClosureNew(rf.Interface(), args...)
-
-	// Remove closure context when closure is finalized.
-	C._g_closure_add_finalize_notifier(closure)
-
-	// Set closure to run as a callback when the idle source runs.
-	C.g_source_set_closure(src, closure)
-
-	// Attach the idle source func to the default main event loop
-	// context.
-	cid := C.g_source_attach(src, nil)
-	return SourceHandle(cid), nil
+	return SourceHandle(h)
 }
 
 // Destroy is a wrapper around g_source_destroy()
@@ -416,9 +473,41 @@ func GetUserRuntimeDir() string {
 func GetUserSpecialDir(directory UserDirectory) (string, error) {
 	c := C.g_get_user_special_dir(C.GUserDirectory(directory))
 	if c == nil {
-		return "", errNilPtr
+		return "", nilPtrErr
 	}
 	return C.GoString((*C.char)(c)), nil
+}
+
+// FormatSize is a wrapper around g_format_size().
+func FormatSize(size uint64) string {
+	char := C.g_format_size(C.guint64(size))
+	defer C.free(unsafe.Pointer(char))
+
+	return C.GoString(char)
+}
+
+// FormatSizeFlags are flags to modify the format of the string returned by
+// FormatSizeFull.
+type FormatSizeFlags int
+
+const (
+	FORMAT_SIZE_DEFAULT     FormatSizeFlags = C.G_FORMAT_SIZE_DEFAULT
+	FORMAT_SIZE_LONG_FORMAT FormatSizeFlags = C.G_FORMAT_SIZE_LONG_FORMAT
+	FORMAT_SIZE_IEC_UNITS   FormatSizeFlags = C.G_FORMAT_SIZE_IEC_UNITS
+	FORMAT_SIZE_BITS        FormatSizeFlags = C.G_FORMAT_SIZE_BITS
+)
+
+// FormatSizeFull is a wrapper around g_format_size_full().
+func FormatSizeFull(size uint64, flags FormatSizeFlags) string {
+	char := C.g_format_size_full(C.guint64(size), C.GFormatSizeFlags(flags))
+	defer C.free(unsafe.Pointer(char))
+
+	return C.GoString(char)
+}
+
+// SpacedPrimesClosest is a wrapper around g_spaced_primes_closest().
+func SpacedPrimesClosest(num uint) uint {
+	return uint(C.g_spaced_primes_closest(C.guint(num)))
 }
 
 /*
@@ -426,7 +515,7 @@ func GetUserSpecialDir(directory UserDirectory) (string, error) {
  */
 
 // IObject is an interface type implemented by Object and all types which embed
-// an Object.  It is meant to be used as a type for function arguments which
+// an Object. It is meant to be used as a type for function arguments which
 // require GObjects or any subclasses thereof.
 type IObject interface {
 	toGObject() *C.GObject
@@ -451,6 +540,9 @@ func (v *Object) toObject() *Object {
 
 // newObject creates a new Object from a GObject pointer.
 func newObject(p *C.GObject) *Object {
+	if p == nil {
+		return nil
+	}
 	return &Object{GObject: p}
 }
 
@@ -486,15 +578,31 @@ func (v *Object) goValue() (interface{}, error) {
 // Take wraps a unsafe.Pointer as a glib.Object, taking ownership of it.
 // This function is exported for visibility in other gotk3 packages and
 // is not meant to be used by applications.
+//
+// To be clear, this should mostly be used when Gtk says "transfer none". Refer
+// to AssumeOwnership for more details.
 func Take(ptr unsafe.Pointer) *Object {
 	obj := newObject(ToGObject(ptr))
-
-	if obj.IsFloating() {
-		obj.RefSink()
-	} else {
-		obj.Ref()
+	if obj == nil {
+		return nil
 	}
 
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*Object).Unref)
+	return obj
+}
+
+// AssumeOwnership is similar to Take, except the function does not take a
+// reference. This is usually used for newly constructed objects that for some
+// reason does not have an initial floating reference.
+//
+// To be clear, this should often be used when Gtk says "transfer full", as it
+// means the ownership is transferred to the caller, so we can assume that much.
+// This is in contrary to Take, which is used when Gtk says "transfer none", as
+// we're now referencing an object that might possibly be kept, so we should
+// mark as such.
+func AssumeOwnership(ptr unsafe.Pointer) *Object {
+	obj := newObject(ToGObject(ptr))
 	runtime.SetFinalizer(obj, (*Object).Unref)
 	return obj
 }
@@ -519,7 +627,8 @@ func (v *Object) TypeFromInstance() Type {
 // This function is exported for visibility in other gotk3 packages and
 // is not meant to be used by applications.
 func ToGObject(p unsafe.Pointer) *C.GObject {
-	return C.toGObject(p)
+	return (*C.GObject)(p)
+	// return C.toGObject(p)
 }
 
 // Ref is a wrapper around g_object_ref().
@@ -556,104 +665,9 @@ func (v *Object) StopEmission(s string) {
 		(*C.gchar)(cstr))
 }
 
-// Set is a wrapper around g_object_set().  However, unlike
-// g_object_set(), this function only sets one name value pair.  Make
-// multiple calls to this function to set multiple properties.
+// Set calls SetProperty.
 func (v *Object) Set(name string, value interface{}) error {
 	return v.SetProperty(name, value)
-	/*
-		cstr := C.CString(name)
-		defer C.free(unsafe.Pointer(cstr))
-
-		if _, ok := value.(Object); ok {
-			value = value.(Object).GObject
-		}
-
-		// Can't call g_object_set() as it uses a variable arg list, use a
-		// wrapper instead
-		var p unsafe.Pointer
-		switch v := value.(type) {
-		case bool:
-			c := gbool(v)
-			p = unsafe.Pointer(&c)
-
-		case int8:
-			c := C.gint8(v)
-			p = unsafe.Pointer(&c)
-
-		case int16:
-			c := C.gint16(v)
-			p = unsafe.Pointer(&c)
-
-		case int32:
-			c := C.gint32(v)
-			p = unsafe.Pointer(&c)
-
-		case int64:
-			c := C.gint64(v)
-			p = unsafe.Pointer(&c)
-
-		case int:
-			c := C.gint(v)
-			p = unsafe.Pointer(&c)
-
-		case uint8:
-			c := C.guchar(v)
-			p = unsafe.Pointer(&c)
-
-		case uint16:
-			c := C.guint16(v)
-			p = unsafe.Pointer(&c)
-
-		case uint32:
-			c := C.guint32(v)
-			p = unsafe.Pointer(&c)
-
-		case uint64:
-			c := C.guint64(v)
-			p = unsafe.Pointer(&c)
-
-		case uint:
-			c := C.guint(v)
-			p = unsafe.Pointer(&c)
-
-		case uintptr:
-			p = unsafe.Pointer(C.gpointer(v))
-
-		case float32:
-			c := C.gfloat(v)
-			p = unsafe.Pointer(&c)
-
-		case float64:
-			c := C.gdouble(v)
-			p = unsafe.Pointer(&c)
-
-		case string:
-			cstr := C.CString(v)
-			defer C.g_free(C.gpointer(unsafe.Pointer(cstr)))
-			p = unsafe.Pointer(&cstr)
-
-		default:
-			if pv, ok := value.(unsafe.Pointer); ok {
-				p = pv
-			} else {
-				val := reflect.ValueOf(value)
-				switch val.Kind() {
-				case reflect.Int, reflect.Int8, reflect.Int16,
-					reflect.Int32, reflect.Int64:
-					c := C.int(val.Int())
-					p = unsafe.Pointer(&c)
-
-				case reflect.Uintptr, reflect.Ptr, reflect.UnsafePointer:
-					p = unsafe.Pointer(C.gpointer(val.Pointer()))
-				}
-			}
-		}
-		if p == nil {
-			return errors.New("Unable to perform type conversion")
-		}
-		C._g_object_set_one(C.gpointer(v.GObject), (*C.gchar)(cstr), p)
-		return nil*/
 }
 
 // GetPropertyType returns the Type of a property of the underlying GObject.
@@ -703,92 +717,6 @@ func (v *Object) SetProperty(name string, value interface{}) error {
 	C.g_object_set_property(v.GObject, (*C.gchar)(cstr), p.native())
 	return nil
 }
-
-// pointerVal attempts to return an unsafe.Pointer for value.
-// Not all types are understood, in which case a nil Pointer
-// is returned.
-/*func pointerVal(value interface{}) unsafe.Pointer {
-	var p unsafe.Pointer
-	switch v := value.(type) {
-	case bool:
-		c := gbool(v)
-		p = unsafe.Pointer(&c)
-
-	case int8:
-		c := C.gint8(v)
-		p = unsafe.Pointer(&c)
-
-	case int16:
-		c := C.gint16(v)
-		p = unsafe.Pointer(&c)
-
-	case int32:
-		c := C.gint32(v)
-		p = unsafe.Pointer(&c)
-
-	case int64:
-		c := C.gint64(v)
-		p = unsafe.Pointer(&c)
-
-	case int:
-		c := C.gint(v)
-		p = unsafe.Pointer(&c)
-
-	case uint8:
-		c := C.guchar(v)
-		p = unsafe.Pointer(&c)
-
-	case uint16:
-		c := C.guint16(v)
-		p = unsafe.Pointer(&c)
-
-	case uint32:
-		c := C.guint32(v)
-		p = unsafe.Pointer(&c)
-
-	case uint64:
-		c := C.guint64(v)
-		p = unsafe.Pointer(&c)
-
-	case uint:
-		c := C.guint(v)
-		p = unsafe.Pointer(&c)
-
-	case uintptr:
-		p = unsafe.Pointer(C.gpointer(v))
-
-	case float32:
-		c := C.gfloat(v)
-		p = unsafe.Pointer(&c)
-
-	case float64:
-		c := C.gdouble(v)
-		p = unsafe.Pointer(&c)
-
-	case string:
-		cstr := C.CString(v)
-		defer C.free(unsafe.Pointer(cstr))
-		p = unsafe.Pointer(cstr)
-
-	default:
-		if pv, ok := value.(unsafe.Pointer); ok {
-			p = pv
-		} else {
-			val := reflect.ValueOf(value)
-			switch val.Kind() {
-			case reflect.Int, reflect.Int8, reflect.Int16,
-				reflect.Int32, reflect.Int64:
-				c := C.int(val.Int())
-				p = unsafe.Pointer(&c)
-
-			case reflect.Uintptr, reflect.Ptr, reflect.UnsafePointer:
-				p = unsafe.Pointer(C.gpointer(val.Pointer()))
-			}
-		}
-	}
-
-	return p
-}*/
 
 /*
  * GObject Signals
@@ -849,24 +777,14 @@ func (v *Object) HandlerUnblock(handle SignalHandle) {
 
 // HandlerDisconnect is a wrapper around g_signal_handler_disconnect().
 func (v *Object) HandlerDisconnect(handle SignalHandle) {
+	// Ensure that Gtk will not use the closure beforehand.
 	C.g_signal_handler_disconnect(C.gpointer(v.GObject), C.gulong(handle))
-	C.g_closure_invalidate(signals[handle])
-	delete(closures.m, signals[handle])
-	delete(signals, handle)
+	closure.DisconnectSignal(uint(handle))
 }
 
 // Wrapper function for new objects with reference management.
 func wrapObject(ptr unsafe.Pointer) *Object {
-	obj := &Object{ToGObject(ptr)}
-
-	if obj.IsFloating() {
-		obj.RefSink()
-	} else {
-		obj.Ref()
-	}
-
-	runtime.SetFinalizer(obj, (*Object).Unref)
-	return obj
+	return Take(ptr)
 }
 
 /*
@@ -911,8 +829,18 @@ func (v *Value) native() *C.GValue {
 }
 
 // Native returns a pointer to the underlying GValue.
-func (v *Value) Native() unsafe.Pointer {
-	return unsafe.Pointer(v.native())
+func (v *Value) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+// IsValue checks if value is a valid and initialized GValue structure.
+func (v *Value) IsValue() bool {
+	return gobool(C._g_is_value(v.native()))
+}
+
+// TypeName gets the type name of value.
+func (v *Value) TypeName() string {
+	return C.GoString((*C.char)(C._g_value_type_name(v.native())))
 }
 
 // ValueAlloc allocates a Value and sets a runtime finalizer to call
@@ -921,7 +849,7 @@ func (v *Value) Native() unsafe.Pointer {
 func ValueAlloc() (*Value, error) {
 	c := C._g_value_alloc()
 	if c == nil {
-		return nil, errNilPtr
+		return nil, nilPtrErr
 	}
 
 	v := &Value{c}
@@ -930,7 +858,8 @@ func ValueAlloc() (*Value, error) {
 	//We need to double check before unsetting, to prevent:
 	//`g_value_unset: assertion 'G_IS_VALUE (value)' failed`
 	runtime.SetFinalizer(v, func(f *Value) {
-		if t, _, err := f.Type(); err != nil || t == TYPE_INVALID || t == TYPE_NONE {
+
+		if !f.IsValue() {
 			C.g_free(C.gpointer(f.native()))
 			return
 		}
@@ -948,7 +877,7 @@ func ValueAlloc() (*Value, error) {
 func ValueInit(t Type) (*Value, error) {
 	c := C._g_value_init(C.GType(t))
 	if c == nil {
-		return nil, errNilPtr
+		return nil, nilPtrErr
 	}
 
 	v := &Value{c}
@@ -967,11 +896,16 @@ func (v *Value) unset() {
 	C.g_value_unset(v.native())
 }
 
+// Unset is wrapper for g_value_unset
+func (v *Value) Unset() {
+	v.unset()
+}
+
 // Type is a wrapper around the G_VALUE_HOLDS_GTYPE() macro and
 // the g_value_get_gtype() function.  GetType() returns TYPE_INVALID if v
 // does not hold a Type, or otherwise returns the Type of v.
 func (v *Value) Type() (actual Type, fundamental Type, err error) {
-	if !gobool(C._g_is_value(v.native())) {
+	if !v.IsValue() {
 		return actual, fundamental, errors.New("invalid GValue")
 	}
 	cActual := C._g_value_type(v.native())
@@ -1299,7 +1233,8 @@ func marshalObject(p uintptr) (interface{}, error) {
 }
 
 func marshalVariant(p uintptr) (interface{}, error) {
-	return nil, errors.New("variant conversion not yet implemented")
+	c := C.g_value_get_variant((*C.GValue)(unsafe.Pointer(p)))
+	return newVariant((*C.GVariant)(c)), nil
 }
 
 // GoValue converts a Value to comparable Go type.  GoValue()
@@ -1394,7 +1329,7 @@ func (v *Value) GetPointer() unsafe.Pointer {
 func (v *Value) GetString() (string, error) {
 	c := C.g_value_get_string(v.native())
 	if c == nil {
-		return "", errNilPtr
+		return "", nilPtrErr
 	}
 	return C.GoString((*C.char)(c)), nil
 }
@@ -1425,6 +1360,21 @@ func (s *Signal) String() string {
 }
 
 type Quark uint32
+
+// GetPrgname is a wrapper around g_get_prgname().
+func GetPrgname() string {
+	c := C.g_get_prgname()
+
+	return C.GoString((*C.char)(c))
+}
+
+// SetPrgname is a wrapper around g_set_prgname().
+func SetPrgname(name string) {
+	cstr := (*C.gchar)(C.CString(name))
+	defer C.free(unsafe.Pointer(cstr))
+
+	C.g_set_prgname(cstr)
+}
 
 // GetApplicationName is a wrapper around g_get_application_name().
 func GetApplicationName() string {

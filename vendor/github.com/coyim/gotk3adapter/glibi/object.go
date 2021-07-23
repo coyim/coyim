@@ -1,8 +1,8 @@
 package glibi
 
 type Object interface {
-	Connect(string, interface{}, ...interface{}) (SignalHandle, error)
-	ConnectAfter(string, interface{}, ...interface{}) (SignalHandle, error)
+	Connect(string, interface{}) SignalHandle
+	ConnectAfter(string, interface{}) SignalHandle
 	Emit(string, ...interface{}) (interface{}, error)
 	GetProperty(string) (interface{}, error)
 	Ref()

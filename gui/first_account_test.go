@@ -60,12 +60,12 @@ func (*FirstAccountSuite) Test_thatDialogGetsShown(c *C) {
 
 	idleAddWaitChannel := make(chan bool)
 
-	m.f = func(ff interface{}, vals ...interface{}) (glibi.SourceHandle, error) {
+	m.f = func(ff interface{}) glibi.SourceHandle {
 		go func() {
 			ff.(func())()
 			idleAddWaitChannel <- true
 		}()
-		return glibi.SourceHandle(0), nil
+		return glibi.SourceHandle(0)
 	}
 
 	gtkm := &mockBuilderNew{}

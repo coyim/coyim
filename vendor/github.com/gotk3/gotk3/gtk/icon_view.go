@@ -36,6 +36,10 @@ func marshalIconView(p uintptr) (interface{}, error) {
 }
 
 func wrapIconView(obj *glib.Object) *IconView {
+	if obj == nil {
+		return nil
+	}
+
 	return &IconView{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -72,13 +76,12 @@ func (v *IconView) SetModel(model ITreeModel) {
 }
 
 // GetModel is a wrapper around gtk_icon_view_get_model().
-func (v *IconView) GetModel() (*TreeModel, error) {
+func (v *IconView) GetModel() (ITreeModel, error) {
 	c := C.gtk_icon_view_get_model(v.native())
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapTreeModel(obj), nil
+	return castTreeModel(c)
 }
 
 // SetTextColumn is a wrapper around gtk_icon_view_set_text_column().

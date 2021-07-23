@@ -8,10 +8,12 @@ package gtk
 import "C"
 import (
 	"runtime"
+	"strings"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/internal/callback"
 )
 
 /*
@@ -39,6 +41,10 @@ func marshalTreeView(p uintptr) (interface{}, error) {
 }
 
 func wrapTreeView(obj *glib.Object) *TreeView {
+	if obj == nil {
+		return nil
+	}
+
 	return &TreeView{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -61,12 +67,12 @@ func TreeViewNewWithModel(model ITreeModel) (*TreeView, error) {
 }
 
 // GetModel is a wrapper around gtk_tree_view_get_model().
-func (v *TreeView) GetModel() (*TreeModel, error) {
+func (v *TreeView) GetModel() (ITreeModel, error) {
 	c := C.gtk_tree_view_get_model(v.native())
 	if c == nil {
-		return nil, nil
+		return nil, nilPtrErr
 	}
-	return wrapTreeModel(glib.Take(unsafe.Pointer(c))), nil
+	return castTreeModel(c)
 }
 
 // SetModel is a wrapper around gtk_tree_view_set_model().
@@ -226,7 +232,7 @@ func (v *TreeView) GetColumns() *glib.List {
 	if clist == nil {
 		return nil
 	}
-	
+
 	list := glib.WrapList(uintptr(unsafe.Pointer(clist)))
 	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
 		return wrapTreeViewColumn(glib.Take(unsafe.Pointer(ptr)))
@@ -234,7 +240,7 @@ func (v *TreeView) GetColumns() *glib.List {
 	runtime.SetFinalizer(list, func(glist *glib.List) {
 		glist.Free()
 	})
-	
+
 	return list
 }
 
@@ -366,6 +372,15 @@ func (v *TreeView) ConvertBinWindowToWidgetCoords(bx, by int, wx, wy *int) {
 		(*C.gint)(unsafe.Pointer(wy)))
 }
 
+// ConvertBinWindowToTreeCoords is a wrapper around gtk_tree_view_convert_bin_window_to_tree_coords().
+func (v *TreeView) ConvertBinWindowToTreeCoords(bx, by int, tx, ty *int) {
+	C.gtk_tree_view_convert_bin_window_to_tree_coords(v.native(),
+		(C.gint)(bx),
+		(C.gint)(by),
+		(*C.gint)(unsafe.Pointer(tx)),
+		(*C.gint)(unsafe.Pointer(ty)))
+}
+
 // SetEnableSearch is a wrapper around gtk_tree_view_set_enable_search().
 func (v *TreeView) SetEnableSearch(b bool) {
 	C.gtk_tree_view_set_enable_search(v.native(), gbool(b))
@@ -400,15 +415,22 @@ func (v *TreeView) SetSearchEntry(e *Entry) {
 	C.gtk_tree_view_set_search_entry(v.native(), e.native())
 }
 
-// SetSearchEqualSubstringMatch is a wrapper around gtk_tree_view_set_search_equal_func().
-// TODO: user data is ignored
-// TODO: searc and destroy GDestroyNotify cannot be specified
+// TreeViewSearchEqualFunc is the callback type for TreeView's
+// SetSearchEqualFunc. It is worth noting that the returned boolean should be
+// false if the row matches.
+type TreeViewSearchEqualFunc func(model *TreeModel, column int, key string, iter *TreeIter) (notMatch bool)
+
+// SetSearchEqualFunc is a wrapper around gtk_tree_view_set_search_equal_func().
+func (v *TreeView) SetSearchEqualFunc(f TreeViewSearchEqualFunc) {
+	C._gtk_tree_view_set_search_equal_func(v.native(), C.gpointer(callback.Assign(f)))
+}
+
+// SetSearchEqualSubstringMatch calls SetSearchEqualFunc with a strings.Contains
+// adapter.
 func (v *TreeView) SetSearchEqualSubstringMatch() {
-	C.gtk_tree_view_set_search_equal_func(
-		v.native(),
-		(C.GtkTreeViewSearchEqualFunc)(unsafe.Pointer(C.substring_match_equal_func)),
-		nil,
-		nil)
+	v.SetSearchEqualFunc(func(model *TreeModel, column int, key string, iter *TreeIter) bool {
+		return !strings.Contains(model.GetStringFromIter(iter), key)
+	})
 }
 
 // SetFixedHeightMode is a wrapper around gtk_tree_view_set_fixed_height_mode().
@@ -537,6 +559,16 @@ func (v *TreeView) SetTooltipRow(tooltip *Tooltip, path *TreePath) {
 	C.gtk_tree_view_set_tooltip_row(v.native(), tooltip.native(), path.native())
 }
 
+// TreeViewDropPosition describes GtkTreeViewDropPosition.
+type TreeViewDropPosition int
+
+const (
+	TREE_VIEW_DROP_BEFORE         TreeViewDropPosition = C.GTK_TREE_VIEW_DROP_BEFORE
+	TREE_VIEW_DROP_AFTER          TreeViewDropPosition = C.GTK_TREE_VIEW_DROP_AFTER
+	TREE_VIEW_DROP_INTO_OR_BEFORE TreeViewDropPosition = C.GTK_TREE_VIEW_DROP_INTO_OR_BEFORE
+	TREE_VIEW_DROP_INTO_OR_AFTER  TreeViewDropPosition = C.GTK_TREE_VIEW_DROP_INTO_OR_AFTER
+)
+
 // TODO:
 // GtkTreeViewDropPosition
 // gboolean 	gtk_tree_view_get_tooltip_context ()
@@ -555,15 +587,71 @@ func (v *TreeView) SetTooltipRow(tooltip *Tooltip, path *TreePath) {
 // void 	gtk_tree_view_get_background_area ()
 // void 	gtk_tree_view_get_visible_rect ()
 // gboolean 	gtk_tree_view_get_visible_range ()
-// void 	gtk_tree_view_convert_bin_window_to_tree_coords ()
 // void 	gtk_tree_view_convert_tree_to_bin_window_coords ()
 // void 	gtk_tree_view_convert_tree_to_widget_coords ()
 // void 	gtk_tree_view_convert_widget_to_tree_coords ()
-// void 	gtk_tree_view_enable_model_drag_dest ()
-// void 	gtk_tree_view_enable_model_drag_source ()
-// void 	gtk_tree_view_unset_rows_drag_source ()
-// void 	gtk_tree_view_unset_rows_drag_dest ()
-// void 	gtk_tree_view_set_drag_dest_row ()
-// void 	gtk_tree_view_get_drag_dest_row ()
-// gboolean 	gtk_tree_view_get_dest_row_at_pos ()
 // cairo_surface_t * 	gtk_tree_view_create_row_drag_icon ()
+
+// EnableModelDragDest is a wrapper around gtk_tree_view_enable_model_drag_dest().
+func (v *TreeView) EnableModelDragDest(targets []TargetEntry, actions gdk.DragAction) {
+	C.gtk_tree_view_enable_model_drag_dest(v.native(), (*C.GtkTargetEntry)(&targets[0]), C.gint(len(targets)), C.GdkDragAction(actions))
+}
+
+// EnableModelDragSource is a wrapper around gtk_tree_view_enable_model_drag_source().
+func (v *TreeView) EnableModelDragSource(startButtonMask gdk.ModifierType, targets []TargetEntry, actions gdk.DragAction) {
+	C.gtk_tree_view_enable_model_drag_source(v.native(), C.GdkModifierType(startButtonMask), (*C.GtkTargetEntry)(&targets[0]), C.gint(len(targets)), C.GdkDragAction(actions))
+}
+
+// UnsetRowsDragSource is a wrapper around gtk_tree_view_unset_rows_drag_source().
+func (v *TreeView) UnsetRowsDragSource() {
+	C.gtk_tree_view_unset_rows_drag_source(v.native())
+}
+
+// UnsetRowsDragDest is a wrapper around gtk_tree_view_unset_rows_drag_dest().
+func (v *TreeView) UnsetRowsDragDest() {
+	C.gtk_tree_view_unset_rows_drag_dest(v.native())
+}
+
+// SetDragDestRow is a wrapper around gtk_tree_view_set_drag_dest_row().
+func (v *TreeView) SetDragDestRow(path *TreePath, pos TreeViewDropPosition) {
+	C.gtk_tree_view_set_drag_dest_row(v.native(), path.native(), C.GtkTreeViewDropPosition(pos))
+}
+
+// GetDragDestRow is a wrapper around gtk_tree_view_get_drag_dest_row().
+func (v *TreeView) GetDragDestRow() (path *TreePath, pos TreeViewDropPosition) {
+	var (
+		cpath *C.GtkTreePath
+		cpos  C.GtkTreeViewDropPosition
+	)
+
+	C.gtk_tree_view_get_drag_dest_row(v.native(), &cpath, &cpos)
+
+	pos = TreeViewDropPosition(cpos)
+
+	if cpath != nil {
+		path = &TreePath{cpath}
+		runtime.SetFinalizer(path, (*TreePath).free)
+	}
+
+	return
+}
+
+// GetDestRowAtPos is a wrapper around gtk_tree_view_get_dest_row_at_pos().
+func (v *TreeView) GetDestRowAtPos(dragX, dragY int) (path *TreePath, pos TreeViewDropPosition, ok bool) {
+	var (
+		cpath *C.GtkTreePath
+		cpos  C.GtkTreeViewDropPosition
+	)
+
+	cbool := C.gtk_tree_view_get_dest_row_at_pos(v.native(), C.gint(dragX), C.gint(dragY), &cpath, &cpos)
+
+	ok = gobool(cbool)
+	pos = TreeViewDropPosition(cpos)
+
+	if cpath != nil {
+		path = &TreePath{cpath}
+		runtime.SetFinalizer(path, (*TreePath).free)
+	}
+
+	return
+}

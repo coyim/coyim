@@ -16,7 +16,7 @@ func authorizePresenceSubscriptionDialog(parent gtki.Window, peer jid.WithoutRes
 	_ = confirmDialog.SetProperty("text", text)
 	confirmDialog.SetTransientFor(parent)
 
-	_, _ = confirmDialog.Connect("response", func(_ interface{}, tp int) {
+	_ = confirmDialog.Connect("response", func(_ interface{}, tp int) {
 		f(gtki.ResponseType(tp))
 		confirmDialog.Destroy()
 	})

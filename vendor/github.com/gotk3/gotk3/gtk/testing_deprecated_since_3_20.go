@@ -1,4 +1,4 @@
-//+build gtk_3_6 gtk_3_8 gtk_3_10 gtk_3_12 gtk_3_14 gtk_3_16 gtk_3_18
+//+build gtk_3_6 gtk_3_8 gtk_3_10 gtk_3_12 gtk_3_14 gtk_3_16 gtk_3_18 gtk_deprecated
 
 package gtk
 
@@ -7,7 +7,6 @@ import "C"
 import (
 	"github.com/gotk3/gotk3/gdk"
 )
-
 
 /*
 GtkWidget *
@@ -58,6 +57,6 @@ gtk_test_text_set (GtkWidget *widget,
 // modifiers: Keyboard modifiers the event is setup with.
 //
 // returns: whether all actions neccessary for the button click simulation were carried out successfully.
-func TestWidgetClick(widget IWidget, button uint, modifiers gdk.ModifierType) bool {
+func TestWidgetClick(widget IWidget, button gdk.Button, modifiers gdk.ModifierType) bool {
 	return gobool(C.gtk_test_widget_click(widget.toWidget(), C.guint(button), C.GdkModifierType(modifiers)))
 }

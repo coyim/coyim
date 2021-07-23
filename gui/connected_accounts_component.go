@@ -153,7 +153,7 @@ func (u *gtkUI) createConnectedAccountsComponent(input gtki.ComboBox, errorNot c
 		})
 	})
 
-	_, _ = result.accountsInput.Connect("changed", func() {
+	_ = result.accountsInput.Connect("changed", func() {
 		act := result.accountsInput.GetActive()
 		if act >= 0 && act < len(result.accountsList) && act != result.currentlyActive {
 			result.currentlyActive = act

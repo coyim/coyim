@@ -47,6 +47,10 @@ func marshalApplication(p uintptr) (interface{}, error) {
 }
 
 func wrapApplication(obj *glib.Object) *Application {
+	if obj == nil {
+		return nil
+	}
+
 	am := &glib.ActionMap{obj}
 	ag := &glib.ActionGroup{obj}
 	return &Application{glib.Application{obj, am, ag}}
@@ -133,11 +137,17 @@ func (v *Application) IsInhibited(flags ApplicationInhibitFlags) bool {
 }
 
 // Inhibited is a wrapper around gtk_application_inhibit().
-func (v *Application) Inhibited(w IWindow, flags ApplicationInhibitFlags, reason string) uint {
+func (v *Application) Inhibited(window IWindow, flags ApplicationInhibitFlags, reason string) uint {
+
 	cstr1 := (*C.gchar)(C.CString(reason))
 	defer C.free(unsafe.Pointer(cstr1))
 
-	return uint(C.gtk_application_inhibit(v.native(), w.toWindow(), C.GtkApplicationInhibitFlags(flags), cstr1))
+	var w *C.GtkWindow = nil
+	if window != nil {
+		w = window.toWindow()
+	}
+
+	return uint(C.gtk_application_inhibit(v.native(), w, C.GtkApplicationInhibitFlags(flags), cstr1))
 }
 
 // void 	gtk_application_add_accelerator () // deprecated and uses a gvariant paramater
@@ -146,13 +156,17 @@ func (v *Application) Inhibited(w IWindow, flags ApplicationInhibitFlags, reason
 // GetWindows is a wrapper around gtk_application_get_windows().
 // Returned list is wrapped to return *gtk.Window elements.
 func (v *Application) GetWindows() *glib.List {
-	glist := C.gtk_application_get_windows(v.native())
-	list := glib.WrapList(uintptr(unsafe.Pointer(glist)))
-	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+	clist := C.gtk_application_get_windows(v.native())
+	if clist == nil {
+		return nil
+	}
+
+	glist := glib.WrapList(uintptr(unsafe.Pointer(clist)))
+	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
 		return wrapWindow(glib.Take(ptr))
 	})
-	runtime.SetFinalizer(list, func(l *glib.List) {
+	runtime.SetFinalizer(glist, func(l *glib.List) {
 		l.Free()
 	})
-	return list
+	return glist
 }

@@ -38,6 +38,10 @@ func marshalInfoBar(p uintptr) (interface{}, error) {
 }
 
 func wrapInfoBar(obj *glib.Object) *InfoBar {
+	if obj == nil {
+		return nil
+	}
+
 	return &InfoBar{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -95,13 +99,12 @@ func (v *InfoBar) GetMessageType() MessageType {
 }
 
 // GetActionArea is a wrapper around gtk_info_bar_get_action_area().
-func (v *InfoBar) GetActionArea() (*Widget, error) {
+func (v *InfoBar) GetActionArea() (IWidget, error) {
 	c := C.gtk_info_bar_get_action_area(v.native())
 	if c == nil {
 		return nil, nilPtrErr
 	}
-
-	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
+	return castWidget(c)
 }
 
 // GetContentArea is a wrapper around gtk_info_bar_get_content_area().

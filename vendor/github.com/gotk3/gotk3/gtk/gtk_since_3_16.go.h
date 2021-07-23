@@ -18,28 +18,30 @@
 
 #pragma once
 
-#include <stdlib.h>
+#include "gtk.go.h"
+#include <stdlib.h> // for gotk3_callbackDelete
 
-static GtkModelButton *
-toGtkModelButton(void *mb)
-{
-	return (GTK_MODEL_BUTTON(mb));
+static GListModel *toGListModel(void *p) { return (G_LIST_MODEL(p)); }
+
+static GtkModelButton *toGtkModelButton(void *mb) {
+  return (GTK_MODEL_BUTTON(mb));
 }
 
-static GtkPopoverMenu *
-toGtkPopoverMenu(void *p)
-{
-	return (GTK_POPOVER_MENU(p));
+static GtkPopoverMenu *toGtkPopoverMenu(void *p) {
+  return (GTK_POPOVER_MENU(p));
 }
 
-static GtkStackSidebar *
-toGtkStackSidebar(void *p)
-{
-	return (GTK_STACK_SIDEBAR(p));
+static GtkStackSidebar *toGtkStackSidebar(void *p) {
+  return (GTK_STACK_SIDEBAR(p));
 }
 
-static GtkGLArea *
-toGtkGLArea(void *p)
-{
-  return (GTK_GL_AREA(p));
+static GtkGLArea *toGtkGLArea(void *p) { return (GTK_GL_AREA(p)); }
+
+extern void goListBoxCreateWidgetFuncs(gpointer item, gpointer user_data);
+
+static inline void _gtk_list_box_bind_model(GtkListBox *box, GListModel *model,
+                                            gpointer user_data) {
+  gtk_list_box_bind_model(
+      box, model, (GtkListBoxCreateWidgetFunc)(goListBoxCreateWidgetFuncs),
+      user_data, (GDestroyNotify)(gotk3_callbackDelete));
 }

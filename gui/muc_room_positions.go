@@ -8,6 +8,7 @@ import (
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/gotk3adapter/gtki"
+	log "github.com/sirupsen/logrus"
 )
 
 type roomPositions struct {
@@ -79,8 +80,12 @@ func (v *roomView) newRoomPositionsView() *roomPositionsView {
 		roomView:              v,
 		roomPositions:         newRoomPositions(),
 		onUpdateOccupantLists: newCallbacksSet(),
-		log:                   v.log.WithField("where", "roomPositionsView"),
 	}
+
+	rp.log = v.log.WithFields(log.Fields{
+		"room":  v.roomID(),
+		"where": "roomPositionsView",
+	})
 
 	rp.initBuilder()
 	rp.initDefaults()

@@ -148,7 +148,7 @@ func (rp *roomPositionsView) onApply() {
 		case <-ec:
 			doInUIThread(func() {
 				rp.roomView.notifications.error(roomNotificationOptions{
-					message:   i18n.Local("It was not possible to update the positions."),
+					message:   i18n.Local("Unable to update positions."),
 					closeable: true,
 				})
 				rp.roomView.loadingViewOverlay.hide()

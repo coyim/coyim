@@ -140,7 +140,7 @@ func (rp *roomPositionsView) onApply() {
 		case <-rc:
 			doInUIThread(func() {
 				rp.roomView.notifications.info(roomNotificationOptions{
-					message:   i18n.Local("The room positions were updated."),
+					message:   i18n.Local("Room positions have been updated."),
 					closeable: true,
 				})
 				rp.roomView.loadingViewOverlay.hide()
@@ -148,7 +148,7 @@ func (rp *roomPositionsView) onApply() {
 		case <-ec:
 			doInUIThread(func() {
 				rp.roomView.notifications.error(roomNotificationOptions{
-					message:   i18n.Local("The room positions could not be updated."),
+					message:   i18n.Local("Room positions couldn't be updated."),
 					closeable: true,
 				})
 				rp.roomView.loadingViewOverlay.hide()

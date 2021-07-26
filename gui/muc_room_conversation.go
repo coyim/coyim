@@ -353,7 +353,7 @@ func (c *roomViewConversation) selfOccupantRemovedEvent(nickname string) {
 func (c *roomViewConversation) occupantRemovedEvent(nickname string) {
 	doInUIThread(func() {
 		message := messageForMembersOnlyRoom(nickname)
-		c.displayFormattedMessage(message, conversationTagInfo)
+		c.displayFormattedMessageWithTimestamp(message, conversationTagInfo)
 	})
 }
 

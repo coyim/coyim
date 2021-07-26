@@ -124,10 +124,16 @@ func (la *mucRoomConfigListAddComponent) removeItemAndUpdateIndexes(index int) {
 }
 
 func (la *mucRoomConfigListAddComponent) removeItemByIndex(index int) {
-	itm := la.formItems[index]
-	la.contentBox.Remove(itm.contentBox())
-	sl := append(la.formItems[:index], la.formItems[index+1:]...)
-	la.formItems = sl
+	newItems := []*mucRoomConfigListFormItem{}
+	for idx, itm := range la.formItems {
+		if idx == index {
+			la.contentBox.Remove(itm.contentBox())
+		} else {
+			newItems = append(newItems, itm)
+		}
+	}
+
+	la.formItems = newItems
 }
 
 func (la *mucRoomConfigListAddComponent) updateItemIndexes() {

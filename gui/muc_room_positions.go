@@ -85,7 +85,8 @@ const (
 
 type roomPositionsView struct {
 	roomView              *roomView
-	roomPositions         *roomPositions
+	banned                muc.RoomOccupantItemList
+	none                  muc.RoomOccupantItemList
 	onUpdateOccupantLists *callbacksSet
 
 	dialog  gtki.Window `gtk-widget:"positions-window"`
@@ -95,63 +96,62 @@ type roomPositionsView struct {
 }
 
 func (v *roomView) newRoomPositionsView() *roomPositionsView {
-	rp := &roomPositionsView{
+	rpv := &roomPositionsView{
 		roomView:              v,
-		roomPositions:         newRoomPositions(),
 		onUpdateOccupantLists: newCallbacksSet(),
 	}
 
-	rp.log = v.log.WithFields(log.Fields{
+	rpv.log = v.log.WithFields(log.Fields{
 		"room":  v.roomID(),
 		"where": "roomPositionsView",
 	})
 
-	rp.initBuilder()
-	rp.initDefaults()
+	rpv.initBuilder()
+	rpv.initDefaults()
 
-	return rp
+	return rpv
 }
 
-func (rp *roomPositionsView) initBuilder() {
+func (rpv *roomPositionsView) initBuilder() {
 	builder := newBuilder("MUCRoomPositionsDialog")
-	panicOnDevError(builder.bindObjects(rp))
+	panicOnDevError(builder.bindObjects(rpv))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_apply":  rp.onApply,
-		"on_cancel": rp.dialog.Destroy,
+		"on_apply":  rpv.onApply,
+		"on_cancel": rpv.dialog.Destroy,
 	})
 }
 
-func (rp *roomPositionsView) initDefaults() {
-	rp.dialog.SetTransientFor(rp.roomView.mainWindow())
-	mucStyles.setRoomConfigPageStyle(rp.content)
+func (rpv *roomPositionsView) initDefaults() {
+	rpv.dialog.SetTransientFor(rpv.roomView.mainWindow())
+	mucStyles.setRoomConfigPageStyle(rpv.content)
 }
 
 // onApply MUST be called from the UI thread
-func (rp *roomPositionsView) onApply() {
-	rp.onUpdateOccupantLists.invokeAll()
+func (rpv *roomPositionsView) onApply() {
+	rpv.onUpdateOccupantLists.invokeAll()
 
-	rp.dialog.Destroy()
-	rp.roomView.loadingViewOverlay.onRoomPositionsUpdate()
+	rpv.dialog.Destroy()
+	rpv.roomView.loadingViewOverlay.onRoomPositionsUpdate()
 
-	rc, ec := rp.roomView.account.session.UpdateOccupantAffiliations(rp.roomView.roomID(), rp.roomPositions.positionsToUpdate())
+	rc, ec := rpv.roomView.account.session.UpdateOccupantAffiliations(rpv.roomView.roomID(), rpv.positionsToUpdate())
 	go func() {
 		select {
 		case <-rc:
 			doInUIThread(func() {
-				rp.roomView.notifications.info(roomNotificationOptions{
+				rpv.roomView.notifications.info(roomNotificationOptions{
 					message:   i18n.Local("The positions were updated."),
 					closeable: true,
 				})
-				rp.roomView.loadingViewOverlay.hide()
+				rpv.roomView.loadingViewOverlay.hide()
 			})
 		case <-ec:
 			doInUIThread(func() {
-				rp.roomView.notifications.error(roomNotificationOptions{
+				rpv.roomView.notifications.error(roomNotificationOptions{
 					message:   i18n.Local("Unable to update positions."),
 					closeable: true,
 				})
-				rp.roomView.loadingViewOverlay.hide()
+				rpv.roomView.loadingViewOverlay.hide()
 			})
 		}
 	}()
@@ -184,28 +184,28 @@ func (rp *roomPositionsView) requestRoomPositions(onSuccess func(), onError func
 }
 
 // addPositionComponent MUST be called from the UI thread
-func (rp *roomPositionsView) addPositionComponent(positionComponent hasRoomConfigFormField) {
-	rp.content.Add(positionComponent.fieldWidget())
+func (rpv *roomPositionsView) addPositionComponent(positionComponent hasRoomConfigFormField) {
+	rpv.content.Add(positionComponent.fieldWidget())
 	positionComponent.refreshContent()
-	rp.onUpdateOccupantLists.add(positionComponent.updateFieldValue)
+	rpv.onUpdateOccupantLists.add(positionComponent.updateFieldValue)
 }
 
 // show MUST be called from the UI thread
-func (rp *roomPositionsView) show() {
-	rp.roomView.loadingViewOverlay.onRoomPositionsRequest()
+func (rpv *roomPositionsView) show() {
+	rpv.roomView.loadingViewOverlay.onRoomPositionsRequest()
 
 	go func() {
-		rp.requestRoomPositions(
+		rpv.requestRoomPositions(
 			func() {
 				doInUIThread(func() {
-					rp.roomView.loadingViewOverlay.hide()
-					rp.dialog.Show()
+					rpv.roomView.loadingViewOverlay.hide()
+					rpv.dialog.Show()
 				})
 			},
 			func() {
 				doInUIThread(func() {
-					rp.roomView.loadingViewOverlay.hide()
-					rp.roomView.notifications.error(roomNotificationOptions{
+					rpv.roomView.loadingViewOverlay.hide()
+					rpv.roomView.notifications.error(roomNotificationOptions{
 						message:   i18n.Local("We couldn't get the occupants by affiliation"),
 						closeable: true,
 					})

@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/coyim/coyim/text"
@@ -197,7 +196,7 @@ func (c *roomViewConversation) displayFormattedMessage(message string, noFormatt
 
 // displayMessageFormatting MUST be called from the UI thread
 func (c *roomViewConversation) displayMessageFormatting(message string, format text.Formatting, tag conversationTag) {
-	c.addTextWithTag(message, conversationTag(fmt.Sprintf("%s_%s", format.Format, tag)))
+	c.addTextWithTag(message, formattingTagName(format.Format, tag))
 }
 
 func formatTimestamp(t time.Time) string {

@@ -9,29 +9,32 @@ import (
 type conversationTag string
 
 const (
-	conversationTagTimestamp                 conversationTag = "timestamp"
-	conversationTagMessage                   conversationTag = "message"
-	conversationTagNickname                  conversationTag = "nickname"
-	conversationTagSomeoneLeftRoom           conversationTag = "occupantLeftRoom"
-	conversationTagSomeoneJoinedRoom         conversationTag = "occupantJoinedRoom"
-	conversationTagRoomSubject               conversationTag = "subject"
-	conversationTagRoomConfigChange          conversationTag = "roomConfigChange"
-	conversationTagDateGroup                 conversationTag = "dateGroup"
-	conversationTagDivider                   conversationTag = "divider"
-	conversationTagPassword                  conversationTag = "password"
-	conversationTagInfo                      conversationTag = "info"
-	conversationTagWarning                   conversationTag = "warning"
-	conversationTagError                     conversationTag = "error"
-	conversationTagFormatInfoNickname        conversationTag = "nickname_info"
-	conversationTagFormatInfoAffiliation     conversationTag = "affiliation_info"
-	conversationTagFormatInfoRole            conversationTag = "role_info"
-	conversationTagFormatLeftRoomNickname    conversationTag = "nickname_occupantLeftRoom"
-	conversationTagFormatJoinedRoomNickname  conversationTag = "nickname_occupantJoinedRoom"
-	conversationTagFormatRoomSubjectNickname conversationTag = "nickname_subject"
+	conversationTagTimestamp         conversationTag = "timestamp"
+	conversationTagMessage           conversationTag = "message"
+	conversationTagNickname          conversationTag = "nickname"
+	conversationTagSomeoneLeftRoom   conversationTag = "occupantLeftRoom"
+	conversationTagSomeoneJoinedRoom conversationTag = "occupantJoinedRoom"
+	conversationTagRoomSubject       conversationTag = "subject"
+	conversationTagRoomConfigChange  conversationTag = "roomConfigChange"
+	conversationTagDateGroup         conversationTag = "dateGroup"
+	conversationTagDivider           conversationTag = "divider"
+	conversationTagPassword          conversationTag = "password"
+	conversationTagInfo              conversationTag = "info"
+	conversationTagWarning           conversationTag = "warning"
+	conversationTagError             conversationTag = "error"
 )
 
-func formattingTagName(format string) conversationTag {
-	return conversationTag(fmt.Sprintf("%sFormatting", format))
+var (
+	conversationTagFormatInfoNickname        = formattingTagName(highlightFormatNickname, conversationTagInfo)
+	conversationTagFormatInfoAffiliation     = formattingTagName(highlightFormatAffiliation, conversationTagInfo)
+	conversationTagFormatInfoRole            = formattingTagName(highlightFormatRole, conversationTagInfo)
+	conversationTagFormatLeftRoomNickname    = formattingTagName(highlightFormatNickname, conversationTagSomeoneLeftRoom)
+	conversationTagFormatJoinedRoomNickname  = formattingTagName(highlightFormatNickname, conversationTagSomeoneJoinedRoom)
+	conversationTagFormatRoomSubjectNickname = formattingTagName(highlightFormatNickname, conversationTagRoomSubject)
+)
+
+func formattingTagName(format string, tag conversationTag) conversationTag {
+	return conversationTag(fmt.Sprintf("%s_%s", format, tag))
 }
 
 const converstationLineSpacing = 12

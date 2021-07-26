@@ -19,6 +19,6 @@ func (*mucMockGlib) Localf(vx string, args ...interface{}) string {
 	return fmt.Sprintf("[localized] "+vx, args...)
 }
 
-func initMUCI18n() {
+func initMUCi18n() {
 	i18n.InitLocalization(&mucMockGlib{})
 }

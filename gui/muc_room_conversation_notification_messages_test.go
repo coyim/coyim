@@ -9,7 +9,7 @@ type MUCRoomConversationDisplaySuite struct{}
 var _ = Suite(&MUCRoomConversationDisplaySuite{})
 
 func (s *MUCRoomConversationDisplaySuite) SetUpSuite(c *C) {
-	initMUCI18n()
+	initMUCi18n()
 }
 
 func (*MUCRoomConversationDisplaySuite) Test_mucRoomConversationDisplay_messageForRoomSubjectUpdate(c *C) {

@@ -12,7 +12,7 @@ type MUCRoomConfigListAddComponentSuite struct{}
 var _ = Suite(&MUCRoomConfigListAddComponentSuite{})
 
 func (s *MUCRoomConfigListAddComponentSuite) SetUpSuite(c *C) {
-	initMUCI18n()
+	initMUCi18n()
 }
 
 type jidEntryMock struct {

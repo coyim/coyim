@@ -34,40 +34,6 @@ func formattingTagName(format string) conversationTag {
 	return conversationTag(fmt.Sprintf("%sFormatting", format))
 }
 
-var (
-	conversationTagFormatNickame     conversationTag = formattingTagName(highlightFormatNickname)
-	conversationTagFormatAffiliation conversationTag = formattingTagName(highlightFormatAffiliation)
-	conversationTagFormatRole        conversationTag = formattingTagName(highlightFormatRole)
-)
-
-type conversationTagsFormatsList []conversationTag
-
-func (list conversationTagsFormatsList) tagForFormat(format string) (conversationTag, bool) {
-	ids := []conversationTag{conversationTag(format), formattingTagName(format)}
-	for _, id := range ids {
-		if list.includes(id) {
-			return id, true
-		}
-	}
-	return "", false
-}
-
-func (list conversationTagsFormatsList) includes(format conversationTag) bool {
-	for _, f := range list {
-		if f == format {
-			return true
-		}
-	}
-	return false
-}
-
-var conversationTagFormats = conversationTagsFormatsList{
-	conversationTagFormatNickame,
-	conversationTagFormatAffiliation,
-	conversationTagFormatRole,
-	conversationTagPassword,
-}
-
 const converstationLineSpacing = 12
 
 var conversationTagsPropertiesRegistry = map[conversationTag]pangoAttributes{
@@ -139,18 +105,6 @@ var conversationTagsPropertiesRegistry = map[conversationTag]pangoAttributes{
 	},
 	conversationTagError: {
 		"style": pangoFontStyleNormal,
-	},
-	conversationTagFormatNickame: {
-		"weight": pangoFontWeightBold,
-		"style":  pangoFontStyleItalic,
-	},
-	conversationTagFormatAffiliation: {
-		"weight": pangoFontWeightBold,
-		"style":  pangoFontStyleItalic,
-	},
-	conversationTagFormatRole: {
-		"weight": pangoFontWeightBold,
-		"style":  pangoFontStyleItalic,
 	},
 }
 

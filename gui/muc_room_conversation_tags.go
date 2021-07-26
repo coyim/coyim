@@ -2,7 +2,6 @@ package gui
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -236,30 +235,6 @@ func (ct *conversationTags) createTag(name conversationTag, properties pangoAttr
 		_ = tag.SetProperty(attribute, value)
 	}
 	return tag
-}
-
-func conversationTagTemporaryName(tag, dependentTag conversationTag) conversationTag {
-	tmpName := fmt.Sprintf("%s_%sTemp", tag, strings.Title(strings.ToLower(string(dependentTag))))
-	return conversationTag(tmpName)
-}
-
-// createTemporaryTag MUST be called from the UI thread
-func (ct *conversationTags) createTemporaryTag(name conversationTag, tagToCopyAttributes conversationTag) conversationTag {
-	tmpTagName := conversationTagTemporaryName(name, tagToCopyAttributes)
-	if _, ok := ct.temporaryTags[tmpTagName]; ok {
-		return tmpTagName
-	}
-
-	colors := ct.colorDefinitionFor(tagToCopyAttributes)
-	colorProperties := colors.applyToProperties(pangoAttributes{})
-
-	properties, _ := conversationTagsPropertiesRegistry[name]
-	tag := ct.createTag(tmpTagName, colorProperties.merge(properties))
-	ct.table.Add(tag)
-
-	ct.temporaryTags[tmpTagName] = tag
-
-	return tmpTagName
 }
 
 // applyTagColors MUST be called from the UI thread

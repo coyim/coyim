@@ -19,7 +19,7 @@
     <child>
       <object class="GtkMenuItem" id="modify-position-lists-menu-item">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">Modify position lists</property>
+        <property name="label" translatable="yes">Modify positions</property>
         <signal name="activate" handler="on_modify_position_lists" swapped="no"/>
       </object>
     </child>

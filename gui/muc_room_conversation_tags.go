@@ -116,26 +116,6 @@ type conversationTagColor struct {
 	background string
 }
 
-// applyToProperties MUST be called from the UI thread
-func (tc *conversationTagColor) applyToProperties(properties pangoAttributes) pangoAttributes {
-	ret := properties.copy()
-
-	if tc != nil {
-		colors := map[string]string{
-			"foreground": tc.foreground,
-			"background": tc.background,
-		}
-
-		for color, value := range colors {
-			if value != "" {
-				ret[color] = value
-			}
-		}
-	}
-
-	return ret
-}
-
 // applyToTag MUST be called from the UI thread
 func (tc *conversationTagColor) applyToTag(tag gtki.TextTag) {
 	tc.applyTagColor("foreground", tc.foreground, tag)
@@ -150,11 +130,6 @@ func (tc *conversationTagColor) applyTagColor(property, color string, tag gtki.T
 }
 
 type conversationTagColors map[conversationTag]*conversationTagColor
-
-func (ctc conversationTagColors) includes(tag conversationTag) bool {
-	_, ok := ctc[tag]
-	return ok
-}
 
 type conversationTags struct {
 	table         gtki.TextTagTable
@@ -199,14 +174,6 @@ func (ct *conversationTags) applyTagColors(tagName conversationTag, tag gtki.Tex
 	c := conversationTagColorDefinition(tagName, cs)
 	c.applyToTag(tag)
 	ct.colors[tagName] = c
-}
-
-func (ct *conversationTags) colorDefinitionFor(tag conversationTag) *conversationTagColor {
-	ret := &conversationTagColor{}
-	if ct.colors.includes(tag) {
-		ret = ct.colors[tag]
-	}
-	return ret
 }
 
 func conversationTagColorDefinition(tagName conversationTag, cs mucColorSet) *conversationTagColor {

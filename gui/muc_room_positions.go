@@ -102,28 +102,21 @@ func (rpv *roomPositionsView) onApply() {
 	}()
 }
 
-// requestOccupantsByAffiliation MUST NOT be called from the UI thread
-func (rp *roomPositionsView) requestOccupantsByAffiliation(a data.Affiliation, onSuccess func(muc.RoomOccupantItemList), onError func()) {
-	rc, ec := rp.roomView.account.session.GetRoomOccupantsByAffiliation(rp.roomView.roomID(), a)
+// requestRoomPositions MUST NOT be called from the UI thread
+func (rpv *roomPositionsView) requestRoomPositions(onSuccess func(), onError func()) {
+	rc, ec := rpv.roomView.account.session.GetRoomOccupantsByAffiliation(rpv.roomView.roomID(), &data.OutcastAffiliation{})
 
 	select {
 	case ol := <-rc:
-		onSuccess(ol)
+		doInUIThread(
+			func() {
+				rpv.setBanList(ol)
+				rpv.addPositionComponent(newRoomConfigPositions(&data.OutcastAffiliation{}, rpv.banned,
+					rpv.setBanList, rpv.updateRemovedOccupantList, func() {}))
+			})
 	case <-ec:
 		onError()
 	}
-}
-
-// requestRoomPositions MUST NOT be called from the UI thread
-func (rp *roomPositionsView) requestRoomPositions(onSuccess func(), onError func()) {
-	rp.requestOccupantsByAffiliation(&data.OutcastAffiliation{},
-		func(items muc.RoomOccupantItemList) {
-			rp.roomPositions.setBanList(items)
-
-			rp.addPositionComponent(newRoomConfigPositions(&data.OutcastAffiliation{}, rp.roomPositions.bannedList(),
-				rp.roomPositions.setBanList, rp.roomPositions.updateRemovedOccupantList, func() {}))
-		},
-		onError)
 
 	onSuccess()
 }

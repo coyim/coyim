@@ -3,7 +3,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:7dcdb83e9e8886a7eae886da15a01a97f7a43cbbb6d69f843e2f73e3e6871d8a"
+  digest = "1:49f616d9e6d7c8722fecca1ed9b8696f88bbd6ec05bde41d2592902f2171b964"
   name = "github.com/gotk3/gotk3"
   packages = [
     "cairo",
@@ -16,7 +16,7 @@
     "pango",
   ]
   pruneopts = "UT"
-  revision = "787972f321b3dc1a41d20262f5eb822402730f93"
+  revision = "94fd13316416ae0c9e352205e9ecf84260cb8cbe"
 
 [solve-meta]
   analyzer-name = "dep"
@@ -25,6 +25,7 @@
     "github.com/gotk3/gotk3/gdk",
     "github.com/gotk3/gotk3/glib",
     "github.com/gotk3/gotk3/gtk",
+    "github.com/gotk3/gotk3/pango",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

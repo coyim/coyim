@@ -81,7 +81,7 @@ var (
 	infoBarCommonStyle = style{
 		"text-shadow":   "none",
 		"font-weight":   "500",
-		"padding":       "4px 4px 4px 0",
+		"padding":       "0",
 		"border-radius": "0",
 	}
 
@@ -94,7 +94,7 @@ var (
 
 	infoBarContentCommonStyle = style{
 		"text-shadow": "none",
-		"padding":     "0px 12px",
+		"padding":     "4px 12px 4px 12px",
 		"background":  "none",
 	}
 

@@ -1,86 +1,12 @@
 package gui
 
 import (
-	"sync"
-
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/gotk3adapter/gtki"
 	log "github.com/sirupsen/logrus"
-)
-
-type roomPositionList struct {
-	list muc.RoomOccupantItemList
-	sync.RWMutex
-}
-
-func newRoomPositionList() *roomPositionList {
-	return &roomPositionList{}
-}
-
-func (pl *roomPositionList) set(list muc.RoomOccupantItemList) {
-	pl.Lock()
-	defer pl.Unlock()
-
-	pl.list = list
-}
-
-func (pl *roomPositionList) merge(list muc.RoomOccupantItemList) {
-	pl.set(append(pl.positions(), list...))
-}
-
-func (pl *roomPositionList) positions() muc.RoomOccupantItemList {
-	pl.RLock()
-	defer pl.RUnlock()
-
-	ret := muc.RoomOccupantItemList{}
-	for _, itm := range pl.list {
-		ret = append(ret, itm)
-	}
-
-	return ret
-}
-
-type roomPositions struct {
-	banned *roomPositionList
-	none   *roomPositionList
-}
-
-func newRoomPositions() *roomPositions {
-	return &roomPositions{
-		banned: newRoomPositionList(),
-		none:   newRoomPositionList(),
-	}
-}
-
-func (rp *roomPositions) bannedList() muc.RoomOccupantItemList {
-	return rp.banned.positions()
-}
-
-func (rp *roomPositions) setBanList(list muc.RoomOccupantItemList) {
-	rp.banned.set(list)
-}
-
-func (rp *roomPositions) updateRemovedOccupantList(list muc.RoomOccupantItemList) {
-	rp.none.merge(list)
-}
-
-func (rp *roomPositions) positionsToUpdate() muc.RoomOccupantItemList {
-	return append(rp.banned.positions(), rp.none.positions()...)
-}
-
-func (v *roomView) onRoomPositionsView() {
-	rp := v.newRoomPositionsView()
-	rp.show()
-}
-
-const (
-	roomBanListAccountIndex int = iota
-	roomBanListAffiliationIndex
-	roomBanListReasonIndex
-	roomBanListAffiliationNameIndex
 )
 
 type roomPositionsView struct {
@@ -125,6 +51,25 @@ func (rpv *roomPositionsView) initBuilder() {
 func (rpv *roomPositionsView) initDefaults() {
 	rpv.dialog.SetTransientFor(rpv.roomView.mainWindow())
 	mucStyles.setRoomConfigPageStyle(rpv.content)
+}
+
+func (v *roomView) onRoomPositionsView() {
+	rpv := v.newRoomPositionsView()
+	rpv.show()
+}
+
+// setBanList MUST be called from the UI thread
+func (rpv *roomPositionsView) setBanList(list muc.RoomOccupantItemList) {
+	rpv.banned = append(rpv.banned, list...)
+}
+
+// updateRemovedOccupantList MUST be called from the UI thread
+func (rpv *roomPositionsView) updateRemovedOccupantList(list muc.RoomOccupantItemList) {
+	rpv.none = append(rpv.none, list...)
+}
+
+func (rpv *roomPositionsView) positionsToUpdate() muc.RoomOccupantItemList {
+	return append(rpv.banned, rpv.none...)
 }
 
 // onApply MUST be called from the UI thread

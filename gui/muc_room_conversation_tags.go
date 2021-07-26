@@ -10,19 +10,25 @@ import (
 type conversationTag string
 
 const (
-	conversationTagTimestamp         conversationTag = "timestamp"
-	conversationTagMessage           conversationTag = "message"
-	conversationTagNickname          conversationTag = "nickname"
-	conversationTagSomeoneLeftRoom   conversationTag = "occupantLeftRoom"
-	conversationTagSomeoneJoinedRoom conversationTag = "occupantJoinedRoom"
-	conversationTagRoomSubject       conversationTag = "subject"
-	conversationTagRoomConfigChange  conversationTag = "roomConfigChange"
-	conversationTagDateGroup         conversationTag = "dateGroup"
-	conversationTagDivider           conversationTag = "divider"
-	conversationTagPassword          conversationTag = "password"
-	conversationTagInfo              conversationTag = "info"
-	conversationTagWarning           conversationTag = "warning"
-	conversationTagError             conversationTag = "error"
+	conversationTagTimestamp                 conversationTag = "timestamp"
+	conversationTagMessage                   conversationTag = "message"
+	conversationTagNickname                  conversationTag = "nickname"
+	conversationTagSomeoneLeftRoom           conversationTag = "occupantLeftRoom"
+	conversationTagSomeoneJoinedRoom         conversationTag = "occupantJoinedRoom"
+	conversationTagRoomSubject               conversationTag = "subject"
+	conversationTagRoomConfigChange          conversationTag = "roomConfigChange"
+	conversationTagDateGroup                 conversationTag = "dateGroup"
+	conversationTagDivider                   conversationTag = "divider"
+	conversationTagPassword                  conversationTag = "password"
+	conversationTagInfo                      conversationTag = "info"
+	conversationTagWarning                   conversationTag = "warning"
+	conversationTagError                     conversationTag = "error"
+	conversationTagFormatInfoNickname        conversationTag = "nickname_info"
+	conversationTagFormatInfoAffiliation     conversationTag = "affiliation_info"
+	conversationTagFormatInfoRole            conversationTag = "role_info"
+	conversationTagFormatLeftRoomNickname    conversationTag = "nickname_occupantLeftRoom"
+	conversationTagFormatJoinedRoomNickname  conversationTag = "nickname_occupantJoinedRoom"
+	conversationTagFormatRoomSubjectNickname conversationTag = "nickname_subject"
 )
 
 func formattingTagName(format string) conversationTag {
@@ -79,11 +85,23 @@ var conversationTagsPropertiesRegistry = map[conversationTag]pangoAttributes{
 	conversationTagSomeoneLeftRoom: {
 		"style": pangoFontStyleItalic,
 	},
+	conversationTagFormatLeftRoomNickname: {
+		"weight": pangoFontWeightBold,
+		"style":  pangoFontStyleItalic,
+	},
 	conversationTagSomeoneJoinedRoom: {
 		"style": pangoFontStyleItalic,
 	},
+	conversationTagFormatJoinedRoomNickname: {
+		"weight": pangoFontWeightBold,
+		"style":  pangoFontStyleItalic,
+	},
 	conversationTagRoomSubject: {
 		"style": pangoFontStyleItalic,
+	},
+	conversationTagFormatRoomSubjectNickname: {
+		"weight": pangoFontWeightBold,
+		"style":  pangoFontStyleItalic,
 	},
 	conversationTagRoomConfigChange: {
 		"style": pangoFontStyleItalic,
@@ -104,6 +122,18 @@ var conversationTagsPropertiesRegistry = map[conversationTag]pangoAttributes{
 	},
 	conversationTagInfo: {
 		"style": pangoFontStyleItalic,
+	},
+	conversationTagFormatInfoNickname: {
+		"weight": pangoFontWeightBold,
+		"style":  pangoFontStyleItalic,
+	},
+	conversationTagFormatInfoAffiliation: {
+		"weight": pangoFontWeightBold,
+		"style":  pangoFontStyleItalic,
+	},
+	conversationTagFormatInfoRole: {
+		"weight": pangoFontWeightBold,
+		"style":  pangoFontStyleItalic,
 	},
 	conversationTagWarning: {
 		"style": pangoFontStyleNormal,
@@ -259,12 +289,14 @@ func conversationTagColorDefinition(tagName conversationTag, cs mucColorSet) *co
 			foreground: cs.infoMessageForeground,
 		}
 
-	case conversationTagSomeoneLeftRoom:
+	case conversationTagSomeoneLeftRoom,
+		conversationTagFormatLeftRoomNickname:
 		return &conversationTagColor{
 			foreground: cs.someoneLeftForeground,
 		}
 
-	case conversationTagSomeoneJoinedRoom:
+	case conversationTagSomeoneJoinedRoom,
+		conversationTagFormatJoinedRoomNickname:
 		return &conversationTagColor{
 			foreground: cs.someoneJoinedForeground,
 		}
@@ -279,7 +311,8 @@ func conversationTagColorDefinition(tagName conversationTag, cs mucColorSet) *co
 			foreground: cs.nicknameForeground,
 		}
 
-	case conversationTagRoomSubject:
+	case conversationTagRoomSubject,
+		conversationTagFormatRoomSubjectNickname:
 		return &conversationTagColor{
 			foreground: cs.subjectForeground,
 		}
@@ -289,7 +322,10 @@ func conversationTagColorDefinition(tagName conversationTag, cs mucColorSet) *co
 			foreground: cs.messageForeground,
 		}
 
-	case conversationTagDateGroup:
+	case conversationTagDateGroup,
+		conversationTagFormatInfoNickname,
+		conversationTagFormatInfoAffiliation,
+		conversationTagFormatInfoRole:
 		return &conversationTagColor{
 			foreground: cs.infoMessageForeground,
 		}

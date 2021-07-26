@@ -133,13 +133,11 @@ type conversationTagColors map[conversationTag]*conversationTagColor
 
 type conversationTags struct {
 	table         gtki.TextTagTable
-	colors        conversationTagColors
 	temporaryTags map[conversationTag]gtki.TextTag
 }
 
 func (c *roomViewConversation) newConversationTags() *conversationTags {
 	ct := &conversationTags{
-		colors:        conversationTagColors{},
 		temporaryTags: map[conversationTag]gtki.TextTag{},
 	}
 
@@ -173,7 +171,6 @@ func (ct *conversationTags) createTag(name conversationTag, properties pangoAttr
 func (ct *conversationTags) applyTagColors(tagName conversationTag, tag gtki.TextTag, cs mucColorSet) {
 	c := conversationTagColorDefinition(tagName, cs)
 	c.applyToTag(tag)
-	ct.colors[tagName] = c
 }
 
 func conversationTagColorDefinition(tagName conversationTag, cs mucColorSet) *conversationTagColor {

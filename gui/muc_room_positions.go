@@ -9,6 +9,12 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// onRoomPositionsView MUST be called from the UI thread
+func (v *roomView) onRoomPositionsView() {
+	rpv := v.newRoomPositionsView()
+	rpv.show()
+}
+
 type roomPositionsView struct {
 	roomView              *roomView
 	banned                muc.RoomOccupantItemList
@@ -51,11 +57,6 @@ func (rpv *roomPositionsView) initBuilder() {
 func (rpv *roomPositionsView) initDefaults() {
 	rpv.dialog.SetTransientFor(rpv.roomView.mainWindow())
 	mucStyles.setRoomConfigPageStyle(rpv.content)
-}
-
-func (v *roomView) onRoomPositionsView() {
-	rpv := v.newRoomPositionsView()
-	rpv.show()
 }
 
 // setBanList MUST be called from the UI thread

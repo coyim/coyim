@@ -5,7 +5,6 @@ import (
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc"
-	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/gotk3adapter/gtki"
 	log "github.com/sirupsen/logrus"
 )
@@ -285,13 +284,29 @@ func (p *roomConfigPage) initOccupantsSummaryFields() {
 }
 
 func (p *roomConfigPage) initOccupants() {
-	p.addField(newRoomConfigPositions(&data.OwnerAffiliation{}, p.form.OwnersList(), p.form.SetOwnerList, p.form.UpdateRemovedOccupantList, func() {
-		p.notifyError(i18n.Local("The room must have at least one owner"))
+	p.addField(newRoomConfigPositions(roomConfigPositionsOptions{
+		affiliation:            ownerAffiliation,
+		occupantList:           p.form.OwnersList(),
+		setOccupantList:        p.form.SetOwnerList,
+		setRemovedOccupantList: p.form.UpdateRemovedOccupantList,
+		displayErrors:          func() { p.notifyError(i18n.Local("The room must have at least one owner")) },
 	}))
 	p.content.Add(createSeparator(gtki.HorizontalOrientation))
-	p.addField(newRoomConfigPositions(&data.AdminAffiliation{}, p.form.AdminsList(), p.form.SetAdminList, p.form.UpdateRemovedOccupantList, func() {}))
+
+	p.addField(newRoomConfigPositions(roomConfigPositionsOptions{
+		affiliation:            adminAffiliation,
+		occupantList:           p.form.AdminsList(),
+		setOccupantList:        p.form.SetAdminList,
+		setRemovedOccupantList: p.form.UpdateRemovedOccupantList,
+	}))
 	p.content.Add(createSeparator(gtki.HorizontalOrientation))
-	p.addField(newRoomConfigPositions(&data.OutcastAffiliation{}, p.form.BanList(), p.form.SetBanList, p.form.UpdateRemovedOccupantList, func() {}))
+
+	p.addField(newRoomConfigPositions(roomConfigPositionsOptions{
+		affiliation:            outcastAffiliation,
+		occupantList:           p.form.BanList(),
+		setOccupantList:        p.form.SetBanList,
+		setRemovedOccupantList: p.form.UpdateRemovedOccupantList,
+	}))
 }
 
 func (p *roomConfigPage) addField(field hasRoomConfigFormField) {

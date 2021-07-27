@@ -112,8 +112,14 @@ func (rpv *roomPositionsView) requestRoomPositions(onSuccess func(), onError fun
 		doInUIThread(
 			func() {
 				rpv.setBanList(ol)
-				rpv.addPositionComponent(newRoomConfigPositions(&data.OutcastAffiliation{}, rpv.banned,
-					rpv.setBanList, rpv.updateRemovedOccupantList, func() {}))
+
+				pv := newRoomConfigPositions(roomConfigPositionsOptions{
+					affiliation:            outcastAffiliation,
+					occupantList:           rpv.banned,
+					setOccupantList:        rpv.setBanList,
+					setRemovedOccupantList: rpv.updateRemovedOccupantList,
+				})
+				rpv.addPositionComponent(pv)
 			})
 	case <-ec:
 		onError()

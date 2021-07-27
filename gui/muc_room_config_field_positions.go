@@ -10,6 +10,14 @@ import (
 
 const positionsListJidColumnIndex = 0
 
+type roomConfigPositionsOptions struct {
+	affiliation            data.Affiliation
+	occupantList           muc.RoomOccupantItemList
+	setOccupantList        func(muc.RoomOccupantItemList) // setOccupantList WILL be called from the UI thread
+	setRemovedOccupantList func(muc.RoomOccupantItemList) // setRemovedOccupantList WILL be called from the UI thread
+	displayErrors          func()                         // displayErrors WILL be called from the UI thread
+}
+
 type roomConfigPositions struct {
 	affiliation               data.Affiliation
 	originalOccupantsList     muc.RoomOccupantItemList
@@ -30,16 +38,13 @@ type roomConfigPositions struct {
 	positionsListController *mucRoomConfigListController
 }
 
-func newRoomConfigPositions(affiliation data.Affiliation, occupantsList muc.RoomOccupantItemList,
-	setOccupantList func(occupants muc.RoomOccupantItemList),
-	updateRemovedOccupantList func(occupantsToRemove muc.RoomOccupantItemList),
-	showErrorNotification func()) hasRoomConfigFormField {
+func newRoomConfigPositions(options roomConfigPositionsOptions) hasRoomConfigFormField {
 	field := &roomConfigPositions{
-		affiliation:               affiliation,
-		originalOccupantsList:     occupantsList,
-		setOccupantList:           setOccupantList,
-		updateRemovedOccupantList: updateRemovedOccupantList,
-		showErrorNotification:     showErrorNotification,
+		affiliation:               options.affiliation,
+		originalOccupantsList:     options.occupantList,
+		setOccupantList:           options.setOccupantList,
+		updateRemovedOccupantList: options.setRemovedOccupantList,
+		showErrorNotification:     options.displayErrors,
 	}
 
 	field.initBuilder()

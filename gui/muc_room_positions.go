@@ -104,28 +104,19 @@ func (rpv *roomPositionsView) onApply() {
 }
 
 // requestRoomPositions MUST NOT be called from the UI thread
-func (rpv *roomPositionsView) requestRoomPositions(onSuccess func(), onError func()) {
+// 	- onOccupantListReceived WILL be called from the UI thread
+//  - onNoOccupantList WILL be called from the UI thread
+func (rpv *roomPositionsView) requestRoomPositions(onOccupantListReceived func(muc.RoomOccupantItemList), onNoOccupantList func()) {
 	rc, ec := rpv.roomView.account.session.GetRoomOccupantsByAffiliation(rpv.roomView.roomID(), &data.OutcastAffiliation{})
 
 	select {
 	case ol := <-rc:
-		doInUIThread(
-			func() {
-				rpv.setBanList(ol)
-
-				pv := newRoomConfigPositions(roomConfigPositionsOptions{
-					affiliation:            outcastAffiliation,
-					occupantList:           rpv.banned,
-					setOccupantList:        rpv.setBanList,
-					setRemovedOccupantList: rpv.updateRemovedOccupantList,
-				})
-				rpv.addPositionComponent(pv)
-			})
+		doInUIThread(func() {
+			onOccupantListReceived(ol)
+		})
 	case <-ec:
-		onError()
+		doInUIThread(onNoOccupantList)
 	}
-
-	onSuccess()
 }
 
 // addPositionComponent MUST be called from the UI thread
@@ -139,23 +130,28 @@ func (rpv *roomPositionsView) addPositionComponent(positionComponent hasRoomConf
 func (rpv *roomPositionsView) show() {
 	rpv.roomView.loadingViewOverlay.onRoomPositionsRequest()
 
-	go func() {
-		rpv.requestRoomPositions(
-			func() {
-				doInUIThread(func() {
-					rpv.roomView.loadingViewOverlay.hide()
-					rpv.dialog.Show()
-				})
-			},
-			func() {
-				doInUIThread(func() {
-					rpv.roomView.loadingViewOverlay.hide()
-					rpv.roomView.notifications.error(roomNotificationOptions{
-						message:   i18n.Local("We couldn't get the occupants by affiliation"),
-						closeable: true,
-					})
-				})
-			},
-		)
-	}()
+	onPositionsAvailable := func(list muc.RoomOccupantItemList) {
+		rpv.setBanList(list)
+
+		pv := newRoomConfigPositions(roomConfigPositionsOptions{
+			affiliation:            outcastAffiliation,
+			occupantList:           rpv.banned,
+			setOccupantList:        rpv.setBanList,
+			setRemovedOccupantList: rpv.updateRemovedOccupantList,
+		})
+		rpv.addPositionComponent(pv)
+
+		rpv.roomView.loadingViewOverlay.hide()
+		rpv.dialog.Show()
+	}
+
+	onNoPositions := func() {
+		rpv.roomView.loadingViewOverlay.hide()
+		rpv.roomView.notifications.error(roomNotificationOptions{
+			message:   i18n.Local("We couldn't get the occupants by affiliation"),
+			closeable: true,
+		})
+	}
+
+	go rpv.requestRoomPositions(onPositionsAvailable, onNoPositions)
 }

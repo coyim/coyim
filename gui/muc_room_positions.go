@@ -138,6 +138,7 @@ func (rpv *roomPositionsView) show() {
 			occupantList:           rpv.banned,
 			setOccupantList:        rpv.setBanList,
 			setRemovedOccupantList: rpv.updateRemovedOccupantList,
+			parentWindow:           rpv.dialog,
 		})
 		rpv.addPositionComponent(pv)
 

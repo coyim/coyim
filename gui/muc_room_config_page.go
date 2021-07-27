@@ -80,7 +80,7 @@ type roomConfigPage struct {
 	log coylog.Logger
 }
 
-func (c *mucRoomConfigComponent) newConfigPage(pageID mucRoomConfigPageID) *roomConfigPage {
+func (c *mucRoomConfigComponent) newConfigPage(pageID mucRoomConfigPageID, parent gtki.Window) *roomConfigPage {
 	p := &roomConfigPage{
 		u:                      c.u,
 		roomConfigComponent:    c,
@@ -96,7 +96,7 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID mucRoomConfigPageID) *room
 	}
 
 	p.initBuilder()
-	p.initDefaults()
+	p.initDefaults(parent)
 	mucStyles.setRoomConfigPageStyle(p.content)
 
 	return p
@@ -118,14 +118,14 @@ func (p *roomConfigPage) initBuilder() {
 	p.page.AddOverlay(p.loadingOverlay.overlay)
 }
 
-func (p *roomConfigPage) initDefaults() {
+func (p *roomConfigPage) initDefaults(parent gtki.Window) {
 	p.initIntroPage()
 	switch p.pageID {
 	case roomConfigSummaryPageIndex:
 		p.initSummary()
 		return
 	case roomConfigPositionsPageIndex:
-		p.initOccupants()
+		p.initOccupants(parent)
 		return
 	case roomConfigOthersPageIndex:
 		p.initKnownFields()
@@ -283,13 +283,14 @@ func (p *roomConfigPage) initOccupantsSummaryFields() {
 	p.addField(newRoomConfigSummaryFieldContainer(fields))
 }
 
-func (p *roomConfigPage) initOccupants() {
+func (p *roomConfigPage) initOccupants(parent gtki.Window) {
 	p.addField(newRoomConfigPositions(roomConfigPositionsOptions{
 		affiliation:            ownerAffiliation,
 		occupantList:           p.form.OwnersList(),
 		setOccupantList:        p.form.SetOwnerList,
 		setRemovedOccupantList: p.form.UpdateRemovedOccupantList,
 		displayErrors:          func() { p.notifyError(i18n.Local("The room must have at least one owner")) },
+		parentWindow:           parent,
 	}))
 	p.content.Add(createSeparator(gtki.HorizontalOrientation))
 
@@ -298,6 +299,7 @@ func (p *roomConfigPage) initOccupants() {
 		occupantList:           p.form.AdminsList(),
 		setOccupantList:        p.form.SetAdminList,
 		setRemovedOccupantList: p.form.UpdateRemovedOccupantList,
+		parentWindow:           parent,
 	}))
 	p.content.Add(createSeparator(gtki.HorizontalOrientation))
 
@@ -306,6 +308,7 @@ func (p *roomConfigPage) initOccupants() {
 		occupantList:           p.form.BanList(),
 		setOccupantList:        p.form.SetBanList,
 		setRemovedOccupantList: p.form.UpdateRemovedOccupantList,
+		parentWindow:           parent,
 	}))
 }
 

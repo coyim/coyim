@@ -16,6 +16,7 @@ type roomConfigPositionsOptions struct {
 	setOccupantList        func(muc.RoomOccupantItemList) // setOccupantList WILL be called from the UI thread
 	setRemovedOccupantList func(muc.RoomOccupantItemList) // setRemovedOccupantList WILL be called from the UI thread
 	displayErrors          func()                         // displayErrors WILL be called from the UI thread
+	parentWindow           gtki.Window
 }
 
 type roomConfigPositions struct {
@@ -49,7 +50,7 @@ func newRoomConfigPositions(options roomConfigPositionsOptions) hasRoomConfigFor
 
 	field.initBuilder()
 	field.initDefaults()
-	field.initPositionsLists(nil)
+	field.initPositionsLists(options.parentWindow)
 	field.initOccupantList()
 
 	return field

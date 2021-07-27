@@ -71,7 +71,7 @@ func (u *gtkUI) newMUCRoomConfigComponent(account *account, data *roomConfigData
 
 func (c *mucRoomConfigComponent) initConfigPages(parent gtki.Window) {
 	for _, pageID := range roomConfigPages {
-		c.pages = append(c.pages, c.newConfigPage(pageID))
+		c.pages = append(c.pages, c.newConfigPage(pageID, parent))
 	}
 }
 

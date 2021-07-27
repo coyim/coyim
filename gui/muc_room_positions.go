@@ -105,7 +105,7 @@ func (rpv *roomPositionsView) onApply() {
 
 // requestRoomPositions MUST NOT be called from the UI thread
 // 	- onOccupantListReceived WILL be called from the UI thread
-//  - onNoOccupantList WILL be called from the UI thread
+//	- onNoOccupantList WILL be called from the UI thread
 func (rpv *roomPositionsView) requestRoomPositions(onOccupantListReceived func(muc.RoomOccupantItemList), onNoOccupantList func()) {
 	rc, ec := rpv.roomView.account.session.GetRoomOccupantsByAffiliation(rpv.roomView.roomID(), &data.OutcastAffiliation{})
 

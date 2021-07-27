@@ -1,9 +1,10 @@
 <interface>
   <object class="GtkWindow" id="positions-window">
-    <property name="width_request">450</property>
-    <property name="height_request">450</property>
     <property name="title" translatable="yes">Positions</property>
+    <property name="modal">True</property>
+    <property name="window_position">center-on-parent</property>
     <property name="default_width">700</property>
+    <property name="default_height">260</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
     <child>

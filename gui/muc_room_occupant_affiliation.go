@@ -10,6 +10,14 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+var (
+	ownerAffiliation   = &data.OwnerAffiliation{}
+	adminAffiliation   = &data.AdminAffiliation{}
+	memberAffiliation  = &data.MemberAffiliation{}
+	outcastAffiliation = &data.OutcastAffiliation{}
+	noneAffiliation    = &data.NoneAffiliation{}
+)
+
 func (r *roomViewRosterInfo) onChangeAffiliation() {
 	av := r.newOccupantAffiliationUpdateView(r.account, r.roomID, r.occupant)
 	av.showDialog()
@@ -118,13 +126,13 @@ func (av *occupantAffiliationUpdateView) onApply() {
 func (av *occupantAffiliationUpdateView) affiliationBasedOnSelectedRadio() data.Affiliation {
 	switch {
 	case av.ownerOption.GetActive():
-		return &data.OwnerAffiliation{}
+		return ownerAffiliation
 	case av.adminOption.GetActive():
-		return &data.AdminAffiliation{}
+		return adminAffiliation
 	case av.memberOption.GetActive():
-		return &data.MemberAffiliation{}
+		return memberAffiliation
 	}
-	return &data.NoneAffiliation{}
+	return noneAffiliation
 }
 
 // closeDialog MUST be called from the UI thread

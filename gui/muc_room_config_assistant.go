@@ -275,14 +275,12 @@ func (rc *roomConfigAssistant) destroyAssistant() {
 func (rc *roomConfigAssistant) onApplyError(sfe *muc.SubmitFormError) {
 	rc.enableAssistant()
 	rc.currentPage.onConfigurationApplyError()
-	errorMessage := rc.roomConfigComponent.friendlyConfigErrorMessage(sfe.Error())
 
 	if sfe.Error() == session.ErrBadRequestResponse {
 		rc.onBadRequestError(sfe)
-		errorMessage = i18n.Local("The settings couldn't be changed. Please, verify the information in the form.")
 	}
 
-	rc.currentPage.notifyError(errorMessage)
+	rc.currentPage.notifyError(rc.roomConfigComponent.friendlyConfigErrorMessage(sfe.Error()))
 }
 
 // onBadRequestError MUST be called from the UI thread

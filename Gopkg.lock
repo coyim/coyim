@@ -52,15 +52,15 @@
     "pangoi",
   ]
   pruneopts = "UT"
-  revision = "dee2664fb9f3e0f72310def03d6276a76c6f4029"
+  revision = "275308b462a8b77cf9f3c81b207161437af44091"
 
 [[projects]]
   branch = "main"
-  digest = "1:747a4b41aed90e1cc0f87e2d089280a72cbf62fde4c830b80120947333b8204e"
+  digest = "1:fd81d1517b678baa9cfb7f0b5bf14d4e6f9737fbadbe1d169da4e3c7afea21db"
   name = "github.com/coyim/gotk3extra"
   packages = ["."]
   pruneopts = "UT"
-  revision = "ca5e6253054c55b0bc7c898f5c796f8b2394b10c"
+  revision = "8ee14470cb3b43bb220a4e0c4243320686e730f8"
 
 [[projects]]
   branch = "main"

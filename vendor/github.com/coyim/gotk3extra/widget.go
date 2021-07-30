@@ -9,6 +9,7 @@ import "C"
 import (
 	"unsafe"
 
+	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 )
 
@@ -36,4 +37,21 @@ func GetWidgetBuildableName(v *gtk.Widget) (string, error) {
 		return "", nilPtrErr
 	}
 	return GetBuildableName(v.Object)
+}
+
+func GetWidgetTemplateChild(v *gtk.Widget, name string) (*glib.Object, error) {
+	if v == nil || v.Object == nil {
+		return nil, nilPtrErr
+	}
+
+	widget := nativeWidget(v)
+	gtype := C.GType(v.Object.TypeFromInstance())
+	c := C.gtk_widget_get_template_child(widget, gtype, (*C.gchar)(C.CString(name)))
+
+	obj := glib.Take(unsafe.Pointer(c))
+	if obj == nil {
+		return nil, nilPtrErr
+	}
+
+	return obj, nil
 }

@@ -75,4 +75,9 @@ func init() {
 	gtki.JUSTIFY_RIGHT = gtki.Justification(gtk.JUSTIFY_RIGHT)
 	gtki.JUSTIFY_CENTER = gtki.Justification(gtk.JUSTIFY_CENTER)
 	gtki.JUSTIFY_FILL = gtki.Justification(gtk.JUSTIFY_FILL)
+
+	gtki.SIZE_GROUP_NONE = gtki.SizeGroupMode(gtk.SIZE_GROUP_NONE)
+	gtki.SIZE_GROUP_HORIZONTAL = gtki.SizeGroupMode(gtk.SIZE_GROUP_HORIZONTAL)
+	gtki.SIZE_GROUP_VERTICAL = gtki.SizeGroupMode(gtk.SIZE_GROUP_VERTICAL)
+	gtki.SIZE_GROUP_BOTH = gtki.SizeGroupMode(gtk.SIZE_GROUP_BOTH)
 }

@@ -121,3 +121,12 @@ var (
 	JUSTIFY_CENTER Justification
 	JUSTIFY_FILL   Justification
 )
+
+type SizeGroupMode int
+
+var (
+	SIZE_GROUP_NONE       SizeGroupMode
+	SIZE_GROUP_HORIZONTAL SizeGroupMode
+	SIZE_GROUP_VERTICAL   SizeGroupMode
+	SIZE_GROUP_BOTH       SizeGroupMode
+)

@@ -62,6 +62,12 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 			return nil, true
 		}
 		return val, true
+	case *gtk.SizeGroup:
+		val := WrapSizeGroupSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
 	case *gtk.Bin:
 		val := WrapBinSimple(oo)
 		if val == nil {
@@ -467,6 +473,12 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *assistant:
 		val := UnwrapAssistant(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *sizeGroup:
+		val := UnwrapSizeGroup(oo)
 		if val == nil {
 			return nil, true
 		}

@@ -127,5 +127,8 @@ func (r *Room) SetProperties(p data.RoomDiscoInfo) {
 // SubjectCanBeChanged returns true if the subject of the room can be changed,
 // specifically by the self occupant of the room.
 func (r *Room) SubjectCanBeChanged() bool {
+	if r.selfOccupant.Role.IsVisitor() {
+		return false
+	}
 	return r.selfOccupant.Role.IsModerator() || r.properties.OccupantsCanChangeSubject
 }

@@ -52,26 +52,26 @@
     "pangoi",
   ]
   pruneopts = "UT"
-  revision = "40d9b3bb0336f3901f93a4fa3466796096f610e9"
+  revision = "ba494ee3ec2f0ca39c7556c7724ab681f74de26a"
 
 [[projects]]
   branch = "main"
-  digest = "1:3585fef12cc1c63965a4906fb662fe0ed0565aa5eb2b8478493377c2aa2c5d7c"
+  digest = "1:747a4b41aed90e1cc0f87e2d089280a72cbf62fde4c830b80120947333b8204e"
   name = "github.com/coyim/gotk3extra"
   packages = ["."]
   pruneopts = "UT"
-  revision = "97ba81e2ad00e05dfaab7833409aa48f0f8324cf"
+  revision = "ca5e6253054c55b0bc7c898f5c796f8b2394b10c"
 
 [[projects]]
   branch = "main"
-  digest = "1:d5cfb0cf0d6b98d1017fc2091c9c51667a58509a6994888b04d7efc76198ab8f"
+  digest = "1:319c549a3c7358cba76f0327638bffa45f5c61012d33a89b405e65be7dc92b02"
   name = "github.com/coyim/gotk3osx"
   packages = [
     ".",
     "access",
   ]
   pruneopts = "UT"
-  revision = "ca931c366bf985709d4231db43cccc77e3488acc"
+  revision = "9f53112bcd45d614398fa8167047da64740171a6"
 
 [[projects]]
   branch = "main"
@@ -110,7 +110,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:0a5a71ed4ffd66f17c1557ee8fcfc58e21b906f2a4bb5eb98541129206ca4534"
+  digest = "1:0f165beb6fdcf9e1ff33bee21c30f1502f533987c8df43360188ccb338f4f271"
   name = "github.com/gotk3/gotk3"
   packages = [
     "cairo",
@@ -123,7 +123,7 @@
     "pango",
   ]
   pruneopts = "UT"
-  revision = "abfb81696a7e820421cceffae1087561818ae89d"
+  revision = "beb3d8d8e677c861b09c075c3d2ff8a53e6a5f50"
 
 [[projects]]
   branch = "master"

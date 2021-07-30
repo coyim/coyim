@@ -120,5 +120,8 @@ func (s *MucSuite) Test_Room_CanChangeSubject(c *C) {
 	c.Assert(r.SubjectCanBeChanged(), Equals, false)
 
 	r.properties.OccupantsCanChangeSubject = true
+	c.Assert(r.SubjectCanBeChanged(), Equals, false)
+
+	r.AddSelfOccupant(newTestOccupant(&data.OwnerAffiliation{}, &data.ParticipantRole{}))
 	c.Assert(r.SubjectCanBeChanged(), Equals, true)
 }

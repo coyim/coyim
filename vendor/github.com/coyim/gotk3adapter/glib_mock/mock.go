@@ -8,6 +8,14 @@ func (*Mock) IdleAdd(f interface{}) glibi.SourceHandle {
 	return glibi.SourceHandle(0)
 }
 
+func (*Mock) TimeoutAdd(milliseconds uint, f interface{}) glibi.SourceHandle {
+	return glibi.SourceHandle(0)
+}
+
+func (*Mock) TimeoutSecondsAdd(milliseconds uint, f interface{}) glibi.SourceHandle {
+	return glibi.SourceHandle(0)
+}
+
 func (*Mock) InitI18n(domain string, dir string) {
 }
 
@@ -104,4 +112,7 @@ func (*Mock) SimpleActionNewStateful(name string, parameterType glibi.VariantTyp
 
 func (*Mock) PropertyActionNew(name string, object glibi.Object, propertyName string) glibi.PropertyAction {
 	return nil
+}
+
+func (*Mock) SetFinalizerStrategy(func(func())) {
 }

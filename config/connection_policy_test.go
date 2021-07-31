@@ -134,7 +134,7 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_FailsIfItCantDoProxyCreation
 
 func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesAssociatedHiddenServiceIfFound(c *C) {
 	account := &Account{
-		Account: "coyim@riseup.net",
+		Account: "coyim@jabber.cat",
 		Proxies: []string{
 			"tor-auto://",
 		},
@@ -151,7 +151,7 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesAssociatedHiddenServiceI
 	ournet.Tor = currentTor
 
 	c.Check(err, IsNil)
-	c.Check(dialer.ServerAddress(), Equals, "4cjw6cwpeaeppfqz.onion:5222")
+	c.Check(dialer.ServerAddress(), Equals, "7drfpncjeom3svqkyjitif26ezb3xvmtgyhgplcvqa7wwbb4qdbsjead.onion:5222")
 }
 
 func (s *ConnectionPolicySuite) Test_buildDialerFor_IgnoresAssociatedHiddenService(c *C) {

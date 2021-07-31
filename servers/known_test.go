@@ -9,9 +9,9 @@ type KnownSuite struct{}
 var _ = Suite(&KnownSuite{})
 
 func (s *KnownSuite) Test_Get_returnsTheServerIfItExists(c *C) {
-	serv, ok := Get("riseup.net")
+	serv, ok := Get("jabber.otr.im")
 	c.Assert(ok, Equals, true)
-	c.Assert(serv.Onion, Equals, "4cjw6cwpeaeppfqz.onion")
+	c.Assert(serv.Onion, Equals, "ynnuxkbbiy5gicdydekpihmpbqd4frruax2mqhpc35xqjxp5ayvrjuqd.onion")
 
 	_, ok2 := Get("blarg.net")
 	c.Assert(ok2, Equals, false)
@@ -58,12 +58,12 @@ func (s *KnownSuite) Test_GetOnion_failsWhenServerDoesntHaveOnion(c *C) {
 }
 
 func (s *KnownSuite) Test_GetOnion_returnsOnion(c *C) {
-	res, ok := GetOnion("jabber.ccc.de")
-	c.Assert(res, Equals, "okj7xc6j2szr2y75.onion")
+	res, ok := GetOnion("jabber.cat")
+	c.Assert(res, Equals, "7drfpncjeom3svqkyjitif26ezb3xvmtgyhgplcvqa7wwbb4qdbsjead.onion")
 	c.Assert(ok, Equals, true)
 }
 
 func (s *KnownSuite) Test_GetServersForRegistration(c *C) {
 	res := GetServersForRegistration()
-	c.Assert(res, HasLen, 58)
+	c.Assert(res, HasLen, 54)
 }

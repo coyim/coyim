@@ -1,5 +1,9 @@
 package gui
 
+import (
+	"github.com/coyim/gotk3adapter/glibi"
+)
+
 //TODO: could this use a compiling flag to generate a noop function when released?
 func assertInUIThread() {
 	if g.glib.MainDepth() == 0 {
@@ -35,4 +39,42 @@ func (*outsideUIThread) assertInUIThread() Graphics {
 
 type uiThread interface {
 	assertInUIThread() Graphics
+}
+
+// FINALIZER FUNCTIONALITY
+
+// finalizerBufferCapability determines how many waiting finalizers we can have before we start blocking
+const finalizerBufferCapability = 10000
+
+// finalizerPollRounds determines how many finalizers we will run before giving back control to the UI thread
+const finalizerPollRounds = 100
+
+// finalizerPollTime is the time in between rounds of finalizers
+const finalizerPollTime = 1000 // milliseconds
+
+func registerFinalizerReaping(gl glibi.Glib) {
+	fins := make(chan func(), finalizerBufferCapability)
+
+	gl.SetFinalizerStrategy(func(f func()) {
+		fins <- f
+	})
+
+	// This will ALWAYS be called in the UI thread
+	finalizerPoller := func() bool {
+		rounds := 0
+
+		for rounds < finalizerPollRounds {
+			select {
+			case ff := <-fins:
+				ff()
+				rounds++
+			default:
+				return true
+			}
+		}
+
+		return true
+	}
+
+	gl.TimeoutAdd(finalizerPollTime, finalizerPoller)
 }

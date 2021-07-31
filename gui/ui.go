@@ -138,6 +138,8 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	g = gx
 	initSignals(inuit)
 
+	registerFinalizerReaping(gx.glib)
+
 	//*.mo files should be in ./i18n/locale_code.utf8/LC_MESSAGES/
 	g.glib.InitI18n(localizationDomain, "./i18n")
 	g.gtk.Init(argsWithApplicationName())

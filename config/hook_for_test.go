@@ -16,3 +16,7 @@ func init() {
 	log.SetOutput(ioutil.Discard)
 	i18n.InitLocalization(&glib_mock.Mock{})
 }
+
+func logPotentialError(c *C, e error) {
+	c.Assert(e, IsNil)
+}

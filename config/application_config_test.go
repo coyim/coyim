@@ -263,7 +263,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_onAfterSave(c *C) {
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithoutEncryption(c *C) {
-	tmpfileName := generateTempFileName()
+	tmpfileName := generateTempFileName(c)
 
 	a := &ApplicationConfig{
 		shouldEncrypt: false,
@@ -271,11 +271,14 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithoutEncryption(c *C)
 	}
 
 	e := a.Save(nil)
-	defer os.Remove(tmpfileName)
+	defer func() {
+		logPotentialError(c, os.Remove(tmpfileName))
+	}()
 
 	c.Assert(e, IsNil)
 
-	content, _ := ioutil.ReadFile(a.filename)
+	content, e := ioutil.ReadFile(a.filename)
+	c.Assert(e, IsNil)
 	c.Assert(string(content), Equals, fmt.Sprintf(""+
 		"{\n"+
 		"\t\"Accounts\": null,\n"+
@@ -308,8 +311,9 @@ func (m *mockKeySupplier) LastAttemptFailed() {
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withNewParameters(c *C) {
-	tmpfile, _ := ioutil.TempFile("", "")
-	os.Remove(tmpfile.Name())
+	tmpfile, e1 := ioutil.TempFile("", "")
+	c.Assert(e1, IsNil)
+	logPotentialError(c, os.Remove(tmpfile.Name()))
 
 	a := &ApplicationConfig{
 		shouldEncrypt:         true,
@@ -322,12 +326,15 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withNewP
 			return testKey, testMacKey, true
 		},
 	})
-	defer os.Remove(a.filename)
+	defer func() {
+		logPotentialError(c, os.Remove(a.filename))
+	}()
 
 	c.Assert(e, IsNil)
 	c.Assert(a.filename, Equals, tmpfile.Name()+".enc")
 
-	content, _ := ioutil.ReadFile(a.filename)
+	content, ex := ioutil.ReadFile(a.filename)
+	c.Assert(ex, IsNil)
 
 	ed, e2 := parseEncryptedData(content)
 	c.Assert(e2, IsNil)
@@ -340,8 +347,9 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withNewP
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withExistingParameters(c *C) {
-	tmpfile, _ := ioutil.TempFile("", "")
-	os.Remove(tmpfile.Name())
+	tmpfile, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	logPotentialError(c, os.Remove(tmpfile.Name()))
 
 	a := &ApplicationConfig{
 		shouldEncrypt:         true,
@@ -364,7 +372,9 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withExis
 			return testKey, testMacKey, true
 		},
 	})
-	defer os.Remove(a.filename)
+	defer func() {
+		logPotentialError(c, os.Remove(a.filename))
+	}()
 
 	c.Assert(e, IsNil)
 	c.Assert(a.filename, Equals, tmpfile.Name()+".enc")
@@ -374,7 +384,8 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withExis
 	c.Assert(a.params.P, Equals, 2)
 	c.Assert(a.params.Nonce, Not(Equals), "dbd8f7642b05349123d59d1b")
 
-	content, _ := ioutil.ReadFile(a.filename)
+	content, ee := ioutil.ReadFile(a.filename)
+	c.Assert(ee, IsNil)
 
 	ed, e2 := parseEncryptedData(content)
 	c.Assert(e2, IsNil)
@@ -387,8 +398,9 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withExis
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_doesntAddExtensionIfNotNecessary(c *C) {
-	tmpfile, _ := ioutil.TempFile("", "")
-	os.Remove(tmpfile.Name())
+	tmpfile, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	logPotentialError(c, os.Remove(tmpfile.Name()))
 
 	a := &ApplicationConfig{
 		shouldEncrypt:         true,
@@ -401,12 +413,15 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_doesntAd
 			return testKey, testMacKey, true
 		},
 	})
-	defer os.Remove(a.filename)
+	defer func() {
+		logPotentialError(c, os.Remove(a.filename))
+	}()
 
 	c.Assert(e, IsNil)
 	c.Assert(a.filename, Equals, tmpfile.Name()+".enc")
 
-	content, _ := ioutil.ReadFile(a.filename)
+	content, ex2 := ioutil.ReadFile(a.filename)
+	c.Assert(ex2, IsNil)
 
 	ed, e2 := parseEncryptedData(content)
 	c.Assert(e2, IsNil)
@@ -430,8 +445,9 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_failsOnSerialization(c *C) {
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_failsIfEncryptionFails(c *C) {
-	tmpfile, _ := ioutil.TempFile("", "")
-	os.Remove(tmpfile.Name())
+	tmpfile, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	logPotentialError(c, os.Remove(tmpfile.Name()))
 
 	a := &ApplicationConfig{
 		shouldEncrypt:         true,
@@ -444,7 +460,9 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_failsIfE
 			return nil, nil, false
 		},
 	})
-	defer os.Remove(a.filename)
+	defer func() {
+		logPotentialError(c, os.Remove(a.filename))
+	}()
 
 	c.Assert(e, ErrorMatches, "no password supplied, aborting")
 }
@@ -527,10 +545,13 @@ func (s *AccountsSuite) Test_LoadOrCreate(c *C) {
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_removeOldFileOnNextSave_removesFileIfIsNotCurrentFilename(c *C) {
-	tmpfile, _ := ioutil.TempFile("", "")
+	tmpfile, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
 	tmpFileName := tmpfile.Name()
-	tmpfile.Close()
-	defer os.Remove(tmpFileName)
+	logPotentialError(c, tmpfile.Close())
+	defer func() {
+		logPotentialError(c, os.Remove(tmpFileName))
+	}()
 
 	a := &ApplicationConfig{filename: tmpFileName}
 
@@ -542,8 +563,11 @@ func (s *AccountsSuite) Test_ApplicationConfig_removeOldFileOnNextSave_removesFi
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_removeOldFileOnNextSave_dontRemoveFileIfIsCurrentFilename(c *C) {
-	tmpfile, _ := ioutil.TempFile("", "")
-	defer os.Remove(tmpfile.Name())
+	tmpfile, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	defer func() {
+		logPotentialError(c, os.Remove(tmpfile.Name()))
+	}()
 
 	a := &ApplicationConfig{filename: tmpfile.Name()}
 
@@ -554,7 +578,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_removeOldFileOnNextSave_dontRemov
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_removeOldFileOnNextSave_doesntDoAnythingIfFileDoesntExist(c *C) {
-	tmpFileName := generateTempFileName()
+	tmpFileName := generateTempFileName(c)
 
 	a := &ApplicationConfig{filename: tmpFileName}
 
@@ -572,9 +596,12 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsWhenReadingNonExisti
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_loadsCorrectFile(c *C) {
-	tmpfile, _ := ioutil.TempFile("", "")
-	defer os.Remove(tmpfile.Name())
-	tmpfile.Write([]byte(`{
+	tmpfile, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	defer func() {
+		logPotentialError(c, os.Remove(tmpfile.Name()))
+	}()
+	_, ex2 := tmpfile.Write([]byte(`{
 	"Accounts": [
 		{
 			"Account": "hello@foo.com",
@@ -598,6 +625,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_loadsCorrectFile(c *C) {
 	"AdvancedOptions": false,
 	"UniqueConfigurationID": ""
 }`))
+	c.Assert(ex2, IsNil)
 
 	a := &ApplicationConfig{filename: tmpfile.Name()}
 
@@ -631,9 +659,12 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_loadsCorrectFile(c *C) {
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsIfThereAreNoAccounts(c *C) {
-	tmpfile, _ := ioutil.TempFile("", "")
-	defer os.Remove(tmpfile.Name())
-	tmpfile.Write([]byte(`{
+	tmpfile, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	defer func() {
+		logPotentialError(c, os.Remove(tmpfile.Name()))
+	}()
+	_, ex2 := tmpfile.Write([]byte(`{
 	"Accounts": [
 	],
 	"Bell": false,
@@ -648,6 +679,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsIfThereAreNoAccounts
 	"AdvancedOptions": false,
 	"UniqueConfigurationID": ""
 }`))
+	c.Assert(ex2, IsNil)
 
 	a := &ApplicationConfig{filename: tmpfile.Name()}
 
@@ -671,9 +703,13 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_encryptedFileWorks(c *C) 
 		return testKey, testMacKey, true
 	})
 
-	tmpfile, _ := ioutil.TempFile("", "")
-	defer os.Remove(tmpfile.Name())
-	tmpfile.Write([]byte(encryptedDataFileExample))
+	tmpfile, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	defer func() {
+		logPotentialError(c, os.Remove(tmpfile.Name()))
+	}()
+	_, ex2 := tmpfile.Write([]byte(encryptedDataFileExample))
+	c.Assert(ex2, IsNil)
 
 	a := &ApplicationConfig{
 		filename: tmpfile.Name(),
@@ -692,9 +728,13 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsIfJSONDataIsInvalid(
 		return testKey, testMacKey, true
 	})
 
-	tmpfile, _ := ioutil.TempFile("", "")
-	defer os.Remove(tmpfile.Name())
-	tmpfile.Write([]byte(data))
+	tmpfile, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	defer func() {
+		logPotentialError(c, os.Remove(tmpfile.Name()))
+	}()
+	_, ex2 := tmpfile.Write([]byte(data))
+	c.Assert(ex2, IsNil)
 
 	a := &ApplicationConfig{
 		filename: tmpfile.Name(),
@@ -709,9 +749,13 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsIfNoPasswordIsSuppli
 		return testKey, testMacKey, false
 	})
 
-	tmpfile, _ := ioutil.TempFile("", "")
-	defer os.Remove(tmpfile.Name())
-	tmpfile.Write([]byte(encryptedDataFileExample))
+	tmpfile, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	defer func() {
+		logPotentialError(c, os.Remove(tmpfile.Name()))
+	}()
+	_, ex2 := tmpfile.Write([]byte(encryptedDataFileExample))
+	c.Assert(ex2, IsNil)
 
 	a := &ApplicationConfig{
 		filename: tmpfile.Name(),
@@ -726,9 +770,13 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsIfWrongPasswordIsSup
 		return testKeyWrong, testMacKey, true
 	})
 
-	tmpfile, _ := ioutil.TempFile("", "")
-	defer os.Remove(tmpfile.Name())
-	tmpfile.Write([]byte(encryptedDataFileExample))
+	tmpfile, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	defer func() {
+		logPotentialError(c, os.Remove(tmpfile.Name()))
+	}()
+	_, ex2 := tmpfile.Write([]byte(encryptedDataFileExample))
+	c.Assert(ex2, IsNil)
 
 	a := &ApplicationConfig{
 		filename: tmpfile.Name(),
@@ -738,11 +786,12 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsIfWrongPasswordIsSup
 	c.Assert(e, Equals, errDecryptionFailed)
 }
 
-func generateTempFileName() string {
-	tmpfile, _ := ioutil.TempFile("", "")
+func generateTempFileName(c *C) string {
+	tmpfile, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
 	tmpfileName := tmpfile.Name()
-	tmpfile.Close()
-	os.Remove(tmpfileName)
+	logPotentialError(c, tmpfile.Close())
+	logPotentialError(c, os.Remove(tmpfileName))
 
 	return tmpfileName
 }

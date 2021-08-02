@@ -595,6 +595,11 @@ func (v *roomView) publishSelfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleU
 }
 
 // publishSelfOccupantRoleUpdatedEvent MUST NOT be called from the UI thread
+func (v *roomView) publishSelfOccupantConnectedEvent() {
+	v.publishEvent(selfOccupantConnectedEvent{})
+}
+
+// publishSelfOccupantRoleUpdatedEvent MUST NOT be called from the UI thread
 func (v *roomView) publishSelfOccupantDisconnectedEvent() {
 	v.publishEvent(selfOccupantDisconnectedEvent{})
 }

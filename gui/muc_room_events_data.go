@@ -125,6 +125,8 @@ type selfOccupantRoleUpdatedEvent struct {
 	selfRoleUpdate data.RoleUpdate
 }
 
+type selfOccupantConnectedEvent struct{}
+
 type selfOccupantDisconnectedEvent struct{}
 
 func (selfOccupantRemovedEvent) markAsRoomViewEvent()                {}
@@ -158,4 +160,5 @@ func (occupantAffiliationUpdatedEvent) markAsRoomViewEvent()         {}
 func (selfOccupantAffiliationUpdatedEvent) markAsRoomViewEvent()     {}
 func (occupantRoleUpdatedEvent) markAsRoomViewEvent()                {}
 func (selfOccupantRoleUpdatedEvent) markAsRoomViewEvent()            {}
+func (selfOccupantConnectedEvent) markAsRoomViewEvent()              {}
 func (selfOccupantDisconnectedEvent) markAsRoomViewEvent()           {}

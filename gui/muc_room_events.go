@@ -85,6 +85,8 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 		v.publishOccupantRoleUpdatedEvent(t.RoleUpdate)
 	case events.MUCSelfOccupantKicked:
 		v.publishSelfOccupantRoleUpdatedEvent(t.RoleUpdate)
+	case events.MUCSelfOccupantConnected:
+		v.publishSelfOccupantConnectedEvent()
 	case events.MUCSelfOccupantDisconnected:
 		v.publishSelfOccupantDisconnectedEvent()
 	default:

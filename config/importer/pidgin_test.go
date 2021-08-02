@@ -1,6 +1,7 @@
 package importer
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -264,7 +265,11 @@ func (s *PidginSuite) Test_pidginImporter_importAllFrom_setsAlwaysEncryptWithAnd
 
 func (s *PidginSuite) Test_pidginImporter_TryImport_works(c *C) {
 	dir, _ := ioutil.TempDir("", "")
-	defer os.RemoveAll(dir)
+	fmt.Printf("TMP DEBUG: Temporary directory for pidgin importer: %v\n", dir)
+	defer func() {
+		res := os.RemoveAll(dir)
+		fmt.Printf("TMP DEBUG: Result of os.RemoveAll(%v) = %v\n", dir, res)
+	}()
 
 	origHome := os.Getenv("HOME")
 	defer func() {

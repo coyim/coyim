@@ -7,6 +7,5 @@ func (u *gtkUI) initMUC() {
 }
 
 func initMUCTextsAndMessages() {
-	initMUCConfigUpdateMessages()
 	initMUCRoomConfigTexts()
 }

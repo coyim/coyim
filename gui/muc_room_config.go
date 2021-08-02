@@ -125,24 +125,20 @@ func (c roomConfigChangedTypes) contains(k data.RoomConfigType) bool {
 	return false
 }
 
-var roomConfigFriendlyMessages map[data.RoomConfigType]func(data.RoomDiscoInfo) string
-
-func initMUCConfigUpdateMessages() {
-	roomConfigFriendlyMessages = map[data.RoomConfigType]func(data.RoomDiscoInfo) string{
-		data.RoomConfigSupportsVoiceRequests:     roomConfigSupportsVoiceRequests,
-		data.RoomConfigAllowsRegistration:        roomConfigAllowsRegistration,
-		data.RoomConfigPersistent:                roomConfigPersistent,
-		data.RoomConfigModerated:                 roomConfigModerated,
-		data.RoomConfigPasswordProtected:         roomConfigPasswordProtected,
-		data.RoomConfigPublic:                    roomConfigPublic,
-		data.RoomConfigLanguage:                  roomConfigLanguage,
-		data.RoomConfigOccupantsCanChangeSubject: roomConfigOccupantsCanChangeSubject,
-		data.RoomConfigTitle:                     roomConfigTitle,
-		data.RoomConfigDescription:               roomConfigDescription,
-		data.RoomConfigMembersCanInvite:          roomConfigMembersCanInvite,
-		data.RoomConfigAllowPrivateMessages:      roomConfigAllowPrivateMessages,
-		data.RoomConfigMaxHistoryFetch:           roomConfigMaxHistoryFetch,
-	}
+var roomConfigFriendlyMessages = map[data.RoomConfigType]func(data.RoomDiscoInfo) string{
+	data.RoomConfigSupportsVoiceRequests:     roomConfigSupportsVoiceRequests,
+	data.RoomConfigAllowsRegistration:        roomConfigAllowsRegistration,
+	data.RoomConfigPersistent:                roomConfigPersistent,
+	data.RoomConfigModerated:                 roomConfigModerated,
+	data.RoomConfigPasswordProtected:         roomConfigPasswordProtected,
+	data.RoomConfigPublic:                    roomConfigPublic,
+	data.RoomConfigLanguage:                  roomConfigLanguage,
+	data.RoomConfigOccupantsCanChangeSubject: roomConfigOccupantsCanChangeSubject,
+	data.RoomConfigTitle:                     roomConfigTitle,
+	data.RoomConfigDescription:               roomConfigDescription,
+	data.RoomConfigMembersCanInvite:          roomConfigMembersCanInvite,
+	data.RoomConfigAllowPrivateMessages:      roomConfigAllowPrivateMessages,
+	data.RoomConfigMaxHistoryFetch:           roomConfigMaxHistoryFetch,
 }
 
 func getRoomConfigUpdatedFriendlyMessages(changes roomConfigChangedTypes, discoInfo data.RoomDiscoInfo) []string {
@@ -159,8 +155,7 @@ func getRoomConfigUpdatedFriendlyMessages(changes roomConfigChangedTypes, discoI
 
 func roomConfigSupportsVoiceRequests(di data.RoomDiscoInfo) string {
 	if di.SupportsVoiceRequests {
-		return i18n.Local("The room's occupants with no \"voice\" can now " +
-			"request permission to speak.")
+		return i18n.Local("Visitors can now request permission to speak.")
 	}
 	return i18n.Local("This room's doesn't support \"voice\" request " +
 		"now, which means that visitors can't ask for permission to speak.")
@@ -216,9 +211,9 @@ func getLanguage(languageCode string) string {
 
 func roomConfigOccupantsCanChangeSubject(config data.RoomDiscoInfo) string {
 	if config.OccupantsCanChangeSubject {
-		return i18n.Local("Occupants can now change the subject of this room.")
+		return i18n.Local("Participants and moderators can change the room subject.")
 	}
-	return i18n.Local("Occupants cannot change the subject of this room.")
+	return i18n.Local("Only moderators can change the room subject.")
 }
 
 func roomConfigTitle(config data.RoomDiscoInfo) string {
@@ -230,11 +225,10 @@ func roomConfigDescription(config data.RoomDiscoInfo) string {
 }
 
 func roomConfigAllowPrivateMessages(config data.RoomDiscoInfo) string {
-	if config.AllowPrivateMessages == data.RoleNone {
-		return i18n.Local("No one in this room can send private messages now.")
+	if config.AllowPrivateMessages == muc.RoomConfigOptionAnyone {
+		return i18n.Local("Anyone can send private messages to people in the room.")
 	}
-	return i18n.Localf("Only the \"%s\" can send private messages "+
-		"to the room's occupants.", rolePluralName(config.AllowPrivateMessages))
+	return i18n.Local("No one in this room can send private messages now.")
 }
 
 func roomConfigMembersCanInvite(config data.RoomDiscoInfo) string {

@@ -73,8 +73,9 @@ func (s *XMPPClientXMPPSuite) Test_xmppClientImporter_TryImport(c *C) {
 	}()
 	os.Setenv("HOME", dir)
 
-	input, _ := ioutil.ReadFile(testResourceFilename("xmpp_client_test_conf.json"))
-	_ = ioutil.WriteFile(filepath.Join(dir, ".xmpp-client"), input, 0644)
+	input, ee := ioutil.ReadFile(testResourceFilename("xmpp_client_test_conf.json"))
+	c.Assert(ee, IsNil)
+	logPotentialError(c, ioutil.WriteFile(filepath.Join(dir, ".xmpp-client"), input, 0644))
 
 	res := (&xmppClientImporter{}).TryImport()
 	c.Assert(res, HasLen, 1)
@@ -102,7 +103,7 @@ func (s *XMPPClientXMPPSuite) Test_xmppClientImporter_TryImport_failsOnBadFile(c
 	}()
 	os.Setenv("HOME", dir)
 
-	_ = ioutil.WriteFile(filepath.Join(dir, ".xmpp-client"), []byte("{"), 0644)
+	logPotentialError(c, ioutil.WriteFile(filepath.Join(dir, ".xmpp-client"), []byte("{"), 0644))
 
 	res := (&xmppClientImporter{}).TryImport()
 	c.Assert(res, HasLen, 0)

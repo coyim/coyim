@@ -15,6 +15,7 @@ func testResourceFilename(s string) string {
 }
 
 func tempFile(c *C) *os.File {
-	tmpfile, _ := ioutil.TempFile(c.MkDir(), "")
+	tmpfile, e := ioutil.TempFile(c.MkDir(), "")
+	c.Assert(e, IsNil)
 	return tmpfile
 }

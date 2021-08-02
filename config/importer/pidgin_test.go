@@ -1,7 +1,6 @@
 package importer
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -264,11 +263,10 @@ func (s *PidginSuite) Test_pidginImporter_importAllFrom_setsAlwaysEncryptWithAnd
 }
 
 func (s *PidginSuite) Test_pidginImporter_TryImport_works(c *C) {
-	dir, _ := ioutil.TempDir("", "")
-	fmt.Printf("TMP DEBUG: Temporary directory for pidgin importer: %v\n", dir)
+	dir, e := ioutil.TempDir("", "")
+	c.Assert(e, IsNil)
 	defer func() {
-		res := os.RemoveAll(dir)
-		fmt.Printf("TMP DEBUG: Result of os.RemoveAll(%v) = %v\n", dir, res)
+		logPotentialError(c, os.RemoveAll(dir))
 	}()
 
 	origHome := os.Getenv("HOME")
@@ -277,11 +275,13 @@ func (s *PidginSuite) Test_pidginImporter_TryImport_works(c *C) {
 	}()
 	os.Setenv("HOME", dir)
 
-	os.Mkdir(filepath.Join(dir, pidginConfigDir), 0755)
-	os.Create(filepath.Join(dir, pidginConfigDir, pidginAccountsFile))
+	logPotentialError(c, os.Mkdir(filepath.Join(dir, pidginConfigDir), 0755))
+	_, e = os.Create(filepath.Join(dir, pidginConfigDir, pidginAccountsFile))
+	c.Assert(e, IsNil)
 
-	input, _ := ioutil.ReadFile(testResourceFilename("pidgin_test_data/accounts.xml"))
-	_ = ioutil.WriteFile(filepath.Join(dir, pidginConfigDir, pidginAccountsFile), input, 0644)
+	input, e2 := ioutil.ReadFile(testResourceFilename("pidgin_test_data/accounts.xml"))
+	c.Assert(e2, IsNil)
+	logPotentialError(c, ioutil.WriteFile(filepath.Join(dir, pidginConfigDir, pidginAccountsFile), input, 0644))
 
 	res := (&pidginImporter{}).TryImport()
 	c.Assert(res, HasLen, 1)

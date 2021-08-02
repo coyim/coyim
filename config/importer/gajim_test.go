@@ -518,9 +518,11 @@ func (s *GajimSuite) Test_mergeAccountInformation_setRequireEncryption(c *C) {
 	c.Assert(res.AlwaysEncryptWith, DeepEquals, []string{"foo@bar.com"})
 }
 
-func copyFile(from, to string) {
-	input, _ := ioutil.ReadFile(from)
-	_ = ioutil.WriteFile(to, input, 0644)
+func copyFile(c *C, from, to string) {
+	input, e := ioutil.ReadFile(from)
+	c.Assert(e, IsNil)
+	e = ioutil.WriteFile(to, input, 0644)
+	c.Assert(e, IsNil)
 }
 
 type GajimTryImportSuite struct {
@@ -533,7 +535,8 @@ type GajimTryImportSuite struct {
 var _ = Suite(&GajimTryImportSuite{})
 
 func (s *GajimTryImportSuite) SetUpTest(c *C) {
-	tempPath, _ := ioutil.TempDir("", "")
+	tempPath, e1 := ioutil.TempDir("", "")
+	c.Assert(e1, IsNil)
 	s.tempPath = tempPath
 
 	s.appPath = filepath.Join(s.tempPath, s.appDirName())
@@ -541,20 +544,19 @@ func (s *GajimTryImportSuite) SetUpTest(c *C) {
 	s.setAppDataHome()
 
 	os.MkdirAll(s.tempPath, 0755)
-	os.MkdirAll(filepath.Join(s.appPath, "config"), 0755)
 	os.MkdirAll(filepath.Join(s.appPath, "pluginsconfig"), 0755)
 }
 
 func (s *GajimTryImportSuite) TearDownTest(c *C) {
 	s.restoreAppDataHome()
-	os.RemoveAll(s.tempPath)
+	logPotentialError(c, os.RemoveAll(s.tempPath))
 }
 
 func (s *GajimTryImportSuite) Test_gajimImporter_TryImport_works(c *C) {
-	copyFile(testResourceFilename("gajim_test_data/config2"), filepath.Join(s.appPath, "config"))
-	copyFile(testResourceFilename("gajim_test_data/gotr2"), filepath.Join(s.appPath, "pluginsconfig", "gotr"))
-	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.key3"), filepath.Join(s.appPath, "aba.baba@jabber.ccc.de.key3"))
-	copyFile(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.fpr"), filepath.Join(s.appPath, "aba.baba@jabber.ccc.de.fpr"))
+	copyFile(c, testResourceFilename("gajim_test_data/config"), filepath.Join(s.appPath, "config"))
+	copyFile(c, testResourceFilename("gajim_test_data/gotr"), filepath.Join(s.appPath, "pluginsconfig", "gotr"))
+	copyFile(c, testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.key3"), filepath.Join(s.appPath, "aba.baba@jabber.ccc.de.key3"))
+	copyFile(c, testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.fpr"), filepath.Join(s.appPath, "aba.baba@jabber.ccc.de.fpr"))
 
 	i := &gajimImporter{}
 	res := i.TryImport()

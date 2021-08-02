@@ -239,33 +239,24 @@ func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 		s.processEncryption(peer, stanza.Encryption)
 	}
 
-	// TODO: it feels iffy that we have error and groupchat special handled here
-	// But not checking on the "message" type.
-	switch stanza.Type {
-	case "groupchat":
+	switch {
+	case stanza.Type == "groupchat", stanza.MUCUser != nil:
 		s.muc.receiveClientMessage(stanza)
-		return true
-	case "error":
+
+	case stanza.Type == "error":
 		// TODO: investigate which errors are NOT recoverable, and return false
 		// to close the connection
 		// https://xmpp.org/rfcs/rfc3920.html#stanzas-error
-
 		if isMUCError(stanza.Error) {
 			s.muc.handleMUCErrorMessage(jid.ParseBare(stanza.From), stanza.Error)
 		} else {
 			s.log.WithField("error", stanza.Error).WithField("peer", peer.NoResource()).Error("Error reported from peer")
 		}
 
-		return true
+	default:
+		messageTime := retrieveMessageTime(stanza)
+		s.receiveClientMessage(peer, messageTime, stanza.Body)
 	}
-
-	if stanza.MUCUser != nil {
-		s.log.WithField("room", stanza.From).Debug("A MUC message has been received")
-		return true
-	}
-
-	messageTime := retrieveMessageTime(stanza)
-	s.receiveClientMessage(peer, messageTime, stanza.Body)
 
 	return true
 }

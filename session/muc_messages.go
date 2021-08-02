@@ -24,6 +24,9 @@ func (m *mucManager) receiveClientMessage(stanza *xmppData.ClientMessage) {
 		m.handleMessageReceived(stanza, m.liveMessageReceived)
 	case isRoomConfigUpdate(stanza):
 		m.handleRoomConfigUpdate(stanza)
+	default:
+		// TODO: Check the content of the message to determine its purpose.
+		m.log.WithField("room", stanza.From).Debug("A MUC user message has been received")
 	}
 }
 

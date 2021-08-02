@@ -19,7 +19,7 @@ func (s *SessionLogSuite) Test_openLogFile_returnsNilIfNoFilenameGiven(c *C) {
 }
 
 func (s *SessionLogSuite) Test_openLogFile_failsIfCantOpenFile(c *C) {
-	tf, ex := ioutil.TempFile("", "")
+	tf, ex := ioutil.TempFile("", "coyim-session-9-")
 	c.Assert(ex, IsNil)
 	ex = tf.Close()
 	c.Assert(ex, IsNil)
@@ -46,7 +46,7 @@ func (s *SessionLogSuite) Test_openLogFile_failsIfCantOpenFile(c *C) {
 }
 
 func (s *SessionLogSuite) Test_openLogFile_succeeds(c *C) {
-	tf, ex := ioutil.TempFile("", "")
+	tf, ex := ioutil.TempFile("", "coyim-session-10-")
 	c.Assert(ex, IsNil)
 	ex = tf.Close()
 	c.Assert(ex, IsNil)

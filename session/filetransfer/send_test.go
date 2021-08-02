@@ -209,7 +209,7 @@ func (s *SendSuite) Test_sendContext_offerSend_works(c *C) {
 		return true
 	}
 
-	tf, ex := ioutil.TempFile("", "")
+	tf, ex := ioutil.TempFile("", "coyim-session-1-")
 	c.Assert(ex, IsNil)
 	_, ex = tf.Write([]byte(`hello again`))
 	c.Assert(ex, IsNil)
@@ -311,7 +311,7 @@ func (s *SendSuite) Test_sendContext_offerSend_failsOnIncorrectSendingMechanism(
 
 	supportedSendingMechanisms = map[string]func(*sendContext){}
 
-	tf, ex := ioutil.TempFile("", "")
+	tf, ex := ioutil.TempFile("", "coyim-session-2-")
 	c.Assert(ex, IsNil)
 	_, ex = tf.Write([]byte(`hello again`))
 	c.Assert(ex, IsNil)
@@ -396,7 +396,7 @@ func (s *SendSuite) Test_sendContext_offerSend_failsOnInvalidSubmitForm(c *C) {
 
 	supportedSendingMechanisms = map[string]func(*sendContext){}
 
-	tf, ex := ioutil.TempFile("", "")
+	tf, ex := ioutil.TempFile("", "coyim-session-3-")
 	c.Assert(ex, IsNil)
 	_, ex = tf.Write([]byte(`hello again`))
 	c.Assert(ex, IsNil)
@@ -478,7 +478,7 @@ func (s *SendSuite) Test_sendContext_offerSend_sendingIQFailsWithDecline(c *C) {
 
 	supportedSendingMechanisms = map[string]func(*sendContext){}
 
-	tf, ex := ioutil.TempFile("", "")
+	tf, ex := ioutil.TempFile("", "coyim-session-4-")
 	c.Assert(ex, IsNil)
 	_, ex = tf.Write([]byte(`hello again`))
 	c.Assert(ex, IsNil)
@@ -562,7 +562,7 @@ func (s *SendSuite) Test_sendContext_offerSend_failsOnErrorIQ(c *C) {
 
 	supportedSendingMechanisms = map[string]func(*sendContext){}
 
-	tf, ex := ioutil.TempFile("", "")
+	tf, ex := ioutil.TempFile("", "coyim-session-5-")
 	c.Assert(ex, IsNil)
 	_, ex = tf.Write([]byte(`hello again`))
 	c.Assert(ex, IsNil)

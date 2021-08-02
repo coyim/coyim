@@ -390,7 +390,7 @@ func (s *MainSuite) Test_startProfileIfNecessary_failsOnStarting(c *C) {
 		return nil, nil
 	}
 
-	tmpfile, ex := ioutil.TempFile("", "")
+	tmpfile, ex := ioutil.TempFile("", "coyim-main-1-")
 	c.Assert(ex, IsNil)
 
 	defer func() {
@@ -415,7 +415,7 @@ func (s *MainSuite) Test_startProfileIfNecessary_failsOnStarting(c *C) {
 func (s *MainSuite) Test_startProfileIfNecessary_works(c *C) {
 	defer pprof.StopCPUProfile()
 
-	tmpfile, ex := ioutil.TempFile("", "")
+	tmpfile, ex := ioutil.TempFile("", "coyim-main-2-")
 	c.Assert(ex, IsNil)
 	ex2 := tmpfile.Close()
 	c.Assert(ex2, IsNil)

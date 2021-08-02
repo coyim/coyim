@@ -1236,7 +1236,7 @@ func (s *SessionSuite) Test_CreateXMPPLogger_works(c *C) {
 }
 
 func (s *SessionSuite) Test_CreateXMPPLogger_createsMultiWriterWhenDebugFlag(c *C) {
-	tf, ex := ioutil.TempFile("", "")
+	tf, ex := ioutil.TempFile("", "coyim-session-11-")
 	c.Assert(ex, IsNil)
 	defer func() {
 		ex2 := os.Remove(tf.Name())

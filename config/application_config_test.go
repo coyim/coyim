@@ -311,7 +311,7 @@ func (m *mockKeySupplier) LastAttemptFailed() {
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withNewParameters(c *C) {
-	tmpfile, e1 := ioutil.TempFile("", "")
+	tmpfile, e1 := ioutil.TempFile("", "coyim-config-5-")
 	c.Assert(e1, IsNil)
 	logPotentialError(c, tmpfile.Close())
 	logPotentialError(c, os.Remove(tmpfile.Name()))
@@ -348,7 +348,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withNewP
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withExistingParameters(c *C) {
-	tmpfile, ex := ioutil.TempFile("", "")
+	tmpfile, ex := ioutil.TempFile("", "coyim-config-6-")
 	c.Assert(ex, IsNil)
 	logPotentialError(c, tmpfile.Close())
 	logPotentialError(c, os.Remove(tmpfile.Name()))
@@ -400,7 +400,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withExis
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_doesntAddExtensionIfNotNecessary(c *C) {
-	tmpfile, ex := ioutil.TempFile("", "")
+	tmpfile, ex := ioutil.TempFile("", "coyim-config-7-")
 	c.Assert(ex, IsNil)
 	logPotentialError(c, tmpfile.Close())
 	logPotentialError(c, os.Remove(tmpfile.Name()))
@@ -448,7 +448,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_failsOnSerialization(c *C) {
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_failsIfEncryptionFails(c *C) {
-	tmpfile, ex := ioutil.TempFile("", "")
+	tmpfile, ex := ioutil.TempFile("", "coyim-config-8-")
 	c.Assert(ex, IsNil)
 	logPotentialError(c, tmpfile.Close())
 	logPotentialError(c, os.Remove(tmpfile.Name()))
@@ -546,7 +546,7 @@ func (s *AccountsSuite) Test_LoadOrCreate(c *C) {
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_removeOldFileOnNextSave_removesFileIfIsNotCurrentFilename(c *C) {
-	tmpfile, ex := ioutil.TempFile("", "")
+	tmpfile, ex := ioutil.TempFile("", "coyim-config-9-")
 	c.Assert(ex, IsNil)
 	tmpFileName := tmpfile.Name()
 	logPotentialError(c, tmpfile.Close())
@@ -561,7 +561,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_removeOldFileOnNextSave_removesFi
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_removeOldFileOnNextSave_dontRemoveFileIfIsCurrentFilename(c *C) {
-	tmpfile, ex := ioutil.TempFile("", "")
+	tmpfile, ex := ioutil.TempFile("", "coyim-config-10-")
 	c.Assert(ex, IsNil)
 	logPotentialError(c, tmpfile.Close())
 	defer func() {
@@ -595,7 +595,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsWhenReadingNonExisti
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_loadsCorrectFile(c *C) {
-	tmpfile, ex := ioutil.TempFile("", "")
+	tmpfile, ex := ioutil.TempFile("", "coyim-config-11-")
 	c.Assert(ex, IsNil)
 	defer func() {
 		logPotentialError(c, os.Remove(tmpfile.Name()))
@@ -659,7 +659,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_loadsCorrectFile(c *C) {
 }
 
 func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsIfThereAreNoAccounts(c *C) {
-	tmpfile, ex := ioutil.TempFile("", "")
+	tmpfile, ex := ioutil.TempFile("", "coyim-config-12-")
 	c.Assert(ex, IsNil)
 	defer func() {
 		logPotentialError(c, os.Remove(tmpfile.Name()))
@@ -704,7 +704,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_encryptedFileWorks(c *C) 
 		return testKey, testMacKey, true
 	})
 
-	tmpfile, ex := ioutil.TempFile("", "")
+	tmpfile, ex := ioutil.TempFile("", "coyim-config-13-")
 	c.Assert(ex, IsNil)
 	defer func() {
 		logPotentialError(c, os.Remove(tmpfile.Name()))
@@ -730,7 +730,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsIfJSONDataIsInvalid(
 		return testKey, testMacKey, true
 	})
 
-	tmpfile, ex := ioutil.TempFile("", "")
+	tmpfile, ex := ioutil.TempFile("", "coyim-config-14-")
 	c.Assert(ex, IsNil)
 	defer func() {
 		logPotentialError(c, os.Remove(tmpfile.Name()))
@@ -752,7 +752,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsIfNoPasswordIsSuppli
 		return testKey, testMacKey, false
 	})
 
-	tmpfile, ex := ioutil.TempFile("", "")
+	tmpfile, ex := ioutil.TempFile("", "coyim-config-15-")
 	c.Assert(ex, IsNil)
 	defer func() {
 		logPotentialError(c, os.Remove(tmpfile.Name()))
@@ -774,7 +774,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsIfWrongPasswordIsSup
 		return testKeyWrong, testMacKey, true
 	})
 
-	tmpfile, ex := ioutil.TempFile("", "")
+	tmpfile, ex := ioutil.TempFile("", "coyim-config-16-")
 	c.Assert(ex, IsNil)
 	defer func() {
 		logPotentialError(c, os.Remove(tmpfile.Name()))
@@ -792,7 +792,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsIfWrongPasswordIsSup
 }
 
 func generateTempFileName(c *C) string {
-	tmpfile, ex := ioutil.TempFile("", "")
+	tmpfile, ex := ioutil.TempFile("", "coyim-config-17-")
 	c.Assert(ex, IsNil)
 	tmpfileName := tmpfile.Name()
 	logPotentialError(c, tmpfile.Close())

@@ -33,18 +33,12 @@ func (ctx *dirSendContext) startPackingDirectory() (<-chan string, <-chan error)
 		e = pack(ctx.dir, tmpFile)
 		closeAndIgnore(tmpFile)
 		if e != nil {
-			exx := os.Remove(tmpFile.Name())
-			if exx != nil {
-				fmt.Printf("TMP DEBUG: couldn't remove the file: %v\n", exx)
-			}
+			_ = os.Remove(tmpFile.Name())
 			errorResult <- e
 			return
 		}
 		newName := fmt.Sprintf("%v.zip", tmpFile.Name())
-		exx2 := os.Rename(tmpFile.Name(), newName)
-		if exx2 != nil {
-			fmt.Printf("TMP DEBUG: couldn't rename the file: %v\n", exx2)
-		}
+		_ = os.Rename(tmpFile.Name(), newName)
 		result <- newName
 	}()
 

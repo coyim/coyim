@@ -90,7 +90,7 @@ func (f *registrationForm) renderForm(title string, fields []interface{}) error 
 }
 
 func requestAndRenderRegistrationForm(server string, formHandler data.FormCallback, df interfaces.DialerFactory, verifier tls.Verifier, c *config.ApplicationConfig) error {
-	_, xmppLog := session.CreateXMPPLogger(c.RawLogFile)
+	_, xmppLog, _ := session.CreateXMPPLogger(c.RawLogFile)
 	ll := log.StandardLogger().WithFields(log.Fields{
 		"server":    server,
 		"component": "registration",

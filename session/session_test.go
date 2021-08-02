@@ -1230,7 +1230,7 @@ func (s *SessionSuite) Test_CreateXMPPLogger_works(c *C) {
 	}()
 	*config.DebugFlag = false
 
-	inm, l := CreateXMPPLogger("")
+	inm, l, _ := CreateXMPPLogger("")
 	c.Assert(inm, IsNil)
 	c.Assert(l, IsNil)
 }
@@ -1251,10 +1251,13 @@ func (s *SessionSuite) Test_CreateXMPPLogger_createsMultiWriterWhenDebugFlag(c *
 	}()
 	*config.DebugFlag = true
 
-	inm, l := CreateXMPPLogger(tf.Name())
+	inm, l, cl := CreateXMPPLogger(tf.Name())
 	c.Assert(inm, Not(IsNil))
 	c.Assert(l, Not(IsNil))
 	c.Assert(l, Not(FitsTypeOf), &bytes.Buffer{})
+
+	exx := cl.Close()
+	c.Assert(exx, IsNil)
 }
 
 func (s *SessionSuite) Test_CreateXMPPLogger_usesInMemoryBufferWhenDebugFlag(c *C) {
@@ -1264,7 +1267,7 @@ func (s *SessionSuite) Test_CreateXMPPLogger_usesInMemoryBufferWhenDebugFlag(c *
 	}()
 	*config.DebugFlag = true
 
-	inm, l := CreateXMPPLogger("")
+	inm, l, _ := CreateXMPPLogger("")
 	c.Assert(inm, Not(IsNil))
 	c.Assert(l, Not(IsNil))
 	c.Assert(l.(*bytes.Buffer), Equals, inm)

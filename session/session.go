@@ -125,8 +125,13 @@ func parseFromConfig(cu *config.Account) []otr3.PrivateKey {
 }
 
 // CreateXMPPLogger creates a XMPP log.
-func CreateXMPPLogger(rawLog string) (*bytes.Buffer, io.Writer) {
+func CreateXMPPLogger(rawLog string) (*bytes.Buffer, io.Writer, io.Closer) {
 	log := openLogFile(rawLog)
+
+	var closer io.Closer
+	if cl, ok := log.(io.Closer); ok {
+		closer = cl
+	}
 
 	var inMemory *bytes.Buffer
 	if *config.DebugFlag {
@@ -139,14 +144,14 @@ func CreateXMPPLogger(rawLog string) (*bytes.Buffer, io.Writer) {
 		}
 	}
 
-	return inMemory, log
+	return inMemory, log, closer
 }
 
 // Factory creates a new session from the given config
 func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifier, tls.Factory) xi.Dialer) access.Session {
 	// Make xmppLogger go to in memory STRING and/or the log file
 
-	inMemoryLog, xmppLogger := CreateXMPPLogger(c.RawLogFile)
+	inMemoryLog, xmppLogger, _ := CreateXMPPLogger(c.RawLogFile)
 
 	sessionLog := log.WithFields(log.Fields{
 		"account": cu.Account,

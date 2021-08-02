@@ -58,6 +58,7 @@ func unpack(file string, intoDir string) error {
 	if err != nil {
 		return err
 	}
+	defer closeAndIgnore(reader)
 
 	if err := os.MkdirAll(intoDir, 0750); err != nil {
 		return err

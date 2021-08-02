@@ -1,6 +1,7 @@
 package session
 
 import (
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -64,10 +65,14 @@ func (s *SessionLogSuite) Test_openLogFile_succeeds(c *C) {
 	ll.SetLevel(log.DebugLevel)
 	hook := test.NewGlobal()
 
-	c.Assert(openLogFile(tf.Name()), Not(IsNil))
+	res := openLogFile(tf.Name())
+	c.Assert(res, Not(IsNil))
 
 	c.Assert(len(hook.Entries), Equals, 1)
 	c.Assert(hook.LastEntry().Level, Equals, log.DebugLevel)
 	c.Assert(hook.LastEntry().Message, Equals, "Logging XMPP messages to file")
 	c.Assert(hook.LastEntry().Data["file"], Equals, tf.Name())
+
+	exx := res.(io.Closer).Close()
+	c.Assert(exx, IsNil)
 }

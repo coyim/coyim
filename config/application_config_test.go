@@ -460,9 +460,6 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_failsIfE
 			return nil, nil, false
 		},
 	})
-	defer func() {
-		logPotentialError(c, os.Remove(a.filename))
-	}()
 
 	c.Assert(e, ErrorMatches, "no password supplied, aborting")
 }
@@ -549,9 +546,6 @@ func (s *AccountsSuite) Test_ApplicationConfig_removeOldFileOnNextSave_removesFi
 	c.Assert(ex, IsNil)
 	tmpFileName := tmpfile.Name()
 	logPotentialError(c, tmpfile.Close())
-	defer func() {
-		logPotentialError(c, os.Remove(tmpFileName))
-	}()
 
 	a := &ApplicationConfig{filename: tmpFileName}
 

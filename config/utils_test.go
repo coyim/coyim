@@ -62,7 +62,7 @@ func (s *UtilsSuite) Test_FindFile_returnsTheSecondFileIfTheFirstDoesntExist(c *
 
 	tmpfile2, e2 := ioutil.TempFile("", "")
 	c.Assert(e2, IsNil)
-	logPotentialError(c, tmpfile1.Close())
+	logPotentialError(c, tmpfile2.Close())
 	defer func() {
 		logPotentialError(c, os.Remove(tmpfile2.Name()))
 	}()

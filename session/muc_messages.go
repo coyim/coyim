@@ -18,15 +18,15 @@ func (m *mucManager) receiveClientMessage(stanza *xmppData.ClientMessage) {
 	}
 
 	switch {
+	case isUserMessagePresence(stanza):
+		// TODO: Check the content of the message to determine its purpose.
+		m.log.WithField("room", stanza.From).Debug("A MUC user message has been received")
 	case isDelayedMessage(stanza):
 		m.handleMessageReceived(stanza, m.appendHistoryMessage)
 	case isLiveMessage(stanza):
 		m.handleMessageReceived(stanza, m.liveMessageReceived)
 	case isRoomConfigUpdate(stanza):
 		m.handleRoomConfigUpdate(stanza)
-	default:
-		// TODO: Check the content of the message to determine its purpose.
-		m.log.WithField("room", stanza.From).Debug("A MUC user message has been received")
 	}
 }
 
@@ -94,6 +94,10 @@ func hasSubject(stanza *xmppData.ClientMessage) bool {
 
 func hasMUCUserExtension(stanza *xmppData.ClientMessage) bool {
 	return stanza.MUCUser != nil
+}
+
+func isUserMessagePresence(stanza *xmppData.ClientMessage) bool {
+	return hasMUCUserExtension(stanza)
 }
 
 func getNicknameFromStanza(stanza *xmppData.ClientMessage) string {

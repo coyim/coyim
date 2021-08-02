@@ -14,7 +14,10 @@ type UtilsSuite struct{}
 var _ = Suite(&UtilsSuite{})
 
 func (s *UtilsSuite) Test_ifExists_returnsTheValueAndTheFileIfItExists(c *C) {
-	tmpfile, _ := ioutil.TempFile("", "")
+	tmpfile, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	logPotentialError(c, tmpfile.Close())
+
 	defer func() {
 		logPotentialError(c, os.Remove(tmpfile.Name()))
 	}()
@@ -39,7 +42,10 @@ func (s *UtilsSuite) Test_ifExists_returnsTheValueButNothingElseIfDoesntExist(c 
 }
 
 func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfFile(c *C) {
-	tmpfile, _ := ioutil.TempFile("", "")
+	tmpfile, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	logPotentialError(c, tmpfile.Close())
+
 	defer func() {
 		logPotentialError(c, os.Remove(tmpfile.Name()))
 	}()
@@ -62,9 +68,13 @@ func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfReadingDirF
 		logPotentialError(c, os.RemoveAll(dir))
 	}()
 
-	os.Mkdir(filepath.Join(dir, "foo"), 0755)
-	os.Create(filepath.Join(dir, "hello.conf"))
-	os.Create(filepath.Join(dir, "goodbye.conf"))
+	logPotentialError(c, os.Mkdir(filepath.Join(dir, "foo"), 0755))
+	ff, ex := os.Create(filepath.Join(dir, "hello.conf"))
+	c.Assert(ex, IsNil)
+	logPotentialError(c, ff.Close())
+	ff, ex = os.Create(filepath.Join(dir, "goodbye.conf"))
+	c.Assert(ex, IsNil)
+	logPotentialError(c, ff.Close())
 
 	makeDirectoryInaccessible(dir)
 
@@ -79,9 +89,13 @@ func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueAndFilesInside(c *C) {
 		logPotentialError(c, os.RemoveAll(dir))
 	}()
 
-	os.Mkdir(filepath.Join(dir, "foo"), 0755)
-	os.Create(filepath.Join(dir, "hello.conf"))
-	os.Create(filepath.Join(dir, "goodbye.conf"))
+	logPotentialError(c, os.Mkdir(filepath.Join(dir, "foo"), 0755))
+	ff, ex := os.Create(filepath.Join(dir, "hello.conf"))
+	c.Assert(ex, IsNil)
+	logPotentialError(c, ff.Close())
+	ff, ex = os.Create(filepath.Join(dir, "goodbye.conf"))
+	c.Assert(ex, IsNil)
+	logPotentialError(c, ff.Close())
 
 	res := ifExistsDir([]string{"foo", "bar"}, dir)
 

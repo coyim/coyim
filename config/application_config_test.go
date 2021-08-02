@@ -313,6 +313,7 @@ func (m *mockKeySupplier) LastAttemptFailed() {
 func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withNewParameters(c *C) {
 	tmpfile, e1 := ioutil.TempFile("", "")
 	c.Assert(e1, IsNil)
+	logPotentialError(c, tmpfile.Close())
 	logPotentialError(c, os.Remove(tmpfile.Name()))
 
 	a := &ApplicationConfig{
@@ -349,6 +350,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withNewP
 func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withExistingParameters(c *C) {
 	tmpfile, ex := ioutil.TempFile("", "")
 	c.Assert(ex, IsNil)
+	logPotentialError(c, tmpfile.Close())
 	logPotentialError(c, os.Remove(tmpfile.Name()))
 
 	a := &ApplicationConfig{
@@ -400,6 +402,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withExis
 func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_doesntAddExtensionIfNotNecessary(c *C) {
 	tmpfile, ex := ioutil.TempFile("", "")
 	c.Assert(ex, IsNil)
+	logPotentialError(c, tmpfile.Close())
 	logPotentialError(c, os.Remove(tmpfile.Name()))
 
 	a := &ApplicationConfig{
@@ -447,6 +450,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_failsOnSerialization(c *C) {
 func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_failsIfEncryptionFails(c *C) {
 	tmpfile, ex := ioutil.TempFile("", "")
 	c.Assert(ex, IsNil)
+	logPotentialError(c, tmpfile.Close())
 	logPotentialError(c, os.Remove(tmpfile.Name()))
 
 	a := &ApplicationConfig{
@@ -559,6 +563,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_removeOldFileOnNextSave_removesFi
 func (s *AccountsSuite) Test_ApplicationConfig_removeOldFileOnNextSave_dontRemoveFileIfIsCurrentFilename(c *C) {
 	tmpfile, ex := ioutil.TempFile("", "")
 	c.Assert(ex, IsNil)
+	logPotentialError(c, tmpfile.Close())
 	defer func() {
 		logPotentialError(c, os.Remove(tmpfile.Name()))
 	}()
@@ -620,6 +625,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_loadsCorrectFile(c *C) {
 	"UniqueConfigurationID": ""
 }`))
 	c.Assert(ex2, IsNil)
+	logPotentialError(c, tmpfile.Close())
 
 	a := &ApplicationConfig{filename: tmpfile.Name()}
 
@@ -674,6 +680,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsIfThereAreNoAccounts
 	"UniqueConfigurationID": ""
 }`))
 	c.Assert(ex2, IsNil)
+	logPotentialError(c, tmpfile.Close())
 
 	a := &ApplicationConfig{filename: tmpfile.Name()}
 
@@ -704,6 +711,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_encryptedFileWorks(c *C) 
 	}()
 	_, ex2 := tmpfile.Write([]byte(encryptedDataFileExample))
 	c.Assert(ex2, IsNil)
+	logPotentialError(c, tmpfile.Close())
 
 	a := &ApplicationConfig{
 		filename: tmpfile.Name(),
@@ -729,6 +737,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsIfJSONDataIsInvalid(
 	}()
 	_, ex2 := tmpfile.Write([]byte(data))
 	c.Assert(ex2, IsNil)
+	logPotentialError(c, tmpfile.Close())
 
 	a := &ApplicationConfig{
 		filename: tmpfile.Name(),
@@ -750,6 +759,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsIfNoPasswordIsSuppli
 	}()
 	_, ex2 := tmpfile.Write([]byte(encryptedDataFileExample))
 	c.Assert(ex2, IsNil)
+	logPotentialError(c, tmpfile.Close())
 
 	a := &ApplicationConfig{
 		filename: tmpfile.Name(),
@@ -771,6 +781,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_tryLoad_failsIfWrongPasswordIsSup
 	}()
 	_, ex2 := tmpfile.Write([]byte(encryptedDataFileExample))
 	c.Assert(ex2, IsNil)
+	logPotentialError(c, tmpfile.Close())
 
 	a := &ApplicationConfig{
 		filename: tmpfile.Name(),

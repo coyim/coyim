@@ -276,8 +276,9 @@ func (s *PidginSuite) Test_pidginImporter_TryImport_works(c *C) {
 	os.Setenv("HOME", dir)
 
 	logPotentialError(c, os.Mkdir(filepath.Join(dir, pidginConfigDir), 0755))
-	_, e = os.Create(filepath.Join(dir, pidginConfigDir, pidginAccountsFile))
+	ff, e := os.Create(filepath.Join(dir, pidginConfigDir, pidginAccountsFile))
 	c.Assert(e, IsNil)
+	logPotentialError(c, ff.Close())
 
 	input, e2 := ioutil.ReadFile(testResourceFilename("pidgin_test_data/accounts.xml"))
 	c.Assert(e2, IsNil)

@@ -39,12 +39,14 @@ func (s *UtilsSuite) Test_FindFile_returnsNothingIfNoPlacesGiven(c *C) {
 func (s *UtilsSuite) Test_FindFile_returnsTheFirstFileFound(c *C) {
 	tmpfile1, e := ioutil.TempFile("", "")
 	c.Assert(e, IsNil)
+	logPotentialError(c, tmpfile1.Close())
 	defer func() {
 		logPotentialError(c, os.Remove(tmpfile1.Name()))
 	}()
 
 	tmpfile2, e2 := ioutil.TempFile("", "")
 	c.Assert(e2, IsNil)
+	logPotentialError(c, tmpfile2.Close())
 	defer func() {
 		logPotentialError(c, os.Remove(tmpfile2.Name()))
 	}()

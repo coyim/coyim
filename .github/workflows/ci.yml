@@ -129,6 +129,8 @@ jobs:
         run: make -C ci/ deps
         env:
           DISPLAY: ':99.0'
+      - name: show temp directories before tests
+        run: ls -alF C:/Users/runneradmin/AppData/Local/Temp
       - name: run tests
         run: |
           export PC_FILES_DIR=`cygpath -u '${{ env.PKG_CONFIG_PC_FILES_DIR }}'`
@@ -139,6 +141,8 @@ jobs:
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
           RUN_WITH: cygdrop -p Backup -p Restore
           PKG_CONFIG_PC_FILES_DIR: ${{ env.REPOSITORY_DIR }}/.pkgconfig-pc-files
+      - name: show temp directories after tests
+        run: ls -alF C:/Users/runneradmin/AppData/Local/Temp
 
   notify-test:
     name: Notify on success or failure of test

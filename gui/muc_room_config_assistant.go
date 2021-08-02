@@ -117,6 +117,10 @@ func (rc *roomConfigAssistant) initDefaults() {
 	rc.assistantButtons = getButtonsForAssistantHeader(rc.assistant)
 	removeMarginFromAssistantPages(rc.assistant)
 
+	if buttonSizeGroup, err := rc.assistant.GetButtonSizeGroup(); err == nil {
+		buttonSizeGroup.SetMode(gtki.SIZE_GROUP_NONE)
+	}
+
 	mucStyles.setRoomConfigSummaryStyle(rc.assistant)
 }
 

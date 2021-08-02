@@ -25,21 +25,26 @@ func (ctx *dirSendContext) startPackingDirectory() (<-chan string, <-chan error)
 	errorResult := make(chan error)
 
 	go func() {
-		tmpFile, e := ioutil.TempFile("", fmt.Sprintf("%s-directory-", filepath.Base(ctx.dir)))
+		tmpFile, e := ioutil.TempFile("", fmt.Sprintf("%s-coy-directory-", filepath.Base(ctx.dir)))
 		if e != nil {
 			errorResult <- e
 			return
 		}
 		e = pack(ctx.dir, tmpFile)
+		closeAndIgnore(tmpFile)
 		if e != nil {
+			exx := os.Remove(tmpFile.Name())
+			if exx != nil {
+				fmt.Printf("TMP DEBUG: couldn't remove the file: %v\n", exx)
+			}
 			errorResult <- e
-			closeAndIgnore(tmpFile)
-			_ = os.Remove(tmpFile.Name())
 			return
 		}
 		newName := fmt.Sprintf("%v.zip", tmpFile.Name())
-		closeAndIgnore(tmpFile)
-		_ = os.Rename(tmpFile.Name(), newName)
+		exx2 := os.Rename(tmpFile.Name(), newName)
+		if exx2 != nil {
+			fmt.Printf("TMP DEBUG: couldn't rename the file: %v\n", exx2)
+		}
 		result <- newName
 	}()
 

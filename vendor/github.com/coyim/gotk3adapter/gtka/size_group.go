@@ -28,3 +28,7 @@ func UnwrapSizeGroup(v gtki.SizeGroup) *gtk.SizeGroup {
 	}
 	return v.(*sizeGroup).internal
 }
+
+func (v *sizeGroup) SetMode(v1 gtki.SizeGroupMode) {
+	v.internal.SetMode(gtk.SizeGroupMode(v1))
+}

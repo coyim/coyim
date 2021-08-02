@@ -20,10 +20,6 @@ func WrapSizeGroupSimple(obj *glib.Object) *gtk.SizeGroup {
 	return &gtk.SizeGroup{obj}
 }
 
-func WrapSizeGroup(obj *glib.Object) (*gtk.SizeGroup, error) {
-	if obj == nil {
-		return nil, nilPtrErr
-	}
-
-	return WrapSizeGroupSimple(obj), nil
+func WrapSizeGroup(obj *glib.Object, e error) (*gtk.SizeGroup, error) {
+	return WrapSizeGroupSimple(obj), e
 }

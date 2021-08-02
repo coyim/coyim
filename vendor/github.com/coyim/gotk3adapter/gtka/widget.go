@@ -4,6 +4,7 @@ import (
 	"github.com/coyim/gotk3adapter/gdka"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gliba"
+	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/coyim/gotk3extra"
 	"github.com/gotk3/gotk3/gtk"
@@ -168,4 +169,9 @@ func (v *widget) Destroy() {
 
 func (v *widget) HasFocus() bool {
 	return v.internal.HasFocus()
+}
+
+func (v *widget) TemplateChild(v1 string) (glibi.Object, error) {
+	obj, err := gotk3extra.GetWidgetTemplateChild(v.internal, v1)
+	return gliba.WrapObjectSimple(obj), err
 }

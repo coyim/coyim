@@ -22,6 +22,7 @@ type Assistant interface {
 	AddActionWidget(child Widget)
 	RemoveActionWidget(child Widget)
 	UpdateButtonsState()
+	GetButtonSizeGroup() (SizeGroup, error)
 }
 
 func AssertAssistant(_ Assistant) {}

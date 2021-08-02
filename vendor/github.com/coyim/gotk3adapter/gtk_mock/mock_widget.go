@@ -3,6 +3,7 @@ package gtk_mock
 import (
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/glib_mock"
+	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -114,4 +115,8 @@ func (*MockWidget) SetOpacity(v2 float64) {
 }
 
 func (*MockWidget) Destroy() {
+}
+
+func (*MockWidget) TemplateChild(string) (glibi.Object, error) {
+	return nil, nil
 }

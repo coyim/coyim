@@ -57,3 +57,7 @@ func (a *MockAssistant) UpdateButtonsState() {
 
 func (a *MockAssistant) SetPageTitle(page gtki.Widget, title string) {
 }
+
+func (a *MockAssistant) GetButtonSizeGroup() (gtki.SizeGroup, error) {
+	return nil, nil
+}

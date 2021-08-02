@@ -39,8 +39,13 @@ func GetWidgetBuildableName(v *gtk.Widget) (string, error) {
 	return GetBuildableName(v.Object)
 }
 
-func GetWidgetTemplateChild(v *gtk.Widget, name string) (*glib.Object, error) {
-	if v == nil || v.Object == nil {
+func GetWidgetTemplateChild(vv gtk.IWidget, name string) (*glib.Object, error) {
+	if vv == nil {
+		return nil, nilPtrErr
+	}
+
+	v := vv.ToWidget()
+	if v.Object == nil {
 		return nil, nilPtrErr
 	}
 

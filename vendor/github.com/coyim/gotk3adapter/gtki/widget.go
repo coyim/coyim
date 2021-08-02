@@ -40,6 +40,7 @@ type Widget interface {
 	IsVisible() bool
 	Show()
 	ShowAll()
+	TemplateChild(string) (glibi.Object, error)
 }
 
 func AssertWidget(_ Widget) {}

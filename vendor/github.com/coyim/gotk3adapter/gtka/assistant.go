@@ -2,6 +2,7 @@ package gtka
 
 import (
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/coyim/gotk3extra"
 	"github.com/gotk3/gotk3/gtk"
 )
 
@@ -88,4 +89,9 @@ func (a *assistant) UpdateButtonsState() {
 
 func (a *assistant) SetPageTitle(page gtki.Widget, title string) {
 	a.internal.SetPageTitle(UnwrapWidget(page), title)
+}
+
+func (a *assistant) GetButtonSizeGroup() (gtki.SizeGroup, error) {
+	v, err := gotk3extra.GetAssistantButtonSizeGroup(a.internal)
+	return WrapSizeGroup(v, err)
 }

@@ -1720,7 +1720,11 @@ func (s *SessionSuite) Test_session_SetLastActionTime(c *C) {
 }
 
 func (s *SessionSuite) Test_session_setStatus_setsConnected(c *C) {
-	sess := &session{}
+	sess := &session{
+		muc: &mucManager{
+			roomManager: &muc.RoomManager{},
+		},
+	}
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
@@ -3639,6 +3643,9 @@ func (s *SessionSuite) Test_session_Connect_works(c *C) {
 		wantToBeOnline: true,
 		resource:       "somewhere",
 		r:              roster.New(),
+		muc: &mucManager{
+			roomManager: &muc.RoomManager{},
+		},
 	}
 
 	res := sess.Connect("one", nil)
@@ -3675,6 +3682,9 @@ func (s *SessionSuite) Test_session_Connect_worksWithoutVCard(c *C) {
 		wantToBeOnline: false,
 		resource:       "somewhere",
 		r:              roster.New(),
+		muc: &mucManager{
+			roomManager: &muc.RoomManager{},
+		},
 	}
 
 	res := sess.Connect("one", nil)

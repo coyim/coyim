@@ -818,11 +818,18 @@ func (s *session) setStatus(status connStatus) {
 
 	switch status {
 	case CONNECTED:
-		s.publish(events.Connected)
+		s.onStatusConnected()
 	case DISCONNECTED:
 		s.onStatusDisconnected()
 	case CONNECTING:
 		s.publish(events.Connecting)
+	}
+}
+
+func (s *session) onStatusConnected() {
+	s.publish(events.Connected)
+	for _, r := range s.muc.roomManager.GetAllRooms() {
+		s.muc.selfOccupantConnected(r.ID)
 	}
 }
 

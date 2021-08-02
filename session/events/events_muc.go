@@ -213,6 +213,9 @@ type MUCSelfOccupantKicked struct {
 	RoleUpdate data.RoleUpdate
 }
 
+// MUCSelfOccupantConnected signifies that the self occupant reconnected to the server
+type MUCSelfOccupantConnected struct{}
+
 // MUCSelfOccupantDisconnected signifies that the self occupant could not be reached by the server
 type MUCSelfOccupantDisconnected struct{}
 
@@ -247,4 +250,5 @@ func (MUCOccupantAffiliationRoleUpdated) markAsMUCEventTypeInterface()     {}
 func (MUCSelfOccupantAffiliationRoleUpdated) markAsMUCEventTypeInterface() {}
 func (MUCOccupantKicked) markAsMUCEventTypeInterface()                     {}
 func (MUCSelfOccupantKicked) markAsMUCEventTypeInterface()                 {}
+func (MUCSelfOccupantConnected) markAsMUCEventTypeInterface()              {}
 func (MUCSelfOccupantDisconnected) markAsMUCEventTypeInterface()           {}

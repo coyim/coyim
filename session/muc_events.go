@@ -80,6 +80,8 @@ func (m *mucManager) selfOccupantJoined(roomID jid.Bare, op *muc.OccupantPresenc
 }
 
 func (m *mucManager) liveMessageReceived(roomID jid.Bare, nickname, message string, timestamp time.Time) {
+	m.appendHistoryMessage(roomID, nickname, message, timestamp)
+
 	ev := events.MUCLiveMessageReceived{}
 	ev.Nickname = nickname
 	ev.Message = message

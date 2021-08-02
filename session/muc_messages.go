@@ -19,7 +19,7 @@ func (m *mucManager) receiveClientMessage(stanza *xmppData.ClientMessage) {
 
 	switch {
 	case isDelayedMessage(stanza):
-		m.handleMessageReceived(stanza, m.receiveDelayedMessage)
+		m.handleMessageReceived(stanza, m.appendHistoryMessage)
 	case isLiveMessage(stanza):
 		m.handleMessageReceived(stanza, m.liveMessageReceived)
 	case isRoomConfigUpdate(stanza):
@@ -27,7 +27,7 @@ func (m *mucManager) receiveClientMessage(stanza *xmppData.ClientMessage) {
 	}
 }
 
-func (m *mucManager) receiveDelayedMessage(roomID jid.Bare, nickname, message string, timestamp time.Time) {
+func (m *mucManager) appendHistoryMessage(roomID jid.Bare, nickname, message string, timestamp time.Time) {
 	room, ok := m.roomManager.GetRoom(roomID)
 	if ok {
 		room.AddHistoryMessage(nickname, message, timestamp)

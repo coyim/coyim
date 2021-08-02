@@ -1236,9 +1236,14 @@ func (s *SessionSuite) Test_CreateXMPPLogger_works(c *C) {
 }
 
 func (s *SessionSuite) Test_CreateXMPPLogger_createsMultiWriterWhenDebugFlag(c *C) {
-	tf, _ := ioutil.TempFile("", "")
-	defer os.Remove(tf.Name())
-	_ = tf.Close()
+	tf, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	defer func() {
+		ex2 := os.Remove(tf.Name())
+		c.Assert(ex2, IsNil)
+	}()
+	ex = tf.Close()
+	c.Assert(ex, IsNil)
 
 	orgDebug := *config.DebugFlag
 	defer func() {

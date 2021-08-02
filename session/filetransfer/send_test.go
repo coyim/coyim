@@ -209,10 +209,16 @@ func (s *SendSuite) Test_sendContext_offerSend_works(c *C) {
 		return true
 	}
 
-	tf, _ := ioutil.TempFile("", "")
-	tf.Write([]byte(`hello again`))
-	_ = tf.Close()
-	defer os.Remove(tf.Name())
+	tf, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	_, ex = tf.Write([]byte(`hello again`))
+	c.Assert(ex, IsNil)
+	ex = tf.Close()
+	c.Assert(ex, IsNil)
+	defer func() {
+		ex2 := os.Remove(tf.Name())
+		c.Assert(ex2, IsNil)
+	}()
 
 	l, hook := test.NewNullLogger()
 	l.SetLevel(log.DebugLevel)
@@ -305,10 +311,16 @@ func (s *SendSuite) Test_sendContext_offerSend_failsOnIncorrectSendingMechanism(
 
 	supportedSendingMechanisms = map[string]func(*sendContext){}
 
-	tf, _ := ioutil.TempFile("", "")
-	tf.Write([]byte(`hello again`))
-	_ = tf.Close()
-	defer os.Remove(tf.Name())
+	tf, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	_, ex = tf.Write([]byte(`hello again`))
+	c.Assert(ex, IsNil)
+	ex = tf.Close()
+	c.Assert(ex, IsNil)
+	defer func() {
+		ex2 := os.Remove(tf.Name())
+		c.Assert(ex2, IsNil)
+	}()
 
 	l, hook := test.NewNullLogger()
 	l.SetLevel(log.DebugLevel)
@@ -384,10 +396,16 @@ func (s *SendSuite) Test_sendContext_offerSend_failsOnInvalidSubmitForm(c *C) {
 
 	supportedSendingMechanisms = map[string]func(*sendContext){}
 
-	tf, _ := ioutil.TempFile("", "")
-	tf.Write([]byte(`hello again`))
-	_ = tf.Close()
-	defer os.Remove(tf.Name())
+	tf, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	_, ex = tf.Write([]byte(`hello again`))
+	c.Assert(ex, IsNil)
+	ex = tf.Close()
+	c.Assert(ex, IsNil)
+	defer func() {
+		ex2 := os.Remove(tf.Name())
+		c.Assert(ex2, IsNil)
+	}()
 
 	l, hook := test.NewNullLogger()
 	l.SetLevel(log.DebugLevel)
@@ -460,10 +478,16 @@ func (s *SendSuite) Test_sendContext_offerSend_sendingIQFailsWithDecline(c *C) {
 
 	supportedSendingMechanisms = map[string]func(*sendContext){}
 
-	tf, _ := ioutil.TempFile("", "")
-	tf.Write([]byte(`hello again`))
-	_ = tf.Close()
-	defer os.Remove(tf.Name())
+	tf, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	_, ex = tf.Write([]byte(`hello again`))
+	c.Assert(ex, IsNil)
+	ex = tf.Close()
+	c.Assert(ex, IsNil)
+	defer func() {
+		ex2 := os.Remove(tf.Name())
+		c.Assert(ex2, IsNil)
+	}()
 
 	l, hook := test.NewNullLogger()
 	l.SetLevel(log.DebugLevel)
@@ -538,10 +562,16 @@ func (s *SendSuite) Test_sendContext_offerSend_failsOnErrorIQ(c *C) {
 
 	supportedSendingMechanisms = map[string]func(*sendContext){}
 
-	tf, _ := ioutil.TempFile("", "")
-	tf.Write([]byte(`hello again`))
-	_ = tf.Close()
-	defer os.Remove(tf.Name())
+	tf, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	_, ex = tf.Write([]byte(`hello again`))
+	c.Assert(ex, IsNil)
+	ex = tf.Close()
+	c.Assert(ex, IsNil)
+	defer func() {
+		ex2 := os.Remove(tf.Name())
+		c.Assert(ex2, IsNil)
+	}()
 
 	l, hook := test.NewNullLogger()
 	l.SetLevel(log.DebugLevel)

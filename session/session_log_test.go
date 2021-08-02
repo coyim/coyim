@@ -19,8 +19,14 @@ func (s *SessionLogSuite) Test_openLogFile_returnsNilIfNoFilenameGiven(c *C) {
 }
 
 func (s *SessionLogSuite) Test_openLogFile_failsIfCantOpenFile(c *C) {
-	tf, _ := ioutil.TempFile("", "")
-	defer os.Remove(tf.Name())
+	tf, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	ex = tf.Close()
+	c.Assert(ex, IsNil)
+	defer func() {
+		ex2 := os.Remove(tf.Name())
+		c.Assert(ex2, IsNil)
+	}()
 
 	ll := log.StandardLogger()
 	orgLevel := ll.Level
@@ -40,8 +46,14 @@ func (s *SessionLogSuite) Test_openLogFile_failsIfCantOpenFile(c *C) {
 }
 
 func (s *SessionLogSuite) Test_openLogFile_succeeds(c *C) {
-	tf, _ := ioutil.TempFile("", "")
-	defer os.Remove(tf.Name())
+	tf, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	ex = tf.Close()
+	c.Assert(ex, IsNil)
+	defer func() {
+		ex2 := os.Remove(tf.Name())
+		c.Assert(ex2, IsNil)
+	}()
 
 	ll := log.StandardLogger()
 	orgLevel := ll.Level

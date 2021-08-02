@@ -33,7 +33,8 @@ func (ctx *dirSendContext) startPackingDirectory() (<-chan string, <-chan error)
 		e = pack(ctx.dir, tmpFile)
 		if e != nil {
 			errorResult <- e
-			defer closeAndIgnore(tmpFile)
+			closeAndIgnore(tmpFile)
+			_ = os.Remove(tmpFile.Name())
 			return
 		}
 		newName := fmt.Sprintf("%v.zip", tmpFile.Name())

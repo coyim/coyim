@@ -22,8 +22,13 @@ func (s *SettingsDefinitionsSuite) Test_SchemaInTempDir(c *C) {
 	fi, err := os.Stat(res)
 	c.Assert(err, IsNil)
 	c.Assert(fi.IsDir(), Equals, true)
+	defer func() {
+		ee := os.RemoveAll(res)
+		c.Assert(ee, IsNil)
+	}()
 
-	data, _ := ioutil.ReadFile(path.Join(res, "gschemas.compiled"))
+	data, e := ioutil.ReadFile(path.Join(res, "gschemas.compiled"))
+	c.Assert(e, IsNil)
 
 	c.Assert(data, DeepEquals, fileContent())
 }

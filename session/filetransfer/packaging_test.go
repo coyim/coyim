@@ -27,11 +27,16 @@ func (s *PackagingSuite) Test_pack_and_unpack(c *C) {
 	dd := c.MkDir()
 	createTemporaryDirectoryStructure(dd)
 
-	f, _ := ioutil.TempFile("", "")
-	defer os.Remove(f.Name())
+	f, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	defer func() {
+		ex2 := os.Remove(f.Name())
+		c.Assert(ex2, IsNil)
+	}()
 
 	e := pack(dd, f)
-	_ = f.Close()
+	ex = f.Close()
+	c.Assert(ex, IsNil)
 
 	c.Assert(e, IsNil)
 

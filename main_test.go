@@ -390,8 +390,16 @@ func (s *MainSuite) Test_startProfileIfNecessary_failsOnStarting(c *C) {
 		return nil, nil
 	}
 
-	tmpfile, _ := ioutil.TempFile("", "")
-	defer os.Remove(tmpfile.Name())
+	tmpfile, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+
+	defer func() {
+		// We ignore the results of this close, we just need to make sure
+		// it's not open before removing it.
+		_ = tmpfile.Close()
+		ee := os.Remove(tmpfile.Name())
+		c.Assert(ee, IsNil)
+	}()
 
 	pprof.StartCPUProfile(tmpfile)
 
@@ -407,8 +415,14 @@ func (s *MainSuite) Test_startProfileIfNecessary_failsOnStarting(c *C) {
 func (s *MainSuite) Test_startProfileIfNecessary_works(c *C) {
 	defer pprof.StopCPUProfile()
 
-	tmpfile, _ := ioutil.TempFile("", "")
-	defer os.Remove(tmpfile.Name())
+	tmpfile, ex := ioutil.TempFile("", "")
+	c.Assert(ex, IsNil)
+	ex2 := tmpfile.Close()
+	c.Assert(ex2, IsNil)
+	defer func() {
+		exe := os.Remove(tmpfile.Name())
+		c.Assert(exe, IsNil)
+	}()
 
 	orgCPUProfileFlag := *config.CPUProfile
 	defer func() {

@@ -124,6 +124,7 @@ func (v *roomView) initSubscribers() {
 	})
 }
 
+// onEventReceived MUST be called from the UI thread
 func (v *roomView) onEventReceived(ev roomViewEvent) {
 	switch t := ev.(type) {
 	case selfOccupantRemovedEvent:
@@ -143,6 +144,7 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 	}
 }
 
+// requestRoomDiscoInfo MUST be called from the UI thread
 func (v *roomView) requestRoomDiscoInfo() {
 	v.loadingViewOverlay.onRoomDiscoInfoLoad()
 	v.notifications.clearErrors()
@@ -238,14 +240,14 @@ func (v *roomView) selfOccupantRemovedEvent() {
 	v.disableRoomView()
 }
 
+// disableRoomView MUST be called from the UI thread
 func (v *roomView) disableRoomView() {
-	doInUIThread(func() {
-		addClassStyle("room-disabled", v.content)
-		v.account.removeRoomView(v.roomID())
-		v.warningsInfoBar.hide()
-	})
+	addClassStyle("room-disabled", v.content)
+	v.account.removeRoomView(v.roomID())
+	v.warningsInfoBar.hide()
 }
 
+// onDestroyWindow MUST be called from the UI thread
 func (v *roomView) onDestroyWindow() {
 	v.opened = false
 	v.account.removeRoomView(v.roomID())
@@ -311,6 +313,7 @@ func (v *roomView) tryLeaveRoom(onSuccess func(), onError func(error)) {
 	)
 }
 
+// publishDestroyEvent MUST NOT be called from the UI thread
 func (v *roomView) publishDestroyEvent(reason string, alternativeRoomID jid.Bare, password string) {
 	v.publishEvent(roomDestroyedEvent{
 		reason:      reason,
@@ -354,6 +357,7 @@ func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, pas
 	}()
 }
 
+// tryUpdateOccupantAffiliation MUST NOT be called from the UI thread
 func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, newAffiliation data.Affiliation, reason string) {
 	doInUIThread(func() {
 		v.loadingViewOverlay.onOccupantAffiliationUpdate()
@@ -365,46 +369,49 @@ func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, newAffiliation 
 	select {
 	case <-sc:
 		v.log.Info("The affiliation has been changed")
-		v.onOccupantAffiliationUpdateSuccess(o, previousAffiliation, newAffiliation)
+		doInUIThread(func() {
+			v.onOccupantAffiliationUpdateSuccess(o, previousAffiliation, newAffiliation)
+		})
 	case err := <-ec:
 		v.log.WithError(err).Error("An error occurred while updating the occupant affiliation")
-		v.onOccupantAffiliationUpdateError(o.Nickname, newAffiliation, err)
+		doInUIThread(func() {
+			v.onOccupantAffiliationUpdateError(o.Nickname, newAffiliation, err)
+		})
 	}
 }
 
+// onOccupantAffiliationUpdateSuccess MUST be called from the UI thread
 func (v *roomView) onOccupantAffiliationUpdateSuccess(o *muc.Occupant, previousAffiliation, affiliation data.Affiliation) {
-	doInUIThread(func() {
-		v.loadingViewOverlay.hide()
+	v.loadingViewOverlay.hide()
 
-		v.notifications.info(roomNotificationOptions{
-			message:   getAffiliationUpdateSuccessMessage(o.Nickname, previousAffiliation, affiliation),
-			closeable: true,
-		})
+	v.notifications.info(roomNotificationOptions{
+		message:   getAffiliationUpdateSuccessMessage(o.Nickname, previousAffiliation, affiliation),
+		closeable: true,
 	})
 }
 
+// onOccupantAffiliationUpdateError MUST be called from the UI thread
 func (v *roomView) onOccupantAffiliationUpdateError(nickname string, newAffiliation data.Affiliation, err error) {
 	messages := getAffiliationUpdateFailureMessage(nickname, newAffiliation, err)
 
-	doInUIThread(func() {
-		v.loadingViewOverlay.hide()
+	v.loadingViewOverlay.hide()
 
-		v.notifications.error(roomNotificationOptions{
-			message:   messages.notificationMessage,
-			closeable: true,
-		})
-
-		dr := createDialogErrorComponent(dialogErrorOptions{
-			title:        messages.errorDialogTitle,
-			header:       messages.errorDialogHeader,
-			message:      messages.errorDialogMessage,
-			parentWindow: v.window,
-		})
-
-		dr.show()
+	v.notifications.error(roomNotificationOptions{
+		message:   messages.notificationMessage,
+		closeable: true,
 	})
+
+	dr := createDialogErrorComponent(dialogErrorOptions{
+		title:        messages.errorDialogTitle,
+		header:       messages.errorDialogHeader,
+		message:      messages.errorDialogMessage,
+		parentWindow: v.window,
+	})
+
+	dr.show()
 }
 
+// tryUpdateOccupantRole MUST NOT be called from the UI thread
 func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, newRole data.Role, reason string) {
 	l := v.log.WithField("occupant", o.Nickname)
 
@@ -418,67 +425,70 @@ func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, newRole data.Role, rea
 	select {
 	case <-sc:
 		l.Info("The role has been changed")
-		v.onOccupantRoleUpdateSuccess(o.Nickname, previousRole, newRole)
+		doInUIThread(func() {
+			v.onOccupantRoleUpdateSuccess(o.Nickname, previousRole, newRole)
+		})
 	case err := <-ec:
 		l.WithError(err).Error("An error occurred while updating the occupant role")
-		v.onOccupantRoleUpdateError(o.Nickname, newRole)
+		doInUIThread(func() {
+			v.onOccupantRoleUpdateError(o.Nickname, newRole)
+		})
 	}
 }
 
+// onOccupantRoleUpdateSuccess MUST be called from the UI thread
 func (v *roomView) onOccupantRoleUpdateSuccess(nickname string, previousRole, newRole data.Role) {
-	doInUIThread(func() {
-		v.loadingViewOverlay.hide()
+	v.loadingViewOverlay.hide()
 
-		v.notifications.info(roomNotificationOptions{
-			message:   getRoleUpdateSuccessMessage(nickname, previousRole, newRole),
-			closeable: true,
-		})
+	v.notifications.info(roomNotificationOptions{
+		message:   getRoleUpdateSuccessMessage(nickname, previousRole, newRole),
+		closeable: true,
 	})
 }
 
+// onOccupantRoleUpdateError MUST be called from the UI thread
 func (v *roomView) onOccupantRoleUpdateError(nickname string, newRole data.Role) {
 	messages := getRoleUpdateFailureMessage(nickname, newRole)
 
-	doInUIThread(func() {
-		v.loadingViewOverlay.hide()
+	v.loadingViewOverlay.hide()
 
-		v.notifications.error(roomNotificationOptions{
-			message:   messages.notificationMessage,
-			closeable: true,
-		})
-
-		dr := createDialogErrorComponent(dialogErrorOptions{
-			title:        messages.errorDialogTitle,
-			header:       messages.errorDialogHeader,
-			message:      messages.errorDialogMessage,
-			parentWindow: v.window,
-		})
-
-		dr.show()
+	v.notifications.error(roomNotificationOptions{
+		message:   messages.notificationMessage,
+		closeable: true,
 	})
+
+	dr := createDialogErrorComponent(dialogErrorOptions{
+		title:        messages.errorDialogTitle,
+		header:       messages.errorDialogHeader,
+		message:      messages.errorDialogMessage,
+		parentWindow: v.window,
+	})
+
+	dr.show()
 }
 
+// updateSubjectRoom MUST be called from the UI thread
 func (v *roomView) updateSubjectRoom(s string, onSuccess func()) {
 	err := v.account.session.UpdateRoomSubject(v.roomID(), v.room.SelfOccupant().RealJid.String(), s)
 	if err != nil {
-		doInUIThread(func() {
-			v.notifications.error(roomNotificationOptions{
-				message:   i18n.Local("The room subject couldn't be updated."),
-				closeable: true,
-			})
+		v.notifications.error(roomNotificationOptions{
+			message:   i18n.Local("The room subject couldn't be updated."),
+			closeable: true,
 		})
 		return
 	}
-	doInUIThread(func() {
-		onSuccess()
 
-		v.notifications.info(roomNotificationOptions{
-			message:   i18n.Local("The room subject has been updated."),
-			closeable: true,
-		})
+	v.notifications.info(roomNotificationOptions{
+		message:   i18n.Local("The room subject has been updated."),
+		closeable: true,
 	})
+
+	if onSuccess != nil {
+		onSuccess()
+	}
 }
 
+// switchToLobbyView MUST be called from the UI thread
 func (v *roomView) switchToLobbyView() {
 	v.initRoomLobby()
 
@@ -489,26 +499,25 @@ func (v *roomView) switchToLobbyView() {
 	setFieldLabel(v.lobby.cancelButton, l)
 
 	v.warningsInfoBar.whenRequestedToClose(nil)
-
 	v.lobby.show()
 }
 
+// switchToMainView MUST be called from the UI thread
 func (v *roomView) switchToMainView() {
 	v.initRoomMain()
 
 	v.warningsInfoBar.whenRequestedToClose(v.warningsInfoBar.hide)
-
 	v.main.show()
 }
 
+// onJoined MUST be called from the UI thread
 func (v *roomView) onJoined() {
-	doInUIThread(func() {
-		v.lobby.destroy()
-		v.content.Remove(v.lobby.content)
-		v.switchToMainView()
-	})
+	v.lobby.destroy()
+	v.content.Remove(v.lobby.content)
+	v.switchToMainView()
 }
 
+// onJoinCancel MUST be called from the UI thread
 func (v *roomView) onJoinCancel() {
 	v.window.Destroy()
 

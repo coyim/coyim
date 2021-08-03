@@ -35,9 +35,7 @@ func (rvd *roomViewData) backToPreviousStep() func() {
 type roomView struct {
 	u       *gtkUI
 	account *account
-	builder *builder
-
-	room *muc.Room
+	room    *muc.Room
 
 	cancel chan bool
 
@@ -103,11 +101,10 @@ func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
 }
 
 func (v *roomView) initBuilderAndSignals() {
-	v.builder = newBuilder("MUCRoomWindow")
+	builder := newBuilder("MUCRoomWindow")
+	panicOnDevError(builder.bindObjects(v))
 
-	panicOnDevError(v.builder.bindObjects(v))
-
-	v.builder.ConnectSignals(map[string]interface{}{
+	builder.ConnectSignals(map[string]interface{}{
 		"on_destroy_window": v.onDestroyWindow,
 	})
 }

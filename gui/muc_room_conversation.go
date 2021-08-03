@@ -194,16 +194,16 @@ func (c *roomViewConversation) selfOccupantDisconnectedEvent() {
 
 func (c *roomViewConversation) occupantModifiedEvent(accountAddress jid.Any, affiliation data.Affiliation) {
 	doInUIThread(func() {
-		message := i18n.Localf("The position of $nickname{%s} has been removed", accountAddress.String())
+		message := i18n.Localf("The position of $nickname{%s} has been removed.", accountAddress.String())
 		switch {
 		case affiliation.IsOwner():
-			message = i18n.Localf("$nickname{%s} has been added as $affiliation{an owner}", accountAddress.String())
+			message = i18n.Localf("$nickname{%s} has been added as $affiliation{an owner}.", accountAddress.String())
 		case affiliation.IsAdmin():
-			message = i18n.Localf("$nickname{%s} has been added as $affiliation{an administrator}", accountAddress.String())
+			message = i18n.Localf("$nickname{%s} has been added as $affiliation{an administrator}.", accountAddress.String())
 		case affiliation.IsMember():
-			message = i18n.Localf("$nickname{%s} has been added as $affiliation{a member}", accountAddress.String())
+			message = i18n.Localf("$nickname{%s} has been added as $affiliation{a member}.", accountAddress.String())
 		case affiliation.IsBanned():
-			message = i18n.Localf("$nickname{%s} has been added to the ban list", accountAddress.String())
+			message = i18n.Localf("$nickname{%s} has been added to the ban list.", accountAddress.String())
 		}
 		c.displayFormattedMessageWithTimestamp(message, conversationTagInfo)
 	})

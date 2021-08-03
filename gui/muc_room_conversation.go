@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gdki"
@@ -132,6 +133,8 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.selfOccupantRoleEvent(t.selfRoleUpdate)
 		case selfOccupantDisconnectedEvent:
 			c.selfOccupantDisconnectedEvent()
+		case accountAffiliationUpdated:
+			c.occupantModifiedEvent(t.accountAddress, t.affiliation)
 		}
 	})
 }
@@ -186,6 +189,23 @@ func (c *roomViewConversation) selfOccupantDisconnectedEvent() {
 	doInUIThread(func() {
 		c.updateNotificationMessage(messageForSelfOccupantDisconnected())
 		c.disableSendCapabilities()
+	})
+}
+
+func (c *roomViewConversation) occupantModifiedEvent(accountAddress jid.Any, affiliation data.Affiliation) {
+	doInUIThread(func() {
+		message := i18n.Localf("The position of $nickname{%s} has been removed", accountAddress.String())
+		switch {
+		case affiliation.IsOwner():
+			message = i18n.Localf("$nickname{%s} has been added as $affiliation{an owner}", accountAddress.String())
+		case affiliation.IsAdmin():
+			message = i18n.Localf("$nickname{%s} has been added as $affiliation{an administrator}", accountAddress.String())
+		case affiliation.IsMember():
+			message = i18n.Localf("$nickname{%s} has been added as $affiliation{a member}", accountAddress.String())
+		case affiliation.IsBanned():
+			message = i18n.Localf("$nickname{%s} has been added to the ban list", accountAddress.String())
+		}
+		c.displayFormattedMessageWithTimestamp(message, conversationTagInfo)
 	})
 }
 

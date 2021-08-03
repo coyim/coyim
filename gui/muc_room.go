@@ -110,7 +110,7 @@ func (v *roomView) initBuilderAndSignals() {
 }
 
 func (v *roomView) initDefaults() {
-	v.setTitle(i18n.Localf("%s [%s]", v.roomID(), v.account.Account()))
+	v.setTitle(i18n.Localf("%[1]s [%[2]s]", v.roomID(), v.account.Account()))
 
 	mucStyles.setRoomWindowStyle(v.window)
 	mucStyles.setDisableRoomStyle(v.content)

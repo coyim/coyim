@@ -281,6 +281,7 @@ func (v *roomView) show() {
 	v.window.Show()
 }
 
+// onLeaveRoom MUST be called from the UI thread
 func (v *roomView) onLeaveRoom() {
 	v.tryLeaveRoom()
 }
@@ -291,7 +292,7 @@ func (v *roomView) tryLeaveRoom() {
 		doInUIThread(v.window.Destroy)
 	}
 
-	onFinal := func(err error) {
+	onError := func(err error) {
 		v.log.WithError(err).Error("An error occurred when trying to leave the room")
 	}
 
@@ -299,7 +300,7 @@ func (v *roomView) tryLeaveRoom() {
 		v.roomID(),
 		v.room.SelfOccupantNickname(),
 		onSuccess,
-		onFinal,
+		onError,
 		nil,
 	)
 }

@@ -240,8 +240,11 @@ func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 	}
 
 	switch {
-	case stanza.Type == "groupchat", stanza.MUCUser != nil:
+	case stanza.Type == "groupchat":
 		s.muc.receiveClientMessage(stanza)
+
+	case stanza.MUCUser != nil:
+		s.muc.handleMUCUserMessage(stanza)
 
 	case stanza.Type == "error":
 		// TODO: investigate which errors are NOT recoverable, and return false

@@ -1377,9 +1377,13 @@ func (s *SessionSuite) Test_session_receivedClientMessage_MUCUserExtension(c *C)
 	sess.muc = newMUCManager(ll, sess.Conn, nil)
 
 	cm := &data.ClientMessage{
-		Body:    "",
-		From:    "testroom@foo.org",
-		MUCUser: &data.MUCUser{},
+		Body: "",
+		From: "testroom@foo.org",
+		MUCUser: &data.MUCUser{
+			Item: &data.MUCUserItem{
+				Jid: "newJid@bla.org/abc",
+			},
+		},
 	}
 
 	res := sess.receivedClientMessage(cm)
@@ -1390,12 +1394,10 @@ func (s *SessionSuite) Test_session_receivedClientMessage_MUCUserExtension(c *C)
 	c.Assert(hook.Entries[0].Message, Equals, "receivedClientMessage()")
 	c.Assert(hook.Entries[0].Data["stanza"], Not(Equals), "")
 
-	c.Assert(hook2.Entries, HasLen, 2)
-	c.Assert(hook2.Entries[0].Level, Equals, log.DebugLevel)
-	c.Assert(hook2.Entries[0].Message, Equals, "handleMUCReceivedClientMessage()")
-	c.Assert(hook2.Entries[1].Level, Equals, log.DebugLevel)
-	c.Assert(hook2.Entries[1].Message, Equals, "A MUC user message has been received")
-	c.Assert(fmt.Sprintf("%s", hook2.Entries[1].Data["room"]), Equals, "testroom@foo.org")
+	c.Assert(hook2.Entries, HasLen, 1)
+	c.Assert(hook2.Entries[0].Level, Equals, log.ErrorLevel)
+	c.Assert(hook2.Entries[0].Message, Equals, "Trying to publish an event in a room that does not exist")
+	c.Assert(fmt.Sprintf("%s", hook2.Entries[0].Data["room"]), Equals, "testroom@foo.org")
 }
 
 func (s *SessionSuite) Test_session_receivedClientMessage_works(c *C) {

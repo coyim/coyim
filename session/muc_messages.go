@@ -3,6 +3,7 @@ package session
 import (
 	"time"
 
+	"github.com/coyim/coyim/session/muc/data"
 	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
@@ -18,9 +19,6 @@ func (m *mucManager) receiveClientMessage(stanza *xmppData.ClientMessage) {
 	}
 
 	switch {
-	case isUserMessagePresence(stanza):
-		// TODO: Check the content of the message to determine its purpose.
-		m.log.WithField("room", stanza.From).Debug("A MUC user message has been received")
 	case isDelayedMessage(stanza):
 		m.handleMessageReceived(stanza, m.appendHistoryMessage)
 	case isLiveMessage(stanza):
@@ -76,6 +74,21 @@ func (m *mucManager) handleMessageReceived(stanza *xmppData.ClientMessage, h fun
 	h(roomID, nickname, stanza.Body, retrieveMessageTime(stanza))
 }
 
+func (m *mucManager) handleMUCUserMessage(stanza *xmppData.ClientMessage) {
+	roomID := m.retrieveRoomID(stanza.From, "handleMUCUserMessage")
+	m.accountAffiliationUpdated(roomID, jid.Parse(stanza.MUCUser.Item.Jid), affiliationFromMUCUserItem(stanza.MUCUser.Item))
+}
+
+func affiliationFromMUCUserItem(item *xmppData.MUCUserItem) data.Affiliation {
+	affiliation := data.AffiliationNone
+	if item != nil {
+		if item.Affiliation != "" {
+			affiliation = item.Affiliation
+		}
+	}
+	return affiliationFromString(affiliation)
+}
+
 func bodyHasContent(stanza *xmppData.ClientMessage) bool {
 	return stanza.Body != ""
 }
@@ -94,10 +107,6 @@ func hasSubject(stanza *xmppData.ClientMessage) bool {
 
 func hasMUCUserExtension(stanza *xmppData.ClientMessage) bool {
 	return stanza.MUCUser != nil
-}
-
-func isUserMessagePresence(stanza *xmppData.ClientMessage) bool {
-	return hasMUCUserExtension(stanza)
 }
 
 func getNicknameFromStanza(stanza *xmppData.ClientMessage) string {

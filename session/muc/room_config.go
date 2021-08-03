@@ -212,9 +212,9 @@ func (rcf *RoomConfigForm) GetRoomOccupantsToUpdate() RoomOccupantItemList {
 	defer rcf.occupantsMutex.Unlock()
 
 	roomAffiliations := RoomOccupantItemList{}
-	roomAffiliations = append(roomAffiliations, rcf.owners.retrieveOccupantsToUpdate()...)
-	roomAffiliations = append(roomAffiliations, rcf.admins.retrieveOccupantsToUpdate()...)
-	roomAffiliations = append(roomAffiliations, rcf.banned.retrieveOccupantsToUpdate()...)
+	roomAffiliations = append(roomAffiliations, rcf.owners.RetrieveOccupantsToUpdate()...)
+	roomAffiliations = append(roomAffiliations, rcf.admins.RetrieveOccupantsToUpdate()...)
+	roomAffiliations = append(roomAffiliations, rcf.banned.RetrieveOccupantsToUpdate()...)
 	roomAffiliations = append(roomAffiliations, rcf.none...)
 	return roomAffiliations
 }

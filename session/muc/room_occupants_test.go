@@ -49,5 +49,5 @@ func (s *MucRoomConfigSuite) Test_RoomConfigForm_retrieveOccupantsToUpdate(c *C)
 			MustBeUpdated: true,
 		},
 	}
-	c.Assert(occupantsList.retrieveOccupantsToUpdate(), HasLen, 1)
+	c.Assert(occupantsList.RetrieveOccupantsToUpdate(), HasLen, 1)
 }

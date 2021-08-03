@@ -31,8 +31,8 @@ func (l RoomOccupantItemList) IncludesJid(id jid.Any) bool {
 	return false
 }
 
-// retrieveOccupantsToUpdate returns a list of occupants to be updated
-func (l RoomOccupantItemList) retrieveOccupantsToUpdate() RoomOccupantItemList {
+// RetrieveOccupantsToUpdate returns a list of occupants to be updated
+func (l RoomOccupantItemList) RetrieveOccupantsToUpdate() RoomOccupantItemList {
 	extracted := RoomOccupantItemList{}
 	for _, o := range l {
 		if o.MustBeUpdated {

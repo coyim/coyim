@@ -70,7 +70,8 @@ func (rpv *roomPositionsView) updateRemovedOccupantList(list muc.RoomOccupantIte
 }
 
 func (rpv *roomPositionsView) positionsToUpdate() muc.RoomOccupantItemList {
-	return append(rpv.banned, rpv.none...)
+	occupantsToUpdate := append(muc.RoomOccupantItemList{}, rpv.banned.RetrieveOccupantsToUpdate()...)
+	return append(occupantsToUpdate, rpv.none...)
 }
 
 // onApply MUST be called from the UI thread

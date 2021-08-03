@@ -110,7 +110,7 @@ func (v *roomView) initBuilderAndSignals() {
 }
 
 func (v *roomView) initDefaults() {
-	v.setTitle(i18n.Localf("%[1]s [%[2]s]", v.roomID(), v.account.Account()))
+	v.window.SetTitle(i18n.Localf("%[1]s [%[2]s]", v.roomID(), v.account.Account()))
 
 	mucStyles.setRoomWindowStyle(v.window)
 	mucStyles.setDisableRoomStyle(v.content)
@@ -258,10 +258,6 @@ func (v *roomView) cancelActiveRequests() {
 		v.cancel <- true
 		v.cancel = nil
 	}
-}
-
-func (v *roomView) setTitle(t string) {
-	v.window.SetTitle(t)
 }
 
 func (v *roomView) isOpen() bool {

@@ -89,6 +89,8 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 		v.publishSelfOccupantConnectedEvent()
 	case events.MUCSelfOccupantDisconnected:
 		v.publishSelfOccupantDisconnectedEvent()
+	case events.MUCAccountAffiliationUpdated:
+		v.publishAccountAffiliationUpdated(t.AccountAddress, t.Affiliation)
 	default:
 		v.log.WithField("event", t).Warn("Unsupported room event received")
 	}

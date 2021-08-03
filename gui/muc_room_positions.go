@@ -61,7 +61,7 @@ func (rpv *roomPositionsView) initDefaults() {
 
 // setBanList MUST be called from the UI thread
 func (rpv *roomPositionsView) setBanList(list muc.RoomOccupantItemList) {
-	rpv.banned = append(rpv.banned, list...)
+	rpv.banned = list
 }
 
 // updateRemovedOccupantList MUST be called from the UI thread

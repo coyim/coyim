@@ -282,33 +282,24 @@ func (v *roomView) show() {
 }
 
 func (v *roomView) onLeaveRoom() {
-	// TODO: Implement the logic behind leaving this room and
-	// how the view will interact with the user during this process
-	v.tryLeaveRoom(nil, nil)
+	v.tryLeaveRoom()
 }
 
-// tryLeaveRoom MUST be called from the UI thread.
-// Please note that "onSuccess" and "onError" will be called from another thread.
-func (v *roomView) tryLeaveRoom(onSuccess func(), onError func(error)) {
-	onSuccessFinal := func() {
+// tryLeaveRoom MUST be called from the UI thread
+func (v *roomView) tryLeaveRoom() {
+	onSuccess := func() {
 		doInUIThread(v.window.Destroy)
-		if onSuccess != nil {
-			onSuccess()
-		}
 	}
 
-	onErrorFinal := func(err error) {
+	onFinal := func(err error) {
 		v.log.WithError(err).Error("An error occurred when trying to leave the room")
-		if onError != nil {
-			onError(err)
-		}
 	}
 
 	go v.account.leaveRoom(
 		v.roomID(),
 		v.room.SelfOccupantNickname(),
-		onSuccessFinal,
-		onErrorFinal,
+		onSuccess,
+		onFinal,
 		nil,
 	)
 }
@@ -323,7 +314,6 @@ func (v *roomView) publishDestroyEvent(reason string, alternativeRoomID jid.Bare
 }
 
 // tryDestroyRoom MUST be called from the UI thread, but please, note that
-// the "onSuccess" and "onError" callbacks will be called from another thread
 func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, password string) {
 	v.loadingViewOverlay.onRoomDestroy()
 

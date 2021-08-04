@@ -2,7 +2,7 @@
   <object class="GtkDialog" id="create-room-dialog">
     <property name="width_request">580</property>
     <property name="title" translatable="yes">Create chat room</property>
-    <property name="resizable">False</property>    
+    <property name="resizable">False</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
     <property name="gravity">north-east</property>
@@ -21,6 +21,17 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="notifications">
+            <property name="visible">True</property>
+            <property name="orientation">vertical</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
             <property name="position">0</property>
           </packing>
         </child>

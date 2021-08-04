@@ -33,12 +33,9 @@ func (a *account) removeRoomView(roomID jid.Bare) {
 	a.mucRoomsLock.Lock()
 	defer a.mucRoomsLock.Unlock()
 
-	_, exists := a.mucRooms[roomID.String()]
-	if !exists {
-		return
+	if _, exists := a.mucRooms[roomID.String()]; exists {
+		delete(a.mucRooms, roomID.String())
 	}
-
-	delete(a.mucRooms, roomID.String())
 }
 
 func (a *account) newRoomModel(roomID jid.Bare) *muc.Room {

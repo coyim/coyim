@@ -28,21 +28,20 @@ type mucCreateRoomViewSuccess struct {
 func (v *mucCreateRoomView) newCreateRoomSuccess() *mucCreateRoomViewSuccess {
 	s := &mucCreateRoomViewSuccess{}
 
-	s.initBuilder(v)
-
-	return s
-}
-
-func (s *mucCreateRoomViewSuccess) initBuilder(v *mucCreateRoomView) {
 	builder := newBuilder("MUCCreateRoomSuccess")
 	panicOnDevError(builder.bindObjects(s))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_createRoom_clicked": v.showCreateForm,
+		"on_createRoom_clicked": func() {
+			v.notifications.clearErrors()
+			v.showCreateForm()
+		},
 		"on_joinRoom_clicked": func() {
 			v.joinRoom(s.ca, s.roomID, s.joinRoomData)
 		},
 	})
+
+	return s
 }
 
 func (s *mucCreateRoomViewSuccess) updateInfo(ca *account, roomID jid.Bare) {

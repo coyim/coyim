@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
@@ -33,7 +34,7 @@ func (u *gtkUI) joinRoomWithData(a *account, roomID jid.Bare, d roomViewDataProv
 	v := u.getOrCreateRoomView(a, roomID)
 
 	if v.isOpen() {
-		v.present()
+		d.notifyError(i18n.Local("You are already in the room."))
 		return
 	}
 
@@ -49,5 +50,6 @@ func (u *gtkUI) joinRoomWithData(a *account, roomID jid.Bare, d roomViewDataProv
 		v.switchToLobbyView()
 	}
 
+	d.doWhenNoErrors()
 	v.show()
 }

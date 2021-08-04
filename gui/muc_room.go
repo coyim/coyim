@@ -279,12 +279,6 @@ func (v *roomView) isSelfOccupantInTheRoom() bool {
 	return v.room.IsSelfOccupantInTheRoom()
 }
 
-func (v *roomView) present() {
-	if v.isOpen() {
-		v.window.Present()
-	}
-}
-
 func (v *roomView) show() {
 	v.opened = true
 	v.window.Show()

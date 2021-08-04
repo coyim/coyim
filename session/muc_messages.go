@@ -81,10 +81,8 @@ func (m *mucManager) handleMUCUserMessage(stanza *xmppData.ClientMessage) {
 
 func affiliationFromMUCUserItem(item *xmppData.MUCUserItem) data.Affiliation {
 	affiliation := data.AffiliationNone
-	if item != nil {
-		if item.Affiliation != "" {
-			affiliation = item.Affiliation
-		}
+	if item != nil && item.Affiliation != "" {
+		affiliation = item.Affiliation
 	}
 	return affiliationFromString(affiliation)
 }

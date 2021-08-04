@@ -6,11 +6,14 @@ import (
 
 // getOrCreateRoomView MUST be called from the UI thread
 func (u *gtkUI) getOrCreateRoomView(a *account, roomID jid.Bare) *roomView {
-	v, exists := a.getRoomView(roomID)
-	if !exists {
-		v = newRoomView(u, a, roomID)
-		a.addRoomView(v)
+	if v, ok := a.getRoomView(roomID); ok {
+		return v
 	}
+
+	room := a.session.NewRoom(roomID)
+	v := u.newRoomView(a, room)
+	a.addRoomView(v)
+
 	return v
 }
 

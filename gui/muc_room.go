@@ -67,16 +67,14 @@ type roomView struct {
 	log coylog.Logger
 }
 
-func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
+func (u *gtkUI) newRoomView(a *account, room *muc.Room) *roomView {
 	view := &roomView{
 		u:                       u,
 		account:                 a,
+		room:                    room,
 		mustNotifyDisconnection: true,
+		log:                     a.log.WithField("room", room.ID),
 	}
-
-	// TODO: We already know this need to change
-	view.room = a.newRoomModel(roomID)
-	view.log = a.log.WithField("room", roomID)
 
 	view.initBuilderAndSignals()
 	view.initSubscribers()

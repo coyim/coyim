@@ -6,7 +6,6 @@ import (
 	"github.com/coyim/coyim/coylog"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
@@ -36,10 +35,6 @@ func (a *account) removeRoomView(roomID jid.Bare) {
 	if _, exists := a.mucRooms[roomID.String()]; exists {
 		delete(a.mucRooms, roomID.String())
 	}
-}
-
-func (a *account) newRoomModel(roomID jid.Bare) *muc.Room {
-	return a.session.NewRoom(roomID)
 }
 
 type roomOpCallback func() (<-chan bool, <-chan error)

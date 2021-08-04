@@ -155,7 +155,6 @@ func (v *mucCreateRoomView) instantiatePersistentRoom(ca *account, roomID jid.Ba
 
 // joinRoom MUST be called from the UI thread
 func (v *mucCreateRoomView) joinRoom(ca *account, roomID jid.Bare, d roomViewDataProvider) {
-	v.dialog.Destroy()
 	v.u.joinRoomWithData(ca, roomID, d)
 }
 
@@ -237,7 +236,6 @@ func (crd *mucCreateRoomData) notifyError(err string) {
 
 // doWhenNoErrors implements the "roomViewDataProvider" interface
 func (crd *mucCreateRoomData) doWhenNoErrors() {
-	// TODO: Close the current windows depending on the current scenario.
 	if crd.onNoErrors != nil {
 		crd.onNoErrors()
 	}

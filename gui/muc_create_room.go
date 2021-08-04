@@ -197,12 +197,14 @@ func (v *mucCreateRoomView) log(ca *account, roomID jid.Bare) coylog.Logger {
 }
 
 type mucCreateRoomData struct {
-	ca           *account
-	roomName     jid.Local
-	where        jid.Domain
-	password     string
-	autoJoin     bool
-	customConfig bool
+	ca            *account
+	roomName      jid.Local
+	where         jid.Domain
+	password      string
+	autoJoin      bool
+	customConfig  bool
+	onNotifyError func(string) // onNotifyError WILL be called from the UI thread
+	onNoErrors    func()       // onNoErrors WILL be called from the UI thread
 }
 
 // passwordProvider implements the "roomViewDataProvider" interface
@@ -220,11 +222,17 @@ func (crd *mucCreateRoomData) notifyError(err string) {
 	// TODO: we need to check the current scenario to show the error notification.
 	// 	1. Do we are in the create instant room scenario?
 	// 	2. Do we are in the create a configured room scenario?
+	if crd.onNotifyError != nil {
+		crd.onNotifyError(err)
+	}
 }
 
 // doWhenNoErrors implements the "roomViewDataProvider" interface
 func (crd *mucCreateRoomData) doWhenNoErrors() {
 	// TODO: Close the current windows depending on the current scenario.
+	if crd.onNoErrors != nil {
+		crd.onNoErrors()
+	}
 }
 
 func (u *gtkUI) mucShowCreateRoomWithData(d *mucCreateRoomData, onViewCreated func(*mucCreateRoomView)) {

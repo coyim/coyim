@@ -54,7 +54,9 @@ func (v *mucCreateRoomView) createReservedRoom(ca *account, roomID jid.Bare, err
 
 func (v *mucCreateRoomView) createInstantRoom(ca *account, roomID jid.Bare, errHandler func(error)) {
 	d := &mucCreateRoomData{
-		autoJoin: v.autoJoin,
+		autoJoin:      v.autoJoin,
+		onNotifyError: v.notifications.notifyOnError,
+		onNoErrors:    v.dialog.Destroy,
 	}
 
 	onSuccess := func() {

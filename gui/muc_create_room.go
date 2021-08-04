@@ -205,10 +205,6 @@ type mucCreateRoomData struct {
 	customConfig bool
 }
 
-func newCreateRoomData() *mucCreateRoomData {
-	return &mucCreateRoomData{}
-}
-
 // passwordProvider implements the "roomViewDataProvider" interface
 func (crd *mucCreateRoomData) passwordProvider() string {
 	return crd.password

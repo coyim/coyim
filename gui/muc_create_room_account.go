@@ -53,8 +53,9 @@ func (v *mucCreateRoomView) createReservedRoom(ca *account, roomID jid.Bare, err
 }
 
 func (v *mucCreateRoomView) createInstantRoom(ca *account, roomID jid.Bare, errHandler func(error)) {
-	d := newCreateRoomData()
-	d.autoJoin = v.autoJoin
+	d := &mucCreateRoomData{
+		autoJoin: v.autoJoin,
+	}
 
 	onSuccess := func() {
 		v.onCreateRoomFinished(ca, roomID, d, func() {
@@ -92,16 +93,14 @@ func (v *mucCreateRoomView) checkIfRoomExists(ca *account, roomID jid.Bare, resu
 }
 
 func (v *mucCreateRoomView) createRoomDataBasedOnConfigForm(ca *account, roomID jid.Bare, cf *muc.RoomConfigForm) *mucCreateRoomData {
-	crd := newCreateRoomData()
-
-	crd.ca = ca
-	crd.roomName = roomID.Local()
-	crd.where = roomID.Host()
-	crd.password = cf.GetConfiguredPassword()
-	crd.autoJoin = v.autoJoin
-	crd.customConfig = true
-
-	return crd
+	return &mucCreateRoomData{
+		ca:           ca,
+		roomName:     roomID.Local(),
+		where:        roomID.Host(),
+		password:     cf.GetConfiguredPassword(),
+		autoJoin:     v.autoJoin,
+		customConfig: true,
+	}
 }
 
 // onReserveRoomFinished MUST be called from the UI thread

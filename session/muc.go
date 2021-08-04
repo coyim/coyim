@@ -40,22 +40,34 @@ func newMUCManager(log coylog.Logger, conn func() xi.Conn, publishEvent func(ev 
 	return m
 }
 
+// GetRoom will look up in the room manager for the room
+// with the given ID and returns it
+func (s *session) GetRoom(roomID jid.Bare) (*muc.Room, bool) {
+	return s.muc.getRoom(roomID)
+}
+
 // NewRoom creates a new muc room and add it to the room manager
 func (s *session) NewRoom(roomID jid.Bare) *muc.Room {
 	return s.muc.newRoom(roomID)
 }
 
-func (m *mucManager) newRoom(roomID jid.Bare) *muc.Room {
+func (m *mucManager) getRoom(roomID jid.Bare) (*muc.Room, bool) {
 	m.roomLock.Lock()
 	defer m.roomLock.Unlock()
 
-	room, exists := m.roomManager.GetRoom(roomID)
+	room, ok := m.roomManager.GetRoom(roomID)
+	return room, ok
+}
 
-	if exists {
+func (m *mucManager) newRoom(roomID jid.Bare) *muc.Room {
+	if room, ok := m.getRoom(roomID); ok {
 		return room
 	}
 
-	room = muc.NewRoom(roomID)
+	m.roomLock.Lock()
+	defer m.roomLock.Unlock()
+
+	room := muc.NewRoom(roomID)
 	m.roomManager.AddRoom(room)
 
 	return room

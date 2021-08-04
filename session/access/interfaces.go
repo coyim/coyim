@@ -71,6 +71,7 @@ type Rooms interface {
 	DestroyRoom(room jid.Bare, reason string, alternativeRoom jid.Bare, password string) (<-chan bool, <-chan error)
 	UpdateOccupantAffiliation(roomID jid.Bare, occupantNickname string, occupantRealJID jid.Full, affiliation mdata.Affiliation, reason string) (<-chan bool, <-chan error)
 	UpdateOccupantRole(roomID jid.Bare, occupantNickname string, role mdata.Role, reason string) (<-chan bool, <-chan error)
+	GetRoom(jid.Bare) (*muc.Room, bool)
 	NewRoom(jid.Bare) *muc.Room
 	SendMUCMessage(to, from, body string) error
 	UpdateRoomSubject(roomID jid.Bare, from, subject string) error

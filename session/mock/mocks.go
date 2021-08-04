@@ -291,6 +291,11 @@ func (*SessionMock) LeaveRoom(room jid.Bare, nickname string) (<-chan bool, <-ch
 	return nil, nil
 }
 
+// GetRoom is the implementation for session interface
+func (*SessionMock) GetRoom(jid.Bare) (*muc.Room, bool) {
+	return nil, false
+}
+
 // NewRoom is the implementation for session interface
 func (*SessionMock) NewRoom(jid.Bare) *muc.Room {
 	return nil

@@ -209,17 +209,27 @@ func newCreateRoomData() *mucCreateRoomData {
 	return &mucCreateRoomData{}
 }
 
+// passwordProvider implements the "roomViewDataProvider" interface
 func (crd *mucCreateRoomData) passwordProvider() string {
 	return crd.password
 }
 
+// backToPreviousStep implements the "roomViewDataProvider" interface
 func (crd *mucCreateRoomData) backToPreviousStep() func() {
 	return nil
 }
 
-func (crd *mucCreateRoomData) notifyError(err string) {}
+// notifyError implements the "roomViewDataProvider" interface
+func (crd *mucCreateRoomData) notifyError(err string) {
+	// TODO: we need to check the current scenario to show the error notification.
+	// 	1. Do we are in the create instant room scenario?
+	// 	2. Do we are in the create a configured room scenario?
+}
 
-func (crd *mucCreateRoomData) doWhenNoErrors() {}
+// doWhenNoErrors implements the "roomViewDataProvider" interface
+func (crd *mucCreateRoomData) doWhenNoErrors() {
+	// TODO: Close the current windows depending on the current scenario.
+}
 
 func (u *gtkUI) mucShowCreateRoomWithData(d *mucCreateRoomData, onViewCreated func(*mucCreateRoomView)) {
 	v := newCreateMUCRoomView(u, d)

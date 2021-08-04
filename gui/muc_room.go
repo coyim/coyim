@@ -11,33 +11,37 @@ import (
 )
 
 type roomViewDataProvider interface {
-	passwordProvider() string
-	backToPreviousStep() func()
-	notifyError(string) // notifyError WILL be called from the UI thread
-	doWhenNoErrors()    // doWhenNoErrors WILL be called from the UI thread
+	passwordProvider() string   // passwordProvider WILL to be called from any thread
+	backToPreviousStep() func() // backToPreviousStep WILL be called from the UI thread
+	notifyError(string)         // notifyError WILL be called from the UI thread
+	doWhenNoErrors()            // doWhenNoErrors WILL be called from the UI thread
 }
 
 type roomViewData struct {
 	passsword            string
-	onBackToPreviousStep func()
-	onNotifyError        func(string)
-	onNoErrors           func()
+	onBackToPreviousStep func()       // onBackToPreviousStep WILL be called from the UI thread
+	onNotifyError        func(string) // onNotifyError WILL be called from the UI thread
+	onNoErrors           func()       // onNoErrors WILL be called from the UI thread
 }
 
+// passwordProvider implements the "roomViewDataProvider" interface
 func (rvd *roomViewData) passwordProvider() string {
 	return rvd.passsword
 }
 
+// backToPreviousStep implements the "roomViewDataProvider" interface
 func (rvd *roomViewData) backToPreviousStep() func() {
 	return rvd.onBackToPreviousStep
 }
 
+// notifyError implements the "roomViewDataProvider" interface
 func (rvd *roomViewData) notifyError(err string) {
 	if rvd.onNotifyError != nil {
 		rvd.onNotifyError(err)
 	}
 }
 
+// doWhenNoErrors implements the "roomViewDataProvider" interface
 func (rvd *roomViewData) doWhenNoErrors() {
 	if rvd.onNoErrors != nil {
 		rvd.onNoErrors()

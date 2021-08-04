@@ -142,13 +142,6 @@ func (rc *roomConfigAssistant) applyLabelBasedOnCurrentScenario() string {
 	return i18n.Local("Update Configuration")
 }
 
-// hideBottomActionArea MUST be called from the UI thread
-func (rc *roomConfigAssistant) hideBottomActionArea() {
-	if actionArea, ok := getBottomActionAreaFromAssistant(rc.assistant); ok {
-		actionArea.Hide()
-	}
-}
-
 // onPageChanged MUST be called from the UI thread
 func (rc *roomConfigAssistant) onPageChanged() {
 	rc.updateAssistantPage(mucRoomConfigPageID(rc.assistant.GetCurrentPage()))
@@ -179,7 +172,7 @@ func (rc *roomConfigAssistant) updateContentPage(pageID mucRoomConfigPageID) {
 	rc.currentPage.refresh()
 
 	rc.refreshButtonLabels()
-	rc.hideBottomActionArea()
+	rc.assistant.HideBottomActionArea()
 }
 
 // enableAssistant MUST be called from the UI thread

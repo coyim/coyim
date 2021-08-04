@@ -239,6 +239,7 @@ func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 		s.processEncryption(peer, stanza.Encryption)
 	}
 
+	// TODO: it feels iffy that we have error and groupchat special handled here
 	switch {
 	case stanza.Type == "groupchat":
 		s.muc.receiveClientMessage(stanza)

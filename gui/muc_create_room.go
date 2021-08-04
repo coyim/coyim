@@ -26,11 +26,13 @@ type mucCreateRoomView struct {
 	configureRoom bool
 	cancel        chan bool
 
-	dialog    gtki.Dialog `gtk-widget:"create-room-dialog"`
-	container gtki.Box    `gtk-widget:"create-room-content"`
+	dialog            gtki.Dialog `gtk-widget:"create-room-dialog"`
+	container         gtki.Box    `gtk-widget:"create-room-content"`
+	notificationsArea gtki.Box    `gtk-widget:"notifications"`
 
-	form    *mucCreateRoomViewForm
-	success *mucCreateRoomViewSuccess
+	form          *mucCreateRoomViewForm
+	success       *mucCreateRoomViewSuccess
+	notifications *notificationsComponent
 
 	onCreateOptionChange *callbacksSet
 	onDestroy            *callbacksSet
@@ -48,6 +50,7 @@ func newCreateMUCRoomView(u *gtkUI, d *mucCreateRoomData) *mucCreateRoomView {
 	v.initBuilder()
 	v.initCreateRoomForm(d)
 	v.initCreateRoomSuccess(d)
+	v.initNotificationsComponent()
 
 	return v
 }
@@ -59,6 +62,11 @@ func (v *mucCreateRoomView) initBuilder() {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_close_window": v.onCloseWindow,
 	})
+}
+
+func (v *mucCreateRoomView) initNotificationsComponent() {
+	v.notifications = v.u.newNotificationsComponent()
+	v.notificationsArea.Add(v.notifications.box)
 }
 
 // onCloseWindow MUST be called from the UI thread

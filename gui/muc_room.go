@@ -13,11 +13,15 @@ import (
 type roomViewDataProvider interface {
 	passwordProvider() string
 	backToPreviousStep() func()
+	notifyError(string) // notifyError WILL be called from the UI thread
+	doWhenNoErrors()    // doWhenNoErrors WILL be called from the UI thread
 }
 
 type roomViewData struct {
 	passsword            string
 	onBackToPreviousStep func()
+	onNotifyError        func(string)
+	onNoErrors           func()
 }
 
 func (rvd *roomViewData) passwordProvider() string {
@@ -26,6 +30,18 @@ func (rvd *roomViewData) passwordProvider() string {
 
 func (rvd *roomViewData) backToPreviousStep() func() {
 	return rvd.onBackToPreviousStep
+}
+
+func (rvd *roomViewData) notifyError(err string) {
+	if rvd.onNotifyError != nil {
+		rvd.onNotifyError(err)
+	}
+}
+
+func (rvd *roomViewData) doWhenNoErrors() {
+	if rvd.onNoErrors != nil {
+		rvd.onNoErrors()
+	}
 }
 
 type roomView struct {

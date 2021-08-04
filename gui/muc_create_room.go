@@ -217,6 +217,10 @@ func (crd *mucCreateRoomData) backToPreviousStep() func() {
 	return nil
 }
 
+func (crd *mucCreateRoomData) notifyError(err string) {}
+
+func (crd *mucCreateRoomData) doWhenNoErrors() {}
+
 func (u *gtkUI) mucShowCreateRoomWithData(d *mucCreateRoomData, onViewCreated func(*mucCreateRoomView)) {
 	v := newCreateMUCRoomView(u, d)
 	u.connectShortcutsChildWindow(v.dialog)

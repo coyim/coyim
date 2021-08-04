@@ -20,10 +20,6 @@ type roomViewData struct {
 	onBackToPreviousStep func()
 }
 
-func newRoomViewData() *roomViewData {
-	return &roomViewData{}
-}
-
 func (rvd *roomViewData) passwordProvider() string {
 	return rvd.passsword
 }

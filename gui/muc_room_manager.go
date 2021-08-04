@@ -37,6 +37,10 @@ func (u *gtkUI) joinRoomWithData(a *account, roomID jid.Bare, d roomViewDataProv
 		return
 	}
 
+	if d == nil {
+		d = &roomViewData{}
+	}
+
 	if v.isSelfOccupantInTheRoom() {
 		v.switchToMainView()
 	} else {

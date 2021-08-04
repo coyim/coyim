@@ -78,14 +78,10 @@ func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
 	view.room = a.newRoomModel(roomID)
 	view.log = a.log.WithField("room", roomID)
 
-	view.room.Subscribe(view.handleRoomEvent)
-
-	view.subscribers = newRoomViewSubscribers(view.roomID(), view.log)
-
 	view.initBuilderAndSignals()
-	view.initDefaults()
 	view.initSubscribers()
 	view.initNotifications()
+	view.initDefaults()
 
 	view.toolbar = view.newRoomViewToolbar()
 	view.roster = view.newRoomViewRoster()
@@ -117,6 +113,9 @@ func (v *roomView) initDefaults() {
 }
 
 func (v *roomView) initSubscribers() {
+	v.subscribers = v.newRoomViewSubscribers()
+	v.room.Subscribe(v.handleRoomEvent)
+
 	v.subscribe("room", func(ev roomViewEvent) {
 		doInUIThread(func() {
 			v.onEventReceived(ev)

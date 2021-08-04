@@ -6,8 +6,6 @@ import (
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/events"
-	"github.com/coyim/coyim/xmpp/jid"
-	log "github.com/sirupsen/logrus"
 )
 
 func (v *roomView) handleRoomEvent(ev events.MUC) {
@@ -104,19 +102,13 @@ type roomViewObserver struct {
 type roomViewSubscribers struct {
 	observers     []*roomViewObserver
 	observersLock sync.Mutex
-
-	log coylog.Logger
+	log           coylog.Logger
 }
 
-func newRoomViewSubscribers(roomID jid.Bare, l coylog.Logger) *roomViewSubscribers {
-	s := &roomViewSubscribers{}
-
-	s.log = l.WithFields(log.Fields{
-		"who":  "newRoomViewSubscribers",
-		"room": roomID,
-	})
-
-	return s
+func (v *roomView) newRoomViewSubscribers() *roomViewSubscribers {
+	return &roomViewSubscribers{
+		log: v.log.WithField("where", "roomViewSubscribers"),
+	}
 }
 
 func (s *roomViewSubscribers) subscribe(id string, onNotify func(roomViewEvent)) {

@@ -1,6 +1,7 @@
 package gtka
 
 import (
+	"github.com/coyim/gotk3adapter/gliba"
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/coyim/gotk3extra"
 	"github.com/gotk3/gotk3/gtk"
@@ -91,7 +92,60 @@ func (a *assistant) SetPageTitle(page gtki.Widget, title string) {
 	a.internal.SetPageTitle(UnwrapWidget(page), title)
 }
 
+const (
+	assistantButtonBackCancelName = "cancel"
+	assistantButtonBackLastName   = "back"
+	assistantButtonLastName       = "last"
+	assistantButtonForwardName    = "forward"
+	assistantButtonApplyName      = "apply"
+)
+
+var assistantButtons = []string{
+	assistantButtonBackCancelName,
+	assistantButtonBackLastName,
+	assistantButtonLastName,
+	assistantButtonForwardName,
+	assistantButtonApplyName,
+}
+
+func (a *assistant) GetButtons() []gtki.Button {
+	buttons := []gtki.Button{}
+
+	for _, buttonName := range assistantButtons {
+		if obj, err := a.TemplateChild(buttonName); err == nil {
+			b := WrapButtonSimple(gotk3extra.WrapButton(gliba.UnwrapObject(obj)))
+			buttons = append(buttons, b)
+		}
+	}
+
+	return buttons
+}
+
 func (a *assistant) GetButtonSizeGroup() (gtki.SizeGroup, error) {
 	v, err := gotk3extra.GetAssistantButtonSizeGroup(a.internal)
 	return WrapSizeGroup(v, err)
+}
+
+const (
+	assistantActionAreaName     = "action_area"
+	assistantSidebarName        = "sidebar"
+	assistantContentWrapperName = "content_box"
+	assistantContentName        = "content"
+)
+
+func (a *assistant) GetSidebar() (gtki.Box, error) {
+	obj, err := a.TemplateChild(assistantSidebarName)
+	return WrapBoxSimple(gotk3extra.WrapBox(gliba.UnwrapObject(obj))), err
+}
+
+func (a *assistant) GetNotebook() (gtki.Notebook, error) {
+	obj, err := a.TemplateChild(assistantContentName)
+	return WrapNotebookSimple(gotk3extra.WrapNotebook(gliba.UnwrapObject(obj))), err
+}
+
+func (a *assistant) HideBottomActionArea() {
+	if obj, err := a.TemplateChild(assistantActionAreaName); err == nil {
+		box := WrapBoxSimple(gotk3extra.WrapBox(gliba.UnwrapObject(obj)))
+		box.Hide()
+	}
 }

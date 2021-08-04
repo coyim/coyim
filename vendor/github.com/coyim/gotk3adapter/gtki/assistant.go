@@ -22,7 +22,14 @@ type Assistant interface {
 	AddActionWidget(child Widget)
 	RemoveActionWidget(child Widget)
 	UpdateButtonsState()
+
+	// The following are suppossed to be helper methods to work with the assistant.
+	// They are not part of the main GTK api.
+	GetButtons() []Button
 	GetButtonSizeGroup() (SizeGroup, error)
+	GetSidebar() (Box, error)
+	GetNotebook() (Notebook, error)
+	HideBottomActionArea()
 }
 
 func AssertAssistant(_ Assistant) {}

@@ -58,6 +58,21 @@ func (a *MockAssistant) UpdateButtonsState() {
 func (a *MockAssistant) SetPageTitle(page gtki.Widget, title string) {
 }
 
+func (a *MockAssistant) GetButtons() []gtki.Button {
+	return nil
+}
+
 func (a *MockAssistant) GetButtonSizeGroup() (gtki.SizeGroup, error) {
 	return nil, nil
+}
+
+func (a *MockAssistant) GetSidebar() (gtki.Box, error) {
+	return nil, nil
+}
+
+func (a *MockAssistant) GetNotebook() (gtki.Notebook, error) {
+	return nil, nil
+}
+
+func (a *MockAssistant) HideBottomActionArea() {
 }

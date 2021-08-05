@@ -829,14 +829,14 @@ func (s *session) setStatus(status connStatus) {
 func (s *session) onStatusConnected() {
 	s.publish(events.Connected)
 	for _, r := range s.muc.roomManager.GetAllRooms() {
-		go s.muc.selfOccupantConnected(r.ID)
+		go r.StatusConnected()
 	}
 }
 
 func (s *session) onStatusDisconnected() {
 	s.publish(events.Disconnected)
 	for _, r := range s.muc.roomManager.GetAllRooms() {
-		go s.muc.selfOccupantDisconnected(r.ID)
+		go r.StatusDisconnected()
 	}
 }
 

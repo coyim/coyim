@@ -235,14 +235,6 @@ func (m *mucManager) selfOccupantKicked(roomID jid.Bare, roleUpdate data.RoleUpd
 	m.publishRoomEvent(roomID, ev)
 }
 
-func (m *mucManager) selfOccupantConnected(roomID jid.Bare) {
-	m.publishRoomEvent(roomID, events.MUCSelfOccupantConnected{})
-}
-
-func (m *mucManager) selfOccupantDisconnected(roomID jid.Bare) {
-	m.publishRoomEvent(roomID, events.MUCSelfOccupantDisconnected{})
-}
-
 func (m *mucManager) accountAffiliationUpdated(roomID jid.Bare, accountAddress jid.Any, affiliation data.Affiliation) {
 	m.publishRoomEvent(roomID, events.MUCAccountAffiliationUpdated{
 		AccountAddress: accountAddress,

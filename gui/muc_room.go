@@ -517,13 +517,6 @@ func (v *roomView) switchToMainView() {
 	v.main.show()
 }
 
-// onJoined MUST be called from the UI thread
-func (v *roomView) onJoined() {
-	v.lobby.destroy()
-	v.content.Remove(v.lobby.content)
-	v.switchToMainView()
-}
-
 // sendJoinRoomRequest MUST NOT be called from the UI thread
 func (v *roomView) sendJoinRoomRequest(nickname, password string, doAfterRequestSent func()) {
 	doAfterRequestSentFinal := doAfterRequestSent
@@ -560,7 +553,9 @@ func (v *roomView) finishJoinRequestWithError(err error) {
 func (v *roomView) selfOccupantJoinedEvent() {
 	// TODO: This will change to something more proper in this case.
 	// For now, we assume that we are in the lobby when joining the room.
-	v.lobby.onJoined()
+	v.lobby.destroy()
+	v.content.Remove(v.lobby.content)
+	v.switchToMainView()
 }
 
 // onJoinCancel MUST be called from the UI thread

@@ -30,10 +30,6 @@ type roomViewLobby struct {
 	notifications  *roomNotifications
 	loadingOverlay *roomViewLoadingOverlay
 
-	// These two methods WILL BE called from the UI thread
-	onSuccess func()
-	onCancel  func()
-
 	log coylog.Logger
 }
 
@@ -47,8 +43,6 @@ func (v *roomView) newRoomViewLobby(a *account, roomID jid.Bare) *roomViewLobby 
 		roomID:                roomID,
 		roomView:              v,
 		account:               a,
-		onSuccess:             v.onJoined,
-		onCancel:              v.onJoinCancel,
 		loadingOverlay:        v.loadingViewOverlay,
 		nicknamesWithConflict: set.New(),
 		log:                   v.log.WithField("where", "roomViewLobby"),
@@ -69,7 +63,7 @@ func (l *roomViewLobby) initBuilder() {
 		"on_nickname_changed": l.enableJoinIfConditionsAreMet,
 		"on_password_changed": l.enableJoinIfConditionsAreMet,
 		"on_join":             doOnlyOnceAtATime(l.onJoinRoomClicked),
-		"on_cancel":           l.onCancel,
+		"on_cancel":           l.roomView.onJoinCancel,
 	})
 }
 
@@ -187,12 +181,6 @@ func (l *roomViewLobby) onJoinRoomClicked(done func()) {
 	password := getEntryText(l.passwordEntry)
 
 	go l.roomView.sendJoinRoomRequest(nickname, password, done)
-}
-
-// finishJoinRequest MUST be called from the UI thread
-func (l *roomViewLobby) onJoined() {
-	l.notifications.clearAll()
-	l.onSuccess()
 }
 
 func (l *roomViewLobby) onJoinFailed(err error) {

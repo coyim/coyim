@@ -27,8 +27,8 @@ type roomViewLobby struct {
 	cancelButton     gtki.Button `gtk-widget:"cancel-button"`
 	notificationArea gtki.Box    `gtk-widget:"notifications-box"`
 
-	notifications  *roomNotifications
-	loadingOverlay *roomViewLoadingOverlay
+	errorNotifications canNotifyErrors
+	loadingOverlay     *roomViewLoadingOverlay
 
 	log coylog.Logger
 }
@@ -43,6 +43,7 @@ func (v *roomView) newRoomViewLobby(a *account, roomID jid.Bare) *roomViewLobby 
 		roomID:                roomID,
 		roomView:              v,
 		account:               a,
+		errorNotifications:    v.notifications,
 		loadingOverlay:        v.loadingViewOverlay,
 		nicknamesWithConflict: set.New(),
 		log:                   v.log.WithField("where", "roomViewLobby"),
@@ -68,8 +69,6 @@ func (l *roomViewLobby) initBuilder() {
 }
 
 func (l *roomViewLobby) initDefaults() {
-	l.notifications = l.roomView.notifications
-
 	l.roomNameLabel.SetText(i18n.Localf("You are joining %s", l.roomID.String()))
 	l.content.SetHExpand(true)
 
@@ -130,7 +129,7 @@ func (l *roomViewLobby) passwordHasContent() bool {
 
 func (l *roomViewLobby) isNotNicknameInConflictList() bool {
 	if l.nicknamesWithConflict.Has(getEntryText(l.nicknameEntry)) {
-		l.notifications.error(roomNotificationOptions{message: i18n.Local("That nickname is already being used.")})
+		l.errorNotifications.notifyOnError(i18n.Local("That nickname is already being used."))
 		return false
 	}
 	return true
@@ -138,7 +137,7 @@ func (l *roomViewLobby) isNotNicknameInConflictList() bool {
 
 func (l *roomViewLobby) enableJoinIfConditionsAreMet() {
 	if !l.accountIsBanned {
-		l.notifications.clearAll()
+		l.errorNotifications.clearErrors()
 		setFieldSensitive(l.joinButton, l.checkJoinConditions())
 	}
 }
@@ -162,7 +161,7 @@ func (l *roomViewLobby) enableFieldsAndHideSpinner() {
 
 // onJoinRoomClicked MUST be called from the UI thread
 func (l *roomViewLobby) onJoinRoomClicked(done func()) {
-	l.notifications.clearAll()
+	l.errorNotifications.clearErrors()
 	l.disableFieldsAndShowSpinner()
 
 	nickname := getEntryText(l.nicknameEntry)
@@ -187,7 +186,7 @@ func (l *roomViewLobby) onJoinFailed(err error) {
 		}
 	}
 
-	l.notifications.error(roomNotificationOptions{message: userMessage})
+	l.errorNotifications.notifyOnError(userMessage)
 
 	setFieldSensitive(l.joinButton, shouldEnableJoin)
 }

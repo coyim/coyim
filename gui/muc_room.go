@@ -103,6 +103,8 @@ func (u *gtkUI) newRoomView(a *account, room *muc.Room) *roomView {
 
 	view.warnings = view.newRoomViewWarnings()
 	view.warningsInfoBar = view.newRoomViewWarningsInfoBar()
+	view.privacityWarningBox.Add(view.warningsInfoBar.view())
+
 	view.loadingViewOverlay = view.newRoomViewLoadingOverlay()
 
 	view.requestRoomDiscoInfo()
@@ -186,7 +188,6 @@ func (v *roomView) roomDiscoInfoReceivedEvent(di data.RoomDiscoInfo) {
 	v.warnings.clear()
 	v.addRoomWarningsBasedOnInfo(di)
 
-	v.privacityWarningBox.Add(v.warningsInfoBar.view())
 	v.warningsInfoBar.reveal()
 }
 

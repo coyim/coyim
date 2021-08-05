@@ -535,7 +535,6 @@ func (v *roomView) sendJoinRoomRequest(nickname, password string, doAfterRequest
 
 	if err != nil {
 		v.finishJoinRequestWithError(err)
-		return
 	}
 }
 

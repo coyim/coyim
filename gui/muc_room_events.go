@@ -45,11 +45,9 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 			anonymityLevel: t.AnonymityLevel,
 		})
 	case events.MUCRoomDiscoInfoReceived:
-		v.publishEvent(roomDiscoInfoReceivedEvent{
-			info: t.DiscoInfo,
-		})
+		v.handleDiscoInfoReceived(t.DiscoInfo)
 	case events.MUCRoomConfigTimeout:
-		v.publishEvent(roomConfigRequestTimeoutEvent{})
+		v.handleDiscoInfoTimeout()
 	case events.MUCRoomConfigChanged:
 		v.publishEvent(roomConfigChangedEvent{
 			changes:   roomConfigChangedTypes(t.Changes),
@@ -84,7 +82,7 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 	case events.MUCSelfOccupantKicked:
 		v.publishSelfOccupantRoleUpdatedEvent(t.RoleUpdate)
 	case events.MUCSelfOccupantConnected:
-		v.publishSelfOccupantConnectedEvent()
+		v.handleSelfOccupantConnectedEvent()
 	case events.MUCSelfOccupantDisconnected:
 		v.publishSelfOccupantDisconnectedEvent()
 	case events.MUCAccountAffiliationUpdated:

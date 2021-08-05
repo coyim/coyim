@@ -71,6 +71,7 @@ type roomView struct {
 	warnings           *roomViewWarnings
 	warningsInfoBar    *roomViewWarningsInfoBar
 	loadingViewOverlay *roomViewLoadingOverlay
+	isReconnecting     bool
 
 	subscribers *roomViewSubscribers
 
@@ -643,9 +644,79 @@ func (v *roomView) publishSelfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleU
 	v.publishEvent(selfOccupantRoleUpdatedEvent{selfRoleUpdate})
 }
 
+// handleDiscoInfoReceived MUST NOT be called from the UI thread
+func (v *roomView) handleDiscoInfoReceived(di data.RoomDiscoInfo) {
+	v.publishEvent(roomDiscoInfoReceivedEvent{di})
+	if v.isReconnecting {
+		doInUIThread(func() {
+			v.onReconnectingRoomInfoReceived(di)
+			v.isReconnecting = false
+		})
+	}
+}
+
+// handleDiscoInfoTimeout MUST NOT be called from the UI thread
+func (v *roomView) handleDiscoInfoTimeout() {
+	v.publishEvent(roomConfigRequestTimeoutEvent{})
+	if v.isReconnecting {
+		doInUIThread(v.onReconnectingRoomInfoTimeout)
+		v.isReconnecting = false
+	}
+}
+
+// onReconnectingRoomInfoReceived MUST be called from the UI thread
+func (v *roomView) onReconnectingRoomInfoReceived(di data.RoomDiscoInfo) {
+	// TODO: Refactor v.switchToLobbyView() and v.switchToMainView()
+	// in order to keep this logic as simple as:
+	//
+	// if di.PasswordProtected {
+	// 	v.switchToLobbyView()
+	// } else {
+	// 	v.switchToMainView()
+	// }
+
+	removeClassStyle("room-disabled", v.content)
+	if di.PasswordProtected {
+		if v.main != nil {
+			v.main.content.Hide()
+		}
+		v.switchToLobbyView()
+		v.lobby.roomDiscoInfoReceivedEvent(di, nil)
+	} else {
+		v.sendJoinRoomRequest(v.room.SelfOccupantNickname(), "", nil)
+	}
+}
+
+// onReconnectingRoomInfoTimeout MUST be called from the UI thread
+func (v *roomView) onReconnectingRoomInfoTimeout() {
+	v.notifications.error(roomNotificationOptions{
+		message:   i18n.Local("We couldn't retrieve the room information, please try again."),
+		showTime:  true,
+		closeable: true,
+		actions: roomNotificationActions{
+			{
+				label:        i18n.Local("Try again"),
+				responseType: gtki.RESPONSE_OK,
+				signals: map[string]interface{}{
+					"clicked": func() {
+						go v.requestRoomInfoOnReconnect()
+					},
+				},
+			},
+		},
+	})
+}
+
+// requestRoomInfoOnReconnect MUST NOT be called from the UI thread
+func (v *roomView) requestRoomInfoOnReconnect() {
+	v.isReconnecting = true
+	v.account.session.RefreshRoomProperties(v.roomID())
+}
+
 // publishSelfOccupantRoleUpdatedEvent MUST NOT be called from the UI thread
-func (v *roomView) publishSelfOccupantConnectedEvent() {
+func (v *roomView) handleSelfOccupantConnectedEvent() {
 	v.publishEvent(selfOccupantConnectedEvent{})
+	go v.requestRoomInfoOnReconnect()
 }
 
 // publishSelfOccupantRoleUpdatedEvent MUST NOT be called from the UI thread

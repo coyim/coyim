@@ -69,7 +69,7 @@ func (l *roomViewLobby) initBuilder() {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_nickname_changed": l.enableJoinIfConditionsAreMet,
 		"on_password_changed": l.enableJoinIfConditionsAreMet,
-		"on_join":             doOnlyOnceAtATime(l.onJoinRoom),
+		"on_join":             doOnlyOnceAtATime(l.onJoinRoomClicked),
 		"on_cancel":           l.onCancel,
 	})
 }
@@ -195,7 +195,8 @@ func (l *roomViewLobby) enableFieldsAndHideSpinner() {
 	l.loadingOverlay.hide()
 }
 
-func (l *roomViewLobby) onJoinRoom(done func()) {
+// onJoinRoomClicked MUST be called from the UI thread
+func (l *roomViewLobby) onJoinRoomClicked(done func()) {
 	l.notifications.clearAll()
 	nickname := getEntryText(l.nicknameEntry)
 	password := getEntryText(l.passwordEntry)

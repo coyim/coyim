@@ -110,6 +110,7 @@ func (l *roomViewLobby) roomConfigRequestTimeoutEvent() {
 	})
 }
 
+// show MUST be called from the UI thread
 func (l *roomViewLobby) show() {
 	l.content.Show()
 }
@@ -119,14 +120,7 @@ func (l *roomViewLobby) destroy() {
 	l.content.Destroy()
 }
 
-func (l *roomViewLobby) nicknameHasContent() bool {
-	return getEntryText(l.nicknameEntry) != ""
-}
-
-func (l *roomViewLobby) passwordHasContent() bool {
-	return getEntryText(l.passwordEntry) != ""
-}
-
+// isNotNicknameInConflictList MUST be called from the UI thread
 func (l *roomViewLobby) isNotNicknameInConflictList() bool {
 	if l.nicknamesWithConflict.Has(getEntryText(l.nicknameEntry)) {
 		l.errorNotifications.notifyOnError(i18n.Local("That nickname is already being used."))
@@ -135,6 +129,7 @@ func (l *roomViewLobby) isNotNicknameInConflictList() bool {
 	return true
 }
 
+// enableJoinIfConditionsAreMet MUST be called from the UI thread
 func (l *roomViewLobby) enableJoinIfConditionsAreMet() {
 	if !l.accountIsBanned {
 		l.errorNotifications.clearErrors()
@@ -142,17 +137,23 @@ func (l *roomViewLobby) enableJoinIfConditionsAreMet() {
 	}
 }
 
+// checkJoinConditions MUST be called from the UI thread
 func (l *roomViewLobby) checkJoinConditions() bool {
-	return l.isReadyToJoinRoom && l.nicknameHasContent() && l.isNotNicknameInConflictList() &&
-		(!l.isPasswordProtected || l.passwordHasContent())
+	nicknameHasContent := getEntryText(l.nicknameEntry) != ""
+	passwordHasContent := getEntryText(l.passwordEntry) != ""
+
+	return l.isReadyToJoinRoom && nicknameHasContent && l.isNotNicknameInConflictList() &&
+		(!l.isPasswordProtected || passwordHasContent)
 }
 
+// disableFieldsAndShowSpinner MUST be called from the UI thread
 func (l *roomViewLobby) disableFieldsAndShowSpinner() {
 	disableField(l.nicknameEntry)
 	disableField(l.joinButton)
 	l.loadingOverlay.onJoinRoom()
 }
 
+// enableFieldsAndHideSpinner MUST be called from the UI thread
 func (l *roomViewLobby) enableFieldsAndHideSpinner() {
 	enableField(l.nicknameEntry)
 	enableField(l.joinButton)
@@ -170,6 +171,7 @@ func (l *roomViewLobby) onJoinRoomClicked(done func()) {
 	go l.roomView.sendJoinRoomRequest(nickname, password, done)
 }
 
+// onJoinFailed MUST be called from the UI thread
 func (l *roomViewLobby) onJoinFailed(err error) {
 	l.enableFieldsAndHideSpinner()
 	shouldEnableJoin := l.checkJoinConditions()

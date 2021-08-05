@@ -56,10 +56,9 @@ type roomView struct {
 
 	cancel chan bool
 
-	opened                  bool
-	mustNotifyDisconnection bool
-	passwordProvider        func() string
-	backToPreviousStep      func()
+	opened             bool
+	passwordProvider   func() string
+	backToPreviousStep func()
 
 	window              gtki.Window   `gtk-widget:"room-window"`
 	overlay             gtki.Overlay  `gtk-widget:"room-overlay"`
@@ -86,11 +85,10 @@ type roomView struct {
 
 func (u *gtkUI) newRoomView(a *account, room *muc.Room) *roomView {
 	view := &roomView{
-		u:                       u,
-		account:                 a,
-		room:                    room,
-		mustNotifyDisconnection: true,
-		log:                     a.log.WithField("room", room.ID),
+		u:       u,
+		account: a,
+		room:    room,
+		log:     a.log.WithField("room", room.ID),
 	}
 
 	view.initBuilderAndSignals()
@@ -246,15 +244,12 @@ func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleUpdate) 
 
 // selfOccupantDisconnectedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantDisconnectedEvent() {
-	if v.mustNotifyDisconnection {
-		v.notifications.error(roomNotificationOptions{
-			message:   i18n.Local("The connection to the server has been lost, please verify your connection."),
-			showTime:  true,
-			closeable: true,
-		})
-		v.disableRoomView()
-		v.mustNotifyDisconnection = false
-	}
+	v.notifications.error(roomNotificationOptions{
+		message:   i18n.Local("The connection to the server has been lost, please verify your connection."),
+		showTime:  true,
+		closeable: true,
+	})
+	v.disableRoomView()
 }
 
 // selfOccupantRemovedEvent MUST be called from the UI thread

@@ -216,7 +216,7 @@ func (l *roomViewLobby) sendJoinRoomRequest(nickname, password string, done func
 func (l *roomViewLobby) joinRoom(nickname, password string) error {
 	err := l.account.session.JoinRoom(l.roomID, nickname, password)
 	if err == session.ErrMUCJoinRoomInvalidNickname {
-		return newRoomLobbyInvalidNicknameError()
+		return newRoomInvalidNicknameError()
 	}
 	return err
 }
@@ -226,7 +226,7 @@ func (l *roomViewLobby) onJoinFailed(err error) {
 	shouldEnableJoin := l.checkJoinConditions()
 
 	userMessage := i18n.Local("An unknown error occurred while trying to join the room, please check your connection or try again.")
-	if err, ok := err.(*mucRoomLobbyErr); ok {
+	if err, ok := err.(*roomError); ok {
 		userMessage = l.getUserErrorMessage(err)
 		shouldEnableJoin = false
 

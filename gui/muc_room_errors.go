@@ -18,28 +18,29 @@ var (
 	errOccupantForbidden    = errors.New("join failed because the occupant is banned")
 )
 
-type mucRoomLobbyErr struct {
+type roomError struct {
 	nickname string
 	errType  error
 }
 
-func (e *mucRoomLobbyErr) Error() string {
+// Error implements the "error" interface
+func (e *roomError) Error() string {
 	return e.errType.Error()
 }
 
-func newMUCRoomLobbyErr(nickname string, errType error) error {
-	return &mucRoomLobbyErr{
+func newRoomError(nickname string, errType error) error {
+	return &roomError{
 		nickname: nickname,
 		errType:  errType,
 	}
 }
 
-func newRoomLobbyInvalidNicknameError() error {
-	return newMUCRoomLobbyErr("", errInvalidNickname)
+func newRoomInvalidNicknameError() error {
+	return newRoomError("", errInvalidNickname)
 }
 
 func (l *roomViewLobby) joinRequestErrorEvent(err error) {
-	l.finishJoinRequestWithError(newMUCRoomLobbyErr("", err))
+	l.joinRequestErrorEvent(newRoomError("", err))
 }
 
 func (l *roomViewLobby) nicknameConflictEvent(nickname string) {
@@ -67,7 +68,7 @@ func (l *roomViewLobby) occupantForbiddenEvent() {
 	l.joinRequestErrorEvent(errOccupantForbidden)
 }
 
-func (l *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
+func (l *roomViewLobby) getUserErrorMessage(err *roomError) string {
 	switch err.errType {
 	case errInvalidNickname:
 		return i18n.Local("You must provide a valid nickname.")

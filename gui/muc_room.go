@@ -107,6 +107,8 @@ func (u *gtkUI) newRoomView(a *account, room *muc.Room) *roomView {
 
 	view.loadingViewOverlay = view.newRoomViewLoadingOverlay()
 
+	view.initRoomViewComponents()
+
 	view.requestRoomDiscoInfo()
 
 	return view
@@ -137,6 +139,11 @@ func (v *roomView) initSubscribers() {
 			v.onEventReceived(ev)
 		})
 	})
+}
+
+func (v *roomView) initRoomViewComponents() {
+	v.lobby = v.newRoomViewLobby()
+	v.main = v.newRoomMainView()
 }
 
 // onEventReceived MUST be called from the UI thread
@@ -506,8 +513,6 @@ func (v *roomView) updateSubjectRoom(s string, onSuccess func()) {
 
 // switchToLobbyView MUST be called from the UI thread
 func (v *roomView) switchToLobbyView() {
-	v.initRoomLobby()
-
 	l := i18n.Local("Cancel")
 	if v.backToPreviousStep != nil {
 		l = i18n.Local("Return")
@@ -515,15 +520,41 @@ func (v *roomView) switchToLobbyView() {
 	setFieldLabel(v.lobby.cancelButton, l)
 
 	v.warningsInfoBar.whenRequestedToClose(nil)
-	v.lobby.show()
+
+	v.hideMainView()
+	v.showLobbyView()
 }
 
 // switchToMainView MUST be called from the UI thread
 func (v *roomView) switchToMainView() {
-	v.initRoomMain()
-
 	v.warningsInfoBar.whenRequestedToClose(v.warningsInfoBar.hide)
-	v.main.show()
+
+	v.hideLobbyView()
+	v.showMainView()
+}
+
+// showLobbyView MUST be called from the UI thread
+func (v *roomView) showLobbyView() {
+	v.content.Add(v.lobby.content)
+	v.lobby.content.Show()
+}
+
+// hideLobbyView MUST be called from the UI thread
+func (v *roomView) hideLobbyView() {
+	v.content.Remove(v.lobby.content)
+	v.lobby.content.Hide()
+}
+
+// showMainView MUST be called from the UI thread
+func (v *roomView) showMainView() {
+	v.content.Add(v.main.content)
+	v.main.content.Show()
+}
+
+// hideMainView MUST be called from the UI thread
+func (v *roomView) hideMainView() {
+	v.content.Remove(v.main.content)
+	v.main.content.Hide()
 }
 
 // sendJoinRoomRequest MUST NOT be called from the UI thread
@@ -678,11 +709,7 @@ func (v *roomView) onReconnectingRoomInfoReceived(di data.RoomDiscoInfo) {
 
 	removeClassStyle("room-disabled", v.content)
 	if di.PasswordProtected {
-		if v.main != nil {
-			v.main.content.Hide()
-		}
 		v.switchToLobbyView()
-		v.lobby.roomDiscoInfoReceivedEvent(di, nil)
 	} else {
 		v.sendJoinRoomRequest(v.room.SelfOccupantNickname(), "", nil)
 	}

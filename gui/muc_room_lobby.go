@@ -31,13 +31,6 @@ type roomViewLobby struct {
 	log coylog.Logger
 }
 
-func (v *roomView) initRoomLobby() {
-	if v.lobby == nil {
-		v.lobby = v.newRoomViewLobby()
-	}
-	v.content.Add(v.lobby.content)
-}
-
 func (v *roomView) newRoomViewLobby() *roomViewLobby {
 	l := &roomViewLobby{
 		roomView:              v,
@@ -109,11 +102,6 @@ func (l *roomViewLobby) roomConfigRequestTimeoutEvent() {
 		disableField(l.nicknameEntry)
 		disableField(l.passwordEntry)
 	})
-}
-
-// show MUST be called from the UI thread
-func (l *roomViewLobby) show() {
-	l.content.Show()
 }
 
 func (l *roomViewLobby) destroy() {

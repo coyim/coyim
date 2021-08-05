@@ -16,12 +16,6 @@ type roomViewMain struct {
 	paneBox gtki.Box `gtk-widget:"room-view-panel"`
 }
 
-func (v *roomView) initRoomMain() {
-	if v.main == nil {
-		v.main = v.newRoomMainView()
-	}
-}
-
 func (v *roomView) newRoomMainView() *roomViewMain {
 	m := &roomViewMain{
 		main:   v.conv.view,
@@ -47,8 +41,4 @@ func (m *roomViewMain) initDefaults() {
 	m.topBox.Add(m.top)
 
 	m.parent.Add(m.content)
-}
-
-func (m *roomViewMain) show() {
-	m.content.Show()
 }

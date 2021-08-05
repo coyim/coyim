@@ -3,6 +3,7 @@ package gui
 import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session"
 
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
@@ -519,6 +520,45 @@ func (v *roomView) onJoined() {
 	v.lobby.destroy()
 	v.content.Remove(v.lobby.content)
 	v.switchToMainView()
+}
+
+// sendJoinRoomRequest MUST NOT be called from the UI thread
+func (v *roomView) sendJoinRoomRequest(nickname, password string, doAfterRequestSent func()) {
+	doAfterRequestSentFinal := doAfterRequestSent
+	doAfterRequestSent = func() {
+		if doAfterRequestSentFinal != nil {
+			doAfterRequestSentFinal()
+		}
+	}
+
+	defer doAfterRequestSent()
+
+	err := v.account.session.JoinRoom(v.roomID(), nickname, password)
+	if err == session.ErrMUCJoinRoomInvalidNickname {
+		err = newRoomInvalidNicknameError()
+	}
+
+	if err != nil {
+		v.finishJoinRequestWithError(err)
+		return
+	}
+}
+
+// finishJoinRequestWithError MUST NOT be called from the UI thread
+func (v *roomView) finishJoinRequestWithError(err error) {
+	v.log.WithError(err).Error("An error occurred while trying to join the room")
+	doInUIThread(func() {
+		// TODO: This will change to something more proper in this case.
+		// For now, we assume that we are in the lobby when joining the room.
+		v.lobby.onJoinFailed(err)
+	})
+}
+
+// selfOccupantJoinedEvent MUST be called from the UI thread
+func (v *roomView) selfOccupantJoinedEvent() {
+	// TODO: This will change to something more proper in this case.
+	// For now, we assume that we are in the lobby when joining the room.
+	v.lobby.onJoined()
 }
 
 // onJoinCancel MUST be called from the UI thread

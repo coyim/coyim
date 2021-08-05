@@ -4,13 +4,11 @@ import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc/data"
-	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/golang-collections/collections/set"
 )
 
 type roomViewLobby struct {
-	roomID                jid.Bare
 	roomView              *roomView
 	account               *account
 	accountIsBanned       bool
@@ -35,16 +33,15 @@ type roomViewLobby struct {
 
 func (v *roomView) initRoomLobby() {
 	if v.lobby == nil {
-		v.lobby = v.newRoomViewLobby(v.account, v.roomID())
+		v.lobby = v.newRoomViewLobby()
 	}
 	v.content.Add(v.lobby.content)
 }
 
-func (v *roomView) newRoomViewLobby(a *account, roomID jid.Bare) *roomViewLobby {
+func (v *roomView) newRoomViewLobby() *roomViewLobby {
 	l := &roomViewLobby{
-		roomID:                roomID,
 		roomView:              v,
-		account:               a,
+		account:               v.account,
 		errorNotifications:    v.notifications,
 		loadingOverlay:        v.loadingViewOverlay,
 		nicknamesWithConflict: set.New(),
@@ -71,7 +68,7 @@ func (l *roomViewLobby) initBuilder() {
 }
 
 func (l *roomViewLobby) initDefaults() {
-	l.roomNameLabel.SetText(i18n.Localf("You are joining %s", l.roomID.String()))
+	l.roomNameLabel.SetText(i18n.Localf("You are joining %s", l.roomView.roomID()))
 	l.content.SetHExpand(true)
 
 	setFieldVisibility(l.passwordLabel, false)

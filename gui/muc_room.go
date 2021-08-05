@@ -592,8 +592,6 @@ func (v *roomView) finishJoinRequestWithError(err error) {
 func (v *roomView) selfOccupantJoinedEvent() {
 	// TODO: This will change to something more proper in this case.
 	// For now, we assume that we are in the lobby when joining the room.
-	v.lobby.destroy()
-	v.content.Remove(v.lobby.content)
 	v.switchToMainView()
 }
 

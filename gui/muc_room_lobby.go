@@ -104,11 +104,6 @@ func (l *roomViewLobby) roomConfigRequestTimeoutEvent() {
 	})
 }
 
-func (l *roomViewLobby) destroy() {
-	l.loadingOverlay.hide()
-	l.content.Destroy()
-}
-
 // isNotNicknameInConflictList MUST be called from the UI thread
 func (l *roomViewLobby) isNotNicknameInConflictList() bool {
 	if l.nicknamesWithConflict.Has(getEntryText(l.nicknameEntry)) {

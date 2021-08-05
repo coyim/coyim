@@ -4,17 +4,20 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+// initNotifications MUST be called from the UI thread
 func (v *roomView) initNotifications() {
 	v.notifications = v.newRoomNotifications()
 	v.notificationsArea.Add(v.notifications.notificationsBox())
 }
 
+// onNewNotificationAdded MUST be called from the UI thread
 func (v *roomView) onNewNotificationAdded() {
 	if !v.notificationsArea.GetRevealChild() {
 		v.notificationsArea.SetRevealChild(true)
 	}
 }
 
+// onNoNotifications MUST be called from the UI thread
 func (v *roomView) onNoNotifications() {
 	v.notificationsArea.SetRevealChild(false)
 }
@@ -52,21 +55,25 @@ type roomNotificationOptions struct {
 	actions     roomNotificationActions
 }
 
+// info MUST be called from the UI thread
 func (rn *roomNotifications) info(n roomNotificationOptions) {
 	n.messageType = gtki.MESSAGE_INFO
 	rn.newNotification(n)
 }
 
+// warning MUST be called from the UI thread
 func (rn *roomNotifications) warning(n roomNotificationOptions) {
 	n.messageType = gtki.MESSAGE_WARNING
 	rn.newNotification(n)
 }
 
+// error MUST be called from the UI thread
 func (rn *roomNotifications) error(n roomNotificationOptions) {
 	n.messageType = gtki.MESSAGE_ERROR
 	rn.newNotification(n)
 }
 
+// newNotification MUST be called from the UI thread
 func (rn *roomNotifications) newNotification(n roomNotificationOptions) {
 	nb := rn.u.newNotificationBar(n.message, n.messageType)
 
@@ -88,6 +95,7 @@ func (rn *roomNotifications) newNotification(n roomNotificationOptions) {
 	rn.roomView.onNewNotificationAdded()
 }
 
+// remove MUST be called from the UI thread
 func (rn *roomNotifications) remove(nb *notificationBar) {
 	rn.notifications.remove(nb)
 
@@ -96,20 +104,24 @@ func (rn *roomNotifications) remove(nb *notificationBar) {
 	}
 }
 
+// notificationsBox MUST be called from the UI thread
 func (rn *roomNotifications) notificationsBox() gtki.Widget {
 	return rn.notifications.contentBox()
 }
 
+// clearAll MUST be called from the UI thread
 func (rn *roomNotifications) clearAll() {
 	rn.notifications.clearAll()
 }
 
 // clearErrors implements the "canNotifyErrors" interface
+// clearErrors MUST be called from the UI thread
 func (rn *roomNotifications) clearErrors() {
 	rn.notifications.clearErrors()
 }
 
 // notifyOnError implements the "canNotifyErrors" interface
+// notifyOnError MUST be called from the UI thread
 func (rn *roomNotifications) notifyOnError(err string) {
 	rn.error(roomNotificationOptions{
 		message: err,

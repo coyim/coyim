@@ -93,7 +93,7 @@ func (l *roomViewLobby) initSubscribers() {
 			l.roomDiscoInfoReceivedEvent(t.info, l.roomView.passwordProvider)
 		case roomConfigRequestTimeoutEvent:
 			l.roomConfigRequestTimeoutEvent()
-		case occupantSelfJoinedEvent:
+		case selfOccupantJoinedEvent:
 			l.finishJoinRequest()
 		case nicknameConflictEvent:
 			l.nicknameConflictEvent(t.nickname)

@@ -86,7 +86,7 @@ func (r *roomViewRosterInfo) initBuilder() {
 func (r *roomViewRosterInfo) initSubscribers() {
 	r.rosterView.roomView.subscribe("roster-info", func(ev roomViewEvent) {
 		switch ev.(type) {
-		case occupantSelfJoinedEvent:
+		case selfOccupantJoinedEvent:
 			r.selfOccupant = r.rosterView.roomSelfOccupant()
 		}
 	})

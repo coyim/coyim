@@ -127,7 +127,7 @@ func (r *roomViewRoster) initDefaults() {
 func (r *roomViewRoster) initSubscribers() {
 	r.roomView.subscribe("roster", func(ev roomViewEvent) {
 		switch ev.(type) {
-		case occupantSelfJoinedEvent,
+		case selfOccupantJoinedEvent,
 			occupantJoinedEvent,
 			occupantUpdatedEvent,
 			occupantLeftEvent,

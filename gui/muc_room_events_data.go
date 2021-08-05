@@ -10,7 +10,7 @@ import (
 
 type selfOccupantRemovedEvent struct{}
 
-type occupantSelfJoinedEvent struct {
+type selfOccupantJoinedEvent struct {
 	nickname string
 	role     data.Role
 }
@@ -138,7 +138,7 @@ func (selfOccupantRemovedEvent) markAsRoomViewEvent()                {}
 func (occupantLeftEvent) markAsRoomViewEvent()                       {}
 func (occupantJoinedEvent) markAsRoomViewEvent()                     {}
 func (occupantUpdatedEvent) markAsRoomViewEvent()                    {}
-func (occupantSelfJoinedEvent) markAsRoomViewEvent()                 {}
+func (selfOccupantJoinedEvent) markAsRoomViewEvent()                 {}
 func (messageEvent) markAsRoomViewEvent()                            {}
 func (subjectUpdatedEvent) markAsRoomViewEvent()                     {}
 func (subjectReceivedEvent) markAsRoomViewEvent()                    {}

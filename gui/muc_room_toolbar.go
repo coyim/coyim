@@ -106,7 +106,7 @@ func (t *roomViewToolbar) initSubscribers() {
 			t.roomDestroyedEvent()
 		case selfOccupantRemovedEvent:
 			t.selfOccupantRemovedEvent()
-		case occupantSelfJoinedEvent:
+		case selfOccupantJoinedEvent:
 			t.selfOccupantJoinedEvent()
 		case selfOccupantRoleUpdatedEvent:
 			t.selfOccupantRoleUpdatedEvent(e.selfRoleUpdate.New)

@@ -89,8 +89,8 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.occupantLeftEvent(t.nickname)
 		case occupantJoinedEvent:
 			c.occupantJoinedEvent(t.nickname)
-		case occupantSelfJoinedEvent:
-			c.occupantSelfJoinedEvent(t.nickname, t.role)
+		case selfOccupantJoinedEvent:
+			c.selfOccupantJoinedEvent(t.nickname, t.role)
 		case occupantUpdatedEvent:
 			c.occupantUpdatedEvent(t.nickname, t.role)
 		case messageEvent:
@@ -230,7 +230,7 @@ func (c *roomViewConversation) onSelfOccupantVoiceRevoked() {
 	c.disableSendCapabilities()
 }
 
-func (c *roomViewConversation) occupantSelfJoinedEvent(nickname string, r data.Role) {
+func (c *roomViewConversation) selfOccupantJoinedEvent(nickname string, r data.Role) {
 	doInUIThread(func() {
 		c.enableSendCapabilitiesIfHasVoice(r.HasVoice())
 		c.displayNotificationWhenOccupantJoinedRoom(nickname)

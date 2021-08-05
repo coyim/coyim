@@ -3,7 +3,6 @@ package gui
 import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -93,8 +92,6 @@ func (l *roomViewLobby) initSubscribers() {
 			l.roomDiscoInfoReceivedEvent(t.info, l.roomView.passwordProvider)
 		case roomConfigRequestTimeoutEvent:
 			l.roomConfigRequestTimeoutEvent()
-		case selfOccupantJoinedEvent:
-			l.finishJoinRequest()
 		case nicknameConflictEvent:
 			l.nicknameConflictEvent(t.nickname)
 		case registrationRequiredEvent:
@@ -129,20 +126,6 @@ func (l *roomViewLobby) roomConfigRequestTimeoutEvent() {
 	doInUIThread(func() {
 		disableField(l.nicknameEntry)
 		disableField(l.passwordEntry)
-	})
-}
-
-func (l *roomViewLobby) finishJoinRequest() {
-	doInUIThread(func() {
-		l.notifications.clearAll()
-		l.onSuccess()
-	})
-}
-
-func (l *roomViewLobby) finishJoinRequestWithError(err error) {
-	l.log.WithError(err).Error("An error occurred while trying to join the room")
-	doInUIThread(func() {
-		l.onJoinFailed(err)
 	})
 }
 
@@ -198,30 +181,18 @@ func (l *roomViewLobby) enableFieldsAndHideSpinner() {
 // onJoinRoomClicked MUST be called from the UI thread
 func (l *roomViewLobby) onJoinRoomClicked(done func()) {
 	l.notifications.clearAll()
+	doInUIThread(l.disableFieldsAndShowSpinner)
+
 	nickname := getEntryText(l.nicknameEntry)
 	password := getEntryText(l.passwordEntry)
 
-	go l.sendJoinRoomRequest(nickname, password, done)
+	go l.roomView.sendJoinRoomRequest(nickname, password, done)
 }
 
-func (l *roomViewLobby) sendJoinRoomRequest(nickname, password string, done func()) {
-	defer done()
-
-	err := l.joinRoom(nickname, password)
-	if err != nil {
-		l.finishJoinRequestWithError(err)
-		return
-	}
-
-	doInUIThread(l.disableFieldsAndShowSpinner)
-}
-
-func (l *roomViewLobby) joinRoom(nickname, password string) error {
-	err := l.account.session.JoinRoom(l.roomID, nickname, password)
-	if err == session.ErrMUCJoinRoomInvalidNickname {
-		return newRoomInvalidNicknameError()
-	}
-	return err
+// finishJoinRequest MUST be called from the UI thread
+func (l *roomViewLobby) onJoined() {
+	l.notifications.clearAll()
+	l.onSuccess()
 }
 
 func (l *roomViewLobby) onJoinFailed(err error) {

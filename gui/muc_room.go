@@ -141,6 +141,8 @@ func (v *roomView) initSubscribers() {
 // onEventReceived MUST be called from the UI thread
 func (v *roomView) onEventReceived(ev roomViewEvent) {
 	switch t := ev.(type) {
+	case selfOccupantJoinedEvent:
+		v.selfOccupantJoinedEvent()
 	case selfOccupantRemovedEvent:
 		v.selfOccupantRemovedEvent()
 	case roomDiscoInfoReceivedEvent:

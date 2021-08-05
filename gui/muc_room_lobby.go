@@ -86,18 +86,6 @@ func (l *roomViewLobby) initSubscribers() {
 			l.roomDiscoInfoReceivedEvent(t.info, l.roomView.passwordProvider)
 		case roomConfigRequestTimeoutEvent:
 			l.roomConfigRequestTimeoutEvent()
-		case nicknameConflictEvent:
-			l.nicknameConflictEvent(t.nickname)
-		case registrationRequiredEvent:
-			l.registrationRequiredEvent()
-		case notAuthorizedEvent:
-			l.notAuthorizedEvent()
-		case serviceUnavailableEvent:
-			l.serviceUnavailableEvent()
-		case unknownErrorEvent:
-			l.unknownErrorEvent()
-		case occupantForbiddenEvent:
-			l.occupantForbiddenEvent()
 		}
 	})
 }
@@ -189,7 +177,7 @@ func (l *roomViewLobby) onJoinFailed(err error) {
 
 	userMessage := i18n.Local("An unknown error occurred while trying to join the room, please check your connection or try again.")
 	if err, ok := err.(*roomError); ok {
-		userMessage = l.getUserErrorMessage(err)
+		userMessage = err.friendlyMessage
 		shouldEnableJoin = false
 
 		if err.errType == errJoinNicknameConflict {

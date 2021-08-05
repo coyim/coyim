@@ -19,8 +19,9 @@ var (
 )
 
 type roomError struct {
-	nickname string
-	errType  error
+	nickname        string
+	friendlyMessage string
+	errType         error
 }
 
 // Error implements the "error" interface
@@ -28,48 +29,50 @@ func (e *roomError) Error() string {
 	return e.errType.Error()
 }
 
-func newRoomError(nickname string, errType error) error {
+func (v *roomView) newRoomError(nickname string, errType error) error {
 	return &roomError{
-		nickname: nickname,
-		errType:  errType,
+		nickname:        nickname,
+		friendlyMessage: v.userFriendlyRoomErrorMessage(errType),
+		errType:         errType,
 	}
 }
 
-func newRoomInvalidNicknameError() error {
-	return newRoomError("", errInvalidNickname)
+func (v *roomView) invalidNicknameError() error {
+	return v.newRoomError("", errInvalidNickname)
 }
 
-func (l *roomViewLobby) joinRequestErrorEvent(err error) {
-	l.joinRequestErrorEvent(newRoomError("", err))
+func (v *roomView) joinRequestError(err error) {
+	joinErr := v.newRoomError("", err)
+	v.finishJoinRequestWithError(joinErr)
 }
 
-func (l *roomViewLobby) nicknameConflictEvent(nickname string) {
-	l.joinRequestErrorEvent(errJoinNicknameConflict)
+func (v *roomView) nicknameConflictEvent(nickname string) {
+	nicknameErr := v.newRoomError(nickname, errJoinNicknameConflict)
+	v.finishJoinRequestWithError(nicknameErr)
 }
 
-func (l *roomViewLobby) registrationRequiredEvent() {
-	l.joinRequestErrorEvent(errJoinOnlyMembers)
+func (v *roomView) registrationRequiredEvent() {
+	v.joinRequestError(errJoinOnlyMembers)
 }
 
-func (l *roomViewLobby) notAuthorizedEvent() {
-	l.joinRequestErrorEvent(errJoinNotAuthorized)
+func (v *roomView) notAuthorizedEvent() {
+	v.joinRequestError(errJoinNotAuthorized)
 }
 
-func (l *roomViewLobby) serviceUnavailableEvent() {
-	l.joinRequestErrorEvent(errServiceUnavailable)
+func (v *roomView) serviceUnavailableEvent() {
+	v.joinRequestError(errServiceUnavailable)
 }
 
-func (l *roomViewLobby) unknownErrorEvent() {
-	l.joinRequestErrorEvent(errUnknownError)
+func (v *roomView) unknownErrorEvent() {
+	v.joinRequestError(errUnknownError)
 }
 
-func (l *roomViewLobby) occupantForbiddenEvent() {
-	l.accountIsBanned = true
-	l.joinRequestErrorEvent(errOccupantForbidden)
+func (v *roomView) occupantForbiddenEvent() {
+	v.joinRequestError(errOccupantForbidden)
 }
 
-func (l *roomViewLobby) getUserErrorMessage(err *roomError) string {
-	switch err.errType {
+func (v *roomView) userFriendlyRoomErrorMessage(err error) string {
+	switch err {
 	case errInvalidNickname:
 		return i18n.Local("You must provide a valid nickname.")
 	case errJoinNicknameConflict:

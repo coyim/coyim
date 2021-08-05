@@ -157,6 +157,18 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 		v.selfOccupantRoleUpdatedEvent(t.selfRoleUpdate)
 	case selfOccupantDisconnectedEvent:
 		v.selfOccupantDisconnectedEvent()
+	case nicknameConflictEvent:
+		v.nicknameConflictEvent(t.nickname)
+	case registrationRequiredEvent:
+		v.registrationRequiredEvent()
+	case notAuthorizedEvent:
+		v.notAuthorizedEvent()
+	case serviceUnavailableEvent:
+		v.serviceUnavailableEvent()
+	case unknownErrorEvent:
+		v.unknownErrorEvent()
+	case occupantForbiddenEvent:
+		v.occupantForbiddenEvent()
 	}
 }
 
@@ -530,7 +542,7 @@ func (v *roomView) sendJoinRoomRequest(nickname, password string, doAfterRequest
 
 	err := v.account.session.JoinRoom(v.roomID(), nickname, password)
 	if err == session.ErrMUCJoinRoomInvalidNickname {
-		err = newRoomInvalidNicknameError()
+		err = v.invalidNicknameError()
 	}
 
 	if err != nil {

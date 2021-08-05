@@ -100,10 +100,18 @@ func (rn *roomNotifications) notificationsBox() gtki.Widget {
 	return rn.notifications.contentBox()
 }
 
+func (rn *roomNotifications) clearAll() {
+	rn.notifications.clearAll()
+}
+
+// clearErrors implements the "canNotifyErrors" interface
 func (rn *roomNotifications) clearErrors() {
 	rn.notifications.clearErrors()
 }
 
-func (rn *roomNotifications) clearAll() {
-	rn.notifications.clearAll()
+// notifyOnError implements the "canNotifyErrors" interface
+func (rn *roomNotifications) notifyOnError(err string) {
+	rn.error(roomNotificationOptions{
+		message: err,
+	})
 }

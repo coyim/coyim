@@ -56,14 +56,15 @@ func (dm *DelayedMessages) add(nickname, message string, timestamp time.Time) {
 	dm.lock.Lock()
 	defer dm.lock.Unlock()
 
+	shouldAddDelayedMessage := true
 	if len(dm.messages) > 0 {
 		lastMessage := dm.messages[len(dm.messages)-1]
-		if lastMessage.Timestamp.After(timestamp) {
-			return
-		}
+		shouldAddDelayedMessage = lastMessage.Timestamp.Before(timestamp)
 	}
 
-	dm.messages = append(dm.messages, newDelayedMessage(nickname, message, timestamp))
+	if shouldAddDelayedMessage {
+		dm.messages = append(dm.messages, newDelayedMessage(nickname, message, timestamp))
+	}
 }
 
 // DiscussionHistory contains the rooms's discussion history

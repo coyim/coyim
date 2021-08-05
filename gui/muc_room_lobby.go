@@ -34,7 +34,9 @@ type roomViewLobby struct {
 }
 
 func (v *roomView) initRoomLobby() {
-	v.lobby = v.newRoomViewLobby(v.account, v.roomID())
+	if v.lobby == nil {
+		v.lobby = v.newRoomViewLobby(v.account, v.roomID())
+	}
 	v.content.Add(v.lobby.content)
 }
 
@@ -97,7 +99,9 @@ func (l *roomViewLobby) roomDiscoInfoReceivedEvent(di data.RoomDiscoInfo, passwo
 			l.isPasswordProtected = true
 			setFieldVisibility(l.passwordLabel, true)
 			setFieldVisibility(l.passwordEntry, true)
-			setEntryText(l.passwordEntry, passwordProvider())
+			if passwordProvider != nil {
+				setEntryText(l.passwordEntry, passwordProvider())
+			}
 		}
 	})
 }

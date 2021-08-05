@@ -17,12 +17,14 @@ type roomViewMain struct {
 }
 
 func (v *roomView) initRoomMain() {
-	v.main = newRoomMainView(
-		v.conv.view,
-		v.roster.view,
-		v.toolbar.view,
-		v.content,
-	)
+	if v.main == nil {
+		v.main = newRoomMainView(
+			v.conv.view,
+			v.roster.view,
+			v.toolbar.view,
+			v.content,
+		)
+	}
 }
 
 func newRoomMainView(main, panel, top, parent gtki.Box) *roomViewMain {

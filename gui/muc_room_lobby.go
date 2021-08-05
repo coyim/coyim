@@ -12,6 +12,7 @@ import (
 
 type roomViewLobby struct {
 	roomID                jid.Bare
+	roomView              *roomView
 	account               *account
 	accountIsBanned       bool
 	isPasswordProtected   bool
@@ -45,6 +46,7 @@ func (v *roomView) initRoomLobby() {
 func (v *roomView) newRoomViewLobby(a *account, roomID jid.Bare) *roomViewLobby {
 	l := &roomViewLobby{
 		roomID:                roomID,
+		roomView:              v,
 		account:               a,
 		onSuccess:             v.onJoined,
 		onCancel:              v.onJoinCancel,
@@ -54,8 +56,8 @@ func (v *roomView) newRoomViewLobby(a *account, roomID jid.Bare) *roomViewLobby 
 	}
 
 	l.initBuilder()
-	l.initDefaults(v)
-	l.initSubscribers(v)
+	l.initDefaults()
+	l.initSubscribers()
 
 	return l
 }
@@ -72,8 +74,8 @@ func (l *roomViewLobby) initBuilder() {
 	})
 }
 
-func (l *roomViewLobby) initDefaults(v *roomView) {
-	l.notifications = v.notifications
+func (l *roomViewLobby) initDefaults() {
+	l.notifications = l.roomView.notifications
 
 	l.roomNameLabel.SetText(i18n.Localf("You are joining %s", l.roomID.String()))
 	l.content.SetHExpand(true)
@@ -84,11 +86,11 @@ func (l *roomViewLobby) initDefaults(v *roomView) {
 	mucStyles.setRoomToolbarLobyStyle(l.content)
 }
 
-func (l *roomViewLobby) initSubscribers(v *roomView) {
-	v.subscribe("lobby", func(ev roomViewEvent) {
+func (l *roomViewLobby) initSubscribers() {
+	l.roomView.subscribe("lobby", func(ev roomViewEvent) {
 		switch t := ev.(type) {
 		case roomDiscoInfoReceivedEvent:
-			l.roomDiscoInfoReceivedEvent(t.info, v.passwordProvider)
+			l.roomDiscoInfoReceivedEvent(t.info, l.roomView.passwordProvider)
 		case roomConfigRequestTimeoutEvent:
 			l.roomConfigRequestTimeoutEvent()
 		case occupantSelfJoinedEvent:

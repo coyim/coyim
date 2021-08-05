@@ -702,15 +702,6 @@ func (v *roomView) handleDiscoInfoTimeout() {
 
 // onReconnectingRoomInfoReceived MUST be called from the UI thread
 func (v *roomView) onReconnectingRoomInfoReceived(di data.RoomDiscoInfo) {
-	// TODO: Refactor v.switchToLobbyView() and v.switchToMainView()
-	// in order to keep this logic as simple as:
-	//
-	// if di.PasswordProtected {
-	// 	v.switchToLobbyView()
-	// } else {
-	// 	v.switchToMainView()
-	// }
-
 	removeClassStyle("room-disabled", v.content)
 	if di.PasswordProtected {
 		v.switchToLobbyView()

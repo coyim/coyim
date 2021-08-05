@@ -26,7 +26,6 @@ type roomViewLobby struct {
 	notificationArea gtki.Box    `gtk-widget:"notifications-box"`
 
 	errorNotifications canNotifyErrors
-	loadingOverlay     *roomViewLoadingOverlay
 
 	log coylog.Logger
 }
@@ -36,7 +35,6 @@ func (v *roomView) newRoomViewLobby() *roomViewLobby {
 		roomView:              v,
 		account:               v.account,
 		errorNotifications:    v.notifications,
-		loadingOverlay:        v.loadingViewOverlay,
 		nicknamesWithConflict: set.New(),
 		log:                   v.log.WithField("where", "roomViewLobby"),
 	}
@@ -134,14 +132,12 @@ func (l *roomViewLobby) checkJoinConditions() bool {
 func (l *roomViewLobby) disableFieldsAndShowSpinner() {
 	disableField(l.nicknameEntry)
 	disableField(l.joinButton)
-	l.loadingOverlay.onJoinRoom()
 }
 
 // enableFieldsAndHideSpinner MUST be called from the UI thread
 func (l *roomViewLobby) enableFieldsAndHideSpinner() {
 	enableField(l.nicknameEntry)
 	enableField(l.joinButton)
-	l.loadingOverlay.hide()
 }
 
 // onJoinRoomClicked MUST be called from the UI thread

@@ -559,6 +559,8 @@ func (v *roomView) hideMainView() {
 
 // sendJoinRoomRequest MUST NOT be called from the UI thread
 func (v *roomView) sendJoinRoomRequest(nickname, password string, doAfterRequestSent func()) {
+	v.loadingViewOverlay.onJoinRoom()
+
 	doAfterRequestSentFinal := doAfterRequestSent
 	doAfterRequestSent = func() {
 		if doAfterRequestSentFinal != nil {
@@ -582,6 +584,8 @@ func (v *roomView) sendJoinRoomRequest(nickname, password string, doAfterRequest
 func (v *roomView) finishJoinRequestWithError(err error) {
 	v.log.WithError(err).Error("An error occurred while trying to join the room")
 	doInUIThread(func() {
+		v.loadingViewOverlay.hide()
+
 		// TODO: This will change to something more proper in this case.
 		// For now, we assume that we are in the lobby when joining the room.
 		v.lobby.onJoinFailed(err)
@@ -590,6 +594,8 @@ func (v *roomView) finishJoinRequestWithError(err error) {
 
 // selfOccupantJoinedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantJoinedEvent() {
+	v.loadingViewOverlay.hide()
+
 	// TODO: This will change to something more proper in this case.
 	// For now, we assume that we are in the lobby when joining the room.
 	v.switchToMainView()

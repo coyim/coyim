@@ -175,7 +175,7 @@ func (l *roomViewLobby) enableFieldsAndHideSpinner() {
 // onJoinRoomClicked MUST be called from the UI thread
 func (l *roomViewLobby) onJoinRoomClicked(done func()) {
 	l.notifications.clearAll()
-	doInUIThread(l.disableFieldsAndShowSpinner)
+	l.disableFieldsAndShowSpinner()
 
 	nickname := getEntryText(l.nicknameEntry)
 	password := getEntryText(l.passwordEntry)

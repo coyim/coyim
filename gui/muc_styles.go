@@ -36,12 +36,6 @@ func (s *mucStylesProvider) setMessageViewBoxStyle(b gtki.Box) {
 	})
 }
 
-func (s *mucStylesProvider) setRoomWindowStyle(w gtki.Window) {
-	s.setWidgetStyle(w, "window", style{
-		"background-color": colorThemeBase,
-	})
-}
-
 func (s *mucStylesProvider) setRoomToolbarLobyStyle(b gtki.Box) {
 	s.setBoxStyle(b, style{
 		"background-color": colorThemeBackground,
@@ -80,12 +74,6 @@ func (s *mucStylesProvider) setRoomToolbarNameLabelStyle(l gtki.Label) {
 func (s *mucStylesProvider) setRoomToolbarSubjectLabelStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
 		"color": s.colors.roomSubjectForeground,
-	})
-}
-
-func (s *mucStylesProvider) setRoomToolbarNameLabelDisabledStyle(l gtki.Label) {
-	s.setLabelStyle(l, style{
-		"color": s.colors.roomNameDisabledForeground,
 	})
 }
 
@@ -218,10 +206,21 @@ func (s *mucStylesProvider) setLabelExpanderStyle(l gtki.Label) {
 	})
 }
 
-func (s *mucStylesProvider) setDisableRoomStyle(e gtki.Box) {
-	s.setWidgetStyles(e, styles{
-		".room-disabled": style{
-			"opacity": "0.5",
+const (
+	roomDisableClassName        = ".room-disabled"
+	roomToolbarDisableClassName = ".room-toolbar-disable"
+)
+
+func (s *mucStylesProvider) setRoomWindowStyle(w gtki.Window) {
+	s.setWidgetStyles(w, styles{
+		"window": style{
+			"background-color": colorThemeBase,
+		},
+		roomDisableClassName: {
+			"opacity": "0.75",
+		},
+		roomToolbarDisableClassName: {
+			"color": s.colors.roomNameDisabledForeground,
 		},
 	})
 }

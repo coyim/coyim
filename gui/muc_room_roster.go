@@ -138,6 +138,10 @@ func (r *roomViewRoster) initSubscribers() {
 			selfOccupantAffiliationUpdatedEvent,
 			occupantAffiliationUpdatedEvent:
 			r.onUpdateRoster()
+		case roomDisableEvent:
+			r.roomDisableEvent()
+		case roomEnableEvent:
+			r.roomEnableEvent()
 		}
 	})
 }
@@ -326,6 +330,18 @@ func (r *roomViewRoster) addOccupantToRoster(o *muc.Occupant, parentIter gtki.Tr
 		roomViewRosterOccupantAffiliationVisibilityIndex: displayAffiliation != "",
 		roomViewRosterExpanderVisibilityIndex:            false,
 	})
+}
+
+// roomDisableEvent MUST be called from the UI thread
+func (r *roomViewRoster) roomDisableEvent() {
+	addRoomDisableClass(r.tree)
+	addRoomDisableClass(r.rosterPanel)
+}
+
+// roomEnableEvent MUST be called from the UI thread
+func (r *roomViewRoster) roomEnableEvent() {
+	removeRoomDisableClass(r.tree)
+	removeRoomDisableClass(r.rosterPanel)
 }
 
 // parentWindow MUST be called from the UI threads

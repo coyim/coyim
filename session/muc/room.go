@@ -109,8 +109,8 @@ func (r *Room) HasHistory() bool {
 	return len(r.discussionHistory.GetHistory()) > 0
 }
 
-// GetHistory returns the room history
-func (r *Room) GetHistory() *data.DiscussionHistory {
+// GetDiscussionHistory returns the room history
+func (r *Room) GetDiscussionHistory() *data.DiscussionHistory {
 	return r.discussionHistory
 }
 

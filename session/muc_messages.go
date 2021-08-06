@@ -42,7 +42,7 @@ func (m *mucManager) handleDiscussionHistory(stanza *xmppData.ClientMessage) {
 	roomID := m.retrieveRoomID(stanza.From, "handleDiscussionHistory")
 	room, ok := m.roomManager.GetRoom(roomID)
 	if ok && room.HasHistory() {
-		m.discussionHistoryReceived(roomID, room.GetHistory())
+		m.discussionHistoryReceived(roomID, room.GetDiscussionHistory())
 	}
 }
 

@@ -90,7 +90,7 @@ func (s *MucSuite) Test_Room_History(c *C) {
 
 	r.AddHistoryMessage("juanito", "test message", time.Now())
 	c.Assert(r.HasHistory(), Equals, true)
-	roomHistory := r.GetHistory()
+	roomHistory := r.GetDiscussionHistory()
 	c.Assert(roomHistory.GetHistory(), HasLen, 1)
 
 }

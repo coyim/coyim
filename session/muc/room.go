@@ -132,14 +132,3 @@ func (r *Room) SubjectCanBeChanged() bool {
 	}
 	return r.selfOccupant.Role.IsModerator() || r.properties.OccupantsCanChangeSubject
 }
-
-// StatusConnected description
-func (r *Room) StatusConnected() {
-	r.Publish(events.MUCSelfOccupantConnected{})
-}
-
-// StatusDisconnected description
-func (r *Room) StatusDisconnected() {
-	r.roster.RemoveOccupant(r.SelfOccupantNickname())
-	r.Publish(events.MUCSelfOccupantDisconnected{})
-}

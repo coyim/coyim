@@ -828,16 +828,12 @@ func (s *session) setStatus(status connStatus) {
 
 func (s *session) onStatusConnected() {
 	s.publish(events.Connected)
-	for _, r := range s.muc.roomManager.GetAllRooms() {
-		go r.StatusConnected()
-	}
+	s.muc.onStatusConnected()
 }
 
 func (s *session) onStatusDisconnected() {
 	s.publish(events.Disconnected)
-	for _, r := range s.muc.roomManager.GetAllRooms() {
-		go r.StatusDisconnected()
-	}
+	s.muc.onStatusDisconnected()
 }
 
 // Connect connects to the server and starts the main threads

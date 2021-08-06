@@ -225,6 +225,16 @@ func (s *mucStylesProvider) setRoomWindowStyle(w gtki.Window) {
 	})
 }
 
+// addRoomDisableClass MUST be called from the UI thread
+func addRoomDisableClass(w gtki.Widget) {
+	addClassStyle(roomDisableClassName, w)
+}
+
+// removeRoomDisableClass MUST be called from the UI thread
+func removeRoomDisableClass(w gtki.Widget) {
+	removeClassStyle(roomDisableClassName, w)
+}
+
 func (s *mucStylesProvider) setFormSectionLabelStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
 		"font-weight": "bold",

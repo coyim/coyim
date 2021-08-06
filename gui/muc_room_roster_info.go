@@ -85,9 +85,19 @@ func (r *roomViewRosterInfo) initBuilder() {
 
 func (r *roomViewRosterInfo) initSubscribers() {
 	r.rosterView.roomView.subscribe("roster-info", func(ev roomViewEvent) {
-		switch ev.(type) {
-		case selfOccupantJoinedEvent:
-			r.selfOccupant = r.rosterView.roomSelfOccupant()
+		switch t := ev.(type) {
+		case selfOccupantJoinedEvent, selfOccupantRemovedEvent:
+			r.selfOccupantUpdateEvent()
+		case occupantUpdatedEvent:
+			r.occupantUpdatedEvent(t.nickname, t.role)
+		case occupantRemovedEvent:
+			r.occupantRemovedEvent(t.nickname)
+		case occupantLeftEvent:
+			r.occupantLeftEvent(t.nickname)
+		case roomDisableEvent:
+			r.roomDisableEvent()
+		case roomEnableEvent:
+			r.roomEnableEvent()
 		}
 	})
 }
@@ -301,6 +311,66 @@ func (r *roomViewRosterInfo) hide() {
 	r.rosterView.hideRosterInfoPanel()
 	r.removeOccupantEvents()
 	r.reset()
+}
+
+// isOpen MUST be called from the UI thread
+func (r *roomViewRosterInfo) isOpen() bool {
+	return r.occupant != nil && r.view.IsVisible()
+}
+
+func (r *roomViewRosterInfo) isTheSameOccupant(nickname string) bool {
+	return r.occupant != nil && r.occupant.Nickname == nickname
+}
+
+// selfOccupantUpdateEvent MUST be called from the UI thread
+func (r *roomViewRosterInfo) selfOccupantUpdateEvent() {
+	r.selfOccupant = r.rosterView.roomSelfOccupant()
+
+	if r.isOpen() {
+		r.validateOccupantPrivileges()
+	}
+}
+
+// occupantUpdatedEvent MUST be called from the UI thread
+func (r *roomViewRosterInfo) occupantUpdatedEvent(nickname string, role data.Role) {
+	r.onOccupantUpdate(nickname)
+}
+
+// occupantRemovedEvent MUST be called from the UI thread
+func (r *roomViewRosterInfo) occupantRemovedEvent(nickname string) {
+	r.onOccupantUpdate(nickname)
+}
+
+// occupantLeftEvent MUST be called from the UI thread
+func (r *roomViewRosterInfo) occupantLeftEvent(nickname string) {
+	r.onOccupantUpdate(nickname)
+}
+
+// onOccupantUpdate MUST be called from the UI thread
+func (r *roomViewRosterInfo) onOccupantUpdate(nickname string) {
+	if r.isOpen() && r.isTheSameOccupant(nickname) {
+		r.validateOccupantPrivileges()
+	}
+}
+
+// roomDisableEvent MUST be called from the UI thread
+func (r *roomViewRosterInfo) roomDisableEvent() {
+	r.affiliationListBoxRow.SetSensitive(false)
+	r.roleListBoxRow.SetSensitive(false)
+
+	if r.isOpen() {
+		r.validateOccupantPrivileges()
+	}
+}
+
+// roomEnableEvent MUST be called from the UI thread
+func (r *roomViewRosterInfo) roomEnableEvent() {
+	r.affiliationListBoxRow.SetSensitive(true)
+	r.roleListBoxRow.SetSensitive(true)
+
+	if r.isOpen() {
+		r.validateOccupantPrivileges()
+	}
 }
 
 // parentWindow MUST be called from the UI threads

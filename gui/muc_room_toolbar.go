@@ -102,10 +102,6 @@ func (t *roomViewToolbar) initSubscribers() {
 			t.subjectUpdatedEvent(e.subject)
 		case roomConfigChangedEvent:
 			t.onRoomConfigChanged()
-		case roomDestroyedEvent:
-			t.roomDestroyedEvent()
-		case selfOccupantRemovedEvent:
-			t.selfOccupantRemovedEvent()
 		case selfOccupantJoinedEvent:
 			t.selfOccupantJoinedEvent()
 		case selfOccupantRoleUpdatedEvent:
@@ -115,6 +111,10 @@ func (t *roomViewToolbar) initSubscribers() {
 		case selfOccupantAffiliationRoleUpdatedEvent:
 			t.selfOccupantRoleUpdatedEvent(e.selfAffiliationRoleUpdate.NewRole)
 			t.selfOccupantAffiliationUpdatedEvent(e.selfAffiliationRoleUpdate.NewAffiliation)
+		case roomDisableEvent, roomDestroyedEvent, selfOccupantRemovedEvent:
+			t.roomDisableEvent()
+		case roomEnableEvent:
+			t.roomEnableEvent()
 		}
 	})
 }
@@ -154,19 +154,11 @@ func (t *roomViewToolbar) onEditSubjectContextChanged() {
 	}
 }
 
-func (t *roomViewToolbar) roomDestroyedEvent() {
-	doInUIThread(t.disable)
-}
-
-func (t *roomViewToolbar) selfOccupantRemovedEvent() {
-	doInUIThread(t.disable)
-}
-
 func (t *roomViewToolbar) selfOccupantRoleUpdatedEvent(role data.Role) {
 	doInUIThread(t.onEditSubjectContextChanged)
 
 	if role.IsNone() {
-		doInUIThread(t.disable)
+		doInUIThread(t.roomDisableEvent)
 	}
 }
 
@@ -176,7 +168,7 @@ func (t *roomViewToolbar) selfOccupantAffiliationUpdatedEvent(affiliation data.A
 	})
 
 	if affiliation.IsBanned() {
-		doInUIThread(t.disable)
+		doInUIThread(t.roomDisableEvent)
 	}
 }
 
@@ -190,13 +182,6 @@ func (t *roomViewToolbar) updateMenuActionsBasedOn(affiliation data.Affiliation)
 	t.configureRoomMenuItem.SetVisible(affiliation.IsOwner())
 	t.destroyRoomMenuItem.SetVisible(affiliation.IsOwner())
 	t.modifyPositionListsMenuItem.SetVisible(affiliation.IsAdmin())
-}
-
-// disable MUST be called from UI Thread
-func (t *roomViewToolbar) disable() {
-	mucStyles.setRoomToolbarNameLabelDisabledStyle(t.roomNameLabel)
-	t.roomStatusIcon.SetFromPixbuf(getMUCIconPixbuf("room-offline"))
-	t.roomMenuButton.Hide()
 }
 
 // displayRoomSubject MUST be called from the UI thread
@@ -293,4 +278,27 @@ func (t *roomViewToolbar) handleEditSubjectComponents() {
 func (t *roomViewToolbar) SetVisibleEditSubjectComponent(v bool) {
 	t.roomSubjectScrolledWindow.SetVisible(v)
 	t.roomSubjectButtonsContainer.SetVisible(v)
+}
+
+const (
+	roomOfflineIconName = "room"
+	roomOnlineIconName  = "room-offline"
+)
+
+// roomDisableEvent MUST be called from the UI thread
+func (t *roomViewToolbar) roomDisableEvent() {
+	t.handleEditSubjectComponents()
+
+	addClassStyle(roomToolbarDisableClassName, t.roomNameLabel)
+	t.roomStatusIcon.SetFromPixbuf(getMUCIconPixbuf(roomOnlineIconName))
+	t.roomMenuButton.SetSensitive(false)
+}
+
+// roomEnableEvent MUST be called from the UI thread
+func (t *roomViewToolbar) roomEnableEvent() {
+	t.handleEditSubjectComponents()
+
+	removeClassStyle(roomToolbarDisableClassName, t.roomNameLabel)
+	t.roomStatusIcon.SetFromPixbuf(getMUCIconPixbuf(roomOfflineIconName))
+	t.roomMenuButton.SetSensitive(true)
 }

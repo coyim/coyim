@@ -44,10 +44,7 @@ func (dm *DelayedMessages) GetMessages() []*DelayedMessage {
 	defer dm.lock.RUnlock()
 
 	result := []*DelayedMessage{}
-
-	for _, m := range dm.messages {
-		result = append(result, m)
-	}
+	result = append(result, dm.messages...)
 
 	return result
 }
@@ -83,13 +80,7 @@ func (dh *DiscussionHistory) GetHistory() []*DelayedMessages {
 	dh.lock.RLock()
 	defer dh.lock.RUnlock()
 
-	result := []*DelayedMessages{}
-
-	for _, h := range dh.history {
-		result = append(result, h)
-	}
-
-	return result
+	return dh.history
 }
 
 // AddMessage add a new delayed message to the history

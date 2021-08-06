@@ -383,3 +383,17 @@ func (s *MucSuite) Test_RoomRoster_GetActorInformation(c *C) {
 		Role:        &data.ParticipantRole{},
 	})
 }
+
+func (s *MucSuite) Test_RoomRoster_Reset(c *C) {
+	rr := newRoomRoster()
+	rr.occupants["one"] = newRosterOccupantForTest("One", "foo@bar.com/somewhere", nil, nil)
+	rr.occupants["two"] = newRosterOccupantForTest("Abc", "foo@bar.com/somewhereelse", nil, nil)
+	rr.occupants["three"] = newRosterOccupantForTest("Foo", "foo@bar.com/foo", nil, nil)
+
+	oo := rr.AllOccupants()
+	c.Assert(oo, HasLen, 3)
+
+	rr.Reset()
+	oo = rr.AllOccupants()
+	c.Assert(oo, HasLen, 0)
+}

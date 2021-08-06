@@ -260,3 +260,11 @@ func (r *RoomRoster) GetOccupant(nickname string) (*Occupant, bool) {
 	o, ok := r.occupants[nickname]
 	return o, ok
 }
+
+// Reset resets the occupant list without updating their statuses
+func (r *RoomRoster) Reset() {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	r.occupants = make(map[string]*Occupant)
+}

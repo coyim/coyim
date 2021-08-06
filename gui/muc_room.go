@@ -175,6 +175,8 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 		v.unknownErrorEvent()
 	case occupantForbiddenEvent:
 		v.occupantForbiddenEvent()
+	case roomDisableEvent:
+		v.roomDisableEvent()
 	}
 }
 
@@ -256,6 +258,7 @@ func (v *roomView) selfOccupantDisconnectedEvent() {
 		showTime:  true,
 		closeable: true,
 	})
+
 	v.disableRoomView()
 }
 
@@ -270,10 +273,18 @@ func (v *roomView) selfOccupantRemovedEvent() {
 	v.disableRoomView()
 }
 
+// enableRoomView MUST be called from the UI thread
+func (v *roomView) enableRoomView() {
+	v.publishEvent(roomEnableEvent{})
+}
+
 // disableRoomView MUST be called from the UI thread
 func (v *roomView) disableRoomView() {
-	addClassStyle("room-disabled", v.content)
-	v.account.removeRoomView(v.roomID())
+	v.publishEvent(roomDisableEvent{})
+}
+
+// roomDisableEvent MUST be called from the UI thread
+func (v *roomView) roomDisableEvent() {
 	v.warningsInfoBar.hide()
 }
 
@@ -700,7 +711,8 @@ func (v *roomView) handleDiscoInfoTimeout() {
 
 // onReconnectingRoomInfoReceived MUST be called from the UI thread
 func (v *roomView) onReconnectingRoomInfoReceived(di data.RoomDiscoInfo) {
-	removeClassStyle("room-disabled", v.content)
+	v.enableRoomView()
+
 	if di.PasswordProtected {
 		v.switchToLobbyView()
 	} else {

@@ -135,6 +135,10 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.selfOccupantDisconnectedEvent()
 		case accountAffiliationUpdated:
 			c.occupantModifiedEvent(t.accountAddress, t.affiliation)
+		case roomDisableEvent:
+			c.roomDisableEvent()
+		case roomEnableEvent:
+			c.roomEnableEvent()
 		}
 	})
 }
@@ -207,6 +211,16 @@ func (c *roomViewConversation) occupantModifiedEvent(accountAddress jid.Any, aff
 		}
 		c.displayFormattedMessageWithTimestamp(message, conversationTagInfo)
 	})
+}
+
+// roomDisableEvent MUST be called from the UI thread
+func (c *roomViewConversation) roomDisableEvent() {
+	addRoomDisableClass(c.chatTextView)
+}
+
+// roomEnableEvent MUST be called from the UI thread
+func (c *roomViewConversation) roomEnableEvent() {
+	removeRoomDisableClass(c.chatTextView)
 }
 
 // onSelfOccupantBanned MUST be called from the UI thread

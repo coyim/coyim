@@ -134,6 +134,10 @@ type accountAffiliationUpdated struct {
 	affiliation    data.Affiliation
 }
 
+type roomDisableEvent struct{}
+
+type roomEnableEvent struct{}
+
 func (selfOccupantRemovedEvent) markAsRoomViewEvent()                {}
 func (occupantLeftEvent) markAsRoomViewEvent()                       {}
 func (occupantJoinedEvent) markAsRoomViewEvent()                     {}
@@ -168,3 +172,5 @@ func (selfOccupantRoleUpdatedEvent) markAsRoomViewEvent()            {}
 func (selfOccupantConnectedEvent) markAsRoomViewEvent()              {}
 func (selfOccupantDisconnectedEvent) markAsRoomViewEvent()           {}
 func (accountAffiliationUpdated) markAsRoomViewEvent()               {}
+func (roomDisableEvent) markAsRoomViewEvent()                        {}
+func (roomEnableEvent) markAsRoomViewEvent()                         {}

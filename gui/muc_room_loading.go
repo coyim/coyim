@@ -3,6 +3,7 @@ package gui
 import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc/data"
+	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type roomViewLoadingOverlay struct {
@@ -78,4 +79,8 @@ func (lo *roomViewLoadingOverlay) onRoomPositionsUpdate() {
 	lo.setTitle(i18n.Local("Saving room positions..."))
 	lo.setTransparent()
 	lo.show()
+}
+
+func (lo *roomViewLoadingOverlay) view() gtki.Overlay {
+	return lo.overlay
 }

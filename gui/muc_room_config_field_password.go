@@ -110,7 +110,9 @@ func (f *roomConfigFormFieldPassword) changeConfirmPasswordEntryStyle() {
 		sc.AddClass("entry-error")
 		return
 	}
+
 	sc.RemoveClass("entry-error")
+	f.hideValidationErrors()
 }
 
 // onShowPasswordClicked MUST be called from the UI thread

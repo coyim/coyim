@@ -76,11 +76,23 @@ func messageForSomeoneWhoLeftTheRoom(nickname string) string {
 }
 
 func messageForRoomSubjectUpdate(nickname, subject string) string {
+	if subject == "" {
+		return messageForRoomSubjectRemoved(nickname)
+	}
+
 	if nickname == "" {
 		return i18n.Localf("Someone has updated the room subject to: \"%s\"", subject)
 	}
 
 	return i18n.Localf("$nickname{%[1]s} updated the room subject to: \"%[2]s\"", nickname, subject)
+}
+
+func messageForRoomSubjectRemoved(nickname string) string {
+	if nickname == "" {
+		return i18n.Local("Someone removed the room subject")
+	}
+
+	return i18n.Localf("$nickname{%[1]s} removed the room subject", nickname)
 }
 
 func messageForRoomSubject(subject string) string {

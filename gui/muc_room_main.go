@@ -21,7 +21,7 @@ func (v *roomView) newRoomMainView() *roomViewMain {
 		main:   v.conv.view,
 		panel:  v.roster.view,
 		top:    v.toolbar.view,
-		parent: v.content,
+		parent: v.window.content,
 	}
 
 	m.initBuilder()

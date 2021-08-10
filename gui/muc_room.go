@@ -53,18 +53,13 @@ type roomView struct {
 	u       *gtkUI
 	account *account
 	room    *muc.Room
+	window  *roomViewWindow
 
 	cancel chan bool
 
 	opened             bool
 	passwordProvider   func() string
 	backToPreviousStep func()
-
-	window              gtki.Window   `gtk-widget:"room-window"`
-	overlay             gtki.Overlay  `gtk-widget:"room-overlay"`
-	privacityWarningBox gtki.Box      `gtk-widget:"room-privacity-warnings-box"`
-	content             gtki.Box      `gtk-widget:"room-main-box"`
-	notificationsArea   gtki.Revealer `gtk-widget:"room-notifications-revealer"`
 
 	notifications *roomNotifications
 
@@ -92,10 +87,9 @@ func (u *gtkUI) newRoomView(a *account, room *muc.Room) *roomView {
 		log:     a.log.WithField("room", room.ID),
 	}
 
-	view.initBuilderAndSignals()
+	view.initRoomWindow()
 	view.initSubscribers()
 	view.initNotifications()
-	view.initDefaults()
 
 	view.toolbar = view.newRoomViewToolbar()
 	view.roster = view.newRoomViewRoster()
@@ -103,30 +97,13 @@ func (u *gtkUI) newRoomView(a *account, room *muc.Room) *roomView {
 
 	view.warnings = view.newRoomViewWarnings()
 	view.warningsInfoBar = view.newRoomViewWarningsInfoBar()
-	view.privacityWarningBox.Add(view.warningsInfoBar.view())
-
 	view.loadingViewOverlay = view.newRoomViewLoadingOverlay()
-	view.overlay.AddOverlay(view.loadingViewOverlay.view())
 
 	view.initRoomViewComponents()
 
 	view.requestRoomDiscoInfo()
 
 	return view
-}
-
-func (v *roomView) initBuilderAndSignals() {
-	builder := newBuilder("MUCRoomWindow")
-	panicOnDevError(builder.bindObjects(v))
-
-	builder.ConnectSignals(map[string]interface{}{
-		"on_destroy_window": v.onDestroyWindow,
-	})
-}
-
-func (v *roomView) initDefaults() {
-	v.window.SetTitle(i18n.Localf("%[1]s [%[2]s]", v.roomID(), v.account.Account()))
-	mucStyles.setRoomWindowStyle(v.window)
 }
 
 func (v *roomView) initSubscribers() {
@@ -140,9 +117,17 @@ func (v *roomView) initSubscribers() {
 	})
 }
 
+func (v *roomView) initRoomWindow() {
+	v.window = v.newRoomViewWindow()
+}
+
 func (v *roomView) initRoomViewComponents() {
 	v.lobby = v.newRoomViewLobby()
 	v.main = v.newRoomMainView()
+
+	v.window.notificationsArea.Add(v.notifications.notificationsBox())
+	v.window.privacityWarningBox.Add(v.warningsInfoBar.view())
+	v.window.overlay.AddOverlay(v.loadingViewOverlay.view())
 }
 
 // onEventReceived MUST be called from the UI thread
@@ -310,7 +295,7 @@ func (v *roomView) isOpen() bool {
 
 func (v *roomView) present() {
 	if v.isOpen() {
-		v.window.Present()
+		v.window.present()
 	}
 }
 
@@ -320,7 +305,7 @@ func (v *roomView) isSelfOccupantInTheRoom() bool {
 
 func (v *roomView) show() {
 	v.opened = true
-	v.window.Show()
+	v.window.show()
 }
 
 // onLeaveRoom MUST be called from the UI thread
@@ -331,7 +316,7 @@ func (v *roomView) onLeaveRoom() {
 // tryLeaveRoom MUST be called from the UI thread
 func (v *roomView) tryLeaveRoom() {
 	onSuccess := func() {
-		doInUIThread(v.window.Destroy)
+		doInUIThread(v.window.destroy)
 	}
 
 	onError := func(err error) {
@@ -438,7 +423,7 @@ func (v *roomView) onOccupantAffiliationUpdateError(nickname string, newAffiliat
 		title:        messages.errorDialogTitle,
 		header:       messages.errorDialogHeader,
 		message:      messages.errorDialogMessage,
-		parentWindow: v.window,
+		parentWindow: v.mainWindow(),
 	})
 
 	dr.show()
@@ -494,7 +479,7 @@ func (v *roomView) onOccupantRoleUpdateError(nickname string, newRole data.Role)
 		title:        messages.errorDialogTitle,
 		header:       messages.errorDialogHeader,
 		message:      messages.errorDialogMessage,
-		parentWindow: v.window,
+		parentWindow: v.window.view(),
 	})
 
 	dr.show()
@@ -545,25 +530,25 @@ func (v *roomView) switchToMainView() {
 
 // showLobbyView MUST be called from the UI thread
 func (v *roomView) showLobbyView() {
-	v.content.Add(v.lobby.content)
+	v.window.addContentWidget(v.lobby.content)
 	v.lobby.content.Show()
 }
 
 // hideLobbyView MUST be called from the UI thread
 func (v *roomView) hideLobbyView() {
-	v.content.Remove(v.lobby.content)
+	v.window.removeContentWidget(v.lobby.content)
 	v.lobby.content.Hide()
 }
 
 // showMainView MUST be called from the UI thread
 func (v *roomView) showMainView() {
-	v.content.Add(v.main.content)
+	v.window.addContentWidget(v.main.content)
 	v.main.content.Show()
 }
 
 // hideMainView MUST be called from the UI thread
 func (v *roomView) hideMainView() {
-	v.content.Remove(v.main.content)
+	v.window.removeContentWidget(v.main.content)
 	v.main.content.Hide()
 }
 
@@ -613,7 +598,7 @@ func (v *roomView) selfOccupantJoinedEvent() {
 
 // onJoinCancel MUST be called from the UI thread
 func (v *roomView) onJoinCancel() {
-	v.window.Destroy()
+	v.window.destroy()
 
 	if v.backToPreviousStep != nil {
 		v.backToPreviousStep()
@@ -765,7 +750,7 @@ func (v *roomView) publishAccountAffiliationUpdated(accountAddress jid.Any, affi
 
 // mainWindow MUST be called from the UI thread
 func (v *roomView) mainWindow() gtki.Window {
-	return v.window
+	return v.window.view()
 }
 
 func (v *roomView) roomID() jid.Bare {

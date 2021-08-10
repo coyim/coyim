@@ -7,19 +7,16 @@ import (
 // initNotifications MUST be called from the UI thread
 func (v *roomView) initNotifications() {
 	v.notifications = v.newRoomNotifications()
-	v.notificationsArea.Add(v.notifications.notificationsBox())
 }
 
 // onNewNotificationAdded MUST be called from the UI thread
 func (v *roomView) onNewNotificationAdded() {
-	if !v.notificationsArea.GetRevealChild() {
-		v.notificationsArea.SetRevealChild(true)
-	}
+	v.window.onNewNotificationAdded()
 }
 
 // onNoNotifications MUST be called from the UI thread
 func (v *roomView) onNoNotifications() {
-	v.notificationsArea.SetRevealChild(false)
+	v.window.onNoNotifications()
 }
 
 type roomNotifications struct {

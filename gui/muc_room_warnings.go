@@ -158,7 +158,7 @@ func (vw *roomViewWarnings) initShortcuts() {
 }
 
 func (vw *roomViewWarnings) initDefaults() {
-	vw.dialog.SetTransientFor(vw.roomView.window)
+	vw.dialog.SetTransientFor(vw.roomView.mainWindow())
 	mucStyles.setRoomWarningsStyles(vw.dialog)
 }
 

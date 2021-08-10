@@ -98,7 +98,7 @@ func (v *roomView) onConfigureRoom() {
 						})
 					},
 					doNotAskForConfirmationOnCancel: true,
-					parentWindow:                    v.window,
+					parentWindow:                    v.mainWindow(),
 				})
 			})
 		case err := <-ec:

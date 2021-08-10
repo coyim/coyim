@@ -69,7 +69,7 @@ func (d *roomDestroyView) initChatServices(v *roomView) {
 }
 
 func (d *roomDestroyView) initDefaults(v *roomView) {
-	d.dialog.SetTransientFor(v.window)
+	d.dialog.SetTransientFor(v.mainWindow())
 
 	d.notifications = v.u.newNotificationsComponent()
 	d.notificationBox.Add(d.notifications.contentBox())

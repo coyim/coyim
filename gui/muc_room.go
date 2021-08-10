@@ -106,6 +106,7 @@ func (u *gtkUI) newRoomView(a *account, room *muc.Room) *roomView {
 	view.privacityWarningBox.Add(view.warningsInfoBar.view())
 
 	view.loadingViewOverlay = view.newRoomViewLoadingOverlay()
+	view.overlay.AddOverlay(view.loadingViewOverlay.view())
 
 	view.initRoomViewComponents()
 

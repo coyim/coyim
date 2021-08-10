@@ -11,13 +11,9 @@ type roomViewLoadingOverlay struct {
 }
 
 func (v *roomView) newRoomViewLoadingOverlay() *roomViewLoadingOverlay {
-	o := &roomViewLoadingOverlay{
+	return &roomViewLoadingOverlay{
 		v.u.newLoadingOverlayComponent(),
 	}
-
-	v.overlay.AddOverlay(o.overlay)
-
-	return o
 }
 
 // onRoomDiscoInfoLoad MUST be called from the UI thread

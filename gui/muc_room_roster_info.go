@@ -120,6 +120,10 @@ func (r *roomViewRosterInfo) initDefaults() {
 		r.removeOccupantRoleInfo,
 		r.validateOccupantPrivileges,
 	)
+
+	if r.rosterView.roomView.room.IsSelfOccupantInTheRoom() {
+		r.selfOccupant = r.rosterView.roomSelfOccupant()
+	}
 }
 
 // onOccupantAction MUST be called from the UI thread

@@ -47,11 +47,9 @@ type roomViewToolbar struct {
 	roomSubjectButtonsContainer gtki.Box            `gtk-widget:"room-edit-subject-buttons-container"`
 	roomSubjectEditButton       gtki.Button         `gtk-widget:"room-edit-subject-button"`
 	roomSubjectApplyButton      gtki.Button         `gtk-widget:"room-edit-subject-apply-button"`
-	securityPropertiesMenuItem  gtki.MenuItem       `gtk-widget:"security-properties-menu-item"`
 	configureRoomMenuItem       gtki.MenuItem       `gtk-widget:"room-configuration-menu-item"`
 	modifyPositionListsMenuItem gtki.MenuItem       `gtk-widget:"modify-position-lists-menu-item"`
 	destroyRoomMenuItem         gtki.MenuItem       `gtk-widget:"destroy-room-menu-item"`
-	leaveRoomMenuItem           gtki.MenuItem       `gtk-widget:"leave-room-menu-item"`
 }
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
@@ -91,6 +89,10 @@ func (t *roomViewToolbar) initDefaults() {
 	mucStyles.setRoomToolbarNameLabelStyle(t.roomNameLabel)
 
 	mucStyles.setRoomToolbarSubjectLabelStyle(t.roomSubjectLabel)
+
+	if t.roomView.room.IsSelfOccupantInTheRoom() {
+		t.updateMenuActionsBasedOn(t.roomView.room.SelfOccupant().Affiliation)
+	}
 }
 
 func (t *roomViewToolbar) initSubscribers() {

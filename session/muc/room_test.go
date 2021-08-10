@@ -49,11 +49,11 @@ func (s *MucSuite) Test_Room_UpdateSubject(c *C) {
 	r := NewRoom(jid.ParseBare("foo@bar.com"))
 	c.Assert(r.HasSubject(), Equals, false)
 
-	c.Assert(r.UpdateSubject("one"), Equals, false)
+	c.Assert(r.UpdateSubject("one"), Equals, true)
 	c.Assert(r.HasSubject(), Equals, true)
 
-	c.Assert(r.UpdateSubject("two"), Equals, true)
-	c.Assert(r.GetSubject(), Equals, "two")
+	c.Assert(r.UpdateSubject("one"), Equals, false)
+	c.Assert(r.GetSubject(), Equals, "one")
 }
 
 func (s *MucSuite) Test_Room_Roster(c *C) {

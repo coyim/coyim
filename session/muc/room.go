@@ -14,8 +14,7 @@ import (
 type Room struct {
 	ID jid.Bare
 
-	subject           string
-	subjectWasUpdated bool
+	subject string
 
 	selfOccupant *Occupant
 	roster       *RoomRoster
@@ -94,14 +93,10 @@ func (r *Room) HasSubject() bool {
 // UpdateSubject updates the room subject and returns a boolean
 // indicating if the subject was updated (true) or not (false)
 func (r *Room) UpdateSubject(s string) bool {
+	previousSubject := r.subject
 	r.subject = s
 
-	if r.subjectWasUpdated {
-		return true
-	}
-
-	r.subjectWasUpdated = true
-	return false
+	return previousSubject != s
 }
 
 // HasHistory returns true if room has history

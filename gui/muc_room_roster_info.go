@@ -121,7 +121,7 @@ func (r *roomViewRosterInfo) initDefaults() {
 		r.validateOccupantPrivileges,
 	)
 
-	if r.rosterView.roomView.room.IsSelfOccupantInTheRoom() {
+	if r.rosterView.isSelfOccupantInTheRoom() {
 		r.selfOccupant = r.rosterView.roomSelfOccupant()
 	}
 }

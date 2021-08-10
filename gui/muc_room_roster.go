@@ -258,6 +258,10 @@ func (r *roomViewRoster) roomSelfOccupant() *muc.Occupant {
 	return r.roomView.room.SelfOccupant()
 }
 
+func (r *roomViewRoster) isSelfOccupantInTheRoom() bool {
+	return r.roomView.isSelfOccupantInTheRoom()
+}
+
 func (r *roomViewRoster) draw() {
 	noneRoles, visitors, participants, moderators := r.roster.OccupantsByRole()
 

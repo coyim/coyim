@@ -756,3 +756,9 @@ func (v *roomView) mainWindow() gtki.Window {
 func (v *roomView) roomID() jid.Bare {
 	return v.room.ID
 }
+
+func doWhenNoReconnecting(isReconnecting bool, fn func()) {
+	if !isReconnecting {
+		fn()
+	}
+}

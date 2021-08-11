@@ -1,6 +1,7 @@
 package muc
 
 import (
+	"sync"
 	"time"
 
 	"github.com/coyim/coyim/session/events"
@@ -14,7 +15,9 @@ import (
 type Room struct {
 	ID jid.Bare
 
-	subject string
+	subject       string
+	subjectIsNew  bool
+	subjectLocker sync.Mutex
 
 	selfOccupant *Occupant
 	roster       *RoomRoster
@@ -29,6 +32,7 @@ type Room struct {
 func NewRoom(roomID jid.Bare) *Room {
 	return &Room{
 		ID:                roomID,
+		subjectIsNew:      true,
 		roster:            newRoomRoster(),
 		observers:         newRoomObservers(),
 		discussionHistory: data.NewDiscussionHistory(),
@@ -82,21 +86,31 @@ func (r *Room) IsSelfOccupantAnOwner() bool {
 
 // GetSubject returns the room subject
 func (r *Room) GetSubject() string {
+	r.subjectLocker.Lock()
+	defer r.subjectLocker.Unlock()
+
 	return r.subject
 }
 
 // HasSubject returns true if the room has subject
 func (r *Room) HasSubject() bool {
+	r.subjectLocker.Lock()
+	defer r.subjectLocker.Unlock()
+
 	return r.subject != ""
 }
 
 // UpdateSubject updates the room subject and returns a boolean
 // indicating if the subject was updated (true) or not (false)
 func (r *Room) UpdateSubject(s string) bool {
-	previousSubject := r.subject
-	r.subject = s
+	r.subjectLocker.Lock()
+	defer r.subjectLocker.Unlock()
 
-	return previousSubject != s
+	r.subject = s
+	isUpdated := !r.subjectIsNew
+	r.subjectIsNew = false
+
+	return isUpdated
 }
 
 // HasHistory returns true if room has history

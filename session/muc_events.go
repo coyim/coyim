@@ -113,6 +113,11 @@ func (m *mucManager) subjectReceived(roomID jid.Bare, subject string) {
 	m.publishRoomEvent(roomID, ev)
 }
 
+func (m *mucManager) joinedRoomFinished(roomID jid.Bare) {
+	ev := events.MUCJoinRoomFinished{}
+	m.publishRoomEvent(roomID, ev)
+}
+
 func (m *mucManager) subjectUpdated(roomID jid.Bare, nickname, subject string) {
 	ev := events.MUCSubjectUpdated{}
 	ev.Nickname = nickname

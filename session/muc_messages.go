@@ -12,13 +12,11 @@ import (
 func (m *mucManager) receiveClientMessage(stanza *xmppData.ClientMessage) {
 	m.log.WithField("stanza", stanza).Debug("handleMUCReceivedClientMessage()")
 
-	if hasSubject(stanza) {
+	// See https://xmpp.org/extensions/xep-0045.html#order
+	switch {
+	case isRoomSubject(stanza):
 		m.handleDiscussionHistory(stanza)
 		m.handleSubjectReceived(stanza)
-		return
-	}
-
-	switch {
 	case isDelayedMessage(stanza):
 		m.handleMessageReceived(stanza, m.appendHistoryMessage)
 	case isLiveMessage(stanza):
@@ -67,6 +65,7 @@ func (m *mucManager) handleSubjectReceived(stanza *xmppData.ClientMessage) {
 	}
 
 	m.subjectReceived(roomID, s)
+	m.joinedRoomFinished(roomID)
 }
 
 func (m *mucManager) handleMessageReceived(stanza *xmppData.ClientMessage, h func(jid.Bare, string, string, time.Time)) {
@@ -99,7 +98,7 @@ func isLiveMessage(stanza *xmppData.ClientMessage) bool {
 	return bodyHasContent(stanza) && !isDelayedMessage(stanza)
 }
 
-func hasSubject(stanza *xmppData.ClientMessage) bool {
+func isRoomSubject(stanza *xmppData.ClientMessage) bool {
 	return stanza.Subject != nil
 }
 
@@ -117,7 +116,7 @@ func getNicknameFromStanza(stanza *xmppData.ClientMessage) string {
 }
 
 func getSubjectFromStanza(stanza *xmppData.ClientMessage) string {
-	if hasSubject(stanza) {
+	if isRoomSubject(stanza) {
 		return stanza.Subject.Text
 	}
 

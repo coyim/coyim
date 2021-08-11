@@ -34,7 +34,8 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 		v.publishMessageEvent("delayed", t.Nickname, t.Message, t.Timestamp)
 	case events.MUCDiscussionHistoryReceived:
 		v.publishEvent(discussionHistoryEvent{
-			history: t.History,
+			history:        t.History,
+			isReconnecting: v.isReconnecting,
 		})
 	case events.MUCSubjectUpdated:
 		v.publishSubjectUpdatedEvent(t.Nickname, t.Subject)
@@ -187,6 +188,7 @@ func (v *roomView) publishSubjectUpdatedEvent(nickname, subject string) {
 
 func (v *roomView) publishSubjectReceivedEvent(subject string) {
 	v.publishEvent(subjectReceivedEvent{
-		subject: subject,
+		subject:        subject,
+		isReconnecting: v.isReconnecting,
 	})
 }

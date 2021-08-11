@@ -148,6 +148,11 @@ type MUCSubjectReceived struct {
 	Subject string
 }
 
+// MUCJoinRoomFinished signifies that the join process has finished.
+// This event must occur ONLY when the room subject is received and BEFORE
+// the room is ready to receive live messages, presence updates, new user joins, etc.
+type MUCJoinRoomFinished struct{}
+
 // MUCLoggingEnabled signifies that logging has been turned on from the room
 type MUCLoggingEnabled struct{}
 
@@ -239,6 +244,7 @@ func (MUCLiveMessageReceived) markAsMUCEventTypeInterface()                {}
 func (MUCDelayedMessageReceived) markAsMUCEventTypeInterface()             {}
 func (MUCSubjectUpdated) markAsMUCEventTypeInterface()                     {}
 func (MUCSubjectReceived) markAsMUCEventTypeInterface()                    {}
+func (MUCJoinRoomFinished) markAsMUCEventTypeInterface()                   {}
 func (MUCLoggingEnabled) markAsMUCEventTypeInterface()                     {}
 func (MUCLoggingDisabled) markAsMUCEventTypeInterface()                    {}
 func (MUCRoomAnonymityChanged) markAsMUCEventTypeInterface()               {}

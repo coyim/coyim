@@ -328,8 +328,21 @@ func (c *roomViewConversation) subjectUpdatedEvent(nickname, subject string) {
 }
 
 func (c *roomViewConversation) subjectReceivedEvent(subject string, isReconnecting bool) {
+	doWhenReconnecting(isReconnecting, func() {
+		doInUIThread(func() {
+			c.displayDivider()
+
+			c.displayCurrentTimestamp()
+			c.displayInfoMessage(i18n.Local("Your connection was restored."))
+		})
+	})
+
 	doInUIThread(func() {
 		c.displayNewInfoMessage(messageForRoomSubject(subject))
+	})
+
+	doWhenReconnecting(isReconnecting, func() {
+		doInUIThread(c.displayDivider)
 	})
 }
 

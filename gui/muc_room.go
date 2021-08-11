@@ -757,6 +757,12 @@ func (v *roomView) roomID() jid.Bare {
 	return v.room.ID
 }
 
+func doWhenReconnecting(isReconnecting bool, fn func()) {
+	if isReconnecting {
+		fn()
+	}
+}
+
 func doWhenNoReconnecting(isReconnecting bool, fn func()) {
 	if !isReconnecting {
 		fn()

@@ -57,9 +57,10 @@ type roomView struct {
 
 	cancel chan bool
 
-	opened             bool
-	passwordProvider   func() string
-	backToPreviousStep func()
+	opened                    bool
+	passwordProvider          func() string
+	backToPreviousStep        func()
+	doWhenJoinRequestFinished func() // doWhenJoinRequestFinished WILL be called from the UI thread
 
 	notifications *roomNotifications
 
@@ -133,14 +134,14 @@ func (v *roomView) initRoomViewComponents() {
 // onEventReceived MUST be called from the UI thread
 func (v *roomView) onEventReceived(ev roomViewEvent) {
 	switch t := ev.(type) {
-	case selfOccupantJoinedEvent:
-		v.selfOccupantJoinedEvent()
 	case selfOccupantRemovedEvent:
 		v.selfOccupantRemovedEvent()
 	case roomDiscoInfoReceivedEvent:
 		v.roomDiscoInfoReceivedEvent(t.info)
 	case roomConfigRequestTimeoutEvent:
 		v.roomConfigRequestTimeoutEvent()
+	case joinRoomFinished:
+		v.finishJoinRequest()
 	case selfOccupantAffiliationUpdatedEvent:
 		v.selfOccupantAffiliationUpdatedEvent(t.selfAffiliationUpdate)
 	case selfOccupantAffiliationRoleUpdatedEvent:
@@ -587,8 +588,12 @@ func (v *roomView) finishJoinRequestWithError(err error) {
 	})
 }
 
-// selfOccupantJoinedEvent MUST be called from the UI thread
-func (v *roomView) selfOccupantJoinedEvent() {
+// finishJoinRequest MUST be called from the UI thread
+func (v *roomView) finishJoinRequest() {
+	if v.doWhenJoinRequestFinished != nil {
+		v.doWhenJoinRequestFinished()
+	}
+
 	v.loadingViewOverlay.hide()
 
 	// TODO: This will change to something more proper in this case.
@@ -681,7 +686,6 @@ func (v *roomView) handleDiscoInfoReceived(di data.RoomDiscoInfo) {
 	if v.isReconnecting {
 		doInUIThread(func() {
 			v.onReconnectingRoomInfoReceived(di)
-			v.isReconnecting = false
 		})
 	}
 }
@@ -730,6 +734,23 @@ func (v *roomView) onReconnectingRoomInfoTimeout() {
 func (v *roomView) requestRoomInfoOnReconnect() {
 	v.isReconnecting = true
 	v.account.session.RefreshRoomProperties(v.roomID())
+
+	previousJoinRequestFn := v.doWhenJoinRequestFinished
+	v.doWhenJoinRequestFinished = func() {
+		doInUIThread(func() {
+			v.roomReconnectFinished(previousJoinRequestFn)
+		})
+	}
+}
+
+// roomReconnectFinished MUST be called from the UI thread
+func (v *roomView) roomReconnectFinished(previousJoinRequestFn func()) {
+	v.isReconnecting = false
+
+	v.doWhenJoinRequestFinished = previousJoinRequestFn
+	if v.doWhenJoinRequestFinished != nil {
+		v.doWhenJoinRequestFinished()
+	}
 }
 
 // publishSelfOccupantRoleUpdatedEvent MUST NOT be called from the UI thread

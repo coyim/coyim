@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/coyim/coyim/coylog"
-	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	xmppData "github.com/coyim/coyim/xmpp/data"
@@ -365,18 +364,12 @@ func (m *mucManager) retrieveRoomIDAndNickname(from string) (jid.Bare, string) {
 
 func (m *mucManager) onStatusConnected() {
 	for _, r := range m.roomManager.GetAllRooms() {
-		r.Roster().Reset()
-		r.Publish(events.MUCSelfOccupantConnected{})
+		r.Connect()
 	}
 }
 
 func (m *mucManager) onStatusDisconnected() {
 	for _, r := range m.roomManager.GetAllRooms() {
-		roomSelfOccupant := r.SelfOccupant()
-
-		roomSelfOccupant.ChangeAffiliationToNone()
-		roomSelfOccupant.ChangeRoleToNone()
-
-		r.Publish(events.MUCSelfOccupantDisconnected{})
+		r.Disconnect()
 	}
 }

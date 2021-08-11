@@ -334,6 +334,7 @@ func (c *roomViewConversation) subjectReceivedEvent(subject string, isReconnecti
 
 		c.displayCurrentTimestamp()
 		c.displayInfoMessage(i18n.Local("Your connection was restored."))
+		c.addNewLine()
 	})
 
 	doInUIThread(func() {

@@ -74,6 +74,10 @@ type subjectReceivedEvent struct {
 	subject string
 }
 
+type joinRoomFinished struct {
+	isReconnecting bool
+}
+
 type roomDestroyedEvent struct {
 	reason      string
 	alternative jid.Bare
@@ -148,6 +152,7 @@ func (selfOccupantJoinedEvent) markAsRoomViewEvent()                 {}
 func (messageEvent) markAsRoomViewEvent()                            {}
 func (subjectUpdatedEvent) markAsRoomViewEvent()                     {}
 func (subjectReceivedEvent) markAsRoomViewEvent()                    {}
+func (joinRoomFinished) markAsRoomViewEvent()                        {}
 func (nicknameConflictEvent) markAsRoomViewEvent()                   {}
 func (registrationRequiredEvent) markAsRoomViewEvent()               {}
 func (loggingEnabledEvent) markAsRoomViewEvent()                     {}

@@ -141,3 +141,22 @@ func (r *Room) SubjectCanBeChanged() bool {
 	}
 	return r.selfOccupant.Role.IsModerator() || r.properties.OccupantsCanChangeSubject
 }
+
+// Connect should be called when the user account recover connection to the room
+func (r *Room) Connect() {
+	r.roster.Reset()
+
+	r.subjectIsNew = true
+
+	r.Publish(events.MUCSelfOccupantConnected{})
+}
+
+// Disconnect should be called when the user account lost connection to the room
+func (r *Room) Disconnect() {
+	roomSelfOccupant := r.SelfOccupant()
+
+	roomSelfOccupant.ChangeAffiliationToNone()
+	roomSelfOccupant.ChangeRoleToNone()
+
+	r.Publish(events.MUCSelfOccupantDisconnected{})
+}

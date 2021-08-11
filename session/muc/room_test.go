@@ -125,3 +125,45 @@ func (s *MucSuite) Test_Room_CanChangeSubject(c *C) {
 	r.AddSelfOccupant(newTestOccupant(&data.OwnerAffiliation{}, &data.ParticipantRole{}))
 	c.Assert(r.SubjectCanBeChanged(), Equals, true)
 }
+
+func (s *MucSuite) Test_Room_Connect(c *C) {
+	r := NewRoom(jid.ParseBare("bla@bar.com"))
+	r.AddSelfOccupant(newTestOccupant(&data.OwnerAffiliation{}, &data.VisitorRole{}))
+
+	connectedEventCalled := make(chan bool)
+	r.Subscribe(func(ev events.MUC) {
+		switch ev.(type) {
+		case events.MUCSelfOccupantConnected:
+			connectedEventCalled <- true
+		}
+	})
+
+	go r.Connect()
+
+	connectedEventCalledOk := <-connectedEventCalled
+
+	c.Assert(r.roster.occupants, HasLen, 0)
+	c.Assert(r.subjectIsNew, Equals, true)
+	c.Assert(connectedEventCalledOk, Equals, true)
+}
+
+func (s *MucSuite) Test_Room_Disconnect(c *C) {
+	r := NewRoom(jid.ParseBare("bla@bar.com"))
+	r.AddSelfOccupant(newTestOccupant(&data.OwnerAffiliation{}, &data.VisitorRole{}))
+
+	disconnectedEventCalled := make(chan bool)
+	r.Subscribe(func(ev events.MUC) {
+		switch ev.(type) {
+		case events.MUCSelfOccupantDisconnected:
+			disconnectedEventCalled <- true
+		}
+	})
+
+	go r.Disconnect()
+
+	disconnectedEventCalledOk := <-disconnectedEventCalled
+
+	c.Assert(r.selfOccupant.Affiliation.IsNone(), Equals, true)
+	c.Assert(r.selfOccupant.Role.IsNone(), Equals, true)
+	c.Assert(disconnectedEventCalledOk, Equals, true)
+}

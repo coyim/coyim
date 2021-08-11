@@ -88,9 +88,9 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case occupantLeftEvent:
 			c.occupantLeftEvent(t.nickname)
 		case occupantJoinedEvent:
-			c.occupantJoinedEvent(t.nickname)
+			c.occupantJoinedEvent(t.nickname, t.isReconnecting)
 		case selfOccupantJoinedEvent:
-			c.selfOccupantJoinedEvent(t.nickname, t.role)
+			c.selfOccupantJoinedEvent(t.nickname, t.role, t.isReconnecting)
 		case occupantUpdatedEvent:
 			c.occupantUpdatedEvent(t.nickname, t.role)
 		case messageEvent:
@@ -244,10 +244,12 @@ func (c *roomViewConversation) onSelfOccupantVoiceRevoked() {
 	c.disableSendCapabilities()
 }
 
-func (c *roomViewConversation) selfOccupantJoinedEvent(nickname string, r data.Role) {
+func (c *roomViewConversation) selfOccupantJoinedEvent(nickname string, r data.Role, isReconnecting bool) {
 	doInUIThread(func() {
 		c.enableSendCapabilitiesIfHasVoice(r.HasVoice())
-		c.displayNotificationWhenOccupantJoinedRoom(nickname)
+		doWhenNoReconnecting(isReconnecting, func() {
+			c.displayNotificationWhenOccupantJoinedRoom(nickname)
+		})
 	})
 }
 
@@ -265,9 +267,11 @@ func (c *roomViewConversation) occupantLeftEvent(nickname string) {
 	})
 }
 
-func (c *roomViewConversation) occupantJoinedEvent(nickname string) {
-	doInUIThread(func() {
-		c.displayNotificationWhenOccupantJoinedRoom(nickname)
+func (c *roomViewConversation) occupantJoinedEvent(nickname string, isReconnecting bool) {
+	doWhenNoReconnecting(isReconnecting, func() {
+		doInUIThread(func() {
+			c.displayNotificationWhenOccupantJoinedRoom(nickname)
+		})
 	})
 }
 

@@ -96,7 +96,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case messageEvent:
 			c.messageEvent(t.tp, t.nickname, t.message, t.timestamp)
 		case discussionHistoryEvent:
-			c.discussionHistoryEvent(t.history)
+			c.discussionHistoryEvent(t.history, t.isReconnecting)
 		case messageForbidden:
 			c.messageForbiddenEvent()
 		case messageNotAcceptable:
@@ -104,7 +104,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case subjectUpdatedEvent:
 			c.subjectUpdatedEvent(t.nickname, t.subject)
 		case subjectReceivedEvent:
-			c.subjectReceivedEvent(t.subject)
+			c.subjectReceivedEvent(t.subject, t.isReconnecting)
 		case loggingEnabledEvent:
 			c.loggingEnabledEvent()
 		case loggingDisabledEvent:
@@ -294,13 +294,15 @@ func (c *roomViewConversation) messageEvent(tp, nickname, message string, timest
 	}
 }
 
-func (c *roomViewConversation) discussionHistoryEvent(dh *data.DiscussionHistory) {
-	doInUIThread(func() {
-		for _, dm := range dh.GetHistory() {
-			c.displayDiscussionHistoryDate(dm.GetDate())
-			c.displayDiscussionHistoryMessages(dm.GetMessages())
-		}
-		c.displayDivider()
+func (c *roomViewConversation) discussionHistoryEvent(dh *data.DiscussionHistory, isReconnecting bool) {
+	doWhenNoReconnecting(isReconnecting, func() {
+		doInUIThread(func() {
+			for _, dm := range dh.GetHistory() {
+				c.displayDiscussionHistoryDate(dm.GetDate())
+				c.displayDiscussionHistoryMessages(dm.GetMessages())
+			}
+			c.displayDivider()
+		})
 	})
 }
 
@@ -325,7 +327,7 @@ func (c *roomViewConversation) subjectUpdatedEvent(nickname, subject string) {
 	})
 }
 
-func (c *roomViewConversation) subjectReceivedEvent(subject string) {
+func (c *roomViewConversation) subjectReceivedEvent(subject string, isReconnecting bool) {
 	doInUIThread(func() {
 		c.displayNewInfoMessage(messageForRoomSubject(subject))
 	})

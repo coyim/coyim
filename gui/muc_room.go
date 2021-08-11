@@ -778,14 +778,16 @@ func (v *roomView) roomID() jid.Bare {
 	return v.room.ID
 }
 
+// doWhenReconnecting WILL call the given function from the UI thread
 func doWhenReconnecting(isReconnecting bool, fn func()) {
 	if isReconnecting {
-		fn()
+		doInUIThread(fn)
 	}
 }
 
+// doWhenNoReconnecting WILL call the given function from the UI thread
 func doWhenNoReconnecting(isReconnecting bool, fn func()) {
 	if !isReconnecting {
-		fn()
+		doInUIThread(fn)
 	}
 }

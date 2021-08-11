@@ -269,9 +269,7 @@ func (c *roomViewConversation) occupantLeftEvent(nickname string) {
 
 func (c *roomViewConversation) occupantJoinedEvent(nickname string, isReconnecting bool) {
 	doWhenNoReconnecting(isReconnecting, func() {
-		doInUIThread(func() {
-			c.displayNotificationWhenOccupantJoinedRoom(nickname)
-		})
+		c.displayNotificationWhenOccupantJoinedRoom(nickname)
 	})
 }
 
@@ -296,14 +294,17 @@ func (c *roomViewConversation) messageEvent(tp, nickname, message string, timest
 
 func (c *roomViewConversation) discussionHistoryEvent(dh *data.DiscussionHistory, isReconnecting bool) {
 	doWhenNoReconnecting(isReconnecting, func() {
-		doInUIThread(func() {
-			for _, dm := range dh.GetHistory() {
-				c.displayDiscussionHistoryDate(dm.GetDate())
-				c.displayDiscussionHistoryMessages(dm.GetMessages())
-			}
-			c.displayDivider()
-		})
+		c.displayDiscussionHistory(dh.GetHistory())
+		c.displayDivider()
 	})
+}
+
+// displayDiscussionHistory MUST be called from the UI thread
+func (c *roomViewConversation) displayDiscussionHistory(history []*data.DelayedMessages) {
+	for _, dm := range history {
+		c.displayDiscussionHistoryDate(dm.GetDate())
+		c.displayDiscussionHistoryMessages(dm.GetMessages())
+	}
 }
 
 func (c *roomViewConversation) messageForbiddenEvent() {
@@ -329,21 +330,17 @@ func (c *roomViewConversation) subjectUpdatedEvent(nickname, subject string) {
 
 func (c *roomViewConversation) subjectReceivedEvent(subject string, isReconnecting bool) {
 	doWhenReconnecting(isReconnecting, func() {
-		doInUIThread(func() {
-			c.displayDivider()
+		c.displayDivider()
 
-			c.displayCurrentTimestamp()
-			c.displayInfoMessage(i18n.Local("Your connection was restored."))
-		})
+		c.displayCurrentTimestamp()
+		c.displayInfoMessage(i18n.Local("Your connection was restored."))
 	})
 
 	doInUIThread(func() {
 		c.displayNewInfoMessage(messageForRoomSubject(subject))
 	})
 
-	doWhenReconnecting(isReconnecting, func() {
-		doInUIThread(c.displayDivider)
-	})
+	doWhenReconnecting(isReconnecting, c.displayDivider)
 }
 
 func (c *roomViewConversation) loggingEnabledEvent() {

@@ -90,9 +90,15 @@ func (s *MucSuite) Test_Room_History(c *C) {
 
 	r.AddHistoryMessage("juanito", "test message", time.Now())
 	c.Assert(r.HasHistory(), Equals, true)
+
 	roomHistory := r.GetDiscussionHistory()
 	c.Assert(roomHistory.GetHistory(), HasLen, 1)
 
+	groupMessage := roomHistory.GetHistory()[0]
+	c.Assert(groupMessage.GetMessages(), HasLen, 1)
+
+	r.AddMessage("juanito", "juanito left the room", time.Now(), data.Left)
+	c.Assert(groupMessage.GetMessages(), HasLen, 2)
 }
 
 func (s *MucSuite) Test_Room_SetProperties(c *C) {

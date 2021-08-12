@@ -7,7 +7,7 @@ import (
 )
 
 func (s *MucSuite) Test_newDelayedMessage(c *C) {
-	res := newDelayedMessage("hello", "someone", time.Now().UTC())
+	res := newDelayedMessage("hello", "someone", time.Now().UTC(), Chat)
 	c.Assert(res.Nickname, Equals, "hello")
 	c.Assert(res.Message, Equals, "someone")
 	c.Assert(res.Timestamp.Location(), Equals, time.Local)
@@ -20,7 +20,7 @@ func (s *MucSuite) Test_newDelayedMessages(c *C) {
 
 func (s *MucSuite) Test_DelayedMessages_GetMessages(c *C) {
 	dms := newDelayedMessages(time.Now().UTC())
-	dms.add("foo", "bar", time.Now().UTC())
+	dms.add("foo", "bar", time.Now().UTC(), Chat)
 
 	res := dms.GetMessages()
 	c.Assert(res, HasLen, 1)
@@ -35,11 +35,11 @@ func (s *MucSuite) Test_DiscussionHistory_GetHistory(c *C) {
 	msg4t := time.Date(2020, 11, 1, 0, 0, 0, 0, time.Local)
 	msg5t := time.Date(2021, 1, 1, 0, 0, 0, 0, time.Local)
 
-	dh.AddMessage("from1", "msg1", msg1t)
-	dh.AddMessage("from2", "msg2", msg2t)
-	dh.AddMessage("from3", "msg3", msg3t)
-	dh.AddMessage("from4", "msg4", msg4t)
-	dh.AddMessage("from5", "msg5", msg5t)
+	dh.AddMessage("from1", "msg1", msg1t, Chat)
+	dh.AddMessage("from2", "msg2", msg2t, Chat)
+	dh.AddMessage("from3", "msg3", msg3t, Chat)
+	dh.AddMessage("from4", "msg4", msg4t, Chat)
+	dh.AddMessage("from5", "msg5", msg5t, Chat)
 
 	res := dh.GetHistory()
 	c.Assert(res, HasLen, 4)

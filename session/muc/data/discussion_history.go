@@ -37,11 +37,12 @@ type DelayedMessage struct {
 	MessageType MessageType
 }
 
-func newDelayedMessage(nickname, message string, timestamp time.Time) *DelayedMessage {
+func newDelayedMessage(nickname, message string, timestamp time.Time, messageType MessageType) *DelayedMessage {
 	return &DelayedMessage{
-		Nickname:  nickname,
-		Message:   message,
-		Timestamp: serverTimeInLocal(timestamp),
+		Nickname:    nickname,
+		Message:     message,
+		Timestamp:   serverTimeInLocal(timestamp),
+		MessageType: messageType,
 	}
 }
 
@@ -74,7 +75,7 @@ func (dm *DelayedMessages) GetMessages() []*DelayedMessage {
 	return result
 }
 
-func (dm *DelayedMessages) add(nickname, message string, timestamp time.Time) {
+func (dm *DelayedMessages) add(nickname, message string, timestamp time.Time, messageType MessageType) {
 	dm.lock.Lock()
 	defer dm.lock.Unlock()
 
@@ -85,7 +86,7 @@ func (dm *DelayedMessages) add(nickname, message string, timestamp time.Time) {
 	}
 
 	if shouldAddDelayedMessage {
-		dm.messages = append(dm.messages, newDelayedMessage(nickname, message, timestamp))
+		dm.messages = append(dm.messages, newDelayedMessage(nickname, message, timestamp, messageType))
 	}
 }
 
@@ -109,18 +110,18 @@ func (dh *DiscussionHistory) GetHistory() []*DelayedMessages {
 }
 
 // AddMessage add a new delayed message to the history
-func (dh *DiscussionHistory) AddMessage(nickname, message string, timestamp time.Time) {
+func (dh *DiscussionHistory) AddMessage(nickname, message string, timestamp time.Time, messageType MessageType) {
 	t := serverTimeInLocal(timestamp)
 
 	for _, dm := range dh.GetHistory() {
 		if sameDate(dm.date, t) {
-			dm.add(nickname, message, t)
+			dm.add(nickname, message, t, messageType)
 			return
 		}
 	}
 
 	dm := dh.addNewMessagesGroup(t)
-	dm.add(nickname, message, t)
+	dm.add(nickname, message, t, messageType)
 }
 
 func (dh *DiscussionHistory) addNewMessagesGroup(date time.Time) *DelayedMessages {

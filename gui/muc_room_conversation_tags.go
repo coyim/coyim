@@ -9,19 +9,21 @@ import (
 type conversationTag string
 
 const (
-	conversationTagTimestamp         conversationTag = "timestamp"
-	conversationTagMessage           conversationTag = "message"
-	conversationTagNickname          conversationTag = "nickname"
-	conversationTagSomeoneLeftRoom   conversationTag = "occupantLeftRoom"
-	conversationTagSomeoneJoinedRoom conversationTag = "occupantJoinedRoom"
-	conversationTagRoomSubject       conversationTag = "subject"
-	conversationTagRoomConfigChange  conversationTag = "roomConfigChange"
-	conversationTagDateGroup         conversationTag = "dateGroup"
-	conversationTagDivider           conversationTag = "divider"
-	conversationTagPassword          conversationTag = "password"
-	conversationTagInfo              conversationTag = "info"
-	conversationTagWarning           conversationTag = "warning"
-	conversationTagError             conversationTag = "error"
+	conversationTagTimestamp                    conversationTag = "timestamp"
+	conversationTagMessage                      conversationTag = "message"
+	conversationTagNickname                     conversationTag = "nickname"
+	conversationTagSomeoneLeftRoom              conversationTag = "occupantLeftRoom"
+	conversationTagSomeoneJoinedRoom            conversationTag = "occupantJoinedRoom"
+	conversationTagRoomSubject                  conversationTag = "subject"
+	conversationTagRoomConfigChange             conversationTag = "roomConfigChange"
+	conversationTagDateGroup                    conversationTag = "dateGroup"
+	conversationTagDivider                      conversationTag = "divider"
+	conversationTagPassword                     conversationTag = "password"
+	conversationTagInfo                         conversationTag = "info"
+	conversationTagWarning                      conversationTag = "warning"
+	conversationTagError                        conversationTag = "error"
+	conversationTagOccupantLostConnection       conversationTag = "occupantLostConnection"
+	conversationTagOccupantRestablishConnection conversationTag = "occupantRestablishConnection"
 )
 
 var (
@@ -108,6 +110,14 @@ var conversationTagsPropertiesRegistry = map[conversationTag]pangoAttributes{
 	},
 	conversationTagError: {
 		"style": pangoFontStyleNormal,
+	},
+	conversationTagOccupantLostConnection: {
+		"weight": pangoFontWeightBold,
+		"style":  pangoFontStyleItalic,
+	},
+	conversationTagOccupantRestablishConnection: {
+		"weight": pangoFontWeightBold,
+		"style":  pangoFontStyleItalic,
 	},
 }
 
@@ -240,6 +250,16 @@ func conversationTagColorDefinition(tagName conversationTag, cs mucColorSet) *co
 		return &conversationTagColor{
 			foreground: cs.warningForeground,
 			background: cs.warningBackground,
+		}
+
+	case conversationTagOccupantLostConnection:
+		return &conversationTagColor{
+			foreground: cs.occupantLostConnection,
+		}
+
+	case conversationTagOccupantRestablishConnection:
+		return &conversationTagColor{
+			foreground: cs.occupantRestablishConnection,
 		}
 	}
 

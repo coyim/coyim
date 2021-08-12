@@ -5,17 +5,27 @@ import (
 	"time"
 )
 
+// MessageType represents a message type
 type MessageType int
 
 const (
+	// Chat represents a single chat message
 	Chat MessageType = iota
+	// Subject represents a subject message
 	Subject
+	// Password represents a password message
 	Password
+	// Joined is used when an occupant joined the room
 	Joined
+	// Left is used when an occupant left the room
 	Left
+	// Connected is used when an occupant connected to the room
 	Connected
+	// Disconnected is used when an occupant lost connection to the room
 	Disconnected
+	// OccupantInformationChanged is used when the occupant information changed
 	OccupantInformationChanged
+	// RoomConfigurationChanged is used when the room information changed
 	RoomConfigurationChanged
 )
 

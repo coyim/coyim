@@ -3,6 +3,7 @@ package gui
 import (
 	"fmt"
 
+	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -25,6 +26,18 @@ const (
 	conversationTagOccupantLostConnection       conversationTag = "occupantLostConnection"
 	conversationTagOccupantRestablishConnection conversationTag = "occupantRestablishConnection"
 )
+
+var messageTagBasedOnMessageType = map[data.MessageType]conversationTag{
+	data.Chat:                       conversationTagMessage,
+	data.Left:                       conversationTagSomeoneLeftRoom,
+	data.Joined:                     conversationTagSomeoneJoinedRoom,
+	data.Subject:                    conversationTagRoomSubject,
+	data.RoomConfigurationChanged:   conversationTagRoomConfigChange,
+	data.Password:                   conversationTagPassword,
+	data.OccupantInformationChanged: conversationTagInfo,
+	data.Disconnected:               conversationTagOccupantLostConnection,
+	data.Connected:                  conversationTagOccupantRestablishConnection,
+}
 
 var (
 	conversationTagFormatInfoNickname        = formattingTagName(highlightFormatNickname, conversationTagInfo)

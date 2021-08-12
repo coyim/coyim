@@ -12,14 +12,14 @@ func (s *MUCRoomConversationDisplaySuite) SetUpSuite(c *C) {
 	initMUCi18n()
 }
 
-func (*MUCRoomConversationDisplaySuite) Test_mucRoomConversationDisplay_messageForRoomSubjectUpdate(c *C) {
-	c.Assert(messageForRoomSubjectUpdate("", "room subject"), Equals,
+func (*MUCRoomConversationDisplaySuite) Test_mucRoomConversationDisplay_messageFromRoomSubjectUpdate(c *C) {
+	c.Assert(messageFromRoomSubjectUpdate("", "room subject"), Equals,
 		"[localized] Someone has updated the room subject to: \"room subject\"")
 
-	c.Assert(messageForRoomSubjectUpdate("nick", "new subject"), Equals,
+	c.Assert(messageFromRoomSubjectUpdate("nick", "new subject"), Equals,
 		"[localized] $nickname{nick} updated the room subject to: \"new subject\"")
 
-	c.Assert(messageForRoomSubjectUpdate("batman", "the batman cave"), Equals,
+	c.Assert(messageFromRoomSubjectUpdate("batman", "the batman cave"), Equals,
 		"[localized] $nickname{batman} updated the room subject to: \"the batman cave\"")
 }
 

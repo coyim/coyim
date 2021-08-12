@@ -13,12 +13,13 @@ import (
 )
 
 type roomViewConversation struct {
-	u                    *gtkUI
-	tags                 *conversationTags
-	roomID               jid.Bare
-	account              *account
-	canSendMessages      bool
-	selfOccupantNickname func() string
+	u                       *gtkUI
+	tags                    *conversationTags
+	roomID                  jid.Bare
+	account                 *account
+	canSendMessages         bool
+	selfOccupantNickname    func() string
+	saveNotificationMessage func(*data.DelayedMessage)
 
 	view                  gtki.Box            `gtk-widget:"room-conversation"`
 	chatScrolledWindow    gtki.ScrolledWindow `gtk-widget:"chat-scrolled-window"`
@@ -37,10 +38,11 @@ type roomViewConversation struct {
 
 func (v *roomView) newRoomViewConversation() *roomViewConversation {
 	c := &roomViewConversation{
-		u:                    v.u,
-		roomID:               v.room.ID,
-		account:              v.account,
-		selfOccupantNickname: v.room.SelfOccupantNickname,
+		u:                       v.u,
+		roomID:                  v.room.ID,
+		account:                 v.account,
+		selfOccupantNickname:    v.room.SelfOccupantNickname,
+		saveNotificationMessage: v.room.AddMessage,
 	}
 
 	c.log = c.account.log.WithFields(log.Fields{

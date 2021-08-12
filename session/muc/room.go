@@ -129,8 +129,8 @@ func (r *Room) AddHistoryMessage(nickname, message string, timestamp time.Time) 
 }
 
 // AddMessage adds a new message in the room history with a specific message type
-func (r *Room) AddMessage(nickname, message string, timestamp time.Time, messageType data.MessageType) {
-	r.discussionHistory.AddMessage(nickname, message, timestamp, messageType)
+func (r *Room) AddMessage(messageData *data.DelayedMessage) {
+	r.discussionHistory.AddMessage(messageData.Nickname, messageData.Message, messageData.Timestamp, messageData.MessageType)
 }
 
 // SetProperties replaces the current room properties by new ones

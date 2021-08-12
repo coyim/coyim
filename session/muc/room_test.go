@@ -97,7 +97,12 @@ func (s *MucSuite) Test_Room_History(c *C) {
 	groupMessage := roomHistory.GetHistory()[0]
 	c.Assert(groupMessage.GetMessages(), HasLen, 1)
 
-	r.AddMessage("juanito", "juanito left the room", time.Now(), data.Left)
+	r.AddMessage(&data.DelayedMessage{
+		Nickname:    "juanito",
+		Message:     "juanito left the room",
+		Timestamp:   time.Now(),
+		MessageType: data.Left,
+	})
 	c.Assert(groupMessage.GetMessages(), HasLen, 2)
 }
 

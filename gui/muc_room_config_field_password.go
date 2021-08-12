@@ -46,10 +46,6 @@ func (f *roomConfigFormFieldPassword) initDefaults() {
 	}
 }
 
-func (f *roomConfigFormFieldPassword) setPassword(p string) {
-	setEntryText(f.entry, p)
-}
-
 func (f *roomConfigFormFieldPassword) passwordsMatch() bool {
 	return getEntryText(f.entry) == getEntryText(f.confirmEntry)
 }
@@ -75,16 +71,8 @@ func (f *roomConfigFormFieldPassword) showValidationErrors() {
 	f.focusConfirm()
 }
 
-func (f *roomConfigFormFieldPassword) focus() {
-	f.entry.GrabFocus()
-}
-
 func (f *roomConfigFormFieldPassword) focusConfirm() {
 	f.confirmEntry.GrabFocus()
-}
-
-func (f *roomConfigFormFieldPassword) contentBox() gtki.Widget {
-	return f.widget
 }
 
 // onShowConfirmPasswordBasedOnMatchError MUST be called from the UI thread
@@ -107,6 +95,7 @@ func (f *roomConfigFormFieldPassword) changeConfirmPasswordEntryStyle() {
 	f.passwordMatchErrorLabel.SetVisible(false)
 	sc, _ := f.confirmEntry.GetStyleContext()
 	if !f.passwordsMatch() {
+		f.onShowValidationErrors()
 		sc.AddClass("entry-error")
 		return
 	}

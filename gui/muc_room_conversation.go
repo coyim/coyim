@@ -192,7 +192,7 @@ func (c *roomViewConversation) selfOccupantRoleEvent(roleUpdate data.RoleUpdate)
 func (c *roomViewConversation) selfOccupantDisconnectedEvent() {
 	doInUIThread(func() {
 		c.displayCurrentTimestamp()
-		c.displayInfoMessage(i18n.Local("You lost connection."))
+		c.addTextWithTag(i18n.Local("You lost connection."), conversationTagOccupantLostConnection)
 		c.addNewLine()
 
 		c.updateNotificationMessage(messageForSelfOccupantDisconnected())
@@ -337,7 +337,7 @@ func (c *roomViewConversation) subjectReceivedEvent(subject string, isReconnecti
 		c.displayDivider()
 
 		c.displayCurrentTimestamp()
-		c.displayInfoMessage(i18n.Local("Your connection was restored."))
+		c.addTextWithTag(i18n.Local("Your connection was restored."), conversationTagOccupantRestablishConnection)
 		c.addNewLine()
 	})
 

@@ -127,7 +127,7 @@ func (v *roomView) initRoomViewComponents() {
 	v.main = v.newRoomMainView()
 
 	v.window.notificationsArea.Add(v.notifications.notificationsBox())
-	v.window.privacityWarningBox.Add(v.warningsInfoBar.view())
+	v.window.privacyWarningBox.Add(v.warningsInfoBar.view())
 	v.window.overlay.AddOverlay(v.loadingViewOverlay.view())
 }
 

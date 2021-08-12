@@ -13,7 +13,7 @@
             <property name="visible">True</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkBox" id="room-privacity-warnings-box">
+              <object class="GtkBox" id="room-privacy-warnings-box">
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
               </object>

@@ -6,11 +6,11 @@ import (
 )
 
 type roomViewWindow struct {
-	window              gtki.Window   `gtk-widget:"room-window"`
-	overlay             gtki.Overlay  `gtk-widget:"room-overlay"`
-	privacityWarningBox gtki.Box      `gtk-widget:"room-privacity-warnings-box"`
-	content             gtki.Box      `gtk-widget:"room-main-box"`
-	notificationsArea   gtki.Revealer `gtk-widget:"room-notifications-revealer"`
+	window            gtki.Window   `gtk-widget:"room-window"`
+	overlay           gtki.Overlay  `gtk-widget:"room-overlay"`
+	privacyWarningBox gtki.Box      `gtk-widget:"room-privacy-warnings-box"`
+	content           gtki.Box      `gtk-widget:"room-main-box"`
+	notificationsArea gtki.Revealer `gtk-widget:"room-notifications-revealer"`
 }
 
 func (v *roomView) newRoomViewWindow() *roomViewWindow {

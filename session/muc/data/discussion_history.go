@@ -37,7 +37,8 @@ type DelayedMessage struct {
 	MessageType MessageType
 }
 
-func newDelayedMessage(nickname, message string, timestamp time.Time, messageType MessageType) *DelayedMessage {
+// NewDelayedMessage returns a DelayedMessage object with the message data
+func NewDelayedMessage(nickname, message string, timestamp time.Time, messageType MessageType) *DelayedMessage {
 	return &DelayedMessage{
 		Nickname:    nickname,
 		Message:     message,
@@ -86,11 +87,11 @@ func (dm *DelayedMessages) add(nickname, message string, timestamp time.Time, me
 	}
 
 	if shouldAddDelayedMessage {
-		dm.messages = append(dm.messages, newDelayedMessage(nickname, message, timestamp, messageType))
+		dm.messages = append(dm.messages, NewDelayedMessage(nickname, message, timestamp, messageType))
 	}
 }
 
-// DiscussionHistory contains the rooms's discussion history
+// DiscussionHistory contains the discussion history of the room
 type DiscussionHistory struct {
 	history []*DelayedMessages
 	lock    sync.RWMutex

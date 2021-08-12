@@ -7,7 +7,7 @@ import (
 )
 
 func (s *MucSuite) Test_newDelayedMessage(c *C) {
-	res := newDelayedMessage("hello", "someone", time.Now().UTC(), Chat)
+	res := NewDelayedMessage("hello", "someone", time.Now().UTC(), Chat)
 	c.Assert(res.Nickname, Equals, "hello")
 	c.Assert(res.Message, Equals, "someone")
 	c.Assert(res.Timestamp.Location(), Equals, time.Local)

@@ -94,6 +94,8 @@ type mucColorSet struct {
 	entryErrorBorderShadow                 string
 	entryErrorBorder                       string
 	entryErrorLabel                        string
+	occupantLostConnection                 string
+	occupantRestablishConnection           string
 }
 
 func (u *gtkUI) currentMUCColorSet() mucColorSet {
@@ -184,6 +186,8 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		entryErrorBorderShadow:                 colorFormat(rgb{255, 127, 80}, 1),
 		entryErrorBorder:                       colorFormat(rgb{228, 70, 53}, 1),
 		entryErrorLabel:                        colorFormat(rgb{228, 70, 53}, 1),
+		occupantLostConnection:                 colorFormat(rgb{115, 22, 41}, 1),
+		occupantRestablishConnection:           colorFormat(rgb{41, 115, 22}, 1),
 	}
 }
 
@@ -268,6 +272,8 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		entryErrorBorderShadow:                 colorFormat(rgb{255, 127, 80}, 1),
 		entryErrorBorder:                       colorFormat(rgb{228, 70, 53}, 1),
 		entryErrorLabel:                        colorFormat(rgb{228, 70, 53}, 1),
+		occupantLostConnection:                 colorFormat(rgb{115, 22, 41}, 1),
+		occupantRestablishConnection:           colorFormat(rgb{41, 115, 22}, 1),
 	}
 }
 

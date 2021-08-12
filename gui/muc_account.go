@@ -32,9 +32,7 @@ func (a *account) removeRoomView(roomID jid.Bare) {
 	a.mucRoomsLock.Lock()
 	defer a.mucRoomsLock.Unlock()
 
-	if _, exists := a.mucRooms[roomID.String()]; exists {
-		delete(a.mucRooms, roomID.String())
-	}
+	delete(a.mucRooms, roomID.String())
 }
 
 type roomOpCallback func() (<-chan bool, <-chan error)

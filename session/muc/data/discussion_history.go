@@ -5,11 +5,26 @@ import (
 	"time"
 )
 
+type MessageType int
+
+const (
+	Chat MessageType = iota
+	Subject
+	Password
+	Joined
+	Left
+	Connected
+	Disconnected
+	OccupantInformationChanged
+	RoomConfigurationChanged
+)
+
 // DelayedMessage contains the information of a delayed message
 type DelayedMessage struct {
-	Nickname  string
-	Message   string
-	Timestamp time.Time
+	Nickname    string
+	Message     string
+	Timestamp   time.Time
+	MessageType MessageType
 }
 
 func newDelayedMessage(nickname, message string, timestamp time.Time) *DelayedMessage {
@@ -80,7 +95,7 @@ func (dh *DiscussionHistory) GetHistory() []*DelayedMessages {
 	dh.lock.RLock()
 	defer dh.lock.RUnlock()
 
-	return dh.history
+	return append([]*DelayedMessages{}, dh.history...)
 }
 
 // AddMessage add a new delayed message to the history

@@ -21,10 +21,18 @@ func (c *roomViewConversation) displayTimestamp(timestamp time.Time) {
 	c.addTextWithTag(messageForTimestamp(timestamp), conversationTagTimestamp)
 }
 
-// displayNotificationWhenOccupantJoinedRoom MUST be called from the UI thread
-func (c *roomViewConversation) displayNotificationWhenOccupantJoinedRoom(nickname string) {
-	message := messageForSomeoneWhoJoinedTheRoom(nickname)
-	c.displayFormattedMessageWithTimestamp(message, conversationTagSomeoneJoinedRoom)
+// handleOccupantJoinedRoom MUST be called from the UI thread
+func (c *roomViewConversation) handleOccupantJoinedRoom(nickname string) {
+	md := data.NewDelayedMessage(nickname, messageForSomeoneWhoJoinedTheRoom(nickname), time.Now(), data.Joined)
+	c.saveNotificationMessage(md)
+	c.displayMessageFromData(md)
+}
+
+// displayMessageData MUST be called from the UI thread
+func (c *roomViewConversation) displayMessageFromData(md *data.DelayedMessage) {
+	c.displayTimestamp(md.Timestamp)
+	c.displayFormattedMessage(md.Message, messageTagBasedOnMessageType[md.MessageType])
+	c.addNewLine()
 }
 
 // displayNotificationWhenOccupantLeftTheRoom MUST be called from the UI thread

@@ -254,7 +254,7 @@ func (c *roomViewConversation) selfOccupantJoinedEvent(nickname string, r data.R
 	doInUIThread(func() {
 		c.enableSendCapabilitiesIfHasVoice(r.HasVoice())
 		doWhenNoReconnecting(isReconnecting, func() {
-			c.displayNotificationWhenOccupantJoinedRoom(nickname)
+			c.handleOccupantJoinedRoom(nickname)
 		})
 	})
 }
@@ -275,7 +275,7 @@ func (c *roomViewConversation) occupantLeftEvent(nickname string) {
 
 func (c *roomViewConversation) occupantJoinedEvent(nickname string, isReconnecting bool) {
 	doWhenNoReconnecting(isReconnecting, func() {
-		c.displayNotificationWhenOccupantJoinedRoom(nickname)
+		c.handleOccupantJoinedRoom(nickname)
 	})
 }
 

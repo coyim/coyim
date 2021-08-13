@@ -7,18 +7,29 @@ import (
 )
 
 const (
-	infoBarClassName         = ".infobar"
-	infoBarInfoClassName     = ".info"
-	infoBarWarningClassName  = ".warning"
-	infoBarQuestionClassName = ".question"
-	infoBarErrorClassName    = ".error"
+	infoBarClassName         = "infobar"
+	infoBarInfoClassName     = "info"
+	infoBarWarningClassName  = "warning"
+	infoBarQuestionClassName = "question"
+	infoBarErrorClassName    = "error"
+	infoBarOtherClassName    = "other"
+)
+
+const (
+	infoBarClassNameSelector         = "." + infoBarClassName
+	infoBarInfoClassNameSelector     = "." + infoBarInfoClassName
+	infoBarWarningClassNameSelector  = "." + infoBarWarningClassName
+	infoBarQuestionClassNameSelector = "." + infoBarQuestionClassName
+	infoBarErrorClassNameSelector    = "." + infoBarErrorClassName
+	infoBarOtherClassNameSelector    = "." + infoBarOtherClassName
 )
 
 var infoBarClassNames = map[infoBarType]string{
-	infoBarTypeInfo:     infoBarInfoClassName,
-	infoBarTypeWarning:  infoBarWarningClassName,
-	infoBarTypeQuestion: infoBarQuestionClassName,
-	infoBarTypeError:    infoBarErrorClassName,
+	infoBarTypeInfo:     infoBarInfoClassNameSelector,
+	infoBarTypeWarning:  infoBarWarningClassNameSelector,
+	infoBarTypeQuestion: infoBarQuestionClassNameSelector,
+	infoBarTypeError:    infoBarErrorClassNameSelector,
+	infoBarTypeOther:    infoBarOtherClassNameSelector,
 }
 
 type infoBarColorInfo struct {

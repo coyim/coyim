@@ -2,7 +2,6 @@ package gui
 
 import (
 	"fmt"
-	"sort"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
@@ -126,32 +125,35 @@ func (c roomConfigChangedTypes) contains(k data.RoomConfigType) bool {
 	return false
 }
 
-var roomConfigFriendlyMessages = map[data.RoomConfigType]func(data.RoomDiscoInfo) string{
-	data.RoomConfigSupportsVoiceRequests:     roomConfigSupportsVoiceRequests,
-	data.RoomConfigAllowsRegistration:        roomConfigAllowsRegistration,
-	data.RoomConfigPersistent:                roomConfigPersistent,
-	data.RoomConfigModerated:                 roomConfigModerated,
-	data.RoomConfigPasswordProtected:         roomConfigPasswordProtected,
-	data.RoomConfigPublic:                    roomConfigPublic,
-	data.RoomConfigLanguage:                  roomConfigLanguage,
-	data.RoomConfigOccupantsCanChangeSubject: roomConfigOccupantsCanChangeSubject,
-	data.RoomConfigTitle:                     roomConfigTitle,
-	data.RoomConfigDescription:               roomConfigDescription,
-	data.RoomConfigMembersCanInvite:          roomConfigMembersCanInvite,
-	data.RoomConfigAllowPrivateMessages:      roomConfigAllowPrivateMessages,
-	data.RoomConfigMaxHistoryFetch:           roomConfigMaxHistoryFetch,
+type configurationMessage struct {
+	configurationType    data.RoomConfigType
+	configurationMessage func(data.RoomDiscoInfo) string
+}
+
+var roomConfigFriendlyMessages = []configurationMessage{
+	{data.RoomConfigTitle, roomConfigTitle},
+	{data.RoomConfigDescription, roomConfigDescription},
+	{data.RoomConfigLanguage, roomConfigLanguage},
+	{data.RoomConfigPublic, roomConfigPublic},
+	{data.RoomConfigPersistent, roomConfigPersistent},
+	{data.RoomConfigPasswordProtected, roomConfigPasswordProtected},
+	{data.RoomConfigMembersCanInvite, roomConfigMembersCanInvite},
+	{data.RoomConfigModerated, roomConfigModerated},
+	{data.RoomConfigOccupantsCanChangeSubject, roomConfigOccupantsCanChangeSubject},
+	{data.RoomConfigAllowPrivateMessages, roomConfigAllowPrivateMessages},
+	{data.RoomConfigSupportsVoiceRequests, roomConfigSupportsVoiceRequests},
+	{data.RoomConfigMaxHistoryFetch, roomConfigMaxHistoryFetch},
+	{data.RoomConfigAllowsRegistration, roomConfigAllowsRegistration},
 }
 
 func getRoomConfigUpdatedFriendlyMessages(changes roomConfigChangedTypes, discoInfo data.RoomDiscoInfo) []string {
 	messages := []string{}
 
-	for k, f := range roomConfigFriendlyMessages {
-		if changes.contains(k) {
-			messages = append(messages, f(discoInfo))
+	for _, cm := range roomConfigFriendlyMessages {
+		if changes.contains(cm.configurationType) {
+			messages = append(messages, cm.configurationMessage(discoInfo))
 		}
 	}
-
-	sort.Strings(messages)
 
 	return messages
 }
@@ -200,7 +202,7 @@ func roomConfigPublic(di data.RoomDiscoInfo) string {
 }
 
 func roomConfigLanguage(di data.RoomDiscoInfo) string {
-	return i18n.Localf("The language of this room was changed to %s", getLanguage(di.Language))
+	return i18n.Localf("The language of this room was changed to %s.", getLanguage(di.Language))
 }
 
 func getLanguage(languageCode string) string {
@@ -242,5 +244,5 @@ func roomConfigMembersCanInvite(config data.RoomDiscoInfo) string {
 }
 
 func roomConfigMaxHistoryFetch(config data.RoomDiscoInfo) string {
-	return i18n.Localf("The room's max history length was changed to %d", config.MaxHistoryFetch)
+	return i18n.Localf("The room's max history length was changed to %d.", config.MaxHistoryFetch)
 }

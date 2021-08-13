@@ -52,6 +52,12 @@ type roomNotificationOptions struct {
 	actions     roomNotificationActions
 }
 
+// other MUST be called from the UI thread
+func (rn *roomNotifications) other(n roomNotificationOptions) {
+	n.messageType = gtki.MESSAGE_OTHER
+	rn.newNotification(n)
+}
+
 // info MUST be called from the UI thread
 func (rn *roomNotifications) info(n roomNotificationOptions) {
 	n.messageType = gtki.MESSAGE_INFO

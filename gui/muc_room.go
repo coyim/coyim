@@ -205,36 +205,49 @@ func (v *roomView) roomConfigRequestTimeoutEvent() {
 
 // selfOccupantAffiliationUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantAffiliationUpdatedEvent(selfAffiliationUpdate data.SelfAffiliationUpdate) {
-	v.notifications.info(roomNotificationOptions{
+	notificationInfo := roomNotificationOptions{
 		message:   getMUCNotificationMessageFrom(selfAffiliationUpdate),
 		showTime:  true,
 		closeable: true,
-	})
+	}
 
 	if selfAffiliationUpdate.New.IsBanned() {
+		v.notifications.error(notificationInfo)
 		v.disableRoomView()
+	} else {
+		v.notifications.other(notificationInfo)
 	}
 }
 
 // selfOccupantAffiliationRoleUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) {
-	v.notifications.info(roomNotificationOptions{
-		message:   getSelfAffiliationRoleUpdateMessage(selfAffiliationRoleUpdate),
+	notificationInfo := roomNotificationOptions{
+		message:   getMUCNotificationMessageFrom(selfAffiliationRoleUpdate),
 		showTime:  true,
 		closeable: true,
-	})
+	}
+
+	if selfAffiliationRoleUpdate.NewAffiliation.IsBanned() || selfAffiliationRoleUpdate.NewRole.IsNone() {
+		v.notifications.error(notificationInfo)
+		v.disableRoomView()
+	} else {
+		v.notifications.other(notificationInfo)
+	}
 }
 
 // selfOccupantRoleUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.RoleUpdate) {
-	v.notifications.info(roomNotificationOptions{
-		message:   getSelfRoleUpdateMessage(selfRoleUpdate),
+	notificationInfo := roomNotificationOptions{
+		message:   getMUCNotificationMessageFrom(selfRoleUpdate),
 		showTime:  true,
 		closeable: true,
-	})
+	}
 
 	if selfRoleUpdate.New.IsNone() {
+		v.notifications.error(notificationInfo)
 		v.disableRoomView()
+	} else {
+		v.notifications.other(notificationInfo)
 	}
 }
 

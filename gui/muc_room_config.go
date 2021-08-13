@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
@@ -149,6 +150,8 @@ func getRoomConfigUpdatedFriendlyMessages(changes roomConfigChangedTypes, discoI
 			messages = append(messages, f(discoInfo))
 		}
 	}
+
+	sort.Strings(messages)
 
 	return messages
 }

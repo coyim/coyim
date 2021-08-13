@@ -23,6 +23,7 @@ const (
 	infoBarWarningIconName  = "message_warning"
 	infoBarQuestionIconName = "message_question"
 	infoBarErrorIconName    = "message_error"
+	infoBarOtherIconName    = "message_other"
 )
 
 var infoBarIconNames = map[infoBarType]string{
@@ -30,6 +31,7 @@ var infoBarIconNames = map[infoBarType]string{
 	infoBarTypeWarning:  infoBarWarningIconName,
 	infoBarTypeQuestion: infoBarQuestionIconName,
 	infoBarTypeError:    infoBarErrorIconName,
+	infoBarTypeOther:    infoBarOtherIconName,
 }
 
 type infoBarComponent struct {

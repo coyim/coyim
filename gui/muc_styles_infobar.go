@@ -248,6 +248,10 @@ func (st *infoBarStyles) stylesFor(ib gtki.InfoBar) styles {
 }
 
 func (s *mucStylesProvider) setInfoBarStyle(ib gtki.InfoBar) {
+	if ib.GetMessageType() == gtki.MESSAGE_OTHER {
+		addClassStyle(infoBarOtherClassName, ib)
+	}
+
 	st := s.infoBarStyles.stylesFor(ib)
 	s.setWidgetStyles(ib, st)
 }

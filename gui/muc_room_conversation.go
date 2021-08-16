@@ -300,6 +300,7 @@ func (c *roomViewConversation) messageEvent(tp, nickname, message string, timest
 
 func (c *roomViewConversation) discussionHistoryEvent(dh *data.DiscussionHistory) {
 	doInUIThread(func() {
+		c.clearBuffer()
 		c.displayDiscussionHistory(dh.GetHistory())
 		c.displayDivider()
 	})

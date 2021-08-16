@@ -90,7 +90,11 @@ func (c *roomViewConversation) displayDiscussionHistoryDate(d time.Time) {
 // displayDiscussionHistoryMessages MUST be called from the UI thread
 func (c *roomViewConversation) displayDiscussionHistoryMessages(messages []*data.DelayedMessage) {
 	for _, m := range messages {
-		c.displayDelayedMessage(m.Nickname, m.Message, m.Timestamp)
+		if m.MessageType == data.Chat {
+			c.displayDelayedMessage(m.Nickname, m.Message, m.Timestamp)
+		} else {
+			c.displayMessageFromData(m)
+		}
 	}
 }
 

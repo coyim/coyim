@@ -52,7 +52,7 @@ func messageForRoomCanNotSeeRealJid() string {
 }
 
 func messageNotSent() string {
-	return i18n.Local("The message couldn't be sent, please try again")
+	return i18n.Local("The message couldn't be sent, please try again.")
 }
 
 func messageForSelfOccupantDisconnected() string {
@@ -68,11 +68,11 @@ func messageForNickname(nickname string) string {
 }
 
 func messageForSomeoneWhoJoinedTheRoom(nickname string) string {
-	return i18n.Localf("$nickname{%s} joined the room", nickname)
+	return i18n.Localf("$nickname{%s} joined the room.", nickname)
 }
 
 func messageForSomeoneWhoLeftTheRoom(nickname string) string {
-	return i18n.Localf("$nickname{%s} left the room", nickname)
+	return i18n.Localf("$nickname{%s} left the room.", nickname)
 }
 
 func messageFromRoomSubjectUpdate(nickname, subject string) string {
@@ -82,22 +82,22 @@ func messageFromRoomSubjectUpdate(nickname, subject string) string {
 
 	switch {
 	case subjectRemoved && noNickname:
-		return i18n.Local("Someone removed the room subject")
+		return i18n.Local("Someone removed the room subject.")
 	case subjectRemoved:
-		return i18n.Localf("$nickname{%[1]s} removed the room subject", nickname)
+		return i18n.Localf("$nickname{%[1]s} removed the room subject.", nickname)
 	case hasNickname:
-		return i18n.Localf("$nickname{%[1]s} updated the room subject to: \"%[2]s\"", nickname, subject)
+		return i18n.Localf("$nickname{%[1]s} updated the room subject to: \"%[2]s\".", nickname, subject)
 	}
 
-	return i18n.Localf("Someone has updated the room subject to: \"%s\"", subject)
+	return i18n.Localf("Someone has updated the room subject to: \"%s\".", subject)
 }
 
 func messageForRoomSubject(subject string) string {
 	if subject == "" {
-		return i18n.Local("The room does not have a subject")
+		return i18n.Local("The room does not have a subject.")
 	}
 
-	return i18n.Localf("The room subject is \"%s\"", subject)
+	return i18n.Localf("The room subject is \"%s\".", subject)
 }
 
 func messageForMembersOnlyRoom(nickname string) string {

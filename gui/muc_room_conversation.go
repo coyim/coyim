@@ -98,7 +98,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case messageEvent:
 			c.messageEvent(t.tp, t.nickname, t.message, t.timestamp)
 		case discussionHistoryEvent:
-			c.discussionHistoryEvent(t.history, t.isReconnecting)
+			c.discussionHistoryEvent(t.history)
 		case messageForbidden:
 			c.messageForbiddenEvent()
 		case messageNotAcceptable:
@@ -298,7 +298,7 @@ func (c *roomViewConversation) messageEvent(tp, nickname, message string, timest
 	}
 }
 
-func (c *roomViewConversation) discussionHistoryEvent(dh *data.DiscussionHistory, isReconnecting bool) {
+func (c *roomViewConversation) discussionHistoryEvent(dh *data.DiscussionHistory) {
 	doInUIThread(func() {
 		c.displayDiscussionHistory(dh.GetHistory())
 		c.displayDivider()

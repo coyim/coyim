@@ -67,6 +67,15 @@ func (cl *mucRoomConfigListComponent) onAddClicked() {
 // onRemoveClicked MUST be called from the UI thread
 func (cl *mucRoomConfigListComponent) onRemoveClicked() {
 	cl.removeSelectedItems(cl.getItemsToRemove())
+	cl.refreshContentItems()
+}
+
+func (cl *mucRoomConfigListComponent) refreshContentItems() {
+	_, ok := cl.listModel.GetIterFirst()
+
+	if cl.onNoItems != nil && !ok {
+		cl.onNoItems()
+	}
 }
 
 // getItemsToRemove MUST be called from the UI thread

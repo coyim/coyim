@@ -51,9 +51,10 @@ func NewDelayedMessage(nickname, message string, timestamp time.Time, messageTyp
 
 // DelayedMessages contains the delayed messages for specific date
 type DelayedMessages struct {
-	date     time.Time
-	messages []*DelayedMessage
-	lock     sync.RWMutex
+	date                     time.Time
+	messages                 []*DelayedMessage
+	lastChatMessageTimestamp *time.Time
+	lock                     sync.RWMutex
 }
 
 func newDelayedMessages(date time.Time) *DelayedMessages {
@@ -78,19 +79,20 @@ func (dm *DelayedMessages) GetMessages() []*DelayedMessage {
 	return result
 }
 
-func (dm *DelayedMessages) add(nickname, message string, timestamp time.Time, messageType MessageType) {
+func (dm *DelayedMessages) add(nickname, message string, timestamp time.Time, messageType MessageType) bool {
 	dm.lock.Lock()
 	defer dm.lock.Unlock()
 
-	shouldAddDelayedMessage := true
-	if len(dm.messages) > 0 {
-		lastMessage := dm.messages[len(dm.messages)-1]
-		shouldAddDelayedMessage = lastMessage.Timestamp.Before(timestamp)
-	}
-
-	if shouldAddDelayedMessage {
+	shouldAddMessage := dm.lastChatMessageTimestamp == nil || dm.lastChatMessageTimestamp.Before(timestamp)
+	if shouldAddMessage {
 		dm.messages = append(dm.messages, NewDelayedMessage(nickname, message, timestamp, messageType))
 	}
+
+	if messageType == Chat {
+		dm.lastChatMessageTimestamp = &timestamp
+	}
+
+	return shouldAddMessage
 }
 
 // DiscussionHistory contains the discussion history of the room

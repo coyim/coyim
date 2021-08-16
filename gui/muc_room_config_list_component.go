@@ -108,11 +108,12 @@ func (cl *mucRoomConfigListComponent) onSelectionChanged() {
 
 // addListItems MUST be called from the UI thread
 func (cl *mucRoomConfigListComponent) addListItems(jids []string) {
-	for _, v := range jids {
-		if cl.canBeAdded(v) {
-			li := cl.listModel.Append()
-			_ = cl.listModel.SetValue(li, jidColumnIndex, v)
-		}
+	newList := cl.appendNewItems(jids)
+	cl.listModel.Clear()
+
+	for _, v := range newList {
+		li := cl.listModel.Append()
+		_ = cl.listModel.SetValue(li, jidColumnIndex, v)
 	}
 }
 
@@ -131,4 +132,14 @@ func (cl *mucRoomConfigListComponent) canBeAdded(jid string) bool {
 	}
 
 	return true
+}
+
+func (cl *mucRoomConfigListComponent) appendNewItems(jids []string) (newList []string) {
+	for _, v := range jids {
+		if cl.canBeAdded(v) {
+			newList = append(newList, v)
+		}
+	}
+
+	return append(newList, toArray(cl.listModel)...)
 }

@@ -43,3 +43,9 @@ func (c *roomViewConversation) addTextWithTag(text string, tag conversationTag) 
 	b := c.getTextBuffer()
 	b.InsertWithTagByName(b.GetEndIter(), text, string(tag))
 }
+
+// clearBuffer MUST be called from the UI thread
+func (c *roomViewConversation) clearBuffer() {
+	b := c.getTextBuffer()
+	b.Delete(b.GetStartIter(), b.GetEndIter())
+}

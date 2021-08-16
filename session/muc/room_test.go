@@ -88,7 +88,8 @@ func (s *MucSuite) Test_Room_History(c *C) {
 	r := NewRoom(jid.ParseBare("foo@bar.com"))
 	c.Assert(r.HasHistory(), Equals, false)
 
-	r.AddHistoryMessage("juanito", "test message", time.Now())
+	t := time.Now()
+	r.AddHistoryMessage("juanito", "test message", t)
 	c.Assert(r.HasHistory(), Equals, true)
 
 	roomHistory := r.GetDiscussionHistory()
@@ -97,10 +98,11 @@ func (s *MucSuite) Test_Room_History(c *C) {
 	groupMessage := roomHistory.GetHistory()[0]
 	c.Assert(groupMessage.GetMessages(), HasLen, 1)
 
+	t = t.Add(time.Second * 5)
 	r.AddMessage(&data.DelayedMessage{
 		Nickname:    "juanito",
 		Message:     "juanito left the room",
-		Timestamp:   time.Now(),
+		Timestamp:   t,
 		MessageType: data.Left,
 	})
 	c.Assert(groupMessage.GetMessages(), HasLen, 2)

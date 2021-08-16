@@ -299,7 +299,7 @@ func (c *roomViewConversation) messageEvent(tp, nickname, message string, timest
 }
 
 func (c *roomViewConversation) discussionHistoryEvent(dh *data.DiscussionHistory, isReconnecting bool) {
-	doWhenNoReconnecting(isReconnecting, func() {
+	doInUIThread(func() {
 		c.displayDiscussionHistory(dh.GetHistory())
 		c.displayDivider()
 	})

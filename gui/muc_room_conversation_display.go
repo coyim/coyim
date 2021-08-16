@@ -30,15 +30,13 @@ func (c *roomViewConversation) saveAndDisplayMessage(nickname, message string, t
 
 // handleOccupantJoinedRoom MUST be called from the UI thread
 func (c *roomViewConversation) handleOccupantJoinedRoom(nickname string) {
-	md := data.NewDelayedMessage(nickname, messageForSomeoneWhoJoinedTheRoom(nickname), time.Now(), data.Joined)
-	c.saveNotificationMessage(md)
-	c.displayMessageFromData(md)
+	c.saveAndDisplayMessage(nickname, messageForSomeoneWhoJoinedTheRoom(nickname), time.Now(), data.Joined)
 }
 
 // displayMessageData MUST be called from the UI thread
-func (c *roomViewConversation) displayMessageFromData(md *data.DelayedMessage) {
-	c.displayTimestamp(md.Timestamp)
-	c.displayFormattedMessage(md.Message, messageTagBasedOnMessageType[md.MessageType])
+func (c *roomViewConversation) displayMessageFromData(dm *data.DelayedMessage) {
+	c.displayTimestamp(dm.Timestamp)
+	c.displayFormattedMessage(dm.Message, messageTagBasedOnMessageType[dm.MessageType])
 	c.addNewLine()
 }
 
@@ -56,6 +54,11 @@ func (c *roomViewConversation) displayNickname(nickname string) {
 // displayRoomSubject MUST be called from the UI thread
 func (c *roomViewConversation) displayRoomSubject(subject string) {
 	c.displayTextLineWithTimestamp(subject, conversationTagRoomSubject)
+}
+
+// handleOccupantJoinedRoom MUST be called from the UI thread
+func (c *roomViewConversation) handleRoomSubject(subject string) {
+	c.saveAndDisplayMessage("", subject, time.Now(), data.Subject)
 }
 
 // displayMessage MUST be called from the UI thread
@@ -156,24 +159,14 @@ func (c *roomViewConversation) displayTextLineWithTimestamp(text string, tag con
 
 // displayNotificationWhenRoomDestroyed MUST be called from the UI thread
 func (c *roomViewConversation) displayNotificationWhenRoomDestroyed(reason string, alternative jid.Bare, password string) {
-	c.displayCurrentTimestamp()
-
-	message := messageForRoomDestroyed(&roomDestroyedData{reason, alternative, password})
-	c.displayFormattedMessage(message, conversationTagWarning)
-
-	c.addNewLine()
+	c.saveAndDisplayMessage("", messageForRoomDestroyed(&roomDestroyedData{reason, alternative, password}), time.Now(), data.Warning)
 
 	c.displayTextLineWithTimestamp(i18n.Local("You can no longer receive any messages in this room and the occupant list will not be updated anymore."), conversationTagWarning)
 }
 
-// displayOccupantUpdateMessage MUST be called from the UI thread
+// displayOccupantUpdateMessageFor MUST be called from the UI thread
 func (c *roomViewConversation) displayOccupantUpdateMessageFor(update interface{}) {
-	c.displayCurrentTimestamp()
-
-	message := getMUCNotificationMessageFrom(update)
-	c.displayFormattedMessage(message, conversationTagInfo)
-
-	c.addNewLine()
+	c.saveAndDisplayMessage("", getMUCNotificationMessageFrom(update), time.Now(), data.OccupantInformationChanged)
 }
 
 // displayFormattedMessageWithTimestamp MUST be called from the UI thread

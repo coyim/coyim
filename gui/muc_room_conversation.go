@@ -147,8 +147,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 
 func (c *roomViewConversation) roomDestroyedEvent(reason string, alternative jid.Bare, password string) {
 	doInUIThread(func() {
-		message := messageForRoomDestroyedEvent()
-		c.updateNotificationMessage(message)
+		c.updateNotificationMessage(messageForRoomDestroyedEvent())
 		c.displayNotificationWhenRoomDestroyed(reason, alternative, password)
 		c.disableSendCapabilities()
 	})
@@ -193,9 +192,7 @@ func (c *roomViewConversation) selfOccupantRoleEvent(roleUpdate data.RoleUpdate)
 
 func (c *roomViewConversation) selfOccupantDisconnectedEvent() {
 	doInUIThread(func() {
-		c.displayCurrentTimestamp()
-		c.addTextWithTag(i18n.Local("You lost connection."), conversationTagOccupantLostConnection)
-		c.addNewLine()
+		c.saveAndDisplayMessage("", i18n.Local("You lost connection."), time.Now(), data.Disconnected)
 
 		c.updateNotificationMessage(messageForSelfOccupantDisconnected())
 		c.disableSendCapabilities()
@@ -215,7 +212,7 @@ func (c *roomViewConversation) occupantModifiedEvent(accountAddress jid.Any, aff
 		case affiliation.IsBanned():
 			message = i18n.Localf("$nickname{%s} has been added to the ban list.", accountAddress.String())
 		}
-		c.displayFormattedMessageWithTimestamp(message, conversationTagInfo)
+		c.saveAndDisplayMessage(accountAddress.String(), message, time.Now(), data.OccupantInformationChanged)
 	})
 }
 
@@ -269,7 +266,7 @@ func (c *roomViewConversation) occupantUpdatedEvent(nickname string, r data.Role
 
 func (c *roomViewConversation) occupantLeftEvent(nickname string) {
 	doInUIThread(func() {
-		c.displayNotificationWhenOccupantLeftTheRoom(nickname)
+		c.saveAndDisplayMessage(nickname, messageForSomeoneWhoLeftTheRoom(nickname), time.Now(), data.Left)
 	})
 }
 
@@ -330,8 +327,7 @@ func (c *roomViewConversation) messageNotAcceptableEvent() {
 
 func (c *roomViewConversation) subjectUpdatedEvent(nickname, subject string) {
 	doInUIThread(func() {
-		message := messageFromRoomSubjectUpdate(nickname, subject)
-		c.displayFormattedMessageWithTimestamp(message, conversationTagInfo)
+		c.saveAndDisplayMessage(nickname, messageFromRoomSubjectUpdate(nickname, subject), time.Now(), data.Subject)
 	})
 }
 
@@ -339,13 +335,11 @@ func (c *roomViewConversation) subjectReceivedEvent(subject string, isReconnecti
 	doWhenReconnecting(isReconnecting, func() {
 		c.displayDivider()
 
-		c.displayCurrentTimestamp()
-		c.addTextWithTag(i18n.Local("Your connection was restored."), conversationTagOccupantRestablishConnection)
-		c.addNewLine()
+		c.saveAndDisplayMessage("", i18n.Local("Your connection was restored."), time.Now(), data.Connected)
 	})
 
 	doInUIThread(func() {
-		c.displayNewInfoMessage(messageForRoomSubject(subject))
+		c.saveAndDisplayMessage("", messageForRoomSubject(subject), time.Now(), data.Subject)
 	})
 
 	doWhenReconnecting(isReconnecting, c.displayDivider)
@@ -353,29 +347,25 @@ func (c *roomViewConversation) subjectReceivedEvent(subject string, isReconnecti
 
 func (c *roomViewConversation) loggingEnabledEvent() {
 	doInUIThread(func() {
-		message := messageForRoomPubliclyLogged()
-		c.displayWarningMessage(message)
+		c.saveAndDisplayMessage("", messageForRoomPubliclyLogged(), time.Now(), data.Warning)
 	})
 }
 
 func (c *roomViewConversation) loggingDisabledEvent() {
 	doInUIThread(func() {
-		message := messageForRoomNotPubliclyLogged()
-		c.displayWarningMessage(message)
+		c.saveAndDisplayMessage("", messageForRoomNotPubliclyLogged(), time.Now(), data.Warning)
 	})
 }
 
 func (c *roomViewConversation) nonAnonymousRoomEvent() {
 	doInUIThread(func() {
-		message := messageForRoomCanSeeRealJid()
-		c.displayNewConfigurationMessage(message)
+		c.saveAndDisplayMessage("", messageForRoomCanSeeRealJid(), time.Now(), data.RoomConfigurationChanged)
 	})
 }
 
 func (c *roomViewConversation) semiAnonymousRoomEvent() {
 	doInUIThread(func() {
-		message := messageForRoomCanNotSeeRealJid()
-		c.displayNewConfigurationMessage(message)
+		c.saveAndDisplayMessage("", messageForRoomCanNotSeeRealJid(), time.Now(), data.RoomConfigurationChanged)
 	})
 }
 
@@ -394,7 +384,7 @@ func (c *roomViewConversation) roomConfigChangedEvent(changes roomConfigChangedT
 	doInUIThread(func() {
 		messages := getRoomConfigUpdatedFriendlyMessages(changes, discoInfo)
 		for _, m := range messages {
-			c.displayNewConfigurationMessage(m)
+			c.saveAndDisplayMessage("", m, time.Now(), data.RoomConfigurationChanged)
 		}
 	})
 }
@@ -410,8 +400,7 @@ func (c *roomViewConversation) selfOccupantRemovedEvent(nickname string) {
 
 func (c *roomViewConversation) occupantRemovedEvent(nickname string) {
 	doInUIThread(func() {
-		message := messageForMembersOnlyRoom(nickname)
-		c.displayFormattedMessageWithTimestamp(message, conversationTagInfo)
+		c.saveAndDisplayMessage(nickname, messageForMembersOnlyRoom(nickname), time.Now(), data.OccupantInformationChanged)
 	})
 }
 

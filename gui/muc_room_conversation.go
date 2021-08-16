@@ -19,7 +19,7 @@ type roomViewConversation struct {
 	account                 *account
 	canSendMessages         bool
 	selfOccupantNickname    func() string
-	saveNotificationMessage func(*data.DelayedMessage)
+	saveNotificationMessage func(*data.DelayedMessage) bool
 
 	view                  gtki.Box            `gtk-widget:"room-conversation"`
 	chatScrolledWindow    gtki.ScrolledWindow `gtk-widget:"chat-scrolled-window"`

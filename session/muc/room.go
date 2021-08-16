@@ -124,13 +124,13 @@ func (r *Room) GetDiscussionHistory() *data.DiscussionHistory {
 }
 
 // AddHistoryMessage adds a new chat message in the room history
-func (r *Room) AddHistoryMessage(nickname, message string, timestamp time.Time) {
-	r.discussionHistory.AddMessage(nickname, message, timestamp, data.Chat)
+func (r *Room) AddHistoryMessage(nickname, message string, timestamp time.Time) bool {
+	return r.discussionHistory.AddMessage(nickname, message, timestamp, data.Chat)
 }
 
 // AddMessage adds a new message in the room history with a specific message type
-func (r *Room) AddMessage(messageData *data.DelayedMessage) {
-	r.discussionHistory.AddMessage(messageData.Nickname, messageData.Message, messageData.Timestamp, messageData.MessageType)
+func (r *Room) AddMessage(messageData *data.DelayedMessage) bool {
+	return r.discussionHistory.AddMessage(messageData.Nickname, messageData.Message, messageData.Timestamp, messageData.MessageType)
 }
 
 // SetProperties replaces the current room properties by new ones

@@ -114,19 +114,18 @@ func (dh *DiscussionHistory) GetHistory() []*DelayedMessages {
 	return append([]*DelayedMessages{}, dh.history...)
 }
 
-// AddMessage add a new delayed message to the history
-func (dh *DiscussionHistory) AddMessage(nickname, message string, timestamp time.Time, messageType MessageType) {
+// AddMessage add a new delayed message to the history and returns true if the message was added, false if not
+func (dh *DiscussionHistory) AddMessage(nickname, message string, timestamp time.Time, messageType MessageType) bool {
 	t := serverTimeInLocal(timestamp)
 
 	for _, dm := range dh.GetHistory() {
 		if sameDate(dm.date, t) {
-			dm.add(nickname, message, t, messageType)
-			return
+			return dm.add(nickname, message, t, messageType)
 		}
 	}
 
 	dm := dh.addNewMessagesGroup(t)
-	dm.add(nickname, message, t, messageType)
+	return dm.add(nickname, message, t, messageType)
 }
 
 func (dh *DiscussionHistory) addNewMessagesGroup(date time.Time) *DelayedMessages {

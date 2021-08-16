@@ -1,9 +1,8 @@
 package pangoi
 
-type PangoAttrList interface {
-	GetAttributes() []PangoAttribute
-	InsertPangoAttribute(PangoAttribute)
+type AttrList interface {
 	Insert(Attribute)
+	GetAttributes() []Attribute
 }
 
-func AssertPangoAttrList(_ PangoAttrList) {}
+func AssertAttrList(_ AttrList) {}

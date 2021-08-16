@@ -11,8 +11,8 @@ type Label interface {
 	SetText(string)
 	SetMarkup(string)
 	GetMnemonicKeyval() uint
-	SetPangoAttributes(pangoi.PangoAttrList)
-	GetPangoAttributes() pangoi.PangoAttrList
+	SetAttributes(pangoi.AttrList)
+	GetAttributes() (pangoi.AttrList, error)
 }
 
 func AssertLabel(_ Label) {}

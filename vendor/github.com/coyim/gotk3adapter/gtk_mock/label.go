@@ -26,9 +26,9 @@ func (*MockLabel) GetMnemonicKeyval() uint {
 	return 0
 }
 
-func (*MockLabel) GetPangoAttributes() pangoi.PangoAttrList {
-	return nil
+func (*MockLabel) GetAttributes() (pangoi.AttrList, error) {
+	return nil, nil
 }
 
-func (*MockLabel) SetPangoAttributes(pangoi.PangoAttrList) {
+func (*MockLabel) SetAttributes(pangoi.AttrList) {
 }

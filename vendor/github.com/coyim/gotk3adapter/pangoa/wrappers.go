@@ -20,7 +20,7 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 		}
 		return val, true
 	case *pango.AttrList:
-		val := wrapAttrListSimple(oo)
+		val := WrapAttrListSimple(oo)
 		if val == nil {
 			return nil, true
 		}
@@ -39,7 +39,7 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 		}
 		return val, true
 	case *attrList:
-		val := unwrapAttrList(oo)
+		val := UnwrapAttrList(oo)
 		if val == nil {
 			return nil, true
 		}

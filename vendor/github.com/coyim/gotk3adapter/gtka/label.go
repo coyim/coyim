@@ -4,7 +4,6 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/coyim/gotk3adapter/pangoa"
 	"github.com/coyim/gotk3adapter/pangoi"
-	"github.com/coyim/gotk3extra"
 	"github.com/gotk3/gotk3/gtk"
 )
 
@@ -55,10 +54,11 @@ func (v *label) GetMnemonicKeyval() uint {
 	return v.internal.GetMnemonicKeyval()
 }
 
-func (v *label) SetPangoAttributes(v1 pangoi.PangoAttrList) {
-	gotk3extra.LabelSetAttributes(v.internal, pangoa.UnwrapPangoAttrList(v1))
+func (v *label) SetAttributes(v1 pangoi.AttrList) {
+	v.internal.SetAttributes(pangoa.UnwrapAttrList(v1))
 }
 
-func (v *label) GetPangoAttributes() pangoi.PangoAttrList {
-	return pangoa.WrapPangoAttrListSimple(gotk3extra.LabelGetAttributes(v.internal))
+func (v *label) GetAttributes() (pangoi.AttrList, error) {
+	atts, err := v.internal.GetAttributes()
+	return pangoa.WrapAttrList(atts, err)
 }

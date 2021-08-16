@@ -8,6 +8,6 @@ func (*Mock) AsFontDescription(v interface{}) pangoi.FontDescription {
 	return nil
 }
 
-func (*Mock) PangoAttrListNew() pangoi.PangoAttrList {
+func (*Mock) AttrListNew() pangoi.AttrList {
 	return nil
 }

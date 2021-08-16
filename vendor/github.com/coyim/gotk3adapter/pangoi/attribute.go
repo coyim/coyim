@@ -1,8 +1,8 @@
 package pangoi
 
-type PangoAttribute interface {
+type Attribute interface {
 	SetStartIndex(int)
 	SetEndIndex(int)
 }
 
-func AssertPangoAttribute(_ PangoAttribute) {}
+func AssertAttribute(_ Attribute) {}

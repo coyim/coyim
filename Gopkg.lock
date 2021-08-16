@@ -35,7 +35,7 @@
 
 [[projects]]
   branch = "main"
-  digest = "1:10b5f708572d322327c1dcc8d1c68bcd312947bfc2bd42936c94ec02f54fa4e9"
+  digest = "1:87c65f17cb5958265cff318aa7dff96287e017fc946a08ef78e30d08764f135d"
   name = "github.com/coyim/gotk3adapter"
   packages = [
     "gdk_mock",
@@ -52,15 +52,15 @@
     "pangoi",
   ]
   pruneopts = "UT"
-  revision = "aa639f153b303533e5d7831295ea9818af10e024"
+  revision = "d4c652ecd6ddf2cd23a3541a77db876e648b2307"
 
 [[projects]]
   branch = "main"
-  digest = "1:f112d7971ca3754b5a57527aeb8a7b12c75f9602d828c53fb2cb7b8792961b13"
+  digest = "1:beafdb7f00c9d4213befe7e877508b06e7d8926d65d36416d868722214ef6492"
   name = "github.com/coyim/gotk3extra"
   packages = ["."]
   pruneopts = "UT"
-  revision = "fd16141e1377fa2a5f5dfa314e307dabd458a03f"
+  revision = "973925e77fd9c04c61fa847e6ad78d98cb1c2718"
 
 [[projects]]
   branch = "main"
@@ -110,7 +110,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:0f165beb6fdcf9e1ff33bee21c30f1502f533987c8df43360188ccb338f4f271"
+  digest = "1:9b6c2679569ae754358a25633083c4bf1728d2801465576cdf8482e55774b238"
   name = "github.com/gotk3/gotk3"
   packages = [
     "cairo",
@@ -123,7 +123,7 @@
     "pango",
   ]
   pruneopts = "UT"
-  revision = "beb3d8d8e677c861b09c075c3d2ff8a53e6a5f50"
+  revision = "474ea38ab56ba00a98d7dc912ace29402c7527b9"
 
 [[projects]]
   branch = "master"

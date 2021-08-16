@@ -27,6 +27,7 @@ type Assistant interface {
 	// They are not part of the main GTK api.
 	GetButtons() []Button
 	GetButtonSizeGroup() (SizeGroup, error)
+	GetHeaderBar() (HeaderBar, error)
 	GetSidebar() (Box, error)
 	GetNotebook() (Notebook, error)
 	HideBottomActionArea()

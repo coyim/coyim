@@ -128,10 +128,16 @@ func (a *assistant) GetButtonSizeGroup() (gtki.SizeGroup, error) {
 
 const (
 	assistantActionAreaName     = "action_area"
+	assistantHeaderBarName      = "headerbar"
 	assistantSidebarName        = "sidebar"
 	assistantContentWrapperName = "content_box"
 	assistantContentName        = "content"
 )
+
+func (a *assistant) GetHeaderBar() (gtki.HeaderBar, error) {
+	obj, err := a.TemplateChild(assistantHeaderBarName)
+	return WrapHeaderBarSimple(gotk3extra.WrapHeaderBar(gliba.UnwrapObject(obj))), err
+}
 
 func (a *assistant) GetSidebar() (gtki.Box, error) {
 	obj, err := a.TemplateChild(assistantSidebarName)

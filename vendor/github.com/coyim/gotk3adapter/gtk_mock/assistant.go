@@ -66,6 +66,10 @@ func (a *MockAssistant) GetButtonSizeGroup() (gtki.SizeGroup, error) {
 	return nil, nil
 }
 
+func (a *MockAssistant) GetHeaderBar() (gtki.HeaderBar, error) {
+	return nil, nil
+}
+
 func (a *MockAssistant) GetSidebar() (gtki.Box, error) {
 	return nil, nil
 }

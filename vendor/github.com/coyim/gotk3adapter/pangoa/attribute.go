@@ -2,37 +2,40 @@ package pangoa
 
 import (
 	"github.com/coyim/gotk3adapter/pangoi"
-	"github.com/coyim/gotk3extra"
+	"github.com/gotk3/gotk3/pango"
 )
 
-type pangoAttribute struct {
-	internal *gotk3extra.PangoAttribute
+type attribute struct {
+	internal *pango.Attribute
 }
 
-func wrapPangoAttributeSimple(p *gotk3extra.PangoAttribute) pangoi.PangoAttribute {
+// WrapAttributeSimple wraps a *pango.Attribute to a pangoi.Attribute
+func WrapAttributeSimple(p *pango.Attribute) pangoi.Attribute {
 	if p == nil {
 		return nil
 	}
 
-	return &pangoAttribute{p}
+	return &attribute{p}
 }
 
-func wrapPangoAttribute(p *gotk3extra.PangoAttribute, e error) (pangoi.PangoAttribute, error) {
-	return wrapPangoAttributeSimple(p), e
+// WrapAttribute wraps a *pango.Attribute to a pangoi.Attribute
+func WrapAttribute(p *pango.Attribute, e error) (pangoi.Attribute, error) {
+	return WrapAttributeSimple(p), e
 }
 
-func unwrapPangoAttribute(v pangoi.PangoAttribute) *gotk3extra.PangoAttribute {
+// UnwrapAttribute unwraps a pangoi.Attribute to a *pango.Attribute
+func UnwrapAttribute(v pangoi.Attribute) *pango.Attribute {
 	if v == nil {
 		return nil
 	}
 
-	return v.(*pangoAttribute).internal
+	return v.(*attribute).internal
 }
 
-func (v *pangoAttribute) SetStartIndex(v1 int) {
+func (v *attribute) SetStartIndex(v1 int) {
 	v.internal.SetStartIndex(uint(v1))
 }
 
-func (v *pangoAttribute) SetEndIndex(v1 int) {
+func (v *attribute) SetEndIndex(v1 int) {
 	v.internal.SetEndIndex(uint(v1))
 }

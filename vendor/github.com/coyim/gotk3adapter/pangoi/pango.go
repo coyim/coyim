@@ -2,7 +2,7 @@ package pangoi
 
 type Pango interface {
 	AsFontDescription(interface{}) FontDescription
-	PangoAttrListNew() PangoAttrList
+	AttrListNew() AttrList
 }
 
 func AssertPango(_ Pango) {}

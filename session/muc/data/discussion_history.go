@@ -27,6 +27,8 @@ const (
 	OccupantInformationChanged
 	// RoomConfigurationChanged is used when the room information changed
 	RoomConfigurationChanged
+	// Warning is used when a room was destroyed or the logging was enabled/disabled
+	Warning
 )
 
 // DelayedMessage contains the information of a delayed message

@@ -37,6 +37,7 @@ var messageTagBasedOnMessageType = map[data.MessageType]conversationTag{
 	data.OccupantInformationChanged: conversationTagInfo,
 	data.Disconnected:               conversationTagOccupantLostConnection,
 	data.Connected:                  conversationTagOccupantRestablishConnection,
+	data.Warning:                    conversationTagWarning,
 }
 
 var (

@@ -20,11 +20,13 @@ type infoBarHighlightAttributes struct {
 	labelRole        gtki.Label `gtk-widget:"labelRole"`
 }
 
-func newInfoBarHighlightAttributes(tp infoBarHighlightType) pangoi.PangoAttrList {
+func newInfoBarHighlightAttributes(tp infoBarHighlightType) (pangoi.AttrList, bool) {
 	ibh := &infoBarHighlightAttributes{}
 
 	builder := newBuilder("InfoBarHighlightAttributes")
 	panicOnDevError(builder.bindObjects(ibh))
+
+	ok := false
 
 	var highlightLabel gtki.Label
 	switch tp {
@@ -36,11 +38,15 @@ func newInfoBarHighlightAttributes(tp infoBarHighlightType) pangoi.PangoAttrList
 		highlightLabel = ibh.labelRole
 	}
 
+	var attributes pangoi.AttrList
 	if highlightLabel != nil {
-		return highlightLabel.GetPangoAttributes()
+		if vv, err := highlightLabel.GetAttributes(); err == nil {
+			attributes = vv
+			ok = true
+		}
 	}
 
-	return nil
+	return attributes, ok
 }
 
 type infobarHighlightFormatter struct {
@@ -75,23 +81,24 @@ func (f *infobarHighlightFormatter) formatLabel(label gtki.Label) {
 	text, formats := formatted.Join()
 	label.SetText(text)
 
-	pangoAttrList := g.pango.PangoAttrListNew()
+	pangoAttrList := g.pango.AttrListNew()
 
 	for _, format := range formats {
 		if highlightType, ok := infoBarHighlightFormats[format.Format]; ok {
-			copy := newInfoBarHighlightAttributes(highlightType)
-			copyAttributesTo(pangoAttrList, copy, format.Start, format.Start+format.Length)
+			if copy, ok := newInfoBarHighlightAttributes(highlightType); ok {
+				copyAttributesTo(pangoAttrList, copy, format.Start, format.Start+format.Length)
+			}
 		}
 	}
 
-	label.SetPangoAttributes(pangoAttrList)
+	label.SetAttributes(pangoAttrList)
 }
 
-func copyAttributesTo(toAttrList, fromAttrList pangoi.PangoAttrList, startIndex, endIndex int) {
+func copyAttributesTo(toAttrList, fromAttrList pangoi.AttrList, startIndex, endIndex int) {
 	for _, attr := range fromAttrList.GetAttributes() {
 		attr.SetStartIndex(startIndex)
 		attr.SetEndIndex(endIndex)
 
-		toAttrList.InsertPangoAttribute(attr)
+		toAttrList.Insert(attr)
 	}
 }

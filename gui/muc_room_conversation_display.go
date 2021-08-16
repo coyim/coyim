@@ -21,6 +21,13 @@ func (c *roomViewConversation) displayTimestamp(timestamp time.Time) {
 	c.addTextWithTag(messageForTimestamp(timestamp), conversationTagTimestamp)
 }
 
+// saveAndDisplayMessage MUST be called from the UI thread
+func (c *roomViewConversation) saveAndDisplayMessage(nickname, message string, timestamp time.Time, messageType data.MessageType) {
+	dm := data.NewDelayedMessage(nickname, message, timestamp, messageType)
+	c.saveNotificationMessage(dm)
+	c.displayMessageFromData(dm)
+}
+
 // handleOccupantJoinedRoom MUST be called from the UI thread
 func (c *roomViewConversation) handleOccupantJoinedRoom(nickname string) {
 	md := data.NewDelayedMessage(nickname, messageForSomeoneWhoJoinedTheRoom(nickname), time.Now(), data.Joined)

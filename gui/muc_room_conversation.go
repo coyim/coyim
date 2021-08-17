@@ -20,6 +20,7 @@ type roomViewConversation struct {
 	canSendMessages         bool
 	selfOccupantNickname    func() string
 	saveNotificationMessage func(*data.DelayedMessage) bool
+	historyPrinted          chan bool
 
 	view                  gtki.Box            `gtk-widget:"room-conversation"`
 	chatScrolledWindow    gtki.ScrolledWindow `gtk-widget:"chat-scrolled-window"`
@@ -43,6 +44,7 @@ func (v *roomView) newRoomViewConversation() *roomViewConversation {
 		account:                 v.account,
 		selfOccupantNickname:    v.room.SelfOccupantNickname,
 		saveNotificationMessage: v.room.AddMessage,
+		historyPrinted:          make(chan bool),
 	}
 
 	c.log = c.account.log.WithFields(log.Fields{
@@ -255,10 +257,13 @@ func (c *roomViewConversation) onSelfOccupantVoiceRevoked() {
 
 // TODO: Remove the isReconnecting flag
 func (c *roomViewConversation) selfOccupantJoinedEvent(nickname string, r data.Role, isReconnecting bool) {
-	doInUIThread(func() {
-		c.enableSendCapabilitiesIfHasVoice(r.HasVoice())
-		c.displaySelfOccupantJoined(nickname, isReconnecting)
-	})
+	go func() {
+		<-c.historyPrinted
+		doInUIThread(func() {
+			c.enableSendCapabilitiesIfHasVoice(r.HasVoice())
+			c.displaySelfOccupantJoined(nickname, isReconnecting)
+		})
+	}()
 }
 
 // displaySelfOccupantJoined MUST be called from the UI thread
@@ -316,6 +321,7 @@ func (c *roomViewConversation) discussionHistoryEvent(dh *data.DiscussionHistory
 		c.displayDiscussionHistory(dh.GetHistory())
 		c.displayDivider()
 	})
+	c.historyPrinted <- true
 }
 
 // displayDiscussionHistory MUST be called from the UI thread

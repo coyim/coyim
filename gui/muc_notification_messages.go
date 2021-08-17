@@ -195,12 +195,12 @@ func getMUCNotificationMessageFrom(d interface{}) string {
 	switch t := d.(type) {
 	case data.AffiliationUpdate:
 		return getAffiliationUpdateMessage(t)
-	case data.SelfAffiliationUpdate:
-		return getSelfAffiliationUpdateMessage(t)
 	case data.RoleUpdate:
 		return getRoleUpdateMessage(t)
 	case data.AffiliationRoleUpdate:
 		return getAffiliationRoleUpdateMessage(t)
+	case data.SelfAffiliationUpdate:
+		return getSelfAffiliationUpdateMessage(t)
 	case data.SelfRoleUpdate:
 		return getSelfRoleUpdateMessage(t)
 	case data.SelfAffiliationRoleUpdate:

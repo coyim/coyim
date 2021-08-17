@@ -203,11 +203,9 @@ func (m *mucManager) occupantAffiliationUpdated(roomID jid.Bare, affiliationUpda
 	m.publishRoomEvent(roomID, ev)
 }
 
-func (m *mucManager) selfOccupantAffiliationUpdated(roomID jid.Bare, affiliationUpdate data.AffiliationUpdate) {
+func (m *mucManager) selfOccupantAffiliationUpdated(roomID jid.Bare, affiliationUpdate data.SelfAffiliationUpdate) {
 	ev := events.MUCSelfOccupantAffiliationUpdated{}
-	ev.AffiliationUpdate = data.SelfAffiliationUpdate{
-		AffiliationUpdate: affiliationUpdate,
-	}
+	ev.AffiliationUpdate = affiliationUpdate
 
 	m.publishRoomEvent(roomID, ev)
 }

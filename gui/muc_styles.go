@@ -178,6 +178,10 @@ func (s *mucStylesProvider) setRoomConfigSummaryStyle(a gtki.Assistant) {
 			"padding":   "0px",
 			"font-size": "large",
 		},
+		".summary-field-multi-value": {
+			"font-style": "italic",
+			"color":      s.colors.roomSubjectForeground,
+		},
 	})
 }
 

@@ -70,7 +70,7 @@
                   </packing>
                 </child>
                 <style>
-                  <class name="notifications-box"/>
+                  <class name="room-notifications-wrapper"/>
                 </style>
               </object>
               <packing>

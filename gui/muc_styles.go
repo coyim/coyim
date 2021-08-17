@@ -207,8 +207,9 @@ func (s *mucStylesProvider) setLabelExpanderStyle(l gtki.Label) {
 }
 
 const (
-	roomDisableClassName        = ".room-disabled"
-	roomToolbarDisableClassName = ".room-toolbar-disable"
+	roomDisableClassName              = ".room-disabled"
+	roomToolbarDisableClassName       = ".room-toolbar-disable"
+	roomNotificationsWrapperClassName = ".room-notifications-wrapper"
 )
 
 func (s *mucStylesProvider) setRoomWindowStyle(w gtki.Window) {
@@ -221,6 +222,9 @@ func (s *mucStylesProvider) setRoomWindowStyle(w gtki.Window) {
 		},
 		roomToolbarDisableClassName: {
 			"color": s.colors.roomNameDisabledForeground,
+		},
+		roomNotificationsWrapperClassName: {
+			"background": s.colors.roomNotificationsBackground,
 		},
 	})
 }

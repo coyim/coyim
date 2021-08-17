@@ -86,10 +86,9 @@ func (dm *DelayedMessages) add(nickname, message string, timestamp time.Time, me
 	shouldAddMessage := dm.lastChatMessageTimestamp == nil || dm.lastChatMessageTimestamp.Before(timestamp)
 	if shouldAddMessage {
 		dm.messages = append(dm.messages, NewDelayedMessage(nickname, message, timestamp, messageType))
-	}
-
-	if messageType == Chat {
-		dm.lastChatMessageTimestamp = &timestamp
+		if messageType == Chat {
+			dm.lastChatMessageTimestamp = &timestamp
+		}
 	}
 
 	return shouldAddMessage

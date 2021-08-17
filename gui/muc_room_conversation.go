@@ -157,45 +157,45 @@ func (c *roomViewConversation) roomDestroyedEvent(reason string, alternative jid
 	})
 }
 
-func (c *roomViewConversation) occupantAffiliationRoleUpdatedEvent(affiliationRoleUpdate data.AffiliationRoleUpdate) {
+func (c *roomViewConversation) occupantAffiliationRoleUpdatedEvent(u data.AffiliationRoleUpdate) {
 	doInUIThread(func() {
-		c.displayOccupantUpdateMessageFor(affiliationRoleUpdate)
+		c.displayOccupantUpdateMessageFor(u)
 	})
 }
 
-func (c *roomViewConversation) selfOccupantAffiliationRoleUpdatedEvent(affiliationRoleUpdate data.SelfAffiliationRoleUpdate) {
+func (c *roomViewConversation) selfOccupantAffiliationRoleUpdatedEvent(u data.SelfAffiliationRoleUpdate) {
 	doInUIThread(func() {
-		c.displayOccupantUpdateMessageFor(affiliationRoleUpdate.AffiliationRoleUpdate)
+		c.displayOccupantUpdateMessageFor(u.AffiliationRoleUpdate)
 	})
 }
 
-func (c *roomViewConversation) occupantAffiliationEvent(affiliationUpdate data.AffiliationUpdate) {
+func (c *roomViewConversation) occupantAffiliationEvent(u data.AffiliationUpdate) {
 	doInUIThread(func() {
-		c.displayOccupantUpdateMessageFor(affiliationUpdate)
+		c.displayOccupantUpdateMessageFor(u)
 	})
 }
 
-func (c *roomViewConversation) occupantRoleEvent(roleUpdate data.RoleUpdate) {
+func (c *roomViewConversation) occupantRoleEvent(u data.RoleUpdate) {
 	doInUIThread(func() {
-		c.displayOccupantUpdateMessageFor(roleUpdate)
+		c.displayOccupantUpdateMessageFor(u)
 	})
 }
 
-func (c *roomViewConversation) selfOccupantAffiliationEvent(affiliationUpdate data.AffiliationUpdate) {
-	c.occupantAffiliationEvent(affiliationUpdate)
+func (c *roomViewConversation) selfOccupantAffiliationEvent(u data.AffiliationUpdate) {
+	c.occupantAffiliationEvent(u)
 
-	if affiliationUpdate.New.IsBanned() {
+	if u.New.IsBanned() {
 		doInUIThread(c.onSelfOccupantBanned)
 	}
 }
 
-func (c *roomViewConversation) selfOccupantRoleEvent(roleUpdate data.SelfRoleUpdate) {
-	c.occupantRoleEvent(roleUpdate.RoleUpdate)
+func (c *roomViewConversation) selfOccupantRoleEvent(u data.SelfRoleUpdate) {
+	c.occupantRoleEvent(u.RoleUpdate)
 
 	switch {
-	case roleUpdate.New.IsNone():
+	case u.New.IsNone():
 		doInUIThread(c.onSelfOccupantKicked)
-	case roleUpdate.New.IsVisitor():
+	case u.New.IsVisitor():
 		doInUIThread(c.onSelfOccupantVoiceRevoked)
 	}
 }

@@ -215,7 +215,7 @@ type MUCOccupantKicked struct {
 
 // MUCSelfOccupantKicked contains information about the self-occupant kicked
 type MUCSelfOccupantKicked struct {
-	RoleUpdate data.RoleUpdate
+	RoleUpdate data.SelfRoleUpdate
 }
 
 // MUCSelfOccupantConnected signifies that the self occupant reconnected to the server

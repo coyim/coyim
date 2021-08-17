@@ -233,7 +233,7 @@ func (m *mucManager) occupantKicked(roomID jid.Bare, roleUpdate data.RoleUpdate)
 	m.publishRoomEvent(roomID, ev)
 }
 
-func (m *mucManager) selfOccupantKicked(roomID jid.Bare, roleUpdate data.RoleUpdate) {
+func (m *mucManager) selfOccupantKicked(roomID jid.Bare, roleUpdate data.SelfRoleUpdate) {
 	ev := events.MUCSelfOccupantKicked{}
 	ev.RoleUpdate = roleUpdate
 

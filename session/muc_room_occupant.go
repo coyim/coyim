@@ -234,11 +234,13 @@ func (m *mucManager) handleOccupantKick(roomID jid.Bare, op *muc.OccupantPresenc
 	}
 
 	if occupantKicked.isOwnPresence() {
-		m.selfOccupantKicked(roomID, roleUpdate)
+		selfRoleUpdate := data.SelfRoleUpdate{}
+		selfRoleUpdate.RoleUpdate = roleUpdate
+		m.selfOccupantKicked(roomID, selfRoleUpdate)
 		m.deleteRoomFromManager(roomID)
-		return
+	} else {
+		m.occupantKicked(roomID, roleUpdate)
 	}
-	m.occupantKicked(roomID, roleUpdate)
 }
 
 func (m *mucManager) handleOccupantBanned(roomID jid.Bare, op *muc.OccupantPresenceInfo) {

@@ -165,7 +165,7 @@ func (c *roomViewConversation) occupantAffiliationRoleUpdatedEvent(affiliationRo
 
 func (c *roomViewConversation) selfOccupantAffiliationRoleUpdatedEvent(affiliationRoleUpdate data.SelfAffiliationRoleUpdate) {
 	doInUIThread(func() {
-		c.displayOccupantUpdateMessageFor(affiliationRoleUpdate)
+		c.displayOccupantUpdateMessageFor(affiliationRoleUpdate.AffiliationRoleUpdate)
 	})
 }
 

@@ -331,18 +331,22 @@ func (c *roomViewConversation) subjectUpdatedEvent(nickname, subject string) {
 	})
 }
 
+// TODO: Remove the isReconnecting flag
 func (c *roomViewConversation) subjectReceivedEvent(subject string, isReconnecting bool) {
-	doWhenReconnecting(isReconnecting, func() {
-		c.displayDivider()
-
-		c.saveAndDisplayMessage("", i18n.Local("Your connection was restored."), time.Now(), data.Connected)
-	})
+	if isReconnecting {
+		doInUIThread(func() {
+			c.displayDivider()
+			c.saveAndDisplayMessage("", i18n.Local("Your connection was restored."), time.Now(), data.Connected)
+		})
+	}
 
 	doInUIThread(func() {
 		c.saveAndDisplayMessage("", messageForRoomSubject(subject), time.Now(), data.Subject)
 	})
 
-	doWhenReconnecting(isReconnecting, c.displayDivider)
+	if isReconnecting {
+		doInUIThread(c.displayDivider)
+	}
 }
 
 func (c *roomViewConversation) loggingEnabledEvent() {

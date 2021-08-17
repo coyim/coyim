@@ -33,7 +33,7 @@ func (c *roomViewConversation) handleOccupantJoinedRoom(nickname string) {
 	c.saveAndDisplayMessage(nickname, messageForSomeoneWhoJoinedTheRoom(nickname), time.Now(), data.Joined)
 }
 
-// displayMessageData MUST be called from the UI thread
+// displayMessageFromData MUST be called from the UI thread
 func (c *roomViewConversation) displayMessageFromData(dm *data.DelayedMessage) {
 	c.displayTimestamp(dm.Timestamp)
 	c.displayFormattedMessage(dm.Message, messageTagBasedOnMessageType[dm.MessageType])
@@ -56,7 +56,7 @@ func (c *roomViewConversation) displayRoomSubject(subject string) {
 	c.displayTextLineWithTimestamp(subject, conversationTagRoomSubject)
 }
 
-// handleOccupantJoinedRoom MUST be called from the UI thread
+// handleRoomSubject MUST be called from the UI thread
 func (c *roomViewConversation) handleRoomSubject(subject string) {
 	c.saveAndDisplayMessage("", subject, time.Now(), data.Subject)
 }

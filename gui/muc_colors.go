@@ -42,6 +42,7 @@ type mucColorSet struct {
 	roomWarningsDialogHeaderBackground     string
 	roomWarningsDialogContentBackground    string
 	roomWarningsCurrentInfoForeground      string
+	roomNotificationsBackground            string
 	rosterGroupBackground                  string
 	rosterGroupForeground                  string
 	rosterOccupantRoleForeground           string
@@ -134,6 +135,7 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		roomWarningsDialogHeaderBackground:     colorNone,
 		roomWarningsDialogContentBackground:    colorNone,
 		roomWarningsCurrentInfoForeground:      colorThemeInsensitiveForeground,
+		roomNotificationsBackground:            colorThemeBackground,
 		rosterGroupBackground:                  colorFormat(rgb{245, 245, 244}, 1),
 		rosterGroupForeground:                  colorFormat(rgb{28, 25, 23}, 1),
 		rosterOccupantRoleForeground:           colorFormat(rgb{168, 162, 158}, 1),
@@ -220,6 +222,7 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		roomWarningsDialogHeaderBackground:     colorNone,
 		roomWarningsDialogContentBackground:    colorNone,
 		roomWarningsCurrentInfoForeground:      colorThemeInsensitiveForeground,
+		roomNotificationsBackground:            colorThemeBackground,
 		rosterGroupBackground:                  colorFormat(rgb{28, 25, 23}, 1),
 		rosterGroupForeground:                  colorFormat(rgb{250, 250, 249}, 1),
 		rosterOccupantRoleForeground:           colorFormat(rgb{231, 229, 228}, 1),

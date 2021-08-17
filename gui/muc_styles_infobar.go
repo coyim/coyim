@@ -97,7 +97,7 @@ var (
 	}
 
 	infoBarRevealerBoxCommonStyle = style{
-		"padding":    "0",
+		"padding":    "0px 6px",
 		"background": "none",
 		"border":     "none",
 		"box-shadow": "none",
@@ -105,7 +105,7 @@ var (
 
 	infoBarContentCommonStyle = style{
 		"text-shadow": "none",
-		"padding":     "4px 12px 4px 12px",
+		"padding":     "6px 12px 6px 0px",
 		"background":  "none",
 	}
 

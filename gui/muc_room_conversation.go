@@ -20,6 +20,7 @@ type roomViewConversation struct {
 	canSendMessages         bool
 	selfOccupantNickname    func() string
 	saveNotificationMessage func(*data.DelayedMessage) bool
+	selfOccupantJoined      chan bool
 	historyPrinted          chan bool
 
 	view                  gtki.Box            `gtk-widget:"room-conversation"`
@@ -44,6 +45,7 @@ func (v *roomView) newRoomViewConversation() *roomViewConversation {
 		account:                 v.account,
 		selfOccupantNickname:    v.room.SelfOccupantNickname,
 		saveNotificationMessage: v.room.AddMessage,
+		selfOccupantJoined:      make(chan bool),
 		historyPrinted:          make(chan bool),
 	}
 
@@ -263,6 +265,7 @@ func (c *roomViewConversation) selfOccupantJoinedEvent(nickname string, r data.R
 			c.enableSendCapabilitiesIfHasVoice(r.HasVoice())
 			c.displaySelfOccupantJoined(nickname, isReconnecting)
 		})
+		c.selfOccupantJoined <- true
 	}()
 }
 
@@ -353,9 +356,12 @@ func (c *roomViewConversation) subjectUpdatedEvent(nickname, subject string) {
 }
 
 func (c *roomViewConversation) subjectReceivedEvent(subject string) {
-	doInUIThread(func() {
-		c.saveAndDisplayMessage("", messageForRoomSubject(subject), time.Now(), data.Subject)
-	})
+	go func() {
+		<-c.selfOccupantJoined
+		doInUIThread(func() {
+			c.saveAndDisplayMessage("", messageForRoomSubject(subject), time.Now(), data.Subject)
+		})
+	}()
 }
 
 func (c *roomViewConversation) loggingEnabledEvent() {

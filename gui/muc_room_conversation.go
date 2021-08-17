@@ -247,12 +247,13 @@ func (c *roomViewConversation) onSelfOccupantVoiceRevoked() {
 	c.disableSendCapabilities()
 }
 
+// TODO: Remove the isReconnecting flag
 func (c *roomViewConversation) selfOccupantJoinedEvent(nickname string, r data.Role, isReconnecting bool) {
 	doInUIThread(func() {
 		c.enableSendCapabilitiesIfHasVoice(r.HasVoice())
-		doWhenNoReconnecting(isReconnecting, func() {
+		if !isReconnecting {
 			c.handleOccupantJoinedRoom(nickname)
-		})
+		}
 	})
 }
 
@@ -270,10 +271,11 @@ func (c *roomViewConversation) occupantLeftEvent(nickname string) {
 	})
 }
 
+// TODO: Remove the isReconnecting flag
 func (c *roomViewConversation) occupantJoinedEvent(nickname string, isReconnecting bool) {
-	doWhenNoReconnecting(isReconnecting, func() {
+	if !isReconnecting {
 		c.handleOccupantJoinedRoom(nickname)
-	})
+	}
 }
 
 func (c *roomViewConversation) messageEvent(tp, nickname, message string, timestamp time.Time) {

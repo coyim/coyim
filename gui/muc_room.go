@@ -790,10 +790,3 @@ func (v *roomView) mainWindow() gtki.Window {
 func (v *roomView) roomID() jid.Bare {
 	return v.room.ID
 }
-
-// doWhenNoReconnecting WILL call the given function from the UI thread
-func doWhenNoReconnecting(isReconnecting bool, fn func()) {
-	if !isReconnecting {
-		doInUIThread(fn)
-	}
-}

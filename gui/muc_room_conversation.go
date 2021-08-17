@@ -257,10 +257,17 @@ func (c *roomViewConversation) onSelfOccupantVoiceRevoked() {
 func (c *roomViewConversation) selfOccupantJoinedEvent(nickname string, r data.Role, isReconnecting bool) {
 	doInUIThread(func() {
 		c.enableSendCapabilitiesIfHasVoice(r.HasVoice())
-		if !isReconnecting {
-			c.handleOccupantJoinedRoom(nickname)
-		}
+		c.displaySelfOccupantJoined(nickname, isReconnecting)
 	})
+}
+
+// displaySelfOccupantJoined MUST be called from the UI thread
+func (c *roomViewConversation) displaySelfOccupantJoined(nickname string, isReconnecting bool) {
+	if isReconnecting {
+		c.saveAndDisplayMessage("", i18n.Local("Your connection was restored."), time.Now(), data.Connected)
+	} else {
+		c.handleOccupantJoinedRoom(nickname)
+	}
 }
 
 func (c *roomViewConversation) occupantUpdatedEvent(nickname string, r data.Role) {
@@ -341,20 +348,9 @@ func (c *roomViewConversation) subjectUpdatedEvent(nickname, subject string) {
 
 // TODO: Remove the isReconnecting flag
 func (c *roomViewConversation) subjectReceivedEvent(subject string, isReconnecting bool) {
-	if isReconnecting {
-		doInUIThread(func() {
-			c.displayDivider()
-			c.saveAndDisplayMessage("", i18n.Local("Your connection was restored."), time.Now(), data.Connected)
-		})
-	}
-
 	doInUIThread(func() {
 		c.saveAndDisplayMessage("", messageForRoomSubject(subject), time.Now(), data.Subject)
 	})
-
-	if isReconnecting {
-		doInUIThread(c.displayDivider)
-	}
 }
 
 func (c *roomViewConversation) loggingEnabledEvent() {

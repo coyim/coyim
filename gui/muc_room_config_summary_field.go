@@ -12,16 +12,15 @@ type roomConfigSummaryField struct {
 	fieldType  muc.RoomConfigFieldType
 	fieldValue muc.HasRoomConfigFormFieldValue
 
-	widget                    gtki.Box            `gtk-widget:"room-config-field-box"`
-	field                     gtki.ListBoxRow     `gtk-widget:"room-config-field"`
-	fieldLabel                gtki.Label          `gtk-widget:"room-config-field-label"`
-	fieldValueLabel           gtki.Label          `gtk-widget:"room-config-field-value"`
-	fieldTextMultiContent     gtki.ScrolledWindow `gtk-widget:"room-config-field-text-area"`
-	fieldTextMultiValue       gtki.TextView       `gtk-widget:"room-config-field-text-area-value"`
-	fieldListContent          gtki.Box            `gtk-widget:"room-config-field-list-content"`
-	fieldListValueButton      gtki.Button         `gtk-widget:"room-config-field-list-button"`
-	fieldListValueButtonImage gtki.Image          `gtk-widget:"room-config-field-list-button-image"`
-	fieldListValues           gtki.TreeView       `gtk-widget:"room-config-field-list-values-tree"`
+	widget                    gtki.Box        `gtk-widget:"room-config-field-box"`
+	field                     gtki.ListBoxRow `gtk-widget:"room-config-field"`
+	fieldLabel                gtki.Label      `gtk-widget:"room-config-field-label"`
+	fieldValueLabel           gtki.Label      `gtk-widget:"room-config-field-value"`
+	fieldTextMultiValue       gtki.Label      `gtk-widget:"room-config-field-text-multi-value"`
+	fieldListContent          gtki.Box        `gtk-widget:"room-config-field-list-content"`
+	fieldListValueButton      gtki.Button     `gtk-widget:"room-config-field-list-button"`
+	fieldListValueButtonImage gtki.Image      `gtk-widget:"room-config-field-list-button-image"`
+	fieldListValues           gtki.TreeView   `gtk-widget:"room-config-field-list-values-tree"`
 
 	listModel gtki.ListStore
 }
@@ -82,15 +81,14 @@ func (f *roomConfigSummaryField) handleTextFieldValue(value string) {
 
 func (f *roomConfigSummaryField) handleTextMultiFieldValue(value string) {
 	if value != "" {
-		setTextViewText(f.fieldTextMultiValue, summaryAssignedValueText(value))
-		f.fieldTextMultiContent.Show()
-		f.fieldValueLabel.SetVisible(false)
-		return
+		setLabelText(f.fieldTextMultiValue, summaryAssignedValueText(value))
+		f.fieldTextMultiValue.Show()
+		f.fieldValueLabel.Hide()
+	} else {
+		setLabelText(f.fieldValueLabel, summaryAssignedValueText(value))
+		f.fieldTextMultiValue.Hide()
+		f.fieldValueLabel.Show()
 	}
-
-	setLabelText(f.fieldValueLabel, summaryAssignedValueText(value))
-	f.fieldTextMultiContent.Hide()
-	f.fieldValueLabel.SetVisible(true)
 }
 
 func (f *roomConfigSummaryField) handleListMultiFieldValue(value []string) {

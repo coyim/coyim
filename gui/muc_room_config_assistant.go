@@ -93,7 +93,7 @@ func (rc *roomConfigAssistant) initRoomConfigPages() {
 		rc.assistantPages[p.pageID] = ap
 
 		rc.assistant.AppendPage(ap.page)
-		rc.assistant.SetPageTitle(ap.page, configPageDisplayTitle(p.pageID))
+		rc.assistant.SetPageTitle(ap.page, i18n.Local("Configure room"))
 		rc.assistant.SetPageComplete(ap.page, true)
 
 		if p.pageID == roomConfigSummaryPageIndex {
@@ -109,6 +109,9 @@ func (rc *roomConfigAssistant) initRoomConfigPages() {
 }
 
 func (rc *roomConfigAssistant) initDefaults() {
+	header, _ := rc.assistant.GetHeaderBar()
+	header.SetProperty("subtitle", rc.roomID.String())
+
 	rc.assistant.SetTitle(i18n.Localf("Configuration for room [%s]", rc.roomID))
 	if rc.parentWindow != nil {
 		rc.assistant.SetTransientFor(rc.parentWindow)

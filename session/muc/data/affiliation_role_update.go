@@ -17,3 +17,8 @@ type AffiliationRoleUpdate struct {
 	PreviousRole        Role
 	Actor               *Actor
 }
+
+// SelfAffiliationRoleUpdate contains information related to a new and previous affiliation and role of the self occupant
+type SelfAffiliationRoleUpdate struct {
+	AffiliationRoleUpdate
+}

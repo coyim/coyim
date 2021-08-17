@@ -207,7 +207,8 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateMessage_roleNone(c *C) {
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfRoleUpdateMessage_roleModerator(c *C) {
-	sru := data.RoleUpdate{
+	sru := data.SelfRoleUpdate{}
+	sru.RoleUpdate = data.RoleUpdate{
 		Nickname: "wanda",
 		New:      newTestRoleFromString(data.RoleModerator),
 		Previous: newTestRoleFromString(data.RoleParticipant),
@@ -227,7 +228,8 @@ func (*MUCNotificationMessagesSuite) Test_getSelfRoleUpdateMessage_roleModerator
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfRoleUpdateMessage_roleParticipant(c *C) {
-	sru := data.RoleUpdate{
+	sru := data.SelfRoleUpdate{}
+	sru.RoleUpdate = data.RoleUpdate{
 		Nickname: "sancho",
 		New:      newTestRoleFromString(data.RoleParticipant),
 		Previous: newTestRoleFromString(data.RoleModerator),
@@ -247,7 +249,8 @@ func (*MUCNotificationMessagesSuite) Test_getSelfRoleUpdateMessage_roleParticipa
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfRoleUpdateMessage_roleVisitor(c *C) {
-	sru := data.RoleUpdate{
+	sru := data.SelfRoleUpdate{}
+	sru.RoleUpdate = data.RoleUpdate{
 		Nickname: "chapulin",
 		New:      newTestRoleFromString(data.RoleVisitor),
 		Previous: newTestRoleFromString(data.RoleModerator),
@@ -628,7 +631,8 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affili
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_affiliationRemoved(c *C) {
-	saru := data.AffiliationRoleUpdate{
+	saru := data.SelfAffiliationRoleUpdate{}
+	saru.AffiliationRoleUpdate = data.AffiliationRoleUpdate{
 		Nickname:            "007",
 		NewAffiliation:      newTestAffiliationFromString(data.AffiliationNone),
 		PreviousAffiliation: newTestAffiliationFromString(data.AffiliationAdmin),
@@ -650,7 +654,8 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_af
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_affiliationAdded(c *C) {
-	saru := data.AffiliationRoleUpdate{
+	saru := data.SelfAffiliationRoleUpdate{}
+	saru.AffiliationRoleUpdate = data.AffiliationRoleUpdate{
 		Nickname:            "alice",
 		NewAffiliation:      newTestAffiliationFromString(data.AffiliationAdmin),
 		PreviousAffiliation: newTestAffiliationFromString(data.AffiliationNone),
@@ -672,7 +677,8 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_af
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_affiliationUpdated(c *C) {
-	saru := data.AffiliationRoleUpdate{
+	saru := data.SelfAffiliationRoleUpdate{}
+	saru.AffiliationRoleUpdate = data.AffiliationRoleUpdate{
 		Nickname:            "goku",
 		NewAffiliation:      newTestAffiliationFromString(data.AffiliationAdmin),
 		PreviousAffiliation: newTestAffiliationFromString(data.AffiliationMember),

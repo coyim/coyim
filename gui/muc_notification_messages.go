@@ -201,6 +201,8 @@ func getMUCNotificationMessageFrom(d interface{}) string {
 		return getRoleUpdateMessage(t)
 	case data.AffiliationRoleUpdate:
 		return getAffiliationRoleUpdateMessage(t)
+	case data.SelfAffiliationRoleUpdate:
+		return getSelfAffiliationRoleUpdateMessage(t)
 	}
 	panic(fmt.Sprintf("unkown update type: %v", d))
 }
@@ -815,7 +817,7 @@ func getAffiliationRoleUpdateMessageForRole(affiliationRoleUpdate data.Affiliati
 	return i18n.Local("As a result, their role was also changed.")
 }
 
-func getSelfAffiliationRoleUpdateMessageForRole(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
+func getSelfAffiliationRoleUpdateMessageForRole(affiliationRoleUpdate data.SelfAffiliationRoleUpdate) string {
 	switch {
 	case affiliationRoleUpdate.PreviousRole.IsVisitor() && affiliationRoleUpdate.NewRole.IsParticipant():
 		return i18n.Local("As a result, your role was changed from $role{visitor} to $role{participant}.")
@@ -1156,7 +1158,7 @@ func getAffiliationRoleUpdateForAffiliationUpdatedForActor(affiliationRoleUpdate
 		affiliationRoleUpdate.Nickname)
 }
 
-func getSelfAffiliationRoleUpdateMessage(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
+func getSelfAffiliationRoleUpdateMessage(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) string {
 	affiliationMessage := getSelfAffiliationRoleUpdateMessageForAffiliation(selfAffiliationRoleUpdate)
 	roleMessage := getSelfAffiliationRoleUpdateMessageForRole(selfAffiliationRoleUpdate)
 
@@ -1166,7 +1168,7 @@ func getSelfAffiliationRoleUpdateMessage(selfAffiliationRoleUpdate data.Affiliat
 	)
 }
 
-func getSelfAffiliationRoleUpdateMessageForAffiliation(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
+func getSelfAffiliationRoleUpdateMessageForAffiliation(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) string {
 	switch {
 	case selfAffiliationRoleUpdate.NewAffiliation.IsNone():
 		return getSelfAffiliationRoleUpateForAffiliationRemoved(selfAffiliationRoleUpdate)
@@ -1176,7 +1178,7 @@ func getSelfAffiliationRoleUpdateMessageForAffiliation(selfAffiliationRoleUpdate
 	return getSelfAffiliationRoleUpdateForAffiliationUpdated(selfAffiliationRoleUpdate)
 }
 
-func getSelfAffiliationRoleUpateForAffiliationRemoved(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
+func getSelfAffiliationRoleUpateForAffiliationRemoved(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) string {
 	if selfAffiliationRoleUpdate.Actor == nil {
 		return getSelfAffiliationRoleUpateForAffiliationRemovedWithoutActor(selfAffiliationRoleUpdate)
 	}
@@ -1184,7 +1186,7 @@ func getSelfAffiliationRoleUpateForAffiliationRemoved(selfAffiliationRoleUpdate 
 	return getSelfAffiliationRoleUpateForAffiliationRemovedWithActor(selfAffiliationRoleUpdate)
 }
 
-func getSelfAffiliationRoleUpateForAffiliationRemovedWithoutActor(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
+func getSelfAffiliationRoleUpateForAffiliationRemovedWithoutActor(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) string {
 	switch {
 	case selfAffiliationRoleUpdate.PreviousAffiliation.IsOwner():
 		return i18n.Local("You are not $affiliation{an owner} anymore.")
@@ -1194,7 +1196,7 @@ func getSelfAffiliationRoleUpateForAffiliationRemovedWithoutActor(selfAffiliatio
 	return i18n.Local("You are not $affiliation{a member} anymore.")
 }
 
-func getSelfAffiliationRoleUpateForAffiliationRemovedWithActor(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
+func getSelfAffiliationRoleUpateForAffiliationRemovedWithActor(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) string {
 	switch {
 	case selfAffiliationRoleUpdate.Actor.Affiliation.IsOwner() && selfAffiliationRoleUpdate.PreviousAffiliation.IsOwner():
 		return i18n.Localf("The owner $nickname{%s} changed your position; you are not $affiliation{an owner} anymore.",
@@ -1219,14 +1221,14 @@ func getSelfAffiliationRoleUpateForAffiliationRemovedWithActor(selfAffiliationRo
 		selfAffiliationRoleUpdate.Actor.Nickname)
 }
 
-func getSelfAffiliationRoleUpdateForAffiliationAdded(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
+func getSelfAffiliationRoleUpdateForAffiliationAdded(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) string {
 	if selfAffiliationRoleUpdate.Actor == nil {
 		return getSelfAffiliationRoleUpdateForAffiliationAddedWithoutActor(selfAffiliationRoleUpdate)
 	}
 	return getSelfAffiliationRoleUpdateForAffiliationAddedWithActor(selfAffiliationRoleUpdate)
 }
 
-func getSelfAffiliationRoleUpdateForAffiliationAddedWithoutActor(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
+func getSelfAffiliationRoleUpdateForAffiliationAddedWithoutActor(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) string {
 	switch {
 	case selfAffiliationRoleUpdate.NewAffiliation.IsOwner():
 		return i18n.Localf("Your position was changed to $affiliation{owner}.")
@@ -1236,7 +1238,7 @@ func getSelfAffiliationRoleUpdateForAffiliationAddedWithoutActor(selfAffiliation
 	return i18n.Localf("Your position was changed to $affiliation{member}.")
 }
 
-func getSelfAffiliationRoleUpdateForAffiliationAddedWithActor(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
+func getSelfAffiliationRoleUpdateForAffiliationAddedWithActor(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) string {
 	switch {
 	case selfAffiliationRoleUpdate.Actor.Affiliation.IsOwner() && selfAffiliationRoleUpdate.NewAffiliation.IsOwner():
 		return i18n.Localf("The owner $nickname{%s} changed your position to $affiliation{owner}.",
@@ -1258,7 +1260,7 @@ func getSelfAffiliationRoleUpdateForAffiliationAddedWithActor(selfAffiliationRol
 		selfAffiliationRoleUpdate.Actor.Nickname)
 }
 
-func getSelfAffiliationRoleUpdateForAffiliationUpdated(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
+func getSelfAffiliationRoleUpdateForAffiliationUpdated(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) string {
 	if selfAffiliationRoleUpdate.Actor == nil {
 		return getSelfAffiliationRoleUpdateForAffiliationUpdatedWithoutActor(selfAffiliationRoleUpdate)
 	}
@@ -1266,7 +1268,7 @@ func getSelfAffiliationRoleUpdateForAffiliationUpdated(selfAffiliationRoleUpdate
 	return getSelfAffiliationRoleUpdateForAffiliationUpdatedWithActor(selfAffiliationRoleUpdate)
 }
 
-func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithoutActor(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
+func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithoutActor(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) string {
 	switch {
 	case selfAffiliationRoleUpdate.PreviousAffiliation.IsOwner() && selfAffiliationRoleUpdate.NewAffiliation.IsAdmin():
 		return i18n.Localf("Your position was changed from $affiliation{owner} to $affiliation{administrator}.")
@@ -1284,7 +1286,7 @@ func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithoutActor(selfAffiliati
 	return i18n.Localf("Your position was changed.")
 }
 
-func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithActor(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) (m string) {
+func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithActor(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) (m string) {
 	switch {
 	case selfAffiliationRoleUpdate.Actor.Affiliation.IsOwner():
 		return getSelfAffiliationRoleUpdateForAffiliationUpdatedWithOwnerActor(selfAffiliationRoleUpdate)
@@ -1294,7 +1296,7 @@ func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithActor(selfAffiliationR
 	return getSelfAffiliationRoleUpdateForAffiliationUpdatedForActor(selfAffiliationRoleUpdate)
 }
 
-func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithOwnerActor(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
+func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithOwnerActor(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) string {
 	switch {
 	case selfAffiliationRoleUpdate.PreviousAffiliation.IsOwner() && selfAffiliationRoleUpdate.NewAffiliation.IsAdmin():
 		return i18n.Localf("The owner $nickname{%s} changed your position from $affiliation{owner} to $affiliation{administrator}.",
@@ -1319,7 +1321,7 @@ func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithOwnerActor(selfAffilia
 		selfAffiliationRoleUpdate.Actor.Nickname)
 }
 
-func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithAdminActor(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
+func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithAdminActor(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) string {
 	switch {
 	case selfAffiliationRoleUpdate.PreviousAffiliation.IsOwner() && selfAffiliationRoleUpdate.NewAffiliation.IsAdmin():
 		return i18n.Localf("The administrator $nickname{%s} changed your position from $affiliation{owner} to $affiliation{administrator}.",
@@ -1344,7 +1346,7 @@ func getSelfAffiliationRoleUpdateForAffiliationUpdatedWithAdminActor(selfAffilia
 		selfAffiliationRoleUpdate.Actor.Nickname)
 }
 
-func getSelfAffiliationRoleUpdateForAffiliationUpdatedForActor(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) string {
+func getSelfAffiliationRoleUpdateForAffiliationUpdatedForActor(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) string {
 	switch {
 	case selfAffiliationRoleUpdate.PreviousAffiliation.IsOwner() && selfAffiliationRoleUpdate.NewAffiliation.IsAdmin():
 		return i18n.Localf("$nickname{%s} changed your position from $affiliation{owner} to $affiliation{administrator}.",

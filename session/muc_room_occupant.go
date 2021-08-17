@@ -139,11 +139,12 @@ func (m *mucManager) handleOccupantAffiliationRoleUpdated(occupantUpdateInfo *oc
 	}
 
 	if occupantUpdateInfo.isOwnPresence() {
-		m.selfOccupantAffiliationRoleUpdated(occupantUpdateInfo.room.ID, affiliationRoleUpate)
-		return
+		selfAffiliationRoleUpdate := data.SelfAffiliationRoleUpdate{}
+		selfAffiliationRoleUpdate.AffiliationRoleUpdate = affiliationRoleUpate
+		m.selfOccupantAffiliationRoleUpdated(occupantUpdateInfo.room.ID, selfAffiliationRoleUpdate)
+	} else {
+		m.occupantAffiliationRoleUpdated(occupantUpdateInfo.room.ID, affiliationRoleUpate)
 	}
-
-	m.occupantAffiliationRoleUpdated(occupantUpdateInfo.room.ID, affiliationRoleUpate)
 }
 
 func (m *mucManager) handleOccupantAffiliationUpdated(occupantUpdateInfo *occupantPresenceUpdateData) {

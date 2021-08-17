@@ -220,7 +220,7 @@ func (v *roomView) selfOccupantAffiliationUpdatedEvent(selfAffiliationUpdate dat
 }
 
 // selfOccupantAffiliationRoleUpdatedEvent MUST be called from the UI thread
-func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) {
+func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) {
 	notificationInfo := roomNotificationOptions{
 		message:   getMUCNotificationMessageFrom(selfAffiliationRoleUpdate),
 		showTime:  true,
@@ -669,7 +669,7 @@ func (v *roomView) publishOccupantAffiliationRoleUpdatedEvent(affiliationRoleUpd
 }
 
 // publishSelfOccupantAffiliationUpdatedEvent MUST NOT be called from the UI thread
-func (v *roomView) publishSelfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUpdate data.AffiliationRoleUpdate) {
+func (v *roomView) publishSelfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) {
 	v.publishEvent(selfOccupantAffiliationRoleUpdatedEvent{selfAffiliationRoleUpdate})
 }
 

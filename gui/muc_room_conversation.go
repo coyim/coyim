@@ -185,8 +185,8 @@ func (c *roomViewConversation) selfOccupantAffiliationEvent(affiliationUpdate da
 	}
 }
 
-func (c *roomViewConversation) selfOccupantRoleEvent(roleUpdate data.RoleUpdate) {
-	c.occupantRoleEvent(roleUpdate)
+func (c *roomViewConversation) selfOccupantRoleEvent(roleUpdate data.SelfRoleUpdate) {
+	c.occupantRoleEvent(roleUpdate.RoleUpdate)
 
 	switch {
 	case roleUpdate.New.IsNone():

@@ -205,7 +205,7 @@ type MUCOccupantRoleUpdated struct {
 
 // MUCSelfOccupantRoleUpdated signifies that the self-occupant role was updated
 type MUCSelfOccupantRoleUpdated struct {
-	RoleUpdate data.RoleUpdate
+	RoleUpdate data.SelfRoleUpdate
 }
 
 // MUCOccupantKicked contains information about the occupant kicked

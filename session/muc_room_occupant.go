@@ -174,11 +174,12 @@ func (m *mucManager) handleOccupantRoleUpdated(occupantUpdateInfo *occupantPrese
 	}
 
 	if occupantUpdateInfo.isOwnPresence() {
-		m.selfOccupantRoleUpdated(occupantUpdateInfo.room.ID, roleUpdate)
-		return
+		selfRoleUpdate := data.SelfRoleUpdate{}
+		selfRoleUpdate.RoleUpdate = roleUpdate
+		m.selfOccupantRoleUpdated(occupantUpdateInfo.room.ID, selfRoleUpdate)
+	} else {
+		m.occupantRoleUpdated(occupantUpdateInfo.room.ID, roleUpdate)
 	}
-
-	m.occupantRoleUpdated(occupantUpdateInfo.room.ID, roleUpdate)
 }
 
 func (m *mucManager) handleOccupantLeft(roomID jid.Bare, op *muc.OccupantPresenceInfo) {

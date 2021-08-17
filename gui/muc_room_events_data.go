@@ -130,7 +130,7 @@ type occupantRoleUpdatedEvent struct {
 }
 
 type selfOccupantRoleUpdatedEvent struct {
-	selfRoleUpdate data.RoleUpdate
+	selfRoleUpdate data.SelfRoleUpdate
 }
 
 type selfOccupantConnectedEvent struct{}

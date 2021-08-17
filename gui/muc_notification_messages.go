@@ -201,6 +201,8 @@ func getMUCNotificationMessageFrom(d interface{}) string {
 		return getRoleUpdateMessage(t)
 	case data.AffiliationRoleUpdate:
 		return getAffiliationRoleUpdateMessage(t)
+	case data.SelfRoleUpdate:
+		return getSelfRoleUpdateMessage(t)
 	case data.SelfAffiliationRoleUpdate:
 		return getSelfAffiliationRoleUpdateMessage(t)
 	}
@@ -654,18 +656,18 @@ func getRoleChangedMessageForActor(roleUpdate data.RoleUpdate) string {
 		roleUpdate.Nickname)
 }
 
-func getSelfRoleUpdateMessage(selfRoleUpdate data.RoleUpdate) string {
+func getSelfRoleUpdateMessage(selfRoleUpdate data.SelfRoleUpdate) string {
 	return appendReasonToMessage(getSelfRoleUpdateBaseMessage(selfRoleUpdate), selfRoleUpdate.Reason)
 }
 
-func getSelfRoleUpdateBaseMessage(selfRoleUpdate data.RoleUpdate) string {
+func getSelfRoleUpdateBaseMessage(selfRoleUpdate data.SelfRoleUpdate) string {
 	if selfRoleUpdate.Actor == nil {
 		return getSelfRoleUpdateMessageWithoutActor(selfRoleUpdate)
 	}
 	return getSelfRoleUpdateMessageWithActor(selfRoleUpdate)
 }
 
-func getSelfRoleUpdateMessageWithoutActor(selfRoleUpdate data.RoleUpdate) string {
+func getSelfRoleUpdateMessageWithoutActor(selfRoleUpdate data.SelfRoleUpdate) string {
 	switch {
 	case selfRoleUpdate.Previous.IsParticipant() && selfRoleUpdate.New.IsVisitor():
 		return i18n.Local("Your role was changed from $role{participant} to $role{visitor}.")
@@ -685,7 +687,7 @@ func getSelfRoleUpdateMessageWithoutActor(selfRoleUpdate data.RoleUpdate) string
 	return i18n.Local("Your role was changed.")
 }
 
-func getSelfRoleUpdateMessageWithActor(selfRoleUpdate data.RoleUpdate) string {
+func getSelfRoleUpdateMessageWithActor(selfRoleUpdate data.SelfRoleUpdate) string {
 	switch {
 	case selfRoleUpdate.Actor.Affiliation.IsOwner():
 		return getSelfRoleUpdateMessageForOwnerActor(selfRoleUpdate)
@@ -695,7 +697,7 @@ func getSelfRoleUpdateMessageWithActor(selfRoleUpdate data.RoleUpdate) string {
 	return getSelfRoleUpdateMessageForActor(selfRoleUpdate)
 }
 
-func getSelfRoleUpdateMessageForOwnerActor(selfRoleUpdate data.RoleUpdate) string {
+func getSelfRoleUpdateMessageForOwnerActor(selfRoleUpdate data.SelfRoleUpdate) string {
 	switch {
 	case selfRoleUpdate.Previous.IsParticipant() && selfRoleUpdate.New.IsVisitor():
 		return i18n.Localf("The owner $nickname{%s} changed your role from $role{participant} to $role{visitor}.",
@@ -723,7 +725,7 @@ func getSelfRoleUpdateMessageForOwnerActor(selfRoleUpdate data.RoleUpdate) strin
 		selfRoleUpdate.Actor.Nickname)
 }
 
-func getSelfRoleUpdateMessageForAdminActor(selfRoleUpdate data.RoleUpdate) string {
+func getSelfRoleUpdateMessageForAdminActor(selfRoleUpdate data.SelfRoleUpdate) string {
 	switch {
 	case selfRoleUpdate.Previous.IsParticipant() && selfRoleUpdate.New.IsVisitor():
 		return i18n.Localf("The administrator $nickname{%s} changed your role from $role{participant} to $role{visitor}.",
@@ -751,7 +753,7 @@ func getSelfRoleUpdateMessageForAdminActor(selfRoleUpdate data.RoleUpdate) strin
 		selfRoleUpdate.Actor.Nickname)
 }
 
-func getSelfRoleUpdateMessageForActor(selfRoleUpdate data.RoleUpdate) string {
+func getSelfRoleUpdateMessageForActor(selfRoleUpdate data.SelfRoleUpdate) string {
 	switch {
 	case selfRoleUpdate.Previous.IsParticipant() && selfRoleUpdate.New.IsVisitor():
 		return i18n.Localf("$nickname{%s} changed your role from $role{participant} to $role{visitor}.",

@@ -106,7 +106,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case subjectUpdatedEvent:
 			c.subjectUpdatedEvent(t.nickname, t.subject)
 		case subjectReceivedEvent:
-			c.subjectReceivedEvent(t.subject, t.isReconnecting)
+			c.subjectReceivedEvent(t.subject)
 		case loggingEnabledEvent:
 			c.loggingEnabledEvent()
 		case loggingDisabledEvent:
@@ -346,8 +346,7 @@ func (c *roomViewConversation) subjectUpdatedEvent(nickname, subject string) {
 	})
 }
 
-// TODO: Remove the isReconnecting flag
-func (c *roomViewConversation) subjectReceivedEvent(subject string, isReconnecting bool) {
+func (c *roomViewConversation) subjectReceivedEvent(subject string) {
 	doInUIThread(func() {
 		c.saveAndDisplayMessage("", messageForRoomSubject(subject), time.Now(), data.Subject)
 	})

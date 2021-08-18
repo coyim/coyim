@@ -53,7 +53,7 @@ func NewDelayedMessage(nickname, message string, timestamp time.Time, messageTyp
 type DelayedMessages struct {
 	date                     time.Time
 	messages                 []*DelayedMessage
-	lastChatMessageTimestamp *time.Time
+	lastChatMessageTimestamp time.Time
 	lock                     sync.RWMutex
 }
 
@@ -83,11 +83,11 @@ func (dm *DelayedMessages) add(nickname, message string, timestamp time.Time, me
 	dm.lock.Lock()
 	defer dm.lock.Unlock()
 
-	shouldAddMessage := dm.lastChatMessageTimestamp == nil || dm.lastChatMessageTimestamp.Before(timestamp)
+	shouldAddMessage := dm.lastChatMessageTimestamp.Before(timestamp)
 	if shouldAddMessage {
 		dm.messages = append(dm.messages, NewDelayedMessage(nickname, message, timestamp, messageType))
 		if messageType == Chat {
-			dm.lastChatMessageTimestamp = &timestamp
+			dm.lastChatMessageTimestamp = timestamp
 		}
 	}
 

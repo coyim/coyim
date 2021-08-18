@@ -49,9 +49,9 @@ func NewDelayedMessage(nickname, message string, timestamp time.Time, messageTyp
 	}
 }
 
-// DelayedMessages contains the delayed messages for specific date
+// DelayedMessages groups the delayed messages based on a specific date
 type DelayedMessages struct {
-	date                     time.Time
+	groupingDate             time.Time
 	messages                 []*DelayedMessage
 	lastChatMessageTimestamp time.Time
 	lock                     sync.RWMutex
@@ -59,13 +59,13 @@ type DelayedMessages struct {
 
 func newDelayedMessages(date time.Time) *DelayedMessages {
 	return &DelayedMessages{
-		date: serverTimeInLocal(date),
+		groupingDate: serverTimeInLocal(date),
 	}
 }
 
 // GetDate returns the delayed messages group's date
 func (dm *DelayedMessages) GetDate() time.Time {
-	return dm.date
+	return dm.groupingDate
 }
 
 // GetMessages returns a list of delayed messages
@@ -118,7 +118,7 @@ func (dh *DiscussionHistory) AddMessage(nickname, message string, timestamp time
 	t := serverTimeInLocal(timestamp)
 
 	for _, dm := range dh.GetHistory() {
-		if sameDate(dm.date, t) {
+		if sameDate(dm.groupingDate, t) {
 			return dm.add(nickname, message, t, messageType)
 		}
 	}

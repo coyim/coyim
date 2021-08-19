@@ -101,10 +101,20 @@ func (la *mucRoomConfigListAddComponent) appendNewFormItem(jid string) {
 
 	item := newMUCRoomConfigListFormItem(form, nil, onRemove)
 	item.updateIndex(len(la.formItems))
-	la.formItems = append(la.formItems, item)
-	la.contentBox.PackStart(item.contentBox(), false, true, 0)
+	la.prependItem(item)
+	la.contentBox.PackEnd(item.contentBox(), false, true, 0)
 
 	la.refresh()
+}
+func (la *mucRoomConfigListAddComponent) prependItem(item *mucRoomConfigListFormItem) {
+	la.formItems = append([]*mucRoomConfigListFormItem{item}, la.formItems...)
+	la.reindex()
+}
+
+func (la *mucRoomConfigListAddComponent) reindex() {
+	for index, itm := range la.formItems {
+		itm.updateIndex(index)
+	}
 }
 
 func (la *mucRoomConfigListAddComponent) jidCanBeAdded(jid string) bool {

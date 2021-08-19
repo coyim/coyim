@@ -316,11 +316,13 @@ func (c *roomViewConversation) messageEvent(tp, nickname, message string, timest
 }
 
 func (c *roomViewConversation) discussionHistoryEvent(dh *data.DiscussionHistory) {
-	doInUIThread(func() {
-		c.clearBuffer()
-		c.displayDiscussionHistory(dh.GetHistory())
-		c.displayDivider()
-	})
+	if len(dh.GetHistory()) > 0 {
+		doInUIThread(func() {
+			c.clearBuffer()
+			c.displayDiscussionHistory(dh.GetHistory())
+			c.displayDivider()
+		})
+	}
 	c.historyPrinted <- true
 }
 

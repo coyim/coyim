@@ -113,11 +113,6 @@ func (r *Room) UpdateSubject(s string) bool {
 	return isUpdated
 }
 
-// HasHistory returns true if room has history
-func (r *Room) HasHistory() bool {
-	return len(r.discussionHistory.GetHistory()) > 0
-}
-
 // GetDiscussionHistory returns the room history
 func (r *Room) GetDiscussionHistory() *data.DiscussionHistory {
 	return r.discussionHistory

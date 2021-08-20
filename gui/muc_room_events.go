@@ -94,6 +94,8 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 		v.handleSelfOccupantConnectedEvent()
 	case events.MUCSelfOccupantDisconnected:
 		v.publishSelfOccupantDisconnectedEvent()
+	case events.MUCSelfOccupantConnecting:
+		v.publishSelfOccupantConnectingEvent()
 	case events.MUCAccountAffiliationUpdated:
 		v.publishAccountAffiliationUpdated(t.AccountAddress, t.Affiliation)
 	default:
@@ -192,3 +194,9 @@ func (v *roomView) publishSubjectReceivedEvent(subject string) {
 		isReconnecting: v.isReconnecting,
 	})
 }
+
+// publishSelfOccupantConnectingEvent MUST NOT be called from the UI thread
+func (v *roomView) publishSelfOccupantConnectingEvent() {
+	v.publishEvent(selfOccupantConnectingEvent{})
+}
+

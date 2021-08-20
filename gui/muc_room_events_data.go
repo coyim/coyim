@@ -137,6 +137,8 @@ type selfOccupantConnectedEvent struct{}
 
 type selfOccupantDisconnectedEvent struct{}
 
+type selfOccupantConnectingEvent struct{}
+
 type accountAffiliationUpdated struct {
 	accountAddress jid.Any
 	affiliation    data.Affiliation
@@ -180,6 +182,7 @@ func (occupantRoleUpdatedEvent) markAsRoomViewEvent()                {}
 func (selfOccupantRoleUpdatedEvent) markAsRoomViewEvent()            {}
 func (selfOccupantConnectedEvent) markAsRoomViewEvent()              {}
 func (selfOccupantDisconnectedEvent) markAsRoomViewEvent()           {}
+func (selfOccupantConnectingEvent) markAsRoomViewEvent()             {}
 func (accountAffiliationUpdated) markAsRoomViewEvent()               {}
 func (roomDisableEvent) markAsRoomViewEvent()                        {}
 func (roomEnableEvent) markAsRoomViewEvent()                         {}

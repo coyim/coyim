@@ -748,6 +748,7 @@ func (v *roomView) requestRoomInfoOnReconnect() {
 	previousJoinRequestFn := v.doWhenJoinRequestFinished
 	v.doWhenJoinRequestFinished = func() {
 		doInUIThread(func() {
+			v.loadingViewOverlay.hide()
 			v.roomReconnectFinished(previousJoinRequestFn)
 		})
 	}

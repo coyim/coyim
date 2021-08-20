@@ -148,6 +148,8 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 		v.selfOccupantAffiliationRoleUpdatedEvent(t.selfAffiliationRoleUpdate)
 	case selfOccupantRoleUpdatedEvent:
 		v.selfOccupantRoleUpdatedEvent(t.selfRoleUpdate)
+	case selfOccupantConnectedEvent:
+		v.selfOccupantConnectedEvent()
 	case selfOccupantDisconnectedEvent:
 		v.selfOccupantDisconnectedEvent()
 	case selfOccupantConnectingEvent:
@@ -768,9 +770,8 @@ func (v *roomView) roomReconnectFinished(previousJoinRequestFn func()) {
 	}
 }
 
-// publishSelfOccupantRoleUpdatedEvent MUST NOT be called from the UI thread
-func (v *roomView) handleSelfOccupantConnectedEvent() {
-	v.publishEvent(selfOccupantConnectedEvent{})
+// selfOccupantConnectedEvent MUST NOT be called from the UI thread
+func (v *roomView) selfOccupantConnectedEvent() {
 	go v.requestRoomInfoOnReconnect()
 }
 

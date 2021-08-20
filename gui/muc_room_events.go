@@ -93,7 +93,7 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 	case events.MUCSelfOccupantKicked:
 		v.publishSelfOccupantRoleUpdatedEvent(t.RoleUpdate)
 	case events.MUCSelfOccupantConnected:
-		v.handleSelfOccupantConnectedEvent()
+		v.publishSelfOccupantConnectedEvent()
 	case events.MUCSelfOccupantDisconnected:
 		v.publishSelfOccupantDisconnectedEvent()
 	case events.MUCSelfOccupantConnecting:
@@ -199,6 +199,11 @@ func (v *roomView) publishSubjectReceivedEvent(subject string) {
 		subject:        subject,
 		isReconnecting: v.isReconnecting,
 	})
+}
+
+// publishSelfOccupantConnectedEvent MUST NOT be called from the UI thread
+func (v *roomView) publishSelfOccupantConnectedEvent() {
+	v.publishEvent(selfOccupantConnectedEvent{})
 }
 
 // publishSelfOccupantRoleUpdatedEvent MUST NOT be called from the UI thread

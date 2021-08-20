@@ -716,16 +716,22 @@ func (v *roomView) onReconnectingRoomInfoReceived(di data.RoomDiscoInfo) {
 
 // onReconnectingRoomInfoTimeout MUST be called from the UI thread
 func (v *roomView) onReconnectingRoomInfoTimeout() {
+	v.notifications.clearAll()
+
 	v.notifications.error(roomNotificationOptions{
-		message:   i18n.Local("We couldn't retrieve the room information, please try again."),
+		message: i18n.Local("Your connection was recovered but " +
+			"loading the room information took longer than usual, " +
+			"perhaps the connection to the server was lost. Do you want to try again?"),
 		showTime:  true,
 		closeable: true,
 		actions: roomNotificationActions{
 			{
-				label:        i18n.Local("Try again"),
-				responseType: gtki.RESPONSE_OK,
+				label:        i18n.Local("Yes, try again"),
+				responseType: gtki.RESPONSE_YES,
 				signals: map[string]interface{}{
 					"clicked": func() {
+						v.notifications.clearAll()
+						v.loadingViewOverlay.onRoomReconnectTryAgain()
 						go v.requestRoomInfoOnReconnect()
 					},
 				},

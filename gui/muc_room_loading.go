@@ -38,6 +38,13 @@ func (lo *roomViewLoadingOverlay) onRoomReconnect() {
 	lo.show()
 }
 
+// onRoomReconnectTryAgain MUST be called from the UI thread
+func (lo *roomViewLoadingOverlay) onRoomReconnectTryAgain() {
+	lo.setTitle(i18n.Local("Trying to connect the room..."))
+	lo.setSolid()
+	lo.show()
+}
+
 // onRoomDestroy MUST be called from the UI thread
 func (lo *roomViewLoadingOverlay) onRoomDestroy() {
 	lo.setTitle(i18n.Local("Destroying room..."))

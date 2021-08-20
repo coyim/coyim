@@ -175,7 +175,7 @@
               <object class="GtkBox" id="room-config-positions-list-content">
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkScrolledWindow" id="public-rooms-view">
+                  <object class="GtkScrolledWindow">
                     <property name="visible">True</property>
                     <property name="hexpand">True</property>
                     <property name="vexpand">True</property>

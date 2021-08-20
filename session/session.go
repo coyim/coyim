@@ -822,7 +822,7 @@ func (s *session) setStatus(status connStatus) {
 	case DISCONNECTED:
 		s.onStatusDisconnected()
 	case CONNECTING:
-		s.publish(events.Connecting)
+		s.onStatusConnecting()
 	}
 }
 
@@ -834,6 +834,11 @@ func (s *session) onStatusConnected() {
 func (s *session) onStatusDisconnected() {
 	s.publish(events.Disconnected)
 	s.muc.onStatusDisconnected()
+}
+
+func (s *session) onStatusConnecting() {
+	s.publish(events.Connecting)
+	s.muc.onStatusConnecting()
 }
 
 // Connect connects to the server and starts the main threads

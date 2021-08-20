@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	xmppData "github.com/coyim/coyim/xmpp/data"
@@ -371,5 +372,11 @@ func (m *mucManager) onStatusConnected() {
 func (m *mucManager) onStatusDisconnected() {
 	for _, r := range m.roomManager.GetAllRooms() {
 		r.Disconnect()
+	}
+}
+
+func (m *mucManager) onStatusConnecting() {
+	for _, r := range m.roomManager.GetAllRooms() {
+		r.Publish(events.MUCSelfOccupantConnecting{})
 	}
 }

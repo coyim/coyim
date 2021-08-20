@@ -224,6 +224,9 @@ type MUCSelfOccupantConnected struct{}
 // MUCSelfOccupantDisconnected signifies that the self occupant could not be reached by the server
 type MUCSelfOccupantDisconnected struct{}
 
+// MUCSelfOccupantConnecting signifies that the self occupant is reconnecting to the server
+type MUCSelfOccupantConnecting struct{}
+
 // MUCAccountAffiliationUpdated is used to notify that an affiliation account has been updated
 type MUCAccountAffiliationUpdated struct {
 	AccountAddress jid.Any
@@ -264,4 +267,5 @@ func (MUCOccupantKicked) markAsMUCEventTypeInterface()                     {}
 func (MUCSelfOccupantKicked) markAsMUCEventTypeInterface()                 {}
 func (MUCSelfOccupantConnected) markAsMUCEventTypeInterface()              {}
 func (MUCSelfOccupantDisconnected) markAsMUCEventTypeInterface()           {}
+func (MUCSelfOccupantConnecting) markAsMUCEventTypeInterface()             {}
 func (MUCAccountAffiliationUpdated) markAsMUCEventTypeInterface()          {}

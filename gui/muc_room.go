@@ -150,6 +150,8 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 		v.selfOccupantRoleUpdatedEvent(t.selfRoleUpdate)
 	case selfOccupantDisconnectedEvent:
 		v.selfOccupantDisconnectedEvent()
+	case selfOccupantConnectingEvent:
+		v.selfOccupantConnectingEvent()
 	case nicknameConflictEvent:
 		v.nicknameConflictEvent(t.nickname)
 	case registrationRequiredEvent:
@@ -770,6 +772,12 @@ func (v *roomView) roomReconnectFinished(previousJoinRequestFn func()) {
 func (v *roomView) handleSelfOccupantConnectedEvent() {
 	v.publishEvent(selfOccupantConnectedEvent{})
 	go v.requestRoomInfoOnReconnect()
+}
+
+// selfOccupantConnectingEvent MUST be called from the UI thread
+func (v *roomView) selfOccupantConnectingEvent() {
+	v.notifications.clearAll()
+	v.loadingViewOverlay.onRoomReconnect()
 }
 
 // mainWindow MUST be called from the UI thread

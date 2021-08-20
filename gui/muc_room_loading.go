@@ -31,6 +31,13 @@ func (lo *roomViewLoadingOverlay) onJoinRoom() {
 	lo.show()
 }
 
+// onRoomReconnect MUST be called from the UI thread
+func (lo *roomViewLoadingOverlay) onRoomReconnect() {
+	lo.setTitle(i18n.Local("Connecting to the room..."))
+	lo.setSolid()
+	lo.show()
+}
+
 // onRoomDestroy MUST be called from the UI thread
 func (lo *roomViewLoadingOverlay) onRoomDestroy() {
 	lo.setTitle(i18n.Local("Destroying room..."))

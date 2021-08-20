@@ -255,17 +255,6 @@ func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.SelfRoleUpda
 	}
 }
 
-// selfOccupantDisconnectedEvent MUST be called from the UI thread
-func (v *roomView) selfOccupantDisconnectedEvent() {
-	v.notifications.error(roomNotificationOptions{
-		message:   i18n.Local("The connection to the server has been lost, please verify your connection."),
-		showTime:  true,
-		closeable: true,
-	})
-
-	v.disableRoomView()
-}
-
 // selfOccupantRemovedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantRemovedEvent() {
 	v.notifications.info(roomNotificationOptions{
@@ -773,6 +762,17 @@ func (v *roomView) roomReconnectFinished(previousJoinRequestFn func()) {
 // selfOccupantConnectedEvent MUST NOT be called from the UI thread
 func (v *roomView) selfOccupantConnectedEvent() {
 	go v.requestRoomInfoOnReconnect()
+}
+
+// selfOccupantDisconnectedEvent MUST be called from the UI thread
+func (v *roomView) selfOccupantDisconnectedEvent() {
+	v.notifications.error(roomNotificationOptions{
+		message:   i18n.Local("The connection to the server has been lost, please verify your connection."),
+		showTime:  true,
+		closeable: true,
+	})
+
+	v.disableRoomView()
 }
 
 // selfOccupantConnectingEvent MUST be called from the UI thread

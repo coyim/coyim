@@ -6,6 +6,8 @@ import (
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/session/muc/data"
+	"github.com/coyim/coyim/xmpp/jid"
 )
 
 func (v *roomView) handleRoomEvent(ev events.MUC) {
@@ -164,6 +166,7 @@ func (v *roomView) unsubscribe(id string) {
 	v.subscribers.unsubscribe(id)
 }
 
+// publishEvent MUST NOT be called from the UI thread
 func (v *roomView) publishEvent(ev roomViewEvent) {
 	if v.opened {
 		// We should analyze if at some point we need
@@ -172,6 +175,7 @@ func (v *roomView) publishEvent(ev roomViewEvent) {
 	}
 }
 
+// publishMessageEvent MUST NOT be called from the UI thread
 func (v *roomView) publishMessageEvent(tp, nickname, message string, timestamp time.Time) {
 	v.publishEvent(messageEvent{
 		tp:        tp,
@@ -181,6 +185,7 @@ func (v *roomView) publishMessageEvent(tp, nickname, message string, timestamp t
 	})
 }
 
+// publishSubjectUpdatedEvent MUST NOT be called from the UI thread
 func (v *roomView) publishSubjectUpdatedEvent(nickname, subject string) {
 	v.publishEvent(subjectUpdatedEvent{
 		nickname: nickname,
@@ -188,6 +193,7 @@ func (v *roomView) publishSubjectUpdatedEvent(nickname, subject string) {
 	})
 }
 
+// publishSubjectReceivedEvent MUST NOT be called from the UI thread
 func (v *roomView) publishSubjectReceivedEvent(subject string) {
 	v.publishEvent(subjectReceivedEvent{
 		subject:        subject,
@@ -195,8 +201,17 @@ func (v *roomView) publishSubjectReceivedEvent(subject string) {
 	})
 }
 
+// publishSelfOccupantRoleUpdatedEvent MUST NOT be called from the UI thread
+func (v *roomView) publishSelfOccupantDisconnectedEvent() {
+	v.publishEvent(selfOccupantDisconnectedEvent{})
+}
+
 // publishSelfOccupantConnectingEvent MUST NOT be called from the UI thread
 func (v *roomView) publishSelfOccupantConnectingEvent() {
 	v.publishEvent(selfOccupantConnectingEvent{})
 }
 
+// publishAccountAffiliationUpdated MUST NOT be called from the UI thread
+func (v *roomView) publishAccountAffiliationUpdated(accountAddress jid.Any, affiliation data.Affiliation) {
+	v.publishEvent(accountAffiliationUpdated{accountAddress, affiliation})
+}

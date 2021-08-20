@@ -772,16 +772,6 @@ func (v *roomView) handleSelfOccupantConnectedEvent() {
 	go v.requestRoomInfoOnReconnect()
 }
 
-// publishSelfOccupantRoleUpdatedEvent MUST NOT be called from the UI thread
-func (v *roomView) publishSelfOccupantDisconnectedEvent() {
-	v.publishEvent(selfOccupantDisconnectedEvent{})
-}
-
-// publishAccountAffiliationUpdated MUST NOT be called from the UI thread
-func (v *roomView) publishAccountAffiliationUpdated(accountAddress jid.Any, affiliation data.Affiliation) {
-	v.publishEvent(accountAffiliationUpdated{accountAddress, affiliation})
-}
-
 // mainWindow MUST be called from the UI thread
 func (v *roomView) mainWindow() gtki.Window {
 	return v.window.view()

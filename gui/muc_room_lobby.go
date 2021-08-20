@@ -148,6 +148,7 @@ func (l *roomViewLobby) onJoinRoomClicked(done func()) {
 	nickname := getEntryText(l.nicknameEntry)
 	password := getEntryText(l.passwordEntry)
 
+	l.roomView.loadingViewOverlay.onJoinRoom()
 	go l.roomView.sendJoinRoomRequest(nickname, password, done)
 }
 

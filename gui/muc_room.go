@@ -561,8 +561,6 @@ func (v *roomView) hideMainView() {
 
 // sendJoinRoomRequest MUST NOT be called from the UI thread
 func (v *roomView) sendJoinRoomRequest(nickname, password string, doAfterRequestSent func()) {
-	v.loadingViewOverlay.onJoinRoom()
-
 	doAfterRequestSentFinal := doAfterRequestSent
 	doAfterRequestSent = func() {
 		if doAfterRequestSentFinal != nil {

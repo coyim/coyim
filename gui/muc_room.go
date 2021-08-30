@@ -729,8 +729,9 @@ func (v *roomView) onReconnectingRoomInfoTimeout() {
 					"clicked": func() {
 						v.notifications.clearAll()
 						v.notifications.other(roomNotificationOptions{
-							message:  i18n.Local("Trying to connect the room..."),
-							showTime: true,
+							message:     i18n.Local("Trying to connect to the room..."),
+							showTime:    true,
+							showSpinner: true,
 						})
 						go v.requestRoomInfoOnReconnect()
 					},
@@ -785,8 +786,9 @@ func (v *roomView) selfOccupantConnectingEvent() {
 	v.notifications.clearAll()
 
 	v.notifications.other(roomNotificationOptions{
-		message:  i18n.Local("Connecting to the room..."),
-		showTime: true,
+		message:     i18n.Local("Connecting to the room..."),
+		showTime:    true,
+		showSpinner: true,
 	})
 }
 

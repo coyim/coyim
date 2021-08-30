@@ -106,6 +106,11 @@ func (v *mucJoinRoomView) beforeJoiningRoom() {
 
 func (v *mucJoinRoomView) onJoinSuccess(a *account, roomID jid.Bare, roomInfo *muc.RoomListing) {
 	doInUIThread(func() {
+		onNoErrors := func() {
+			v.dialog.Hide()
+			v.spinner.hide()
+		}
+
 		onNotifyError := func(err string) {
 			v.spinner.hide()
 			v.enableJoinFields()
@@ -117,7 +122,7 @@ func (v *mucJoinRoomView) onJoinSuccess(a *account, roomID jid.Bare, roomInfo *m
 		v.u.joinRoom(a, roomID, &roomViewData{
 			onBackToPreviousStep: v.returnToJoinRoomView,
 			onNotifyError:        onNotifyError,
-			onNoErrors:           v.dialog.Hide,
+			onNoErrors:           onNoErrors,
 		})
 	})
 }

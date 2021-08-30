@@ -35,25 +35,30 @@ var infoBarIconNames = map[infoBarType]string{
 }
 
 type infoBarComponent struct {
+	u                      *gtkUI
 	text                   string
 	messageType            gtki.MessageType
+	spinner                *spinner
 	doWhenRequestedToClose func() // doWhenRequestedToClose will be called from the UI thread
 	tickerCancelChannel    chan bool
 	tickerCancelLock       sync.Mutex
 
-	infoBar gtki.InfoBar `gtk-widget:"infobar"`
-	time    gtki.Label   `gtk-widget:"time-label"`
-	title   gtki.Label   `gtk-widget:"title-label"`
-	icon    gtki.Image   `gtk-widget:"icon-image"`
+	infoBar    gtki.InfoBar `gtk-widget:"infobar"`
+	time       gtki.Label   `gtk-widget:"time-label"`
+	title      gtki.Label   `gtk-widget:"title-label"`
+	icon       gtki.Image   `gtk-widget:"icon-image"`
+	spinnerBox gtki.Box     `gtk-widget:"spinner-box"`
 }
 
 func (u *gtkUI) newInfoBarComponent(text string, messageType gtki.MessageType) *infoBarComponent {
 	ib := &infoBarComponent{
+		u:           u,
 		text:        text,
 		messageType: messageType,
 	}
 
 	ib.initBuilder()
+	ib.initSpinnerComponent()
 	ib.initDefaults()
 	ib.initStyleAndIcon()
 
@@ -75,6 +80,12 @@ func (ib *infoBarComponent) initBuilder() {
 			}
 		},
 	})
+}
+
+func (ib *infoBarComponent) initSpinnerComponent() {
+	ib.spinner = ib.u.newSpinnerComponent()
+	ib.spinner.setSize(spinnerSizeMedium)
+	ib.spinnerBox.Add(ib.spinner.spinner())
 }
 
 func (ib *infoBarComponent) initDefaults() {
@@ -180,6 +191,18 @@ func (ib *infoBarComponent) closeActiveTickerChannel() {
 // refreshElapsedTime MUST be called from the UI thread
 func (ib *infoBarComponent) refreshElapsedTime(t time.Time) {
 	ib.time.SetText(elapsedFriendlyTime(t))
+}
+
+// showSpinner MUST be called from the UI thread
+func (ib *infoBarComponent) showSpinner() {
+	ib.spinner.show()
+	ib.spinnerBox.Show()
+}
+
+// hideSpinner MUST be called from the UI thread
+func (ib *infoBarComponent) hideSpinner() {
+	ib.spinner.hide()
+	ib.spinnerBox.Hide()
 }
 
 func infoBarTypeForMessageType(mt gtki.MessageType) infoBarType {

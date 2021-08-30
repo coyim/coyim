@@ -79,16 +79,18 @@ func (f *roomConfigSummaryField) handleTextFieldValue(value string) {
 	}
 }
 
+// handleTextMultiFieldValue MUST be called from the UI thread
 func (f *roomConfigSummaryField) handleTextMultiFieldValue(value string) {
 	if value != "" {
 		setLabelText(f.fieldTextMultiValue, summaryAssignedValueText(value))
 		f.fieldTextMultiValue.Show()
 		f.fieldValueLabel.Hide()
-	} else {
-		setLabelText(f.fieldValueLabel, summaryAssignedValueText(value))
-		f.fieldTextMultiValue.Hide()
-		f.fieldValueLabel.Show()
+		return
 	}
+
+	setLabelText(f.fieldValueLabel, summaryAssignedValueText(value))
+	f.fieldTextMultiValue.Hide()
+	f.fieldValueLabel.Show()
 }
 
 func (f *roomConfigSummaryField) handleListMultiFieldValue(value []string) {

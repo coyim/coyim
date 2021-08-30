@@ -201,10 +201,12 @@ func (c *roomViewConversation) selfOccupantRoleEvent(sru data.SelfRoleUpdate) {
 
 func (c *roomViewConversation) selfOccupantDisconnectedEvent() {
 	doInUIThread(func() {
-		c.saveAndDisplayMessage("", i18n.Local("You lost connection."), time.Now(), data.Disconnected)
-
 		c.updateNotificationMessage(messageForSelfOccupantDisconnected())
 		c.disableSendCapabilities()
+
+		if c.roomView.isSelfOccupantInTheRoom() {
+			c.saveAndDisplayMessage("", i18n.Local("You lost connection."), time.Now(), data.Disconnected)
+		}
 	})
 }
 

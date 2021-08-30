@@ -731,7 +731,10 @@ func (v *roomView) onReconnectingRoomInfoTimeout() {
 				signals: map[string]interface{}{
 					"clicked": func() {
 						v.notifications.clearAll()
-						v.loadingViewOverlay.onRoomReconnectTryAgain()
+						v.notifications.other(roomNotificationOptions{
+							message:  i18n.Local("Trying to connect the room..."),
+							showTime: true,
+						})
 						go v.requestRoomInfoOnReconnect()
 					},
 				},
@@ -748,7 +751,7 @@ func (v *roomView) requestRoomInfoOnReconnect() {
 	previousJoinRequestFn := v.doWhenJoinRequestFinished
 	v.doWhenJoinRequestFinished = func() {
 		doInUIThread(func() {
-			v.loadingViewOverlay.hide()
+			v.notifications.clearAll()
 			v.roomReconnectFinished(previousJoinRequestFn)
 		})
 	}
@@ -783,7 +786,11 @@ func (v *roomView) selfOccupantDisconnectedEvent() {
 // selfOccupantConnectingEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantConnectingEvent() {
 	v.notifications.clearAll()
-	v.loadingViewOverlay.onRoomReconnect()
+
+	v.notifications.other(roomNotificationOptions{
+		message:  i18n.Local("Connecting to the room..."),
+		showTime: true,
+	})
 }
 
 // mainWindow MUST be called from the UI thread

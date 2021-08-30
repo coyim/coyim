@@ -142,9 +142,10 @@ func (m *mucManager) handleOccupantAffiliationRoleUpdated(occupantUpdateInfo *oc
 		selfAffiliationRoleUpdate := data.SelfAffiliationRoleUpdate{}
 		selfAffiliationRoleUpdate.AffiliationRoleUpdate = affiliationRoleUpate
 		m.selfOccupantAffiliationRoleUpdated(occupantUpdateInfo.room.ID, selfAffiliationRoleUpdate)
-	} else {
-		m.occupantAffiliationRoleUpdated(occupantUpdateInfo.room.ID, affiliationRoleUpate)
+		return
 	}
+
+	m.occupantAffiliationRoleUpdated(occupantUpdateInfo.room.ID, affiliationRoleUpate)
 }
 
 func (m *mucManager) handleOccupantAffiliationUpdated(occupantUpdateInfo *occupantPresenceUpdateData) {
@@ -160,9 +161,10 @@ func (m *mucManager) handleOccupantAffiliationUpdated(occupantUpdateInfo *occupa
 		selfAffiliationUpdate := data.SelfAffiliationUpdate{}
 		selfAffiliationUpdate.AffiliationUpdate = affiliationUpate
 		m.selfOccupantAffiliationUpdated(occupantUpdateInfo.room.ID, selfAffiliationUpdate)
-	} else {
-		m.occupantAffiliationUpdated(occupantUpdateInfo.room.ID, affiliationUpate)
+		return
 	}
+
+	m.occupantAffiliationUpdated(occupantUpdateInfo.room.ID, affiliationUpate)
 }
 
 func (m *mucManager) handleOccupantRoleUpdated(occupantUpdateInfo *occupantPresenceUpdateData) {
@@ -178,9 +180,10 @@ func (m *mucManager) handleOccupantRoleUpdated(occupantUpdateInfo *occupantPrese
 		selfRoleUpdate := data.SelfRoleUpdate{}
 		selfRoleUpdate.RoleUpdate = roleUpdate
 		m.selfOccupantRoleUpdated(occupantUpdateInfo.room.ID, selfRoleUpdate)
-	} else {
-		m.occupantRoleUpdated(occupantUpdateInfo.room.ID, roleUpdate)
+		return
 	}
+
+	m.occupantRoleUpdated(occupantUpdateInfo.room.ID, roleUpdate)
 }
 
 func (m *mucManager) handleOccupantLeft(roomID jid.Bare, op *muc.OccupantPresenceInfo) {
@@ -239,9 +242,10 @@ func (m *mucManager) handleOccupantKick(roomID jid.Bare, op *muc.OccupantPresenc
 		selfRoleUpdate.RoleUpdate = roleUpdate
 		m.selfOccupantKicked(roomID, selfRoleUpdate)
 		m.deleteRoomFromManager(roomID)
-	} else {
-		m.occupantKicked(roomID, roleUpdate)
+		return
 	}
+
+	m.occupantKicked(roomID, roleUpdate)
 }
 
 func (m *mucManager) handleOccupantBanned(roomID jid.Bare, op *muc.OccupantPresenceInfo) {

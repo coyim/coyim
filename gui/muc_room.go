@@ -68,6 +68,7 @@ type roomView struct {
 	warningsInfoBar    *roomViewWarningsInfoBar
 	loadingViewOverlay *roomViewLoadingOverlay
 	isReconnecting     bool
+	enteredAtLeastOnce bool
 
 	subscribers *roomViewSubscribers
 
@@ -86,6 +87,10 @@ func (u *gtkUI) newRoomView(a *account, room *muc.Room) *roomView {
 		account: a,
 		room:    room,
 		log:     a.log.WithField("room", room.ID),
+	}
+
+	view.doWhenJoinRequestFinished = func() {
+		view.enteredAtLeastOnce = true
 	}
 
 	view.initRoomWindow()

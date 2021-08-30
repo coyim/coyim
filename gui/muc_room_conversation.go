@@ -17,6 +17,7 @@ type roomViewConversation struct {
 	tags                    *conversationTags
 	roomID                  jid.Bare
 	account                 *account
+	roomView                *roomView
 	canSendMessages         bool
 	selfOccupantNickname    func() string
 	saveNotificationMessage func(*data.DelayedMessage)
@@ -43,6 +44,7 @@ func (v *roomView) newRoomViewConversation() *roomViewConversation {
 		u:                       v.u,
 		roomID:                  v.room.ID,
 		account:                 v.account,
+		roomView:                v,
 		selfOccupantNickname:    v.room.SelfOccupantNickname,
 		saveNotificationMessage: v.room.AddMessage,
 		selfOccupantJoined:      make(chan bool),
@@ -268,7 +270,7 @@ func (c *roomViewConversation) selfOccupantJoinedEvent(nickname string, r data.R
 
 // displaySelfOccupantJoined MUST be called from the UI thread
 func (c *roomViewConversation) displaySelfOccupantJoined(nickname string, isReconnecting bool) {
-	if isReconnecting {
+	if isReconnecting && c.roomView.enteredAtLeastOnce {
 		c.saveAndDisplayMessage("", i18n.Local("Your connection was restored."), time.Now(), data.Connected)
 	} else {
 		c.handleOccupantJoinedRoom(nickname)

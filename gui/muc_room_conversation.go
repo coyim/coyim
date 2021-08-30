@@ -154,45 +154,45 @@ func (c *roomViewConversation) roomDestroyedEvent(reason string, alternative jid
 	})
 }
 
-func (c *roomViewConversation) occupantAffiliationRoleUpdatedEvent(u data.AffiliationRoleUpdate) {
+func (c *roomViewConversation) occupantAffiliationRoleUpdatedEvent(aru data.AffiliationRoleUpdate) {
 	doInUIThread(func() {
-		c.displayOccupantUpdateMessageFor(u)
+		c.displayOccupantUpdateMessageFor(aru)
 	})
 }
 
-func (c *roomViewConversation) selfOccupantAffiliationRoleUpdatedEvent(u data.SelfAffiliationRoleUpdate) {
+func (c *roomViewConversation) selfOccupantAffiliationRoleUpdatedEvent(saru data.SelfAffiliationRoleUpdate) {
 	doInUIThread(func() {
-		c.displayOccupantUpdateMessageFor(u.AffiliationRoleUpdate)
+		c.displayOccupantUpdateMessageFor(saru.AffiliationRoleUpdate)
 	})
 }
 
-func (c *roomViewConversation) occupantAffiliationEvent(u data.AffiliationUpdate) {
+func (c *roomViewConversation) occupantAffiliationEvent(au data.AffiliationUpdate) {
 	doInUIThread(func() {
-		c.displayOccupantUpdateMessageFor(u)
+		c.displayOccupantUpdateMessageFor(au)
 	})
 }
 
-func (c *roomViewConversation) occupantRoleEvent(u data.RoleUpdate) {
+func (c *roomViewConversation) occupantRoleEvent(ru data.RoleUpdate) {
 	doInUIThread(func() {
-		c.displayOccupantUpdateMessageFor(u)
+		c.displayOccupantUpdateMessageFor(ru)
 	})
 }
 
-func (c *roomViewConversation) selfOccupantAffiliationEvent(u data.AffiliationUpdate) {
-	c.occupantAffiliationEvent(u)
+func (c *roomViewConversation) selfOccupantAffiliationEvent(au data.AffiliationUpdate) {
+	c.occupantAffiliationEvent(au)
 
-	if u.New.IsBanned() {
+	if au.New.IsBanned() {
 		doInUIThread(c.onSelfOccupantBanned)
 	}
 }
 
-func (c *roomViewConversation) selfOccupantRoleEvent(u data.SelfRoleUpdate) {
-	c.occupantRoleEvent(u.RoleUpdate)
+func (c *roomViewConversation) selfOccupantRoleEvent(sru data.SelfRoleUpdate) {
+	c.occupantRoleEvent(sru.RoleUpdate)
 
 	switch {
-	case u.New.IsNone():
+	case sru.New.IsNone():
 		doInUIThread(c.onSelfOccupantKicked)
-	case u.New.IsVisitor():
+	case sru.New.IsVisitor():
 		doInUIThread(c.onSelfOccupantVoiceRevoked)
 	}
 }

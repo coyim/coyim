@@ -136,10 +136,11 @@ func (r *Room) SetProperties(p data.RoomDiscoInfo) {
 // SubjectCanBeChanged returns true if the subject of the room can be changed,
 // specifically by the self occupant of the room.
 func (r *Room) SubjectCanBeChanged() bool {
-	if r.selfOccupant.Role.IsVisitor() {
-		return false
+	if r.IsSelfOccupantInTheRoom() {
+		roomSelfOccupant := r.SelfOccupant()
+		return !roomSelfOccupant.Role.IsVisitor() && (roomSelfOccupant.Role.IsModerator() || r.properties.OccupantsCanChangeSubject)
 	}
-	return r.selfOccupant.Role.IsModerator() || r.properties.OccupantsCanChangeSubject
+	return false
 }
 
 // Connect should be called when the user account recover connection to the room
@@ -153,10 +154,12 @@ func (r *Room) Connect() {
 
 // Disconnect should be called when the user account lost connection to the room
 func (r *Room) Disconnect() {
-	roomSelfOccupant := r.SelfOccupant()
+	if r.IsSelfOccupantInTheRoom() {
+		roomSelfOccupant := r.SelfOccupant()
 
-	roomSelfOccupant.ChangeAffiliationToNone()
-	roomSelfOccupant.ChangeRoleToNone()
+		roomSelfOccupant.ChangeAffiliationToNone()
+		roomSelfOccupant.ChangeRoleToNone()
+	}
 
 	r.Publish(events.MUCSelfOccupantDisconnected{})
 }

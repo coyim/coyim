@@ -75,6 +75,8 @@ func (l *roomViewLobby) initSubscribers() {
 			l.roomDiscoInfoReceivedEvent(t.info, l.roomView.passwordProvider)
 		case roomConfigRequestTimeoutEvent:
 			l.roomConfigRequestTimeoutEvent()
+		case roomDisableEvent:
+			l.disableLobbyFields()
 		}
 	})
 }
@@ -130,6 +132,7 @@ func (l *roomViewLobby) checkJoinConditions() bool {
 // disableLobbyFields MUST be called from the UI thread
 func (l *roomViewLobby) disableLobbyFields() {
 	disableField(l.nicknameEntry)
+	disableField(l.passwordEntry)
 	disableField(l.joinButton)
 }
 

@@ -82,15 +82,13 @@ func (l *roomViewLobby) initSubscribers() {
 func (l *roomViewLobby) roomDiscoInfoReceivedEvent(di data.RoomDiscoInfo, passwordProvider func() string) {
 	l.isReadyToJoinRoom = true
 	doInUIThread(func() {
+		l.isPasswordProtected = di.PasswordProtected
+
 		l.enableLobbyFields()
 		l.enableJoinIfConditionsAreMet()
-		if di.PasswordProtected {
-			l.isPasswordProtected = true
-			setFieldVisibility(l.passwordLabel, true)
-			setFieldVisibility(l.passwordEntry, true)
-			if passwordProvider != nil {
-				setEntryText(l.passwordEntry, passwordProvider())
-			}
+
+		if l.isPasswordProtected && passwordProvider != nil {
+			setEntryText(l.passwordEntry, passwordProvider())
 		}
 	})
 }
@@ -138,7 +136,11 @@ func (l *roomViewLobby) disableLobbyFields() {
 // enableLobbyFields MUST be called from the UI thread
 func (l *roomViewLobby) enableLobbyFields() {
 	enableField(l.nicknameEntry)
+	setFieldSensitive(l.passwordEntry, l.isPasswordProtected)
 	enableField(l.joinButton)
+
+	setFieldVisibility(l.passwordLabel, l.isPasswordProtected)
+	setFieldVisibility(l.passwordEntry, l.isPasswordProtected)
 }
 
 // onJoinRoomClicked MUST be called from the UI thread

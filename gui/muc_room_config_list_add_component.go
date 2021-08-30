@@ -107,13 +107,11 @@ func (la *mucRoomConfigListAddComponent) appendNewFormItem(jid string) {
 	la.refresh()
 }
 
-// prependItem MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) prependItem(item *mucRoomConfigListFormItem) {
 	la.formItems = append([]*mucRoomConfigListFormItem{item}, la.formItems...)
 	la.reindex()
 }
 
-// reindex MUST be called from the UI thread
 func (la *mucRoomConfigListAddComponent) reindex() {
 	for index, itm := range la.formItems {
 		itm.updateIndex(index)

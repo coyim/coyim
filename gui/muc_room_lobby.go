@@ -82,6 +82,7 @@ func (l *roomViewLobby) initSubscribers() {
 func (l *roomViewLobby) roomDiscoInfoReceivedEvent(di data.RoomDiscoInfo, passwordProvider func() string) {
 	l.isReadyToJoinRoom = true
 	doInUIThread(func() {
+		l.enableLobbyFields()
 		l.enableJoinIfConditionsAreMet()
 		if di.PasswordProtected {
 			l.isPasswordProtected = true
@@ -128,14 +129,14 @@ func (l *roomViewLobby) checkJoinConditions() bool {
 		(!l.isPasswordProtected || passwordHasContent)
 }
 
-// disableFieldsAndShowSpinner MUST be called from the UI thread
-func (l *roomViewLobby) disableFieldsAndShowSpinner() {
+// disableLobbyFields MUST be called from the UI thread
+func (l *roomViewLobby) disableLobbyFields() {
 	disableField(l.nicknameEntry)
 	disableField(l.joinButton)
 }
 
-// enableFieldsAndHideSpinner MUST be called from the UI thread
-func (l *roomViewLobby) enableFieldsAndHideSpinner() {
+// enableLobbyFields MUST be called from the UI thread
+func (l *roomViewLobby) enableLobbyFields() {
 	enableField(l.nicknameEntry)
 	enableField(l.joinButton)
 }
@@ -143,7 +144,7 @@ func (l *roomViewLobby) enableFieldsAndHideSpinner() {
 // onJoinRoomClicked MUST be called from the UI thread
 func (l *roomViewLobby) onJoinRoomClicked(done func()) {
 	l.errorNotifications.clearErrors()
-	l.disableFieldsAndShowSpinner()
+	l.disableLobbyFields()
 
 	nickname := getEntryText(l.nicknameEntry)
 	password := getEntryText(l.passwordEntry)
@@ -154,7 +155,7 @@ func (l *roomViewLobby) onJoinRoomClicked(done func()) {
 
 // onJoinFailed MUST be called from the UI thread
 func (l *roomViewLobby) onJoinFailed(err error) {
-	l.enableFieldsAndHideSpinner()
+	l.enableLobbyFields()
 	shouldEnableJoin := l.checkJoinConditions()
 
 	userMessage := i18n.Local("An unknown error occurred while trying to join the room, please check your connection or try again.")

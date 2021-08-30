@@ -772,6 +772,7 @@ func (v *roomView) selfOccupantConnectedEvent() {
 
 // selfOccupantDisconnectedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantDisconnectedEvent() {
+	v.notifications.clearAll()
 	v.notifications.error(roomNotificationOptions{
 		message:   i18n.Local("The connection to the server has been lost, please verify your connection."),
 		showTime:  true,

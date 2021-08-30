@@ -179,6 +179,7 @@
                     <property name="visible">True</property>
                     <property name="hexpand">True</property>
                     <property name="vexpand">True</property>
+                    <property name="overlay-scrolling">False</property>
                     <property name="max-content-height">80</property>
                     <property name="min-content-height">80</property>
                     <property name="shadow_type">etched-in</property>

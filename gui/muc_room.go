@@ -706,12 +706,7 @@ func (v *roomView) handleDiscoInfoTimeout() {
 // onReconnectingRoomInfoReceived MUST be called from the UI thread
 func (v *roomView) onReconnectingRoomInfoReceived(di data.RoomDiscoInfo) {
 	v.enableRoomView()
-
-	if di.PasswordProtected {
-		v.switchToLobbyView()
-	} else {
-		v.sendJoinRoomRequest(v.room.SelfOccupantNickname(), "", nil)
-	}
+	v.switchToLobbyView()
 }
 
 // onReconnectingRoomInfoTimeout MUST be called from the UI thread

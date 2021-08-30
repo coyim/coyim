@@ -48,6 +48,7 @@ type roomNotificationOptions struct {
 	message     string
 	messageType gtki.MessageType
 	showTime    bool
+	showSpinner bool
 	closeable   bool
 	actions     roomNotificationActions
 }
@@ -82,6 +83,10 @@ func (rn *roomNotifications) newNotification(n roomNotificationOptions) {
 
 	if n.showTime {
 		nb = rn.u.newNotificationBarWithTime(n.message, n.messageType)
+	}
+
+	if n.showSpinner {
+		nb.showSpinner()
 	}
 
 	if n.closeable {

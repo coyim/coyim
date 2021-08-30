@@ -20,13 +20,11 @@ type infoBarHighlightAttributes struct {
 	labelRole        gtki.Label `gtk-widget:"labelRole"`
 }
 
-func newInfoBarHighlightAttributes(tp infoBarHighlightType) (pangoi.AttrList, bool) {
+func newInfoBarHighlightAttributes(tp infoBarHighlightType) pangoi.AttrList {
 	ibh := &infoBarHighlightAttributes{}
 
 	builder := newBuilder("InfoBarHighlightAttributes")
 	panicOnDevError(builder.bindObjects(ibh))
-
-	ok := false
 
 	var highlightLabel gtki.Label
 	switch tp {
@@ -38,15 +36,13 @@ func newInfoBarHighlightAttributes(tp infoBarHighlightType) (pangoi.AttrList, bo
 		highlightLabel = ibh.labelRole
 	}
 
-	var attributes pangoi.AttrList
 	if highlightLabel != nil {
 		if vv, err := highlightLabel.GetAttributes(); err == nil {
-			attributes = vv
-			ok = true
+			return vv
 		}
 	}
 
-	return attributes, ok
+	return nil
 }
 
 type infobarHighlightFormatter struct {
@@ -85,9 +81,8 @@ func (f *infobarHighlightFormatter) formatLabel(label gtki.Label) {
 
 	for _, format := range formats {
 		if highlightType, ok := infoBarHighlightFormats[format.Format]; ok {
-			if copy, ok := newInfoBarHighlightAttributes(highlightType); ok {
-				copyAttributesTo(pangoAttrList, copy, format.Start, format.Start+format.Length)
-			}
+			copy := newInfoBarHighlightAttributes(highlightType)
+			copyAttributesTo(pangoAttrList, copy, format.Start, format.Start+format.Length)
 		}
 	}
 

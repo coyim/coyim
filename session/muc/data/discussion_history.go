@@ -79,19 +79,24 @@ func (dm *DelayedMessages) GetMessages() []*DelayedMessage {
 	return result
 }
 
-func (dm *DelayedMessages) add(nickname, message string, timestamp time.Time, messageType MessageType) bool {
+func (dm *DelayedMessages) addMessageIfNewer(nickname, message string, timestamp time.Time, messageType MessageType) {
 	dm.lock.Lock()
 	defer dm.lock.Unlock()
 
-	shouldAddMessage := dm.lastChatMessageTimestamp.Before(timestamp)
-	if shouldAddMessage {
-		dm.messages = append(dm.messages, NewDelayedMessage(nickname, message, timestamp, messageType))
-		if messageType == Chat {
-			dm.lastChatMessageTimestamp = timestamp
-		}
+	if dm.isMessageNewerThanMessagesInHistory(timestamp) {
+		dm.addMessage(nickname, message, timestamp, messageType)
 	}
+}
 
-	return shouldAddMessage
+func (dm *DelayedMessages) isMessageNewerThanMessagesInHistory(timestamp time.Time) bool {
+	return dm.lastChatMessageTimestamp.Before(timestamp)
+}
+
+func (dm *DelayedMessages) addMessage(nickname, message string, timestamp time.Time, messageType MessageType) {
+	dm.messages = append(dm.messages, NewDelayedMessage(nickname, message, timestamp, messageType))
+	if messageType == Chat {
+		dm.lastChatMessageTimestamp = timestamp
+	}
 }
 
 // DiscussionHistory contains the discussion history of the room
@@ -114,17 +119,18 @@ func (dh *DiscussionHistory) GetHistory() []*DelayedMessages {
 }
 
 // AddMessage add a new delayed message to the history and returns true if the message was added, false if not
-func (dh *DiscussionHistory) AddMessage(nickname, message string, timestamp time.Time, messageType MessageType) bool {
+func (dh *DiscussionHistory) AddMessage(nickname, message string, timestamp time.Time, messageType MessageType) {
 	t := serverTimeInLocal(timestamp)
 
 	for _, dm := range dh.GetHistory() {
 		if sameDate(dm.groupingDate, t) {
-			return dm.add(nickname, message, t, messageType)
+			dm.addMessageIfNewer(nickname, message, t, messageType)
+			return
 		}
 	}
 
 	dm := dh.addNewMessagesGroup(t)
-	return dm.add(nickname, message, t, messageType)
+	dm.addMessageIfNewer(nickname, message, t, messageType)
 }
 
 func (dh *DiscussionHistory) addNewMessagesGroup(date time.Time) *DelayedMessages {

@@ -19,7 +19,7 @@ type roomViewConversation struct {
 	account                 *account
 	canSendMessages         bool
 	selfOccupantNickname    func() string
-	saveNotificationMessage func(*data.DelayedMessage) bool
+	saveNotificationMessage func(*data.DelayedMessage)
 	selfOccupantJoined      chan bool
 	historyPrinted          chan bool
 

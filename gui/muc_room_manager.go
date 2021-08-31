@@ -18,7 +18,7 @@ func (u *gtkUI) getOrCreateRoomView(a *account, room *muc.Room) *roomView {
 	return v
 }
 
-// joinRoom MUST always be called from the UI thread
+// joinRoom MUST NOT  be called from the UI thread
 //
 // Also, when we want to show a chat room, having a "return to" function that
 // will be called from the lobby only when the user wants to "cancel" or "return"
@@ -26,13 +26,10 @@ func (u *gtkUI) getOrCreateRoomView(a *account, room *muc.Room) *roomView {
 //
 // Please note that "backToPreviousStep" will be called from the UI thread too
 func (u *gtkUI) joinRoom(a *account, roomID jid.Bare, rvd roomViewDataProvider) {
-	// [ps]: This is a temporarily solution. It will be removed in next commits
-	go func() {
-		room := a.session.NewRoom(roomID)
-		doInUIThread(func() {
-			u.joinRoomWithData(a, room, rvd)
-		})
-	}()
+	room := a.session.NewRoom(roomID)
+	doInUIThread(func() {
+		u.joinRoomWithData(a, room, rvd)
+	})
 }
 
 // joinRoomWithData MUST be called from the UI thread

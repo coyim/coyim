@@ -2,16 +2,16 @@ package gui
 
 import (
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
 // getOrCreateRoomView MUST be called from the UI thread
-func (u *gtkUI) getOrCreateRoomView(a *account, roomID jid.Bare) *roomView {
-	if v, ok := a.getRoomView(roomID); ok {
+func (u *gtkUI) getOrCreateRoomView(a *account, room *muc.Room) *roomView {
+	if v, ok := a.getRoomView(room.ID); ok {
 		return v
 	}
 
-	room := a.session.NewRoom(roomID)
 	v := u.newRoomView(a, room)
 	a.addRoomView(v)
 
@@ -26,12 +26,18 @@ func (u *gtkUI) getOrCreateRoomView(a *account, roomID jid.Bare) *roomView {
 //
 // Please note that "backToPreviousStep" will be called from the UI thread too
 func (u *gtkUI) joinRoom(a *account, roomID jid.Bare, rvd roomViewDataProvider) {
-	u.joinRoomWithData(a, roomID, rvd)
+	// [ps]: This is a temporarily solution. It will be removed in next commits
+	go func() {
+		room := a.session.NewRoom(roomID)
+		doInUIThread(func() {
+			u.joinRoomWithData(a, room, rvd)
+		})
+	}()
 }
 
 // joinRoomWithData MUST be called from the UI thread
-func (u *gtkUI) joinRoomWithData(a *account, roomID jid.Bare, d roomViewDataProvider) {
-	v := u.getOrCreateRoomView(a, roomID)
+func (u *gtkUI) joinRoomWithData(a *account, room *muc.Room, d roomViewDataProvider) {
+	v := u.getOrCreateRoomView(a, room)
 
 	if v.isOpen() {
 		d.notifyError(i18n.Local("You are already in the room."))

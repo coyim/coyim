@@ -155,7 +155,13 @@ func (v *mucCreateRoomView) instantiatePersistentRoom(ca *account, roomID jid.Ba
 
 // joinRoom MUST be called from the UI thread
 func (v *mucCreateRoomView) joinRoom(ca *account, roomID jid.Bare, d roomViewDataProvider) {
-	v.u.joinRoomWithData(ca, roomID, d)
+	// [ps]: This is a temporarily solution. It will be removed in next commits
+	go func() {
+		room := ca.session.NewRoom(roomID)
+		doInUIThread(func() {
+			v.u.joinRoomWithData(ca, room, d)
+		})
+	}()
 }
 
 // updateAutoJoinValue IS SAFE to be called from the UI thread

@@ -522,7 +522,7 @@ func (u *gtkUI) mucShowPublicRooms() {
 	view.dialog.Show()
 }
 
-// joinRoom should not be called from the UI thread
+// joinRoom MUST NOT be called from the UI thread
 func (prv *mucPublicRoomsView) joinRoom(roomJid jid.Bare, roomInfo *muc.RoomListing) {
 	if prv.currentAccount == nil {
 		prv.log().WithField("room", roomJid).Debug("joinRoom(): no account is selected")

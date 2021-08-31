@@ -41,8 +41,7 @@ func newMUCManager(log coylog.Logger, conn func() xi.Conn, publishEvent func(ev 
 	return m
 }
 
-// GetRoom will look up in the room manager for the room
-// with the given ID and returns it
+// GetRoom will look up the room with the given ID in the room manager and returns it
 func (s *session) GetRoom(roomID jid.Bare) (*muc.Room, bool) {
 	return s.muc.getRoom(roomID)
 }

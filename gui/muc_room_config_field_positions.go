@@ -173,6 +173,20 @@ func (p *roomConfigPositions) isValid() bool {
 	return !(p.affiliation.IsOwner() && len(p.originalOccupantsList) != 0 && len(p.currentOccupantList()) == 0)
 }
 
+func (p *roomConfigPositions) hasListChanged() bool {
+	if len(p.originalOccupantsList) != len(p.currentOccupantList()) {
+		return true
+	}
+
+	for _, i := range p.currentOccupantList() {
+		if !p.originalOccupantsList.IncludesJid(i.Jid) {
+			return true
+		}
+	}
+
+	return false
+}
+
 // fieldKey implements the hasRoomConfigFormField interface
 func (p *roomConfigPositions) fieldKey() muc.RoomConfigFieldType {
 	return muc.RoomConfigFieldUnexpected

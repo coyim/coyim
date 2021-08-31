@@ -37,6 +37,7 @@ func (v *mucCreateRoomView) newCreateRoomSuccess() *mucCreateRoomViewSuccess {
 			v.showCreateForm()
 		},
 		"on_joinRoom_clicked": func() {
+			v.destroy()
 			go v.joinRoom(s.ca, s.roomID, s.joinRoomData)
 		},
 	})

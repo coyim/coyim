@@ -18,19 +18,19 @@ var (
 	errOccupantForbidden    = errors.New("join failed because the occupant is banned")
 )
 
-type roomError struct {
+type customRoomViewError struct {
 	nickname        string
 	friendlyMessage string
 	errType         error
 }
 
 // Error implements the `error` interface
-func (e *roomError) Error() string {
+func (e *customRoomViewError) Error() string {
 	return e.errType.Error()
 }
 
-func (v *roomView) newRoomError(nickname string, errType error) error {
-	return &roomError{
+func (v *roomView) newCustomRoomViewError(nickname string, errType error) error {
+	return &customRoomViewError{
 		nickname:        nickname,
 		friendlyMessage: v.userFriendlyRoomErrorMessage(errType),
 		errType:         errType,
@@ -38,16 +38,16 @@ func (v *roomView) newRoomError(nickname string, errType error) error {
 }
 
 func (v *roomView) invalidNicknameError() error {
-	return v.newRoomError("", errInvalidNickname)
+	return v.newCustomRoomViewError("", errInvalidNickname)
 }
 
 func (v *roomView) joinRequestError(err error) {
-	joinErr := v.newRoomError("", err)
+	joinErr := v.newCustomRoomViewError("", err)
 	v.finishJoinRequestWithError(joinErr)
 }
 
 func (v *roomView) nicknameConflictEvent(nickname string) {
-	nicknameErr := v.newRoomError(nickname, errJoinNicknameConflict)
+	nicknameErr := v.newCustomRoomViewError(nickname, errJoinNicknameConflict)
 	v.finishJoinRequestWithError(nicknameErr)
 }
 

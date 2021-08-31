@@ -164,7 +164,7 @@ func (l *roomViewLobby) onJoinFailed(err error) {
 	shouldEnableJoin := l.checkJoinConditions()
 
 	userMessage := i18n.Local("An unknown error occurred while trying to join the room, please check your connection or try again.")
-	if err, ok := err.(*roomError); ok {
+	if err, ok := err.(*customRoomViewError); ok {
 		userMessage = err.friendlyMessage
 		shouldEnableJoin = false
 

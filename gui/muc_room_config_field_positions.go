@@ -15,6 +15,7 @@ type roomConfigPositionsOptions struct {
 	occupantList           muc.RoomOccupantItemList
 	setOccupantList        func(muc.RoomOccupantItemList) // setOccupantList WILL be called from the UI thread
 	setRemovedOccupantList func(muc.RoomOccupantItemList) // setRemovedOccupantList WILL be called from the UI thread
+	onListModified         func(enableOptions bool)       // onListModified WILL be called from the UI thread
 	displayErrors          func()                         // displayErrors WILL be called from the UI thread
 	parentWindow           gtki.Window
 }
@@ -24,6 +25,7 @@ type roomConfigPositions struct {
 	originalOccupantsList     muc.RoomOccupantItemList
 	setOccupantList           func(occupants muc.RoomOccupantItemList)
 	updateRemovedOccupantList func(occupantsToRemove muc.RoomOccupantItemList)
+	onListModified            func(enableOptions bool)
 	showErrorNotification     func()
 
 	content                  gtki.Box              `gtk-widget:"room-config-positions-content"`
@@ -46,6 +48,7 @@ func newRoomConfigPositions(options roomConfigPositionsOptions) hasRoomConfigFor
 		setOccupantList:           options.setOccupantList,
 		updateRemovedOccupantList: options.setRemovedOccupantList,
 		showErrorNotification:     options.displayErrors,
+		onListModified:            options.onListModified,
 	}
 
 	field.initBuilder()

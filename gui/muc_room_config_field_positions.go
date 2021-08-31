@@ -28,15 +28,14 @@ type roomConfigPositions struct {
 	onListModified            func(enableOptions bool)
 	showErrorNotification     func()
 
-	content                  gtki.Box              `gtk-widget:"room-config-positions-content"`
-	header                   gtki.Label            `gtk-widget:"room-config-position-header"`
-	description              gtki.Label            `gtk-widget:"room-config-position-description"`
-	positionsListContent     gtki.Box              `gtk-widget:"room-config-positions-list-content"`
-	positionsList            gtki.TreeView         `gtk-widget:"room-config-positions-list"`
-	positionsAddButton       gtki.Button           `gtk-widget:"room-config-position-add"`
-	positionsRemoveButton    gtki.Button           `gtk-widget:"room-config-position-remove"`
-	positionsRemoveLabel     gtki.Label            `gtk-widget:"room-config-position-remove-label"`
-	positionsListJidRenderer gtki.CellRendererText `gtk-widget:"room-config-position-jid-text-renderer"`
+	content               gtki.Box      `gtk-widget:"room-config-positions-content"`
+	header                gtki.Label    `gtk-widget:"room-config-position-header"`
+	description           gtki.Label    `gtk-widget:"room-config-position-description"`
+	positionsListContent  gtki.Box      `gtk-widget:"room-config-positions-list-content"`
+	positionsList         gtki.TreeView `gtk-widget:"room-config-positions-list"`
+	positionsAddButton    gtki.Button   `gtk-widget:"room-config-position-add"`
+	positionsRemoveButton gtki.Button   `gtk-widget:"room-config-position-remove"`
+	positionsRemoveLabel  gtki.Label    `gtk-widget:"room-config-position-remove-label"`
 
 	positionsListController *mucRoomConfigListController
 }

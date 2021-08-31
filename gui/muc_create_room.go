@@ -234,8 +234,8 @@ func (crd *mucCreateRoomData) notifyError(err string) {
 	}
 }
 
-// doWhenNoErrors implements the "roomViewDataProvider" interface
-func (crd *mucCreateRoomData) doWhenNoErrors() {
+// doWhenNoErrorOccurred implements the "roomViewDataProvider" interface
+func (crd *mucCreateRoomData) doWhenNoErrorOccurred() {
 	if crd.onNoErrors != nil {
 		crd.onNoErrors()
 	}

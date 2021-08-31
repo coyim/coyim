@@ -53,6 +53,6 @@ func (u *gtkUI) joinRoomWithData(a *account, room *muc.Room, d roomViewDataProvi
 		v.switchToLobbyView()
 	}
 
-	d.doWhenNoErrors()
+	d.doWhenNoErrorOccurred()
 	v.show()
 }

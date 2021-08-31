@@ -15,7 +15,7 @@ type roomViewDataProvider interface {
 	passwordProvider() string   // passwordProvider WILL to be called from any thread
 	backToPreviousStep() func() // backToPreviousStep WILL be called from the UI thread
 	notifyError(string)         // notifyError WILL be called from the UI thread
-	doWhenNoErrors()            // doWhenNoErrors WILL be called from the UI thread
+	doWhenNoErrorOccurred()     // doWhenNoErrorOccurred WILL be called from the UI thread
 }
 
 type roomViewData struct {
@@ -42,8 +42,8 @@ func (rvd *roomViewData) notifyError(err string) {
 	}
 }
 
-// doWhenNoErrors implements the "roomViewDataProvider" interface
-func (rvd *roomViewData) doWhenNoErrors() {
+// doWhenNoErrorOccurred implements the "roomViewDataProvider" interface
+func (rvd *roomViewData) doWhenNoErrorOccurred() {
 	if rvd.onNoErrors != nil {
 		rvd.onNoErrors()
 	}

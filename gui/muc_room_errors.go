@@ -24,7 +24,7 @@ type roomError struct {
 	errType         error
 }
 
-// Error implements the "error" interface
+// Error implements the `error` interface
 func (e *roomError) Error() string {
 	return e.errType.Error()
 }

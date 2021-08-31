@@ -86,6 +86,7 @@
                   <object class="GtkButton" id="apply-button">
                     <property name="label" translatable="yes">Apply</property>
                     <property name="visible">True</property>
+                    <property name="sensitive">False</property>
                     <property name="receives_default">True</property>
                     <signal name="clicked" handler="on_apply" swapped="no"/>
                   </object>

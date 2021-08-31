@@ -560,15 +560,6 @@ func (v *roomView) hideMainView() {
 
 // sendJoinRoomRequest MUST NOT be called from the UI thread
 func (v *roomView) sendJoinRoomRequest(nickname, password string, doAfterRequestSent func()) {
-	doAfterRequestSentFinal := doAfterRequestSent
-	doAfterRequestSent = func() {
-		if doAfterRequestSentFinal != nil {
-			doAfterRequestSentFinal()
-		}
-	}
-
-	defer doAfterRequestSent()
-
 	err := v.account.session.JoinRoom(v.roomID(), nickname, password)
 	if err == session.ErrMUCJoinRoomInvalidNickname {
 		err = v.invalidNicknameError()
@@ -576,6 +567,10 @@ func (v *roomView) sendJoinRoomRequest(nickname, password string, doAfterRequest
 
 	if err != nil {
 		v.finishJoinRequestWithError(err)
+	}
+
+	if doAfterRequestSent != nil {
+		doAfterRequestSent()
 	}
 }
 

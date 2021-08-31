@@ -103,6 +103,9 @@ func (p *roomConfigPositions) initOwnersListController(parent gtki.Window) {
 
 func (p *roomConfigPositions) refreshContentLists() {
 	p.positionsListContent.SetVisible(p.positionsListController.hasItems())
+	if p.onListModified != nil {
+		p.onListModified(p.hasListChanged())
+	}
 }
 
 func (p *roomConfigPositions) onOccupantJidEdited(_ gtki.CellRendererText, path string, newValue string) {

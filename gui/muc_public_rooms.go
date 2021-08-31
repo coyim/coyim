@@ -526,7 +526,9 @@ func (u *gtkUI) mucShowPublicRooms() {
 func (prv *mucPublicRoomsView) joinRoom(roomJid jid.Bare, roomInfo *muc.RoomListing) {
 	if prv.currentAccount == nil {
 		prv.log().WithField("room", roomJid).Debug("joinRoom(): no account is selected")
-		prv.notifications.error(i18n.Local("No account was selected, please select one account from the list."))
+		doInUIThread(func() {
+			prv.notifications.error(i18n.Local("No account was selected, please select one account from the list."))
+		})
 		return
 	}
 

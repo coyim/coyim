@@ -157,9 +157,7 @@ func (v *mucCreateRoomView) cancelConfiguration(ca *account, roomID jid.Bare, on
 func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare, createRoomData *mucCreateRoomData, onNoAutoJoin func()) {
 	switch {
 	case createRoomData.autoJoin:
-		doInUIThread(func() {
-			v.joinRoom(ca, roomID, createRoomData)
-		})
+		v.joinRoom(ca, roomID, createRoomData)
 
 	case onNoAutoJoin != nil:
 		doInUIThread(onNoAutoJoin)

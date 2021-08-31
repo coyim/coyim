@@ -155,11 +155,12 @@ func (v *mucCreateRoomView) cancelConfiguration(ca *account, roomID jid.Bare, on
 
 // onCreateRoomFinished MUST NOT be called from the UI thread
 func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare, createRoomData *mucCreateRoomData, onNoAutoJoin func()) {
-	switch {
-	case createRoomData.autoJoin:
+	if createRoomData.autoJoin {
 		v.joinRoom(ca, roomID, createRoomData)
+		return
+	}
 
-	case onNoAutoJoin != nil:
+	if onNoAutoJoin != nil {
 		doInUIThread(onNoAutoJoin)
 	}
 }

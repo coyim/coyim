@@ -214,18 +214,18 @@ type mucCreateRoomData struct {
 	onNoErrors    func()       // onNoErrors WILL be called from the UI thread
 }
 
-// passwordProvider implements the roomViewDataProvider interface
+// passwordProvider implements the `roomViewDataProvider` interface
 func (crd *mucCreateRoomData) passwordProvider() string {
 	return crd.password
 }
 
-// backToPreviousStep implements the roomViewDataProvider interface
+// backToPreviousStep implements the `roomViewDataProvider` interface
 func (crd *mucCreateRoomData) backToPreviousStep() func() {
 	return nil
 }
 
 // notifyError MUST be called from the UI thread
-// notifyError implements the roomViewDataProvider interface
+// notifyError implements the `roomViewDataProvider` interface
 func (crd *mucCreateRoomData) notifyError(err string) {
 	// TODO: we need to check the current scenario to show the error notification.
 	// 	1. Do we are in the create instant room scenario?
@@ -236,7 +236,7 @@ func (crd *mucCreateRoomData) notifyError(err string) {
 }
 
 // doWhenNoErrorOccurred MUST be called from the UI thread
-// doWhenNoErrorOccurred implements the roomViewDataProvider interface
+// doWhenNoErrorOccurred implements the `roomViewDataProvider` interface
 func (crd *mucCreateRoomData) doWhenNoErrorOccurred() {
 	if crd.onNoErrors != nil {
 		crd.onNoErrors()

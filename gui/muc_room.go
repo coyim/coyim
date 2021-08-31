@@ -25,24 +25,24 @@ type roomViewData struct {
 	onNoErrors           func()       // onNoErrors WILL be called from the UI thread
 }
 
-// passwordProvider implements the roomViewDataProvider interface
+// passwordProvider implements the `roomViewDataProvider` interface
 func (rvd *roomViewData) passwordProvider() string {
 	return rvd.passsword
 }
 
-// backToPreviousStep implements the roomViewDataProvider interface
+// backToPreviousStep implements the `roomViewDataProvider` interface
 func (rvd *roomViewData) backToPreviousStep() func() {
 	return rvd.onBackToPreviousStep
 }
 
-// notifyError implements the roomViewDataProvider interface
+// notifyError implements the `roomViewDataProvider` interface
 func (rvd *roomViewData) notifyError(err string) {
 	if rvd.onNotifyError != nil {
 		rvd.onNotifyError(err)
 	}
 }
 
-// doWhenNoErrorOccurred implements the roomViewDataProvider interface
+// doWhenNoErrorOccurred implements the `roomViewDataProvider` interface
 func (rvd *roomViewData) doWhenNoErrorOccurred() {
 	if rvd.onNoErrors != nil {
 		rvd.onNoErrors()

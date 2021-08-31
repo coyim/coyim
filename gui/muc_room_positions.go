@@ -21,8 +21,9 @@ type roomPositionsView struct {
 	none                  muc.RoomOccupantItemList
 	onUpdateOccupantLists *callbacksSet
 
-	dialog  gtki.Window `gtk-widget:"positions-window"`
-	content gtki.Box    `gtk-widget:"content"`
+	dialog      gtki.Window `gtk-widget:"positions-window"`
+	content     gtki.Box    `gtk-widget:"content"`
+	applyButton gtki.Button `gtk-widget:"apply-button"`
 
 	log coylog.Logger
 }
@@ -139,7 +140,12 @@ func (rpv *roomPositionsView) show() {
 			occupantList:           rpv.banned,
 			setOccupantList:        rpv.setBanList,
 			setRemovedOccupantList: rpv.updateRemovedOccupantList,
-			parentWindow:           rpv.dialog,
+			onListModified: func(v bool) {
+				doInUIThread(func() {
+					rpv.applyButton.SetSensitive(v)
+				})
+			},
+			parentWindow: rpv.dialog,
 		})
 		rpv.addPositionComponent(pv)
 

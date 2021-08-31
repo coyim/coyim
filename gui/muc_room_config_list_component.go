@@ -71,9 +71,7 @@ func (cl *mucRoomConfigListComponent) onRemoveClicked() {
 }
 
 func (cl *mucRoomConfigListComponent) refreshContentItems() {
-	_, ok := cl.listModel.GetIterFirst()
-
-	if cl.onNoItems != nil && !ok {
+	if cl.onNoItems != nil {
 		cl.onNoItems()
 	}
 }

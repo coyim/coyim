@@ -224,6 +224,7 @@ func (crd *mucCreateRoomData) backToPreviousStep() func() {
 	return nil
 }
 
+// notifyError MUST be called from the UI thread
 // notifyError implements the roomViewDataProvider interface
 func (crd *mucCreateRoomData) notifyError(err string) {
 	// TODO: we need to check the current scenario to show the error notification.
@@ -234,6 +235,7 @@ func (crd *mucCreateRoomData) notifyError(err string) {
 	}
 }
 
+// doWhenNoErrorOccurred MUST be called from the UI thread
 // doWhenNoErrorOccurred implements the roomViewDataProvider interface
 func (crd *mucCreateRoomData) doWhenNoErrorOccurred() {
 	if crd.onNoErrors != nil {

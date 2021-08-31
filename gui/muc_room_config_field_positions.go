@@ -108,6 +108,9 @@ func (p *roomConfigPositions) refreshContentLists() {
 
 func (p *roomConfigPositions) onOccupantJidEdited(_ gtki.CellRendererText, path string, newValue string) {
 	p.updateOccupantListCellForString(p.positionsListController, positionsListJidColumnIndex, path, newValue)
+	if p.onListModified != nil {
+		p.onListModified(p.hasListChanged())
+	}
 }
 
 func (p *roomConfigPositions) updateOccupantListCellForString(controller *mucRoomConfigListController, column int, path string, newValue string) {

@@ -49,7 +49,7 @@ func getAffiliationChangedSuccessMessage(nickname string, affiliation data.Affil
 func getRoleUpdateSuccessMessage(nickname string, previousRole, newRole data.Role) string {
 	switch {
 	case newRole.IsNone():
-		return i18n.Localf("$nickname{%s} was temporarily removed from the room.", nickname)
+		return i18n.Localf("$nickname{%s} was expelled from the room.", nickname)
 	case previousRole.IsNone():
 		return getRoleAddedSuccessMessage(nickname, newRole)
 	}
@@ -497,7 +497,7 @@ func getRoleUpdateBaseMessage(roleUpdate data.RoleUpdate) string {
 
 func getRoleRemovedMessage(roleUpdate data.RoleUpdate) string {
 	if roleUpdate.Actor == nil {
-		return i18n.Localf("$nickname{%s} was temporarily removed from the room.", roleUpdate.Nickname)
+		return i18n.Localf("$nickname{%s} was expelled from the room.", roleUpdate.Nickname)
 	}
 	return getRoleRemovedMessageWithActor(roleUpdate)
 }
@@ -505,15 +505,15 @@ func getRoleRemovedMessage(roleUpdate data.RoleUpdate) string {
 func getRoleRemovedMessageWithActor(roleUpdate data.RoleUpdate) string {
 	switch {
 	case roleUpdate.Actor.Affiliation.IsOwner():
-		return i18n.Localf("The owner $nickname{%[1]s} temporarily removed $nickname{%[2]s} from the room.",
+		return i18n.Localf("The owner $nickname{%[1]s} expelled $nickname{%[2]s} from the room.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
 	case roleUpdate.Actor.Affiliation.IsAdmin():
-		return i18n.Localf("The administrator $nickname{%[1]s} temporarily removed $nickname{%[2]s} from the room.",
+		return i18n.Localf("The administrator $nickname{%[1]s} expelled $nickname{%[2]s} from the room.",
 			roleUpdate.Actor.Nickname,
 			roleUpdate.Nickname)
 	}
-	return i18n.Localf("$nickname{%[1]s} temporarily removed $nickname{%[2]s} from the room.",
+	return i18n.Localf("$nickname{%[1]s} expelled $nickname{%[2]s} from the room.",
 		roleUpdate.Actor.Nickname,
 		roleUpdate.Nickname)
 }

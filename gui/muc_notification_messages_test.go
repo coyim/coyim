@@ -193,17 +193,17 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateMessage_roleNone(c *C) {
 		Previous: newTestRoleFromString(data.RoleVisitor),
 	}
 
-	c.Assert(getRoleUpdateMessage(ru), Equals, "[localized] $nickname{alberto} was temporarily removed from the room.")
+	c.Assert(getRoleUpdateMessage(ru), Equals, "[localized] $nickname{alberto} was expelled from the room.")
 
 	ru.Reason = "bla"
-	c.Assert(getRoleUpdateMessage(ru), Equals, "[localized] [localized] $nickname{alberto} was temporarily removed from the room. The reason given was: bla.")
+	c.Assert(getRoleUpdateMessage(ru), Equals, "[localized] [localized] $nickname{alberto} was expelled from the room. The reason given was: bla.")
 
 	ru.Reason = ""
 	ru.Actor = newTestActor("foo", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getRoleUpdateMessage(ru), Equals, "[localized] The owner $nickname{foo} temporarily removed $nickname{alberto} from the room.")
+	c.Assert(getRoleUpdateMessage(ru), Equals, "[localized] The owner $nickname{foo} expelled $nickname{alberto} from the room.")
 
 	ru.Reason = "bla"
-	c.Assert(getRoleUpdateMessage(ru), Equals, "[localized] [localized] The owner $nickname{foo} temporarily removed $nickname{alberto} from the room. The reason given was: bla.")
+	c.Assert(getRoleUpdateMessage(ru), Equals, "[localized] [localized] The owner $nickname{foo} expelled $nickname{alberto} from the room. The reason given was: bla.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfRoleUpdateMessage_roleModerator(c *C) {
@@ -504,9 +504,9 @@ func (*MUCNotificationMessagesSuite) Test_getRoleUpdateSuccessMessage(c *C) {
 	visitor := newTestRoleFromString(data.RoleVisitor)
 	none := newTestRoleFromString(data.RoleNone)
 
-	c.Assert(getRoleUpdateSuccessMessage("Maria", moderator, none), Equals, "[localized] $nickname{Maria} was temporarily removed from the room.")
-	c.Assert(getRoleUpdateSuccessMessage("Carlos", participant, none), Equals, "[localized] $nickname{Carlos} was temporarily removed from the room.")
-	c.Assert(getRoleUpdateSuccessMessage("Mauricio", visitor, none), Equals, "[localized] $nickname{Mauricio} was temporarily removed from the room.")
+	c.Assert(getRoleUpdateSuccessMessage("Maria", moderator, none), Equals, "[localized] $nickname{Maria} was expelled from the room.")
+	c.Assert(getRoleUpdateSuccessMessage("Carlos", participant, none), Equals, "[localized] $nickname{Carlos} was expelled from the room.")
+	c.Assert(getRoleUpdateSuccessMessage("Mauricio", visitor, none), Equals, "[localized] $nickname{Mauricio} was expelled from the room.")
 
 	c.Assert(getRoleUpdateSuccessMessage("Jose", none, moderator), Equals, "[localized] The role of $nickname{Jose} was changed to $role{moderator}.")
 	c.Assert(getRoleUpdateSuccessMessage("Alberto", none, participant), Equals, "[localized] The role of $nickname{Alberto} was changed to $role{participant}.")

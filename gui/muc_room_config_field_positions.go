@@ -244,12 +244,15 @@ func (p *roomConfigPositions) isValid() bool {
 }
 
 func (p *roomConfigPositions) hasListChanged() bool {
-	if len(p.originalOccupantsList) != len(p.currentOccupantList()) {
+	ol := append(muc.RoomOccupantItemList{}, p.originalOccupantsList...)
+	cl := append(muc.RoomOccupantItemList{}, p.currentOccupantList()...)
+
+	if len(ol) != len(cl) {
 		return true
 	}
 
-	for _, i := range p.currentOccupantList() {
-		if !p.originalOccupantsList.IncludesJid(i.Jid) {
+	for _, i := range cl {
+		if !ol.IncludesJid(i.Jid) {
 			return true
 		}
 	}

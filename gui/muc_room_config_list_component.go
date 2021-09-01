@@ -14,8 +14,8 @@ type mucRoomConfigListComponent struct {
 	addButton         gtki.Button
 	removeButton      gtki.Button
 	removeButtonLabel gtki.Label
-	onAdd             func()
-	onNoItems         func()
+	onAdd             *callbacksSet
+	onNoItems         *callbacksSet
 }
 
 func newMUCRoomConfigListComponent(list gtki.TreeView, addButton, removeButton gtki.Button, removeButtonLabel gtki.Label, onAdd, onNoItems func()) *mucRoomConfigListComponent {
@@ -24,8 +24,8 @@ func newMUCRoomConfigListComponent(list gtki.TreeView, addButton, removeButton g
 		addButton:         addButton,
 		removeButton:      removeButton,
 		removeButtonLabel: removeButtonLabel,
-		onAdd:             onAdd,
-		onNoItems:         onNoItems,
+		onAdd:             newCallbacksSet(onAdd),
+		onNoItems:         newCallbacksSet(onNoItems),
 	}
 
 	cl.initListModel()
@@ -59,21 +59,13 @@ func (cl *mucRoomConfigListComponent) initDefaults() {
 
 // onAddClicked MUST be called from the UI thread
 func (cl *mucRoomConfigListComponent) onAddClicked() {
-	if cl.onAdd != nil {
-		cl.onAdd()
-	}
+	cl.onAdd.invokeAll()
 }
 
 // onRemoveClicked MUST be called from the UI thread
 func (cl *mucRoomConfigListComponent) onRemoveClicked() {
 	cl.removeSelectedItems(cl.getItemsToRemove())
-	cl.refreshContentItems()
-}
-
-func (cl *mucRoomConfigListComponent) refreshContentItems() {
-	if cl.onNoItems != nil {
-		cl.onNoItems()
-	}
+	cl.onNoItems.invokeAll()
 }
 
 // getItemsToRemove MUST be called from the UI thread

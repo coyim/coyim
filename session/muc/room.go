@@ -137,8 +137,8 @@ func (r *Room) SubjectCanBeChanged() bool {
 	return false
 }
 
-// HandleSelfOccupantConnection sets the room's initial values when a new connection is established
-func (r *Room) HandleSelfOccupantConnection() {
+// SetUpRoomOnStatusConnected sets the room's initial values when a new connection is established
+func (r *Room) SetUpRoomOnStatusConnected() {
 	r.roster.reset()
 
 	r.subjectIsNew = true
@@ -146,8 +146,8 @@ func (r *Room) HandleSelfOccupantConnection() {
 	r.Publish(events.MUCSelfOccupantConnected{})
 }
 
-// HandleSelfOccupantDisconnection sets appropriate values when an occupant loses connection to the room
-func (r *Room) HandleSelfOccupantDisconnection() {
+// SetUpRoomOnStatusDisconnected sets appropriate values when an occupant loses connection to the room
+func (r *Room) SetUpRoomOnStatusDisconnected() {
 	if r.IsSelfOccupantInTheRoom() {
 		roomSelfOccupant := r.SelfOccupant()
 

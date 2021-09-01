@@ -86,17 +86,11 @@ func (r *Room) IsSelfOccupantAnOwner() bool {
 
 // GetSubject returns the room subject
 func (r *Room) GetSubject() string {
-	r.subjectLocker.Lock()
-	defer r.subjectLocker.Unlock()
-
 	return r.subject
 }
 
 // HasSubject returns true if the room has subject
 func (r *Room) HasSubject() bool {
-	r.subjectLocker.Lock()
-	defer r.subjectLocker.Unlock()
-
 	return r.subject != ""
 }
 

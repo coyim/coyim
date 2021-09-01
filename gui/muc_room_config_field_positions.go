@@ -53,7 +53,6 @@ func newRoomConfigPositionsComponent(options roomConfigPositionsOptions) *roomCo
 	rcp.initBuilder()
 	rcp.initDefaults()
 	rcp.initPositionsLists(options.parentWindow)
-	rcp.initOccupantList()
 
 	return rcp
 }
@@ -80,19 +79,7 @@ func (p *roomConfigPositions) initPositionLabels() {
 	p.description.SetText(getFieldTextByAffiliation(p.affiliation).descriptionLabel)
 }
 
-func (p *roomConfigPositions) initOccupantList() {
-	jids := []string{}
-	for _, o := range p.originalOccupantsList {
-		jids = append(jids, o.Jid.String())
-	}
-	p.positionsListController.listComponent.addListItems(jids)
-}
-
 func (p *roomConfigPositions) initPositionsLists(parent gtki.Window) {
-	p.initOwnersListController(parent)
-}
-
-func (p *roomConfigPositions) initOwnersListController(parent gtki.Window) {
 	p.positionsListController = newMUCRoomConfigListController(&mucRoomConfigListControllerData{
 		addOccupantButton:      p.positionsAddButton,
 		removeOccupantButton:   p.positionsRemoveButton,
@@ -103,6 +90,17 @@ func (p *roomConfigPositions) initOwnersListController(parent gtki.Window) {
 		addOccupantDescription: getFieldTextByAffiliation(p.affiliation).dialogDescription,
 		onListUpdated:          p.refreshContentLists,
 	})
+
+	p.addItemsToListController()
+}
+
+// addItemsToListController MUST be called from the UI thread
+func (p *roomConfigPositions) addItemsToListController() {
+	jids := []string{}
+	for _, o := range p.originalOccupantsList {
+		jids = append(jids, o.Jid.String())
+	}
+	p.positionsListController.listComponent.addListItems(jids)
 }
 
 func (p *roomConfigPositions) refreshContentLists() {

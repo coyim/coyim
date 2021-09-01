@@ -84,7 +84,7 @@ func (ib *infoBarComponent) initBuilder() {
 
 func (ib *infoBarComponent) initSpinnerComponent() {
 	ib.spinner = ib.u.newSpinnerComponent()
-	ib.spinner.setSize(spinnerSize24)
+	ib.spinner.setSize(spinnerSize24px)
 	ib.spinnerBox.Add(ib.spinner.spinner())
 }
 

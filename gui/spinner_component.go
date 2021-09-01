@@ -5,10 +5,10 @@ import "github.com/coyim/gotk3adapter/gtki"
 type spinnerSize int
 
 const (
-	spinnerSizeNormal spinnerSize = 16
-	spinnerSizeMedium spinnerSize = 24
+	spinnerSize16 spinnerSize = 16
+	spinnerSize24 spinnerSize = 24
 
-	spinnerSizeDefault = spinnerSizeNormal
+	spinnerSizeDefault = spinnerSize16
 )
 
 type spinner struct {

@@ -393,7 +393,7 @@ func (s *MucSuite) Test_RoomRoster_Reset(c *C) {
 	oo := rr.AllOccupants()
 	c.Assert(oo, HasLen, 3)
 
-	rr.Reset()
+	rr.reset()
 	oo = rr.AllOccupants()
 	c.Assert(oo, HasLen, 0)
 }

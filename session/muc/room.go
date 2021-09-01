@@ -139,7 +139,7 @@ func (r *Room) SubjectCanBeChanged() bool {
 
 // HandleSelfOccupantConnection sets the room's initial values when a new connection is established
 func (r *Room) HandleSelfOccupantConnection() {
-	r.roster.Reset()
+	r.roster.reset()
 
 	r.subjectIsNew = true
 

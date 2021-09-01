@@ -261,8 +261,7 @@ func (r *RoomRoster) GetOccupant(nickname string) (*Occupant, bool) {
 	return o, ok
 }
 
-// Reset initializes the roster's occupant list
-func (r *RoomRoster) Reset() {
+func (r *RoomRoster) reset() {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

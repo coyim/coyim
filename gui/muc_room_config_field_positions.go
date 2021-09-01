@@ -15,7 +15,6 @@ type roomConfigPositionsOptions struct {
 	occupantList           muc.RoomOccupantItemList
 	setOccupantList        func(muc.RoomOccupantItemList) // setOccupantList WILL be called from the UI thread
 	setRemovedOccupantList func(muc.RoomOccupantItemList) // setRemovedOccupantList WILL be called from the UI thread
-	onListModified         func(enableOptions bool)       // onListModified WILL be called from the UI thread
 	displayErrors          func()                         // displayErrors WILL be called from the UI thread
 	parentWindow           gtki.Window
 }
@@ -26,7 +25,6 @@ type roomConfigPositions struct {
 	originalOccupantsList     muc.RoomOccupantItemList
 	setOccupantList           func(occupants muc.RoomOccupantItemList)
 	updateRemovedOccupantList func(occupantsToRemove muc.RoomOccupantItemList)
-	onListModified            func(enableOptions bool)
 	showErrorNotification     func()
 
 	content               gtki.Box      `gtk-widget:"room-config-positions-content"`
@@ -48,7 +46,6 @@ func newRoomConfigPositionsComponent(options roomConfigPositionsOptions) *roomCo
 		setOccupantList:           options.setOccupantList,
 		updateRemovedOccupantList: options.setRemovedOccupantList,
 		showErrorNotification:     options.displayErrors,
-		onListModified:            options.onListModified,
 	}
 
 	rcp.initBuilder()
@@ -168,16 +165,10 @@ func (p *roomConfigPositions) addItemsToListController() {
 
 func (p *roomConfigPositions) refreshContentLists() {
 	p.positionsListContent.SetVisible(p.positionsListController.hasItems())
-	if p.onListModified != nil {
-		p.onListModified(p.hasListChanged())
-	}
 }
 
 func (p *roomConfigPositions) onOccupantJidEdited(_ gtki.CellRendererText, path string, newValue string) {
 	p.updateOccupantListCellForString(p.positionsListController, positionsListJidColumnIndex, path, newValue)
-	if p.onListModified != nil {
-		p.onListModified(p.hasListChanged())
-	}
 }
 
 func (p *roomConfigPositions) updateOccupantListCellForString(controller *mucRoomConfigListController, column int, path string, newValue string) {

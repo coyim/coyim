@@ -140,12 +140,7 @@ func (rpv *roomPositionsView) show() {
 			occupantList:           rpv.banned,
 			setOccupantList:        rpv.setBanList,
 			setRemovedOccupantList: rpv.updateRemovedOccupantList,
-			onListModified: func(v bool) {
-				doInUIThread(func() {
-					rpv.applyButton.SetSensitive(v)
-				})
-			},
-			parentWindow: rpv.dialog,
+			parentWindow:           rpv.dialog,
 		})
 		rpv.addPositionComponent(pv)
 

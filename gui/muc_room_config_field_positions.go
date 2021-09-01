@@ -53,7 +53,6 @@ func newRoomConfigPositionsComponent(options roomConfigPositionsOptions) *roomCo
 
 	rcp.initBuilder()
 	rcp.initDefaults()
-	rcp.initPositionsLists(options.parentWindow)
 
 	return rcp
 }
@@ -75,6 +74,7 @@ func newRoomConfigPositionsWithApplyButton(applyButton gtki.Button, options room
 	}
 
 	rcpb.initBuilderSignals()
+	rcpb.initPositionsLists(options.parentWindow)
 
 	return rcpb
 }
@@ -121,6 +121,7 @@ func newRoomConfigPositions(options roomConfigPositionsOptions) hasRoomConfigFor
 	rcpf := newRoomConfigPositionsComponent(options)
 
 	rcpf.initBuilderSignals()
+	rcpf.initPositionsLists(options.parentWindow)
 
 	return rcpf
 }
@@ -129,16 +130,6 @@ func (p *roomConfigPositions) initBuilderSignals() {
 	p.builder.ConnectSignals(map[string]interface{}{
 		"on_jid_edited": p.onOccupantJidEdited,
 	})
-}
-
-func (p *roomConfigPositions) initDefaults() {
-	p.initPositionLabels()
-	mucStyles.setHelpTextStyle(p.content)
-}
-
-func (p *roomConfigPositions) initPositionLabels() {
-	p.header.SetText(getFieldTextByAffiliation(p.affiliation).headerLabel)
-	p.description.SetText(getFieldTextByAffiliation(p.affiliation).descriptionLabel)
 }
 
 func (p *roomConfigPositions) initPositionsLists(parent gtki.Window) {
@@ -154,6 +145,16 @@ func (p *roomConfigPositions) initPositionsLists(parent gtki.Window) {
 	})
 
 	p.addItemsToListController()
+}
+
+func (p *roomConfigPositions) initDefaults() {
+	p.initPositionLabels()
+	mucStyles.setHelpTextStyle(p.content)
+}
+
+func (p *roomConfigPositions) initPositionLabels() {
+	p.header.SetText(getFieldTextByAffiliation(p.affiliation).headerLabel)
+	p.description.SetText(getFieldTextByAffiliation(p.affiliation).descriptionLabel)
 }
 
 // addItemsToListController MUST be called from the UI thread

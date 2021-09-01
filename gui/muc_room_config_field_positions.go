@@ -57,6 +57,50 @@ func newRoomConfigPositionsComponent(options roomConfigPositionsOptions) *roomCo
 	return rcp
 }
 
+type roomConfigPositionsWithApplyButton struct {
+	*roomConfigPositions
+	applyButton gtki.Button
+}
+
+func newRoomConfigPositionsWithApplyButton(applyButton gtki.Button, options roomConfigPositionsOptions) hasRoomConfigFormField {
+	return &roomConfigPositionsWithApplyButton{
+		roomConfigPositions: newRoomConfigPositionsComponent(options),
+		applyButton:         applyButton,
+	}
+}
+
+func (rcpb *roomConfigPositionsWithApplyButton) initPositionsLists(parent gtki.Window) {
+	rcpb.positionsListController = newMUCRoomConfigListController(&mucRoomConfigListControllerData{
+		addOccupantButton:      rcpb.positionsAddButton,
+		removeOccupantButton:   rcpb.positionsRemoveButton,
+		removeOccupantLabel:    rcpb.positionsRemoveLabel,
+		occupantsTreeView:      rcpb.positionsList,
+		parentWindow:           parent,
+		addOccupantDialogTitle: getFieldTextByAffiliation(rcpb.affiliation).dialogTitle,
+		addOccupantDescription: getFieldTextByAffiliation(rcpb.affiliation).dialogDescription,
+		onListUpdated:          rcpb.refreshContentLists,
+	})
+
+	rcpb.addItemsToListController()
+}
+
+// refreshContentLists MUST be called from the UI thread
+func (rcpb *roomConfigPositionsWithApplyButton) refreshContentLists() {
+	rcpb.roomConfigPositions.refreshContentLists()
+	rcpb.enableOrDisableApplyButton()
+}
+
+// onOccupantJidEdited MUST be called from the UI thread
+func (rcpb *roomConfigPositionsWithApplyButton) onOccupantJidEdited(cell gtki.CellRendererText, path string, newValue string) {
+	rcpb.roomConfigPositions.onOccupantJidEdited(cell, path, newValue)
+	rcpb.enableOrDisableApplyButton()
+}
+
+// enableOrDisableApplyButton MUST be called from the UI thread
+func (rcpb *roomConfigPositionsWithApplyButton) enableOrDisableApplyButton() {
+	rcpb.applyButton.SetSensitive(rcpb.hasListChanged())
+}
+
 func newRoomConfigPositions(options roomConfigPositionsOptions) hasRoomConfigFormField {
 	return newRoomConfigPositionsComponent(options)
 }

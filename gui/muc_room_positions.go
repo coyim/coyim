@@ -135,7 +135,7 @@ func (rpv *roomPositionsView) show() {
 	onPositionsAvailable := func(list muc.RoomOccupantItemList) {
 		rpv.setBanList(list)
 
-		pv := newRoomConfigPositions(roomConfigPositionsOptions{
+		pv := newRoomConfigPositionsWithApplyButton(rpv.applyButton, roomConfigPositionsOptions{
 			affiliation:            outcastAffiliation,
 			occupantList:           rpv.banned,
 			setOccupantList:        rpv.setBanList,

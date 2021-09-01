@@ -27,7 +27,7 @@ func newMUCJoinRoomView(u *gtkUI) *mucJoinRoomView {
 		u: u,
 	}
 
-	view.initBuilder()
+	view.loadUIDefinition()
 	view.initNotificationsAndSpinner()
 	view.initRoomFormComponent()
 
@@ -36,16 +36,21 @@ func newMUCJoinRoomView(u *gtkUI) *mucJoinRoomView {
 	return view
 }
 
-func (v *mucJoinRoomView) initBuilder() {
-	v.builder = newBuilder("MUCJoinRoomDialog")
-	panicOnDevError(v.builder.bindObjects(v))
+func (v *mucJoinRoomView) setBuilder(b *builder) {
+	v.builder = b
+}
 
-	v.builder.ConnectSignals(map[string]interface{}{
+func (v *mucJoinRoomView) connectUISignals(b *builder) {
+	b.ConnectSignals(map[string]interface{}{
 		"on_close_window":     v.onCloseWindow,
 		"on_roomname_changed": v.enableJoinIfConditionsAreMet,
 		"on_cancel":           v.dialog.Destroy,
 		"on_join":             doOnlyOnceAtATime(v.tryJoinRoom),
 	})
+}
+
+func (v *mucJoinRoomView) loadUIDefinition() {
+	buildUserInterface("MUCJoinRoomDialog", v, v.setBuilder, v.connectUISignals)
 }
 
 func (v *mucJoinRoomView) initRoomFormComponent() {

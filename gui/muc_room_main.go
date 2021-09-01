@@ -31,8 +31,7 @@ func (v *roomView) newRoomMainView() *roomViewMain {
 }
 
 func (m *roomViewMain) initBuilder() {
-	builder := newBuilder("MUCRoomMain")
-	panicOnDevError(builder.bindObjects(m))
+	buildUserInterface("MUCRoomMain", m)
 }
 
 func (m *roomViewMain) initDefaults() {

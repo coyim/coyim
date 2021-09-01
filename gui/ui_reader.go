@@ -228,3 +228,14 @@ func setImageFromFile(i gtki.Image, filename string) {
 
 	i.SetFromPixbuf(pb)
 }
+
+// buildUserInterface will load the interface definition with the given name
+// and bind it into the object given. If any `withBuilder` is given, it will be called
+// with the builder created.
+func buildUserInterface(name string, obj interface{}, withBuilder ...func(*builder)) {
+	b := newBuilder(name)
+	panicOnDevError(b.bindObjects(obj))
+	for _, wb := range withBuilder {
+		wb(b)
+	}
+}

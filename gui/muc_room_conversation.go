@@ -205,7 +205,7 @@ func (c *roomViewConversation) selfOccupantDisconnectedEvent() {
 		c.disableSendCapabilities()
 
 		if c.roomView.isSelfOccupantInTheRoom() {
-			c.saveAndDisplayMessage("", i18n.Local("You lost connection."), time.Now(), data.Disconnected)
+			c.saveAndDisplayMessage("", i18n.Local("The connection to the server has been lost, please verify your connection."), time.Now(), data.Disconnected)
 		}
 	})
 }

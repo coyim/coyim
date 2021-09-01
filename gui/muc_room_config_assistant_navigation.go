@@ -86,7 +86,15 @@ func (rcn *roomConfigAssistantNavigation) selectPageByIndex(pageID mucRoomConfig
 
 	if rowIndex != noRowIndex && rowIndex != currentRowIndex {
 		rcn.navigation.SelectRow(row)
+		doALittleBitLater(row.GrabFocus)
 	}
+
+}
+
+// doALittleBitLater will execute the function given when all current
+// tasks in the UI thread has been managed.
+func doALittleBitLater(f func()) {
+	doInUIThread(f)
 }
 
 func getListBoxRowIndex(r gtki.ListBoxRow) int {

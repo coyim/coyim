@@ -40,8 +40,8 @@ type roomConfigPositions struct {
 	positionsListController *mucRoomConfigListController
 }
 
-func newRoomConfigPositions(options roomConfigPositionsOptions) hasRoomConfigFormField {
-	field := &roomConfigPositions{
+func newRoomConfigPositionsComponent(options roomConfigPositionsOptions) *roomConfigPositions {
+	rcp := &roomConfigPositions{
 		affiliation:               options.affiliation,
 		originalOccupantsList:     options.occupantList,
 		setOccupantList:           options.setOccupantList,
@@ -50,12 +50,16 @@ func newRoomConfigPositions(options roomConfigPositionsOptions) hasRoomConfigFor
 		onListModified:            options.onListModified,
 	}
 
-	field.initBuilder()
-	field.initDefaults()
-	field.initPositionsLists(options.parentWindow)
-	field.initOccupantList()
+	rcp.initBuilder()
+	rcp.initDefaults()
+	rcp.initPositionsLists(options.parentWindow)
+	rcp.initOccupantList()
 
-	return field
+	return rcp
+}
+
+func newRoomConfigPositions(options roomConfigPositionsOptions) hasRoomConfigFormField {
+	return newRoomConfigPositionsComponent(options)
 }
 
 func (p *roomConfigPositions) initBuilder() {

@@ -35,8 +35,10 @@ type callbacksSet struct {
 	sync.Mutex
 }
 
-func newCallbacksSet() *callbacksSet {
-	return &callbacksSet{}
+func newCallbacksSet(callbacks ...func()) *callbacksSet {
+	return &callbacksSet{
+		callbacks: callbacks,
+	}
 }
 
 func (s *callbacksSet) add(callbacks ...func()) {

@@ -258,7 +258,6 @@ func (c *roomViewConversation) onSelfOccupantVoiceRevoked() {
 	c.disableSendCapabilities()
 }
 
-// TODO: Remove the isReconnecting flag
 func (c *roomViewConversation) selfOccupantJoinedEvent(nickname string, r data.Role, isReconnecting bool) {
 	go func() {
 		<-c.historyPrinted

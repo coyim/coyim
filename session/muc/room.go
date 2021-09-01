@@ -143,8 +143,8 @@ func (r *Room) SubjectCanBeChanged() bool {
 	return false
 }
 
-// Connect should be called when the user account recover connection to the room
-func (r *Room) Connect() {
+// HandleSelfOccupantConnection sets the room's initial values when a new connection is established
+func (r *Room) HandleSelfOccupantConnection() {
 	r.roster.Reset()
 
 	r.subjectIsNew = true
@@ -152,8 +152,8 @@ func (r *Room) Connect() {
 	r.Publish(events.MUCSelfOccupantConnected{})
 }
 
-// Disconnect should be called when the user account lost connection to the room
-func (r *Room) Disconnect() {
+// HandleSelfOccupantDisconnection sets appropriate values when an occupant loses connection to the room
+func (r *Room) HandleSelfOccupantDisconnection() {
 	if r.IsSelfOccupantInTheRoom() {
 		roomSelfOccupant := r.SelfOccupant()
 

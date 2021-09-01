@@ -114,8 +114,14 @@ func (rcpb *roomConfigPositionsWithApplyButton) enableOrDisableApplyButton() {
 	rcpb.applyButton.SetSensitive(rcpb.hasListChanged())
 }
 
-func newRoomConfigPositions(options roomConfigPositionsOptions) hasRoomConfigFormField {
-	rcpf := newRoomConfigPositionsComponent(options)
+type roomConfigPositionsField struct {
+	*roomConfigPositions
+}
+
+func newRoomConfigPositionsField(options roomConfigPositionsOptions) hasRoomConfigFormField {
+	rcpf := &roomConfigPositionsField{
+		newRoomConfigPositionsComponent(options),
+	}
 
 	rcpf.initBuilderSignals()
 	rcpf.initPositionsLists(options.parentWindow)
@@ -123,25 +129,25 @@ func newRoomConfigPositions(options roomConfigPositionsOptions) hasRoomConfigFor
 	return rcpf
 }
 
-func (p *roomConfigPositions) initBuilderSignals() {
-	p.builder.ConnectSignals(map[string]interface{}{
-		"on_jid_edited": p.onOccupantJidEdited,
+func (rcpf *roomConfigPositionsField) initBuilderSignals() {
+	rcpf.builder.ConnectSignals(map[string]interface{}{
+		"on_jid_edited": rcpf.onOccupantJidEdited,
 	})
 }
 
-func (p *roomConfigPositions) initPositionsLists(parent gtki.Window) {
-	p.positionsListController = newMUCRoomConfigListController(&mucRoomConfigListControllerData{
-		addOccupantButton:      p.positionsAddButton,
-		removeOccupantButton:   p.positionsRemoveButton,
-		removeOccupantLabel:    p.positionsRemoveLabel,
-		occupantsTreeView:      p.positionsList,
+func (rcpf *roomConfigPositionsField) initPositionsLists(parent gtki.Window) {
+	rcpf.positionsListController = newMUCRoomConfigListController(&mucRoomConfigListControllerData{
+		addOccupantButton:      rcpf.positionsAddButton,
+		removeOccupantButton:   rcpf.positionsRemoveButton,
+		removeOccupantLabel:    rcpf.positionsRemoveLabel,
+		occupantsTreeView:      rcpf.positionsList,
 		parentWindow:           parent,
-		addOccupantDialogTitle: getFieldTextByAffiliation(p.affiliation).dialogTitle,
-		addOccupantDescription: getFieldTextByAffiliation(p.affiliation).dialogDescription,
-		onListUpdated:          p.refreshContentLists,
+		addOccupantDialogTitle: getFieldTextByAffiliation(rcpf.affiliation).dialogTitle,
+		addOccupantDescription: getFieldTextByAffiliation(rcpf.affiliation).dialogDescription,
+		onListUpdated:          rcpf.refreshContentLists,
 	})
 
-	p.addItemsToListController()
+	rcpf.addItemsToListController()
 }
 
 func (p *roomConfigPositions) initDefaults() {

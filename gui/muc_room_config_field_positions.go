@@ -21,6 +21,7 @@ type roomConfigPositionsOptions struct {
 }
 
 type roomConfigPositions struct {
+	builder                   *builder
 	affiliation               data.Affiliation
 	originalOccupantsList     muc.RoomOccupantItemList
 	setOccupantList           func(occupants muc.RoomOccupantItemList)
@@ -57,16 +58,31 @@ func newRoomConfigPositionsComponent(options roomConfigPositionsOptions) *roomCo
 	return rcp
 }
 
+func (p *roomConfigPositions) initBuilder() {
+	p.builder = newBuilder("MUCRoomConfigAssistantFieldPositions")
+	panicOnDevError(p.builder.bindObjects(p))
+}
+
 type roomConfigPositionsWithApplyButton struct {
 	*roomConfigPositions
 	applyButton gtki.Button
 }
 
 func newRoomConfigPositionsWithApplyButton(applyButton gtki.Button, options roomConfigPositionsOptions) hasRoomConfigFormField {
-	return &roomConfigPositionsWithApplyButton{
+	rcpb := &roomConfigPositionsWithApplyButton{
 		roomConfigPositions: newRoomConfigPositionsComponent(options),
 		applyButton:         applyButton,
 	}
+
+	rcpb.initBuilderSignals()
+
+	return rcpb
+}
+
+func (rcpb *roomConfigPositionsWithApplyButton) initBuilderSignals() {
+	rcpb.builder.ConnectSignals(map[string]interface{}{
+		"on_jid_edited": rcpb.onOccupantJidEdited,
+	})
 }
 
 func (rcpb *roomConfigPositionsWithApplyButton) initPositionsLists(parent gtki.Window) {
@@ -102,13 +118,15 @@ func (rcpb *roomConfigPositionsWithApplyButton) enableOrDisableApplyButton() {
 }
 
 func newRoomConfigPositions(options roomConfigPositionsOptions) hasRoomConfigFormField {
-	return newRoomConfigPositionsComponent(options)
+	rcpf := newRoomConfigPositionsComponent(options)
+
+	rcpf.initBuilderSignals()
+
+	return rcpf
 }
 
-func (p *roomConfigPositions) initBuilder() {
-	builder := newBuilder("MUCRoomConfigAssistantFieldPositions")
-	panicOnDevError(builder.bindObjects(p))
-	builder.ConnectSignals(map[string]interface{}{
+func (p *roomConfigPositions) initBuilderSignals() {
+	p.builder.ConnectSignals(map[string]interface{}{
 		"on_jid_edited": p.onOccupantJidEdited,
 	})
 }

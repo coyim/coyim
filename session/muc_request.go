@@ -90,10 +90,17 @@ func (r *mucRequest) clientIQFromStanza(stanza data.Stanza) (*data.ClientIQ, err
 	}
 
 	if iq.Type == "error" {
-		return nil, ErrInformationQueryResponse
+		return nil, errorBasedOnStanzaError(iq.Error)
 	}
 
 	return iq, nil
+}
+
+func errorBasedOnStanzaError(se data.StanzaError) error {
+	if se.Type == "cancel" && se.MUCGone != nil {
+		return ErrInformationQueryResponseWithGoneTag
+	}
+	return ErrInformationQueryResponse
 }
 
 func (r *mucRequest) sendMUCPresence() bool {

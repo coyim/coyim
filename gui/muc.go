@@ -16,9 +16,10 @@ var supportedCreateMUCErrors map[error]string
 // and have a custom and useful user message for each one
 func initMUCSupportedErrors() {
 	supportedCreateMUCErrors = map[error]string{
-		session.ErrInvalidInformationQueryRequest: i18n.Local("Couldn't send the information query to the server, please try again."),
-		session.ErrUnexpectedResponse:             i18n.Local("The connection to the server can't be established."),
-		session.ErrInformationQueryResponse:       i18n.Local("You don't have the permissions to create a room."),
+		session.ErrInvalidInformationQueryRequest:      i18n.Local("Couldn't send the information query to the server, please try again."),
+		session.ErrUnexpectedResponse:                  i18n.Local("The connection to the server can't be established."),
+		session.ErrInformationQueryResponse:            i18n.Local("You don't have the permissions to create a room."),
+		session.ErrInformationQueryResponseWithGoneTag: i18n.Local("Could not create the room with the provided name. Please, change it and try again."),
 	}
 }
 

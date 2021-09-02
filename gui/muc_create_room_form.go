@@ -135,12 +135,12 @@ func (f *mucCreateRoomViewForm) onCreateRoomError(roomID jid.Bare, err error) {
 	case errCreateRoomAlreadyExists:
 		f.roomNameConflictList.Insert(roomID.String())
 		doInUIThread(f.onCreateRoomAlreadyExists)
-	case errCreateRoomFailed:
+	case errCreateRoomTimeout:
+		doInUIThread(f.onCreateRoomTimeout)
+	default:
 		doInUIThread(func() {
 			f.onCreateRoomFailed(err)
 		})
-	case errCreateRoomTimeout:
-		doInUIThread(f.onCreateRoomTimeout)
 	}
 }
 

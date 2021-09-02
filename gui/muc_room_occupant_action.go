@@ -89,7 +89,7 @@ func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant) *occupantActionVie
 		parentWindow: r.parentWindow(),
 
 		dialogTitle: i18n.Local("Expel person"),
-		headerText:  i18n.Localf("You are about to temporarily remove %s from the room.", o.Nickname),
+		headerText:  i18n.Localf("You are about to expel %s from the room.", o.Nickname),
 		messageText: i18n.Local("They will be able to join the room again. Are you sure you want to continue?"),
 		reasonText:  i18n.Local("Here you can provide an optional reason for removing the person. Everyone in the room will see this reason."),
 

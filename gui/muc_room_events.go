@@ -13,11 +13,7 @@ import (
 func (v *roomView) handleRoomEvent(ev events.MUC) {
 	switch t := ev.(type) {
 	case events.MUCSelfOccupantJoined:
-		v.publishEvent(selfOccupantJoinedEvent{
-			nickname:       t.Nickname,
-			role:           t.Role,
-			isReconnecting: v.isReconnecting,
-		})
+		v.publishSelfOccupantJoinedEvent(t.Nickname, t.Role)
 	case events.MUCOccupantUpdated:
 		v.publishEvent(occupantUpdatedEvent{
 			nickname: t.Nickname,
@@ -173,6 +169,18 @@ func (v *roomView) publishEvent(ev roomViewEvent) {
 		// to be able to publish an event in a closed view
 		v.subscribers.publish(ev)
 	}
+}
+
+// publishSelfOccupantJoinedEvent MUST NOT be called from the UI thread
+func (v *roomView) publishSelfOccupantJoinedEvent(nickname string, role data.Role) {
+	selfOccupantJoinedEvt := selfOccupantJoinedEvent{nickname, role}
+
+	if v.isReconnecting {
+		v.publishEvent(selfOccupantReconnectedEvent{selfOccupantJoinedEvt})
+		return
+	}
+
+	v.publishEvent(selfOccupantJoinedEvt)
 }
 
 // publishMessageEvent MUST NOT be called from the UI thread

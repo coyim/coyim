@@ -94,8 +94,10 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.occupantLeftEvent(t.nickname)
 		case occupantJoinedEvent:
 			c.occupantJoinedEvent(t.nickname, t.isReconnecting)
+		case selfOccupantReconnectedEvent:
+			c.selfOccupantJoinedEvent(t.nickname, t.role, true)
 		case selfOccupantJoinedEvent:
-			c.selfOccupantJoinedEvent(t.nickname, t.role, t.isReconnecting)
+			c.selfOccupantJoinedEvent(t.nickname, t.role, false)
 		case occupantUpdatedEvent:
 			c.occupantUpdatedEvent(t.nickname, t.role)
 		case messageEvent:

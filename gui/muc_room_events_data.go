@@ -11,9 +11,12 @@ import (
 type selfOccupantRemovedEvent struct{}
 
 type selfOccupantJoinedEvent struct {
-	nickname       string
-	role           data.Role
-	isReconnecting bool
+	nickname string
+	role     data.Role
+}
+
+type selfOccupantReconnectedEvent struct {
+	selfOccupantJoinedEvent
 }
 
 type occupantLeftEvent struct {

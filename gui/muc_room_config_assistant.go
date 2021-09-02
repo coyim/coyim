@@ -118,6 +118,11 @@ func (rc *roomConfigAssistant) initDefaults() {
 	}
 
 	rc.assistantButtons = getButtonsForAssistantHeader(rc.assistant)
+	rc.assistantButtons.updateLastButtonLabel(i18n.Local("Summary"))
+	rc.assistantButtons.updateApplyButtonLabel(rc.applyLabelBasedOnCurrentScenario())
+
+	rc.assistant.HideBottomActionArea()
+
 	removeMarginFromAssistantPages(rc.assistant)
 
 	if buttonSizeGroup, err := rc.assistant.GetButtonSizeGroup(); err == nil {
@@ -130,12 +135,6 @@ func (rc *roomConfigAssistant) initDefaults() {
 func (rc *roomConfigAssistant) initSidebarNavigation() {
 	rc.navigation = rc.newRoomConfigAssistantNavigation()
 	setAssistantSidebarContent(rc.assistant, rc.navigation.content)
-}
-
-// refreshButtonLabels MUST be called from the UI thread
-func (rc *roomConfigAssistant) refreshButtonLabels() {
-	rc.assistantButtons.updateLastButtonLabel(i18n.Local("Summary"))
-	rc.assistantButtons.updateApplyButtonLabel(rc.applyLabelBasedOnCurrentScenario())
 }
 
 func (rc *roomConfigAssistant) applyLabelBasedOnCurrentScenario() string {
@@ -173,9 +172,6 @@ func (rc *roomConfigAssistant) canChangePage() bool {
 func (rc *roomConfigAssistant) updateContentPage(pageID mucRoomConfigPageID) {
 	rc.setCurrentPage(pageID)
 	rc.currentPage.refresh()
-
-	rc.refreshButtonLabels()
-	rc.assistant.HideBottomActionArea()
 }
 
 // enableAssistant MUST be called from the UI thread

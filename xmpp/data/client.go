@@ -79,6 +79,7 @@ type StanzaError struct {
 	MUCServiceUnavailable   *MUCServiceUnavailable
 	MUCBadRequest           *MUCBadRequest
 	MUCInternalServerError  *MUCInternalServerError
+	MUCGone                 *MUCGone
 }
 
 func anyNotNil(vals ...interface{}) interface{} {

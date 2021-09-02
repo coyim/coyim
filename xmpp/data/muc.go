@@ -108,6 +108,11 @@ type MUCInternalServerError struct {
 	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-stanzas internal-server-error,omitempty"`
 }
 
+// MUCGone inform user that an error with an internal gone tag was received
+type MUCGone struct {
+	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-stanzas gone,omitempty"`
+}
+
 // MUCRoomDestroyQuery contains query information to destroy a room
 type MUCRoomDestroyQuery struct {
 	XMLName xml.Name       `xml:"http://jabber.org/protocol/muc#owner query"`

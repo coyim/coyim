@@ -46,7 +46,6 @@ type roomNotificationActions []roomNotificationAction
 
 type roomNotificationOptions struct {
 	message     string
-	messageType gtki.MessageType
 	showTime    bool
 	showSpinner bool
 	closeable   bool
@@ -55,34 +54,30 @@ type roomNotificationOptions struct {
 
 // other MUST be called from the UI thread
 func (rn *roomNotifications) other(n roomNotificationOptions) {
-	n.messageType = gtki.MESSAGE_OTHER
-	rn.newNotification(n)
+	rn.newNotification(gtki.MESSAGE_OTHER, n)
 }
 
 // info MUST be called from the UI thread
 func (rn *roomNotifications) info(n roomNotificationOptions) {
-	n.messageType = gtki.MESSAGE_INFO
-	rn.newNotification(n)
+	rn.newNotification(gtki.MESSAGE_INFO, n)
 }
 
 // warning MUST be called from the UI thread
 func (rn *roomNotifications) warning(n roomNotificationOptions) {
-	n.messageType = gtki.MESSAGE_WARNING
-	rn.newNotification(n)
+	rn.newNotification(gtki.MESSAGE_WARNING, n)
 }
 
 // error MUST be called from the UI thread
 func (rn *roomNotifications) error(n roomNotificationOptions) {
-	n.messageType = gtki.MESSAGE_ERROR
-	rn.newNotification(n)
+	rn.newNotification(gtki.MESSAGE_ERROR, n)
 }
 
 // newNotification MUST be called from the UI thread
-func (rn *roomNotifications) newNotification(n roomNotificationOptions) {
-	nb := rn.u.newNotificationBar(n.message, n.messageType)
+func (rn *roomNotifications) newNotification(mt gtki.MessageType, n roomNotificationOptions) {
+	nb := rn.u.newNotificationBar(n.message, mt)
 
 	if n.showTime {
-		nb = rn.u.newNotificationBarWithTime(n.message, n.messageType)
+		nb = rn.u.newNotificationBarWithTime(n.message, mt)
 	}
 
 	if n.showSpinner {

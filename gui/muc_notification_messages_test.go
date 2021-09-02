@@ -486,16 +486,16 @@ func (*MUCNotificationMessagesSuite) Test_getAffiliationUpdateSuccessMessage(c *
 		"[localized] The position of $nickname{Juan} was changed to $affiliation{owner}.")
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, none, outcast), Equals,
-		"[localized] $nickname{Juan} has been $affiliation{banned} from the room.")
+		"[localized] $nickname{Juan} has been banned from the room.")
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, member, outcast), Equals,
-		"[localized] $nickname{Juan} has been $affiliation{banned} from the room.")
+		"[localized] $nickname{Juan} has been banned from the room.")
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, admin, outcast), Equals,
-		"[localized] $nickname{Juan} has been $affiliation{banned} from the room.")
+		"[localized] $nickname{Juan} has been banned from the room.")
 
 	c.Assert(getAffiliationUpdateSuccessMessage(nickname, owner, outcast), Equals,
-		"[localized] $nickname{Juan} has been $affiliation{banned} from the room.")
+		"[localized] $nickname{Juan} has been banned from the room.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getRoleUpdateSuccessMessage(c *C) {
@@ -617,17 +617,17 @@ func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affili
 		},
 	}
 
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] You have been $affiliation{banned} from the room.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] You have been banned from the room.")
 
 	sau.Reason = "it's so cold"
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] You have been $affiliation{banned} from the room. The reason given was: it's so cold.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] You have been banned from the room. The reason given was: it's so cold.")
 
 	sau.Reason = ""
 	sau.Actor = newTestActor("calvin", newTestAffiliationFromString(data.AffiliationOwner), newTestRoleFromString(data.RoleModerator))
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] The owner $nickname{calvin} $affiliation{banned} you from the room.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] The owner $nickname{calvin} banned you from the room.")
 
 	sau.Reason = "it isn't cool"
-	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] The owner $nickname{calvin} $affiliation{banned} you from the room. The reason given was: it isn't cool.")
+	c.Assert(getSelfAffiliationUpdateMessage(sau), Equals, "[localized] [localized] The owner $nickname{calvin} banned you from the room. The reason given was: it isn't cool.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationRoleUpdateMessage_affiliationRemoved(c *C) {

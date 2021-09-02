@@ -24,7 +24,7 @@ func getAffiliationRemovedSuccessMessage(nickname string, previousAffiliation da
 	case previousAffiliation.IsMember():
 		return i18n.Localf("$nickname{%s} is not $affiliation{a member} anymore.", nickname)
 	}
-	return i18n.Localf("$nickname{%s} is not $affiliation{banned} anymore.", nickname)
+	return i18n.Localf("$nickname{%s} is not banned anymore.", nickname)
 }
 
 func getAffiliationChangedSuccessMessage(nickname string, affiliation data.Affiliation) string {
@@ -36,7 +36,7 @@ func getAffiliationChangedSuccessMessage(nickname string, affiliation data.Affil
 	case affiliation.IsMember():
 		return i18n.Localf("The position of $nickname{%s} was changed to $affiliation{member}.", nickname)
 	case affiliation.IsBanned():
-		return i18n.Localf("$nickname{%s} has been $affiliation{banned} from the room.", nickname)
+		return i18n.Localf("$nickname{%s} has been banned from the room.", nickname)
 	}
 	return i18n.Localf("The position of $nickname{%s} was changed.", nickname)
 }
@@ -241,7 +241,7 @@ func getAffiliationRemovedMessageWithoutActor(affiliationUpdate data.Affiliation
 	case affiliationUpdate.Previous.IsMember():
 		return i18n.Localf("$nickname{%s} is not $affiliation{a member} anymore.", affiliationUpdate.Nickname)
 	}
-	return i18n.Localf("$nickname{%s} is not $affiliation{banned} anymore.", affiliationUpdate.Nickname)
+	return i18n.Localf("$nickname{%s} is not banned anymore.", affiliationUpdate.Nickname)
 }
 
 func getAffiliationRemovedMessageWithActor(affiliationUpdate data.AffiliationUpdate) string {
@@ -332,7 +332,7 @@ func getAffiliationAddedMessageWithoutActor(affiliationUpdate data.AffiliationUp
 	case affiliationUpdate.New.IsMember():
 		return i18n.Localf("$nickname{%s} is now $affiliation{a member}.", affiliationUpdate.Nickname)
 	}
-	return i18n.Localf("$nickname{%s} is now $affiliation{banned}.", affiliationUpdate.Nickname)
+	return i18n.Localf("$nickname{%s} is now banned.", affiliationUpdate.Nickname)
 }
 
 func getAffiliationAddedMessageWithActor(affiliationUpdate data.AffiliationUpdate) string {
@@ -357,7 +357,7 @@ func getAffiliationAddedMessageWithOwnerActor(affiliationUpdate data.Affiliation
 			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname)
 	}
-	return i18n.Localf("The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is now $affiliation{banned}.",
+	return i18n.Localf("The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is now banned.",
 		affiliationUpdate.Actor.Nickname,
 		affiliationUpdate.Nickname)
 }
@@ -377,7 +377,7 @@ func getAffiliationAddedMessageWithAdminActor(affiliationUpdate data.Affiliation
 			affiliationUpdate.Actor.Nickname,
 			affiliationUpdate.Nickname)
 	}
-	return i18n.Localf("The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is now $affiliation{banned}.",
+	return i18n.Localf("The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is now banned.",
 		affiliationUpdate.Actor.Nickname,
 		affiliationUpdate.Nickname)
 }
@@ -1405,7 +1405,7 @@ func getSelfAffiliationRemovedMessageWithoutActor(selfAffiliationUpdate data.Sel
 	case selfAffiliationUpdate.Previous.IsMember():
 		return i18n.Local("You are not $affiliation{a member} anymore.")
 	}
-	return i18n.Local("You are not $affiliation{banned} anymore.")
+	return i18n.Local("You are not banned anymore.")
 }
 
 func getSelfAffiliationRemovedMessageWithActor(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
@@ -1427,7 +1427,7 @@ func getSelfAffiliationRemovedMessageWithOwnerActor(selfAffiliationUpdate data.S
 		return i18n.Localf("The owner $nickname{%s} changed your position; you are not $affiliation{a member} anymore.",
 			selfAffiliationUpdate.Actor.Nickname)
 	}
-	return i18n.Localf("The owner $nickname{%s} changed your position; you are not $affiliation{banned} anymore.",
+	return i18n.Localf("The owner $nickname{%s} changed your position; you are not banned anymore.",
 		selfAffiliationUpdate.Actor.Nickname)
 }
 
@@ -1443,7 +1443,7 @@ func getSelfAffiliationRemovedMessageWithAdminActor(selfAffiliationUpdate data.S
 		return i18n.Localf("The administrator $nickname{%s} changed your position; you are not $affiliation{a member} anymore.",
 			selfAffiliationUpdate.Actor.Nickname)
 	}
-	return i18n.Localf("The administrator $nickname{%s} changed your position; you are not $affiliation{banned} anymore.",
+	return i18n.Localf("The administrator $nickname{%s} changed your position; you are not banned anymore.",
 		selfAffiliationUpdate.Actor.Nickname)
 }
 
@@ -1463,7 +1463,7 @@ func getSelfAffiliationAddedMessageWithoutActor(selfAffiliationUpdate data.SelfA
 	case selfAffiliationUpdate.New.IsMember():
 		return i18n.Local("You are now $affiliation{a member}.")
 	}
-	return i18n.Local("You are now $affiliation{banned}.")
+	return i18n.Local("You are now banned.")
 }
 
 func getSelfAffiliationAddedMessageWithActor(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
@@ -1485,7 +1485,7 @@ func getSelfAffiliationAddedMessageWithOwnerActor(selfAffiliationUpdate data.Sel
 		return i18n.Localf("The owner $nickname{%s} changed your position; you are now $affiliation{a member}.",
 			selfAffiliationUpdate.Actor.Nickname)
 	}
-	return i18n.Localf("The owner $nickname{%s} changed your position; you are now $affiliation{banned}.",
+	return i18n.Localf("The owner $nickname{%s} changed your position; you are now banned.",
 		selfAffiliationUpdate.Actor.Nickname)
 }
 
@@ -1501,7 +1501,7 @@ func getSelfAffiliationAddedMessageWithAdminActor(selfAffiliationUpdate data.Sel
 		return i18n.Localf("The administrator $nickname{%s} changed your position; you are now $affiliation{a member}.",
 			selfAffiliationUpdate.Actor.Nickname)
 	}
-	return i18n.Localf("The administrator $nickname{%s} changed your position; you are now $affiliation{banned}.",
+	return i18n.Localf("The administrator $nickname{%s} changed your position; you are now banned.",
 		selfAffiliationUpdate.Actor.Nickname)
 }
 
@@ -1589,17 +1589,17 @@ func getSelfAffiliationChangedMessageWithAdminActor(selfAffiliationUpdate data.S
 
 func getSelfAffiliationBannedMessage(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
 	if selfAffiliationUpdate.Actor == nil {
-		return i18n.Localf("You have been $affiliation{banned} from the room.")
+		return i18n.Localf("You have been banned from the room.")
 	}
 	return getSelfAffiliationBannedMessageWithActor(selfAffiliationUpdate)
 }
 
 func getSelfAffiliationBannedMessageWithActor(selfAffiliationUpdate data.SelfAffiliationUpdate) string {
 	if selfAffiliationUpdate.Actor.Affiliation.IsOwner() {
-		return i18n.Localf("The owner $nickname{%s} $affiliation{banned} you from the room.",
+		return i18n.Localf("The owner $nickname{%s} banned you from the room.",
 			selfAffiliationUpdate.Actor.Nickname)
 	}
-	return i18n.Localf("The administrator $nickname{%s} $affiliation{banned} you from the room.",
+	return i18n.Localf("The administrator $nickname{%s} banned you from the room.",
 		selfAffiliationUpdate.Actor.Nickname)
 }
 

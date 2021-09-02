@@ -175,12 +175,11 @@ func (v *roomView) publishEvent(ev roomViewEvent) {
 func (v *roomView) publishSelfOccupantJoinedEvent(nickname string, role data.Role) {
 	selfOccupantJoinedEvt := selfOccupantJoinedEvent{nickname, role}
 
-	if v.isReconnecting {
+	if v.isReconnecting && v.enteredAtLeastOnce {
 		v.publishEvent(selfOccupantReconnectedEvent{selfOccupantJoinedEvt})
-		return
+	} else {
+		v.publishEvent(selfOccupantJoinedEvt)
 	}
-
-	v.publishEvent(selfOccupantJoinedEvt)
 }
 
 // publishMessageEvent MUST NOT be called from the UI thread

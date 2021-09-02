@@ -273,7 +273,7 @@ func (c *roomViewConversation) selfOccupantJoinedEvent(nickname string, r data.R
 
 // displaySelfOccupantJoined MUST be called from the UI thread
 func (c *roomViewConversation) displaySelfOccupantJoined(nickname string, isReconnecting bool) {
-	if isReconnecting && c.roomView.enteredAtLeastOnce {
+	if isReconnecting {
 		c.saveAndDisplayMessage("", i18n.Local("Your connection was restored."), time.Now(), data.Connected)
 	} else {
 		c.handleOccupantJoinedRoom(nickname)

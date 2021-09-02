@@ -172,7 +172,10 @@ func (v *roomView) publishEvent(ev roomViewEvent) {
 func (v *roomView) publishSelfOccupantJoinedEvent(nickname string, role data.Role) {
 	selfOccupantJoinedEvt := selfOccupantJoinedEvent{nickname, role}
 
-	if v.isReconnecting && v.enteredAtLeastOnce {
+	isReconnecting := v.isReconnecting
+	enteredAtLeastOnce := v.enteredAtLeastOnce
+
+	if isReconnecting && enteredAtLeastOnce {
 		v.publishEvent(selfOccupantReconnectedEvent{selfOccupantJoinedEvt})
 	} else {
 		v.publishEvent(selfOccupantJoinedEvt)

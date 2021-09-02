@@ -681,7 +681,9 @@ func (v *roomView) publishSelfOccupantRoleUpdatedEvent(selfRoleUpdate data.SelfR
 // handleDiscoInfoReceived MUST NOT be called from the UI thread
 func (v *roomView) handleDiscoInfoReceived(di data.RoomDiscoInfo) {
 	v.publishEvent(roomDiscoInfoReceivedEvent{di})
-	if v.isReconnecting {
+
+	reconnecting := v.isReconnecting
+	if reconnecting {
 		doInUIThread(func() {
 			v.onReconnectingRoomInfoReceived(di)
 		})
@@ -691,7 +693,9 @@ func (v *roomView) handleDiscoInfoReceived(di data.RoomDiscoInfo) {
 // handleDiscoInfoTimeout MUST NOT be called from the UI thread
 func (v *roomView) handleDiscoInfoTimeout() {
 	v.publishEvent(roomConfigRequestTimeoutEvent{})
-	if v.isReconnecting {
+
+	reconnecting := v.isReconnecting
+	if reconnecting {
 		doInUIThread(v.onReconnectingRoomInfoTimeout)
 		v.isReconnecting = false
 	}

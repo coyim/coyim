@@ -121,8 +121,6 @@ func (rc *roomConfigAssistant) initDefaults() {
 	rc.assistantButtons.updateLastButtonLabel(i18n.Local("Summary"))
 	rc.assistantButtons.updateApplyButtonLabel(rc.applyLabelBasedOnCurrentScenario())
 
-	rc.assistant.HideBottomActionArea()
-
 	removeMarginFromAssistantPages(rc.assistant)
 
 	if buttonSizeGroup, err := rc.assistant.GetButtonSizeGroup(); err == nil {
@@ -172,6 +170,7 @@ func (rc *roomConfigAssistant) canChangePage() bool {
 func (rc *roomConfigAssistant) updateContentPage(pageID mucRoomConfigPageID) {
 	rc.setCurrentPage(pageID)
 	rc.currentPage.refresh()
+	rc.assistant.HideBottomActionArea()
 }
 
 // enableAssistant MUST be called from the UI thread

@@ -93,7 +93,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case occupantLeftEvent:
 			c.occupantLeftEvent(t.nickname)
 		case occupantJoinedEvent:
-			c.occupantJoinedEvent(t.nickname, t.isReconnecting)
+			c.occupantJoinedEvent(t.nickname)
 		case selfOccupantReconnectedEvent:
 			c.selfOccupantReconnectedEvent(t.nickname, t.role)
 		case selfOccupantJoinedEvent:
@@ -296,11 +296,8 @@ func (c *roomViewConversation) occupantLeftEvent(nickname string) {
 	})
 }
 
-// TODO: Remove the isReconnecting flag
-func (c *roomViewConversation) occupantJoinedEvent(nickname string, isReconnecting bool) {
-	if !isReconnecting {
-		c.handleOccupantJoinedRoom(nickname)
-	}
+func (c *roomViewConversation) occupantJoinedEvent(nickname string) {
+	c.handleOccupantJoinedRoom(nickname)
 }
 
 func (c *roomViewConversation) messageEvent(tp, nickname, message string, timestamp time.Time) {

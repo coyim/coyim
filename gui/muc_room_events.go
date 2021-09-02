@@ -20,10 +20,7 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 			role:     t.Role,
 		})
 	case events.MUCOccupantJoined:
-		v.publishEvent(occupantJoinedEvent{
-			nickname:       t.Nickname,
-			isReconnecting: v.isReconnecting,
-		})
+		v.handleOccupantJoinedEvent(t.Nickname)
 	case events.MUCOccupantLeft:
 		v.publishEvent(occupantLeftEvent{t.Nickname})
 	case events.MUCLiveMessageReceived:
@@ -226,4 +223,13 @@ func (v *roomView) publishSelfOccupantConnectingEvent() {
 // publishAccountAffiliationUpdated MUST NOT be called from the UI thread
 func (v *roomView) publishAccountAffiliationUpdated(accountAddress jid.Any, affiliation data.Affiliation) {
 	v.publishEvent(accountAffiliationUpdated{accountAddress, affiliation})
+}
+
+func (v *roomView) handleOccupantJoinedEvent(nickname string) {
+	reconnecting := v.isReconnecting
+	if !reconnecting {
+		v.publishEvent(occupantJoinedEvent{
+			nickname: nickname,
+		})
+	}
 }

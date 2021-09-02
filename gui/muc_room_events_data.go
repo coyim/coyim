@@ -24,8 +24,7 @@ type occupantLeftEvent struct {
 }
 
 type occupantJoinedEvent struct {
-	nickname       string
-	isReconnecting bool
+	nickname string
 }
 
 type occupantUpdatedEvent struct {

@@ -95,9 +95,9 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case occupantJoinedEvent:
 			c.occupantJoinedEvent(t.nickname, t.isReconnecting)
 		case selfOccupantReconnectedEvent:
-			c.selfOccupantJoinedEvent(t.nickname, t.role, true)
+			c.selfOccupantReconnectedEvent(t.nickname, t.role)
 		case selfOccupantJoinedEvent:
-			c.selfOccupantJoinedEvent(t.nickname, t.role, false)
+			c.selfOccupantJoinedEvent(t.nickname, t.role)
 		case occupantUpdatedEvent:
 			c.occupantUpdatedEvent(t.nickname, t.role)
 		case messageEvent:
@@ -260,24 +260,26 @@ func (c *roomViewConversation) onSelfOccupantVoiceRevoked() {
 	c.disableSendCapabilities()
 }
 
-func (c *roomViewConversation) selfOccupantJoinedEvent(nickname string, r data.Role, isReconnecting bool) {
-	go func() {
-		<-c.historyPrinted
-		doInUIThread(func() {
-			c.enableSendCapabilitiesIfHasVoice(r.HasVoice())
-			c.displaySelfOccupantJoined(nickname, isReconnecting)
-		})
-		c.selfOccupantJoined <- true
-	}()
+func (c *roomViewConversation) selfOccupantReconnectedEvent(nickname string, r data.Role) {
+	go c.waitForDiscussionHistoryAndJoin(r, func() {
+		c.enableSendCapabilitiesIfHasVoice(r.HasVoice())
+		c.saveAndDisplayMessage("", i18n.Local("Your connection was restored."), time.Now(), data.Connected)
+	})
 }
 
-// displaySelfOccupantJoined MUST be called from the UI thread
-func (c *roomViewConversation) displaySelfOccupantJoined(nickname string, isReconnecting bool) {
-	if isReconnecting {
-		c.saveAndDisplayMessage("", i18n.Local("Your connection was restored."), time.Now(), data.Connected)
-	} else {
+func (c *roomViewConversation) selfOccupantJoinedEvent(nickname string, r data.Role) {
+	go c.waitForDiscussionHistoryAndJoin(r, func() {
+		c.enableSendCapabilitiesIfHasVoice(r.HasVoice())
 		c.handleOccupantJoinedRoom(nickname)
-	}
+	})
+}
+
+// waitForDiscussionHistoryAndJoin MUST NOT be called from the UI thread
+// The given argument `onDiscussionHistoryPrinted` WILL be called from the UI thread
+func (c *roomViewConversation) waitForDiscussionHistoryAndJoin(r data.Role, onDiscussionHistoryPrinted func()) {
+	<-c.historyPrinted
+	doInUIThread(onDiscussionHistoryPrinted)
+	c.selfOccupantJoined <- true
 }
 
 func (c *roomViewConversation) occupantUpdatedEvent(nickname string, r data.Role) {

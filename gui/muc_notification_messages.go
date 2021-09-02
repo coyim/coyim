@@ -682,7 +682,7 @@ func getSelfRoleUpdateMessageWithoutActor(selfRoleUpdate data.SelfRoleUpdate) st
 	case selfRoleUpdate.Previous.IsModerator() && selfRoleUpdate.New.IsParticipant():
 		return i18n.Local("Your role was changed from $role{moderator} to $role{participant}.")
 	case selfRoleUpdate.New.IsNone():
-		return i18n.Local("You have been $role{expelled}.")
+		return i18n.Local("You have been expelled.")
 	}
 	return i18n.Local("Your role was changed.")
 }
@@ -718,7 +718,7 @@ func getSelfRoleUpdateMessageForOwnerActor(selfRoleUpdate data.SelfRoleUpdate) s
 		return i18n.Localf("The owner $nickname{%s} changed your role from $role{moderator} to $role{participant}.",
 			selfRoleUpdate.Actor.Nickname)
 	case selfRoleUpdate.New.IsNone():
-		return i18n.Localf("The owner $nickname{%s} has $role{expelled} you from the room.",
+		return i18n.Localf("The owner $nickname{%s} has expelled you from the room.",
 			selfRoleUpdate.Actor.Nickname)
 	}
 	return i18n.Localf("The owner $nickname{%s} changed your role.",
@@ -746,7 +746,7 @@ func getSelfRoleUpdateMessageForAdminActor(selfRoleUpdate data.SelfRoleUpdate) s
 		return i18n.Localf("The administrator $nickname{%s} changed your role from $role{moderator} to $role{participant}.",
 			selfRoleUpdate.Actor.Nickname)
 	case selfRoleUpdate.New.IsNone():
-		return i18n.Localf("The administrator $nickname{%s} has $role{expelled} you from the room.",
+		return i18n.Localf("The administrator $nickname{%s} has expelled you from the room.",
 			selfRoleUpdate.Actor.Nickname)
 	}
 	return i18n.Localf("The administrator $nickname{%s} changed your role.",
@@ -774,7 +774,7 @@ func getSelfRoleUpdateMessageForActor(selfRoleUpdate data.SelfRoleUpdate) string
 		return i18n.Localf("$nickname{%s} changed your role from $role{moderator} to $role{participant}.",
 			selfRoleUpdate.Actor.Nickname)
 	case selfRoleUpdate.New.IsNone():
-		return i18n.Localf("$nickname{%s} has $role{expelled} you from the room.",
+		return i18n.Localf("$nickname{%s} has expelled you from the room.",
 			selfRoleUpdate.Actor.Nickname)
 	}
 	return i18n.Localf("$nickname{%s} changed your role.",

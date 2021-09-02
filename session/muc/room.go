@@ -130,10 +130,14 @@ func (r *Room) SetProperties(p data.RoomDiscoInfo) {
 // SubjectCanBeChanged returns true if the subject of the room can be changed,
 // specifically by the self occupant of the room.
 func (r *Room) SubjectCanBeChanged() bool {
-	if r.IsSelfOccupantInTheRoom() {
-		roomSelfOccupant := r.SelfOccupant()
-		return !roomSelfOccupant.Role.IsVisitor() && (roomSelfOccupant.Role.IsModerator() || r.properties.OccupantsCanChangeSubject)
+	occupantsCanChangeSubject := r.properties.OccupantsCanChangeSubject
+
+	roomSelfOccupant := r.SelfOccupant()
+	if roomSelfOccupant != nil {
+		role := roomSelfOccupant.Role
+		return !role.IsVisitor() && (role.IsModerator() || occupantsCanChangeSubject)
 	}
+
 	return false
 }
 
@@ -148,9 +152,8 @@ func (r *Room) SetUpRoomOnStatusConnected() {
 
 // SetUpRoomOnStatusDisconnected sets appropriate values when an occupant loses connection to the room
 func (r *Room) SetUpRoomOnStatusDisconnected() {
-	if r.IsSelfOccupantInTheRoom() {
-		roomSelfOccupant := r.SelfOccupant()
-
+	roomSelfOccupant := r.SelfOccupant()
+	if roomSelfOccupant != nil {
 		roomSelfOccupant.ChangeAffiliationToNone()
 		roomSelfOccupant.ChangeRoleToNone()
 	}

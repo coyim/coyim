@@ -1,7 +1,5 @@
 package gui
 
-import "github.com/coyim/gotk3adapter/gtki"
-
 // [ps] All this file MUST doesn't make sense and we should remove the
 // use of the `roomConfigPositionsField` struct.
 
@@ -9,27 +7,9 @@ type roomConfigPositionsField struct {
 	*roomConfigFieldPositions
 }
 
+// [ps] Whoever is using this initializer should now call `newRoomConfigFieldPositions` directly
 func newRoomConfigPositionsField(options roomConfigPositionsOptions) hasRoomConfigFormField {
-	rcpf := &roomConfigPositionsField{
+	return &roomConfigPositionsField{
 		newRoomConfigFieldPositions(options),
 	}
-
-	rcpf.initPositionsLists(options.parentWindow)
-
-	return rcpf
-}
-
-func (rcpf *roomConfigPositionsField) initPositionsLists(parent gtki.Window) {
-	rcpf.positionsListController = newMUCRoomConfigListController(&mucRoomConfigListControllerData{
-		addOccupantButton:      rcpf.positionsAddButton,
-		removeOccupantButton:   rcpf.positionsRemoveButton,
-		removeOccupantLabel:    rcpf.positionsRemoveLabel,
-		occupantsTreeView:      rcpf.positionsList,
-		parentWindow:           parent,
-		addOccupantDialogTitle: getFieldTextByAffiliation(rcpf.affiliation).dialogTitle,
-		addOccupantDescription: getFieldTextByAffiliation(rcpf.affiliation).dialogDescription,
-		onListUpdated:          rcpf.refreshContentLists,
-	})
-
-	rcpf.addItemsToListController()
 }

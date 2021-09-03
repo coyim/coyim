@@ -38,6 +38,7 @@ type roomConfigFieldPositions struct {
 
 	positionsListController *mucRoomConfigListController
 	onListChanged           *callbacksSet
+	onRefreshContentLists   *callbacksSet
 }
 
 func newRoomConfigFieldPositions(options roomConfigPositionsOptions) *roomConfigFieldPositions {
@@ -48,9 +49,11 @@ func newRoomConfigFieldPositions(options roomConfigPositionsOptions) *roomConfig
 		updateRemovedOccupantList: options.setRemovedOccupantList,
 		showErrorNotification:     options.displayErrors,
 		onListChanged:             newCallbacksSet(),
+		onRefreshContentLists:     newCallbacksSet(),
 	}
 
 	rcp.loadUIDefinition()
+	rcp.createPositionsListsController(options.parentWindow)
 	rcp.initDefaults()
 
 	return rcp
@@ -68,6 +71,22 @@ func (p *roomConfigFieldPositions) connectUISignals(b *builder) {
 
 func (p *roomConfigFieldPositions) loadUIDefinition() {
 	buildUserInterface("MUCRoomConfigFieldPositions", p, p.setUIBuilder, p.connectUISignals)
+}
+
+// createPositionsListsController MUST be called from the UI thread
+func (p *roomConfigFieldPositions) createPositionsListsController(parent gtki.Window) {
+	p.positionsListController = newMUCRoomConfigListController(&mucRoomConfigListControllerData{
+		addOccupantButton:      p.positionsAddButton,
+		removeOccupantButton:   p.positionsRemoveButton,
+		removeOccupantLabel:    p.positionsRemoveLabel,
+		occupantsTreeView:      p.positionsList,
+		parentWindow:           parent,
+		addOccupantDialogTitle: getFieldTextByAffiliation(p.affiliation).dialogTitle,
+		addOccupantDescription: getFieldTextByAffiliation(p.affiliation).dialogDescription,
+		onListUpdated:          p.refreshContentLists,
+	})
+
+	p.addItemsToListController()
 }
 
 func (p *roomConfigFieldPositions) initDefaults() {
@@ -91,6 +110,7 @@ func (p *roomConfigFieldPositions) addItemsToListController() {
 
 func (p *roomConfigFieldPositions) refreshContentLists() {
 	p.positionsListContent.SetVisible(p.positionsListController.hasItems())
+	p.onRefreshContentLists.invokeAll()
 }
 
 func (p *roomConfigFieldPositions) onOccupantJidEdited(_ gtki.CellRendererText, path string, newValue string) {

@@ -15,7 +15,6 @@ func (m *mucManager) receiveClientMessage(stanza *xmppData.ClientMessage) {
 	// See https://xmpp.org/extensions/xep-0045.html#order
 	switch {
 	case isRoomSubject(stanza):
-		m.handleDiscussionHistory(stanza)
 		m.handleSubjectReceived(stanza)
 	case isDelayedMessage(stanza):
 		m.handleMessageReceived(stanza, m.appendHistoryMessage)
@@ -64,6 +63,7 @@ func (m *mucManager) handleSubjectReceived(stanza *xmppData.ClientMessage) {
 		return
 	}
 
+	m.handleDiscussionHistory(stanza)
 	m.subjectReceived(roomID, s)
 	m.joinedRoomFinished(roomID)
 }

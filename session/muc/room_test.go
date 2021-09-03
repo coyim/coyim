@@ -149,7 +149,7 @@ func (s *MucSuite) Test_Room_Connect(c *C) {
 		}
 	})
 
-	go r.SetUpRoomOnStatusConnected()
+	go r.OnStatusConnected()
 
 	connectedEventCalledOk := <-connectedEventCalled
 
@@ -170,7 +170,7 @@ func (s *MucSuite) Test_Room_Disconnect(c *C) {
 		}
 	})
 
-	go r.SetUpRoomOnStatusDisconnected()
+	go r.OnStatusDisconnected()
 
 	disconnectedEventCalledOk := <-disconnectedEventCalled
 

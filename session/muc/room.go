@@ -141,8 +141,8 @@ func (r *Room) SubjectCanBeChanged() bool {
 	return false
 }
 
-// SetUpRoomOnStatusConnected sets the room's initial values when a new connection is established
-func (r *Room) SetUpRoomOnStatusConnected() {
+// OnStatusConnected sets the room's initial values when a new connection is established
+func (r *Room) OnStatusConnected() {
 	r.roster.reset()
 
 	r.subjectIsNew = true
@@ -150,8 +150,8 @@ func (r *Room) SetUpRoomOnStatusConnected() {
 	r.Publish(events.MUCSelfOccupantConnected{})
 }
 
-// SetUpRoomOnStatusDisconnected sets appropriate values when an occupant loses connection to the room
-func (r *Room) SetUpRoomOnStatusDisconnected() {
+// OnStatusDisconnected sets appropriate values when an occupant loses connection to the room
+func (r *Room) OnStatusDisconnected() {
 	roomSelfOccupant := r.SelfOccupant()
 	if roomSelfOccupant != nil {
 		roomSelfOccupant.ChangeAffiliationToNone()

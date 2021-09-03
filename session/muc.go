@@ -364,13 +364,13 @@ func (m *mucManager) retrieveRoomIDAndNickname(from string) (jid.Bare, string) {
 
 func (m *mucManager) onStatusConnected() {
 	for _, r := range m.roomManager.GetAllRooms() {
-		r.SetUpRoomOnStatusConnected()
+		r.OnStatusConnected()
 	}
 }
 
 func (m *mucManager) onStatusDisconnected() {
 	for _, r := range m.roomManager.GetAllRooms() {
-		r.SetUpRoomOnStatusDisconnected()
+		r.OnStatusDisconnected()
 	}
 }
 

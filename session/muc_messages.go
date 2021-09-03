@@ -99,7 +99,7 @@ func isLiveMessage(stanza *xmppData.ClientMessage) bool {
 }
 
 func isRoomSubject(stanza *xmppData.ClientMessage) bool {
-	return stanza.Subject != nil
+	return stanza.Subject != nil && stanza.Body == ""
 }
 
 func hasMUCUserExtension(stanza *xmppData.ClientMessage) bool {

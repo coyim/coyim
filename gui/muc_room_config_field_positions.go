@@ -19,6 +19,7 @@ type roomConfigPositionsOptions struct {
 	parentWindow           gtki.Window
 }
 
+// [ps] Rename this struct to `roomConfigFieldPositions` to fix naming problems in this file
 type roomConfigPositions struct {
 	builder                   *builder
 	affiliation               data.Affiliation
@@ -55,7 +56,9 @@ func newRoomConfigPositionsComponent(options roomConfigPositionsOptions) *roomCo
 }
 
 func (p *roomConfigPositions) initBuilder() {
-	p.builder = newBuilder("MUCRoomConfigAssistantFieldPositions")
+	// [ps] This is going to change to the new builder initialization pattern
+	// using the helper `buildUserInterface`
+	p.builder = newBuilder("MUCRoomConfigFieldPositions")
 	panicOnDevError(p.builder.bindObjects(p))
 }
 

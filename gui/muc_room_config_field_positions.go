@@ -49,17 +49,18 @@ func newRoomConfigPositionsComponent(options roomConfigPositionsOptions) *roomCo
 		showErrorNotification:     options.displayErrors,
 	}
 
-	rcp.initBuilder()
+	rcp.loadUIDefinition()
 	rcp.initDefaults()
 
 	return rcp
 }
 
-func (p *roomConfigPositions) initBuilder() {
-	// [ps] This is going to change to the new builder initialization pattern
-	// using the helper `buildUserInterface`
-	p.builder = newBuilder("MUCRoomConfigFieldPositions")
-	panicOnDevError(p.builder.bindObjects(p))
+func (p *roomConfigPositions) setUIBuilder(b *builder) {
+	p.builder = b
+}
+
+func (p *roomConfigPositions) loadUIDefinition() {
+	buildUserInterface("MUCRoomConfigFieldPositions", p, p.setUIBuilder)
 }
 
 type roomConfigPositionsWithApplyButton struct {
@@ -73,13 +74,13 @@ func newRoomConfigPositionsWithApplyButton(applyButton gtki.Button, options room
 		applyButton:         applyButton,
 	}
 
-	rcpb.initBuilderSignals()
+	rcpb.connectUISignals()
 	rcpb.initPositionsLists(options.parentWindow)
 
 	return rcpb
 }
 
-func (rcpb *roomConfigPositionsWithApplyButton) initBuilderSignals() {
+func (rcpb *roomConfigPositionsWithApplyButton) connectUISignals() {
 	rcpb.builder.ConnectSignals(map[string]interface{}{
 		"on_jid_edited": rcpb.onOccupantJidEdited,
 	})
@@ -126,13 +127,13 @@ func newRoomConfigPositionsField(options roomConfigPositionsOptions) hasRoomConf
 		newRoomConfigPositionsComponent(options),
 	}
 
-	rcpf.initBuilderSignals()
+	rcpf.connectUISignals()
 	rcpf.initPositionsLists(options.parentWindow)
 
 	return rcpf
 }
 
-func (rcpf *roomConfigPositionsField) initBuilderSignals() {
+func (rcpf *roomConfigPositionsField) connectUISignals() {
 	rcpf.builder.ConnectSignals(map[string]interface{}{
 		"on_jid_edited": rcpf.onOccupantJidEdited,
 	})

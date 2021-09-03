@@ -3,7 +3,6 @@ package gui
 import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/session"
 
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
@@ -561,10 +560,6 @@ func (v *roomView) hideMainView() {
 // sendJoinRoomRequest MUST NOT be called from the UI thread
 func (v *roomView) sendJoinRoomRequest(nickname, password string, doAfterRequestSent func()) {
 	err := v.account.session.JoinRoom(v.roomID(), nickname, password)
-	if err == session.ErrMUCJoinRoomInvalidNickname {
-		err = v.invalidNicknameError()
-	}
-
 	if err != nil {
 		v.finishJoinRequestWithError(err)
 	}

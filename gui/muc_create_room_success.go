@@ -22,7 +22,8 @@ type mucCreateRoomViewSuccess struct {
 	roomID       jid.Bare
 	joinRoomData roomViewDataProvider
 
-	view gtki.Box `gtk-widget:"createRoomSuccess"`
+	icon gtki.Image `gtk-widget:"createRoomSuccessImage"`
+	view gtki.Box   `gtk-widget:"createRoomSuccess"`
 }
 
 func (v *mucCreateRoomView) newCreateRoomSuccess() *mucCreateRoomViewSuccess {
@@ -41,6 +42,8 @@ func (v *mucCreateRoomView) newCreateRoomSuccess() *mucCreateRoomViewSuccess {
 			go v.joinRoom(s.ca, s.roomID, s.joinRoomData)
 		},
 	})
+
+	s.icon.SetFromPixbuf(getMUCIconPixbuf("dialog_ok"))
 
 	return s
 }

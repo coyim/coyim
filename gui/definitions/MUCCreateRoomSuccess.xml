@@ -14,7 +14,7 @@
         <property name="orientation">vertical</property>
         <property name="spacing">20</property>
         <child>
-          <object class="GtkImage">
+          <object class="GtkImage" id="createRoomSuccessImage">
             <property name="pixel_size">60</property>
             <property name="icon_name">dialog-ok</property>
             <property name="use_fallback">True</property>

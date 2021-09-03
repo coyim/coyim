@@ -69,7 +69,7 @@ func (v *mucCreateRoomView) createInstantRoom(ca *account, roomID jid.Bare, errH
 
 	onError := func(err error) {
 		v.log(ca, roomID).WithError(err).Error("Something went wrong when trying to create the instant room")
-		errHandler(errCreateRoomFailed)
+		errHandler(err)
 	}
 
 	ca.createInstantRoom(roomID, onSuccess, onError)

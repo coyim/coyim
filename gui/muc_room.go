@@ -56,10 +56,10 @@ type roomView struct {
 
 	cancel chan bool
 
-	opened                    bool
-	passwordProvider          func() string
-	backToPreviousStep        func()
-	doWhenJoinRequestFinished func() // doWhenJoinRequestFinished WILL be called from the UI thread
+	opened             bool
+	passwordProvider   func() string
+	backToPreviousStep func()
+	onJoinFinished     func() // onJoinFinished WILL be called from the UI thread
 
 	notifications *roomNotifications
 
@@ -88,7 +88,7 @@ func (u *gtkUI) newRoomView(a *account, room *muc.Room) *roomView {
 		log:     a.log.WithField("room", room.ID),
 	}
 
-	view.doWhenJoinRequestFinished = func() {
+	view.onJoinFinished = func() {
 		view.enteredAtLeastOnce = true
 	}
 
@@ -583,8 +583,8 @@ func (v *roomView) finishJoinRequestWithError(err error) {
 
 // finishJoinRequest MUST be called from the UI thread
 func (v *roomView) finishJoinRequest() {
-	if v.doWhenJoinRequestFinished != nil {
-		v.doWhenJoinRequestFinished()
+	if v.onJoinFinished != nil {
+		v.onJoinFinished()
 	}
 
 	v.loadingViewOverlay.hide()
@@ -739,22 +739,22 @@ func (v *roomView) requestRoomInfoOnReconnect() {
 	v.isReconnecting = true
 	v.account.session.RefreshRoomProperties(v.roomID())
 
-	previousJoinRequestFn := v.doWhenJoinRequestFinished
-	v.doWhenJoinRequestFinished = func() {
+	previousOnJoinFinished := v.onJoinFinished
+	v.onJoinFinished = func() {
 		doInUIThread(func() {
 			v.notifications.clearAll()
-			v.roomReconnectFinished(previousJoinRequestFn)
+			v.roomReconnectFinished(previousOnJoinFinished)
 		})
 	}
 }
 
 // roomReconnectFinished MUST be called from the UI thread
-func (v *roomView) roomReconnectFinished(previousJoinRequestFn func()) {
+func (v *roomView) roomReconnectFinished(previousOnJoinFinished func()) {
 	v.isReconnecting = false
 
-	v.doWhenJoinRequestFinished = previousJoinRequestFn
-	if v.doWhenJoinRequestFinished != nil {
-		v.doWhenJoinRequestFinished()
+	v.onJoinFinished = previousOnJoinFinished
+	if v.onJoinFinished != nil {
+		v.onJoinFinished()
 	}
 }
 

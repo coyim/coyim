@@ -78,6 +78,13 @@ func removeMarginFromAssistantPages(a gtki.Assistant) {
 func setAssistantSidebarContent(a gtki.Assistant, content gtki.Widget) {
 	if sidebar, err := a.GetSidebar(); err == nil {
 		for _, ch := range sidebar.GetChildren() {
+			// It seems that the assistant keeps references to these labels in
+			// other structures, so if we remove them from the sidebar,
+			// the ref count will go down. However, this means that these will be
+			// freed - but when the assistant later tries to use them for various
+			// purposes, things will crash. By adding an extra reference here we
+			// stop that from happening.
+			ch.Ref()
 			sidebar.Remove(ch)
 		}
 		sidebar.PackStart(content, false, false, 0)

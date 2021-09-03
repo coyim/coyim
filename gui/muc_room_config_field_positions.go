@@ -19,8 +19,7 @@ type roomConfigPositionsOptions struct {
 	parentWindow           gtki.Window
 }
 
-// [ps] Rename this struct to `roomConfigFieldPositions` to fix naming problems in this file
-type roomConfigPositions struct {
+type roomConfigFieldPositions struct {
 	builder                   *builder
 	affiliation               data.Affiliation
 	originalOccupantsList     muc.RoomOccupantItemList
@@ -40,8 +39,8 @@ type roomConfigPositions struct {
 	positionsListController *mucRoomConfigListController
 }
 
-func newRoomConfigPositionsComponent(options roomConfigPositionsOptions) *roomConfigPositions {
-	rcp := &roomConfigPositions{
+func newRoomConfigFieldPositions(options roomConfigPositionsOptions) *roomConfigFieldPositions {
+	rcp := &roomConfigFieldPositions{
 		affiliation:               options.affiliation,
 		originalOccupantsList:     options.occupantList,
 		setOccupantList:           options.setOccupantList,
@@ -55,23 +54,23 @@ func newRoomConfigPositionsComponent(options roomConfigPositionsOptions) *roomCo
 	return rcp
 }
 
-func (p *roomConfigPositions) setUIBuilder(b *builder) {
+func (p *roomConfigFieldPositions) setUIBuilder(b *builder) {
 	p.builder = b
 }
 
-func (p *roomConfigPositions) loadUIDefinition() {
+func (p *roomConfigFieldPositions) loadUIDefinition() {
 	buildUserInterface("MUCRoomConfigFieldPositions", p, p.setUIBuilder)
 }
 
 type roomConfigPositionsWithApplyButton struct {
-	*roomConfigPositions
+	*roomConfigFieldPositions
 	applyButton gtki.Button
 }
 
 func newRoomConfigPositionsWithApplyButton(applyButton gtki.Button, options roomConfigPositionsOptions) hasRoomConfigFormField {
 	rcpb := &roomConfigPositionsWithApplyButton{
-		roomConfigPositions: newRoomConfigPositionsComponent(options),
-		applyButton:         applyButton,
+		roomConfigFieldPositions: newRoomConfigFieldPositions(options),
+		applyButton:              applyButton,
 	}
 
 	rcpb.connectUISignals()
@@ -103,13 +102,13 @@ func (rcpb *roomConfigPositionsWithApplyButton) initPositionsLists(parent gtki.W
 
 // refreshContentLists MUST be called from the UI thread
 func (rcpb *roomConfigPositionsWithApplyButton) refreshContentLists() {
-	rcpb.roomConfigPositions.refreshContentLists()
+	rcpb.roomConfigFieldPositions.refreshContentLists()
 	rcpb.enableOrDisableApplyButton()
 }
 
 // onOccupantJidEdited MUST be called from the UI thread
 func (rcpb *roomConfigPositionsWithApplyButton) onOccupantJidEdited(cell gtki.CellRendererText, path string, newValue string) {
-	rcpb.roomConfigPositions.onOccupantJidEdited(cell, path, newValue)
+	rcpb.roomConfigFieldPositions.onOccupantJidEdited(cell, path, newValue)
 	rcpb.enableOrDisableApplyButton()
 }
 
@@ -119,12 +118,12 @@ func (rcpb *roomConfigPositionsWithApplyButton) enableOrDisableApplyButton() {
 }
 
 type roomConfigPositionsField struct {
-	*roomConfigPositions
+	*roomConfigFieldPositions
 }
 
 func newRoomConfigPositionsField(options roomConfigPositionsOptions) hasRoomConfigFormField {
 	rcpf := &roomConfigPositionsField{
-		newRoomConfigPositionsComponent(options),
+		newRoomConfigFieldPositions(options),
 	}
 
 	rcpf.connectUISignals()
@@ -154,18 +153,18 @@ func (rcpf *roomConfigPositionsField) initPositionsLists(parent gtki.Window) {
 	rcpf.addItemsToListController()
 }
 
-func (p *roomConfigPositions) initDefaults() {
+func (p *roomConfigFieldPositions) initDefaults() {
 	p.initPositionLabels()
 	mucStyles.setHelpTextStyle(p.content)
 }
 
-func (p *roomConfigPositions) initPositionLabels() {
+func (p *roomConfigFieldPositions) initPositionLabels() {
 	p.header.SetText(getFieldTextByAffiliation(p.affiliation).headerLabel)
 	p.description.SetText(getFieldTextByAffiliation(p.affiliation).descriptionLabel)
 }
 
 // addItemsToListController MUST be called from the UI thread
-func (p *roomConfigPositions) addItemsToListController() {
+func (p *roomConfigFieldPositions) addItemsToListController() {
 	jids := []string{}
 	for _, o := range p.originalOccupantsList {
 		jids = append(jids, o.Jid.String())
@@ -173,15 +172,15 @@ func (p *roomConfigPositions) addItemsToListController() {
 	p.positionsListController.listComponent.addListItems(jids)
 }
 
-func (p *roomConfigPositions) refreshContentLists() {
+func (p *roomConfigFieldPositions) refreshContentLists() {
 	p.positionsListContent.SetVisible(p.positionsListController.hasItems())
 }
 
-func (p *roomConfigPositions) onOccupantJidEdited(_ gtki.CellRendererText, path string, newValue string) {
+func (p *roomConfigFieldPositions) onOccupantJidEdited(_ gtki.CellRendererText, path string, newValue string) {
 	p.updateOccupantListCellForString(p.positionsListController, positionsListJidColumnIndex, path, newValue)
 }
 
-func (p *roomConfigPositions) updateOccupantListCellForString(controller *mucRoomConfigListController, column int, path string, newValue string) {
+func (p *roomConfigFieldPositions) updateOccupantListCellForString(controller *mucRoomConfigListController, column int, path string, newValue string) {
 	if controller.updateCellForString(column, path, newValue) {
 		log.WithFields(log.Fields{
 			"path":        path,
@@ -191,11 +190,11 @@ func (p *roomConfigPositions) updateOccupantListCellForString(controller *mucRoo
 	}
 }
 
-func (p *roomConfigPositions) updateFieldValue() {
+func (p *roomConfigFieldPositions) updateFieldValue() {
 	p.refreshOccupantLists(p.currentOccupantList())
 }
 
-func (p *roomConfigPositions) refreshOccupantLists(currentList muc.RoomOccupantItemList) {
+func (p *roomConfigFieldPositions) refreshOccupantLists(currentList muc.RoomOccupantItemList) {
 	occupantsList := muc.RoomOccupantItemList{}
 	for _, oi := range currentList {
 		oi.MustBeUpdated = p.isNewOccupant(oi)
@@ -214,11 +213,11 @@ func (p *roomConfigPositions) refreshOccupantLists(currentList muc.RoomOccupantI
 	p.updateRemovedOccupantList(deletedOccupantsList)
 }
 
-func (p *roomConfigPositions) isNewOccupant(o *muc.RoomOccupantItem) bool {
+func (p *roomConfigFieldPositions) isNewOccupant(o *muc.RoomOccupantItem) bool {
 	return !p.originalOccupantsList.IncludesJid(o.Jid)
 }
 
-func (p *roomConfigPositions) currentOccupantList() muc.RoomOccupantItemList {
+func (p *roomConfigFieldPositions) currentOccupantList() muc.RoomOccupantItemList {
 	positionsList := []*muc.RoomOccupantItem{}
 	for _, item := range p.positionsListController.listItems() {
 		positionsList = append(positionsList, &muc.RoomOccupantItem{
@@ -229,25 +228,25 @@ func (p *roomConfigPositions) currentOccupantList() muc.RoomOccupantItemList {
 	return positionsList
 }
 
-func (p *roomConfigPositions) showValidationErrors() {
+func (p *roomConfigFieldPositions) showValidationErrors() {
 	if p.showErrorNotification != nil {
 		p.showErrorNotification()
 	}
 }
 
-func (p *roomConfigPositions) fieldWidget() gtki.Widget {
+func (p *roomConfigFieldPositions) fieldWidget() gtki.Widget {
 	return p.content
 }
 
-func (p *roomConfigPositions) refreshContent() {
+func (p *roomConfigFieldPositions) refreshContent() {
 	p.refreshContentLists()
 }
 
-func (p *roomConfigPositions) isValid() bool {
+func (p *roomConfigFieldPositions) isValid() bool {
 	return !(p.affiliation.IsOwner() && len(p.originalOccupantsList) != 0 && len(p.currentOccupantList()) == 0)
 }
 
-func (p *roomConfigPositions) hasListChanged() bool {
+func (p *roomConfigFieldPositions) hasListChanged() bool {
 	ol := append(muc.RoomOccupantItemList{}, p.originalOccupantsList...)
 	cl := append(muc.RoomOccupantItemList{}, p.currentOccupantList()...)
 
@@ -265,6 +264,6 @@ func (p *roomConfigPositions) hasListChanged() bool {
 }
 
 // fieldKey implements the hasRoomConfigFormField interface
-func (p *roomConfigPositions) fieldKey() muc.RoomConfigFieldType {
+func (p *roomConfigFieldPositions) fieldKey() muc.RoomConfigFieldType {
 	return muc.RoomConfigFieldUnexpected
 }

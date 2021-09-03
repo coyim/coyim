@@ -4,6 +4,7 @@ import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc/data"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/golang-collections/collections/set"
 )
@@ -122,10 +123,10 @@ func (l *roomViewLobby) enableJoinIfConditionsAreMet() {
 
 // checkJoinConditions MUST be called from the UI thread
 func (l *roomViewLobby) checkJoinConditions() bool {
-	nicknameHasContent := getEntryText(l.nicknameEntry) != ""
+	nickname := jid.NewResource(getEntryText(l.nicknameEntry))
 	passwordHasContent := getEntryText(l.passwordEntry) != ""
 
-	return l.isReadyToJoinRoom && nicknameHasContent && l.isNotNicknameInConflictList() &&
+	return l.isReadyToJoinRoom && nickname.Valid() && l.isNotNicknameInConflictList() &&
 		(!l.isPasswordProtected || passwordHasContent)
 }
 

@@ -65,7 +65,7 @@ func (m *mucManager) handleSubjectReceived(stanza *xmppData.ClientMessage) {
 
 	m.handleDiscussionHistory(stanza)
 	m.subjectReceived(roomID, s)
-	m.joinedRoomFinished(roomID)
+	m.joinRoomFinished(roomID)
 }
 
 func (m *mucManager) handleMessageReceived(stanza *xmppData.ClientMessage, h func(jid.Bare, string, string, time.Time)) {

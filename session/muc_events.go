@@ -113,7 +113,7 @@ func (m *mucManager) subjectReceived(roomID jid.Bare, subject string) {
 	m.publishRoomEvent(roomID, ev)
 }
 
-func (m *mucManager) joinedRoomFinished(roomID jid.Bare) {
+func (m *mucManager) joinRoomFinished(roomID jid.Bare) {
 	ev := events.MUCJoinRoomFinished{}
 	m.publishRoomEvent(roomID, ev)
 }

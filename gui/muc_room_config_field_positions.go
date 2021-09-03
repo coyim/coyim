@@ -37,6 +37,7 @@ type roomConfigFieldPositions struct {
 	positionsRemoveLabel  gtki.Label    `gtk-widget:"room-config-position-remove-label"`
 
 	positionsListController *mucRoomConfigListController
+	onListChanged           *callbacksSet
 }
 
 func newRoomConfigFieldPositions(options roomConfigPositionsOptions) *roomConfigFieldPositions {
@@ -46,6 +47,7 @@ func newRoomConfigFieldPositions(options roomConfigPositionsOptions) *roomConfig
 		setOccupantList:           options.setOccupantList,
 		updateRemovedOccupantList: options.setRemovedOccupantList,
 		showErrorNotification:     options.displayErrors,
+		onListChanged:             newCallbacksSet(),
 	}
 
 	rcp.loadUIDefinition()
@@ -58,8 +60,14 @@ func (p *roomConfigFieldPositions) setUIBuilder(b *builder) {
 	p.builder = b
 }
 
+func (p *roomConfigFieldPositions) connectUISignals(b *builder) {
+	b.ConnectSignals(map[string]interface{}{
+		"on_jid_edited": p.onOccupantJidEdited,
+	})
+}
+
 func (p *roomConfigFieldPositions) loadUIDefinition() {
-	buildUserInterface("MUCRoomConfigFieldPositions", p, p.setUIBuilder)
+	buildUserInterface("MUCRoomConfigFieldPositions", p, p.setUIBuilder, p.connectUISignals)
 }
 
 func (p *roomConfigFieldPositions) initDefaults() {
@@ -87,6 +95,7 @@ func (p *roomConfigFieldPositions) refreshContentLists() {
 
 func (p *roomConfigFieldPositions) onOccupantJidEdited(_ gtki.CellRendererText, path string, newValue string) {
 	p.updateOccupantListCellForString(p.positionsListController, positionsListJidColumnIndex, path, newValue)
+	p.onListChanged.invokeAll()
 }
 
 func (p *roomConfigFieldPositions) updateOccupantListCellForString(controller *mucRoomConfigListController, column int, path string, newValue string) {

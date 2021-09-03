@@ -13,16 +13,11 @@ func newRoomConfigPositionsWithApplyButton(applyButton gtki.Button, options room
 		applyButton:              applyButton,
 	}
 
-	rcpb.connectUISignals()
+	rcpb.onListChanged.add(rcpb.enableOrDisableApplyButton)
+
 	rcpb.initPositionsLists(options.parentWindow)
 
 	return rcpb
-}
-
-func (rcpb *roomConfigPositionsWithApplyButton) connectUISignals() {
-	rcpb.builder.ConnectSignals(map[string]interface{}{
-		"on_jid_edited": rcpb.onOccupantJidEdited,
-	})
 }
 
 func (rcpb *roomConfigPositionsWithApplyButton) initPositionsLists(parent gtki.Window) {
@@ -44,12 +39,6 @@ func (rcpb *roomConfigPositionsWithApplyButton) initPositionsLists(parent gtki.W
 // refreshContentLists MUST be called from the UI thread
 func (rcpb *roomConfigPositionsWithApplyButton) refreshContentLists() {
 	rcpb.roomConfigFieldPositions.refreshContentLists()
-	rcpb.enableOrDisableApplyButton()
-}
-
-// onOccupantJidEdited MUST be called from the UI thread
-func (rcpb *roomConfigPositionsWithApplyButton) onOccupantJidEdited(cell gtki.CellRendererText, path string, newValue string) {
-	rcpb.roomConfigFieldPositions.onOccupantJidEdited(cell, path, newValue)
 	rcpb.enableOrDisableApplyButton()
 }
 

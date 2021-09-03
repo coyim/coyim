@@ -14,16 +14,9 @@ func newRoomConfigPositionsField(options roomConfigPositionsOptions) hasRoomConf
 		newRoomConfigFieldPositions(options),
 	}
 
-	rcpf.connectUISignals()
 	rcpf.initPositionsLists(options.parentWindow)
 
 	return rcpf
-}
-
-func (rcpf *roomConfigPositionsField) connectUISignals() {
-	rcpf.builder.ConnectSignals(map[string]interface{}{
-		"on_jid_edited": rcpf.onOccupantJidEdited,
-	})
 }
 
 func (rcpf *roomConfigPositionsField) initPositionsLists(parent gtki.Window) {

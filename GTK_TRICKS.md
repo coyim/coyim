@@ -91,3 +91,165 @@ I would like to have a better solution to this, where I can basically say that a
 sides, only vertically.
 
 PLEASE FILL IN YOUR SOLUTION HERE.
+
+
+## Get faster feedback about GTK warnings
+
+When you get warnings in the style of 
+
+```
+(CoyIM:19511): Gtk-CRITICAL **: 21:40:31.567: gtk_widget_set_visible: assertion 'GTK_IS_WIDGET (widget)' failed
+
+(CoyIM:19511): Gtk-CRITICAL **: 21:40:31.567: gtk_widget_set_visible: assertion 'GTK_IS_WIDGET (widget)' failed
+```
+
+It can sometimes be very hard to find where and why they are happening. By setting the environment variable `G_DEBUG` to
+`fatal_warnings`, the first such warning will crash the Go program and give you a helpful stack trace. You can invoke
+Coy in this way to make that happen easily:
+
+```
+G_DEBUG=fatal_warnings ./bin/coyim
+```
+
+
+## Get information about garbage collection problems
+
+Sometimes garbage collection will happen and cause problems, and sometimes Golang objects are freed too early, causing
+reference counting problems. One way of looking at these kinds of problems is to modify the Finalizer for GObject, to
+print information during finalization. In the `Take` method in `vendor/github.com/gotk3/gotk3/glib/glib.go`, I sometimes
+add this kind of code:
+
+```
+		refc := v.native().ref_count
+		if refc < 2 {
+			nm := v.TypeFromInstance().Name()
+			extra := ""
+			if nm == "GtkLabel" {
+				extra = HelperBla(v)
+			}
+			fmt.Printf("1. Finalizing object of type: %v (ref count: %d) extra: %s\n", nm, refc, extra)
+		}
+``
+
+This will print some useful information if the ref count is 1 or 0, indicating that the object will be freed.
+
+
+## Do Garbage Collection more often to provoke issues wit reference counting
+
+Sometimes you need to push the Garbage Collection a bit harder to see crashes in a consistent way. You can do this by
+adding this snippet of code to `main.go`:
+
+```
+	go func() {
+		for {
+			time.Sleep(100 * time.Millisecond)
+			runtime.GC()
+		}
+	}()
+
+```
+
+
+## To debug GTK objects, use this kind of print code
+
+Sometimes you need a deeper understanding of GTK objects. These snippets of code can be added to Gotk3 temporarily to
+print a bunch of information. Add more evolution to this code when you use it!
+
+```
+func genIn(indent int) string {
+	res := ""
+	for i := 0; i < indent; i++ {
+		res = res + " "
+	}
+	return res
+}
+
+func printCollection(indent int, v Container) {
+	v.GetChildren().Foreach(func(item interface{}) {
+		printAllNative(indent, item)
+	})
+}
+
+func (w *Widget) Print() {
+	printAllNative(0, w)
+}
+
+func printAllNative(indent int, v interface{}) {
+	switch vv := v.(type) {
+	case *Widget:
+		va, er := vv.TestGoValue()
+		if er != nil {
+			fmt.Printf(" GOT ERROR CONVERTING: %#v\n", va)
+		} else {
+			printAllNative(indent, va)
+		}
+	case *ScrolledWindow:
+		fmt.Printf("%sScrolledWindow(%#v) {\n", genIn(indent), vv.native())
+		printCollection(indent+1, vv.Bin.Container)
+		fmt.Printf("%s}\n", genIn(indent))
+	case *Viewport:
+		fmt.Printf("%sViewport(%#v) {\n", genIn(indent), vv.native())
+		printCollection(indent+1, vv.Bin.Container)
+		fmt.Printf("%s}\n", genIn(indent))
+	case *TextBuffer:
+		fmt.Printf("%sTextBuffer(%#v) {\n", genIn(indent), vv.native())
+	case *ListBox:
+		fmt.Printf("%sListBox(%#v) {\n", genIn(indent), vv.native())
+		printCollection(indent+1, vv.Container)
+		fmt.Printf("%s}\n", genIn(indent))
+	case *ListBoxRow:
+		fmt.Printf("%sListBoxRow(%#v) {\n", genIn(indent), vv.native())
+		printCollection(indent+1, vv.Bin.Container)
+		fmt.Printf("%s}\n", genIn(indent))
+	case *Box:
+		fmt.Printf("%sBox(%#v) {\n", genIn(indent), vv.native())
+		printCollection(indent+1, vv.Container)
+		fmt.Printf("%s}\n", genIn(indent))
+	case *Menu:
+		fmt.Printf("%sMenu(%#v)\n", genIn(indent), vv.native())
+	case *MenuItem:
+		fmt.Printf("%sMenuItem(%#v)\n", genIn(indent), vv.native())
+	case *SeparatorMenuItem:
+		fmt.Printf("%sSeparatorMenuItem(%#v)\n", genIn(indent), vv.native())
+	case *CheckMenuItem:
+		fmt.Printf("%sCheckMenuItem(%#v)\n", genIn(indent), vv.native())
+	case *HeaderBar:
+		fmt.Printf("%sHeaderBar(%#v) {\n", genIn(indent), vv.native())
+		printCollection(indent+1, vv.Container)
+		fmt.Printf("%s}\n", genIn(indent))
+	case *Label:
+		ttt, _ := vv.GetText()
+		fmt.Printf("%sLabel(%#v) Text=%s\n", genIn(indent), vv.native(), ttt)
+	case *Notebook:
+		fmt.Printf("%sNotebook(%#v) {\n", genIn(indent), vv.native())
+		printCollection(indent+1, vv.Container)
+		fmt.Printf("%s}\n", genIn(indent))
+	case *Overlay:
+		fmt.Printf("%sOverlay(%#v) {\n", genIn(indent), vv.native())
+		printCollection(indent+1, vv.Bin.Container)
+		fmt.Printf("%s}\n", genIn(indent))
+	case *Separator:
+		fmt.Printf("%sSeparator(%#v)\n", genIn(indent), vv.native())
+	case *SizeGroup:
+		fmt.Printf("%sSizeGroup(%#v)\n", genIn(indent), vv.native())
+	case *Spinner:
+		fmt.Printf("%sSpinner(%#v)\n", genIn(indent), vv.native())
+	case *CheckButton:
+		fmt.Printf("%sCheckButton(%#v)\n", genIn(indent), vv.native())
+	case *Grid:
+		fmt.Printf("%sGrid(%#v) {\n", genIn(indent), vv.native())
+		printCollection(indent+1, vv.Container)
+		fmt.Printf("%s}\n", genIn(indent))
+	default:
+		fmt.Printf("NO TYPE MATCH: %#v\n", vv)
+	}
+}
+```
+
+For this to work, you also need to add this snippet to the `glib` part of `gotk3`:
+
+```
+func (v *Object) TestGoValue() (interface{}, error) {
+       return v.goValue()
+}
+```

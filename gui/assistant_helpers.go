@@ -74,7 +74,7 @@ func removeMarginFromAssistantPages(a gtki.Assistant) {
 	}
 }
 
-// setAssistantSidebar MUST be called from the UI thread
+// setAssistantSidebarContent MUST be called from the UI thread
 func setAssistantSidebarContent(a gtki.Assistant, content gtki.Widget) {
 	if sidebar, err := a.GetSidebar(); err == nil {
 		for _, ch := range sidebar.GetChildren() {

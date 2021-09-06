@@ -771,3 +771,24 @@ func (s *RegisterSuite) Test_conn_createAccount_failsOnWritingToRawOut(c *C) {
 	c.Assert(hook.Entries[1].Level, Equals, log.DebugLevel)
 	c.Assert(hook.Entries[1].Message, Equals, "createAccount() - received the registration form")
 }
+
+func (s *RegisterSuite) Test_generateErrorForIQErrorResponse_returnsAnOldStyleBadRequestError(c *C) {
+	ee := data.StanzaError{
+		Condition: data.StanzaErrorCondition{
+			XMLName: xml.Name{
+				Space: "urn:ietf:params:xml:ns:xmpp-stanzas",
+				Local: "bad-request",
+			},
+		},
+	}
+
+	c.Assert(generateErrorForIQErrorResponse(ee, nil), Equals, ErrBadRequest)
+}
+
+func (s *RegisterSuite) Test_generateErrorForIQErrorResponse_returnsAnInternalServerError(c *C) {
+	ee := data.StanzaError{
+		MUCInternalServerError: &data.MUCInternalServerError{},
+	}
+
+	c.Assert(generateErrorForIQErrorResponse(ee, nil), Equals, ErrInternalServerError)
+}

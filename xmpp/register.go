@@ -121,23 +121,7 @@ func (c *conn) createAccount(user, password string) error {
 	}
 
 	if iq2.Type == "error" {
-		switch {
-		case iq2.Error.MUCConflict != nil:
-			return ErrUsernameConflict
-		case iq2.Error.MUCNotAcceptable != nil:
-			return ErrMissingRequiredRegistrationInfo
-		case iq2.Error.MUCNotAllowed != nil:
-			return ErrWrongCaptcha
-		default:
-			switch iq2.Error.Condition.XMLName.Local {
-			case "bad-request":
-				return ErrRegistrationFailed
-			case "resource-constraint":
-				return ErrResourceConstraint
-			default:
-				return ErrRegistrationFailed
-			}
-		}
+		return mapErrorToCreationError(generateErrorForIQErrorResponse(iq2.Error, ErrRegistrationFailed))
 	}
 
 	c.log.Debug("createAccount() - received a successful response")
@@ -189,31 +173,55 @@ func (c *conn) ChangePassword(username, server, password string) error {
 
 	// TODO: server can also return a form requiring more information from the user. This should be rendered.
 	if iq.Type == "error" {
-		if iq.Error.MUCNotAllowed != nil {
-			return ErrNotAllowed
-		}
-
-		if iq.Error.MUCNotAuthorized != nil {
-			return ErrNotAuthorized
-		}
-
-		if iq.Error.MUCBadRequest != nil {
-			return ErrBadRequest
-		}
-
-		if iq.Error.MUCInternalServerError != nil {
-			return ErrInternalServerError
-		}
-
-		switch iq.Error.Condition.XMLName.Local {
-		case "bad-request":
-			return ErrBadRequest
-		case "unexpected-request":
-			return ErrUnexpectedRequest
-		default:
-			return ErrChangePasswordFailed
-		}
+		return generateErrorForIQErrorResponse(iq.Error, ErrChangePasswordFailed)
 	}
 
 	return ErrChangePasswordFailed
+}
+
+func mapErrorToCreationError(e error) error {
+	switch e {
+	case ErrNotAllowed:
+		return ErrWrongCaptcha
+	case ErrBadRequest:
+		return ErrRegistrationFailed
+	}
+	return e
+}
+
+func generateErrorForIQErrorResponse(iqe data.StanzaError, def error) error {
+	if iqe.MUCNotAllowed != nil {
+		return ErrNotAllowed
+	}
+
+	if iqe.MUCNotAuthorized != nil {
+		return ErrNotAuthorized
+	}
+
+	if iqe.MUCBadRequest != nil {
+		return ErrBadRequest
+	}
+
+	if iqe.MUCInternalServerError != nil {
+		return ErrInternalServerError
+	}
+
+	if iqe.MUCConflict != nil {
+		return ErrUsernameConflict
+	}
+
+	if iqe.MUCNotAcceptable != nil {
+		return ErrMissingRequiredRegistrationInfo
+	}
+
+	switch iqe.Condition.XMLName.Local {
+	case "bad-request":
+		return ErrBadRequest
+	case "unexpected-request":
+		return ErrUnexpectedRequest
+	case "resource-constraint":
+		return ErrResourceConstraint
+	}
+
+	return def
 }

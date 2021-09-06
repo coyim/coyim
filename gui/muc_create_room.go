@@ -140,7 +140,9 @@ func (v *mucCreateRoomView) instantiatePersistentRoom(ca *account, roomID jid.Ba
 			go func() {
 				select {
 				case <-rc:
-					v.createReservedRoom(ca, roomID, onError)
+					doInUIThread(func() {
+						v.onReserveRoomFinished(ca, roomID, form)
+					})
 				case errorResponse := <-ec:
 					ca.log.WithError(errorResponse.Error()).Error("An error occurred when submitting the configuration form")
 				case <-time.After(timeoutThreshold):

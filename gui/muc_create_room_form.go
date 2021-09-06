@@ -12,6 +12,8 @@ import (
 func (v *mucCreateRoomView) initCreateRoomForm(d *mucCreateRoomData) {
 	f := v.newCreateRoomForm()
 
+	f.addCallbacks(v)
+
 	if d != nil {
 		f.roomFormComponent.setCurrentAccount(d.ca)
 		f.roomFormComponent.setCurrentRoomName(d.roomName)
@@ -25,8 +27,6 @@ func (v *mucCreateRoomView) initCreateRoomForm(d *mucCreateRoomData) {
 			f.onCreateRoomError(roomID, err)
 		})
 	}
-
-	f.addCallbacks(v)
 
 	v.form = f
 }

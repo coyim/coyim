@@ -145,7 +145,7 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 	case roomConfigRequestTimeoutEvent:
 		v.roomConfigRequestTimeoutEvent()
 	case joinRoomFinishedEvent:
-		v.finishJoinRequest()
+		v.joinRoomFinishedEvent()
 	case selfOccupantAffiliationUpdatedEvent:
 		v.selfOccupantAffiliationUpdatedEvent(t.selfAffiliationUpdate)
 	case selfOccupantAffiliationRoleUpdatedEvent:
@@ -581,8 +581,8 @@ func (v *roomView) finishJoinRequestWithError(err error) {
 	})
 }
 
-// finishJoinRequest MUST be called from the UI thread
-func (v *roomView) finishJoinRequest() {
+// joinRoomFinishedEvent MUST be called from the UI thread
+func (v *roomView) joinRoomFinishedEvent() {
 	if v.onJoinFinished != nil {
 		v.onJoinFinished()
 	}

@@ -35,14 +35,14 @@ func (*MucRoomManagerSuite) Test_RoomManager_AddRoom(c *C) {
 	c.Assert(ok, Equals, false)
 }
 
-func (*MucRoomManagerSuite) Test_RoomManager_LeaveRoom(c *C) {
+func (*MucRoomManagerSuite) Test_RoomManager_DeleteRoom(c *C) {
 	rr := NewRoomManager()
 	_ = rr.AddRoom(&Room{ID: jid.ParseBare("foo@bar.com")})
 
-	ok := rr.LeaveRoom(jid.ParseBare("somewhere@bar.com"))
+	ok := rr.DeleteRoom(jid.ParseBare("somewhere@bar.com"))
 	c.Assert(ok, Equals, false)
 
-	ok = rr.LeaveRoom(jid.ParseBare("foo@bar.com"))
+	ok = rr.DeleteRoom(jid.ParseBare("foo@bar.com"))
 	c.Assert(ok, Equals, true)
 }
 

@@ -179,7 +179,7 @@ func (s *session) LeaveRoom(roomID jid.Bare, nickname string) (<-chan bool, <-ch
 }
 
 func (m *mucManager) deleteRoomFromManager(roomID jid.Bare) {
-	if !m.roomManager.LeaveRoom(roomID) {
+	if !m.roomManager.DeleteRoom(roomID) {
 		m.log.WithField("room", roomID).Error("Trying to leave a room that is not present in the manager")
 	}
 }

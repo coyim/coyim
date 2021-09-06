@@ -312,6 +312,7 @@ func (r *roomViewRosterInfo) show() {
 
 // show MUST be called from the UI thread
 func (r *roomViewRosterInfo) hide() {
+	r.view.Hide()
 	r.rosterView.hideRosterInfoPanel()
 	r.removeOccupantEvents()
 	r.reset()

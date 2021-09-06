@@ -22,36 +22,6 @@ func (a *account) createInstantRoom(roomID jid.Bare, onSuccess func(), onError f
 	}()
 }
 
-// createReservedRoom IS SAFE to be called from the UI thread
-func (a *account) createReservedRoom(roomID jid.Bare, onSuccess func(jid.Bare, *muc.RoomConfigForm), onError func(error)) {
-	fc, ec := a.session.CreateReservedRoom(roomID)
-	go func() {
-		select {
-		case err := <-ec:
-			onError(err)
-		case form := <-fc:
-			onSuccess(roomID, form)
-		case <-time.After(timeoutThreshold):
-			onError(errCreateRoomTimeout)
-		}
-	}()
-}
-
-func (v *mucCreateRoomView) createReservedRoom(ca *account, roomID jid.Bare, errHandler func(error)) {
-	onSuccess := func(roomID jid.Bare, cf *muc.RoomConfigForm) {
-		doInUIThread(func() {
-			v.onReserveRoomFinished(ca, roomID, cf)
-		})
-	}
-
-	onError := func(err error) {
-		v.log(ca, roomID).WithError(err).Error("Something went wrong when trying to reserve the room")
-		errHandler(errCreateRoomFailed)
-	}
-
-	ca.createReservedRoom(roomID, onSuccess, onError)
-}
-
 func (v *mucCreateRoomView) createInstantRoom(ca *account, roomID jid.Bare, errHandler func(error)) {
 	d := &mucCreateRoomData{
 		autoJoin:      v.autoJoin,

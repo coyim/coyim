@@ -324,7 +324,8 @@ func (r *roomViewRosterInfo) isOpen() bool {
 }
 
 func (r *roomViewRosterInfo) isTheSameOccupant(nickname string) bool {
-	return r.occupant != nil && r.occupant.Nickname == nickname
+	o, ok := r.rosterView.occupantFromRoster(nickname)
+	return ok && r.occupant == o
 }
 
 // selfOccupantUpdateEvent MUST be called from the UI thread

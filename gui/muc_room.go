@@ -144,7 +144,7 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 		v.roomDiscoInfoReceivedEvent(t.info)
 	case roomConfigRequestTimeoutEvent:
 		v.roomConfigRequestTimeoutEvent()
-	case joinRoomFinished:
+	case joinRoomFinishedEvent:
 		v.finishJoinRequest()
 	case selfOccupantAffiliationUpdatedEvent:
 		v.selfOccupantAffiliationUpdatedEvent(t.selfAffiliationUpdate)

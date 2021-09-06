@@ -77,7 +77,7 @@ type subjectReceivedEvent struct {
 	isReconnecting bool
 }
 
-type joinRoomFinished struct {
+type joinRoomFinishedEvent struct {
 	isReconnecting bool
 }
 
@@ -158,7 +158,7 @@ func (selfOccupantJoinedEvent) markAsRoomViewEvent()                 {}
 func (messageEvent) markAsRoomViewEvent()                            {}
 func (subjectUpdatedEvent) markAsRoomViewEvent()                     {}
 func (subjectReceivedEvent) markAsRoomViewEvent()                    {}
-func (joinRoomFinished) markAsRoomViewEvent()                        {}
+func (joinRoomFinishedEvent) markAsRoomViewEvent()                   {}
 func (nicknameConflictEvent) markAsRoomViewEvent()                   {}
 func (registrationRequiredEvent) markAsRoomViewEvent()               {}
 func (loggingEnabledEvent) markAsRoomViewEvent()                     {}

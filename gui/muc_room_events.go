@@ -37,7 +37,7 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 	case events.MUCSubjectReceived:
 		v.publishSubjectReceivedEvent(t.Subject)
 	case events.MUCJoinRoomFinished:
-		v.publishEvent(joinRoomFinished{
+		v.publishEvent(joinRoomFinishedEvent{
 			isReconnecting: v.isReconnecting,
 		})
 	case events.MUCLoggingEnabled:

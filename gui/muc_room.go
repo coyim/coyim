@@ -59,7 +59,7 @@ type roomView struct {
 	opened             bool
 	passwordProvider   func() string
 	backToPreviousStep func()
-	onJoinFinished     func() // onJoinFinished WILL be called from the UI thread
+	onJoinFinished     *callbacksSet // onJoinFinished WILL be called from the UI thread
 
 	notifications *roomNotifications
 
@@ -88,9 +88,9 @@ func (u *gtkUI) newRoomView(a *account, room *muc.Room) *roomView {
 		log:     a.log.WithField("room", room.ID),
 	}
 
-	view.onJoinFinished = func() {
+	view.onJoinFinished = newCallbacksSet(func() {
 		view.enteredAtLeastOnce = true
-	}
+	})
 
 	view.initRoomWindow()
 	view.initSubscribers()
@@ -583,9 +583,7 @@ func (v *roomView) finishJoinRequestWithError(err error) {
 
 // joinRoomFinishedEvent MUST be called from the UI thread
 func (v *roomView) joinRoomFinishedEvent() {
-	if v.onJoinFinished != nil {
-		v.onJoinFinished()
-	}
+	v.onJoinFinished.invokeAll()
 
 	v.loadingViewOverlay.hide()
 
@@ -740,22 +738,20 @@ func (v *roomView) requestRoomInfoOnReconnect() {
 	v.account.session.RefreshRoomProperties(v.roomID())
 
 	previousOnJoinFinished := v.onJoinFinished
-	v.onJoinFinished = func() {
+	v.onJoinFinished = newCallbacksSet(func() {
 		doInUIThread(func() {
 			v.notifications.clearAll()
 			v.roomReconnectFinished(previousOnJoinFinished)
 		})
-	}
+	})
 }
 
 // roomReconnectFinished MUST be called from the UI thread
-func (v *roomView) roomReconnectFinished(previousOnJoinFinished func()) {
+func (v *roomView) roomReconnectFinished(previousOnJoinFinished *callbacksSet) {
 	v.isReconnecting = false
 
 	v.onJoinFinished = previousOnJoinFinished
-	if v.onJoinFinished != nil {
-		v.onJoinFinished()
-	}
+	v.onJoinFinished.invokeAll()
 }
 
 // selfOccupantConnectedEvent MUST NOT be called from the UI thread

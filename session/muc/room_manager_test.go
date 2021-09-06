@@ -35,15 +35,17 @@ func (*MucRoomManagerSuite) Test_RoomManager_AddRoom(c *C) {
 	c.Assert(ok, Equals, false)
 }
 
-func (*MucRoomManagerSuite) Test_RoomManager_DeleteRoom(c *C) {
+func (*MucRoomManagerSuite) Test_RoomManager_LeaveRoom(c *C) {
 	rr := NewRoomManager()
+
+	_ = rr.AddRoom(&Room{ID: jid.ParseBare("somewhere@bar.com")})
 	_ = rr.AddRoom(&Room{ID: jid.ParseBare("foo@bar.com")})
 
-	ok := rr.DeleteRoom(jid.ParseBare("somewhere@bar.com"))
-	c.Assert(ok, Equals, false)
+	rr.DeleteRoom(jid.ParseBare("somewhere@bar.com"))
+	c.Assert(hasRoom(rr, jid.ParseBare("somewhere@bar.com")), Equals, false)
 
-	ok = rr.DeleteRoom(jid.ParseBare("foo@bar.com"))
-	c.Assert(ok, Equals, true)
+	rr.DeleteRoom(jid.ParseBare("foo@bar.com"))
+	c.Assert(hasRoom(rr, jid.ParseBare("foo@bar.com")), Equals, false)
 }
 
 func (*MucRoomManagerSuite) Test_RoomManager_GetAllRooms(c *C) {
@@ -58,4 +60,9 @@ func (*MucRoomManagerSuite) Test_RoomManager_GetAllRooms(c *C) {
 		_, ok := rr.GetRoom(r.ID)
 		c.Assert(ok, Equals, true)
 	}
+}
+
+func hasRoom(manager *RoomManager, roomID jid.Bare) bool {
+	_, ok := manager.GetRoom(roomID)
+	return ok
 }

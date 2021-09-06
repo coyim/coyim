@@ -46,6 +46,11 @@ func (u *gtkUI) joinRoomWithData(a *account, room *muc.Room, d roomViewDataProvi
 	}
 
 	if v.isSelfOccupantInTheRoom() {
+		v.notifications.other(roomNotificationOptions{
+			message:   i18n.Local("You were already connected to this room."),
+			closeable: true,
+		})
+
 		v.switchToMainView()
 	} else {
 		v.backToPreviousStep = d.backToPreviousStep()

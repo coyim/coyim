@@ -78,12 +78,22 @@ func (c *conn) isGoogle() bool {
 	return false
 }
 
+func (c *conn) hasChannelBinding() bool {
+	return len(c.GetChannelBinding()) > 0
+}
+
 var preferedMechanisms = []string{"SCRAM-SHA-512-PLUS", "SCRAM-SHA-512", "SCRAM-SHA-256-PLUS", "SCRAM-SHA-256", "SCRAM-SHA-1-PLUS", "SCRAM-SHA-1", "DIGEST-MD5", "PLAIN"}
+var preferedMechanismsWithoutChannelBinding = []string{"SCRAM-SHA-512", "SCRAM-SHA-256", "SCRAM-SHA-1", "DIGEST-MD5", "PLAIN"}
 var preferedMechanismsWithoutSCRAM = []string{"DIGEST-MD5", "PLAIN"}
 
 func (c *conn) authenticateWithPreferedMethod(user, password string) error {
 	//TODO: this should be configurable by the client
 	pm := preferedMechanisms
+
+	if !c.hasChannelBinding() {
+		pm = preferedMechanismsWithoutChannelBinding
+	}
+
 	if c.known != nil && c.known.BrokenSCRAM {
 		pm = preferedMechanismsWithoutSCRAM
 	}
@@ -93,7 +103,7 @@ func (c *conn) authenticateWithPreferedMethod(user, password string) error {
 	for _, prefered := range pm {
 		for _, m := range c.features.Mechanisms.Mechanism {
 			if prefered == m {
-				c.log.WithField("mechanism", m).Info("sasl: authenticating via")
+				c.log.WithField("mechanism", prefered).Info("sasl: authenticating via")
 				return c.authenticateWith(prefered, user, password)
 			}
 		}

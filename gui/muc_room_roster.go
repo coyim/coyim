@@ -154,13 +154,18 @@ func (r *roomViewRoster) onOccupantSelected(_ gtki.TreeView, path gtki.TreePath)
 		return
 	}
 
-	o, ok := r.roster.GetOccupant(nickname)
+	o, ok := r.occupantFromRoster(nickname)
 	if !ok {
 		r.log.WithField("nickname", nickname).Debug("The occupant was not found in the roster")
 		return
 	}
 
 	r.showOccupantInfo(o)
+}
+
+// occupantFromRoster MUST NOT be called from the UI thread
+func (r *roomViewRoster) occupantFromRoster(nickname string) (*muc.Occupant, bool) {
+	return r.roster.GetOccupant(nickname)
 }
 
 // onGroupActivated MUST be called from the UI thread

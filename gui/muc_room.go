@@ -313,8 +313,8 @@ func (v *roomView) isSelfOccupantInTheRoom() bool {
 }
 
 func (v *roomView) show() {
-	v.opened = true
 	v.window.show()
+	v.opened = true
 }
 
 // onLeaveRoom MUST be called from the UI thread

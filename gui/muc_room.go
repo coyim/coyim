@@ -290,6 +290,10 @@ func (v *roomView) onDestroyWindow() {
 	v.opened = false
 	v.account.removeRoomView(v.roomID())
 	go v.cancelActiveRequests()
+
+	if v.isSelfOccupantInTheRoom() {
+		v.showCloseConfirmWindow()
+	}
 }
 
 // cancelActiveRequests MUST NOT be called from the UI thread

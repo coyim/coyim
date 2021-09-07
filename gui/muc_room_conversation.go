@@ -324,6 +324,11 @@ func (c *roomViewConversation) messageEvent(tp, nickname, message string, timest
 }
 
 func (c *roomViewConversation) discussionHistoryEvent(dh *data.DiscussionHistory) {
+	c.handleDiscussionHistory(dh)
+	c.historyPrinted <- true
+}
+
+func (c *roomViewConversation) handleDiscussionHistory(dh *data.DiscussionHistory) {
 	if len(dh.GetHistory()) > 0 {
 		doInUIThread(func() {
 			c.clearBuffer()
@@ -331,7 +336,6 @@ func (c *roomViewConversation) discussionHistoryEvent(dh *data.DiscussionHistory
 			c.displayDivider()
 		})
 	}
-	c.historyPrinted <- true
 }
 
 // displayDiscussionHistory MUST be called from the UI thread

@@ -2,7 +2,7 @@ package gui
 
 import (
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/xmpp/jid"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -14,7 +14,7 @@ func (v *roomView) showCloseConfirmWindow() {
 
 type roomViewCloseWindowConfirm struct {
 	u       *gtkUI
-	roomID  jid.Bare
+	room    *muc.Room
 	account *account
 
 	headerLabel  gtki.Label  `gtk-widget:"room-close-confirm-header"`
@@ -25,7 +25,7 @@ type roomViewCloseWindowConfirm struct {
 func (v *roomView) newRoomViewCloseWindowConfirm() *roomViewCloseWindowConfirm {
 	confirm := &roomViewCloseWindowConfirm{
 		u:       v.u,
-		roomID:  v.roomID(),
+		room:    v.room,
 		account: v.account,
 	}
 
@@ -53,7 +53,7 @@ func (v *roomViewCloseWindowConfirm) loadUIDefinition() {
 
 // onReturnToRoomClicked MUST be called from the UI thread
 func (v *roomViewCloseWindowConfirm) onReturnToRoomClicked() {
-	v.u.joinRoom(v.account, v.roomID, nil)
+	v.u.joinRoom(v.account, v.room.ID, nil)
 	v.closeWindow()
 }
 

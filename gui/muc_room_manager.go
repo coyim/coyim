@@ -46,12 +46,14 @@ func (u *gtkUI) joinRoomWithData(a *account, room *muc.Room, d roomViewDataProvi
 		d = &roomViewData{}
 	}
 
+	isOpeningRoomAgain := false
 	if v.isSelfOccupantInTheRoom() {
 		v.notifications.other(roomNotificationOptions{
 			message:   i18n.Local("You were already connected to this room."),
 			closeable: true,
 		})
 
+		isOpeningRoomAgain = true
 		v.switchToMainView()
 	} else {
 		v.backToPreviousStep = d.backToPreviousStep()
@@ -61,4 +63,11 @@ func (u *gtkUI) joinRoomWithData(a *account, room *muc.Room, d roomViewDataProvi
 
 	d.doWhenNoErrorOccurred()
 	v.show()
+
+	if isOpeningRoomAgain {
+		v.publishEvent(reopenRoomEvent{
+			history: v.room.GetDiscussionHistory(),
+			subject: v.room.GetSubject(),
+		})
+	}
 }

@@ -214,7 +214,8 @@ func (c *roomViewConversation) selfOccupantDisconnectedEvent() {
 
 func (c *roomViewConversation) occupantModifiedEvent(accountAddress jid.Any, affiliation data.Affiliation) {
 	doInUIThread(func() {
-		message := i18n.Localf("The position of $nickname{%s} has been removed.", accountAddress.String())
+		message := ""
+
 		switch {
 		case affiliation.IsOwner():
 			message = i18n.Localf("$nickname{%s} has been added as $affiliation{an owner}.", accountAddress.String())
@@ -225,7 +226,10 @@ func (c *roomViewConversation) occupantModifiedEvent(accountAddress jid.Any, aff
 		case affiliation.IsBanned():
 			message = i18n.Localf("$nickname{%s} has been added to the ban list.", accountAddress.String())
 		}
-		c.saveAndDisplayMessage(accountAddress.String(), message, time.Now(), data.OccupantInformationChanged)
+
+		if message != "" {
+			c.saveAndDisplayMessage(accountAddress.String(), message, time.Now(), data.OccupantInformationChanged)
+		}
 	})
 }
 

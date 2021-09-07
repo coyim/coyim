@@ -144,6 +144,11 @@ type accountAffiliationUpdated struct {
 	affiliation    data.Affiliation
 }
 
+type reopenRoomEvent struct {
+	history *data.DiscussionHistory
+	subject string
+}
+
 type roomDisableEvent struct{}
 
 type roomEnableEvent struct{}
@@ -186,3 +191,4 @@ func (selfOccupantConnectingEvent) markAsRoomViewEvent()             {}
 func (accountAffiliationUpdated) markAsRoomViewEvent()               {}
 func (roomDisableEvent) markAsRoomViewEvent()                        {}
 func (roomEnableEvent) markAsRoomViewEvent()                         {}
+func (reopenRoomEvent) markAsRoomViewEvent()                         {}

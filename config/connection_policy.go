@@ -71,6 +71,9 @@ var buildDialerFor = func(p *ConnectionPolicy, conf *Account, verifier ourtls.Ve
 	return p.buildDialerFor(conf, verifier)
 }
 
+// DefaultXMPPPort is the default port which XMPP clients should use for connecting to XMPP servers
+const DefaultXMPPPort = 5222
+
 func (p *ConnectionPolicy) buildDialerFor(conf *Account, verifier ourtls.Verifier) (interfaces.Dialer, error) {
 	//Account is a bare JID
 	jidParts := strings.SplitN(conf.Account, "@", 2)
@@ -138,7 +141,7 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account, verifier ourtls.Verifie
 		customServerAddress = true
 	}
 
-	if conf.Port > 0 {
+	if conf.Port > 0 && conf.Port != DefaultXMPPPort {
 		port = strconv.Itoa(conf.Port)
 		customServerAddress = true
 	}

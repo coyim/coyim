@@ -38,6 +38,7 @@ func (u *gtkUI) joinRoomWithData(a *account, room *muc.Room, d roomViewDataProvi
 
 	if v.isOpen() {
 		d.notifyError(i18n.Local("You are already in the room."))
+		v.present()
 		return
 	}
 

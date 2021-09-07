@@ -797,6 +797,11 @@ func (v *roomView) mainWindow() gtki.Window {
 	return v.window.view()
 }
 
+// present MUST be called from the UI thread
+func (v *roomView) present() {
+	v.window.present()
+}
+
 func (v *roomView) roomID() jid.Bare {
 	return v.room.ID
 }

@@ -36,7 +36,7 @@ func (v *roomView) newRoomViewCloseWindowConfirm() *roomViewCloseWindowConfirm {
 	confirm.loadUIDefinition()
 
 	confirm.messageLabel.SetText(i18n.Localf("Hi, we have seen that you closed the room %s.\n"+
-		"What action do you would like to do?", v.roomID()))
+		"What would you like to do?", v.roomID()))
 
 	mucStyles.setRoomCloseWindowConfirmHeaderStyle(confirm.headerLabel)
 

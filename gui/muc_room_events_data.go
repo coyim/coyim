@@ -73,8 +73,7 @@ type subjectUpdatedEvent struct {
 }
 
 type subjectReceivedEvent struct {
-	subject        string
-	isReconnecting bool
+	subject string
 }
 
 type joinRoomFinishedEvent struct {
@@ -92,8 +91,7 @@ type messageForbidden struct{}
 type messageNotAcceptable struct{}
 
 type discussionHistoryEvent struct {
-	history        *data.DiscussionHistory
-	isReconnecting bool
+	history *data.DiscussionHistory
 }
 
 type roomViewEvent interface {

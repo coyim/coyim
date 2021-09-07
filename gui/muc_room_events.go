@@ -28,10 +28,7 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 	case events.MUCDelayedMessageReceived:
 		v.publishMessageEvent("delayed", t.Nickname, t.Message, t.Timestamp)
 	case events.MUCDiscussionHistoryReceived:
-		v.publishEvent(discussionHistoryEvent{
-			history:        t.History,
-			isReconnecting: v.isReconnecting,
-		})
+		v.publishEvent(discussionHistoryEvent{history: t.History})
 	case events.MUCSubjectUpdated:
 		v.publishSubjectUpdatedEvent(t.Nickname, t.Subject)
 	case events.MUCSubjectReceived:
@@ -201,8 +198,7 @@ func (v *roomView) publishSubjectUpdatedEvent(nickname, subject string) {
 // publishSubjectReceivedEvent MUST NOT be called from the UI thread
 func (v *roomView) publishSubjectReceivedEvent(subject string) {
 	v.publishEvent(subjectReceivedEvent{
-		subject:        subject,
-		isReconnecting: v.isReconnecting,
+		subject: subject,
 	})
 }
 

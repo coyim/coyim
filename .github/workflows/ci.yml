@@ -59,8 +59,6 @@ jobs:
           path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
       - name: install OS dependencies
         run: brew install gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info gtk-mac-integration create-dmg fileicon
-      - name: temp debug
-        run: create-dmg --help
       - uses: actions/setup-go@v2
         with:
           go-version: 1.14

@@ -63,12 +63,28 @@ func (v *roomViewCloseWindowConfirm) onReturnToRoomClicked() {
 
 // onLeaveRoomClicked MUST be called from the UI thread
 func (v *roomViewCloseWindowConfirm) onLeaveRoomClicked() {
+	go v.tryLeaveRoom()
 	v.closeWindow()
 }
 
 // onKeepInRoomClicked MUST be called from the UI thread
 func (v *roomViewCloseWindowConfirm) onKeepInRoomClicked() {
 	v.closeWindow()
+}
+
+// tryLeaveRoom MUST NOT be called from the UI thread
+func (v *roomViewCloseWindowConfirm) tryLeaveRoom() {
+	onError := func(err error) {
+		v.log.WithError(err).Error("An error occurred when trying to leave the room")
+	}
+
+	v.account.leaveRoom(
+		v.room.ID,
+		v.room.SelfOccupantNickname(),
+		nil,
+		onError,
+		nil,
+	)
 }
 
 // showWindow MUST be called from the UI thread

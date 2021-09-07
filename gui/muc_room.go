@@ -698,6 +698,12 @@ func (v *roomView) handleDiscoInfoTimeout() {
 func (v *roomView) onReconnectingRoomInfoReceived(di data.RoomDiscoInfo) {
 	v.notifications.clearAll()
 
+	v.notifications.info(
+		roomNotificationOptions{
+			message:   i18n.Local("Your connection has been reestablished. You can join this room again."),
+			showTime:  true,
+			closeable: true,
+		})
 	v.enableRoomView()
 	v.switchToLobbyView()
 }

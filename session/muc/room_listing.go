@@ -14,6 +14,7 @@ const (
 	discoInfoFieldFormType             = "http://jabber.org/protocol/muc#roominfo"
 	discoInfoFieldLang                 = "muc#roominfo_lang"
 	discoInfoFieldChangeSubject        = "muc#roominfo_changesubject"
+	discoInfoFieldCanChangeSubject     = configFieldCanChangeSubject
 	discoInfoFieldEnableLogging        = configFieldEnableLogging
 	discoInfoFieldRoomName             = configFieldRoomName
 	discoInfoFieldDescription          = "muc#roominfo_description"
@@ -167,7 +168,7 @@ func (rl *RoomListing) updateWithFormField(field string, values []string) {
 		if len(values) > 0 {
 			rl.Language = values[0]
 		}
-	case discoInfoFieldChangeSubject:
+	case discoInfoFieldChangeSubject, discoInfoFieldCanChangeSubject:
 		// When the `roominfo_changesubject` field is changed to false,
 		// the response is not 0 for false value, this response is `empty`.
 		// For this reason, this field is `initialized` with false

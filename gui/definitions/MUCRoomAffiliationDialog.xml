@@ -1,7 +1,7 @@
 <interface>
   <object class="GtkDialog" id="affiliation-dialog">
     <property name="width_request">600</property>
-    <property name="title" translatable="yes">Change occupant position</property>
+    <property name="title" translatable="yes">Change position</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="type_hint">dialog</property>
@@ -96,7 +96,7 @@
                           <object class="GtkLabel" id="affiliation-title-label">
                             <property name="visible">True</property>
                             <property name="halign">start</property>
-                            <property name="label" translatable="yes">Change occupant position</property>
+                            <property name="label" translatable="yes">Change position</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -305,7 +305,7 @@
                                         <child>
                                           <object class="GtkLabel">
                                             <property name="visible">True</property>
-                                            <property name="label" translatable="yes">An occupant with this position can enter a members-only room, and can also immediately speak in all rooms they are a member of.</property>
+                                            <property name="label" translatable="yes">A person with this position can enter a members-only room, and can also immediately speak in all rooms they are a member of.</property>
                                             <property name="wrap">True</property>
                                             <property name="width_chars">0</property>
                                             <property name="max_width_chars">50</property>
@@ -370,7 +370,7 @@
                                         <child>
                                           <object class="GtkLabel">
                                             <property name="visible">True</property>
-                                            <property name="label" translatable="yes">Without a position, an occupant can't enter a members-only room.</property>
+                                            <property name="label" translatable="yes">Without a position, a person can't enter a members-only room.</property>
                                             <property name="wrap">True</property>
                                             <property name="width_chars">0</property>
                                             <property name="max_width_chars">50</property>

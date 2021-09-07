@@ -1,7 +1,7 @@
 <interface>
   <object class="GtkDialog" id="role-dialog">
     <property name="width_request">600</property>
-    <property name="title" translatable="yes">Change occupant role</property>
+    <property name="title" translatable="yes">Change role</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="type_hint">dialog</property>
@@ -91,7 +91,7 @@
                       <object class="GtkLabel" id="role-type-label">
                         <property name="visible">True</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Change occupant role</property>
+                        <property name="label" translatable="yes">Change role</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>

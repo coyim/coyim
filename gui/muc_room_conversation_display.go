@@ -161,7 +161,7 @@ func (c *roomViewConversation) displayTextLineWithTimestamp(text string, tag con
 func (c *roomViewConversation) displayNotificationWhenRoomDestroyed(reason string, alternative jid.Bare, password string) {
 	c.saveAndDisplayMessage("", messageForRoomDestroyed(&roomDestroyedData{reason, alternative, password}), time.Now(), data.Warning)
 
-	c.displayTextLineWithTimestamp(i18n.Local("You can no longer receive any messages in this room and the occupant list will not be updated anymore."), conversationTagWarning)
+	c.displayTextLineWithTimestamp(i18n.Local("You can no longer receive any messages in this room and the people list will not be updated anymore."), conversationTagWarning)
 }
 
 // displayOccupantUpdateMessageFor MUST be called from the UI thread

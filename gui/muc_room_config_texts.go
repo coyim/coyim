@@ -154,7 +154,7 @@ func initMUCRoomConfigFieldsTexts() {
 			displayLabel: i18n.Local("Make this room persistent"),
 			summaryLabel: i18n.Local("Persistent"),
 			displayDescription: i18n.Local("A persistent room won't be destroyed when the last " +
-				"occupant leaves the room."),
+				"person leaves the room."),
 		},
 		muc.RoomConfigFieldPresenceBroadcast: {
 			displayLabel: i18n.Local("Roles that will receive information about other people in the room"),

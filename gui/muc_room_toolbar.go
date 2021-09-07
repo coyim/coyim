@@ -104,7 +104,7 @@ func (t *roomViewToolbar) initSubscribers() {
 			t.subjectUpdatedEvent(e.subject)
 		case roomConfigChangedEvent:
 			t.onRoomConfigChanged()
-		case selfOccupantJoinedEvent:
+		case selfOccupantJoinedEvent, selfOccupantReconnectedEvent:
 			t.selfOccupantJoinedEvent()
 		case selfOccupantRoleUpdatedEvent:
 			t.selfOccupantRoleUpdatedEvent(e.selfRoleUpdate.New)

@@ -116,6 +116,18 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesConfiguredServerAddressA
 	c.Check(dialer.ServerAddress(), Equals, "coy.im:5234")
 }
 
+func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesACustomPortEvenIfNoCustomServerIsSpecified(c *C) {
+	policy := ConnectionPolicy{DialerFactory: xmpp.DialerFactory, torState: mockTorState("", false)}
+
+	dialer, err := policy.buildDialerFor(&Account{
+		Account: "coyim@coy.im",
+		Port:    5236,
+	}, nil)
+
+	c.Assert(err, IsNil)
+	c.Assert(dialer.ServerAddress(), Equals, "coy.im:5236")
+}
+
 func (s *ConnectionPolicySuite) Test_buildDialerFor_FailsIfItCantDoProxyCreation(c *C) {
 	policy := ConnectionPolicy{DialerFactory: xmpp.DialerFactory, torState: mockTorState("", false)}
 

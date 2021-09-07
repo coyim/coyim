@@ -122,17 +122,30 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account, verifier ourtls.Verifie
 	dialer.SetProxy(proxy)
 	dialer.SetConfig(xmppConfig)
 
+	defaultServerAddress := dialer.GetServer()
+	defaultHost, defaultPort, _ := net.SplitHostPort(defaultServerAddress)
+
+	host := defaultHost
+	port := defaultPort
+	customServerAddress := false
+
 	// Although RFC 6120, section 3.2.3 recommends to skip the SRV lookup in this
 	// case, we opt for keep compatibility with existing client implementations
 	// and still make the SRV lookup. This avoids preventing imported accounts to
 	// use the SRV lookup.
-	if len(conf.Server) > 0 && conf.Port > 0 {
-		dialer.SetServerAddress(net.JoinHostPort(conf.Server, strconv.Itoa(conf.Port)))
+	if len(conf.Server) > 0 {
+		host = conf.Server
+		customServerAddress = true
 	}
 
-	server := dialer.GetServer()
-	// This error can't logically happen, so we will ignore it here
-	host, port, _ := net.SplitHostPort(server)
+	if conf.Port > 0 {
+		port = strconv.Itoa(conf.Port)
+		customServerAddress = true
+	}
+
+	if customServerAddress {
+		dialer.SetServerAddress(net.JoinHostPort(host, port))
+	}
 
 	known, ok := servers.Get(host)
 	if ok {

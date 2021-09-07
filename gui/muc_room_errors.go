@@ -18,19 +18,19 @@ var (
 	errOccupantForbidden    = errors.New("join failed because the occupant is banned")
 )
 
-type customRoomViewError struct {
+type roomViewCustomError struct {
 	nickname        string
 	friendlyMessage string
 	errType         error
 }
 
 // Error implements the `error` interface
-func (e *customRoomViewError) Error() string {
+func (e *roomViewCustomError) Error() string {
 	return e.errType.Error()
 }
 
 func (v *roomView) newCustomRoomViewError(nickname string, errType error) error {
-	return &customRoomViewError{
+	return &roomViewCustomError{
 		nickname:        nickname,
 		friendlyMessage: v.userFriendlyRoomErrorMessage(errType),
 		errType:         errType,

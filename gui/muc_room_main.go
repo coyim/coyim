@@ -5,10 +5,9 @@ import (
 )
 
 type roomViewMain struct {
-	main   gtki.Box
-	panel  gtki.Box
-	top    gtki.Box
-	parent gtki.Box
+	main  gtki.Box
+	panel gtki.Box
+	top   gtki.Box
 
 	content gtki.Box `gtk-widget:"room-view-box"`
 	topBox  gtki.Box `gtk-widget:"room-view-top"`
@@ -18,10 +17,9 @@ type roomViewMain struct {
 
 func (v *roomView) newRoomMainView() *roomViewMain {
 	m := &roomViewMain{
-		main:   v.conv.view,
-		panel:  v.roster.view,
-		top:    v.toolbar.view,
-		parent: v.window.content,
+		main:  v.conv.view,
+		panel: v.roster.view,
+		top:   v.toolbar.view,
 	}
 
 	m.initBuilder()
@@ -38,6 +36,4 @@ func (m *roomViewMain) initDefaults() {
 	m.roomBox.Add(m.main)
 	m.paneBox.Add(m.panel)
 	m.topBox.Add(m.top)
-
-	m.parent.Add(m.content)
 }

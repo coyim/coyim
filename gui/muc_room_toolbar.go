@@ -117,6 +117,8 @@ func (t *roomViewToolbar) initSubscribers() {
 			t.roomDisableEvent()
 		case roomEnableEvent:
 			t.roomEnableEvent()
+		case reopenRoomEvent:
+			t.subjectReceivedEvent(e.subject)
 		}
 	})
 }

@@ -1,5 +1,5 @@
 # Spanish translations for coy package
-# Traducciones al español para el paquete coy.
+# Traducciones al espaÃ±ol para el paquete coy.
 # Copyright (C) 2016 THE coy'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the coy package.
 # Automatically generated, 2016.
@@ -841,7 +841,7 @@ msgstr ""
 
 #: ../gui/definitions/Main.xml:48
 msgid "_Accounts"
-msgstr ""
+msgstr "Cuent_as"
 
 #: ../gui/definitions/Main.xml:55
 msgid "Chat _Rooms"

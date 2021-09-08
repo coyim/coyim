@@ -74,7 +74,7 @@ func (rn *roomNotifications) error(n roomNotificationOptions) {
 }
 
 // newNotification MUST be called from the UI thread
-func (rn *roomNotifications) newNotification(mt gtki.MessageType, n roomNotificationOptions) {
+func (rn *roomNotifications) newNotification(mt gtki.MessageType, n roomNotificationOptions) *notificationBar {
 	nb := rn.u.newNotificationBar(n.message, mt)
 
 	if n.showTime {
@@ -99,6 +99,8 @@ func (rn *roomNotifications) newNotification(mt gtki.MessageType, n roomNotifica
 
 	rn.notifications.add(nb)
 	rn.roomView.onNewNotificationAdded()
+
+	return nb
 }
 
 // remove MUST be called from the UI thread

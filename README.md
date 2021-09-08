@@ -2,6 +2,7 @@
 
 [![Build Status](https://github.com/coyim/coyim/workflows/CoyIM%20CI/badge.svg)](https://github.com/coyim/coyim/actions?query=workflow%3A%22CoyIM+CI%22)
 [![Coverage Status](https://coveralls.io/repos/coyim/coyim/badge.svg?branch=main&service=github)](https://coveralls.io/github/coyim/coyim?branch=main)
+[[![Translation status](https://hosted.weblate.org/engage/coyim/)](https://hosted.weblate.org/widgets/coyim/-/main/svg-badge.svg)
 
 <p align="center">
   <img src="build/osx/mac-bundle/coyim.iconset/icon_256x256.png">
@@ -18,6 +19,8 @@ only use the Tor Onion Service for a known server and also uses TLS and TLS
 certificates to verify the connection - no configuration required. The
 implementation is written in the Go language, to avoid many common types of
 vulnerabilities that come from using unsafe languages.
+
+We use Weblate (https://hosted.weblate.org/projects/coyim/) to help crowd-source translation.
 
 ## Security warning
 

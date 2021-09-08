@@ -47,8 +47,5 @@ version_generated.go
 # vscode
 .vscode
 
-#Zanata - Translation platform
-.zanata
-
 .build-tools
 __debug_bin

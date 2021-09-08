@@ -2,7 +2,7 @@
 Here's the brief:
 
 * We welcome contributions of all kinds, including but not limited to features, bug fixes, quality assurance, documentation, security review or asking questions
-* If you do not know how to code yet you can help us translating CoyIM through [Zanata](https://translate.zanata.org/zanata/project/view/coyim)
+* If you do not know how to code yet you can help us translating CoyIM through [Weblate](https://hosted.weblate.org/projects/coyim/)
 * Pull requests are based off, integrated into & rebased against master
 * Write automated tests, ideally using TDD. CI needs to be green in order to merge.
 * Contact us for questions & suggestions:

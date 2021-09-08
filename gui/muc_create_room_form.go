@@ -144,6 +144,20 @@ func (f *mucCreateRoomViewForm) onCreateRoomError(roomID jid.Bare, err error) {
 	}
 }
 
+// notifyBasedOnError MUST be called from the UI thread
+func (f *mucCreateRoomViewForm) notifyBasedOnError(err error) {
+	switch err {
+	case errCreateRoomCheckIfExistsFails:
+		f.notifications.error(i18n.Local("Couldn't connect to the service, please verify that it exists or try again later."))
+	case errCreateRoomAlreadyExists:
+		f.notifications.error(i18n.Local("That room already exists, try again with a different name."))
+	case errCreateRoomTimeout:
+		f.notifications.error(i18n.Local("We didn't receive a response from the server."))
+	default:
+		f.onCreateRoomFailed(err)
+	}
+}
+
 // hideSpinnerAndEnableFields MUST be called from the UI thread
 func (f *mucCreateRoomViewForm) hideSpinnerAndEnableFields() {
 	f.spinner.hide()

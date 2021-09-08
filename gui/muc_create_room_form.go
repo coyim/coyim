@@ -3,6 +3,7 @@ package gui
 import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -129,7 +130,7 @@ func (f *mucCreateRoomViewForm) onCreateRoomError(roomID jid.Bare, err error) {
 	doInUIThread(f.hideSpinnerAndEnableFields)
 
 	switch err {
-	case errCreateRoomAlreadyExists:
+	case errCreateRoomAlreadyExists, session.ErrInformationQueryResponseWithGoneTag:
 		f.roomNameConflictList[roomID] = err
 		doInUIThread(f.disableCreateRoomButton)
 	}

@@ -149,6 +149,7 @@ gui/settings/definitions/schemas.go: gui/settings/definitions/gschemas.compiled
 
 i18n:
 	make -C ./i18n
+	make -C ./i18n generate
 
 lint: $(AUTOGEN)
 	golint -set_exit_status $(SRC_DIRS)

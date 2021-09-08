@@ -14,6 +14,8 @@ func newRoomConfigPositionsWithApplyButton(applyButton gtki.Button, options room
 	}
 
 	rcpb.loadUIDefinition()
+	rcpb.createPositionsListsController(options.parentWindow)
+	rcpb.initDefaults()
 
 	return rcpb
 }
@@ -30,6 +32,28 @@ func (rcpb *roomConfigPositionsWithApplyButton) connectUISignals(b *builder) {
 
 func (rcpb *roomConfigPositionsWithApplyButton) loadUIDefinition() {
 	buildUserInterface("MUCRoomConfigFieldPositions", rcpb.roomConfigPositions, rcpb.setUIBuilder, rcpb.connectUISignals)
+}
+
+// createPositionsListsController MUST be called from the UI thread
+func (rcpb *roomConfigPositionsWithApplyButton) createPositionsListsController(parent gtki.Window) {
+	rcpb.positionsListController = newMUCRoomConfigListController(&mucRoomConfigListControllerData{
+		addOccupantButton:      rcpb.positionsAddButton,
+		removeOccupantButton:   rcpb.positionsRemoveButton,
+		removeOccupantLabel:    rcpb.positionsRemoveLabel,
+		occupantsTreeView:      rcpb.positionsList,
+		parentWindow:           parent,
+		addOccupantDialogTitle: getFieldTextByAffiliation(rcpb.affiliation).dialogTitle,
+		addOccupantDescription: getFieldTextByAffiliation(rcpb.affiliation).dialogDescription,
+		onListUpdated:          rcpb.refreshContentLists,
+	})
+
+	rcpb.addItemsToListController()
+}
+
+// refreshContentLists MUST be called from the UI thread
+func (rcpb *roomConfigPositionsWithApplyButton) refreshContentLists() {
+	rcpb.roomConfigPositions.refreshContentLists()
+	rcpb.enableOrDisableApplyButton()
 }
 
 // onOccupantJidEdited MUST be called from the UI thread

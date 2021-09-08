@@ -19,6 +19,7 @@ func (v *mucCreateRoomView) initCreateRoomForm(d *mucCreateRoomData) {
 		f.roomFormComponent.setCurrentServiceValue(d.where)
 		f.roomAutoJoinCheck.SetActive(d.autoJoin)
 		f.roomConfigCheck.SetActive(d.customConfig)
+		f.roomNameConflictList = d.roomNameConflictList
 	}
 
 	f.createRoom = func(ca *account, roomID jid.Bare) {

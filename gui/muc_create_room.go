@@ -206,14 +206,15 @@ func (v *mucCreateRoomView) log(ca *account, roomID jid.Bare) coylog.Logger {
 }
 
 type mucCreateRoomData struct {
-	ca            *account
-	roomName      jid.Local
-	where         jid.Domain
-	password      string
-	autoJoin      bool
-	customConfig  bool
-	onNotifyError func(string) // onNotifyError WILL be called from the UI thread
-	onNoErrors    func()       // onNoErrors WILL be called from the UI thread
+	ca                   *account
+	roomName             jid.Local
+	where                jid.Domain
+	password             string
+	autoJoin             bool
+	customConfig         bool
+	onNotifyError        func(string) // onNotifyError WILL be called from the UI thread
+	onNoErrors           func()       // onNoErrors WILL be called from the UI thread
+	roomNameConflictList map[jid.Bare]error
 }
 
 // passwordProvider implements the `roomViewDataProvider` interface

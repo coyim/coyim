@@ -80,6 +80,7 @@ func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, 
 	v.destroy()
 
 	createRoomData := v.createRoomDataBasedOnConfigForm(ca, roomID, cf)
+	createRoomData.roomNameConflictList = v.form.roomNameConflictList
 
 	onSuccess := func(autoJoin bool) {
 		createRoomData.autoJoin = autoJoin

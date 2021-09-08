@@ -35,7 +35,23 @@ func (vw *roomViewWindow) loadUIDefinition() {
 func (vw *roomViewWindow) connectUISignals(b *builder) {
 	b.ConnectSignals(map[string]interface{}{
 		"on_destroy_window": vw.roomView.onDestroyWindow,
+		"on_before_delete":  vw.onBeforeWindowClose,
 	})
+}
+
+const (
+	roomWindowCloseStopEvent     = true // This will stop calling all the signals attached to `delete-event`
+	roomWindowCloseContinueEvent = false
+)
+
+// onBeforeWindowClose MUST be called from the UI thread
+func (vw *roomViewWindow) onBeforeWindowClose() bool {
+	if vw.roomView.isSelfOccupantInTheRoom() {
+		vw.roomView.confirmWindowClose()
+		return roomWindowCloseStopEvent
+	}
+
+	return roomWindowCloseContinueEvent
 }
 
 // onNewNotificationAdded MUST be called from the UI thread

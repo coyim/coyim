@@ -1,5 +1,5 @@
 DEFINITIONS=$(shell ls ../gui/definitions/*.xml)
-IN_FILES=$(shell find ../gui -name "*.go" ! -path "gui/definitions/*")
+IN_FILES=$(shell find ../gui -name "*.go" ! -path "../gui/definitions/*" ! -path "../gui/definitions.go")
 
 # https://www.gnu.org/software/gettext/manual/gettext.html#Overview
 # translatables from source -> .po

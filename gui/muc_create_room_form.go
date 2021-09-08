@@ -5,7 +5,6 @@ import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
-	"github.com/golang-collections/collections/set"
 )
 
 // initCreateRoomForm MUST be called from the UI thread
@@ -53,7 +52,7 @@ type mucCreateRoomViewForm struct {
 	spinner       *spinner
 	notifications *notificationsComponent
 
-	roomNameConflictList *set.Set
+	roomNameConflictList map[jid.Bare]error
 	// createRoom MUST NOT be called from the UI thread
 	createRoom               func(*account, jid.Bare)
 	updateAutoJoinValue      func(bool)
@@ -64,7 +63,7 @@ type mucCreateRoomViewForm struct {
 
 func (v *mucCreateRoomView) newCreateRoomForm() *mucCreateRoomViewForm {
 	f := &mucCreateRoomViewForm{
-		roomNameConflictList:     set.New(),
+		roomNameConflictList:     make(map[jid.Bare]error),
 		updateAutoJoinValue:      v.updateAutoJoinValue,
 		updateConfigureRoomValue: v.updateConfigureRoomValue,
 		log:                      v.log,
@@ -130,7 +129,7 @@ func (f *mucCreateRoomViewForm) onCreateRoomError(roomID jid.Bare, err error) {
 
 	switch err {
 	case errCreateRoomAlreadyExists:
-		f.roomNameConflictList.Insert(roomID.String())
+		f.roomNameConflictList[roomID] = err
 		doInUIThread(f.disableCreateRoomButton)
 	}
 
@@ -255,8 +254,8 @@ func (f *mucCreateRoomViewForm) enableCreationIfConditionsAreMet() {
 }
 
 func (f *mucCreateRoomViewForm) checkIfRoomNameHasConflict() bool {
-	if f.roomNameConflictList.Has(f.roomFormComponent.currentRoomIDValue()) {
-		f.notifications.error(i18n.Local("That room already exists, try again with a different name."))
+	if err, ok := f.roomNameConflictList[f.roomFormComponent.currentRoomID()]; ok {
+		f.notifyBasedOnError(err)
 		return true
 	}
 	return false

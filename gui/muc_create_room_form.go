@@ -132,7 +132,7 @@ func (f *mucCreateRoomViewForm) onCreateRoomError(roomID jid.Bare, err error) {
 	switch err {
 	case errCreateRoomAlreadyExists:
 		f.roomNameConflictList.Insert(roomID.String())
-		doInUIThread(f.onCreateRoomAlreadyExists)
+		doInUIThread(f.disableCreateRoomButton)
 	}
 
 	doInUIThread(func() {
@@ -158,11 +158,6 @@ func (f *mucCreateRoomViewForm) notifyBasedOnError(err error) {
 func (f *mucCreateRoomViewForm) hideSpinnerAndEnableFields() {
 	f.spinner.hide()
 	f.enableFields()
-}
-
-// onCreateRoomAlreadyExists MUST be called from the UI thread
-func (f *mucCreateRoomViewForm) onCreateRoomAlreadyExists() {
-	f.disableCreateRoomButton()
 }
 
 func (f *mucCreateRoomViewForm) onCreateRoomFailed(err error) {

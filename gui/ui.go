@@ -124,7 +124,7 @@ func argsWithApplicationName() *[]string {
 }
 
 // NewGTK returns a new client for a GTK ui
-func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx Graphics, hooks OSHooks) UI {
+func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx Graphics, hooks OSHooks, translationDirectory string) UI {
 	runtime.LockOSThread()
 
 	inuit := &inUIThread{g: gx}
@@ -141,7 +141,7 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	registerFinalizerReaping(gx.glib)
 
 	//*.mo files should be in ./i18n/locale_code.utf8/LC_MESSAGES/
-	g.glib.InitI18n(localizationDomain, "./i18n")
+	g.glib.InitI18n(localizationDomain, translationDirectory)
 	g.gtk.Init(argsWithApplicationName())
 	ensureInstalled()
 

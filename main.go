@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 	"runtime/pprof"
 
 	log "github.com/sirupsen/logrus"
@@ -86,6 +87,14 @@ func printFinalNewline() {
 	_, _ = os.Stdout.Write([]byte("\n"))
 }
 
+func translationsDirectory() string {
+	return filepath.Join(config.XdgDataHome(), "coyim", "translations")
+}
+
+func initTranslations() {
+	i18n.UnpackTranslationFilesInto(translationsDirectory(), BuildCommit)
+}
+
 func main() {
 	flag.Parse()
 
@@ -100,6 +109,7 @@ func main() {
 	defer stopProfileIfNecessary()
 
 	initLog()
+	initTranslations()
 	runClient()
 	printFinalNewline()
 }
@@ -109,7 +119,7 @@ type looper interface {
 }
 
 var createGTK = func(g gui.Graphics) looper {
-	return gui.NewGTK(coyimVersion, session.Factory, xmpp.DialerFactory, g, hooks())
+	return gui.NewGTK(coyimVersion, session.Factory, xmpp.DialerFactory, g, hooks(), translationsDirectory())
 }
 
 func runClient() {

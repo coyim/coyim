@@ -709,6 +709,7 @@ func (v *roomView) handleDiscoInfoTimeout() {
 
 // onReconnectingRoomInfoReceived MUST be called from the UI thread
 func (v *roomView) onReconnectingRoomInfoReceived(di data.RoomDiscoInfo) {
+	v.notifications.remove(v.connectingNotificationBar)
 	v.notifications.info(
 		roomNotificationOptions{
 			message:   i18n.Local("Your connection has been restored; you can join this room again."),
@@ -721,6 +722,7 @@ func (v *roomView) onReconnectingRoomInfoReceived(di data.RoomDiscoInfo) {
 
 // onReconnectingRoomInfoTimeout MUST be called from the UI thread
 func (v *roomView) onReconnectingRoomInfoTimeout() {
+	v.notifications.remove(v.connectingNotificationBar)
 	v.notifications.error(roomNotificationOptions{
 		message: i18n.Local("Your connection was recovered but " +
 			"loading the room information took longer than usual, " +

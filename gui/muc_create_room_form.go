@@ -166,20 +166,17 @@ func (f *mucCreateRoomViewForm) hideSpinnerAndEnableFields() {
 
 // onCreateRoomCheckIfExistsFails MUST be called from the UI thread
 func (f *mucCreateRoomViewForm) onCreateRoomCheckIfExistsFails() {
-	f.notifications.error(i18n.Local("Couldn't connect to the service, please verify that it exists or try again later."))
 	f.hideSpinnerAndEnableFields()
 }
 
 // onCreateRoomAlreadyExists MUST be called from the UI thread
 func (f *mucCreateRoomViewForm) onCreateRoomAlreadyExists() {
-	f.notifications.error(i18n.Local("That room already exists, try again with a different name."))
 	f.hideSpinnerAndEnableFields()
 	f.disableCreateRoomButton()
 }
 
 // onCreateRoomTimeout MUST be called from the UI thread
 func (f *mucCreateRoomViewForm) onCreateRoomTimeout() {
-	f.notifications.error(i18n.Local("We didn't receive a response from the server."))
 	f.hideSpinnerAndEnableFields()
 }
 

@@ -37,8 +37,6 @@ type roomConfigPositions struct {
 	positionsRemoveLabel  gtki.Label    `gtk-widget:"room-config-position-remove-label"`
 
 	positionsListController *mucRoomConfigListController
-	onListChanged           *callbacksSet
-	onRefreshContentLists   *callbacksSet
 }
 
 func newRoomConfigPositionsField(options roomConfigPositionsOptions) *roomConfigPositions {
@@ -58,8 +56,6 @@ func newRoomConfigPositions(options roomConfigPositionsOptions) *roomConfigPosit
 		setOccupantList:           options.setOccupantList,
 		updateRemovedOccupantList: options.setRemovedOccupantList,
 		showErrorNotification:     options.displayErrors,
-		onListChanged:             newCallbacksSet(),
-		onRefreshContentLists:     newCallbacksSet(),
 	}
 }
 
@@ -114,12 +110,10 @@ func (p *roomConfigPositions) addItemsToListController() {
 
 func (p *roomConfigPositions) refreshContentLists() {
 	p.positionsListContent.SetVisible(p.positionsListController.hasItems())
-	p.onRefreshContentLists.invokeAll()
 }
 
 func (p *roomConfigPositions) onOccupantJidEdited(_ gtki.CellRendererText, path string, newValue string) {
 	p.updateOccupantListCellForString(p.positionsListController, positionsListJidColumnIndex, path, newValue)
-	p.onListChanged.invokeAll()
 }
 
 func (p *roomConfigPositions) updateOccupantListCellForString(controller *mucRoomConfigListController, column int, path string, newValue string) {

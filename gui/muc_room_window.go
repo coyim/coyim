@@ -6,6 +6,8 @@ import (
 )
 
 type roomViewWindow struct {
+	roomView *roomView
+
 	window            gtki.Window   `gtk-widget:"room-window"`
 	overlay           gtki.Overlay  `gtk-widget:"room-overlay"`
 	privacyWarningBox gtki.Box      `gtk-widget:"room-privacy-warnings-box"`
@@ -14,19 +16,26 @@ type roomViewWindow struct {
 }
 
 func (v *roomView) newRoomViewWindow() *roomViewWindow {
-	vw := &roomViewWindow{}
+	vw := &roomViewWindow{
+		roomView: v,
+	}
 
-	builder := newBuilder("MUCRoomWindow")
-	panicOnDevError(builder.bindObjects(vw))
-
-	builder.ConnectSignals(map[string]interface{}{
-		"on_destroy_window": v.onDestroyWindow,
-	})
+	vw.loadUIDefinition()
 
 	vw.window.SetTitle(i18n.Localf("%[1]s [%[2]s]", v.roomID(), v.account.Account()))
 	mucStyles.setRoomWindowStyle(vw.window)
 
 	return vw
+}
+
+func (vw *roomViewWindow) loadUIDefinition() {
+	buildUserInterface("MUCRoomWindow", vw, vw.connectUISignals)
+}
+
+func (vw *roomViewWindow) connectUISignals(b *builder) {
+	b.ConnectSignals(map[string]interface{}{
+		"on_destroy_window": vw.roomView.onDestroyWindow,
+	})
 }
 
 // onNewNotificationAdded MUST be called from the UI thread

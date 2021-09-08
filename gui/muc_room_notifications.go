@@ -49,6 +49,7 @@ type roomNotificationOptions struct {
 	showTime    bool
 	showSpinner bool
 	closeable   bool
+	mustRemain  bool
 	actions     roomNotificationActions
 }
 
@@ -89,6 +90,8 @@ func (rn *roomNotifications) newNotification(mt gtki.MessageType, n roomNotifica
 			rn.remove(nb)
 		})
 	}
+
+	nb.mustRemain = n.mustRemain
 
 	for _, action := range n.actions {
 		nb.addAction(action.label, action.responseType, action.signals)

@@ -37,6 +37,7 @@ var infoBarIconNames = map[infoBarType]string{
 type infoBarComponent struct {
 	u                      *gtkUI
 	text                   string
+	mustRemain             bool
 	messageType            gtki.MessageType
 	spinner                *spinner
 	doWhenRequestedToClose func() // doWhenRequestedToClose will be called from the UI thread

@@ -137,11 +137,11 @@ func (f *mucCreateRoomViewForm) onCreateRoomError(roomID jid.Bare, err error) {
 		doInUIThread(f.onCreateRoomAlreadyExists)
 	case errCreateRoomTimeout:
 		doInUIThread(f.onCreateRoomTimeout)
-	default:
-		doInUIThread(func() {
-			f.onCreateRoomFailed(err)
-		})
 	}
+
+	doInUIThread(func() {
+		f.notifyBasedOnError(err)
+	})
 }
 
 // notifyBasedOnError MUST be called from the UI thread

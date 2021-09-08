@@ -71,7 +71,7 @@ func (n *notificationsComponent) clearAll() {
 func (n *notificationsComponent) clearMessagesByType(mt gtki.MessageType) {
 	notifications := n.notifications
 	for _, nb := range notifications {
-		if nb.messageType == mt {
+		if nb.messageType == mt && !nb.mustRemain {
 			n.remove(nb)
 		}
 	}

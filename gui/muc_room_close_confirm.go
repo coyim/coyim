@@ -67,6 +67,8 @@ func (v *roomViewCloseWindowConfirm) onConfirmClicked() {
 	if v.leaveRoomCheck.GetActive() {
 		go v.tryLeaveRoom()
 	}
+
+	v.roomView.close()
 }
 
 // tryLeaveRoom MUST NOT be called from the UI thread

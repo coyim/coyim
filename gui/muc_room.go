@@ -320,6 +320,11 @@ func (v *roomView) show() {
 	v.opened = true
 }
 
+// close MUST be called from the UI thread
+func (v *roomView) close() {
+	v.window.destroy()
+}
+
 // onLeaveRoom MUST be called from the UI thread
 func (v *roomView) onLeaveRoom() {
 	v.tryLeaveRoom()

@@ -2,6 +2,7 @@ package gui
 
 import (
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -17,7 +18,9 @@ type roomViewCloseWindowConfirm struct {
 	room    *muc.Room
 	account *account
 
-	window gtki.Window `gtk-widget:"room-close-confirm-window"`
+	window         gtki.Window      `gtk-widget:"room-close-confirm-window"`
+	leaveRoomCheck gtki.CheckButton `gtk-widget:"room-close-confirm-leave-checkbox"`
+	confirmButton  gtki.Button      `gtk-widget:"room-close-confirm-button"`
 
 	log coylog.Logger
 }
@@ -38,13 +41,23 @@ func (v *roomView) newRoomViewCloseWindowConfirm() *roomViewCloseWindowConfirm {
 
 func (v *roomViewCloseWindowConfirm) connectUISignals(b *builder) {
 	b.ConnectSignals(map[string]interface{}{
-		"on_cancel":  v.onCancelClicked,
-		"on_confirm": v.onConfirmClicked,
+		"on_leave_room_check_changed": v.onLeaveRoomCheckChanged,
+		"on_cancel":                   v.onCancelClicked,
+		"on_confirm":                  v.onConfirmClicked,
 	})
 }
 
 func (v *roomViewCloseWindowConfirm) loadUIDefinition() {
 	buildUserInterface("MUCRoomCloseWindowConfirm", v, v.connectUISignals)
+}
+
+// onLeaveRoomCheckChanged MUST be called from the UI thread
+func (v *roomViewCloseWindowConfirm) onLeaveRoomCheckChanged() {
+	buttonLabel := i18n.Local("Close room")
+	if v.leaveRoomCheck.GetActive() {
+		buttonLabel = i18n.Local("Close & leave room")
+	}
+	v.confirmButton.SetLabel(buttonLabel)
 }
 
 // onCancelClicked MUST be called from the UI thread
@@ -54,8 +67,11 @@ func (v *roomViewCloseWindowConfirm) onCancelClicked() {
 
 // onConfirmClicked MUST be called from the UI thread
 func (v *roomViewCloseWindowConfirm) onConfirmClicked() {
-	go v.tryLeaveRoom()
 	v.closeWindow()
+
+	if v.leaveRoomCheck.GetActive() {
+		go v.tryLeaveRoom()
+	}
 }
 
 // tryLeaveRoom MUST NOT be called from the UI thread

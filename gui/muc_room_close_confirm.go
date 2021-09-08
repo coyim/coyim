@@ -31,6 +31,7 @@ func (v *roomView) newRoomViewCloseWindowConfirm() *roomViewCloseWindowConfirm {
 	}
 
 	confirm.loadUIDefinition()
+	confirm.window.SetTransientFor(v.mainWindow())
 
 	return confirm
 }

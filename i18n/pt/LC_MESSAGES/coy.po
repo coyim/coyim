@@ -1,4 +1,5 @@
-# English translations for coy package.
+# Portuguese translations for coy package
+# Traduções em português brasileiro para o pacote coy.
 # Copyright (C) 2016 THE coy'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the coy package.
 # Automatically generated, 2016.
@@ -11,16 +12,16 @@ msgstr ""
 "PO-Revision-Date: 2016-02-16 14:02-0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
-"Language: en_US\n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: ../gui/definitions/AccountDetails.xml:22
 #: ../gui/definitions/GlobalPreferences.xml:35
 msgid "Account Details"
-msgstr "Account Details"
+msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:34
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:55
@@ -44,14 +45,14 @@ msgstr "Account Details"
 #: ../gui/file_transfer_notification.go:125
 #: ../gui/file_transfer_notification.go:401
 msgid "Cancel"
-msgstr "Cancel"
+msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:47
 #: ../gui/definitions/EditProxy.xml:151
 #: ../gui/definitions/GlobalPreferences.xml:397
 #: ../gui/definitions/PeerDetails.xml:197
 msgid "Save"
-msgstr "Save"
+msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:108
 msgid ""
@@ -65,7 +66,7 @@ msgstr ""
 #: ../gui/definitions/MUCRoomLobby.xml:82 ../gui/definitions/Password.xml:11
 #: ../gui/muc_room_config_texts.go:178
 msgid "Password"
-msgstr "Password"
+msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:149
 msgid "Account name (optional)"
@@ -73,22 +74,22 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:169
 msgid "Display all settings"
-msgstr "Display all settings"
+msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:198
 #: ../gui/definitions/AskForPassword.xml:27
 #: ../gui/definitions/MUCCreateRoomForm.xml:39
 #: ../gui/definitions/MUCJoinRoomDialog.xml:139
 msgid "Account"
-msgstr "Account"
+msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:219
 msgid "Server (leave empty for default)"
-msgstr "Server (leave empty for default)"
+msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:239
 msgid "Port (leave empty for default)"
-msgstr "Port (leave empty for default)"
+msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:259
 msgid "Pinning policy"
@@ -124,7 +125,7 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:365 ../gui/account.go:306
 msgid "_Remove"
-msgstr "_Remove"
+msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:407
 msgid ""
@@ -162,11 +163,11 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:445
 msgid "Server"
-msgstr "Server"
+msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:520
 msgid "_Add..."
-msgstr "_Add..."
+msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:535
 msgid "_Remove..."
@@ -174,11 +175,11 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:550 ../gui/account.go:293
 msgid "_Edit..."
-msgstr "_Edit..."
+msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:583
 msgid "Proxies"
-msgstr "Proxies"
+msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:622
 msgid ""
@@ -196,11 +197,11 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:637
 msgid "Import Private _Keys..."
-msgstr "Import Private _Keys..."
+msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:651
 msgid "Import _Fingerprints..."
-msgstr "Import _Fingerprints..."
+msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:666
 msgid ""
@@ -211,15 +212,15 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:679
 msgid "Export Private Keys..."
-msgstr "Export Private Keys..."
+msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:692
 msgid "Export Fingerprints..."
-msgstr "Export Fingerprints..."
+msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:717
 msgid "Encryption"
-msgstr "Encryption"
+msgstr ""
 
 #: ../gui/definitions/AccountRegistration.xml:17
 msgid "Recommended servers: "
@@ -270,7 +271,7 @@ msgstr ""
 #: ../gui/definitions/MUCRoomConfigListAddDialog.xml:33
 #: ../gui/muc_room_config_list_add_component.go:196
 msgid "Add"
-msgstr "Add"
+msgstr ""
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:49
 msgid "Answer: "
@@ -298,7 +299,7 @@ msgstr ""
 
 #: ../gui/definitions/AskForPassword.xml:4
 msgid "Enter your password"
-msgstr "Enter your password"
+msgstr ""
 
 #: ../gui/definitions/AskForPassword.xml:72
 msgid "Save password"
@@ -306,7 +307,7 @@ msgstr ""
 
 #: ../gui/definitions/AskForPassword.xml:101
 msgid "Connect"
-msgstr "Connect"
+msgstr ""
 
 #: ../gui/definitions/AskToEncrypt.xml:6
 msgid "Encrypt your account's information"
@@ -330,7 +331,7 @@ msgstr ""
 
 #: ../gui/definitions/AuthorizeSubscription.xml:3
 msgid "Subscription request"
-msgstr "Subscription request"
+msgstr ""
 
 #: ../gui/definitions/CannotVerifyWithSMP.xml:46
 #: ../gui/definitions/VerificationFailed.xml:47
@@ -351,7 +352,7 @@ msgstr ""
 #: ../gui/definitions/VerificationSucceeded.xml:25
 #: ../gui/definitions/VerifyFingerprintUnknown.xml:18
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: ../gui/definitions/CertificateDialog.xml:3
 msgid "Problem with secure connection for ACCOUNT_NAME"
@@ -440,7 +441,7 @@ msgstr ""
 #: ../gui/definitions/ChangePassword.xml:44
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:42
 msgid "Ok"
-msgstr "Ok"
+msgstr ""
 
 #: ../gui/definitions/ChangePassword.xml:4
 msgid "Change account password"
@@ -479,15 +480,15 @@ msgstr ""
 #: ../gui/definitions/ChooseKeyToImport.xml:35
 #: ../gui/definitions/Importer.xml:97
 msgid "Import"
-msgstr "Import"
+msgstr ""
 
 #: ../gui/definitions/ConfirmAccountRemoval.xml:3
 msgid "Confirm account removal"
-msgstr "Confirm account removal"
+msgstr ""
 
 #: ../gui/definitions/ConfirmAccountRemoval.xml:5
 msgid "Are you sure you want to remove this account?"
-msgstr "Are you sure you want to remove this account?"
+msgstr ""
 
 #: ../gui/definitions/ConnectionInformation.xml:3
 msgid "Connection Information"
@@ -524,13 +525,13 @@ msgstr ""
 
 #: ../gui/definitions/ContactPopupMenu.xml:5
 msgid "Edit..."
-msgstr "Edit..."
+msgstr ""
 
 #: ../gui/definitions/ContactPopupMenu.xml:11
 #: ../gui/definitions/MUCRoomConfigFieldPositions.xml:135
 #: ../gui/muc_room_config_list_component.go:101
 msgid "Remove"
-msgstr "Remove"
+msgstr ""
 
 #: ../gui/definitions/ContactPopupMenu.xml:21
 msgid "Talk to..."
@@ -546,19 +547,19 @@ msgstr ""
 
 #: ../gui/definitions/ContactPopupMenu.xml:41
 msgid "Ask contact to see their status"
-msgstr "Ask contact to see their status"
+msgstr ""
 
 #: ../gui/definitions/ContactPopupMenu.xml:47
 msgid "Allow contact to see my status"
-msgstr "Allow contact to see my status"
+msgstr ""
 
 #: ../gui/definitions/ContactPopupMenu.xml:53
 msgid "Forbid contact to see my status"
-msgstr "Forbid contact to see my status"
+msgstr ""
 
 #: ../gui/definitions/ContactPopupMenu.xml:62 ../gui/account.go:326
 msgid "Dump info"
-msgstr "Dump info"
+msgstr ""
 
 #: ../gui/definitions/ConversationPane.xml:15
 #: ../gui/definitions/ConversationPane.xml:135
@@ -567,15 +568,15 @@ msgstr ""
 
 #: ../gui/definitions/ConversationPane.xml:25
 msgid "Start encrypted chat"
-msgstr "Start encrypted chat"
+msgstr ""
 
 #: ../gui/definitions/ConversationPane.xml:32
 msgid "End encrypted chat"
-msgstr "End encrypted chat"
+msgstr ""
 
 #: ../gui/definitions/ConversationPane.xml:39
 msgid "Verify fingerprint"
-msgstr "Verify fingerprint"
+msgstr ""
 
 #: ../gui/definitions/ConversationPane.xml:53
 msgid "Transfer"
@@ -591,27 +592,27 @@ msgstr ""
 
 #: ../gui/definitions/EditProxy.xml:3
 msgid "Edit Proxy"
-msgstr "Edit Proxy"
+msgstr ""
 
 #: ../gui/definitions/EditProxy.xml:17
 msgid "Proxy type:"
-msgstr "Proxy type:"
+msgstr ""
 
 #: ../gui/definitions/EditProxy.xml:39
 msgid "User:"
-msgstr "User:"
+msgstr ""
 
 #: ../gui/definitions/EditProxy.xml:59
 msgid "Password:"
-msgstr "Password:"
+msgstr ""
 
 #: ../gui/definitions/EditProxy.xml:80
 msgid "Server:"
-msgstr "Server:"
+msgstr ""
 
 #: ../gui/definitions/EditProxy.xml:100
 msgid "Port:"
-msgstr "Port:"
+msgstr ""
 
 #: ../gui/definitions/EditProxy.xml:120
 msgid "Path:"
@@ -619,15 +620,15 @@ msgstr ""
 
 #: ../gui/definitions/FeedbackInfo.xml:12
 msgid "Are you liking it?"
-msgstr "Are you liking it?"
+msgstr ""
 
 #: ../gui/definitions/FeedbackInfo.xml:22 ../gui/definitions/Main.xml:164
 msgid "Feedback"
-msgstr "Feedback"
+msgstr ""
 
 #: ../gui/definitions/Feedback.xml:4
 msgid "We would like to receive your feedback"
-msgstr "We would like to receive your feedback"
+msgstr ""
 
 #: ../gui/definitions/Feedback.xml:14
 msgid ""
@@ -807,25 +808,24 @@ msgstr ""
 
 #: ../gui/definitions/Importer.xml:12
 msgid "Import Accounts"
-msgstr "Import Accounts"
+msgstr ""
 
 #: ../gui/definitions/Importer.xml:22
 msgid ""
 "Choose the accounts you would like to import and start using from CoyIM."
 msgstr ""
-"Choose the accounts you would like to import and start using from CoyIM."
 
 #: ../gui/definitions/Importer.xml:41
 msgid "Import this"
-msgstr "Import this"
+msgstr ""
 
 #: ../gui/definitions/Importer.xml:55
 msgid "From application"
-msgstr "From application"
+msgstr ""
 
 #: ../gui/definitions/Importer.xml:67
 msgid "Account name"
-msgstr "Account name"
+msgstr ""
 
 #: ../gui/definitions/Main.xml:22
 msgid "_Contacts"
@@ -833,7 +833,7 @@ msgstr ""
 
 #: ../gui/definitions/Main.xml:30
 msgid "Add..."
-msgstr "Add..."
+msgstr ""
 
 #: ../gui/definitions/Main.xml:37
 msgid "New Conversation..."
@@ -866,11 +866,11 @@ msgstr ""
 
 #: ../gui/definitions/Main.xml:97
 msgid "Merge Accounts"
-msgstr "Merge Accounts"
+msgstr ""
 
 #: ../gui/definitions/Main.xml:104
 msgid "Show Offline Contacts"
-msgstr "Show Offline Contacts"
+msgstr ""
 
 #: ../gui/definitions/Main.xml:111
 msgid "Show Waiting Contacts"
@@ -886,7 +886,7 @@ msgstr ""
 
 #: ../gui/definitions/Main.xml:137
 msgid "Encrypt configuration file"
-msgstr "Encrypt configuration file"
+msgstr ""
 
 #: ../gui/definitions/Main.xml:144 ../gui/menubar.go:49
 msgid "Preferences..."
@@ -898,7 +898,7 @@ msgstr ""
 
 #: ../gui/definitions/Main.xml:171
 msgid "About"
-msgstr "About"
+msgstr ""
 
 #: ../gui/definitions/Main.xml:199
 msgid "Search..."
@@ -906,15 +906,13 @@ msgstr ""
 
 #: ../gui/definitions/MasterPassword.xml:4
 msgid "Enter master password"
-msgstr "Enter master password"
+msgstr ""
 
 #: ../gui/definitions/MasterPassword.xml:15
 msgid ""
 "Please enter the master password for the configuration file. You will not be "
 "asked for this password again until you restart CoyIM."
 msgstr ""
-"Please enter the master password for the configuration file. You will not be "
-"asked for this password again until you restart CoyIM."
 
 #: ../gui/definitions/MUCCreateRoomDialog.xml:4
 msgid "Create chat room"
@@ -979,7 +977,7 @@ msgstr ""
 #: ../gui/importer.go:324 ../gui/importer.go:348 ../gui/importer.go:370
 #: ../gui/file_transfer.go:156 ../gui/file_transfer.go:266
 msgid "_Cancel"
-msgstr "_Cancel"
+msgstr ""
 
 #: ../gui/definitions/MUCJoinRoomDialog.xml:54
 msgid "_Continue"
@@ -1016,7 +1014,7 @@ msgstr ""
 #: ../gui/definitions/MUCRoomRoleDialog.xml:42
 #: ../gui/definitions/MUCRoomToolbar.xml:375
 msgid "Apply"
-msgstr "Apply"
+msgstr ""
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:110
 msgid ""
@@ -1431,7 +1429,7 @@ msgstr ""
 
 #: ../gui/definitions/RegistrationForm.xml:41
 msgid "Register"
-msgstr "Register"
+msgstr ""
 
 #: ../gui/definitions/TorHelper.xml:6
 msgid "Warning!"
@@ -1475,15 +1473,15 @@ msgstr ""
 
 #: ../gui/definitions/UnifiedLayout.xml:138
 msgid "Conversations"
-msgstr "Conversations"
+msgstr ""
 
 #: ../gui/definitions/UnifiedLayout.xml:164
 msgid "icon"
-msgstr "icon"
+msgstr ""
 
 #: ../gui/definitions/UnifiedLayout.xml:178
 msgid "column"
-msgstr "column"
+msgstr ""
 
 #: ../gui/definitions/UnverifiedWarning.xml:87
 msgid "Validate Channel"
@@ -3695,15 +3693,15 @@ msgstr ""
 
 #: ../gui/importer.go:296
 msgid "Import private keys"
-msgstr "Import private keys"
+msgstr ""
 
 #: ../gui/importer.go:301 ../gui/importer.go:350
 msgid "_Import"
-msgstr "_Import"
+msgstr ""
 
 #: ../gui/importer.go:310
 msgid "Keys imported"
-msgstr "Keys imported"
+msgstr ""
 
 #: ../gui/importer.go:310
 msgid "The key was imported correctly."
@@ -3711,80 +3709,80 @@ msgstr ""
 
 #: ../gui/importer.go:312
 msgid "Failure importing keys"
-msgstr "Failure importing keys"
+msgstr ""
 
 #: ../gui/importer.go:312
 #, python-format
 msgid "Couldn't import any keys from %s."
-msgstr "Couldn't import any keys from %s."
+msgstr ""
 
 #: ../gui/importer.go:321
 msgid "Export private keys"
-msgstr "Export private keys"
+msgstr ""
 
 #: ../gui/importer.go:326 ../gui/importer.go:372
 msgid "_Export"
-msgstr "_Export"
+msgstr ""
 
 #: ../gui/importer.go:335
 msgid "Keys exported"
-msgstr "Keys exported"
+msgstr ""
 
 #: ../gui/importer.go:335
 msgid "Keys were exported correctly."
-msgstr "Keys were exported correctly."
+msgstr ""
 
 #: ../gui/importer.go:337
 msgid "Failure exporting keys"
-msgstr "Failure exporting keys"
+msgstr ""
 
 #: ../gui/importer.go:337
 #, python-format
 msgid "Couldn't export keys to %s."
-msgstr "Couldn't export keys to %s."
+msgstr ""
 
 #: ../gui/importer.go:345
 msgid "Import fingerprints"
-msgstr "Import fingerprints"
+msgstr ""
 
 #: ../gui/importer.go:357
 msgid "Fingerprints imported"
-msgstr "Fingerprints imported"
+msgstr ""
 
 #: ../gui/importer.go:357
 #, python-format
 msgid "%d fingerprint(s) were imported correctly."
-msgstr "%d fingerprint(s) were imported correctly."
+msgstr ""
 
 #: ../gui/importer.go:359
 msgid "Failure importing fingerprints"
-msgstr "Failure importing fingerprints"
+msgstr ""
 
 #: ../gui/importer.go:359
 #, python-format
 msgid "Couldn't import any fingerprints from %s."
-msgstr "Couldn't import any fingerprints from %s."
+msgstr ""
 
 #: ../gui/importer.go:367
 msgid "Export fingerprints"
-msgstr "Export fingerprints"
+msgstr ""
 
 #: ../gui/importer.go:381
 msgid "Fingerprints exported"
-msgstr "Fingerprints exported"
+msgstr ""
 
 #: ../gui/importer.go:381
 msgid "Fingerprints were exported correctly."
-msgstr "Fingerprints were exported correctly."
+msgstr ""
 
 #: ../gui/importer.go:383
 msgid "Failure exporting fingerprints"
-msgstr "Failure exporting fingerprints"
+msgstr ""
 
 #: ../gui/importer.go:383
 #, python-format
 msgid "Couldn't export fingerprints to %s."
-msgstr "Couldn't export fingerprints to %s."
+msgstr ""
 
 #: ../gui/muc_room_destroy.go:128
 msgid "You must provide a service name."
@@ -3870,15 +3868,15 @@ msgstr ""
 
 #: ../gui/ui.go:663
 msgid "CoyIM!"
-msgstr "CoyIM!"
+msgstr ""
 
 #: ../gui/ui.go:743
 msgid "There is no account with the id %q"
-msgstr "There is no account with the id %q"
+msgstr ""
 
 #: ../gui/ui.go:747
 msgid "Can't send a contact request from an offline account"
-msgstr "Can't send a contact request from an offline account"
+msgstr ""
 
 #: ../gui/connection.go:28
 msgid "Connection lost"
@@ -3924,11 +3922,11 @@ msgstr ""
 
 #: ../gui/accounts_menu.go:20
 msgid "Connect On _Startup"
-msgstr "Connect On _Startup"
+msgstr ""
 
 #: ../gui/accounts_menu.go:30
 msgid "_Connect All"
-msgstr "_Connect All"
+msgstr ""
 
 #: ../gui/accounts_menu.go:34
 msgid "_Disconnect All"
@@ -4109,7 +4107,7 @@ msgstr ""
 
 #: ../gui/account.go:164
 msgid "Account added"
-msgstr "Account added"
+msgstr ""
 
 #: ../gui/account.go:164
 #, python-format
@@ -4122,11 +4120,11 @@ msgstr ""
 
 #: ../gui/account.go:255
 msgid "_Connect"
-msgstr "_Connect"
+msgstr ""
 
 #: ../gui/account.go:265
 msgid "_Disconnect"
-msgstr "_Disconnect"
+msgstr ""
 
 #: ../gui/account.go:283
 msgid "Connection _information..."
@@ -4138,11 +4136,11 @@ msgstr ""
 
 #: ../gui/account.go:312
 msgid "Connect _Automatically"
-msgstr "Connect _Automatically"
+msgstr ""
 
 #: ../gui/account.go:319
 msgid "Always Encrypt Conversation"
-msgstr "Always Encrypt Conversation"
+msgstr ""
 
 #: ../gui/account.go:340
 msgid "XML Console"
@@ -4154,8 +4152,6 @@ msgid ""
 "Connecting account\n"
 "%s"
 msgstr ""
-"Connecting account\n"
-"%s"
 
 #: ../gui/account.go:445
 #, python-format
@@ -4163,12 +4159,10 @@ msgid ""
 "Connection failure\n"
 "%s"
 msgstr ""
-"Connection failure\n"
-"%s"
 
 #: ../gui/account.go:449
 msgid "Tor is not currently running"
-msgstr "Tor is not currently running"
+msgstr ""
 
 #: ../gui/muc_room_warnings.go:32
 msgid ""
@@ -4595,35 +4589,35 @@ msgstr ""
 
 #: ../gui/conversation.go:593
 msgid "Available"
-msgstr "Available"
+msgstr ""
 
 #: ../gui/conversation.go:595
 msgid "Not Available"
-msgstr "Not Available"
+msgstr ""
 
 #: ../gui/conversation.go:597
 msgid "Away"
-msgstr "Away"
+msgstr ""
 
 #: ../gui/conversation.go:599
 msgid "Busy"
-msgstr "Busy"
+msgstr ""
 
 #: ../gui/conversation.go:601
 msgid "Free for Chat"
-msgstr "Free for Chat"
+msgstr ""
 
 #: ../gui/conversation.go:603
 msgid "Invisible"
-msgstr "Invisible"
+msgstr ""
 
 #: ../gui/conversation.go:638
 msgid "Offline"
-msgstr "Offline"
+msgstr ""
 
 #: ../gui/conversation.go:644
 msgid " is now "
-msgstr " is now "
+msgstr ""
 
 #: ../gui/conversation.go:760
 msgid "The peer is using a key we haven't seen before!"
@@ -4700,20 +4694,20 @@ msgstr ""
 #: ../gui/edit_contact.go:114
 #, python-format
 msgid "There are no known fingerprints for %s"
-msgstr "There are no known fingerprints for %s"
+msgstr ""
 
 #: ../gui/edit_contact.go:116
 #, python-format
 msgid "These are the fingerprints known for %s:"
-msgstr "These are the fingerprints known for %s:"
+msgstr ""
 
 #: ../gui/edit_contact.go:122
 msgid "not trusted"
-msgstr "not trusted"
+msgstr ""
 
 #: ../gui/edit_contact.go:124
 msgid "trusted"
-msgstr "trusted"
+msgstr ""
 
 #: ../gui/account_details.go:199
 msgid ""
@@ -5044,11 +5038,11 @@ msgstr ""
 #: ../gui/fingerprint_verification.go:61
 #, python-format
 msgid "Verify fingerprint for %s"
-msgstr "Verify fingerprint for %s"
+msgstr ""
 
 #: ../gui/account_events.go:154
 msgid "Private conversation started."
-msgstr "Private conversation started."
+msgstr ""
 
 #: ../gui/account_events.go:154
 #, python-format
@@ -5057,11 +5051,11 @@ msgstr ""
 
 #: ../gui/account_events.go:154
 msgid "Unverified conversation started."
-msgstr "Unverified conversation started."
+msgstr ""
 
 #: ../gui/account_events.go:163
 msgid "Successfully refreshed the private conversation."
-msgstr "Successfully refreshed the private conversation."
+msgstr ""
 
 #: ../gui/account_events.go:163
 #, python-format
@@ -5070,12 +5064,12 @@ msgstr ""
 
 #: ../gui/account_events.go:163
 msgid "Successfully refreshed the unverified private conversation."
-msgstr "Successfully refreshed the unverified private conversation."
+msgstr ""
 
 #: ../gui/subscription.go:15
 #, python-format
 msgid "%s wants to talk to you. Is that ok?"
-msgstr "%s wants to talk to you. Is that ok?"
+msgstr ""
 
 #: ../gui/subscription.go:102
 msgid "There are no currently connected accounts."
@@ -5179,166 +5173,16 @@ msgstr ""
 
 #: ../gui/master_password.go:33
 msgid "Passwords have to be the same - please try again"
-msgstr "Passwords have to be the same - please try again"
+msgstr ""
 
 #: ../gui/master_password.go:115
 msgid "Incorrect password entered, please try again."
-msgstr "Incorrect password entered, please try again."
+msgstr ""
 
 #: ../gui/master_password.go:126
 msgid "Checking password..."
-msgstr "Checking password..."
+msgstr ""
 
 #: ../gui/muc_room_close_confirm.go:53
 msgid "Close & leave room"
 msgstr ""
-
-#~ msgid "Failed to generate OTR message: %s\n"
-#~ msgstr "Failed to generate OTR message: %s\n"
-
-#~ msgid "Failed to terminate the encrypted chat: %s\n"
-#~ msgstr "Failed to terminate the encrypted chat: %s\n"
-
-#~ msgid ""
-#~ "Your account\n"
-#~ "(example: kim42@dukgo.com)"
-#~ msgstr ""
-#~ "Your account\n"
-#~ "(example: kim42@dukgo.com)"
-
-#~ msgid ""
-#~ "The below buttons allow you to import private keys and fingerprints. Both "
-#~ "of them should be in the Pidgin/libotr format. If you import private "
-#~ "keys, your existing private keys will be deleted, since current there is "
-#~ "no way to choose which key to use for encrypted chat."
-#~ msgstr ""
-#~ "The below buttons allow you to import private keys and fingerprints. Both "
-#~ "of them should be in the Pidgin/libotr format. If you import private "
-#~ "keys, your existing private keys will be deleted, since current there is "
-#~ "no way to choose which key to use for encrypted chat."
-
-#~ msgid ""
-#~ "The below buttons allow you to export private keys and fingerprints. Be "
-#~ "careful with the files that come out of this process, since they contain "
-#~ "potentially sensitive data. The export will be in Pidgin/libotr format."
-#~ msgstr ""
-#~ "The below buttons allow you to export private keys and fingerprints. Be "
-#~ "careful with the files that come out of this process, since they contain "
-#~ "potentially sensitive data. The export will be in Pidgin/libotr format."
-
-#~ msgid "Disconnect"
-#~ msgstr "Disconnect"
-
-#~ msgid "Choose a server to register your account"
-#~ msgstr "Choose a server to register your account"
-
-#~ msgid "Add contact"
-#~ msgstr "Add contact"
-
-#~ msgid "Contact to add (for example: arnoldsPub@jabber.ccc.de)"
-#~ msgstr "Contact to add (for example: arnoldsPub@jabber.ccc.de)"
-
-#~ msgid ""
-#~ "Would you like to save your configuration file in an encrypted format? "
-#~ "This can be significantly more secure, but you will not be able to access "
-#~ "your configuration if you lose the password. You will only be asked for "
-#~ "your password when CoyIM starts."
-#~ msgstr ""
-#~ "Would you like to save your configuration file in an encrypted format? "
-#~ "This can be significantly more secure, but you will not be able to access "
-#~ "your configuration if you lose the password. You will only be asked for "
-#~ "your password when CoyIM starts."
-
-#~ msgid "Configure master password"
-#~ msgstr "Configure master password"
-
-#~ msgid ""
-#~ "Please enter the master password for the configuration file, two times."
-#~ msgstr ""
-#~ "Please enter the master password for the configuration file, two times."
-
-#~ msgid "Fingerprints..."
-#~ msgstr "Fingerprints..."
-
-#~ msgid "Rename..."
-#~ msgstr "Rename..."
-
-#~ msgid "Developer options"
-#~ msgstr "Developer options"
-
-#~ msgid "You are talking over an unprotected channel"
-#~ msgstr "You are talking over an unprotected channel"
-
-#~ msgid "Secure chat"
-#~ msgstr "Secure chat"
-
-#~ msgid ""
-#~ "Please, tell us how is going for you to use CoyIM.\n"
-#~ "This is the only way we can create a better tool to keep your "
-#~ "conversations private."
-#~ msgstr ""
-#~ "Please, tell us how is going for you to use CoyIM.\n"
-#~ "This is the only way we can create a better tool to keep your "
-#~ "conversations private."
-
-#~ msgid "https://coy.im/feedback"
-#~ msgstr "https://coy.im/feedback"
-
-#~ msgid "Contacts"
-#~ msgstr "Contacts"
-
-#~ msgid "Accounts"
-#~ msgstr "Accounts"
-
-#~ msgid "View"
-#~ msgstr "View"
-
-#~ msgid "Help"
-#~ msgstr "Help"
-
-#~ msgid "Peer fingerprints"
-#~ msgstr "Peer fingerprints"
-
-#~ msgid "_OK"
-#~ msgstr "_OK"
-
-#~ msgid "Contact's new name"
-#~ msgstr "Contact's new name"
-
-#~ msgid "Verify"
-#~ msgstr "Verify"
-
-#~ msgid "The account %s was added successfully."
-#~ msgstr "The account %s was added successfully."
-
-#~ msgid ""
-#~ "Your fingerprints for %s:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Your fingerprints for %s:\n"
-#~ "%s"
-
-#~ msgid "Private conversation lost."
-#~ msgstr "Private conversation lost."
-
-#~ msgid "_Import..."
-#~ msgstr "_Import..."
-
-#~ msgid "_Register..."
-#~ msgstr "_Register..."
-
-#~ msgid ""
-#~ "You can't verify the fingerprint for %s yet.\n"
-#~ "You first have to start an encrypted conversation with them."
-#~ msgstr ""
-#~ "You can't verify the fingerprint for %s yet.\n"
-#~ "You first have to start an encrypted conversation with them."
-
-#~ msgid "%d key(s) were imported correctly."
-#~ msgstr "%d key(s) were imported correctly."
-
-#~ msgid "Password can not be empty - please try again"
-#~ msgstr "Password can not be empty - please try again"
-
-#~ msgid "You have not verified the identity of %s"
-#~ msgstr "You have not verified the identity of %s"

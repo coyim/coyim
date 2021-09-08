@@ -1,4 +1,4 @@
-//go:generate ../.build-tools/esc -o translations.go -modtime 1489449600 -pkg i18n -private ar en_US es_EC pt_BR sv_SE zh_CN
+//go:generate ../.build-tools/esc -o translations.go -modtime 1489449600 -pkg i18n -private ar en es pt sv zh
 
 package i18n
 

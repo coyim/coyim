@@ -1,23 +1,26 @@
-# Fan Jiang <fan.torchz@gmail.com>, 2016. #zanata
+# English translations for coy package.
+# Copyright (C) 2016 THE coy'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the coy package.
+# Automatically generated, 2016.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-08 16:02+0000\n"
-"PO-Revision-Date: 2016-02-23 03:48-0500\n"
-"Last-Translator: Fan Jiang <fan.torchz@gmail.com>\n"
-"Language-Team: Chinese (Simplified, China)\n"
-"Language: zh-Hans-CN\n"
+"PO-Revision-Date: 2016-02-16 14:02-0500\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Zanata 3.8.2\n"
-"Plural-Forms: nplurals=1; plural=0\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../gui/definitions/AccountDetails.xml:22
 #: ../gui/definitions/GlobalPreferences.xml:35
 msgid "Account Details"
-msgstr "账号详情"
+msgstr "Account Details"
 
 #: ../gui/definitions/AccountDetails.xml:34
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:55
@@ -41,14 +44,14 @@ msgstr "账号详情"
 #: ../gui/file_transfer_notification.go:125
 #: ../gui/file_transfer_notification.go:401
 msgid "Cancel"
-msgstr "取消"
+msgstr "Cancel"
 
 #: ../gui/definitions/AccountDetails.xml:47
 #: ../gui/definitions/EditProxy.xml:151
 #: ../gui/definitions/GlobalPreferences.xml:397
 #: ../gui/definitions/PeerDetails.xml:197
 msgid "Save"
-msgstr "保存"
+msgstr "Save"
 
 #: ../gui/definitions/AccountDetails.xml:108
 msgid ""
@@ -62,7 +65,7 @@ msgstr ""
 #: ../gui/definitions/MUCRoomLobby.xml:82 ../gui/definitions/Password.xml:11
 #: ../gui/muc_room_config_texts.go:178
 msgid "Password"
-msgstr "密码"
+msgstr "Password"
 
 #: ../gui/definitions/AccountDetails.xml:149
 msgid "Account name (optional)"
@@ -70,22 +73,22 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:169
 msgid "Display all settings"
-msgstr "显示所有选项"
+msgstr "Display all settings"
 
 #: ../gui/definitions/AccountDetails.xml:198
 #: ../gui/definitions/AskForPassword.xml:27
 #: ../gui/definitions/MUCCreateRoomForm.xml:39
 #: ../gui/definitions/MUCJoinRoomDialog.xml:139
 msgid "Account"
-msgstr "账号"
+msgstr "Account"
 
 #: ../gui/definitions/AccountDetails.xml:219
 msgid "Server (leave empty for default)"
-msgstr "服务器地址（默认为空）"
+msgstr "Server (leave empty for default)"
 
 #: ../gui/definitions/AccountDetails.xml:239
 msgid "Port (leave empty for default)"
-msgstr "端口号（默认为空）"
+msgstr "Port (leave empty for default)"
 
 #: ../gui/definitions/AccountDetails.xml:259
 msgid "Pinning policy"
@@ -121,7 +124,7 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:365 ../gui/account.go:306
 msgid "_Remove"
-msgstr "_删除..."
+msgstr "_Remove"
 
 #: ../gui/definitions/AccountDetails.xml:407
 msgid ""
@@ -159,11 +162,11 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:445
 msgid "Server"
-msgstr "服务器"
+msgstr "Server"
 
 #: ../gui/definitions/AccountDetails.xml:520
 msgid "_Add..."
-msgstr "_添加..."
+msgstr "_Add..."
 
 #: ../gui/definitions/AccountDetails.xml:535
 msgid "_Remove..."
@@ -171,11 +174,11 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:550 ../gui/account.go:293
 msgid "_Edit..."
-msgstr "_编辑..."
+msgstr "_Edit..."
 
 #: ../gui/definitions/AccountDetails.xml:583
 msgid "Proxies"
-msgstr "代理"
+msgstr "Proxies"
 
 #: ../gui/definitions/AccountDetails.xml:622
 msgid ""
@@ -193,11 +196,11 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:637
 msgid "Import Private _Keys..."
-msgstr "导入私钥..."
+msgstr "Import Private _Keys..."
 
 #: ../gui/definitions/AccountDetails.xml:651
 msgid "Import _Fingerprints..."
-msgstr "导入Fingerprint..."
+msgstr "Import _Fingerprints..."
 
 #: ../gui/definitions/AccountDetails.xml:666
 msgid ""
@@ -208,15 +211,15 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:679
 msgid "Export Private Keys..."
-msgstr "导出私钥..."
+msgstr "Export Private Keys..."
 
 #: ../gui/definitions/AccountDetails.xml:692
 msgid "Export Fingerprints..."
-msgstr "导出Fingerprint"
+msgstr "Export Fingerprints..."
 
 #: ../gui/definitions/AccountDetails.xml:717
 msgid "Encryption"
-msgstr "加密"
+msgstr "Encryption"
 
 #: ../gui/definitions/AccountRegistration.xml:17
 msgid "Recommended servers: "
@@ -267,7 +270,7 @@ msgstr ""
 #: ../gui/definitions/MUCRoomConfigListAddDialog.xml:33
 #: ../gui/muc_room_config_list_add_component.go:196
 msgid "Add"
-msgstr "添加"
+msgstr "Add"
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:49
 msgid "Answer: "
@@ -295,7 +298,7 @@ msgstr ""
 
 #: ../gui/definitions/AskForPassword.xml:4
 msgid "Enter your password"
-msgstr "输入密码"
+msgstr "Enter your password"
 
 #: ../gui/definitions/AskForPassword.xml:72
 msgid "Save password"
@@ -303,7 +306,7 @@ msgstr ""
 
 #: ../gui/definitions/AskForPassword.xml:101
 msgid "Connect"
-msgstr "连接"
+msgstr "Connect"
 
 #: ../gui/definitions/AskToEncrypt.xml:6
 msgid "Encrypt your account's information"
@@ -327,7 +330,7 @@ msgstr ""
 
 #: ../gui/definitions/AuthorizeSubscription.xml:3
 msgid "Subscription request"
-msgstr "查看状态请求"
+msgstr "Subscription request"
 
 #: ../gui/definitions/CannotVerifyWithSMP.xml:46
 #: ../gui/definitions/VerificationFailed.xml:47
@@ -348,7 +351,7 @@ msgstr ""
 #: ../gui/definitions/VerificationSucceeded.xml:25
 #: ../gui/definitions/VerifyFingerprintUnknown.xml:18
 msgid "OK"
-msgstr "好"
+msgstr "OK"
 
 #: ../gui/definitions/CertificateDialog.xml:3
 msgid "Problem with secure connection for ACCOUNT_NAME"
@@ -437,7 +440,7 @@ msgstr ""
 #: ../gui/definitions/ChangePassword.xml:44
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:42
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: ../gui/definitions/ChangePassword.xml:4
 msgid "Change account password"
@@ -476,15 +479,15 @@ msgstr ""
 #: ../gui/definitions/ChooseKeyToImport.xml:35
 #: ../gui/definitions/Importer.xml:97
 msgid "Import"
-msgstr "导入"
+msgstr "Import"
 
 #: ../gui/definitions/ConfirmAccountRemoval.xml:3
 msgid "Confirm account removal"
-msgstr "确认移除账号"
+msgstr "Confirm account removal"
 
 #: ../gui/definitions/ConfirmAccountRemoval.xml:5
 msgid "Are you sure you want to remove this account?"
-msgstr "请确定您是否真的想移除这个账号？"
+msgstr "Are you sure you want to remove this account?"
 
 #: ../gui/definitions/ConnectionInformation.xml:3
 msgid "Connection Information"
@@ -521,13 +524,13 @@ msgstr ""
 
 #: ../gui/definitions/ContactPopupMenu.xml:5
 msgid "Edit..."
-msgstr "编辑"
+msgstr "Edit..."
 
 #: ../gui/definitions/ContactPopupMenu.xml:11
 #: ../gui/definitions/MUCRoomConfigFieldPositions.xml:135
 #: ../gui/muc_room_config_list_component.go:101
 msgid "Remove"
-msgstr "移除"
+msgstr "Remove"
 
 #: ../gui/definitions/ContactPopupMenu.xml:21
 msgid "Talk to..."
@@ -543,19 +546,19 @@ msgstr ""
 
 #: ../gui/definitions/ContactPopupMenu.xml:41
 msgid "Ask contact to see their status"
-msgstr "请求查看该联系人状态"
+msgstr "Ask contact to see their status"
 
 #: ../gui/definitions/ContactPopupMenu.xml:47
 msgid "Allow contact to see my status"
-msgstr "允许该联系人查看我的状态"
+msgstr "Allow contact to see my status"
 
 #: ../gui/definitions/ContactPopupMenu.xml:53
 msgid "Forbid contact to see my status"
-msgstr "禁止该联系人查看我的状态"
+msgstr "Forbid contact to see my status"
 
 #: ../gui/definitions/ContactPopupMenu.xml:62 ../gui/account.go:326
 msgid "Dump info"
-msgstr "输出信息"
+msgstr "Dump info"
 
 #: ../gui/definitions/ConversationPane.xml:15
 #: ../gui/definitions/ConversationPane.xml:135
@@ -564,15 +567,15 @@ msgstr ""
 
 #: ../gui/definitions/ConversationPane.xml:25
 msgid "Start encrypted chat"
-msgstr "开始加密会话"
+msgstr "Start encrypted chat"
 
 #: ../gui/definitions/ConversationPane.xml:32
 msgid "End encrypted chat"
-msgstr "结束加密会话"
+msgstr "End encrypted chat"
 
 #: ../gui/definitions/ConversationPane.xml:39
 msgid "Verify fingerprint"
-msgstr "验证Fingerprint"
+msgstr "Verify fingerprint"
 
 #: ../gui/definitions/ConversationPane.xml:53
 msgid "Transfer"
@@ -588,27 +591,27 @@ msgstr ""
 
 #: ../gui/definitions/EditProxy.xml:3
 msgid "Edit Proxy"
-msgstr "编辑代理服务"
+msgstr "Edit Proxy"
 
 #: ../gui/definitions/EditProxy.xml:17
 msgid "Proxy type:"
-msgstr "代理类型："
+msgstr "Proxy type:"
 
 #: ../gui/definitions/EditProxy.xml:39
 msgid "User:"
-msgstr "用户名："
+msgstr "User:"
 
 #: ../gui/definitions/EditProxy.xml:59
 msgid "Password:"
-msgstr "密码："
+msgstr "Password:"
 
 #: ../gui/definitions/EditProxy.xml:80
 msgid "Server:"
-msgstr "服务地址："
+msgstr "Server:"
 
 #: ../gui/definitions/EditProxy.xml:100
 msgid "Port:"
-msgstr "端口："
+msgstr "Port:"
 
 #: ../gui/definitions/EditProxy.xml:120
 msgid "Path:"
@@ -616,15 +619,15 @@ msgstr ""
 
 #: ../gui/definitions/FeedbackInfo.xml:12
 msgid "Are you liking it?"
-msgstr "您喜欢CoyIM吗？"
+msgstr "Are you liking it?"
 
 #: ../gui/definitions/FeedbackInfo.xml:22 ../gui/definitions/Main.xml:164
 msgid "Feedback"
-msgstr "反馈"
+msgstr "Feedback"
 
 #: ../gui/definitions/Feedback.xml:4
 msgid "We would like to receive your feedback"
-msgstr "我们希望获取您的反馈"
+msgstr "We would like to receive your feedback"
 
 #: ../gui/definitions/Feedback.xml:14
 msgid ""
@@ -804,24 +807,25 @@ msgstr ""
 
 #: ../gui/definitions/Importer.xml:12
 msgid "Import Accounts"
-msgstr "导入账号"
+msgstr "Import Accounts"
 
 #: ../gui/definitions/Importer.xml:22
 msgid ""
 "Choose the accounts you would like to import and start using from CoyIM."
-msgstr "选择您想要导入的账号。"
+msgstr ""
+"Choose the accounts you would like to import and start using from CoyIM."
 
 #: ../gui/definitions/Importer.xml:41
 msgid "Import this"
-msgstr "是否导入"
+msgstr "Import this"
 
 #: ../gui/definitions/Importer.xml:55
 msgid "From application"
-msgstr "格式"
+msgstr "From application"
 
 #: ../gui/definitions/Importer.xml:67
 msgid "Account name"
-msgstr "账号名"
+msgstr "Account name"
 
 #: ../gui/definitions/Main.xml:22
 msgid "_Contacts"
@@ -829,7 +833,7 @@ msgstr ""
 
 #: ../gui/definitions/Main.xml:30
 msgid "Add..."
-msgstr "添加..."
+msgstr "Add..."
 
 #: ../gui/definitions/Main.xml:37
 msgid "New Conversation..."
@@ -862,11 +866,11 @@ msgstr ""
 
 #: ../gui/definitions/Main.xml:97
 msgid "Merge Accounts"
-msgstr "合并联系人列表"
+msgstr "Merge Accounts"
 
 #: ../gui/definitions/Main.xml:104
 msgid "Show Offline Contacts"
-msgstr "显示离线用户"
+msgstr "Show Offline Contacts"
 
 #: ../gui/definitions/Main.xml:111
 msgid "Show Waiting Contacts"
@@ -882,7 +886,7 @@ msgstr ""
 
 #: ../gui/definitions/Main.xml:137
 msgid "Encrypt configuration file"
-msgstr "加密配置文件"
+msgstr "Encrypt configuration file"
 
 #: ../gui/definitions/Main.xml:144 ../gui/menubar.go:49
 msgid "Preferences..."
@@ -894,7 +898,7 @@ msgstr ""
 
 #: ../gui/definitions/Main.xml:171
 msgid "About"
-msgstr "关于"
+msgstr "About"
 
 #: ../gui/definitions/Main.xml:199
 msgid "Search..."
@@ -902,13 +906,15 @@ msgstr ""
 
 #: ../gui/definitions/MasterPassword.xml:4
 msgid "Enter master password"
-msgstr "输入主密码"
+msgstr "Enter master password"
 
 #: ../gui/definitions/MasterPassword.xml:15
 msgid ""
 "Please enter the master password for the configuration file. You will not be "
 "asked for this password again until you restart CoyIM."
-msgstr "请输入配置主密码，下次打开CoyIM前您不会被要求再次输入。"
+msgstr ""
+"Please enter the master password for the configuration file. You will not be "
+"asked for this password again until you restart CoyIM."
 
 #: ../gui/definitions/MUCCreateRoomDialog.xml:4
 msgid "Create chat room"
@@ -973,7 +979,7 @@ msgstr ""
 #: ../gui/importer.go:324 ../gui/importer.go:348 ../gui/importer.go:370
 #: ../gui/file_transfer.go:156 ../gui/file_transfer.go:266
 msgid "_Cancel"
-msgstr "_取消"
+msgstr "_Cancel"
 
 #: ../gui/definitions/MUCJoinRoomDialog.xml:54
 msgid "_Continue"
@@ -1010,7 +1016,7 @@ msgstr ""
 #: ../gui/definitions/MUCRoomRoleDialog.xml:42
 #: ../gui/definitions/MUCRoomToolbar.xml:375
 msgid "Apply"
-msgstr "申请"
+msgstr "Apply"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:110
 msgid ""
@@ -1425,7 +1431,7 @@ msgstr ""
 
 #: ../gui/definitions/RegistrationForm.xml:41
 msgid "Register"
-msgstr "注册"
+msgstr "Register"
 
 #: ../gui/definitions/TorHelper.xml:6
 msgid "Warning!"
@@ -1469,15 +1475,15 @@ msgstr ""
 
 #: ../gui/definitions/UnifiedLayout.xml:138
 msgid "Conversations"
-msgstr "会话"
+msgstr "Conversations"
 
 #: ../gui/definitions/UnifiedLayout.xml:164
 msgid "icon"
-msgstr ""
+msgstr "icon"
 
 #: ../gui/definitions/UnifiedLayout.xml:178
 msgid "column"
-msgstr ""
+msgstr "column"
 
 #: ../gui/definitions/UnverifiedWarning.xml:87
 msgid "Validate Channel"
@@ -3689,15 +3695,15 @@ msgstr ""
 
 #: ../gui/importer.go:296
 msgid "Import private keys"
-msgstr "导入私钥"
+msgstr "Import private keys"
 
 #: ../gui/importer.go:301 ../gui/importer.go:350
 msgid "_Import"
-msgstr "_导入"
+msgstr "_Import"
 
 #: ../gui/importer.go:310
 msgid "Keys imported"
-msgstr "导入的私钥"
+msgstr "Keys imported"
 
 #: ../gui/importer.go:310
 msgid "The key was imported correctly."
@@ -3705,80 +3711,80 @@ msgstr ""
 
 #: ../gui/importer.go:312
 msgid "Failure importing keys"
-msgstr "导入私钥失败"
+msgstr "Failure importing keys"
 
 #: ../gui/importer.go:312
 #, python-format
 msgid "Couldn't import any keys from %s."
-msgstr "无法从%s导入私钥"
+msgstr "Couldn't import any keys from %s."
 
 #: ../gui/importer.go:321
 msgid "Export private keys"
-msgstr "导出私钥"
+msgstr "Export private keys"
 
 #: ../gui/importer.go:326 ../gui/importer.go:372
 msgid "_Export"
-msgstr "_导出"
+msgstr "_Export"
 
 #: ../gui/importer.go:335
 msgid "Keys exported"
-msgstr "导出的私钥"
+msgstr "Keys exported"
 
 #: ../gui/importer.go:335
 msgid "Keys were exported correctly."
-msgstr "私钥导出成功"
+msgstr "Keys were exported correctly."
 
 #: ../gui/importer.go:337
 msgid "Failure exporting keys"
-msgstr "私钥导出失败"
+msgstr "Failure exporting keys"
 
 #: ../gui/importer.go:337
 #, python-format
 msgid "Couldn't export keys to %s."
-msgstr "无法导出私钥到%s"
+msgstr "Couldn't export keys to %s."
 
 #: ../gui/importer.go:345
 msgid "Import fingerprints"
-msgstr "导入Fingerprint"
+msgstr "Import fingerprints"
 
 #: ../gui/importer.go:357
 msgid "Fingerprints imported"
-msgstr "导入的Fingerprint"
+msgstr "Fingerprints imported"
 
 #: ../gui/importer.go:357
 #, python-format
 msgid "%d fingerprint(s) were imported correctly."
-msgstr "%d个Fingerprint导入成功"
+msgstr "%d fingerprint(s) were imported correctly."
 
 #: ../gui/importer.go:359
 msgid "Failure importing fingerprints"
-msgstr "Fingerprint导入失败"
+msgstr "Failure importing fingerprints"
 
 #: ../gui/importer.go:359
 #, python-format
 msgid "Couldn't import any fingerprints from %s."
-msgstr "无法从%s导入Fingerprint"
+msgstr "Couldn't import any fingerprints from %s."
 
 #: ../gui/importer.go:367
 msgid "Export fingerprints"
-msgstr "导出Fingerprint"
+msgstr "Export fingerprints"
 
 #: ../gui/importer.go:381
 msgid "Fingerprints exported"
-msgstr "导出的Fingerprint"
+msgstr "Fingerprints exported"
 
 #: ../gui/importer.go:381
 msgid "Fingerprints were exported correctly."
-msgstr "Fingerprint导出成功"
+msgstr "Fingerprints were exported correctly."
 
 #: ../gui/importer.go:383
 msgid "Failure exporting fingerprints"
-msgstr "Fingerprint导出失败"
+msgstr "Failure exporting fingerprints"
 
 #: ../gui/importer.go:383
 #, python-format
 msgid "Couldn't export fingerprints to %s."
-msgstr "无法导出Fingerprint到%s"
+msgstr "Couldn't export fingerprints to %s."
 
 #: ../gui/muc_room_destroy.go:128
 msgid "You must provide a service name."
@@ -3864,15 +3870,15 @@ msgstr ""
 
 #: ../gui/ui.go:663
 msgid "CoyIM!"
-msgstr ""
+msgstr "CoyIM!"
 
 #: ../gui/ui.go:743
 msgid "There is no account with the id %q"
-msgstr "ID为%q的账号不存在"
+msgstr "There is no account with the id %q"
 
 #: ../gui/ui.go:747
 msgid "Can't send a contact request from an offline account"
-msgstr "无法使用离线账号发送联系人请求"
+msgstr "Can't send a contact request from an offline account"
 
 #: ../gui/connection.go:28
 msgid "Connection lost"
@@ -3918,11 +3924,11 @@ msgstr ""
 
 #: ../gui/accounts_menu.go:20
 msgid "Connect On _Startup"
-msgstr "打开时连接"
+msgstr "Connect On _Startup"
 
 #: ../gui/accounts_menu.go:30
 msgid "_Connect All"
-msgstr "_连接所有账号"
+msgstr "_Connect All"
 
 #: ../gui/accounts_menu.go:34
 msgid "_Disconnect All"
@@ -4103,7 +4109,7 @@ msgstr ""
 
 #: ../gui/account.go:164
 msgid "Account added"
-msgstr "添加的账号"
+msgstr "Account added"
 
 #: ../gui/account.go:164
 #, python-format
@@ -4116,11 +4122,11 @@ msgstr ""
 
 #: ../gui/account.go:255
 msgid "_Connect"
-msgstr "连接"
+msgstr "_Connect"
 
 #: ../gui/account.go:265
 msgid "_Disconnect"
-msgstr "断开连接"
+msgstr "_Disconnect"
 
 #: ../gui/account.go:283
 msgid "Connection _information..."
@@ -4132,11 +4138,11 @@ msgstr ""
 
 #: ../gui/account.go:312
 msgid "Connect _Automatically"
-msgstr "自动连接"
+msgstr "Connect _Automatically"
 
 #: ../gui/account.go:319
 msgid "Always Encrypt Conversation"
-msgstr "始终加密会话"
+msgstr "Always Encrypt Conversation"
 
 #: ../gui/account.go:340
 msgid "XML Console"
@@ -4148,7 +4154,7 @@ msgid ""
 "Connecting account\n"
 "%s"
 msgstr ""
-"正在连接账号\n"
+"Connecting account\n"
 "%s"
 
 #: ../gui/account.go:445
@@ -4157,12 +4163,12 @@ msgid ""
 "Connection failure\n"
 "%s"
 msgstr ""
-"连接失败\n"
+"Connection failure\n"
 "%s"
 
 #: ../gui/account.go:449
 msgid "Tor is not currently running"
-msgstr "检测到Tor未运行"
+msgstr "Tor is not currently running"
 
 #: ../gui/muc_room_warnings.go:32
 msgid ""
@@ -4589,35 +4595,35 @@ msgstr ""
 
 #: ../gui/conversation.go:593
 msgid "Available"
-msgstr "可联系"
+msgstr "Available"
 
 #: ../gui/conversation.go:595
 msgid "Not Available"
-msgstr "不可联系"
+msgstr "Not Available"
 
 #: ../gui/conversation.go:597
 msgid "Away"
-msgstr "离开"
+msgstr "Away"
 
 #: ../gui/conversation.go:599
 msgid "Busy"
-msgstr "繁忙"
+msgstr "Busy"
 
 #: ../gui/conversation.go:601
 msgid "Free for Chat"
-msgstr "随时可谈"
+msgstr "Free for Chat"
 
 #: ../gui/conversation.go:603
 msgid "Invisible"
-msgstr "不可见"
+msgstr "Invisible"
 
 #: ../gui/conversation.go:638
 msgid "Offline"
-msgstr "离线"
+msgstr "Offline"
 
 #: ../gui/conversation.go:644
 msgid " is now "
-msgstr "状态为"
+msgstr " is now "
 
 #: ../gui/conversation.go:760
 msgid "The peer is using a key we haven't seen before!"
@@ -4694,20 +4700,20 @@ msgstr ""
 #: ../gui/edit_contact.go:114
 #, python-format
 msgid "There are no known fingerprints for %s"
-msgstr "%s的Fingerprint未知"
+msgstr "There are no known fingerprints for %s"
 
 #: ../gui/edit_contact.go:116
 #, python-format
 msgid "These are the fingerprints known for %s:"
-msgstr "下列为%s的已知的Fingerprint"
+msgstr "These are the fingerprints known for %s:"
 
 #: ../gui/edit_contact.go:122
 msgid "not trusted"
-msgstr "未信任"
+msgstr "not trusted"
 
 #: ../gui/edit_contact.go:124
 msgid "trusted"
-msgstr "已经信任"
+msgstr "trusted"
 
 #: ../gui/account_details.go:199
 msgid ""
@@ -5038,11 +5044,11 @@ msgstr ""
 #: ../gui/fingerprint_verification.go:61
 #, python-format
 msgid "Verify fingerprint for %s"
-msgstr "验证%s的Fingerprint"
+msgstr "Verify fingerprint for %s"
 
 #: ../gui/account_events.go:154
 msgid "Private conversation started."
-msgstr "隐私会话已建立"
+msgstr "Private conversation started."
 
 #: ../gui/account_events.go:154
 #, python-format
@@ -5051,11 +5057,11 @@ msgstr ""
 
 #: ../gui/account_events.go:154
 msgid "Unverified conversation started."
-msgstr "未验证的会话"
+msgstr "Unverified conversation started."
 
 #: ../gui/account_events.go:163
 msgid "Successfully refreshed the private conversation."
-msgstr "成功刷新隐私会话"
+msgstr "Successfully refreshed the private conversation."
 
 #: ../gui/account_events.go:163
 #, python-format
@@ -5064,12 +5070,12 @@ msgstr ""
 
 #: ../gui/account_events.go:163
 msgid "Successfully refreshed the unverified private conversation."
-msgstr "成功刷新未验证隐私会话"
+msgstr "Successfully refreshed the unverified private conversation."
 
 #: ../gui/subscription.go:15
 #, python-format
 msgid "%s wants to talk to you. Is that ok?"
-msgstr "%s想要与您建立联系，是否同意？"
+msgstr "%s wants to talk to you. Is that ok?"
 
 #: ../gui/subscription.go:102
 msgid "There are no currently connected accounts."
@@ -5173,30 +5179,32 @@ msgstr ""
 
 #: ../gui/master_password.go:33
 msgid "Passwords have to be the same - please try again"
-msgstr "密码不一致，请确认"
+msgstr "Passwords have to be the same - please try again"
 
 #: ../gui/master_password.go:115
 msgid "Incorrect password entered, please try again."
-msgstr "密码错误，请重试"
+msgstr "Incorrect password entered, please try again."
 
 #: ../gui/master_password.go:126
 msgid "Checking password..."
-msgstr "验证密码中..."
+msgstr "Checking password..."
 
 #: ../gui/muc_room_close_confirm.go:53
 msgid "Close & leave room"
 msgstr ""
 
 #~ msgid "Failed to generate OTR message: %s\n"
-#~ msgstr "生成OTR消息失败: %s\n"
+#~ msgstr "Failed to generate OTR message: %s\n"
 
 #~ msgid "Failed to terminate the encrypted chat: %s\n"
-#~ msgstr "结束加密会话失败：%s\n"
+#~ msgstr "Failed to terminate the encrypted chat: %s\n"
 
 #~ msgid ""
 #~ "Your account\n"
 #~ "(example: kim42@dukgo.com)"
-#~ msgstr "我的账号"
+#~ msgstr ""
+#~ "Your account\n"
+#~ "(example: kim42@dukgo.com)"
 
 #~ msgid ""
 #~ "The below buttons allow you to import private keys and fingerprints. Both "
@@ -5204,28 +5212,31 @@ msgstr ""
 #~ "keys, your existing private keys will be deleted, since current there is "
 #~ "no way to choose which key to use for encrypted chat."
 #~ msgstr ""
-#~ "下列按钮，可以为您导入Pidgin和libotr格式的私钥和Fingerprint，如果您需要导"
-#~ "入私钥，你的现有私钥会被覆盖。"
+#~ "The below buttons allow you to import private keys and fingerprints. Both "
+#~ "of them should be in the Pidgin/libotr format. If you import private "
+#~ "keys, your existing private keys will be deleted, since current there is "
+#~ "no way to choose which key to use for encrypted chat."
 
 #~ msgid ""
 #~ "The below buttons allow you to export private keys and fingerprints. Be "
 #~ "careful with the files that come out of this process, since they contain "
 #~ "potentially sensitive data. The export will be in Pidgin/libotr format."
 #~ msgstr ""
-#~ "下列按钮，可以为您导出私钥和fingerprint，请谨慎处理导出的文件，因为它可能"
-#~ "包含敏感信息，导出的格式将会是Pidgin和libotr格式。"
+#~ "The below buttons allow you to export private keys and fingerprints. Be "
+#~ "careful with the files that come out of this process, since they contain "
+#~ "potentially sensitive data. The export will be in Pidgin/libotr format."
 
 #~ msgid "Disconnect"
-#~ msgstr "断开连接"
+#~ msgstr "Disconnect"
 
 #~ msgid "Choose a server to register your account"
-#~ msgstr "选择一个服务来注册您的账号"
+#~ msgstr "Choose a server to register your account"
 
 #~ msgid "Add contact"
-#~ msgstr "添加联系人"
+#~ msgstr "Add contact"
 
 #~ msgid "Contact to add (for example: arnoldsPub@jabber.ccc.de)"
-#~ msgstr "需添加的联系人（如：arnoldsPub@jabber.ccc.de）"
+#~ msgstr "Contact to add (for example: arnoldsPub@jabber.ccc.de)"
 
 #~ msgid ""
 #~ "Would you like to save your configuration file in an encrypted format? "
@@ -5233,88 +5244,101 @@ msgstr ""
 #~ "your configuration if you lose the password. You will only be asked for "
 #~ "your password when CoyIM starts."
 #~ msgstr ""
-#~ "是否希望加密配置文件？这可以为您提供更安全的环境，加密后您需要使用主密码来"
-#~ "登陆CoyIM"
+#~ "Would you like to save your configuration file in an encrypted format? "
+#~ "This can be significantly more secure, but you will not be able to access "
+#~ "your configuration if you lose the password. You will only be asked for "
+#~ "your password when CoyIM starts."
 
 #~ msgid "Configure master password"
-#~ msgstr "设置主密码"
+#~ msgstr "Configure master password"
 
 #~ msgid ""
 #~ "Please enter the master password for the configuration file, two times."
-#~ msgstr "请输入用于加密配置文件的主密码，确保一致"
+#~ msgstr ""
+#~ "Please enter the master password for the configuration file, two times."
 
 #~ msgid "Fingerprints..."
 #~ msgstr "Fingerprints..."
 
 #~ msgid "Rename..."
-#~ msgstr "重命名..."
+#~ msgstr "Rename..."
 
 #~ msgid "Developer options"
-#~ msgstr "开发者选项"
+#~ msgstr "Developer options"
 
 #~ msgid "You are talking over an unprotected channel"
-#~ msgstr "你正在使用未加密的消息通道"
+#~ msgstr "You are talking over an unprotected channel"
 
 #~ msgid "Secure chat"
-#~ msgstr "安全会话"
+#~ msgstr "Secure chat"
 
 #~ msgid ""
 #~ "Please, tell us how is going for you to use CoyIM.\n"
 #~ "This is the only way we can create a better tool to keep your "
 #~ "conversations private."
 #~ msgstr ""
-#~ "请告诉我们您的使用体验。\n"
-#~ "这能帮助我们提供更好的隐私聊天工具。"
+#~ "Please, tell us how is going for you to use CoyIM.\n"
+#~ "This is the only way we can create a better tool to keep your "
+#~ "conversations private."
+
+#~ msgid "https://coy.im/feedback"
+#~ msgstr "https://coy.im/feedback"
 
 #~ msgid "Contacts"
-#~ msgstr "联系人"
+#~ msgstr "Contacts"
 
 #~ msgid "Accounts"
-#~ msgstr "账号"
+#~ msgstr "Accounts"
 
 #~ msgid "View"
-#~ msgstr "显示"
+#~ msgstr "View"
 
 #~ msgid "Help"
-#~ msgstr "帮助"
+#~ msgstr "Help"
+
+#~ msgid "Peer fingerprints"
+#~ msgstr "Peer fingerprints"
+
+#~ msgid "_OK"
+#~ msgstr "_OK"
 
 #~ msgid "Contact's new name"
-#~ msgstr "联系人别名"
+#~ msgstr "Contact's new name"
 
 #~ msgid "Verify"
-#~ msgstr "验证"
+#~ msgstr "Verify"
 
 #~ msgid "The account %s was added successfully."
-#~ msgstr "账号%s添加成功"
+#~ msgstr "The account %s was added successfully."
 
 #~ msgid ""
 #~ "Your fingerprints for %s:\n"
 #~ "%s"
 #~ msgstr ""
-#~ "您的账号%s的Fingerprint:\n"
+#~ "Your fingerprints for %s:\n"
 #~ "%s"
 
 #~ msgid "Private conversation lost."
-#~ msgstr "隐私会话已结束"
+#~ msgstr "Private conversation lost."
 
 #~ msgid "_Import..."
-#~ msgstr "_导入..."
+#~ msgstr "_Import..."
 
 #~ msgid "_Register..."
-#~ msgstr "_导出..."
+#~ msgstr "_Register..."
 
 #~ msgid ""
 #~ "You can't verify the fingerprint for %s yet.\n"
 #~ "You first have to start an encrypted conversation with them."
 #~ msgstr ""
-#~ "目前无法验证%s的Fingerprint。\n"
-#~ "你必须先建立一个加密会话。"
+#~ "You can't verify the fingerprint for %s yet.\n"
+#~ "You first have to start an encrypted conversation with them."
 
 #~ msgid "%d key(s) were imported correctly."
-#~ msgstr "%d 个私钥导入成功"
+#~ msgstr "%d key(s) were imported correctly."
 
 #~ msgid "Password can not be empty - please try again"
-#~ msgstr "密码不可为空，请确认"
+#~ msgstr "Password can not be empty - please try again"
 
 #~ msgid "You have not verified the identity of %s"
-#~ msgstr "您尚未验证%s身份"
+#~ msgstr "You have not verified the identity of %s"

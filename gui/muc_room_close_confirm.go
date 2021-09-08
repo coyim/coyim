@@ -3,7 +3,6 @@ package gui
 import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -14,9 +13,7 @@ func (v *roomView) showCloseConfirmWindow() {
 }
 
 type roomViewCloseWindowConfirm struct {
-	u       *gtkUI
-	room    *muc.Room
-	account *account
+	roomView *roomView
 
 	window         gtki.Window      `gtk-widget:"room-close-confirm-window"`
 	leaveRoomCheck gtki.CheckButton `gtk-widget:"room-close-confirm-leave-checkbox"`
@@ -27,10 +24,8 @@ type roomViewCloseWindowConfirm struct {
 
 func (v *roomView) newRoomViewCloseWindowConfirm() *roomViewCloseWindowConfirm {
 	confirm := &roomViewCloseWindowConfirm{
-		u:       v.u,
-		room:    v.room,
-		account: v.account,
-		log:     v.log.WithField("where", "roomViewCloseWindowConfirm"),
+		roomView: v,
+		log:      v.log.WithField("where", "roomViewCloseWindowConfirm"),
 	}
 
 	confirm.loadUIDefinition()
@@ -80,9 +75,9 @@ func (v *roomViewCloseWindowConfirm) tryLeaveRoom() {
 		v.log.WithError(err).Error("An error occurred when trying to leave the room")
 	}
 
-	v.account.leaveRoom(
-		v.room.ID,
-		v.room.SelfOccupantNickname(),
+	v.roomView.account.leaveRoom(
+		v.roomView.room.ID,
+		v.roomView.room.SelfOccupantNickname(),
 		nil,
 		onError,
 		nil,

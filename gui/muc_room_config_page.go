@@ -284,7 +284,7 @@ func (p *roomConfigPage) initOccupantsSummaryFields() {
 }
 
 func (p *roomConfigPage) initOccupants(parent gtki.Window) {
-	p.addField(newRoomConfigFieldPositions(roomConfigPositionsOptions{
+	p.addField(newRoomConfigPositionsField(roomConfigPositionsOptions{
 		affiliation:            ownerAffiliation,
 		occupantList:           p.form.OwnersList(),
 		setOccupantList:        p.form.SetOwnerList,
@@ -294,7 +294,7 @@ func (p *roomConfigPage) initOccupants(parent gtki.Window) {
 	}))
 	p.content.Add(createSeparator(gtki.HorizontalOrientation))
 
-	p.addField(newRoomConfigFieldPositions(roomConfigPositionsOptions{
+	p.addField(newRoomConfigPositionsField(roomConfigPositionsOptions{
 		affiliation:            adminAffiliation,
 		occupantList:           p.form.AdminsList(),
 		setOccupantList:        p.form.SetAdminList,
@@ -303,7 +303,7 @@ func (p *roomConfigPage) initOccupants(parent gtki.Window) {
 	}))
 	p.content.Add(createSeparator(gtki.HorizontalOrientation))
 
-	p.addField(newRoomConfigFieldPositions(roomConfigPositionsOptions{
+	p.addField(newRoomConfigPositionsField(roomConfigPositionsOptions{
 		affiliation:            outcastAffiliation,
 		occupantList:           p.form.BanList(),
 		setOccupantList:        p.form.SetBanList,

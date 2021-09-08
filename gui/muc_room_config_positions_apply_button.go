@@ -3,14 +3,14 @@ package gui
 import "github.com/coyim/gotk3adapter/gtki"
 
 type roomConfigPositionsWithApplyButton struct {
-	*roomConfigFieldPositions
+	*roomConfigPositions
 	applyButton gtki.Button
 }
 
 func newRoomConfigPositionsWithApplyButton(applyButton gtki.Button, options roomConfigPositionsOptions) hasRoomConfigFormField {
 	rcpb := &roomConfigPositionsWithApplyButton{
-		roomConfigFieldPositions: newRoomConfigFieldPositions(options),
-		applyButton:              applyButton,
+		roomConfigPositions: newRoomConfigPositions(options),
+		applyButton:         applyButton,
 	}
 
 	rcpb.onListChanged.add(rcpb.enableOrDisableApplyButton)

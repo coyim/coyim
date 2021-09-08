@@ -95,7 +95,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case occupantJoinedEvent:
 			c.occupantJoinedEvent(t.nickname)
 		case selfOccupantReconnectedEvent:
-			c.selfOccupantReconnectedEvent(t.nickname, t.role)
+			c.selfOccupantJoinedEvent(t.nickname, t.role)
 		case selfOccupantJoinedEvent:
 			c.selfOccupantJoinedEvent(t.nickname, t.role)
 		case occupantUpdatedEvent:
@@ -207,10 +207,7 @@ func (c *roomViewConversation) selfOccupantDisconnectedEvent() {
 	doInUIThread(func() {
 		c.updateNotificationMessage(messageForSelfOccupantDisconnected())
 		c.disableSendCapabilities()
-
-		if c.roomView.isSelfOccupantInTheRoom() {
-			c.saveAndDisplayMessage("", i18n.Local("The connection to the server has been lost, please verify your connection."), time.Now(), data.Disconnected)
-		}
+		c.occupantLeftEvent(c.selfOccupantNickname())
 	})
 }
 
@@ -264,13 +261,6 @@ func (c *roomViewConversation) onSelfOccupantVoiceRevoked() {
 	message := messageForSelfOccupantVisitor()
 	c.updateNotificationMessage(message)
 	c.disableSendCapabilities()
-}
-
-func (c *roomViewConversation) selfOccupantReconnectedEvent(nickname string, r data.Role) {
-	go c.waitForDiscussionHistoryAndJoin(r, func() {
-		c.enableSendCapabilitiesIfHasVoice(r.HasVoice())
-		c.saveAndDisplayMessage("", i18n.Local("Your connection was restored."), time.Now(), data.Connected)
-	})
 }
 
 func (c *roomViewConversation) selfOccupantJoinedEvent(nickname string, r data.Role) {

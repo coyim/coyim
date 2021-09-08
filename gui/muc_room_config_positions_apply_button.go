@@ -13,10 +13,29 @@ func newRoomConfigPositionsWithApplyButton(applyButton gtki.Button, options room
 		applyButton:         applyButton,
 	}
 
-	rcpb.onListChanged.add(rcpb.enableOrDisableApplyButton)
-	rcpb.onRefreshContentLists.add(rcpb.enableOrDisableApplyButton)
+	rcpb.loadUIDefinition()
 
 	return rcpb
+}
+
+func (rcpb *roomConfigPositionsWithApplyButton) setUIBuilder(b *builder) {
+	rcpb.builder = b
+}
+
+func (rcpb *roomConfigPositionsWithApplyButton) connectUISignals(b *builder) {
+	b.ConnectSignals(map[string]interface{}{
+		"on_jid_edited": rcpb.onOccupantJidEdited,
+	})
+}
+
+func (rcpb *roomConfigPositionsWithApplyButton) loadUIDefinition() {
+	buildUserInterface("MUCRoomConfigFieldPositions", rcpb.roomConfigPositions, rcpb.setUIBuilder, rcpb.connectUISignals)
+}
+
+// onOccupantJidEdited MUST be called from the UI thread
+func (rcpb *roomConfigPositionsWithApplyButton) onOccupantJidEdited(crt gtki.CellRendererText, path string, newValue string) {
+	rcpb.roomConfigPositions.onOccupantJidEdited(crt, path, newValue)
+	rcpb.enableOrDisableApplyButton()
 }
 
 // enableOrDisableApplyButton MUST be called from the UI thread

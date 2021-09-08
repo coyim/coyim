@@ -202,7 +202,7 @@ func supportedLanguageDescription(langCode string) string {
 		return systemLangName
 	}
 
-	return i18n.Localf("%s (%s)", systemLangName, display.Self.Name(langTag))
+	return i18n.Localf("%[1]s (%[2]s)", systemLangName, display.Self.Name(langTag))
 }
 
 func languageCodeBasedOnTag(t language.Tag) string {

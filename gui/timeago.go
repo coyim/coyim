@@ -76,7 +76,7 @@ func timeToFriendlyString(t time.Time) string {
 }
 
 func timeToFriendlyDate(t time.Time) string {
-	return i18n.Localf("%s, %s %d, %d", localizedWeekday(t.Weekday()), localizedMonth(t.Month()), t.Day(), t.Year())
+	return i18n.Localf("%[1]s, %[2]s %[3]d, %[4]d", localizedWeekday(t.Weekday()), localizedMonth(t.Month()), t.Day(), t.Year())
 }
 
 func localizedWeekday(wd time.Weekday) string {

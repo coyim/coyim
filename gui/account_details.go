@@ -196,7 +196,7 @@ func renderSessionDetails(s access.Session, data *accountDetailsData, account st
 
 	if s.PrivateKeys() != nil && len(s.PrivateKeys()) > 0 {
 		data.fingerprintsMessage.SetSelectable(true)
-		m := i18n.Local("The fingerprints for %s:\n%s")
+		m := i18n.Local("The fingerprints for %[1]s:\n%[2]s")
 		message := fmt.Sprintf(m, account, formattedFingerprintsFor(s))
 		data.fingerprintsMessage.SetText(message)
 	}

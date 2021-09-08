@@ -89,7 +89,7 @@ func (u *gtkUI) buildChangePasswordDialog(account *account) {
 			newPassword, _ := data.passwordEntry.GetText()
 			repeatedPassword, _ := data.repeatPasswordEntry.GetText()
 
-			data.formBoxLabel.SetText(i18n.Local(""))
+			data.formBoxLabel.SetText("")
 
 			if err := validateNewPassword(newPassword, repeatedPassword); err != nil {
 				data.formBoxLabel.Show()

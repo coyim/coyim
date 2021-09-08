@@ -120,16 +120,16 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer, a *account) {
 		}
 	}
 
-	secondary = i18n.Localf("%s\nEncrypted: %v", secondary, enc)
+	secondary = i18n.Localf("%[1]s\nEncrypted: %[2]v", secondary, enc)
 
 	if ev.Description != "" {
-		secondary = i18n.Localf("%s\nDescription: %s", secondary, ev.Description)
+		secondary = i18n.Localf("%[1]s\nDescription: %[2]s", secondary, ev.Description)
 	}
 	if ev.DateLastModified != "" {
-		secondary = i18n.Localf("%s\nLast modified: %s", secondary, ev.DateLastModified)
+		secondary = i18n.Localf("%[1]s\nLast modified: %[2]s", secondary, ev.DateLastModified)
 	}
 	if ev.Size != 0 {
-		secondary = i18n.Localf("%s\nSize: %d bytes", secondary, ev.Size)
+		secondary = i18n.Localf("%[1]s\nSize: %[2]d bytes", secondary, ev.Size)
 	}
 
 	_ = d.SetProperty("text", message)

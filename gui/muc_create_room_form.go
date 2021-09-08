@@ -58,7 +58,6 @@ type mucCreateRoomViewForm struct {
 	createRoom               func(*account, jid.Bare)
 	updateAutoJoinValue      func(bool)
 	updateConfigureRoomValue func(bool)
-	onCheckFieldsConditions  func(string, string, *account) bool
 
 	log func(*account, jid.Bare) coylog.Logger
 }
@@ -269,10 +268,6 @@ func (f *mucCreateRoomViewForm) enableCreateRoomButton() {
 
 func (f *mucCreateRoomViewForm) disableCreateRoomButton() {
 	f.createButton.SetSensitive(false)
-}
-
-func setEnabled(w gtki.Widget, enable bool) {
-	w.SetSensitive(enable)
 }
 
 func labelForCreateRoomButton(autoJoin, configRoom bool) string {

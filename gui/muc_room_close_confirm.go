@@ -2,7 +2,6 @@ package gui
 
 import (
 	"github.com/coyim/coyim/coylog"
-	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -18,9 +17,7 @@ type roomViewCloseWindowConfirm struct {
 	room    *muc.Room
 	account *account
 
-	headerLabel  gtki.Label  `gtk-widget:"room-close-confirm-header"`
-	messageLabel gtki.Label  `gtk-widget:"room-close-confirm-message"`
-	window       gtki.Window `gtk-widget:"room-close-confirm-window"`
+	window gtki.Window `gtk-widget:"room-close-confirm-window"`
 
 	log coylog.Logger
 }
@@ -34,11 +31,6 @@ func (v *roomView) newRoomViewCloseWindowConfirm() *roomViewCloseWindowConfirm {
 	}
 
 	confirm.loadUIDefinition()
-
-	confirm.messageLabel.SetText(i18n.Localf("Hi, we have seen that you closed the room %s.\n"+
-		"What would you like to do?", v.roomID()))
-
-	mucStyles.setRoomCloseWindowConfirmHeaderStyle(confirm.headerLabel)
 
 	return confirm
 }

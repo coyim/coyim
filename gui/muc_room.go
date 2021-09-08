@@ -61,7 +61,8 @@ type roomView struct {
 	backToPreviousStep func()
 	onJoinFinished     *callbacksSet // onJoinFinished WILL be called from the UI thread
 
-	notifications *roomNotifications
+	notifications             *roomNotifications
+	connectingNotificationBar *notificationBar
 
 	warnings           *roomViewWarnings
 	warningsInfoBar    *roomViewWarningsInfoBar
@@ -786,7 +787,7 @@ func (v *roomView) selfOccupantDisconnectedEvent() {
 
 // selfOccupantConnectingEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantConnectingEvent() {
-	v.notifications.other(roomNotificationOptions{
+	v.connectingNotificationBar = v.notifications.newNotification(gtki.MESSAGE_OTHER, roomNotificationOptions{
 		message:     i18n.Local("Connecting to the room..."),
 		showTime:    true,
 		showSpinner: true,

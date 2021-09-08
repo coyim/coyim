@@ -42,24 +42,10 @@
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton">
-                <property name="label" translatable="yes">Return to the room</property>
+                <property name="label" translatable="yes">Cancel</property>
                 <property name="visible">True</property>
                 <property name="receives_default">True</property>
-                <signal name="clicked" handler="on_return_to_room" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-                <property name="non_homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton">
-                <property name="label" translatable="yes">Leave the room</property>
-                <property name="visible">True</property>
-                <property name="receives_default">True</property>
-                <signal name="clicked" handler="on_leave_room" swapped="no"/>
+                <signal name="clicked" handler="on_cancel" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -69,11 +55,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton">
-                <property name="label" translatable="yes">Close and keep me in the room</property>
+              <object class="GtkButton" id="room-close-confirm-button">
+                <property name="label" translatable="yes">Close room</property>
                 <property name="visible">True</property>
                 <property name="receives_default">True</property>
-                <signal name="clicked" handler="on_keep_in_room" swapped="no"/>
+                <signal name="clicked" handler="on_confirm" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

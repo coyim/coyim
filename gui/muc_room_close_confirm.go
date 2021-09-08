@@ -37,9 +37,8 @@ func (v *roomView) newRoomViewCloseWindowConfirm() *roomViewCloseWindowConfirm {
 
 func (v *roomViewCloseWindowConfirm) connectUISignals(b *builder) {
 	b.ConnectSignals(map[string]interface{}{
-		"on_return_to_room": v.onReturnToRoomClicked,
-		"on_leave_room":     v.onLeaveRoomClicked,
-		"on_keep_in_room":   v.onKeepInRoomClicked,
+		"on_cancel":  v.onCancelClicked,
+		"on_confirm": v.onConfirmClicked,
 	})
 }
 
@@ -47,20 +46,14 @@ func (v *roomViewCloseWindowConfirm) loadUIDefinition() {
 	buildUserInterface("MUCRoomCloseWindowConfirm", v, v.connectUISignals)
 }
 
-// onReturnToRoomClicked MUST be called from the UI thread
-func (v *roomViewCloseWindowConfirm) onReturnToRoomClicked() {
-	v.u.joinRoom(v.account, v.room.ID, nil)
+// onCancelClicked MUST be called from the UI thread
+func (v *roomViewCloseWindowConfirm) onCancelClicked() {
 	v.closeWindow()
 }
 
-// onLeaveRoomClicked MUST be called from the UI thread
-func (v *roomViewCloseWindowConfirm) onLeaveRoomClicked() {
+// onConfirmClicked MUST be called from the UI thread
+func (v *roomViewCloseWindowConfirm) onConfirmClicked() {
 	go v.tryLeaveRoom()
-	v.closeWindow()
-}
-
-// onKeepInRoomClicked MUST be called from the UI thread
-func (v *roomViewCloseWindowConfirm) onKeepInRoomClicked() {
 	v.closeWindow()
 }
 

@@ -708,8 +708,6 @@ func (v *roomView) handleDiscoInfoTimeout() {
 
 // onReconnectingRoomInfoReceived MUST be called from the UI thread
 func (v *roomView) onReconnectingRoomInfoReceived(di data.RoomDiscoInfo) {
-	v.notifications.clearAll()
-
 	v.notifications.info(
 		roomNotificationOptions{
 			message:   i18n.Local("Your connection has been restored; you can join this room again."),
@@ -722,8 +720,6 @@ func (v *roomView) onReconnectingRoomInfoReceived(di data.RoomDiscoInfo) {
 
 // onReconnectingRoomInfoTimeout MUST be called from the UI thread
 func (v *roomView) onReconnectingRoomInfoTimeout() {
-	v.notifications.clearAll()
-
 	v.notifications.error(roomNotificationOptions{
 		message: i18n.Local("Your connection was recovered but " +
 			"loading the room information took longer than usual, " +
@@ -758,7 +754,6 @@ func (v *roomView) requestRoomInfoOnReconnect() {
 	previousOnJoinFinished := v.onJoinFinished
 	v.onJoinFinished = newCallbacksSet(func() {
 		doInUIThread(func() {
-			v.notifications.clearAll()
 			v.roomReconnectFinished(previousOnJoinFinished)
 		})
 	})
@@ -779,7 +774,6 @@ func (v *roomView) selfOccupantConnectedEvent() {
 
 // selfOccupantDisconnectedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantDisconnectedEvent() {
-	v.notifications.clearAll()
 	v.notifications.error(roomNotificationOptions{
 		message:   i18n.Local("The connection to the server has been lost, please verify your connection."),
 		showTime:  true,
@@ -791,8 +785,6 @@ func (v *roomView) selfOccupantDisconnectedEvent() {
 
 // selfOccupantConnectingEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantConnectingEvent() {
-	v.notifications.clearAll()
-
 	v.notifications.other(roomNotificationOptions{
 		message:     i18n.Local("Connecting to the room..."),
 		showTime:    true,

@@ -16,6 +16,7 @@ type roomViewCloseWindowConfirm struct {
 	roomView *roomView
 
 	window         gtki.Window      `gtk-widget:"room-close-confirm-window"`
+	icon           gtki.Image       `gtk-widget:"room-close-confirm-icon"`
 	leaveRoomCheck gtki.CheckButton `gtk-widget:"room-close-confirm-leave-checkbox"`
 	confirmButton  gtki.Button      `gtk-widget:"room-close-confirm-button"`
 
@@ -29,6 +30,7 @@ func (v *roomView) newRoomViewCloseWindowConfirm() *roomViewCloseWindowConfirm {
 	}
 
 	confirm.loadUIDefinition()
+	confirm.icon.SetFromPixbuf(getMUCIconPixbuf("dialog_question"))
 	confirm.window.SetTransientFor(v.mainWindow())
 
 	return confirm

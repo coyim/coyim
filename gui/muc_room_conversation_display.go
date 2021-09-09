@@ -35,9 +35,9 @@ func (c *roomViewConversation) handleOccupantJoinedRoom(nickname string) {
 
 // displayMessageFromData MUST be called from the UI thread
 func (c *roomViewConversation) displayMessageFromData(dm *data.DelayedMessage) {
+	c.addNewLine()
 	c.displayTimestamp(dm.Timestamp)
 	c.displayFormattedMessage(dm.Message, messageTagBasedOnMessageType[dm.MessageType])
-	c.addNewLine()
 }
 
 // displayNotificationWhenOccupantLeftTheRoom MUST be called from the UI thread
@@ -78,23 +78,22 @@ func (c *roomViewConversation) displayConfigurationMessage(message string) {
 
 // displayLiveMessage MUST be called from the UI thread
 func (c *roomViewConversation) displayLiveMessage(nickname, message string, timestamp time.Time) {
+	c.addNewLine()
 	c.displayTimestamp(timestamp)
-
 	c.displayNickname(nickname)
 	c.displayMessage(message)
-
-	c.addNewLine()
 }
 
 // displayDiscussionHistoryDate MUST be called from the UI thread
 func (c *roomViewConversation) displayDiscussionHistoryDate(d time.Time) {
+	c.addNewLine()
+
 	j := c.chatTextView.GetJustification()
 	defer c.chatTextView.SetJustification(j)
 
 	c.chatTextView.SetJustification(gtki.JUSTIFY_CENTER)
 
 	c.addTextWithTag(timeToFriendlyString(d), conversationTagDateGroup)
-	c.addNewLine()
 }
 
 // displayDiscussionHistoryMessages MUST be called from the UI thread
@@ -110,26 +109,26 @@ func (c *roomViewConversation) displayDiscussionHistoryMessages(messages []*data
 
 // displayDelayedMessage MUST be called from the UI thread
 func (c *roomViewConversation) displayDelayedMessage(nickname, message string, timestamp time.Time) {
+	c.addNewLine()
+
 	c.displayTimestamp(timestamp)
 
 	c.displayNickname(nickname)
 	c.displayMessage(message)
-
-	c.addNewLine()
 }
 
 // displayNewInfoMessage MUST be called from the UI thread
 func (c *roomViewConversation) displayNewInfoMessage(message string) {
+	c.addNewLine()
 	c.displayCurrentTimestamp()
 	c.displayInfoMessage(message)
-	c.addNewLine()
 }
 
 // displayNewConfigurationMessage MUST be called from the UI thread
 func (c *roomViewConversation) displayNewConfigurationMessage(message string) {
+	c.addNewLine()
 	c.displayCurrentTimestamp()
 	c.displayConfigurationMessage(message)
-	c.addNewLine()
 }
 
 // displayWarningMessage MUST be called from the UI thread
@@ -146,15 +145,15 @@ const conversationDividerText = "―――――――――――――――�
 
 // displayDivider MUST be called from the UI thread
 func (c *roomViewConversation) displayDivider() {
-	c.addTextWithTag(conversationDividerText, conversationTagDivider)
 	c.addNewLine()
+	c.addTextWithTag(conversationDividerText, conversationTagDivider)
 }
 
 // displayTextLineWithTimestamp MUST be called from the UI thread
 func (c *roomViewConversation) displayTextLineWithTimestamp(text string, tag conversationTag) {
+	c.addNewLine()
 	c.displayCurrentTimestamp()
 	c.addTextWithTag(text, tag)
-	c.addNewLine()
 }
 
 // displayNotificationWhenRoomDestroyed MUST be called from the UI thread
@@ -171,9 +170,9 @@ func (c *roomViewConversation) displayOccupantUpdateMessageFor(update interface{
 
 // displayFormattedMessageWithTimestamp MUST be called from the UI thread
 func (c *roomViewConversation) displayFormattedMessageWithTimestamp(message string, noFormattedTextTag conversationTag) {
+	c.addNewLine()
 	c.displayCurrentTimestamp()
 	c.displayFormattedMessage(message, noFormattedTextTag)
-	c.addNewLine()
 }
 
 // displayFormattedMessage MUST be called from the UI thread

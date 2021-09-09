@@ -7,21 +7,23 @@ import (
 )
 
 const (
-	infoBarClassName         = "infobar"
-	infoBarInfoClassName     = "info"
-	infoBarWarningClassName  = "warning"
-	infoBarQuestionClassName = "question"
-	infoBarErrorClassName    = "error"
-	infoBarOtherClassName    = "other"
+	infoBarComponentClassName = "infobar-component"
+	infoBarClassName          = "infobar"
+	infoBarInfoClassName      = "info"
+	infoBarWarningClassName   = "warning"
+	infoBarQuestionClassName  = "question"
+	infoBarErrorClassName     = "error"
+	infoBarOtherClassName     = "other"
 )
 
 const (
-	infoBarClassNameSelector         = "." + infoBarClassName
-	infoBarInfoClassNameSelector     = "." + infoBarInfoClassName
-	infoBarWarningClassNameSelector  = "." + infoBarWarningClassName
-	infoBarQuestionClassNameSelector = "." + infoBarQuestionClassName
-	infoBarErrorClassNameSelector    = "." + infoBarErrorClassName
-	infoBarOtherClassNameSelector    = "." + infoBarOtherClassName
+	infoBarComponentClassNameSelector = "." + infoBarComponentClassName
+	infoBarClassNameSelector          = "." + infoBarClassName
+	infoBarInfoClassNameSelector      = "." + infoBarInfoClassName
+	infoBarWarningClassNameSelector   = "." + infoBarWarningClassName
+	infoBarQuestionClassNameSelector  = "." + infoBarQuestionClassName
+	infoBarErrorClassNameSelector     = "." + infoBarErrorClassName
+	infoBarOtherClassNameSelector     = "." + infoBarOtherClassName
 )
 
 var infoBarClassNames = map[infoBarType]string{
@@ -161,7 +163,9 @@ type infoBarStyle struct {
 func (st *infoBarStyles) newInfoBarStyle(ib gtki.InfoBar) *infoBarStyle {
 	tp := infoBarTypeForMessageType(ib.GetMessageType())
 
-	selector := infoBarClassName
+	// The following classname selector allows us to identify the infobars used in MUC.
+	// In this way we avoid visual changes in the notifications used in other places.
+	selector := infoBarClassName + infoBarComponentClassNameSelector
 	if definedTypeClass, ok := infoBarClassNames[tp]; ok {
 		selector = selector + definedTypeClass
 	}
@@ -248,6 +252,7 @@ func (st *infoBarStyles) stylesFor(ib gtki.InfoBar) styles {
 }
 
 func (s *mucStylesProvider) setInfoBarStyle(ib gtki.InfoBar) {
+	addClassStyle(infoBarComponentClassName, ib)
 	if ib.GetMessageType() == gtki.MESSAGE_OTHER {
 		addClassStyle(infoBarOtherClassName, ib)
 	}

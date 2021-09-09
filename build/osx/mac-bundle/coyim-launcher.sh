@@ -1,5 +1,11 @@
 #!/bin/sh
 
+COY_DEBUG_EXTRA=""
+
+if test "x$COYIM_DEBUG" != x; then
+    COY_DEBUG_EXTRA=-debug >> ~/.coyim.log 2>&1
+fi
+
 if test "x$GTK_DEBUG_LAUNCHER" != x; then
     set -x
 fi
@@ -178,4 +184,4 @@ fi
 
 # TODO: fixme
 cd $bundle_contents/MacOS # we need to cd to this directory for the locale to work
-$EXEC "$bundle_contents/MacOS/$name-bin" "$@" $EXTRA_ARGS -debug >> ~/.coyim.log 2>&1
+$EXEC "$bundle_contents/MacOS/$name-bin" "$@" $EXTRA_ARGS $COY_DEBUG_EXTRA

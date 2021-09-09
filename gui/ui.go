@@ -820,7 +820,9 @@ func (u *gtkUI) initMenuBar() {
 	u.setMenuBarSensitive(false)
 
 	u.whenHaveConfig(func() {
-		u.setMenuBarSensitive(true)
+		doInUIThread(func() {
+			u.setMenuBarSensitive(true)
+		})
 	})
 }
 

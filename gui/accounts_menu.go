@@ -58,12 +58,14 @@ func (u *gtkUI) buildStaticAccountsMenu(submenu gtki.Menu) {
 	importMenu.SetSensitive(false)
 
 	u.whenHaveConfig(func() {
-		connectAutomaticallyItem.SetSensitive(true)
-		connectAllMenu.SetSensitive(true)
-		disconnectAllMenu.SetSensitive(true)
-		registerAccMenu.SetSensitive(true)
-		addAccMenu.SetSensitive(true)
-		importMenu.SetSensitive(true)
+		doInUIThread(func() {
+			connectAutomaticallyItem.SetSensitive(true)
+			connectAllMenu.SetSensitive(true)
+			disconnectAllMenu.SetSensitive(true)
+			registerAccMenu.SetSensitive(true)
+			addAccMenu.SetSensitive(true)
+			importMenu.SetSensitive(true)
+		})
 	})
 }
 

@@ -135,7 +135,7 @@ func (r *Room) SubjectCanBeChanged() bool {
 	roomSelfOccupant := r.SelfOccupant()
 	if roomSelfOccupant != nil {
 		role := roomSelfOccupant.Role
-		return !role.IsVisitor() && (role.IsModerator() || occupantsCanChangeSubject)
+		return !role.IsNone() && !role.IsVisitor() && (role.IsModerator() || occupantsCanChangeSubject)
 	}
 
 	return false

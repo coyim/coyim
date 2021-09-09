@@ -111,7 +111,7 @@
                 <property name="halign">end</property>
                 <property name="margin_top">5</property>
                 <property name="margin_bottom">5</property>
-                <property name="spacing">5</property>
+                <property name="spacing">12</property>
                 <property name="layout_style">start</property>
                 <child>
                   <object class="GtkButton" id="cancel-button">

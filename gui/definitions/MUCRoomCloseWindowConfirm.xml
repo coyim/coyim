@@ -1,7 +1,7 @@
 <interface>
   <object class="GtkWindow" id="room-close-confirm-window">
     <property name="width_request">450</property>
-    <property name="title" translatable="yes">Close room</property>
+    <property name="title" translatable="yes">Close Room</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="type_hint">dialog</property>

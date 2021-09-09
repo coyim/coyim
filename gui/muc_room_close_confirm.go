@@ -48,9 +48,9 @@ func (v *roomViewCloseWindowConfirm) loadUIDefinition() {
 
 // onLeaveRoomCheckChanged MUST be called from the UI thread
 func (v *roomViewCloseWindowConfirm) onLeaveRoomCheckChanged() {
-	buttonLabel := i18n.Local("Close room")
+	buttonLabel := i18n.Local("Close Room")
 	if v.leaveRoomCheck.GetActive() {
-		buttonLabel = i18n.Local("Close & leave room")
+		buttonLabel = i18n.Local("Close & Leave Room")
 	}
 	v.confirmButton.SetLabel(buttonLabel)
 }

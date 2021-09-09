@@ -1,7 +1,7 @@
 <interface>
   <object class="GtkWindow" id="room-close-confirm-window">
-    <property name="width_request">450</property>
-    <property name="title" translatable="yes">Close Room</property>
+    <property name="width_request">400</property>
+    <property name="title" translatable="yes">Close room</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="type_hint">dialog</property>
@@ -10,18 +10,31 @@
         <property name="visible">True</property>
         <property name="border_width">12</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">24</property>
+        <property name="spacing">12</property>
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="orientation">vertical</property>
             <property name="spacing">12</property>
             <child>
-              <object class="GtkLabel" id="room-close-confirm-message">
+              <object class="GtkBox">
+                <property name="width_request">42</property>
+                <property name="height_request">42</property>
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Do you want to leave the room?</property>
-                <property name="xalign">0</property>
-                <property name="yalign">0</property>
+                <property name="valign">start</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkImage" id="room-close-confirm-icon">
+                    <property name="visible">True</property>
+                    <property name="pixel_size">42</property>
+                    <property name="icon_name">dialog-question</property>
+                    <property name="icon_size">6</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -30,17 +43,49 @@
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton" id="room-close-confirm-leave-checkbox">
-                <property name="label" translatable="yes">Yes, leave the room</property>
+              <object class="GtkBox">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="focus_on_click">False</property>
-                <property name="receives_default">False</property>
-                <property name="draw_indicator">True</property>
-                <signal name="toggled" handler="on_leave_room_check_changed" swapped="no"/>
+                <property name="orientation">vertical</property>
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkLabel" id="room-close-confirm-message">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Do you want to leave the room?</property>
+                    <property name="xalign">0</property>
+                    <property name="yalign">0</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="room-close-confirm-leave-checkbox">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="focus_on_click">False</property>
+                    <property name="receives_default">False</property>
+                    <property name="draw_indicator">True</property>
+                    <signal name="toggled" handler="on_leave_room_check_changed" swapped="no"/>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Yes, leave the room</property>
+                        <property name="xalign">0</property>
+                        <property name="yalign">0</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
               </object>
               <packing>
-                <property name="expand">False</property>
+                <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
               </packing>
@@ -49,6 +94,7 @@
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
+            <property name="padding">12</property>
             <property name="position">0</property>
           </packing>
         </child>
@@ -73,7 +119,7 @@
             </child>
             <child>
               <object class="GtkButton" id="room-close-confirm-button">
-                <property name="label" translatable="yes">Close room</property>
+                <property name="label" translatable="yes">Close Room</property>
                 <property name="visible">True</property>
                 <property name="receives_default">True</property>
                 <signal name="clicked" handler="on_confirm" swapped="no"/>

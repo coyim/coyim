@@ -13,16 +13,17 @@ import (
 )
 
 type roomViewConversation struct {
-	u                       *gtkUI
-	tags                    *conversationTags
-	roomID                  jid.Bare
-	account                 *account
-	roomView                *roomView
-	canSendMessages         bool
-	selfOccupantNickname    func() string
-	saveNotificationMessage func(*data.DelayedMessage)
-	selfOccupantJoined      chan bool
-	historyPrinted          chan bool
+	u                        *gtkUI
+	tags                     *conversationTags
+	roomID                   jid.Bare
+	account                  *account
+	roomView                 *roomView
+	canSendMessages          bool
+	selfOccupantNickname     func() string
+	saveNotificationMessage  func(*data.DelayedMessage)
+	selfOccupantJoined       chan bool
+	historyPrinted           chan bool
+	disconnectMessagePrinted bool
 
 	view                  gtki.Box            `gtk-widget:"room-conversation"`
 	chatScrolledWindow    gtki.ScrolledWindow `gtk-widget:"chat-scrolled-window"`
@@ -207,7 +208,11 @@ func (c *roomViewConversation) selfOccupantDisconnectedEvent() {
 	doInUIThread(func() {
 		c.updateNotificationMessage(messageForSelfOccupantDisconnected())
 		c.disableSendCapabilities()
-		c.occupantLeftEvent(c.selfOccupantNickname())
+
+		if !c.disconnectMessagePrinted {
+			c.occupantLeftEvent(c.selfOccupantNickname())
+			c.disconnectMessagePrinted = true
+		}
 	})
 }
 
@@ -268,6 +273,7 @@ func (c *roomViewConversation) selfOccupantJoinedEvent(nickname string, r data.R
 		c.enableSendCapabilitiesIfHasVoice(r.HasVoice())
 		c.handleOccupantJoinedRoom(nickname)
 	})
+	c.disconnectMessagePrinted = false
 }
 
 // waitForDiscussionHistoryAndJoin MUST NOT be called from the UI thread

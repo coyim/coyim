@@ -8,15 +8,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-09 17:10+0000\n"
-"PO-Revision-Date: 2016-02-23 17:42-0500\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"POT-Creation-Date: 2021-09-08 16:02+0000\n"
+"PO-Revision-Date: 2021-09-09 16:58+0000\n"
+"Last-Translator: sara-la-loca-de-los-gatos <sara@autonomia.digital>\n"
+"Language-Team: Spanish <https://hosted.weblate.org/projects/coyim/main/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.8.1-dev\n"
 
 #: ../gui/definitions/AccountDetails.xml:22
 #: ../gui/definitions/GlobalPreferences.xml:35
@@ -31,7 +32,7 @@ msgstr "Detalles de la cuenta"
 #: ../gui/definitions/GroupDetails.xml:35 ../gui/definitions/Importer.xml:92
 #: ../gui/definitions/MasterPassword.xml:43
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:29
-#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:108
+#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:62
 #: ../gui/definitions/MUCRoomConfigListAddDialog.xml:19
 #: ../gui/definitions/MUCRoomDestroyDialogError.xml:23
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:24
@@ -41,24 +42,27 @@ msgstr "Detalles de la cuenta"
 #: ../gui/definitions/MUCRoomToolbar.xml:362
 #: ../gui/definitions/PeerDetails.xml:191
 #: ../gui/definitions/RegistrationForm.xml:35
-#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:529
+#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:528
 #: ../gui/file_transfer_notification.go:125
 #: ../gui/file_transfer_notification.go:401
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #: ../gui/definitions/AccountDetails.xml:47
 #: ../gui/definitions/EditProxy.xml:151
 #: ../gui/definitions/GlobalPreferences.xml:397
 #: ../gui/definitions/PeerDetails.xml:197
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 #: ../gui/definitions/AccountDetails.xml:108
+#, fuzzy
 msgid ""
 "Your account\n"
 "(example: kim42@jabber.otr.im)"
 msgstr ""
+"Tu cuenta\n"
+"(ejemplo: kim42@jabber.otr.im)"
 
 #: ../gui/definitions/AccountDetails.xml:128
 #: ../gui/definitions/AskForPassword.xml:50
@@ -66,30 +70,32 @@ msgstr ""
 #: ../gui/definitions/MUCRoomLobby.xml:82 ../gui/definitions/Password.xml:11
 #: ../gui/muc_room_config_texts.go:178
 msgid "Password"
-msgstr ""
+msgstr "Contraseña"
 
 #: ../gui/definitions/AccountDetails.xml:149
 msgid "Account name (optional)"
-msgstr ""
+msgstr "Nombre de la cuenta (opcional)"
 
 #: ../gui/definitions/AccountDetails.xml:169
+#, fuzzy
 msgid "Display all settings"
-msgstr ""
+msgstr "Mostrar toda la configuración"
 
 #: ../gui/definitions/AccountDetails.xml:198
 #: ../gui/definitions/AskForPassword.xml:27
 #: ../gui/definitions/MUCCreateRoomForm.xml:39
 #: ../gui/definitions/MUCJoinRoomDialog.xml:139
 msgid "Account"
-msgstr ""
+msgstr "Cuenta"
 
 #: ../gui/definitions/AccountDetails.xml:219
+#, fuzzy
 msgid "Server (leave empty for default)"
-msgstr ""
+msgstr "Servidor (dejar en blanco para servidor predeterminado)"
 
 #: ../gui/definitions/AccountDetails.xml:239
 msgid "Port (leave empty for default)"
-msgstr ""
+msgstr "Puerto (dejar en blanco para puerto predeterminado)"
 
 #: ../gui/definitions/AccountDetails.xml:259
 msgid "Pinning policy"
@@ -101,15 +107,15 @@ msgstr ""
 #: ../gui/muc_room_roster.go:417 ../gui/muc_room_occupant_affiliation.go:175
 #: ../gui/muc_room_occupant_affiliation.go:189
 msgid "None"
-msgstr ""
+msgstr "Ninguno"
 
 #: ../gui/definitions/AccountDetails.xml:272
 msgid "Deny"
-msgstr ""
+msgstr "Denegar"
 
 #: ../gui/definitions/AccountDetails.xml:273
 msgid "Always add"
-msgstr ""
+msgstr "Agregar siempre"
 
 #: ../gui/definitions/AccountDetails.xml:274
 msgid "Add the first, ask for the rest"
@@ -121,11 +127,12 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:276
 msgid "Always ask"
-msgstr ""
+msgstr "Preguntar siempre"
 
 #: ../gui/definitions/AccountDetails.xml:365 ../gui/account.go:306
+#, fuzzy
 msgid "_Remove"
-msgstr ""
+msgstr "_Remover"
 
 #: ../gui/definitions/AccountDetails.xml:407
 msgid ""
@@ -163,23 +170,25 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:445
 msgid "Server"
-msgstr ""
+msgstr "Servidor"
 
 #: ../gui/definitions/AccountDetails.xml:520
+#, fuzzy
 msgid "_Add..."
-msgstr ""
+msgstr "_Agregar..."
 
 #: ../gui/definitions/AccountDetails.xml:535
 msgid "_Remove..."
-msgstr ""
+msgstr "_Remover..."
 
 #: ../gui/definitions/AccountDetails.xml:550 ../gui/account.go:293
+#, fuzzy
 msgid "_Edit..."
-msgstr ""
+msgstr "_Editar..."
 
 #: ../gui/definitions/AccountDetails.xml:583
 msgid "Proxies"
-msgstr ""
+msgstr "Proxys"
 
 #: ../gui/definitions/AccountDetails.xml:622
 msgid ""
@@ -196,12 +205,14 @@ msgid ""
 msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:637
+#, fuzzy
 msgid "Import Private _Keys..."
-msgstr ""
+msgstr "Importar llaves_privadas..."
 
 #: ../gui/definitions/AccountDetails.xml:651
+#, fuzzy
 msgid "Import _Fingerprints..."
-msgstr ""
+msgstr "Importar_fingerprints..."
 
 #: ../gui/definitions/AccountDetails.xml:666
 msgid ""
@@ -212,45 +223,45 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:679
 msgid "Export Private Keys..."
-msgstr ""
+msgstr "Exportar llaves privadas..."
 
 #: ../gui/definitions/AccountDetails.xml:692
 msgid "Export Fingerprints..."
-msgstr ""
+msgstr "Exportar fingerprints..."
 
 #: ../gui/definitions/AccountDetails.xml:717
 msgid "Encryption"
-msgstr ""
+msgstr "Cifrado"
 
 #: ../gui/definitions/AccountRegistration.xml:17
 msgid "Recommended servers: "
-msgstr ""
+msgstr "Servidores recomendados: "
 
 #: ../gui/definitions/AccountRegistration.xml:38
 msgid "1. Choose a server"
-msgstr ""
+msgstr "1. Selecciona un servidor"
 
 #: ../gui/definitions/AccountRegistration.xml:72
 msgid "2. Create account"
-msgstr ""
+msgstr "2. Crea una cuenta"
 
 #: ../gui/definitions/AddContact.xml:3
 msgid "I would like to add you to my contact list."
-msgstr ""
+msgstr "Quisiera agregarte a mi lista de contactos."
 
 #: ../gui/definitions/AddContact.xml:9
 msgid "Add new contact"
-msgstr ""
+msgstr "Agregar nuevo contacto"
 
 #: ../gui/definitions/AddContact.xml:50
 #: ../gui/definitions/MUCPublicRoomsDialog.xml:93
 #: ../gui/definitions/PeerDetails.xml:31
 msgid "Account:"
-msgstr ""
+msgstr "Cuenta:"
 
 #: ../gui/definitions/AddContact.xml:79
 msgid "Contact to add:"
-msgstr ""
+msgstr "Contacto a agregar:"
 
 #: ../gui/definitions/AddContact.xml:103 ../gui/definitions/PeerDetails.xml:73
 msgid "Nickname:"
@@ -261,17 +272,20 @@ msgid "A_llow this contact to view my status"
 msgstr ""
 
 #: ../gui/definitions/AddContact.xml:175
+#, fuzzy
 msgid ""
 "Warning: This message will not be end-to-end encrypted. Do not reveal any "
 "sensitive information in it."
 msgstr ""
+"Advertencia: Este mensaje no se cifrará de extremo a extremo. No reveles "
+"ninguna información sensible en él."
 
 #: ../gui/definitions/AddContact.xml:197
 #: ../gui/definitions/MUCRoomConfigFieldPositions.xml:93
 #: ../gui/definitions/MUCRoomConfigListAddDialog.xml:33
 #: ../gui/muc_room_config_list_add_component.go:196
 msgid "Add"
-msgstr ""
+msgstr "Agregar"
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:49
 msgid "Answer: "
@@ -295,23 +309,23 @@ msgstr ""
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:144
 msgid "Verify Answer"
-msgstr ""
+msgstr "Verificar respuesta"
 
 #: ../gui/definitions/AskForPassword.xml:4
 msgid "Enter your password"
-msgstr ""
+msgstr "Ingresa tu contraseña"
 
 #: ../gui/definitions/AskForPassword.xml:72
 msgid "Save password"
-msgstr ""
+msgstr "Guardar contraseña"
 
 #: ../gui/definitions/AskForPassword.xml:101
 msgid "Connect"
-msgstr ""
+msgstr "Conectar"
 
 #: ../gui/definitions/AskToEncrypt.xml:6
 msgid "Encrypt your account's information"
-msgstr ""
+msgstr "Encripta la información de tu cuenta"
 
 #: ../gui/definitions/AskToEncrypt.xml:7
 msgid ""
@@ -319,6 +333,9 @@ msgid ""
 "Would you like to encrypt your account's information?\n"
 "    "
 msgstr ""
+"\n"
+"Te gustaría encriptar la información de tu cuenta?\n"
+"    "
 
 #: ../gui/definitions/AskToEncrypt.xml:10
 msgid ""
@@ -336,15 +353,19 @@ msgstr ""
 #: ../gui/definitions/CannotVerifyWithSMP.xml:46
 #: ../gui/definitions/VerificationFailed.xml:47
 msgid "Try again later"
-msgstr ""
+msgstr "Intenta de nuevo más tarde"
 
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:5
+#, fuzzy
 msgid "Configure your master password"
-msgstr ""
+msgstr "Configura tu contraseña master"
 
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:16
+#, fuzzy
 msgid "Please enter the master password for the configuration file twice."
 msgstr ""
+"Por favor, ingresa la contraseña master para el archivo de configuración dos "
+"veces."
 
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:61
 #: ../gui/definitions/GroupDetails.xml:40
@@ -352,7 +373,7 @@ msgstr ""
 #: ../gui/definitions/VerificationSucceeded.xml:25
 #: ../gui/definitions/VerifyFingerprintUnknown.xml:18
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: ../gui/definitions/CertificateDialog.xml:3
 msgid "Problem with secure connection for ACCOUNT_NAME"
@@ -369,12 +390,12 @@ msgstr ""
 
 #: ../gui/definitions/CertificateDialog.xml:68
 msgid "Other names:"
-msgstr ""
+msgstr "Otros nombres:"
 
 #: ../gui/definitions/CertificateDialog.xml:94
 #: ../gui/definitions/CertificateDialog.xml:211
 msgid "Organization (O):"
-msgstr ""
+msgstr "Organización (O):"
 
 #: ../gui/definitions/CertificateDialog.xml:118
 #: ../gui/definitions/CertificateDialog.xml:235
@@ -383,15 +404,16 @@ msgstr ""
 
 #: ../gui/definitions/CertificateDialog.xml:142
 msgid "Serial Number:"
-msgstr ""
+msgstr "Número de serie:"
 
 #: ../gui/definitions/CertificateDialog.xml:168
 msgid "Issued by:"
 msgstr ""
 
 #: ../gui/definitions/CertificateDialog.xml:261
+#, fuzzy
 msgid "Validity:"
-msgstr ""
+msgstr "Validez:"
 
 #: ../gui/definitions/CertificateDialog.xml:280
 msgid "Issued on:"
@@ -399,19 +421,19 @@ msgstr ""
 
 #: ../gui/definitions/CertificateDialog.xml:304
 msgid "Expires on:"
-msgstr ""
+msgstr "Expira en:"
 
 #: ../gui/definitions/CertificateDialog.xml:338
 msgid "SHA-1 fingerprint:"
-msgstr ""
+msgstr "Fingerprint SHA-1:"
 
 #: ../gui/definitions/CertificateDialog.xml:365
 msgid "SHA-256 fingerprint:"
-msgstr ""
+msgstr "Fingerprint SHA-256:"
 
 #: ../gui/definitions/CertificateDialog.xml:392
 msgid "SHA3-256 fingerprint:"
-msgstr ""
+msgstr "Fingerprint SHA3-256:"
 
 #: ../gui/definitions/CertificateDialog.xml:421
 msgid ""
@@ -423,53 +445,54 @@ msgstr ""
 
 #: ../gui/definitions/CertificateDialog.xml:436
 msgid "Don't connect"
-msgstr ""
+msgstr "No conectar"
 
 #: ../gui/definitions/CertificateDialog.xml:441
 msgid "Accept temporarily"
-msgstr ""
+msgstr "Aceptar temporalmente"
 
 #: ../gui/definitions/CertificateDialog.xml:446
 msgid "Accept permanently"
-msgstr ""
+msgstr "Aceptar temporalmente"
 
 #: ../gui/definitions/ChangePasswordMessageResponse.xml:4
 msgid "Change password"
-msgstr ""
+msgstr "Cambiar contraseña"
 
 #: ../gui/definitions/ChangePasswordMessageResponse.xml:24
 #: ../gui/definitions/ChangePassword.xml:44
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:42
 msgid "Ok"
-msgstr ""
+msgstr "OK"
 
 #: ../gui/definitions/ChangePassword.xml:4
 msgid "Change account password"
-msgstr ""
+msgstr "Cambiar contraseña de la cuenta"
 
 #: ../gui/definitions/ChangePassword.xml:32
 msgid "Change Password"
-msgstr ""
+msgstr "Cambiar contraseña"
 
 #: ../gui/definitions/ChangePassword.xml:79
 msgid "Enter new password:"
-msgstr ""
+msgstr "Ingresa nueva contraseña:"
 
 #: ../gui/definitions/ChangePassword.xml:104
 msgid "Confirm new password:"
-msgstr ""
+msgstr "Confirma nueva contraseña:"
 
 #: ../gui/definitions/ChangePassword.xml:127
 msgid "Save new password ?"
-msgstr ""
+msgstr "Guardar nueva contraseña?"
 
 #: ../gui/definitions/ChangePassword.xml:186
 msgid "label"
-msgstr ""
+msgstr "etiqueta"
 
 #: ../gui/definitions/ChooseKeyToImport.xml:3
+#, fuzzy
 msgid "Choose a key to import"
-msgstr ""
+msgstr "Selecciona una llave a importar"
 
 #: ../gui/definitions/ChooseKeyToImport.xml:12
 msgid ""
@@ -480,35 +503,35 @@ msgstr ""
 #: ../gui/definitions/ChooseKeyToImport.xml:35
 #: ../gui/definitions/Importer.xml:97
 msgid "Import"
-msgstr ""
+msgstr "Importar"
 
 #: ../gui/definitions/ConfirmAccountRemoval.xml:3
 msgid "Confirm account removal"
-msgstr ""
+msgstr "Confirmar remoción de la cuenta"
 
 #: ../gui/definitions/ConfirmAccountRemoval.xml:5
 msgid "Are you sure you want to remove this account?"
-msgstr ""
+msgstr "Estás seguro de que quieres remover esta cuenta?"
 
 #: ../gui/definitions/ConnectionInformation.xml:3
 msgid "Connection Information"
-msgstr ""
+msgstr "Información de la conexión"
 
 #: ../gui/definitions/ConnectionInformation.xml:18
 msgid "Server connected to:"
-msgstr ""
+msgstr "Servidor conectado a:"
 
 #: ../gui/definitions/ConnectionInformation.xml:42
 msgid "Secure connection version:"
-msgstr ""
+msgstr "Versión de la conexión segura:"
 
 #: ../gui/definitions/ConnectionInformation.xml:66
 msgid "Secure connection algorithm:"
-msgstr ""
+msgstr "Algoritmo de la conexión segura:"
 
 #: ../gui/definitions/ConnectionInformation.xml:90
 msgid "Secure connection fingerprint:"
-msgstr ""
+msgstr "Fingerprint de la conexión segura:"
 
 #: ../gui/definitions/ConnectionInformation.xml:118
 msgid "Pin certificate"
@@ -521,29 +544,29 @@ msgstr ""
 #: ../gui/file_transfer_notification.go:198
 #: ../gui/file_transfer_notification.go:308
 msgid "Close"
-msgstr ""
+msgstr "Cerrar"
 
 #: ../gui/definitions/ContactPopupMenu.xml:5
 msgid "Edit..."
-msgstr ""
+msgstr "Editar..."
 
 #: ../gui/definitions/ContactPopupMenu.xml:11
 #: ../gui/definitions/MUCRoomConfigFieldPositions.xml:135
 #: ../gui/muc_room_config_list_component.go:101
 msgid "Remove"
-msgstr ""
+msgstr "Remover"
 
 #: ../gui/definitions/ContactPopupMenu.xml:21
 msgid "Talk to..."
-msgstr ""
+msgstr "Hablar con..."
 
 #: ../gui/definitions/ContactPopupMenu.xml:26
 msgid "Send file..."
-msgstr ""
+msgstr "Enviar archivo..."
 
 #: ../gui/definitions/ContactPopupMenu.xml:32
 msgid "Send directory..."
-msgstr ""
+msgstr "Enviar directorio..."
 
 #: ../gui/definitions/ContactPopupMenu.xml:41
 msgid "Ask contact to see their status"
@@ -567,24 +590,26 @@ msgid "Secure Chat"
 msgstr ""
 
 #: ../gui/definitions/ConversationPane.xml:25
+#, fuzzy
 msgid "Start encrypted chat"
-msgstr ""
+msgstr "Iniciar chat cifrado"
 
 #: ../gui/definitions/ConversationPane.xml:32
+#, fuzzy
 msgid "End encrypted chat"
-msgstr ""
+msgstr "Terminar chat cifrado"
 
 #: ../gui/definitions/ConversationPane.xml:39
 msgid "Verify fingerprint"
-msgstr ""
+msgstr "Verificar fingerprint"
 
 #: ../gui/definitions/ConversationPane.xml:53
 msgid "Transfer"
-msgstr ""
+msgstr "Transferir"
 
 #: ../gui/definitions/ConversationPane.xml:63
 msgid "Send File"
-msgstr ""
+msgstr "Enviar archivo"
 
 #: ../gui/definitions/ConversationPane.xml:70
 msgid "Send Dir"
@@ -592,7 +617,7 @@ msgstr ""
 
 #: ../gui/definitions/EditProxy.xml:3
 msgid "Edit Proxy"
-msgstr ""
+msgstr "Editar proxy"
 
 #: ../gui/definitions/EditProxy.xml:17
 msgid "Proxy type:"
@@ -600,27 +625,28 @@ msgstr ""
 
 #: ../gui/definitions/EditProxy.xml:39
 msgid "User:"
-msgstr ""
+msgstr "Usuario:"
 
 #: ../gui/definitions/EditProxy.xml:59
 msgid "Password:"
-msgstr ""
+msgstr "Contraseña:"
 
 #: ../gui/definitions/EditProxy.xml:80
 msgid "Server:"
-msgstr ""
+msgstr "Servidor:"
 
 #: ../gui/definitions/EditProxy.xml:100
 msgid "Port:"
-msgstr ""
+msgstr "Puerto:"
 
 #: ../gui/definitions/EditProxy.xml:120
 msgid "Path:"
 msgstr ""
 
 #: ../gui/definitions/FeedbackInfo.xml:12
+#, fuzzy
 msgid "Are you liking it?"
-msgstr ""
+msgstr "Te está gustando?"
 
 #: ../gui/definitions/FeedbackInfo.xml:22 ../gui/definitions/Main.xml:164
 msgid "Feedback"
@@ -639,7 +665,7 @@ msgstr ""
 
 #: ../gui/definitions/Feedback.xml:28
 msgid "https://coy.im"
-msgstr ""
+msgstr "https://coy.im"
 
 #: ../gui/definitions/Feedback.xml:46
 msgid ""
@@ -651,16 +677,18 @@ msgid ""
 msgstr ""
 
 #: ../gui/definitions/FileTransferAskToReceive.xml:6
+#, fuzzy
 msgid "File transfer"
-msgstr ""
+msgstr "Transferencia de archivo"
 
 #: ../gui/definitions/FileTransferContinueWithoutEncryption.xml:6
 msgid "File transfer without encryption?"
 msgstr ""
 
 #: ../gui/definitions/FirstAccountDialog.xml:4
+#, fuzzy
 msgid "Setup your first account"
-msgstr ""
+msgstr "Configura tu primera cuenta"
 
 #: ../gui/definitions/FirstAccountDialog.xml:15
 msgid "Welcome to CoyIM!"
@@ -668,31 +696,32 @@ msgstr ""
 
 #: ../gui/definitions/FirstAccountDialog.xml:36
 msgid "Create a new account"
-msgstr ""
+msgstr "Crear nueva cuenta"
 
 #: ../gui/definitions/FirstAccountDialog.xml:43
 msgid "Add an existing account"
-msgstr ""
+msgstr "Agregar una cuenta existente"
 
 #: ../gui/definitions/FirstAccountDialog.xml:50
 msgid "Import account from your computer"
-msgstr ""
+msgstr "Importar cuenta desde tu computadora"
 
 #: ../gui/definitions/GeneratePIN.xml:45
 msgid "Share in person"
-msgstr ""
+msgstr "Compartir en persona"
 
 #: ../gui/definitions/GeneratePIN.xml:64
+#, fuzzy
 msgid "Share through a different encrypted channel"
-msgstr ""
+msgstr "Compartir por un canal cifrado diferente"
 
 #: ../gui/definitions/GeneratePIN.xml:83
 msgid "Share in a phone call"
-msgstr ""
+msgstr "Compartir en una llamada telefónica"
 
 #: ../gui/definitions/GlobalPreferences.xml:11
 msgid "No notifications"
-msgstr ""
+msgstr "Sin notificaciones"
 
 #: ../gui/definitions/GlobalPreferences.xml:15
 msgid "Only show that a new message arrived"
@@ -700,23 +729,24 @@ msgstr ""
 
 #: ../gui/definitions/GlobalPreferences.xml:19
 msgid "Show who sent the message"
-msgstr ""
+msgstr "Mostrar quién envió el mensaje"
 
 #: ../gui/definitions/GlobalPreferences.xml:23
 msgid "Show message"
-msgstr ""
+msgstr "Mostrar mensaje"
 
 #: ../gui/definitions/GlobalPreferences.xml:65
 msgid "Unify conversations in one window"
-msgstr ""
+msgstr "Unificar conversaciones en una ventana"
 
 #: ../gui/definitions/GlobalPreferences.xml:84
 msgid "Send messages with Shift-Enter"
-msgstr ""
+msgstr "Enviar mensajes con Shift-Enter"
 
 #: ../gui/definitions/GlobalPreferences.xml:103
+#, fuzzy
 msgid "Display empty groups"
-msgstr ""
+msgstr "Mostrar grupos vacíos"
 
 #: ../gui/definitions/GlobalPreferences.xml:122
 msgid "Use Emacs key bindings"
@@ -724,7 +754,7 @@ msgstr ""
 
 #: ../gui/definitions/GlobalPreferences.xml:143
 msgid "General"
-msgstr ""
+msgstr "General"
 
 #: ../gui/definitions/GlobalPreferences.xml:161
 msgid ""
@@ -737,7 +767,7 @@ msgstr ""
 
 #: ../gui/definitions/GlobalPreferences.xml:174
 msgid "Notification type"
-msgstr ""
+msgstr "Tipo de notificación"
 
 #: ../gui/definitions/GlobalPreferences.xml:202
 msgid ""
@@ -758,7 +788,7 @@ msgstr ""
 
 #: ../gui/definitions/GlobalPreferences.xml:247
 msgid "Should notifications expire?"
-msgstr ""
+msgstr "Las notificaciones deben expirar?"
 
 #: ../gui/definitions/GlobalPreferences.xml:266
 msgid ""
@@ -774,11 +804,11 @@ msgstr ""
 
 #: ../gui/definitions/GlobalPreferences.xml:299
 msgid "Minimum time between notifications in seconds"
-msgstr ""
+msgstr "Tiempo mínimo entre notificaciones en segundos"
 
 #: ../gui/definitions/GlobalPreferences.xml:323
 msgid "Notifications"
-msgstr ""
+msgstr "Notificaciones"
 
 #: ../gui/definitions/GlobalPreferences.xml:341
 msgid ""
@@ -796,36 +826,38 @@ msgstr ""
 
 #: ../gui/definitions/GlobalPreferences.xml:376
 msgid "Debugging"
-msgstr ""
+msgstr "Debugging"
 
 #: ../gui/definitions/GroupDetails.xml:4
 msgid "Add Group"
-msgstr ""
+msgstr "Agregar grupo"
 
 #: ../gui/definitions/GroupDetails.xml:11
 msgid "Group name"
-msgstr ""
+msgstr "Nombre del grupo"
 
 #: ../gui/definitions/Importer.xml:12
 msgid "Import Accounts"
-msgstr ""
+msgstr "Importar cuentas"
 
 #: ../gui/definitions/Importer.xml:22
+#, fuzzy
 msgid ""
 "Choose the accounts you would like to import and start using from CoyIM."
 msgstr ""
+"Selecciona las cuentas que te gustaría importar y empezar a usar desde CoyIM"
 
 #: ../gui/definitions/Importer.xml:41
 msgid "Import this"
-msgstr ""
+msgstr "Importar esto"
 
 #: ../gui/definitions/Importer.xml:55
 msgid "From application"
-msgstr ""
+msgstr "Desde la aplicación"
 
 #: ../gui/definitions/Importer.xml:67
 msgid "Account name"
-msgstr ""
+msgstr "Nombre de la cuenta"
 
 #: ../gui/definitions/Main.xml:22
 msgid "_Contacts"
@@ -833,11 +865,11 @@ msgstr ""
 
 #: ../gui/definitions/Main.xml:30
 msgid "Add..."
-msgstr ""
+msgstr "Agregar..."
 
 #: ../gui/definitions/Main.xml:37
 msgid "New Conversation..."
-msgstr ""
+msgstr "Nueva conversación..."
 
 #: ../gui/definitions/Main.xml:48
 msgid "_Accounts"
@@ -850,47 +882,51 @@ msgstr ""
 #: ../gui/definitions/Main.xml:63 ../gui/muc_room_config_assistant.go:140
 #: ../gui/muc_create_room_form.go:283
 msgid "Create Room"
-msgstr ""
+msgstr "Crear sala"
 
 #: ../gui/definitions/Main.xml:71
 msgid "Show public rooms..."
-msgstr ""
+msgstr "Mostrar salas públicas..."
 
 #: ../gui/definitions/Main.xml:78
 msgid "Join a Room"
-msgstr ""
+msgstr "Unirte a una sala"
 
 #: ../gui/definitions/Main.xml:89
 msgid "_View"
 msgstr ""
 
 #: ../gui/definitions/Main.xml:97
+#, fuzzy
 msgid "Merge Accounts"
-msgstr ""
+msgstr "Fusionar cuentas"
 
 #: ../gui/definitions/Main.xml:104
+#, fuzzy
 msgid "Show Offline Contacts"
-msgstr ""
+msgstr "Mostrar contactos sin conexión"
 
 #: ../gui/definitions/Main.xml:111
 msgid "Show Waiting Contacts"
-msgstr ""
+msgstr "Mostrar contactos en espera"
 
 #: ../gui/definitions/Main.xml:118
+#, fuzzy
 msgid "Sort By Status"
-msgstr ""
+msgstr "Ordenar por status"
 
 #: ../gui/definitions/Main.xml:129
 msgid "_Options"
 msgstr ""
 
 #: ../gui/definitions/Main.xml:137
+#, fuzzy
 msgid "Encrypt configuration file"
-msgstr ""
+msgstr "Encriptar archivo de configuración"
 
 #: ../gui/definitions/Main.xml:144 ../gui/menubar.go:49
 msgid "Preferences..."
-msgstr ""
+msgstr "Preferencias..."
 
 #: ../gui/definitions/Main.xml:156
 msgid "_Help"
@@ -898,11 +934,11 @@ msgstr ""
 
 #: ../gui/definitions/Main.xml:171
 msgid "About"
-msgstr ""
+msgstr "Acerca de"
 
 #: ../gui/definitions/Main.xml:199
 msgid "Search..."
-msgstr ""
+msgstr "Buscar..."
 
 #: ../gui/definitions/MasterPassword.xml:4
 msgid "Enter master password"
@@ -916,28 +952,29 @@ msgstr ""
 
 #: ../gui/definitions/MUCCreateRoomDialog.xml:4
 msgid "Create chat room"
-msgstr ""
+msgstr "Crear sala de chat"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:68
 #: ../gui/definitions/MUCJoinRoomDialog.xml:115
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:230
 msgid "Room"
-msgstr ""
+msgstr "Sala"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:80
 #: ../gui/definitions/MUCJoinRoomDialog.xml:126
+#, fuzzy
 msgid "Enter the room name"
-msgstr ""
+msgstr "Ingresa el nombre de la sala"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:96
 msgid "Enter the location or select one from the list"
-msgstr ""
+msgstr "Ingresa la ubicación o selecciona una de la lista"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:112
 #: ../gui/definitions/MUCJoinRoomDialog.xml:167
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:253
 msgid "Where"
-msgstr ""
+msgstr "Donde"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:127
 msgid "_Automatically join the room"
@@ -1067,20 +1104,17 @@ msgid ""
 msgstr ""
 
 #: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:4
+#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:76
+#: ../gui/muc_room_close_confirm.go:51
 msgid "Close room"
 msgstr ""
 
-#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:53
+#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:22
 msgid "Do you want to leave the room?"
 msgstr ""
 
-#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:74
+#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:34
 msgid "Yes, leave the room"
-msgstr ""
-
-#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:122
-#: ../gui/muc_room_close_confirm.go:55
-msgid "Close Room"
 msgstr ""
 
 #: ../gui/definitions/MUCRoomConfigAssistant.xml:4
@@ -1151,7 +1185,7 @@ msgstr ""
 msgid "Are you sure you want to cancel the room creation? "
 msgstr ""
 
-#: ../gui/definitions/MUCRoomConversation.xml:122 ../gui/file_transfer.go:268
+#: ../gui/definitions/MUCRoomConversation.xml:123 ../gui/file_transfer.go:268
 msgid "Send"
 msgstr ""
 
@@ -1165,23 +1199,24 @@ msgstr ""
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:37
 msgid "Destroy Room"
-msgstr ""
+msgstr "Destruir sala"
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:105
 msgid "You are about to permanently destroy this room."
-msgstr ""
+msgstr "Estás a punto de destruir esta sala permanentemente."
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:119
+#, fuzzy
 msgid "You may want to provide the following information:"
-msgstr ""
+msgstr "Es posible que quieras proporcionar la siguiente información:"
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:151
 msgid "Enter the reason for destroying the room"
-msgstr ""
+msgstr "Ingresa la razón para destruir la sala"
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:189
 msgid "Add information about the new room"
-msgstr ""
+msgstr "Agrega información acerca de la nueva sala"
 
 #: ../gui/definitions/MUCRoomLobby.xml:58
 #: ../gui/definitions/MUCRoomRosterInfo.xml:17
@@ -3085,6 +3120,7 @@ msgid "Access"
 msgstr ""
 
 #: ../gui/muc_room_config_texts.go:34
+#, fuzzy
 msgid ""
 "Here you can manage access to the room. If you specify a password for the "
 "room, you should share it in a secure way. This will help to protect the "
@@ -3092,154 +3128,197 @@ msgid ""
 "encrypted, so people that control the location of the room might still have "
 "access to it, even without providing a password."
 msgstr ""
+"Aquí puedes administrar el acceso a la sala. Si especificas una contraseña "
+"para la sala, debes compartirla de forma segura. Esto ayudará a proteger a "
+"las personas en la misma. Recuerda que las contraseñas de la sala no cifran "
+"la sala como tal, por lo que las personas que controlan la ubicación de la "
+"sala pueden tener acceso a ella, incluso sin proporcionar una contraseña."
 
 #: ../gui/muc_room_config_texts.go:41
 msgid "Permissions"
-msgstr ""
+msgstr "Permisos"
 
 #: ../gui/muc_room_config_texts.go:42
 msgid ""
 "Here you can change settings that impact who can do what inside the room."
 msgstr ""
+"Aquí puedes cambiar la configuración respecto a quién puede hacer qué dentro "
+"de la habitación."
 
 #: ../gui/muc_room_config_texts.go:47
+#, fuzzy
 msgid ""
 "Here you can define who the owners, administrators and banned people are."
 msgstr ""
+"Aquí puedes definir quiénes son los propietarios, administradores y personas "
+"bloqueadas."
 
 #: ../gui/muc_room_config_texts.go:50
+#, fuzzy
 msgid "Other settings"
-msgstr ""
+msgstr "Otros ajustes"
 
 #: ../gui/muc_room_config_texts.go:51
+#, fuzzy
 msgid ""
 "Here you can find other configuration options that might be useful to you. "
 "Note that if archiving is enabled, all the discussions in the room might be "
 "logged and potentially made publicly accessible."
 msgstr ""
+"Aquí puedes encontrar otras opciones de configuración que te pueden resultar "
+"útiles. Ten en cuenta que si el archivo está habilitado, se podría acceder a "
+"todas las discusiones en la sala y potencialmente volverse accesibles al "
+"público."
 
 #: ../gui/muc_room_config_texts.go:56 ../gui/muc_room_config_assistant.go:121
 msgid "Summary"
-msgstr ""
+msgstr "Resumen"
 
 #: ../gui/muc_room_config_texts.go:100 ../gui/muc_room_config_texts.go:101
 msgid "Title"
-msgstr ""
+msgstr "Título"
 
 #: ../gui/muc_room_config_texts.go:102
+#, fuzzy
 msgid "The room title can be used to find the room in the public list."
-msgstr ""
+msgstr "El título de la sala puede ser usado para ubicarla en la lista pública."
 
 #: ../gui/muc_room_config_texts.go:105 ../gui/muc_room_config_texts.go:106
 msgid "Description"
-msgstr ""
+msgstr "Descripción"
 
 #: ../gui/muc_room_config_texts.go:107
 msgid ""
 "The room description can be used to add more information about the room, "
 "such as the purpose, the discussion topics, interests, etc."
 msgstr ""
+"La descripción de la sala se puede utilizar para agregar más información "
+"sobre la misma, como el propósito, los temas de discusión, los intereses, "
+"etc."
 
 #: ../gui/muc_room_config_texts.go:111 ../gui/muc_room_config_texts.go:112
+#, fuzzy
 msgid "Enable archiving of discussions"
-msgstr ""
+msgstr "Habilitar el archivo de discusiones"
 
 #: ../gui/muc_room_config_texts.go:113
+#, fuzzy
 msgid ""
 "The conversation of this room will be stored in an archive that could be "
 "accessed publicly. CoyIM users will be notified about this when joining the "
 "room, however, other clients might not."
 msgstr ""
+"La conversación de esta sala se almacenará en un archivo al que se podrá "
+"acceder públicamente. Los usuarios de CoyIM serán notificados sobre esto "
+"cuando se unan a la sala, sin embargo, es posible que otros clientes no lo "
+"hagan."
 
 #: ../gui/muc_room_config_texts.go:118 ../gui/muc_room_config_texts.go:119
 msgid "Primary language of discussion"
-msgstr ""
+msgstr "Idioma principal de la discusión"
 
 #: ../gui/muc_room_config_texts.go:120
 msgid ""
 "This is the primary language in which conversations are held. Changing this "
 "will not impact the language of the application."
 msgstr ""
+"Este es el idioma principal en el que se llevan a cabo las conversaciones. "
+"Cambiar esto no afectará el idioma de la aplicación."
 
 #: ../gui/muc_room_config_texts.go:124 ../gui/muc_room_config_texts.go:125
 msgid "XMPP URI of associated publish-subscribe node"
 msgstr ""
 
 #: ../gui/muc_room_config_texts.go:126
+#, fuzzy
 msgid ""
 "A chat room can have an associated place where publication and subscription "
 "of certain information can happen. This is a technical setting, which should "
 "be left empty unless you know what it means."
 msgstr ""
+"Una sala de chat puede tener un lugar asociado donde se puede realizar la "
+"publicación y suscripción de cierta información. Esta es una configuración "
+"técnica, que debe dejarse en blanco a menos que sepas lo que significa."
 
 #: ../gui/muc_room_config_texts.go:131
 msgid "Allow anyone to set the subject of the room"
-msgstr ""
+msgstr "Permitir que cualquiera establezca el tema de la sala"
 
 #: ../gui/muc_room_config_texts.go:132
 msgid "Occupants can change subject of the room"
-msgstr ""
+msgstr "Los ocupantes pueden cambiar el tema de la sala"
 
 #: ../gui/muc_room_config_texts.go:133
+#, fuzzy
 msgid "If not set, only moderators can modify it."
-msgstr ""
+msgstr "Si no se configura, sólo las moderadoras pueden modificarlo."
 
 #: ../gui/muc_room_config_texts.go:136
+#, fuzzy
 msgid "Allow members to invite others to the room"
-msgstr ""
+msgstr "Permitir que los miembros inviten a otros a la sala"
 
 #: ../gui/muc_room_config_texts.go:137
+#, fuzzy
 msgid "Allow members to invite others"
-msgstr ""
+msgstr "Permitir a los miembros invitar a otros"
 
 #: ../gui/muc_room_config_texts.go:140 ../gui/muc_room_config_texts.go:141
+#, fuzzy
 msgid "People can send private messages"
-msgstr ""
+msgstr "La gente puede enviar mensajes privados"
 
 #: ../gui/muc_room_config_texts.go:144 ../gui/muc_room_config_texts.go:145
 msgid "Maximum number of people in the room"
-msgstr ""
+msgstr "Máximo número de personas en la sala"
 
 #: ../gui/muc_room_config_texts.go:148
+#, fuzzy
 msgid "Make this room public"
-msgstr ""
+msgstr "Hacer pública esta sala"
 
 #: ../gui/muc_room_config_texts.go:149
 msgid "Include in public lists"
-msgstr ""
+msgstr "Incluir en listas públicas"
 
 #: ../gui/muc_room_config_texts.go:150
+#, fuzzy
 msgid "A public room can be found by all users in any public listing."
 msgstr ""
+"Una sala pública puede ser encontrada por todos los usuarios en cualquier "
+"listado público."
 
 #: ../gui/muc_room_config_texts.go:154
 msgid "Make this room persistent"
-msgstr ""
+msgstr "Hacer esta sala persistente"
 
 #: ../gui/muc_room_config_texts.go:155
 msgid "Persistent"
-msgstr ""
+msgstr "Persistente"
 
 #: ../gui/muc_room_config_texts.go:156
 msgid ""
 "A persistent room won't be destroyed when the last person leaves the room."
 msgstr ""
+"Una sala persistente no será destruida cuando la última persona deje la sala."
 
 #: ../gui/muc_room_config_texts.go:160 ../gui/muc_room_config_texts.go:161
 msgid "Roles that will receive information about other people in the room"
-msgstr ""
+msgstr "Roles que recibirán información acerca de otras personas en la sala"
 
 #: ../gui/muc_room_config_texts.go:164
+#, fuzzy
 msgid "Make this room moderated"
-msgstr ""
+msgstr "Hacer esta sala moderada"
 
 #: ../gui/muc_room_config_texts.go:165
 msgid "Moderated"
-msgstr ""
+msgstr "Moderada"
 
 #: ../gui/muc_room_config_texts.go:166
+#, fuzzy
 msgid "In a moderated room, visitors must be given permission to speak."
-msgstr ""
+msgstr "En una sala moderada, les visitantes deben tener permiso para hablar."
 
 #: ../gui/muc_room_config_texts.go:170
 msgid "Make this room members-only"
@@ -3469,34 +3548,34 @@ msgstr ""
 msgid "No accounts"
 msgstr ""
 
-#: ../gui/muc_room.go:203
+#: ../gui/muc_room.go:202
 msgid ""
 "Loading the room information took longer than usual, perhaps the connection "
 "to the server was lost. Do you want to try again?"
 msgstr ""
 
-#: ../gui/muc_room.go:206 ../gui/muc_room.go:734
+#: ../gui/muc_room.go:205 ../gui/muc_room.go:735
 msgid "Yes, try again"
 msgstr ""
 
-#: ../gui/muc_room.go:266
+#: ../gui/muc_room.go:265
 msgid ""
 "You have been removed from this room because it's now a members only room."
 msgstr ""
 
-#: ../gui/muc_room.go:376
+#: ../gui/muc_room.go:375
 msgid "The room has been destroyed"
 msgstr ""
 
-#: ../gui/muc_room.go:511
+#: ../gui/muc_room.go:510
 msgid "The room subject couldn't be updated."
 msgstr ""
 
-#: ../gui/muc_room.go:518
+#: ../gui/muc_room.go:517
 msgid "The room subject has been updated."
 msgstr ""
 
-#: ../gui/muc_room.go:531
+#: ../gui/muc_room.go:530
 msgid "Return"
 msgstr ""
 
@@ -3504,23 +3583,23 @@ msgstr ""
 msgid "Your connection has been restored; you can join this room again."
 msgstr ""
 
-#: ../gui/muc_room.go:727
+#: ../gui/muc_room.go:728
 msgid ""
 "Your connection was recovered but loading the room information took longer "
 "than usual, perhaps the connection to the server was lost. Do you want to "
 "try again?"
 msgstr ""
 
-#: ../gui/muc_room.go:740
+#: ../gui/muc_room.go:741
 msgid "Trying to connect to the room..."
 msgstr ""
 
-#: ../gui/muc_room.go:781
+#: ../gui/muc_room.go:784 ../gui/muc_room_conversation.go:212
 msgid ""
 "The connection to the server has been lost, please verify your connection."
 msgstr ""
 
-#: ../gui/muc_room.go:793
+#: ../gui/muc_room.go:797
 msgid "Connecting to the room..."
 msgstr ""
 
@@ -3584,31 +3663,31 @@ msgstr ""
 
 #: ../gui/muc_room_config_component.go:165
 msgid "Nobody"
-msgstr ""
+msgstr "Nadie"
 
 #: ../gui/muc_room_config_component.go:167
 msgid "No maximum"
-msgstr ""
+msgstr "Sin máximo"
 
 #: ../gui/muc_room_config_component.go:169
 msgid "10"
-msgstr ""
+msgstr "10"
 
 #: ../gui/muc_room_config_component.go:171
 msgid "20"
-msgstr ""
+msgstr "20"
 
 #: ../gui/muc_room_config_component.go:173
 msgid "30"
-msgstr ""
+msgstr "30"
 
 #: ../gui/muc_room_config_component.go:175
 msgid "50"
-msgstr ""
+msgstr "50"
 
 #: ../gui/muc_room_config_component.go:177
 msgid "100"
-msgstr ""
+msgstr "100"
 
 #: ../gui/muc_room_roster.go:293
 msgid "%s (%v)"
@@ -3861,7 +3940,7 @@ msgstr ""
 msgid "You must provide a valid account address."
 msgstr ""
 
-#: ../gui/ui.go:611
+#: ../gui/ui.go:605
 msgid ""
 "You are trying to connect to a Google account - sometimes Google will not "
 "allow connections even if you have entered the correct password. Try turning "
@@ -3869,15 +3948,15 @@ msgid ""
 "access the account (don't worry, CoyIM is plenty secure)."
 msgstr ""
 
-#: ../gui/ui.go:669
+#: ../gui/ui.go:663
 msgid "CoyIM!"
 msgstr ""
 
-#: ../gui/ui.go:749
+#: ../gui/ui.go:743
 msgid "There is no account with the id %q"
 msgstr ""
 
-#: ../gui/ui.go:753
+#: ../gui/ui.go:747
 msgid "Can't send a contact request from an offline account"
 msgstr ""
 
@@ -3967,7 +4046,7 @@ msgstr ""
 msgid "Remove all"
 msgstr ""
 
-#: ../gui/infobar_component.go:155
+#: ../gui/infobar_component.go:154
 msgid "January 2, 2006 at 15:04:05"
 msgstr ""
 
@@ -4493,6 +4572,8 @@ msgid ""
 "Do you want to continue anyway? This means an adversary or server "
 "administrator can potentially see the content of the file."
 msgstr ""
+"¿Quieres continuar de todos modos? Esto significa que potencialmente un "
+"adversario o administrador del servidor puede ver el contenido del archivo."
 
 #: ../gui/file_transfer.go:107
 #, python-format
@@ -4564,7 +4645,7 @@ msgstr ""
 msgid "%[1]s [%[2]s]"
 msgstr ""
 
-#: ../gui/muc_room_conversation_display.go:163
+#: ../gui/muc_room_conversation_display.go:164
 msgid ""
 "You can no longer receive any messages in this room and the list of people "
 "in the room will not be updated anymore."
@@ -4718,24 +4799,28 @@ msgid ""
 "%[2]s"
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:220
+#: ../gui/muc_room_conversation.go:223
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an owner}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:222
+#: ../gui/muc_room_conversation.go:225
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an administrator}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:224
+#: ../gui/muc_room_conversation.go:227
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{a member}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:226
+#: ../gui/muc_room_conversation.go:229
 #, python-format
 msgid "$nickname{%s} has been added to the ban list."
+msgstr ""
+
+#: ../gui/muc_room_conversation.go:272
+msgid "Your connection was restored."
 msgstr ""
 
 #: ../gui/file_transfer_notification.go:148
@@ -5054,7 +5139,7 @@ msgstr ""
 
 #: ../gui/account_events.go:163
 msgid "Successfully refreshed the private conversation."
-msgstr ""
+msgstr "La conversación privada se actualizó con éxito."
 
 #: ../gui/account_events.go:163
 #, python-format
@@ -5063,7 +5148,7 @@ msgstr ""
 
 #: ../gui/account_events.go:163
 msgid "Successfully refreshed the unverified private conversation."
-msgstr ""
+msgstr "La conversación privada no verificada se actualizó con éxito ."
 
 #: ../gui/subscription.go:15
 #, python-format
@@ -5072,7 +5157,7 @@ msgstr ""
 
 #: ../gui/subscription.go:102
 msgid "There are no currently connected accounts."
-msgstr ""
+msgstr "Al momento no hay cuentas conectadas."
 
 #: ../gui/subscription.go:119
 msgid "There is no connected account selected."
@@ -5086,7 +5171,7 @@ msgstr ""
 msgid ""
 "Make sure no one else\n"
 "is reading your messages"
-msgstr ""
+msgstr "Asegúrate de que nadie más está leyendo tus mensajes"
 
 #: ../gui/verifier.go:182
 #, python-format
@@ -5121,10 +5206,11 @@ msgid ""
 msgstr ""
 
 #: ../gui/verifier.go:353
+#, fuzzy
 msgid ""
 "Finish verifying the \n"
 "security of this channel..."
-msgstr ""
+msgstr "Termina la verificación de la seguridad de este canal..."
 
 #: ../gui/verifier.go:378
 #, python-format
@@ -5179,9 +5265,11 @@ msgid "Incorrect password entered, please try again."
 msgstr ""
 
 #: ../gui/master_password.go:126
+#, fuzzy
 msgid "Checking password..."
-msgstr ""
+msgstr "Verificando contraseña..."
 
-#: ../gui/muc_room_close_confirm.go:57
-msgid "Close & Leave Room"
-msgstr ""
+#: ../gui/muc_room_close_confirm.go:53
+#, fuzzy
+msgid "Close & leave room"
+msgstr "Cerrar & salir de la sala"

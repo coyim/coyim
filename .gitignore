@@ -37,9 +37,6 @@ bin/
 *.coverprofile
 /.coverprofiles/
 
-# generated files
-version_generated.go
-
 # Intellij
 *.iml
 .idea/

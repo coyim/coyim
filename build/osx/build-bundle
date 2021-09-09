@@ -127,8 +127,8 @@ EOF
 
 echo "** Copying locale files and mime database"
 
-# Copy locales from our app
-cp -av i18n $macos/
+# Copy locales from our app - but only the .mo files
+rsync -avz --include='*/' --include='*.mo' --exclude='*' i18n $macos/
 
 # Copy mime database
 mkdir -p $resources/share/mime

@@ -8,20 +8,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-09 17:10+0000\n"
-"PO-Revision-Date: 2016-02-16 14:02-0500\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"POT-Creation-Date: 2021-09-08 16:02+0000\n"
+"PO-Revision-Date: 2021-09-09 16:58+0000\n"
+"Last-Translator: Ola Bini <ola@autonomia.digital>\n"
+"Language-Team: Swedish <https://hosted.weblate.org/projects/coyim/main/sv/>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.8.1-dev\n"
 
 #: ../gui/definitions/AccountDetails.xml:22
 #: ../gui/definitions/GlobalPreferences.xml:35
 msgid "Account Details"
-msgstr ""
+msgstr "Kontodetaljer"
 
 #: ../gui/definitions/AccountDetails.xml:34
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:55
@@ -31,7 +32,7 @@ msgstr ""
 #: ../gui/definitions/GroupDetails.xml:35 ../gui/definitions/Importer.xml:92
 #: ../gui/definitions/MasterPassword.xml:43
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:29
-#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:108
+#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:62
 #: ../gui/definitions/MUCRoomConfigListAddDialog.xml:19
 #: ../gui/definitions/MUCRoomDestroyDialogError.xml:23
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:24
@@ -41,24 +42,26 @@ msgstr ""
 #: ../gui/definitions/MUCRoomToolbar.xml:362
 #: ../gui/definitions/PeerDetails.xml:191
 #: ../gui/definitions/RegistrationForm.xml:35
-#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:529
+#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:528
 #: ../gui/file_transfer_notification.go:125
 #: ../gui/file_transfer_notification.go:401
 msgid "Cancel"
-msgstr ""
+msgstr "Avbryt"
 
 #: ../gui/definitions/AccountDetails.xml:47
 #: ../gui/definitions/EditProxy.xml:151
 #: ../gui/definitions/GlobalPreferences.xml:397
 #: ../gui/definitions/PeerDetails.xml:197
 msgid "Save"
-msgstr ""
+msgstr "Spara"
 
 #: ../gui/definitions/AccountDetails.xml:108
 msgid ""
 "Your account\n"
 "(example: kim42@jabber.otr.im)"
 msgstr ""
+"Ditt konto\n"
+"(exempelvis: kim42@jabber.otr.im)"
 
 #: ../gui/definitions/AccountDetails.xml:128
 #: ../gui/definitions/AskForPassword.xml:50
@@ -66,34 +69,34 @@ msgstr ""
 #: ../gui/definitions/MUCRoomLobby.xml:82 ../gui/definitions/Password.xml:11
 #: ../gui/muc_room_config_texts.go:178
 msgid "Password"
-msgstr ""
+msgstr "Lösenord"
 
 #: ../gui/definitions/AccountDetails.xml:149
 msgid "Account name (optional)"
-msgstr ""
+msgstr "Kontonamn (frivilligt)"
 
 #: ../gui/definitions/AccountDetails.xml:169
 msgid "Display all settings"
-msgstr ""
+msgstr "Visa alla inställningar"
 
 #: ../gui/definitions/AccountDetails.xml:198
 #: ../gui/definitions/AskForPassword.xml:27
 #: ../gui/definitions/MUCCreateRoomForm.xml:39
 #: ../gui/definitions/MUCJoinRoomDialog.xml:139
 msgid "Account"
-msgstr ""
+msgstr "Konto"
 
 #: ../gui/definitions/AccountDetails.xml:219
 msgid "Server (leave empty for default)"
-msgstr ""
+msgstr "Server (lämna fältet tomt för standardvärde)"
 
 #: ../gui/definitions/AccountDetails.xml:239
 msgid "Port (leave empty for default)"
-msgstr ""
+msgstr "Port (lämna fältet tomt för standarvärde)"
 
 #: ../gui/definitions/AccountDetails.xml:259
 msgid "Pinning policy"
-msgstr ""
+msgstr "Policy för certifikatstiftning"
 
 #: ../gui/definitions/AccountDetails.xml:271
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:355
@@ -101,31 +104,31 @@ msgstr ""
 #: ../gui/muc_room_roster.go:417 ../gui/muc_room_occupant_affiliation.go:175
 #: ../gui/muc_room_occupant_affiliation.go:189
 msgid "None"
-msgstr ""
+msgstr "Ingen"
 
 #: ../gui/definitions/AccountDetails.xml:272
 msgid "Deny"
-msgstr ""
+msgstr "Avböj"
 
 #: ../gui/definitions/AccountDetails.xml:273
 msgid "Always add"
-msgstr ""
+msgstr "Lägg alltid till"
 
 #: ../gui/definitions/AccountDetails.xml:274
 msgid "Add the first, ask for the rest"
-msgstr ""
+msgstr "Lägg till första, fråga för resten"
 
 #: ../gui/definitions/AccountDetails.xml:275
 msgid "Add the first, deny the rest"
-msgstr ""
+msgstr "Lägg till första, avböj resten"
 
 #: ../gui/definitions/AccountDetails.xml:276
 msgid "Always ask"
-msgstr ""
+msgstr "Fråga alltid"
 
 #: ../gui/definitions/AccountDetails.xml:365 ../gui/account.go:306
 msgid "_Remove"
-msgstr ""
+msgstr "_Ta bort"
 
 #: ../gui/definitions/AccountDetails.xml:407
 msgid ""
@@ -160,26 +163,54 @@ msgid ""
 "<b>Always ask</b>: Ask the user every time we encounter a new unpinned "
 "certificate to accept or to reject it."
 msgstr ""
+"<b>Policy för stiftning av certifikat</b>\n"
+"\n"
+"Policyn för stiftning av certifikat bestämmer huruvida vi sparar information "
+"om certifikat vi har sett förut, och hur vi kommer reagera i olika fall. Ett "
+"stiftat certifikat innebär att vi litar på det certifikatet för att säkra "
+"anslutningen. De möjliga valen och deras mening beskrivs nedan::\n"
+"\n"
+"<b>Ingen</b>: Använd inte certifikatstiftning.\n"
+"\n"
+"<b>Avböj</b>: Stifta inte nya certikifakt och använd enbart tidigare "
+"stiftade certifikat. Om en server erbjuder ett certifikat som inte existerar "
+"avbryts anslutningen..\n"
+"\n"
+"<b>Lägg alltid till</b>: Stifta automatiskt nya certifikat from servern. Ett "
+"sätt att använda det här valet är för att först ansluta till dina servrar, "
+"spara certifikaten och sedan ändra policyn till en mer restriktiv variant.\n"
+"\n"
+"<i>VAR UPPMÄRKSAM - Det här valet måste användas med försiktighet.</i>\n"
+"\n"
+"<b>Lägg till första, fråga för resten</b>:  Stifta automatiskt det första "
+"certifikatet vi ser, och sedan frågar vi användaren för nya certifikat om "
+"dem ska läggas till eller avböjas.\n"
+"\n"
+"<b>Lägg till första, avböj resten</b>: Stifta automatiskt det första "
+"certifikatet vi ser från en server och sedan avböja alla framtida.\n"
+"\n"
+"<b>Fråga alltid</b>: Fråga användaren varje gång vi ser ett nytt certifikat "
+"som inte redan har blivit stiftat, om vi ska acceptera eller avböja det.."
 
 #: ../gui/definitions/AccountDetails.xml:445
 msgid "Server"
-msgstr ""
+msgstr "Server"
 
 #: ../gui/definitions/AccountDetails.xml:520
 msgid "_Add..."
-msgstr ""
+msgstr "_Lägg till..."
 
 #: ../gui/definitions/AccountDetails.xml:535
 msgid "_Remove..."
-msgstr ""
+msgstr "_Ta bort..."
 
 #: ../gui/definitions/AccountDetails.xml:550 ../gui/account.go:293
 msgid "_Edit..."
-msgstr ""
+msgstr "_Redigera..."
 
 #: ../gui/definitions/AccountDetails.xml:583
 msgid "Proxies"
-msgstr ""
+msgstr "Proxyservrar"
 
 #: ../gui/definitions/AccountDetails.xml:622
 msgid ""
@@ -194,14 +225,26 @@ msgid ""
 "in question to find out where the files are located for your platform. The "
 "filenames to look for are \"otr.fingerprints\" and \"otr.private_key\"."
 msgstr ""
+"Knapparna nedan gör det möjligt för dig att importera private nycklar och "
+"fingeravtryck. Båda bör vara i format som genereras av Pidgin/libotr. Om du "
+"importerar privata nycklar kommer dina existerande privata nycklar att "
+"raderas eftersom CoyIM för tillfället inte tillåter dig att välja en privat "
+"nyckel att använda för en krypterad chat.\n"
+"\n"
+"Det existerar ett antal program som använder samma format som libotr, till "
+"exampel Pidgin, Adium och Tor Messenger. Beroende på vilket operativsystem "
+"du har kan dessa filer existera på många olika platser. Sök i "
+"dokumentationen för programmet i fråga för att hitta var filerna finns på "
+"din maskin. Filnamnen kommer oftast vara \"otr.fingerprints\" och \"otr."
+"private_key\"."
 
 #: ../gui/definitions/AccountDetails.xml:637
 msgid "Import Private _Keys..."
-msgstr ""
+msgstr "Importera privata _nycklar..."
 
 #: ../gui/definitions/AccountDetails.xml:651
 msgid "Import _Fingerprints..."
-msgstr ""
+msgstr "Importera _Fingeravtryck..."
 
 #: ../gui/definitions/AccountDetails.xml:666
 msgid ""
@@ -209,109 +252,115 @@ msgid ""
 "careful with the files that come out of this process as they contain "
 "potentially sensitive data. The export will be in the Pidgin/libotr format."
 msgstr ""
+"De följande knapparna gör det möjligt att exportera privata nycklar och "
+"fingeravtryck. Var försiktig med filerna som kommer från den här processen, "
+"eftersom dem kan innehålla känslig information. Filerna kommer exporteras i "
+"ett format som är kompatibelt med Pidgin/libotr."
 
 #: ../gui/definitions/AccountDetails.xml:679
 msgid "Export Private Keys..."
-msgstr ""
+msgstr "Exportera privata nycklar..."
 
 #: ../gui/definitions/AccountDetails.xml:692
 msgid "Export Fingerprints..."
-msgstr ""
+msgstr "Exportera fingeravtryck..."
 
 #: ../gui/definitions/AccountDetails.xml:717
 msgid "Encryption"
-msgstr ""
+msgstr "Kryptering"
 
 #: ../gui/definitions/AccountRegistration.xml:17
 msgid "Recommended servers: "
-msgstr ""
+msgstr "Rekommenderade servrar: "
 
 #: ../gui/definitions/AccountRegistration.xml:38
 msgid "1. Choose a server"
-msgstr ""
+msgstr "1. Välj en server"
 
 #: ../gui/definitions/AccountRegistration.xml:72
 msgid "2. Create account"
-msgstr ""
+msgstr "2. Skapa ett konto"
 
 #: ../gui/definitions/AddContact.xml:3
 msgid "I would like to add you to my contact list."
-msgstr ""
+msgstr "Jag skulle vilja lägga till dig till min kontaktlista."
 
 #: ../gui/definitions/AddContact.xml:9
 msgid "Add new contact"
-msgstr ""
+msgstr "Lägg till ny kontakt"
 
 #: ../gui/definitions/AddContact.xml:50
 #: ../gui/definitions/MUCPublicRoomsDialog.xml:93
 #: ../gui/definitions/PeerDetails.xml:31
 msgid "Account:"
-msgstr ""
+msgstr "Konto:"
 
 #: ../gui/definitions/AddContact.xml:79
 msgid "Contact to add:"
-msgstr ""
+msgstr "Kontakt att lägga till:"
 
 #: ../gui/definitions/AddContact.xml:103 ../gui/definitions/PeerDetails.xml:73
 msgid "Nickname:"
-msgstr ""
+msgstr "Namn:"
 
 #: ../gui/definitions/AddContact.xml:133
 msgid "A_llow this contact to view my status"
-msgstr ""
+msgstr "Ti_llåt den här kontakten att se min status"
 
 #: ../gui/definitions/AddContact.xml:175
 msgid ""
 "Warning: This message will not be end-to-end encrypted. Do not reveal any "
 "sensitive information in it."
 msgstr ""
+"Varning: Det här meddelandet kommer inte att vara krypterat från endpunkt "
+"till endpunkt. Avslöja ingen känslig information i det."
 
 #: ../gui/definitions/AddContact.xml:197
 #: ../gui/definitions/MUCRoomConfigFieldPositions.xml:93
 #: ../gui/definitions/MUCRoomConfigListAddDialog.xml:33
 #: ../gui/muc_room_config_list_add_component.go:196
 msgid "Add"
-msgstr ""
+msgstr "Lägg till"
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:49
 msgid "Answer: "
-msgstr ""
+msgstr "Svar: "
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:71
 msgid "Your peer must have previously shared it with you. If not, try to:"
-msgstr ""
+msgstr "Din kontakt måste ha delat den med dig tidigare. Om inte, försök att:"
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:90
 msgid "Ask them in person"
-msgstr ""
+msgstr "Fråga dem personligen"
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:109
 msgid "Ask them in a different encrypted channel"
-msgstr ""
+msgstr "Fråga dem via en annan krypterad kanal"
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:128
 msgid "Ask them over the phone"
-msgstr ""
+msgstr "Fråga dem över telefonen"
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:144
 msgid "Verify Answer"
-msgstr ""
+msgstr "Verifiera svar"
 
 #: ../gui/definitions/AskForPassword.xml:4
 msgid "Enter your password"
-msgstr ""
+msgstr "Skriv ditt lösenord"
 
 #: ../gui/definitions/AskForPassword.xml:72
 msgid "Save password"
-msgstr ""
+msgstr "Spara lösenord"
 
 #: ../gui/definitions/AskForPassword.xml:101
 msgid "Connect"
-msgstr ""
+msgstr "Anslut"
 
 #: ../gui/definitions/AskToEncrypt.xml:6
 msgid "Encrypt your account's information"
-msgstr ""
+msgstr "Kryptera din kontoinformation"
 
 #: ../gui/definitions/AskToEncrypt.xml:7
 msgid ""
@@ -319,6 +368,9 @@ msgid ""
 "Would you like to encrypt your account's information?\n"
 "    "
 msgstr ""
+"\n"
+"Vill du kryptera din kontoinformation?\n"
+"    "
 
 #: ../gui/definitions/AskToEncrypt.xml:10
 msgid ""
@@ -328,23 +380,27 @@ msgid ""
 "password. You will only be asked for it when CoyIM starts.\n"
 "    "
 msgstr ""
+"Du kan inte få tillgång till din kontoinformation om du tappar bort\n"
+"\n"
+"lösenorder. Du kommer bara bli tillfrågad om det när CoyIM startar.\n"
+"    "
 
 #: ../gui/definitions/AuthorizeSubscription.xml:3
 msgid "Subscription request"
-msgstr ""
+msgstr "Begäran om prenumeration"
 
 #: ../gui/definitions/CannotVerifyWithSMP.xml:46
 #: ../gui/definitions/VerificationFailed.xml:47
 msgid "Try again later"
-msgstr ""
+msgstr "Försök igen senare"
 
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:5
 msgid "Configure your master password"
-msgstr ""
+msgstr "Ställ in ditt huvudlösenord"
 
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:16
 msgid "Please enter the master password for the configuration file twice."
-msgstr ""
+msgstr "Var god skriv in huvudlösenordet för konfigurationsfilen två gånger."
 
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:61
 #: ../gui/definitions/GroupDetails.xml:40
@@ -352,66 +408,66 @@ msgstr ""
 #: ../gui/definitions/VerificationSucceeded.xml:25
 #: ../gui/definitions/VerifyFingerprintUnknown.xml:18
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: ../gui/definitions/CertificateDialog.xml:3
 msgid "Problem with secure connection for ACCOUNT_NAME"
-msgstr ""
+msgstr "Problem med den säkra anslutningen för ACCOUNT_NAME"
 
 #: ../gui/definitions/CertificateDialog.xml:25
 msgid "Issued to:"
-msgstr ""
+msgstr "Utfärdat till:"
 
 #: ../gui/definitions/CertificateDialog.xml:44
 #: ../gui/definitions/CertificateDialog.xml:187
 msgid "Common Name (CN):"
-msgstr ""
+msgstr "Common Name (CN):"
 
 #: ../gui/definitions/CertificateDialog.xml:68
 msgid "Other names:"
-msgstr ""
+msgstr "Andra namn:"
 
 #: ../gui/definitions/CertificateDialog.xml:94
 #: ../gui/definitions/CertificateDialog.xml:211
 msgid "Organization (O):"
-msgstr ""
+msgstr "Organisation (O):"
 
 #: ../gui/definitions/CertificateDialog.xml:118
 #: ../gui/definitions/CertificateDialog.xml:235
 msgid "Organizational Unit (OU):"
-msgstr ""
+msgstr "Organisationsenhet (OU):"
 
 #: ../gui/definitions/CertificateDialog.xml:142
 msgid "Serial Number:"
-msgstr ""
+msgstr "Serienummer:"
 
 #: ../gui/definitions/CertificateDialog.xml:168
 msgid "Issued by:"
-msgstr ""
+msgstr "Utfärdat av:"
 
 #: ../gui/definitions/CertificateDialog.xml:261
 msgid "Validity:"
-msgstr ""
+msgstr "Giltighet:"
 
 #: ../gui/definitions/CertificateDialog.xml:280
 msgid "Issued on:"
-msgstr ""
+msgstr "Utfärdat:"
 
 #: ../gui/definitions/CertificateDialog.xml:304
 msgid "Expires on:"
-msgstr ""
+msgstr "Går ut:"
 
 #: ../gui/definitions/CertificateDialog.xml:338
 msgid "SHA-1 fingerprint:"
-msgstr ""
+msgstr "Fingeravtryck (SHA-1):"
 
 #: ../gui/definitions/CertificateDialog.xml:365
 msgid "SHA-256 fingerprint:"
-msgstr ""
+msgstr "Fingeravtryck (SHA-256):"
 
 #: ../gui/definitions/CertificateDialog.xml:392
 msgid "SHA3-256 fingerprint:"
-msgstr ""
+msgstr "Fingeravtryck (SHA3-256):"
 
 #: ../gui/definitions/CertificateDialog.xml:421
 msgid ""
@@ -420,99 +476,106 @@ msgid ""
 "connect using this information this time but request that we ask again next "
 "time, or connect using this information and remember it for the future."
 msgstr ""
+"Beroende på om du tror att ovanstående information är korrekt, eller baserat "
+"på hur mycket risk du kan acceptera så har du tre val: Bestäm dig för att "
+"inte ansluta, ansluta med den här information den här gången men begär att "
+"vi frågar igen nästa gång, eller anslut med informationen och spara den för "
+"framtida uppkopplingar."
 
 #: ../gui/definitions/CertificateDialog.xml:436
 msgid "Don't connect"
-msgstr ""
+msgstr "Anslut inte"
 
 #: ../gui/definitions/CertificateDialog.xml:441
 msgid "Accept temporarily"
-msgstr ""
+msgstr "Godkänn tillfälligt"
 
 #: ../gui/definitions/CertificateDialog.xml:446
 msgid "Accept permanently"
-msgstr ""
+msgstr "Godkänn permanent"
 
 #: ../gui/definitions/ChangePasswordMessageResponse.xml:4
 msgid "Change password"
-msgstr ""
+msgstr "Byt lösenord"
 
 #: ../gui/definitions/ChangePasswordMessageResponse.xml:24
 #: ../gui/definitions/ChangePassword.xml:44
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:42
 msgid "Ok"
-msgstr ""
+msgstr "OK"
 
 #: ../gui/definitions/ChangePassword.xml:4
 msgid "Change account password"
-msgstr ""
+msgstr "Byt kontolösenord"
 
 #: ../gui/definitions/ChangePassword.xml:32
 msgid "Change Password"
-msgstr ""
+msgstr "Byt lösenord"
 
 #: ../gui/definitions/ChangePassword.xml:79
 msgid "Enter new password:"
-msgstr ""
+msgstr "Skriv nytt lösenord:"
 
 #: ../gui/definitions/ChangePassword.xml:104
 msgid "Confirm new password:"
-msgstr ""
+msgstr "Bekräfta nytt lösenord:"
 
 #: ../gui/definitions/ChangePassword.xml:127
 msgid "Save new password ?"
-msgstr ""
+msgstr "Spara nytt lösenord?"
 
 #: ../gui/definitions/ChangePassword.xml:186
 msgid "label"
-msgstr ""
+msgstr "(används inte)"
 
 #: ../gui/definitions/ChooseKeyToImport.xml:3
 msgid "Choose a key to import"
-msgstr ""
+msgstr "Välj en nyckel att importera"
 
 #: ../gui/definitions/ChooseKeyToImport.xml:12
 msgid ""
 "The file you choose contains more than one private key. Choose from the list "
 "below the key you would like to import."
 msgstr ""
+"Filen du valde innehåller mer än en privat nyckel. Välj från listan nedanför "
+"vilken nyckel du vill importera."
 
 #: ../gui/definitions/ChooseKeyToImport.xml:35
 #: ../gui/definitions/Importer.xml:97
 msgid "Import"
-msgstr ""
+msgstr "Importera"
 
 #: ../gui/definitions/ConfirmAccountRemoval.xml:3
 msgid "Confirm account removal"
-msgstr ""
+msgstr "Bekräfta borttagning av konto"
 
 #: ../gui/definitions/ConfirmAccountRemoval.xml:5
 msgid "Are you sure you want to remove this account?"
-msgstr ""
+msgstr "Är du säker på att du vill ta bort det här kontot?"
 
 #: ../gui/definitions/ConnectionInformation.xml:3
 msgid "Connection Information"
-msgstr ""
+msgstr "Anslutningsinformation"
 
 #: ../gui/definitions/ConnectionInformation.xml:18
 msgid "Server connected to:"
-msgstr ""
+msgstr "Ansluten till server:"
 
 #: ../gui/definitions/ConnectionInformation.xml:42
 msgid "Secure connection version:"
-msgstr ""
+msgstr "Version av säker anslutning:"
 
 #: ../gui/definitions/ConnectionInformation.xml:66
 msgid "Secure connection algorithm:"
-msgstr ""
+msgstr "Algoritm för säker anslutning:"
 
 #: ../gui/definitions/ConnectionInformation.xml:90
 msgid "Secure connection fingerprint:"
-msgstr ""
+msgstr "Fingeravtryck för säker anslutning:"
 
 #: ../gui/definitions/ConnectionInformation.xml:118
 msgid "Pin certificate"
-msgstr ""
+msgstr "Stifta certifikat"
 
 #: ../gui/definitions/ConnectionInformation.xml:135
 #: ../gui/definitions/Feedback.xml:65 ../gui/definitions/GeneratePIN.xml:102
@@ -521,114 +584,114 @@ msgstr ""
 #: ../gui/file_transfer_notification.go:198
 #: ../gui/file_transfer_notification.go:308
 msgid "Close"
-msgstr ""
+msgstr "Stäng"
 
 #: ../gui/definitions/ContactPopupMenu.xml:5
 msgid "Edit..."
-msgstr ""
+msgstr "Redigera..."
 
 #: ../gui/definitions/ContactPopupMenu.xml:11
 #: ../gui/definitions/MUCRoomConfigFieldPositions.xml:135
 #: ../gui/muc_room_config_list_component.go:101
 msgid "Remove"
-msgstr ""
+msgstr "Ta bort"
 
 #: ../gui/definitions/ContactPopupMenu.xml:21
 msgid "Talk to..."
-msgstr ""
+msgstr "Tala med..."
 
 #: ../gui/definitions/ContactPopupMenu.xml:26
 msgid "Send file..."
-msgstr ""
+msgstr "Skicka fil..."
 
 #: ../gui/definitions/ContactPopupMenu.xml:32
 msgid "Send directory..."
-msgstr ""
+msgstr "Skicka katalog..."
 
 #: ../gui/definitions/ContactPopupMenu.xml:41
 msgid "Ask contact to see their status"
-msgstr ""
+msgstr "Fråga kontakt om tillstånd att se deras status"
 
 #: ../gui/definitions/ContactPopupMenu.xml:47
 msgid "Allow contact to see my status"
-msgstr ""
+msgstr "Tillåt kontakt att se min status"
 
 #: ../gui/definitions/ContactPopupMenu.xml:53
 msgid "Forbid contact to see my status"
-msgstr ""
+msgstr "Förbjud kontakt att se min status"
 
 #: ../gui/definitions/ContactPopupMenu.xml:62 ../gui/account.go:326
 msgid "Dump info"
-msgstr ""
+msgstr "Dumpa information"
 
 #: ../gui/definitions/ConversationPane.xml:15
 #: ../gui/definitions/ConversationPane.xml:135
 msgid "Secure Chat"
-msgstr ""
+msgstr "Säker chat"
 
 #: ../gui/definitions/ConversationPane.xml:25
 msgid "Start encrypted chat"
-msgstr ""
+msgstr "Starta krypterad chat"
 
 #: ../gui/definitions/ConversationPane.xml:32
 msgid "End encrypted chat"
-msgstr ""
+msgstr "Avsluta krypterad chat"
 
 #: ../gui/definitions/ConversationPane.xml:39
 msgid "Verify fingerprint"
-msgstr ""
+msgstr "Verifiera fingeravtryck"
 
 #: ../gui/definitions/ConversationPane.xml:53
 msgid "Transfer"
-msgstr ""
+msgstr "Överföring"
 
 #: ../gui/definitions/ConversationPane.xml:63
 msgid "Send File"
-msgstr ""
+msgstr "Skicka fil"
 
 #: ../gui/definitions/ConversationPane.xml:70
 msgid "Send Dir"
-msgstr ""
+msgstr "Skicka katalog"
 
 #: ../gui/definitions/EditProxy.xml:3
 msgid "Edit Proxy"
-msgstr ""
+msgstr "Redigera Proxy"
 
 #: ../gui/definitions/EditProxy.xml:17
 msgid "Proxy type:"
-msgstr ""
+msgstr "Proxytyp:"
 
 #: ../gui/definitions/EditProxy.xml:39
 msgid "User:"
-msgstr ""
+msgstr "Användare:"
 
 #: ../gui/definitions/EditProxy.xml:59
 msgid "Password:"
-msgstr ""
+msgstr "Lösenord:"
 
 #: ../gui/definitions/EditProxy.xml:80
 msgid "Server:"
-msgstr ""
+msgstr "Server:"
 
 #: ../gui/definitions/EditProxy.xml:100
 msgid "Port:"
-msgstr ""
+msgstr "Port:"
 
 #: ../gui/definitions/EditProxy.xml:120
 msgid "Path:"
-msgstr ""
+msgstr "Sökväg:"
 
 #: ../gui/definitions/FeedbackInfo.xml:12
 msgid "Are you liking it?"
-msgstr ""
+msgstr "Uppskattar du programmet?"
 
 #: ../gui/definitions/FeedbackInfo.xml:22 ../gui/definitions/Main.xml:164
 msgid "Feedback"
-msgstr ""
+msgstr "Respons"
 
 #: ../gui/definitions/Feedback.xml:4
 msgid "We would like to receive your feedback"
-msgstr ""
+msgstr "Vi mottar gärna din respons"
 
 #: ../gui/definitions/Feedback.xml:14
 msgid ""
@@ -636,10 +699,13 @@ msgid ""
 "              Visit the website to get in touch with us:\n"
 "            "
 msgstr ""
+"\n"
+"              Besök vår hemsida för att komma i kontakt med oss:\n"
+"            "
 
 #: ../gui/definitions/Feedback.xml:28
 msgid "https://coy.im"
-msgstr ""
+msgstr "https://coy.im"
 
 #: ../gui/definitions/Feedback.xml:46
 msgid ""
@@ -649,82 +715,88 @@ msgid ""
 "              This is the only way we can create a better privacy tool.\n"
 "            "
 msgstr ""
+"\n"
+"              Berätta för oss vad du tycker om CoyIM.\n"
+"\n"
+"              Detta är enda sättet vi kan skapa ett bättre verktyg för "
+"personlig integritet.\n"
+"            "
 
 #: ../gui/definitions/FileTransferAskToReceive.xml:6
 msgid "File transfer"
-msgstr ""
+msgstr "Filöverföring"
 
 #: ../gui/definitions/FileTransferContinueWithoutEncryption.xml:6
 msgid "File transfer without encryption?"
-msgstr ""
+msgstr "Överför fil utan kryptering?"
 
 #: ../gui/definitions/FirstAccountDialog.xml:4
 msgid "Setup your first account"
-msgstr ""
+msgstr "Upprätta ditt första konto"
 
 #: ../gui/definitions/FirstAccountDialog.xml:15
 msgid "Welcome to CoyIM!"
-msgstr ""
+msgstr "Välkommen till CoyIM!"
 
 #: ../gui/definitions/FirstAccountDialog.xml:36
 msgid "Create a new account"
-msgstr ""
+msgstr "Skapa nytt konto"
 
 #: ../gui/definitions/FirstAccountDialog.xml:43
 msgid "Add an existing account"
-msgstr ""
+msgstr "Lägg till existerande konto"
 
 #: ../gui/definitions/FirstAccountDialog.xml:50
 msgid "Import account from your computer"
-msgstr ""
+msgstr "Importera konto från din dator"
 
 #: ../gui/definitions/GeneratePIN.xml:45
 msgid "Share in person"
-msgstr ""
+msgstr "Dela med dig personligen"
 
 #: ../gui/definitions/GeneratePIN.xml:64
 msgid "Share through a different encrypted channel"
-msgstr ""
+msgstr "Dela med dig via en annan krypterad kanal"
 
 #: ../gui/definitions/GeneratePIN.xml:83
 msgid "Share in a phone call"
-msgstr ""
+msgstr "Dela med dig via telefonsamtal"
 
 #: ../gui/definitions/GlobalPreferences.xml:11
 msgid "No notifications"
-msgstr ""
+msgstr "Inga underrättelser"
 
 #: ../gui/definitions/GlobalPreferences.xml:15
 msgid "Only show that a new message arrived"
-msgstr ""
+msgstr "Visa enbart att ett nytt meddelande har anlänt"
 
 #: ../gui/definitions/GlobalPreferences.xml:19
 msgid "Show who sent the message"
-msgstr ""
+msgstr "Visa vem som skickade meddelandet"
 
 #: ../gui/definitions/GlobalPreferences.xml:23
 msgid "Show message"
-msgstr ""
+msgstr "Via meddelandet"
 
 #: ../gui/definitions/GlobalPreferences.xml:65
 msgid "Unify conversations in one window"
-msgstr ""
+msgstr "Förena alla konversationer i ett fönster"
 
 #: ../gui/definitions/GlobalPreferences.xml:84
 msgid "Send messages with Shift-Enter"
-msgstr ""
+msgstr "Skicka meddelanden via Skift-Retur"
 
 #: ../gui/definitions/GlobalPreferences.xml:103
 msgid "Display empty groups"
-msgstr ""
+msgstr "Visa tomma grupper"
 
 #: ../gui/definitions/GlobalPreferences.xml:122
 msgid "Use Emacs key bindings"
-msgstr ""
+msgstr "Använd tangentbordskopplingar från Emacs"
 
 #: ../gui/definitions/GlobalPreferences.xml:143
 msgid "General"
-msgstr ""
+msgstr "Allmäna"
 
 #: ../gui/definitions/GlobalPreferences.xml:161
 msgid ""
@@ -734,10 +806,15 @@ msgid ""
 "message, or even the author, could potentially be a privacy leak if you're "
 "ever in settings where someone can see your screen."
 msgstr ""
+"CoyIM kan skicka underrättelser till dig när ett nytt meddelande anländer. "
+"Dessa underrättelser kan stängas av, eller ställas in att visa olika mängder "
+"information. Det är viktigt att komma ihåg att visa texten för meddelandet "
+"eller till och med författaren kan vara en invasion av din personliga "
+"integritet om du är i en situation där någon kan se din skärm."
 
 #: ../gui/definitions/GlobalPreferences.xml:174
 msgid "Notification type"
-msgstr ""
+msgstr "Underrättelsetyp"
 
 #: ../gui/definitions/GlobalPreferences.xml:202
 msgid ""
@@ -745,20 +822,26 @@ msgid ""
 "fullscreen mode. If the notification is not urgent, it will not display over "
 "a fullscreen window."
 msgstr ""
+"Underrättelser kan ställas in att visas angeläget - detta kan vara "
+"användbart om du arbeter i fullskärmsläge. Om underrättelsen inte är "
+"angelägen kommer den inte visas framför ett fullskärmsfönster."
 
 #: ../gui/definitions/GlobalPreferences.xml:215
 msgid "Should notifications be displayed urgently?"
-msgstr ""
+msgstr "Skall underrättelser visas angeläget?"
 
 #: ../gui/definitions/GlobalPreferences.xml:234
 msgid ""
 "Notifications can stay on the screen until you've gone back to CoyIM, or "
 "they can expire after a while. The below setting changes this behavior."
 msgstr ""
+"Underrättelser kan stanna på skärmen tills du har gått tillbaka till CoyIM, "
+"eller så kan de gå ut efter en stund. Instälnningen nedan ändrar detta "
+"beteende."
 
 #: ../gui/definitions/GlobalPreferences.xml:247
 msgid "Should notifications expire?"
-msgstr ""
+msgstr "Skall underrättelser upphöra?"
 
 #: ../gui/definitions/GlobalPreferences.xml:266
 msgid ""
@@ -767,18 +850,22 @@ msgid ""
 "a timeout period before running the next time. The command and timeout is "
 "specified below. "
 msgstr ""
+"Du kan välja ett anpassat kommando som kommer köras varje gång ett "
+"meddelande är mottaget. Om du väljer att göra detta kommer kommandet köras "
+"varje för varje meddelande, med undantag för en paus innan det körs nästa "
+"gång. Både kommandot och paus-tiden kan skrivas nedan. "
 
 #: ../gui/definitions/GlobalPreferences.xml:279
 msgid "Notification command"
-msgstr ""
+msgstr "Underrättelsekommando"
 
 #: ../gui/definitions/GlobalPreferences.xml:299
 msgid "Minimum time between notifications in seconds"
-msgstr ""
+msgstr "Minsta tid mellan underrättelser i sekunder"
 
 #: ../gui/definitions/GlobalPreferences.xml:323
 msgid "Notifications"
-msgstr ""
+msgstr "Underrättelser"
 
 #: ../gui/definitions/GlobalPreferences.xml:341
 msgid ""
@@ -789,275 +876,290 @@ msgid ""
 "traffic information. This setting will only take effect after a restart of "
 "CoyIM."
 msgstr ""
+"Om du sätter den här inställningen till ett filnamn kommer "
+"lågnivåinformation att loggas där. Var försiktig - den här informationen är "
+"känslig och kan innehålla privat information. Sätt enbart på den här "
+"inställningen om du absolut behöver det för felsökning. Filen kommer logga "
+"traffikinformation för protokollet XMPP. Den här inställningen tar effekt "
+"enbart efter en omstart av CoyIM."
 
 #: ../gui/definitions/GlobalPreferences.xml:354
 msgid "Raw log file"
-msgstr ""
+msgstr "Rå loggfil"
 
 #: ../gui/definitions/GlobalPreferences.xml:376
 msgid "Debugging"
-msgstr ""
+msgstr "Felsökning"
 
 #: ../gui/definitions/GroupDetails.xml:4
 msgid "Add Group"
-msgstr ""
+msgstr "Lägg till grupp"
 
 #: ../gui/definitions/GroupDetails.xml:11
 msgid "Group name"
-msgstr ""
+msgstr "Gruppnamn"
 
 #: ../gui/definitions/Importer.xml:12
 msgid "Import Accounts"
-msgstr ""
+msgstr "Importera konton"
 
 #: ../gui/definitions/Importer.xml:22
 msgid ""
 "Choose the accounts you would like to import and start using from CoyIM."
-msgstr ""
+msgstr "Välj de konton du vill importera och börja använda från CoyIM."
 
 #: ../gui/definitions/Importer.xml:41
 msgid "Import this"
-msgstr ""
+msgstr "Importera detta"
 
 #: ../gui/definitions/Importer.xml:55
 msgid "From application"
-msgstr ""
+msgstr "Från program"
 
 #: ../gui/definitions/Importer.xml:67
 msgid "Account name"
-msgstr ""
+msgstr "Kontonamn"
 
 #: ../gui/definitions/Main.xml:22
 msgid "_Contacts"
-msgstr ""
+msgstr "_Kontakter"
 
 #: ../gui/definitions/Main.xml:30
 msgid "Add..."
-msgstr ""
+msgstr "Lägg till..."
 
 #: ../gui/definitions/Main.xml:37
 msgid "New Conversation..."
-msgstr ""
+msgstr "Ny konversation..."
 
 #: ../gui/definitions/Main.xml:48
 msgid "_Accounts"
-msgstr ""
+msgstr "Ko_nton"
 
 #: ../gui/definitions/Main.xml:55
 msgid "Chat _Rooms"
-msgstr ""
+msgstr "Chatt_rum"
 
 #: ../gui/definitions/Main.xml:63 ../gui/muc_room_config_assistant.go:140
 #: ../gui/muc_create_room_form.go:283
 msgid "Create Room"
-msgstr ""
+msgstr "Skapa rum"
 
 #: ../gui/definitions/Main.xml:71
 msgid "Show public rooms..."
-msgstr ""
+msgstr "Visa offentliga rum..."
 
 #: ../gui/definitions/Main.xml:78
 msgid "Join a Room"
-msgstr ""
+msgstr "Gå med i ett rum"
 
 #: ../gui/definitions/Main.xml:89
 msgid "_View"
-msgstr ""
+msgstr "_Vy"
 
 #: ../gui/definitions/Main.xml:97
 msgid "Merge Accounts"
-msgstr ""
+msgstr "Slå samman konton"
 
 #: ../gui/definitions/Main.xml:104
 msgid "Show Offline Contacts"
-msgstr ""
+msgstr "Visa ej anslutna konton"
 
 #: ../gui/definitions/Main.xml:111
 msgid "Show Waiting Contacts"
-msgstr ""
+msgstr "Visa bidande kontakter"
 
 #: ../gui/definitions/Main.xml:118
 msgid "Sort By Status"
-msgstr ""
+msgstr "Sortera efter status"
 
 #: ../gui/definitions/Main.xml:129
 msgid "_Options"
-msgstr ""
+msgstr "Alternativ"
 
 #: ../gui/definitions/Main.xml:137
 msgid "Encrypt configuration file"
-msgstr ""
+msgstr "Kryptera konfigurationsfilen"
 
 #: ../gui/definitions/Main.xml:144 ../gui/menubar.go:49
 msgid "Preferences..."
-msgstr ""
+msgstr "Preferenser..."
 
 #: ../gui/definitions/Main.xml:156
 msgid "_Help"
-msgstr ""
+msgstr "_Hjälp"
 
 #: ../gui/definitions/Main.xml:171
 msgid "About"
-msgstr ""
+msgstr "Om"
 
 #: ../gui/definitions/Main.xml:199
 msgid "Search..."
-msgstr ""
+msgstr "Sök..."
 
 #: ../gui/definitions/MasterPassword.xml:4
 msgid "Enter master password"
-msgstr ""
+msgstr "Skriv in huvudlösenord"
 
 #: ../gui/definitions/MasterPassword.xml:15
 msgid ""
 "Please enter the master password for the configuration file. You will not be "
 "asked for this password again until you restart CoyIM."
 msgstr ""
+"Var god skriv in huvudlösenordet för konfigurationsfilen. Du kommer inte bli "
+"tillfrågad om detta lösenord igen förräns du startar om CoyIM."
 
 #: ../gui/definitions/MUCCreateRoomDialog.xml:4
 msgid "Create chat room"
-msgstr ""
+msgstr "Skapa chattrum"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:68
 #: ../gui/definitions/MUCJoinRoomDialog.xml:115
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:230
 msgid "Room"
-msgstr ""
+msgstr "Rum"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:80
 #: ../gui/definitions/MUCJoinRoomDialog.xml:126
 msgid "Enter the room name"
-msgstr ""
+msgstr "Skriv in rumsnamnet"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:96
 msgid "Enter the location or select one from the list"
-msgstr ""
+msgstr "Skriv in platsen eller välj en från listan"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:112
 #: ../gui/definitions/MUCJoinRoomDialog.xml:167
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:253
 msgid "Where"
-msgstr ""
+msgstr "Var"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:127
 msgid "_Automatically join the room"
-msgstr ""
+msgstr "Gå in _automatiskt i rummet"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:130
 msgid "Automatically join the room when created"
-msgstr ""
+msgstr "Gå in automatiskt i rummet när det har blivit skapat"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:145
 msgid "Add custom room configuration"
-msgstr ""
+msgstr "Lägg till anpassad rumskonfiguration"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:224
 msgid "_Create Room"
-msgstr ""
+msgstr "_Skapa rum"
 
 #: ../gui/definitions/MUCCreateRoomSuccess.xml:31
 msgid "Congratulations, the room has been created"
-msgstr ""
+msgstr "Grattis, rummet har blivit skapat"
 
 #: ../gui/definitions/MUCCreateRoomSuccess.xml:46
 msgid "Create another room"
-msgstr ""
+msgstr "Skapa ytterligare ett rum"
 
 #: ../gui/definitions/MUCCreateRoomSuccess.xml:58
 #: ../gui/definitions/MUCPublicRoomsDialog.xml:41
 msgid "Join"
-msgstr ""
+msgstr "Gå med"
 
 #: ../gui/definitions/MUCJoinRoomDialog.xml:4
 msgid "Join a chat room"
-msgstr ""
+msgstr "Gå med i ett chattrum"
 
 #: ../gui/definitions/MUCJoinRoomDialog.xml:39
 #: ../gui/definitions/MUCRoomLobby.xml:118 ../gui/importer.go:299
 #: ../gui/importer.go:324 ../gui/importer.go:348 ../gui/importer.go:370
 #: ../gui/file_transfer.go:156 ../gui/file_transfer.go:266
 msgid "_Cancel"
-msgstr ""
+msgstr "_Avbryt"
 
 #: ../gui/definitions/MUCJoinRoomDialog.xml:54
 msgid "_Continue"
-msgstr ""
+msgstr "_Fortsätt"
 
 #: ../gui/definitions/MUCJoinRoomDialog.xml:185
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:267
 msgid "Enter or select the service"
-msgstr ""
+msgstr "Skriv in eller välj tjänsten"
 
 #: ../gui/definitions/MUCPublicRoomsDialog.xml:3
 msgid "Chat rooms"
-msgstr ""
+msgstr "Chattrum"
 
 #: ../gui/definitions/MUCPublicRoomsDialog.xml:121
 msgid "List all rooms"
-msgstr ""
+msgstr "Visa alla rum"
 
 #: ../gui/definitions/MUCPublicRoomsDialog.xml:137
 msgid "Service:"
-msgstr ""
+msgstr "Tjänst:"
 
 #: ../gui/definitions/MUCPublicRoomsDialog.xml:160
 msgid "List rooms in service"
-msgstr ""
+msgstr "Visa all rum hos tjänsten"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:4
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:99
 msgid "Change position"
-msgstr ""
+msgstr "Ändra ställning"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:42
 #: ../gui/definitions/MUCRoomPositionsDialog.xml:87
 #: ../gui/definitions/MUCRoomRoleDialog.xml:42
 #: ../gui/definitions/MUCRoomToolbar.xml:375
 msgid "Apply"
-msgstr ""
+msgstr "Tillämpa"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:110
 msgid ""
 "As an administrator you can't make others into administrators or owners."
 msgstr ""
+"Som administratör kan du inte göra andra till administratörer eller ägare."
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:159
 #: ../gui/definitions/MUCRoomRosterInfo.xml:596 ../gui/muc_room_roster.go:389
 #: ../gui/muc_room_occupant_affiliation.go:167
 msgid "Owner"
-msgstr ""
+msgstr "Ägare"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:178
 msgid ""
 "An owner is allowed to change the room configuration and destroy the room, "
 "in addition to all administrator privileges."
 msgstr ""
+"En ägare kan ändra rumsinställningarna och förstöra rummet, förutom alla "
+"andra administratörsprivilegier"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:225
 #: ../gui/definitions/MUCRoomRosterInfo.xml:511
 msgid "Administrator"
-msgstr ""
+msgstr "Administratör"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:243
 msgid ""
 "An administrator is responsible for memberships for the room, and "
 "automatically becomes a moderator when entering it."
 msgstr ""
+"En administratör är ansvarig för medlemskap i rummet, och blir automatiskt "
+"moderatör när hen går in i det."
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:290
 #: ../gui/muc_room_occupant_affiliation.go:171
 msgid "Member"
-msgstr ""
+msgstr "Medlem"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:308
 msgid ""
 "A person with this position can enter a members-only room, and can also "
 "immediately speak in all rooms they are a member of."
 msgstr ""
+"En person med den här ställningen kan gå in i rum enbart för medlemmer, och "
+"kan också omedelbart prata i alla rum dem är medlem i."
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:373
 msgid "Without a position, a person can't enter a members-only room."
-msgstr ""
+msgstr "Utan ställning kan en person inte gå in i rum enbart för medlemmar."
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:425
 #: ../gui/definitions/MUCRoomRoleDialog.xml:325
@@ -1065,31 +1167,30 @@ msgid ""
 "Here you can provide an optional reason for the change. Everyone in the room "
 "will see this reason."
 msgstr ""
+"Här kan du ge en frivillig anledning för ändringen. Alla i rummet kan se den "
+"här anledningen"
 
 #: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:4
+#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:76
+#: ../gui/muc_room_close_confirm.go:51
 msgid "Close room"
-msgstr ""
+msgstr "Stäng rummet"
 
-#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:53
+#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:22
 msgid "Do you want to leave the room?"
-msgstr ""
+msgstr "Vill du lämna rummet?"
 
-#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:74
+#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:34
 msgid "Yes, leave the room"
-msgstr ""
-
-#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:122
-#: ../gui/muc_room_close_confirm.go:55
-msgid "Close Room"
-msgstr ""
+msgstr "Ja, lämna rummet"
 
 #: ../gui/definitions/MUCRoomConfigAssistant.xml:4
 msgid "Room configuration"
-msgstr ""
+msgstr "Rumsinställningar"
 
 #: ../gui/definitions/MUCRoomConfigFieldPositions.xml:47
 msgid "Position description here"
-msgstr ""
+msgstr "Ställningsbeskriving här"
 
 #: ../gui/definitions/MUCRoomConfigFieldPositions.xml:201
 #: ../gui/definitions/MUCRoomConfigListAddForm.xml:16
@@ -1097,119 +1198,119 @@ msgstr ""
 #: ../gui/definitions/MUCRoomRosterInfo.xml:62
 #: ../gui/definitions/MUCRoomRosterInfo.xml:77
 msgid "Account address"
-msgstr ""
+msgstr "Kontoadress"
 
 #: ../gui/definitions/MUCRoomConfigFormFieldAdvancedOptionsContainer.xml:28
 #: ../gui/definitions/MUCRoomConfigSummaryAdvancedOptionsField.xml:22
 msgid "Advanced options"
-msgstr ""
+msgstr "Avancerade inställningar"
 
 #: ../gui/definitions/MUCRoomConfigFormFieldPassword.xml:31
 #: ../gui/muc_room_config_texts.go:177
 msgid "Enter the room password"
-msgstr ""
+msgstr "Skriv in rumslösenordet"
 
 #: ../gui/definitions/MUCRoomConfigFormFieldPassword.xml:61
 #: ../gui/definitions/Password.xml:22 ../gui/password_component.go:46
 #: ../gui/muc_room_config_field_password.go:125
 msgid "Show"
-msgstr ""
+msgstr "Visa"
 
 #: ../gui/definitions/MUCRoomConfigFormFieldPassword.xml:79
 msgid "Confirm the room password"
-msgstr ""
+msgstr "Bekräfta rumslösenordet"
 
 #: ../gui/definitions/MUCRoomConfigFormFieldPassword.xml:92
 msgid "Passwords don't match"
-msgstr ""
+msgstr "Lösenorden stämmer inte överens"
 
 #: ../gui/definitions/MUCRoomConfigListAddDialog.xml:138
 msgid "Clear"
-msgstr ""
+msgstr "Rensa"
 
 #: ../gui/definitions/MUCRoomConfigPage.xml:100
 msgid "Automatically join the room"
-msgstr ""
+msgstr "Gå in automatiskt i rummet"
 
 #: ../gui/definitions/MUCRoomConfirmationRoomDialog.xml:3
 msgid "Cancel room creation"
-msgstr ""
+msgstr "Avbryt skapelse av rum"
 
 #: ../gui/definitions/MUCRoomConfirmationRoomDialog.xml:20
 #: ../gui/definitions/VerifyFingerprint.xml:31
 #: ../gui/muc_room_config_summary_field.go:155
 msgid "No"
-msgstr ""
+msgstr "Nej"
 
 #: ../gui/definitions/MUCRoomConfirmationRoomDialog.xml:36
 #: ../gui/definitions/VerifyFingerprint.xml:36
 #: ../gui/muc_room_config_summary_field.go:153
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: ../gui/definitions/MUCRoomConfirmationRoomDialog.xml:81
 msgid "Are you sure you want to cancel the room creation? "
-msgstr ""
+msgstr "Är du säker på att du vill avbryta skapelsen av rummet? "
 
-#: ../gui/definitions/MUCRoomConversation.xml:122 ../gui/file_transfer.go:268
+#: ../gui/definitions/MUCRoomConversation.xml:123 ../gui/file_transfer.go:268
 msgid "Send"
-msgstr ""
+msgstr "Skicka"
 
 #: ../gui/definitions/MUCRoomDestroyDialogError.xml:3
 msgid "Room destroy error"
-msgstr ""
+msgstr "Fel vid förstörelse av rummet"
 
 #: ../gui/definitions/MUCRoomDestroyDialogError.xml:39
 msgid "Retry"
-msgstr ""
+msgstr "Försök igen"
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:37
 msgid "Destroy Room"
-msgstr ""
+msgstr "Förstör rummet"
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:105
 msgid "You are about to permanently destroy this room."
-msgstr ""
+msgstr "Du kommer att permanent förstöra det här rummet."
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:119
 msgid "You may want to provide the following information:"
-msgstr ""
+msgstr "Du bör kanske lämna följande information"
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:151
 msgid "Enter the reason for destroying the room"
-msgstr ""
+msgstr "Skriv in varför du förstör rummet"
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:189
 msgid "Add information about the new room"
-msgstr ""
+msgstr "Skriv in information om det nya rummet"
 
 #: ../gui/definitions/MUCRoomLobby.xml:58
 #: ../gui/definitions/MUCRoomRosterInfo.xml:17
 #: ../gui/definitions/MUCRoomRosterInfo.xml:32
 msgid "Nickname"
-msgstr ""
+msgstr "Namn"
 
 #: ../gui/definitions/MUCRoomLobby.xml:132
 msgid "_Join"
-msgstr ""
+msgstr "_Gå in"
 
 #: ../gui/definitions/MUCRoomMessageBoxNotification.xml:29
 msgid "You don't have the permissions to send messages."
-msgstr ""
+msgstr "Du har inte tillstånd att skicka meddelanden."
 
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:4
 msgid "Remove person from the room"
-msgstr ""
+msgstr "Ta bort personen från rummet"
 
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:123
 msgid "You are about to temporarily remove the person from the room."
-msgstr ""
+msgstr "Du kommer temporärt ta bort personen från rummet."
 
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:138
 #: ../gui/muc_room_occupant_action.go:93
 msgid ""
 "They will be able to join the room again. Are you sure you want to continue?"
-msgstr ""
+msgstr "De kan gå in i rummet igen. Är du säker på att du vill fortsätta?"
 
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:171
 #: ../gui/muc_room_occupant_action.go:94
@@ -1217,26 +1318,28 @@ msgid ""
 "Here you can provide an optional reason for removing the person. Everyone in "
 "the room will see this reason."
 msgstr ""
+"Här kan du beskriva varför du tar bort personen. Alla i rummet kan se den "
+"här anledningen."
 
 #: ../gui/definitions/MUCRoomPositionsDialog.xml:3
 #: ../gui/muc_room_config_texts.go:46
 msgid "Positions"
-msgstr ""
+msgstr "Ställningar"
 
 #: ../gui/definitions/MUCRoomPositionsDialog.xml:24
 msgid "Here you can define who the banned people are."
-msgstr ""
+msgstr "Här kan du fastställa alla personer som är förbjudna i det här rummet."
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:4
 #: ../gui/definitions/MUCRoomRoleDialog.xml:94
 msgid "Change role"
-msgstr ""
+msgstr "Byt roll"
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:128
 #: ../gui/muc_room_config_component.go:159 ../gui/muc_room_roster.go:423
 #: ../gui/muc_room_occupant_affiliation.go:183
 msgid "Moderator"
-msgstr ""
+msgstr "Moderatör"
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:146
 msgid ""
@@ -1244,12 +1347,15 @@ msgid ""
 "Administrators and owners will automatically become moderators when they "
 "enter a room, but they can also make other occupants into moderators."
 msgstr ""
+"En moderatör kan kasta ut användare, ge eller ta bort röst, och ge "
+"moderatorskap. Administratörer och ägare blir automatiskt moderatörer när de "
+"kommer in i ett rum, men de kan också göra andra personer till moderatörer."
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:194
 #: ../gui/muc_room_config_component.go:155 ../gui/muc_room_roster.go:419
 #: ../gui/muc_room_occupant_affiliation.go:185
 msgid "Participant"
-msgstr ""
+msgstr "Deltagare"
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:213
 msgid ""
@@ -1257,12 +1363,15 @@ msgid ""
 "the room. In non-moderated rooms, there's no difference between a "
 "participant and a visitor."
 msgstr ""
+"I ett modererat rum kan enbart deltagare och moderatörer skicka meddelanden "
+"till rummet. I rum some inte är modererade är det ingen skillnad mellan "
+"besökare och deltagare."
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:261
 #: ../gui/muc_room_config_component.go:161 ../gui/muc_room_roster.go:421
 #: ../gui/muc_room_occupant_affiliation.go:187
 msgid "Visitor"
-msgstr ""
+msgstr "Besökare"
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:279
 msgid ""
@@ -1270,100 +1379,109 @@ msgid ""
 "still read the conversation. In an unmoderated room there is no difference "
 "between a participant and a visitor."
 msgstr ""
+"I ett modererat rum kan besökare inte skicka meddelanden, men de kan "
+"fortfarande läsa konversationen. I ett omodererat rum är det ingen skillnad "
+"mellan deltagare och besökare."
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:108
 #: ../gui/definitions/MUCRoomRosterInfo.xml:146
 #: ../gui/definitions/MUCRoomRosterInfo.xml:391
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:229
 msgid "Back"
-msgstr ""
+msgstr "Tillbaka"
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:264
 msgid "Information"
-msgstr ""
+msgstr "Information"
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:468
 msgid ""
 "A position is a long-lived association with the room. The position of the "
 "person is maintained between visits."
 msgstr ""
+"En ställning är en långtida förbindelse med rummet. En persons ställning "
+"upprätthålls ävan mellan besök."
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:488
 msgid "Position"
-msgstr ""
+msgstr "Ställning"
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:563
 msgid ""
 "A role controls what a person can do within the room. A role only lasts for "
 "the duration of the visit."
 msgstr ""
+"En roll kontrollerar vad en person kan göra i ett rum. En roll varar enbart "
+"under tiden för besöket."
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:580
 msgid "Role"
-msgstr ""
+msgstr "Roll"
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:632
 msgid ""
 "Administrators and owners will automatically be moderators for a room. "
 "Therefore, the role of Juanito can't be changed."
 msgstr ""
+"Administratörer och ägare blir automatiskt moderatörer i ett rum. På grund "
+"av detta kan inte Juanito's roll ändras."
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:691
 msgid "Expel"
-msgstr ""
+msgstr "Kasta ut"
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:698
 msgid "Ban"
-msgstr ""
+msgstr "Bannlysa"
 
 #: ../gui/definitions/MUCRoomRoster.xml:36
 msgid "Expander"
-msgstr ""
+msgstr "Expander (visas inte)"
 
 #: ../gui/definitions/MUCRoomRoster.xml:47
 msgid "Occupant"
-msgstr ""
+msgstr "Invånare"
 
 #: ../gui/definitions/MUCRoomToolbar.xml:6
 msgid "Security properties"
-msgstr ""
+msgstr "Säkerhetsegenskaper"
 
 #: ../gui/definitions/MUCRoomToolbar.xml:14
 #: ../gui/muc_room_config_assistant.go:96
 msgid "Configure room"
-msgstr ""
+msgstr "Konfigurera rum"
 
 #: ../gui/definitions/MUCRoomToolbar.xml:22
 msgid "Modify positions"
-msgstr ""
+msgstr "Ändra ställningar"
 
 #: ../gui/definitions/MUCRoomToolbar.xml:34
 msgid "Destroy room"
-msgstr ""
+msgstr "Förstör rummet"
 
 #: ../gui/definitions/MUCRoomToolbar.xml:42
 msgid "Leave room"
-msgstr ""
+msgstr "Lämna rummet"
 
 #: ../gui/definitions/MUCRoomToolbar.xml:133 ../gui/muc_room_toolbar.go:255
 msgid "Show room subject"
-msgstr ""
+msgstr "Visa rumsämne"
 
 #: ../gui/definitions/MUCRoomToolbar.xml:301
 msgid "Edit subject"
-msgstr ""
+msgstr "Ändra ämne"
 
 #: ../gui/definitions/MUCRoomWarningsDialog.xml:13
 msgid "Security properties warnings"
-msgstr ""
+msgstr "Varningar om säkerhetsegenskaper"
 
 #: ../gui/definitions/MUCRoomWarningsDialog.xml:67
 #: ../gui/muc_room_warnings.go:31
 msgid "Communication in this room is not encrypted"
-msgstr ""
+msgstr "Kommunikation i det här rummet är inte krypterad"
 
 #: ../gui/definitions/MUCRoomWarningsDialog.xml:86
 msgid ""
@@ -1373,70 +1491,74 @@ msgid ""
 "join this room and communicate here if you trust the server to not be "
 "hostile."
 msgstr ""
+"Var medveten om att kommunikation i chattrum inte är krypterad - om någon "
+"kan fånga upp kommunikation mellan dig och servern - och servern själv - kan "
+"dem se vad du säger i chattrummet. Gå enbart in i detta rum och kommunicera "
+"här om du litar på att servern inte är illvillig."
 
 #: ../gui/definitions/MUCRoomWarningsDialog.xml:166
 msgid "Go to previous [Ctrl + left]"
-msgstr ""
+msgstr "Bakåt [Ctrl + vänster]"
 
 #: ../gui/definitions/MUCRoomWarningsDialog.xml:185
 msgid "Go to next [Ctrl + right]"
-msgstr ""
+msgstr "Framåt [Ctrl + höger]"
 
 #: ../gui/definitions/MUCRoomWarningsDialog.xml:234
 msgid "Close dialog"
-msgstr ""
+msgstr "Stäng dialog"
 
 #: ../gui/definitions/MUCRoomWarningsOverlay.xml:31
 msgid "Warnings related to room configuration"
-msgstr ""
+msgstr "Varningar om rummets inställningar"
 
 #: ../gui/definitions/NewCustomConversation.xml:13
 msgid "Start new conversation"
-msgstr ""
+msgstr "Starta ny konversation"
 
 #: ../gui/definitions/NewCustomConversation.xml:33
 msgid "From:"
-msgstr ""
+msgstr "Från:"
 
 #: ../gui/definitions/NewCustomConversation.xml:61
 msgid "With:"
-msgstr ""
+msgstr "Med:"
 
 #: ../gui/definitions/NewCustomConversation.xml:100
 msgid "Start"
-msgstr ""
+msgstr "Starta"
 
 #: ../gui/definitions/PeerDetails.xml:9
 msgid "New Group..."
-msgstr ""
+msgstr "Ny grupp..."
 
 #: ../gui/definitions/PeerDetails.xml:16
 msgid "Edit contact"
-msgstr ""
+msgstr "Ändra kontakt"
 
 #: ../gui/definitions/PeerDetails.xml:52
 msgid "Contact:"
-msgstr ""
+msgstr "Kontakt:"
 
 #: ../gui/definitions/PeerDetails.xml:92
 msgid "Require encryption with this peer"
-msgstr ""
+msgstr "Kräv kryptering med denna kontakt"
 
 #: ../gui/definitions/PeerDetails.xml:110
 msgid "Groups:"
-msgstr ""
+msgstr "Grupper:"
 
 #: ../gui/definitions/PeerRequestsSMP.xml:87
 msgid "Finish Verification"
-msgstr ""
+msgstr "Avsluta kontroll"
 
 #: ../gui/definitions/RegistrationForm.xml:41
 msgid "Register"
-msgstr ""
+msgstr "Registrera"
 
 #: ../gui/definitions/TorHelper.xml:6
 msgid "Warning!"
-msgstr ""
+msgstr "Varning!"
 
 #: ../gui/definitions/TorHelper.xml:7
 msgid ""
@@ -1450,6 +1572,16 @@ msgid ""
 "Would you like to install it?\n"
 "    "
 msgstr ""
+"\n"
+"Vi kunde inte hitta en aktiverad installation av Tor.\n"
+"\n"
+"För att få den säkraste upplevelsen möjlig, rekommenderar vi att du "
+"installar och aktiverar Tor.\n"
+"\n"
+"Tor är ett verktyg för att ge anonymitet.\n"
+"\n"
+"Vill du installera det?\n"
+"    "
 
 #: ../gui/definitions/TorInstallHelper.xml:14
 msgid ""
@@ -1457,6 +1589,9 @@ msgid ""
 "              Installing Tor for CoyIM:\n"
 "            "
 msgstr ""
+"\n"
+"              Installera Tor för CoyIM:\n"
+"            "
 
 #: ../gui/definitions/TorInstallHelper.xml:31
 msgid ""
@@ -1469,97 +1604,105 @@ msgid ""
 "              3. Start Tor (or the Tor Browser)\n"
 "            "
 msgstr ""
+"\n"
+"\n"
+"              1. Besök https://www.torproject.org/\n"
+"\n"
+"              2. Ladda ner och installera Tor (eller Tor Browser Bundle)\n"
+"\n"
+"              3. Starta Tor (eller Tor Browser)\n"
+"            "
 
 #: ../gui/definitions/TorInstallHelper.xml:58
 msgid "4. Click here to check if Tor is now running"
-msgstr ""
+msgstr "4. Klicka här för att se om Tor nu är aktivt"
 
 #: ../gui/definitions/UnifiedLayout.xml:138
 msgid "Conversations"
-msgstr ""
+msgstr "Konversationer"
 
 #: ../gui/definitions/UnifiedLayout.xml:164
 msgid "icon"
-msgstr ""
+msgstr "icon"
 
 #: ../gui/definitions/UnifiedLayout.xml:178
 msgid "column"
-msgstr ""
+msgstr "kolumnt"
 
 #: ../gui/definitions/UnverifiedWarning.xml:87
 msgid "Validate Channel"
-msgstr ""
+msgstr "Bekräfta kanal"
 
 #: ../gui/definitions/VerificationFailed.xml:17
 msgid "Verification Failed"
-msgstr ""
+msgstr "Kontroll misslyckades"
 
 #: ../gui/definitions/VerifyFingerprint.xml:16
 msgid "Tag (optional name for this fingerprint):"
-msgstr ""
+msgstr "Etikett (valfritt namn för det här fingeravtrycket):"
 
 #: ../gui/definitions/XMLConsole.xml:3
 msgid "Hello world"
-msgstr ""
+msgstr "Hej världen"
 
 #: ../gui/definitions/XMLConsole.xml:8
 msgid "XMPP Console: ACCOUNT_NAME"
-msgstr ""
+msgstr "XMPP-konsoll: ACCOUNT_NAME"
 
 #: ../gui/definitions/XMLConsole.xml:56
 msgid "_Close"
-msgstr ""
+msgstr "_Stäng"
 
 #: ../gui/muc_notification_messages.go:21
 #: ../gui/muc_notification_messages.go:238
 #: ../gui/muc_notification_messages.go:850
 #, python-format
 msgid "$nickname{%s} is not $affiliation{an owner} anymore."
-msgstr ""
+msgstr "$nickname{%s} är inte $affiliation{en ägare} längre."
 
 #: ../gui/muc_notification_messages.go:23
 #: ../gui/muc_notification_messages.go:240
 #: ../gui/muc_notification_messages.go:853
 #, python-format
 msgid "$nickname{%s} is not $affiliation{an administrator} anymore."
-msgstr ""
+msgstr "$nickname{%s} är inte $affiliation{en administratör} längre."
 
 #: ../gui/muc_notification_messages.go:25
 #: ../gui/muc_notification_messages.go:242
 #: ../gui/muc_notification_messages.go:856
 #, python-format
 msgid "$nickname{%s} is not $affiliation{a member} anymore."
-msgstr ""
+msgstr "$nickname{%s} är inte $affiliation{en medlem} längre."
 
 #: ../gui/muc_notification_messages.go:27
 #: ../gui/muc_notification_messages.go:244
 #, python-format
 msgid "$nickname{%s} is not banned anymore."
-msgstr ""
+msgstr "$nickname{%s} är inte bannlyst längre."
 
 #: ../gui/muc_notification_messages.go:33
 #: ../gui/muc_notification_messages.go:943
 #, python-format
 msgid "The position of $nickname{%s} was changed to $affiliation{owner}."
-msgstr ""
+msgstr "$nickname{%s} är nu $affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:35
 #: ../gui/muc_notification_messages.go:946
 #, python-format
 msgid ""
 "The position of $nickname{%s} was changed to $affiliation{administrator}."
-msgstr ""
+msgstr "$nickname{%s} är nu $affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:37
 #: ../gui/muc_notification_messages.go:949
 #, python-format
 msgid "The position of $nickname{%s} was changed to $affiliation{member}."
-msgstr ""
+msgstr "$nickname{%s} är nu $affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:39
 #, python-format
 msgid "$nickname{%s} has been banned from the room."
-msgstr ""
+msgstr "$nickname{%s} har blivit bannlyst från rummet."
 
 #: ../gui/muc_notification_messages.go:41
 #: ../gui/muc_notification_messages.go:413
@@ -1567,28 +1710,28 @@ msgstr ""
 #: ../gui/muc_notification_messages.go:1054
 #, python-format
 msgid "The position of $nickname{%s} was changed."
-msgstr ""
+msgstr "Ställningen för $nickname{%s} har ändrats."
 
 #: ../gui/muc_notification_messages.go:52
 #: ../gui/muc_notification_messages.go:500
 #, python-format
 msgid "$nickname{%s} was expelled from the room."
-msgstr ""
+msgstr "$nickname{%s} kastades ut från rummet."
 
 #: ../gui/muc_notification_messages.go:62
 #, python-format
 msgid "The role of $nickname{%s} was changed to $role{moderator}."
-msgstr ""
+msgstr "$nickname{%s} har nu rollen $role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:64
 #, python-format
 msgid "The role of $nickname{%s} was changed to $role{participant}."
-msgstr ""
+msgstr "$nickname{%s} har nu rollen $role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:66
 #, python-format
 msgid "The role of $nickname{%s} was changed to $role{visitor}."
-msgstr ""
+msgstr "$nickname{%s} har nu rollen $role{besökare}."
 
 #: ../gui/muc_notification_messages.go:72
 #, python-format
@@ -1596,6 +1739,8 @@ msgid ""
 "The role of $nickname{%s} was changed from $role{moderator} to "
 "$role{participant}."
 msgstr ""
+"$nickname{%s} har nu rollen ${besökare}. Den tidigare rollen var "
+"$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:74
 #, python-format
@@ -1603,6 +1748,8 @@ msgid ""
 "The role of $nickname{%s} was changed from $role{moderator} to "
 "$role{visitor}."
 msgstr ""
+"$nickname{%s} har nu rollen ${besökare}. Den tidigare rollen var "
+"$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:76
 #, python-format
@@ -1610,6 +1757,8 @@ msgid ""
 "The role of $nickname{%s} was changed from $role{participant} to "
 "$role{moderator}."
 msgstr ""
+"$nickname{%s} har nu rollen ${deltagare}. Den tidigare rollen var "
+"$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:78
 #, python-format
@@ -1617,6 +1766,8 @@ msgid ""
 "The role of $nickname{%s} was changed from $role{participant} to "
 "$role{visitor}."
 msgstr ""
+"$nickname{%s} har nu rollen ${besökare}. Den tidigare rollen var "
+"$role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:80
 #, python-format
@@ -1624,6 +1775,8 @@ msgid ""
 "The role of $nickname{%s} was changed from $role{visitor} to "
 "$role{moderator}."
 msgstr ""
+"$nickname{%s} har nu rollen ${moderatör}. Den tidigare rollen var "
+"$role{besökare}."
 
 #: ../gui/muc_notification_messages.go:82
 #, python-format
@@ -1631,143 +1784,148 @@ msgid ""
 "The role of $nickname{%s} was changed from $role{visitor} to "
 "$role{participant}."
 msgstr ""
+"$nickname{%s} har nu rollen ${deltagare}. Den tidigare rollen var "
+"$role{besökare}."
 
 #: ../gui/muc_notification_messages.go:84
 #, python-format
 msgid "The role of $nickname{%s} was changed."
-msgstr ""
+msgstr "Rollen för $nickname{%s} har ändrats."
 
 #: ../gui/muc_notification_messages.go:100
 #, python-format
 msgid "The position of $nickname{%s} couldn't be changed."
-msgstr ""
+msgstr "Ställningen för $nickname{%s} kunde inte ändras."
 
 #: ../gui/muc_notification_messages.go:101
 msgid "Changing the position failed"
-msgstr ""
+msgstr "Ändringen av ställning misslyckades"
 
 #: ../gui/muc_notification_messages.go:102
 #, python-format
 msgid "The position of %s couldn't be changed"
-msgstr ""
+msgstr "Ställningen för %s kunde inte ändras"
 
 #: ../gui/muc_notification_messages.go:109
 #, python-format
 msgid "$nickname{%s} couldn't be banned."
-msgstr ""
+msgstr "$nickname{%s} kunde inte bannlysas."
 
 #: ../gui/muc_notification_messages.go:110
 msgid "Banning failed"
-msgstr ""
+msgstr "Bannlysning misslyckades"
 
 #: ../gui/muc_notification_messages.go:111
 #, python-format
 msgid "%s couldn't be banned"
-msgstr ""
+msgstr "%s kunde inte bannlysas"
 
 #: ../gui/muc_notification_messages.go:118
 msgid ""
 "You can't change your own position because you are the only owner for this "
 "room. Every room must have at least one owner."
 msgstr ""
+"Du kan inte ändra din egen ställning eftersom du är den enda ägaren för det "
+"här rummet. Varje rum måste ha åtminstonde en ägare."
 
 #: ../gui/muc_notification_messages.go:126
 #, python-format
 msgid "An error occurred trying to change the position of %s to owner."
-msgstr ""
+msgstr "Ett fel uppstod när vi försökte ändra ställningen för %s till ägare."
 
 #: ../gui/muc_notification_messages.go:128
 #, python-format
 msgid "An error occurred trying to change the position of %s to administrator."
 msgstr ""
+"Ett fel uppstod när vi försökte ändra ställningen för %s till administratör."
 
 #: ../gui/muc_notification_messages.go:130
 #, python-format
 msgid "An error occurred trying to change the position of %s to member."
-msgstr ""
+msgstr "Ett fel uppstod när vi försökte ändra ställningen för %s till medlem."
 
 #: ../gui/muc_notification_messages.go:132
 #, python-format
 msgid "An error occurred trying to ban %s."
-msgstr ""
+msgstr "Ett fel uppstod när vi försökte bannlysa %s."
 
 #: ../gui/muc_notification_messages.go:134
 #, python-format
 msgid "An error occurred trying to change the position of %s."
-msgstr ""
+msgstr "Ett fel uppstod när vi försökte ändra ställningen för %s."
 
 #: ../gui/muc_notification_messages.go:143
 #, python-format
 msgid "The role of $nickname{%s} couldn't be changed."
-msgstr ""
+msgstr "Rollen för $nickname{%s} kunde inte ändras."
 
 #: ../gui/muc_notification_messages.go:144
 msgid "Changing the role failed"
-msgstr ""
+msgstr "Ändringen av rollen misslyckades"
 
 #: ../gui/muc_notification_messages.go:145
 #, python-format
 msgid "The role of %s couldn't be changed"
-msgstr ""
+msgstr "Rollen för %s kunde inte ändras"
 
 #: ../gui/muc_notification_messages.go:153
 #, python-format
 msgid "An error occurred trying to change the role of %s to moderator."
-msgstr ""
+msgstr "Ett fel uppstod när vi försökte ändra rollen för %s till moderatör."
 
 #: ../gui/muc_notification_messages.go:155
 #, python-format
 msgid "An error occurred trying to change the role of %s to participant."
-msgstr ""
+msgstr "Ett fel uppstod när vi försökte ändra rollen för %s till deltagare."
 
 #: ../gui/muc_notification_messages.go:157
 #, python-format
 msgid "An error occurred trying to change the role of %s to visitor."
-msgstr ""
+msgstr "Ett fel uppstod när vi försökte ändra rollen för %s till besökare."
 
 #: ../gui/muc_notification_messages.go:159
 #, python-format
 msgid "An error occurred trying to change the role of %s."
-msgstr ""
+msgstr "Ett fel uppstod när vi försökte ändra rollen för %s."
 
 #: ../gui/muc_notification_messages.go:164
 #, python-format
 msgid "$nickname{%s} couldn't be expelled."
-msgstr ""
+msgstr "$nickname{%s} kunde inte kastas ut."
 
 #: ../gui/muc_notification_messages.go:165
 msgid "Expelling failed"
-msgstr ""
+msgstr "Utkastning misslyckades"
 
 #: ../gui/muc_notification_messages.go:166
 #, python-format
 msgid "%s couldn't be expelled"
-msgstr ""
+msgstr "%s kunde inte kastas ut"
 
 #: ../gui/muc_notification_messages.go:176
 #, python-format
 msgid "An error occurred expelling %s."
-msgstr ""
+msgstr "Ett fel uppstod när vi försökte kasta ut %s."
 
 #: ../gui/muc_notification_messages.go:183
 #, python-format
 msgid "As an owner you don't have permissions to expel %s."
-msgstr ""
+msgstr "Som ägare har du inte tillåtelse att kasta ut %s."
 
 #: ../gui/muc_notification_messages.go:185
 #, python-format
 msgid "As an administrator you don't have permissions to expel %s."
-msgstr ""
+msgstr "Som administratör har du inte tillåtelse att kasta ut %s."
 
 #: ../gui/muc_notification_messages.go:187
 #, python-format
 msgid "As a member you don't have permissions to expel %s."
-msgstr ""
+msgstr "Som medlem har du inte tillåtelse att kasta ut %s."
 
 #: ../gui/muc_notification_messages.go:191
 #, python-format
 msgid "You don't have permissions to expel %s."
-msgstr ""
+msgstr "Du har inte tillåtelse att kasta ut %s."
 
 #: ../gui/muc_notification_messages.go:257
 #: ../gui/muc_notification_messages.go:876
@@ -1775,6 +1933,8 @@ msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not $affiliation{an owner} anymore."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; "
+"$nickname{%[2]s} är inte längre $affiliation{en ägare}."
 
 #: ../gui/muc_notification_messages.go:261
 #: ../gui/muc_notification_messages.go:880
@@ -3469,34 +3629,34 @@ msgstr ""
 msgid "No accounts"
 msgstr ""
 
-#: ../gui/muc_room.go:203
+#: ../gui/muc_room.go:202
 msgid ""
 "Loading the room information took longer than usual, perhaps the connection "
 "to the server was lost. Do you want to try again?"
 msgstr ""
 
-#: ../gui/muc_room.go:206 ../gui/muc_room.go:734
+#: ../gui/muc_room.go:205 ../gui/muc_room.go:735
 msgid "Yes, try again"
 msgstr ""
 
-#: ../gui/muc_room.go:266
+#: ../gui/muc_room.go:265
 msgid ""
 "You have been removed from this room because it's now a members only room."
 msgstr ""
 
-#: ../gui/muc_room.go:376
+#: ../gui/muc_room.go:375
 msgid "The room has been destroyed"
 msgstr ""
 
-#: ../gui/muc_room.go:511
+#: ../gui/muc_room.go:510
 msgid "The room subject couldn't be updated."
 msgstr ""
 
-#: ../gui/muc_room.go:518
+#: ../gui/muc_room.go:517
 msgid "The room subject has been updated."
 msgstr ""
 
-#: ../gui/muc_room.go:531
+#: ../gui/muc_room.go:530
 msgid "Return"
 msgstr ""
 
@@ -3504,23 +3664,23 @@ msgstr ""
 msgid "Your connection has been restored; you can join this room again."
 msgstr ""
 
-#: ../gui/muc_room.go:727
+#: ../gui/muc_room.go:728
 msgid ""
 "Your connection was recovered but loading the room information took longer "
 "than usual, perhaps the connection to the server was lost. Do you want to "
 "try again?"
 msgstr ""
 
-#: ../gui/muc_room.go:740
+#: ../gui/muc_room.go:741
 msgid "Trying to connect to the room..."
 msgstr ""
 
-#: ../gui/muc_room.go:781
+#: ../gui/muc_room.go:784 ../gui/muc_room_conversation.go:212
 msgid ""
 "The connection to the server has been lost, please verify your connection."
 msgstr ""
 
-#: ../gui/muc_room.go:793
+#: ../gui/muc_room.go:797
 msgid "Connecting to the room..."
 msgstr ""
 
@@ -3861,7 +4021,7 @@ msgstr ""
 msgid "You must provide a valid account address."
 msgstr ""
 
-#: ../gui/ui.go:611
+#: ../gui/ui.go:605
 msgid ""
 "You are trying to connect to a Google account - sometimes Google will not "
 "allow connections even if you have entered the correct password. Try turning "
@@ -3869,15 +4029,15 @@ msgid ""
 "access the account (don't worry, CoyIM is plenty secure)."
 msgstr ""
 
-#: ../gui/ui.go:669
+#: ../gui/ui.go:663
 msgid "CoyIM!"
 msgstr ""
 
-#: ../gui/ui.go:749
+#: ../gui/ui.go:743
 msgid "There is no account with the id %q"
 msgstr ""
 
-#: ../gui/ui.go:753
+#: ../gui/ui.go:747
 msgid "Can't send a contact request from an offline account"
 msgstr ""
 
@@ -3967,7 +4127,7 @@ msgstr ""
 msgid "Remove all"
 msgstr ""
 
-#: ../gui/infobar_component.go:155
+#: ../gui/infobar_component.go:154
 msgid "January 2, 2006 at 15:04:05"
 msgstr ""
 
@@ -4564,7 +4724,7 @@ msgstr ""
 msgid "%[1]s [%[2]s]"
 msgstr ""
 
-#: ../gui/muc_room_conversation_display.go:163
+#: ../gui/muc_room_conversation_display.go:164
 msgid ""
 "You can no longer receive any messages in this room and the list of people "
 "in the room will not be updated anymore."
@@ -4718,24 +4878,28 @@ msgid ""
 "%[2]s"
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:220
+#: ../gui/muc_room_conversation.go:223
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an owner}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:222
+#: ../gui/muc_room_conversation.go:225
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an administrator}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:224
+#: ../gui/muc_room_conversation.go:227
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{a member}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:226
+#: ../gui/muc_room_conversation.go:229
 #, python-format
 msgid "$nickname{%s} has been added to the ban list."
+msgstr ""
+
+#: ../gui/muc_room_conversation.go:272
+msgid "Your connection was restored."
 msgstr ""
 
 #: ../gui/file_transfer_notification.go:148
@@ -5182,6 +5346,6 @@ msgstr ""
 msgid "Checking password..."
 msgstr ""
 
-#: ../gui/muc_room_close_confirm.go:57
-msgid "Close & Leave Room"
+#: ../gui/muc_room_close_confirm.go:53
+msgid "Close & leave room"
 msgstr ""

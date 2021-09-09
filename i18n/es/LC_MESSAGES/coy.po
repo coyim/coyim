@@ -1,5 +1,5 @@
 # Spanish translations for coy package
-# Traducciones al espaÃƒÂ±ol para el paquete coy.
+# Traducciones al espaÃ±ol para el paquete coy.
 # Copyright (C) 2016 THE coy'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the coy package.
 # Automatically generated, 2016.
@@ -70,7 +70,7 @@ msgstr ""
 #: ../gui/definitions/MUCRoomLobby.xml:82 ../gui/definitions/Password.xml:11
 #: ../gui/muc_room_config_texts.go:178
 msgid "Password"
-msgstr "Contraseña"
+msgstr "ContraseÃ±a"
 
 #: ../gui/definitions/AccountDetails.xml:149
 msgid "Account name (optional)"
@@ -79,7 +79,7 @@ msgstr "Nombre de la cuenta (opcional)"
 #: ../gui/definitions/AccountDetails.xml:169
 #, fuzzy
 msgid "Display all settings"
-msgstr "Mostrar toda la configuración"
+msgstr "Mostrar toda la configuraciÃ³n"
 
 #: ../gui/definitions/AccountDetails.xml:198
 #: ../gui/definitions/AskForPassword.xml:27
@@ -277,8 +277,8 @@ msgid ""
 "Warning: This message will not be end-to-end encrypted. Do not reveal any "
 "sensitive information in it."
 msgstr ""
-"Advertencia: Este mensaje no se cifrará de extremo a extremo. No reveles "
-"ninguna información sensible en él."
+"Advertencia: Este mensaje no se cifrarÃ¡ de extremo a extremo. No reveles "
+"ninguna informaciÃ³n sensible en Ã©l."
 
 #: ../gui/definitions/AddContact.xml:197
 #: ../gui/definitions/MUCRoomConfigFieldPositions.xml:93
@@ -313,11 +313,11 @@ msgstr "Verificar respuesta"
 
 #: ../gui/definitions/AskForPassword.xml:4
 msgid "Enter your password"
-msgstr "Ingresa tu contraseña"
+msgstr "Ingresa tu contraseÃ±a"
 
 #: ../gui/definitions/AskForPassword.xml:72
 msgid "Save password"
-msgstr "Guardar contraseña"
+msgstr "Guardar contraseÃ±a"
 
 #: ../gui/definitions/AskForPassword.xml:101
 msgid "Connect"
@@ -325,7 +325,7 @@ msgstr "Conectar"
 
 #: ../gui/definitions/AskToEncrypt.xml:6
 msgid "Encrypt your account's information"
-msgstr "Encripta la información de tu cuenta"
+msgstr "Encripta la informaciÃ³n de tu cuenta"
 
 #: ../gui/definitions/AskToEncrypt.xml:7
 msgid ""
@@ -334,7 +334,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"Te gustaría encriptar la información de tu cuenta?\n"
+"Te gustarÃ­a encriptar la informaciÃ³n de tu cuenta?\n"
 "    "
 
 #: ../gui/definitions/AskToEncrypt.xml:10
@@ -353,18 +353,18 @@ msgstr ""
 #: ../gui/definitions/CannotVerifyWithSMP.xml:46
 #: ../gui/definitions/VerificationFailed.xml:47
 msgid "Try again later"
-msgstr "Intenta de nuevo más tarde"
+msgstr "Intenta de nuevo mÃ¡s tarde"
 
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:5
 #, fuzzy
 msgid "Configure your master password"
-msgstr "Configura tu contraseña master"
+msgstr "Configura tu contraseÃ±a master"
 
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:16
 #, fuzzy
 msgid "Please enter the master password for the configuration file twice."
 msgstr ""
-"Por favor, ingresa la contraseña master para el archivo de configuración dos "
+"Por favor, ingresa la contraseÃ±a master para el archivo de configuraciÃ³n dos "
 "veces."
 
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:61
@@ -395,7 +395,7 @@ msgstr "Otros nombres:"
 #: ../gui/definitions/CertificateDialog.xml:94
 #: ../gui/definitions/CertificateDialog.xml:211
 msgid "Organization (O):"
-msgstr "Organización (O):"
+msgstr "OrganizaciÃ³n (O):"
 
 #: ../gui/definitions/CertificateDialog.xml:118
 #: ../gui/definitions/CertificateDialog.xml:235
@@ -404,7 +404,7 @@ msgstr ""
 
 #: ../gui/definitions/CertificateDialog.xml:142
 msgid "Serial Number:"
-msgstr "Número de serie:"
+msgstr "NÃºmero de serie:"
 
 #: ../gui/definitions/CertificateDialog.xml:168
 msgid "Issued by:"
@@ -457,7 +457,7 @@ msgstr "Aceptar temporalmente"
 
 #: ../gui/definitions/ChangePasswordMessageResponse.xml:4
 msgid "Change password"
-msgstr "Cambiar contraseña"
+msgstr "Cambiar contraseÃ±a"
 
 #: ../gui/definitions/ChangePasswordMessageResponse.xml:24
 #: ../gui/definitions/ChangePassword.xml:44
@@ -467,23 +467,23 @@ msgstr "OK"
 
 #: ../gui/definitions/ChangePassword.xml:4
 msgid "Change account password"
-msgstr "Cambiar contraseña de la cuenta"
+msgstr "Cambiar contraseÃ±a de la cuenta"
 
 #: ../gui/definitions/ChangePassword.xml:32
 msgid "Change Password"
-msgstr "Cambiar contraseña"
+msgstr "Cambiar contraseÃ±a"
 
 #: ../gui/definitions/ChangePassword.xml:79
 msgid "Enter new password:"
-msgstr "Ingresa nueva contraseña:"
+msgstr "Ingresa nueva contraseÃ±a:"
 
 #: ../gui/definitions/ChangePassword.xml:104
 msgid "Confirm new password:"
-msgstr "Confirma nueva contraseña:"
+msgstr "Confirma nueva contraseÃ±a:"
 
 #: ../gui/definitions/ChangePassword.xml:127
 msgid "Save new password ?"
-msgstr "Guardar nueva contraseña?"
+msgstr "Guardar nueva contraseÃ±a?"
 
 #: ../gui/definitions/ChangePassword.xml:186
 msgid "label"
@@ -507,15 +507,15 @@ msgstr "Importar"
 
 #: ../gui/definitions/ConfirmAccountRemoval.xml:3
 msgid "Confirm account removal"
-msgstr "Confirmar remoción de la cuenta"
+msgstr "Confirmar remociÃ³n de la cuenta"
 
 #: ../gui/definitions/ConfirmAccountRemoval.xml:5
 msgid "Are you sure you want to remove this account?"
-msgstr "Estás seguro de que quieres remover esta cuenta?"
+msgstr "EstÃ¡s seguro de que quieres remover esta cuenta?"
 
 #: ../gui/definitions/ConnectionInformation.xml:3
 msgid "Connection Information"
-msgstr "Información de la conexión"
+msgstr "InformaciÃ³n de la conexiÃ³n"
 
 #: ../gui/definitions/ConnectionInformation.xml:18
 msgid "Server connected to:"
@@ -523,15 +523,15 @@ msgstr "Servidor conectado a:"
 
 #: ../gui/definitions/ConnectionInformation.xml:42
 msgid "Secure connection version:"
-msgstr "Versión de la conexión segura:"
+msgstr "VersiÃ³n de la conexiÃ³n segura:"
 
 #: ../gui/definitions/ConnectionInformation.xml:66
 msgid "Secure connection algorithm:"
-msgstr "Algoritmo de la conexión segura:"
+msgstr "Algoritmo de la conexiÃ³n segura:"
 
 #: ../gui/definitions/ConnectionInformation.xml:90
 msgid "Secure connection fingerprint:"
-msgstr "Fingerprint de la conexión segura:"
+msgstr "Fingerprint de la conexiÃ³n segura:"
 
 #: ../gui/definitions/ConnectionInformation.xml:118
 msgid "Pin certificate"
@@ -629,7 +629,7 @@ msgstr "Usuario:"
 
 #: ../gui/definitions/EditProxy.xml:59
 msgid "Password:"
-msgstr "Contraseña:"
+msgstr "ContraseÃ±a:"
 
 #: ../gui/definitions/EditProxy.xml:80
 msgid "Server:"
@@ -646,7 +646,7 @@ msgstr ""
 #: ../gui/definitions/FeedbackInfo.xml:12
 #, fuzzy
 msgid "Are you liking it?"
-msgstr "Te está gustando?"
+msgstr "Te estÃ¡ gustando?"
 
 #: ../gui/definitions/FeedbackInfo.xml:22 ../gui/definitions/Main.xml:164
 msgid "Feedback"
@@ -717,7 +717,7 @@ msgstr "Compartir por un canal cifrado diferente"
 
 #: ../gui/definitions/GeneratePIN.xml:83
 msgid "Share in a phone call"
-msgstr "Compartir en una llamada telefónica"
+msgstr "Compartir en una llamada telefÃ³nica"
 
 #: ../gui/definitions/GlobalPreferences.xml:11
 msgid "No notifications"
@@ -729,7 +729,7 @@ msgstr ""
 
 #: ../gui/definitions/GlobalPreferences.xml:19
 msgid "Show who sent the message"
-msgstr "Mostrar quién envió el mensaje"
+msgstr "Mostrar quiÃ©n enviÃ³ el mensaje"
 
 #: ../gui/definitions/GlobalPreferences.xml:23
 msgid "Show message"
@@ -746,7 +746,7 @@ msgstr "Enviar mensajes con Shift-Enter"
 #: ../gui/definitions/GlobalPreferences.xml:103
 #, fuzzy
 msgid "Display empty groups"
-msgstr "Mostrar grupos vacíos"
+msgstr "Mostrar grupos vacÃ­os"
 
 #: ../gui/definitions/GlobalPreferences.xml:122
 msgid "Use Emacs key bindings"
@@ -767,7 +767,7 @@ msgstr ""
 
 #: ../gui/definitions/GlobalPreferences.xml:174
 msgid "Notification type"
-msgstr "Tipo de notificación"
+msgstr "Tipo de notificaciÃ³n"
 
 #: ../gui/definitions/GlobalPreferences.xml:202
 msgid ""
@@ -804,7 +804,7 @@ msgstr ""
 
 #: ../gui/definitions/GlobalPreferences.xml:299
 msgid "Minimum time between notifications in seconds"
-msgstr "Tiempo mínimo entre notificaciones en segundos"
+msgstr "Tiempo mÃ­nimo entre notificaciones en segundos"
 
 #: ../gui/definitions/GlobalPreferences.xml:323
 msgid "Notifications"
@@ -845,7 +845,7 @@ msgstr "Importar cuentas"
 msgid ""
 "Choose the accounts you would like to import and start using from CoyIM."
 msgstr ""
-"Selecciona las cuentas que te gustaría importar y empezar a usar desde CoyIM"
+"Selecciona las cuentas que te gustarÃ­a importar y empezar a usar desde CoyIM"
 
 #: ../gui/definitions/Importer.xml:41
 msgid "Import this"
@@ -853,7 +853,7 @@ msgstr "Importar esto"
 
 #: ../gui/definitions/Importer.xml:55
 msgid "From application"
-msgstr "Desde la aplicación"
+msgstr "Desde la aplicaciÃ³n"
 
 #: ../gui/definitions/Importer.xml:67
 msgid "Account name"
@@ -869,7 +869,7 @@ msgstr "Agregar..."
 
 #: ../gui/definitions/Main.xml:37
 msgid "New Conversation..."
-msgstr "Nueva conversación..."
+msgstr "Nueva conversaciÃ³n..."
 
 #: ../gui/definitions/Main.xml:48
 msgid "_Accounts"
@@ -886,7 +886,7 @@ msgstr "Crear sala"
 
 #: ../gui/definitions/Main.xml:71
 msgid "Show public rooms..."
-msgstr "Mostrar salas públicas..."
+msgstr "Mostrar salas pÃºblicas..."
 
 #: ../gui/definitions/Main.xml:78
 msgid "Join a Room"
@@ -904,7 +904,7 @@ msgstr "Fusionar cuentas"
 #: ../gui/definitions/Main.xml:104
 #, fuzzy
 msgid "Show Offline Contacts"
-msgstr "Mostrar contactos sin conexión"
+msgstr "Mostrar contactos sin conexiÃ³n"
 
 #: ../gui/definitions/Main.xml:111
 msgid "Show Waiting Contacts"
@@ -922,7 +922,7 @@ msgstr ""
 #: ../gui/definitions/Main.xml:137
 #, fuzzy
 msgid "Encrypt configuration file"
-msgstr "Encriptar archivo de configuración"
+msgstr "Encriptar archivo de configuraciÃ³n"
 
 #: ../gui/definitions/Main.xml:144 ../gui/menubar.go:49
 msgid "Preferences..."
@@ -968,7 +968,7 @@ msgstr "Ingresa el nombre de la sala"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:96
 msgid "Enter the location or select one from the list"
-msgstr "Ingresa la ubicación o selecciona una de la lista"
+msgstr "Ingresa la ubicaciÃ³n o selecciona una de la lista"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:112
 #: ../gui/definitions/MUCJoinRoomDialog.xml:167
@@ -1203,20 +1203,20 @@ msgstr "Destruir sala"
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:105
 msgid "You are about to permanently destroy this room."
-msgstr "Estás a punto de destruir esta sala permanentemente."
+msgstr "EstÃ¡s a punto de destruir esta sala permanentemente."
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:119
 #, fuzzy
 msgid "You may want to provide the following information:"
-msgstr "Es posible que quieras proporcionar la siguiente información:"
+msgstr "Es posible que quieras proporcionar la siguiente informaciÃ³n:"
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:151
 msgid "Enter the reason for destroying the room"
-msgstr "Ingresa la razón para destruir la sala"
+msgstr "Ingresa la razÃ³n para destruir la sala"
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:189
 msgid "Add information about the new room"
-msgstr "Agrega información acerca de la nueva sala"
+msgstr "Agrega informaciÃ³n acerca de la nueva sala"
 
 #: ../gui/definitions/MUCRoomLobby.xml:58
 #: ../gui/definitions/MUCRoomRosterInfo.xml:17
@@ -3128,11 +3128,11 @@ msgid ""
 "encrypted, so people that control the location of the room might still have "
 "access to it, even without providing a password."
 msgstr ""
-"Aquí puedes administrar el acceso a la sala. Si especificas una contraseña "
-"para la sala, debes compartirla de forma segura. Esto ayudará a proteger a "
-"las personas en la misma. Recuerda que las contraseñas de la sala no cifran "
-"la sala como tal, por lo que las personas que controlan la ubicación de la "
-"sala pueden tener acceso a ella, incluso sin proporcionar una contraseña."
+"AquÃ­ puedes administrar el acceso a la sala. Si especificas una contraseÃ±a "
+"para la sala, debes compartirla de forma segura. Esto ayudarÃ¡ a proteger a "
+"las personas en la misma. Recuerda que las contraseÃ±as de la sala no cifran "
+"la sala como tal, por lo que las personas que controlan la ubicaciÃ³n de la "
+"sala pueden tener acceso a ella, incluso sin proporcionar una contraseÃ±a."
 
 #: ../gui/muc_room_config_texts.go:41
 msgid "Permissions"
@@ -3142,15 +3142,15 @@ msgstr "Permisos"
 msgid ""
 "Here you can change settings that impact who can do what inside the room."
 msgstr ""
-"Aquí puedes cambiar la configuración respecto a quién puede hacer qué dentro "
-"de la habitación."
+"AquÃ­ puedes cambiar la configuraciÃ³n respecto a quiÃ©n puede hacer quÃ© dentro "
+"de la habitaciÃ³n."
 
 #: ../gui/muc_room_config_texts.go:47
 #, fuzzy
 msgid ""
 "Here you can define who the owners, administrators and banned people are."
 msgstr ""
-"Aquí puedes definir quiénes son los propietarios, administradores y personas "
+"AquÃ­ puedes definir quiÃ©nes son los propietarios, administradores y personas "
 "bloqueadas."
 
 #: ../gui/muc_room_config_texts.go:50
@@ -3165,10 +3165,10 @@ msgid ""
 "Note that if archiving is enabled, all the discussions in the room might be "
 "logged and potentially made publicly accessible."
 msgstr ""
-"Aquí puedes encontrar otras opciones de configuración que te pueden resultar "
-"útiles. Ten en cuenta que si el archivo está habilitado, se podría acceder a "
+"AquÃ­ puedes encontrar otras opciones de configuraciÃ³n que te pueden resultar "
+"Ãºtiles. Ten en cuenta que si el archivo estÃ¡ habilitado, se podrÃ­a acceder a "
 "todas las discusiones en la sala y potencialmente volverse accesibles al "
-"público."
+"pÃºblico."
 
 #: ../gui/muc_room_config_texts.go:56 ../gui/muc_room_config_assistant.go:121
 msgid "Summary"
@@ -3176,24 +3176,24 @@ msgstr "Resumen"
 
 #: ../gui/muc_room_config_texts.go:100 ../gui/muc_room_config_texts.go:101
 msgid "Title"
-msgstr "Título"
+msgstr "TÃ­tulo"
 
 #: ../gui/muc_room_config_texts.go:102
 #, fuzzy
 msgid "The room title can be used to find the room in the public list."
-msgstr "El título de la sala puede ser usado para ubicarla en la lista pública."
+msgstr "El tÃ­tulo de la sala puede ser usado para ubicarla en la lista pÃºblica."
 
 #: ../gui/muc_room_config_texts.go:105 ../gui/muc_room_config_texts.go:106
 msgid "Description"
-msgstr "Descripción"
+msgstr "DescripciÃ³n"
 
 #: ../gui/muc_room_config_texts.go:107
 msgid ""
 "The room description can be used to add more information about the room, "
 "such as the purpose, the discussion topics, interests, etc."
 msgstr ""
-"La descripción de la sala se puede utilizar para agregar más información "
-"sobre la misma, como el propósito, los temas de discusión, los intereses, "
+"La descripciÃ³n de la sala se puede utilizar para agregar mÃ¡s informaciÃ³n "
+"sobre la misma, como el propÃ³sito, los temas de discusiÃ³n, los intereses, "
 "etc."
 
 #: ../gui/muc_room_config_texts.go:111 ../gui/muc_room_config_texts.go:112
@@ -3208,14 +3208,14 @@ msgid ""
 "accessed publicly. CoyIM users will be notified about this when joining the "
 "room, however, other clients might not."
 msgstr ""
-"La conversación de esta sala se almacenará en un archivo al que se podrá "
-"acceder públicamente. Los usuarios de CoyIM serán notificados sobre esto "
+"La conversaciÃ³n de esta sala se almacenarÃ¡ en un archivo al que se podrÃ¡ "
+"acceder pÃºblicamente. Los usuarios de CoyIM serÃ¡n notificados sobre esto "
 "cuando se unan a la sala, sin embargo, es posible que otros clientes no lo "
 "hagan."
 
 #: ../gui/muc_room_config_texts.go:118 ../gui/muc_room_config_texts.go:119
 msgid "Primary language of discussion"
-msgstr "Idioma principal de la discusión"
+msgstr "Idioma principal de la discusiÃ³n"
 
 #: ../gui/muc_room_config_texts.go:120
 msgid ""
@@ -3223,7 +3223,7 @@ msgid ""
 "will not impact the language of the application."
 msgstr ""
 "Este es el idioma principal en el que se llevan a cabo las conversaciones. "
-"Cambiar esto no afectará el idioma de la aplicación."
+"Cambiar esto no afectarÃ¡ el idioma de la aplicaciÃ³n."
 
 #: ../gui/muc_room_config_texts.go:124 ../gui/muc_room_config_texts.go:125
 msgid "XMPP URI of associated publish-subscribe node"
@@ -3237,8 +3237,8 @@ msgid ""
 "be left empty unless you know what it means."
 msgstr ""
 "Una sala de chat puede tener un lugar asociado donde se puede realizar la "
-"publicación y suscripción de cierta información. Esta es una configuración "
-"técnica, que debe dejarse en blanco a menos que sepas lo que significa."
+"publicaciÃ³n y suscripciÃ³n de cierta informaciÃ³n. Esta es una configuraciÃ³n "
+"tÃ©cnica, que debe dejarse en blanco a menos que sepas lo que significa."
 
 #: ../gui/muc_room_config_texts.go:131
 msgid "Allow anyone to set the subject of the room"
@@ -3251,7 +3251,7 @@ msgstr "Los ocupantes pueden cambiar el tema de la sala"
 #: ../gui/muc_room_config_texts.go:133
 #, fuzzy
 msgid "If not set, only moderators can modify it."
-msgstr "Si no se configura, sólo las moderadoras pueden modificarlo."
+msgstr "Si no se configura, sÃ³lo las moderadoras pueden modificarlo."
 
 #: ../gui/muc_room_config_texts.go:136
 #, fuzzy
@@ -3270,23 +3270,23 @@ msgstr "La gente puede enviar mensajes privados"
 
 #: ../gui/muc_room_config_texts.go:144 ../gui/muc_room_config_texts.go:145
 msgid "Maximum number of people in the room"
-msgstr "Máximo número de personas en la sala"
+msgstr "MÃ¡ximo nÃºmero de personas en la sala"
 
 #: ../gui/muc_room_config_texts.go:148
 #, fuzzy
 msgid "Make this room public"
-msgstr "Hacer pública esta sala"
+msgstr "Hacer pÃºblica esta sala"
 
 #: ../gui/muc_room_config_texts.go:149
 msgid "Include in public lists"
-msgstr "Incluir en listas públicas"
+msgstr "Incluir en listas pÃºblicas"
 
 #: ../gui/muc_room_config_texts.go:150
 #, fuzzy
 msgid "A public room can be found by all users in any public listing."
 msgstr ""
-"Una sala pública puede ser encontrada por todos los usuarios en cualquier "
-"listado público."
+"Una sala pÃºblica puede ser encontrada por todos los usuarios en cualquier "
+"listado pÃºblico."
 
 #: ../gui/muc_room_config_texts.go:154
 msgid "Make this room persistent"
@@ -3300,11 +3300,11 @@ msgstr "Persistente"
 msgid ""
 "A persistent room won't be destroyed when the last person leaves the room."
 msgstr ""
-"Una sala persistente no será destruida cuando la última persona deje la sala."
+"Una sala persistente no serÃ¡ destruida cuando la Ãºltima persona deje la sala."
 
 #: ../gui/muc_room_config_texts.go:160 ../gui/muc_room_config_texts.go:161
 msgid "Roles that will receive information about other people in the room"
-msgstr "Roles que recibirán información acerca de otras personas en la sala"
+msgstr "Roles que recibirÃ¡n informaciÃ³n acerca de otras personas en la sala"
 
 #: ../gui/muc_room_config_texts.go:164
 #, fuzzy
@@ -3667,7 +3667,7 @@ msgstr "Nadie"
 
 #: ../gui/muc_room_config_component.go:167
 msgid "No maximum"
-msgstr "Sin máximo"
+msgstr "Sin mÃ¡ximo"
 
 #: ../gui/muc_room_config_component.go:169
 msgid "10"
@@ -4572,7 +4572,7 @@ msgid ""
 "Do you want to continue anyway? This means an adversary or server "
 "administrator can potentially see the content of the file."
 msgstr ""
-"¿Quieres continuar de todos modos? Esto significa que potencialmente un "
+"Â¿Quieres continuar de todos modos? Esto significa que potencialmente un "
 "adversario o administrador del servidor puede ver el contenido del archivo."
 
 #: ../gui/file_transfer.go:107
@@ -5139,7 +5139,7 @@ msgstr ""
 
 #: ../gui/account_events.go:163
 msgid "Successfully refreshed the private conversation."
-msgstr "La conversación privada se actualizó con éxito."
+msgstr "La conversaciÃ³n privada se actualizÃ³ con Ã©xito."
 
 #: ../gui/account_events.go:163
 #, python-format
@@ -5148,7 +5148,7 @@ msgstr ""
 
 #: ../gui/account_events.go:163
 msgid "Successfully refreshed the unverified private conversation."
-msgstr "La conversación privada no verificada se actualizó con éxito ."
+msgstr "La conversaciÃ³n privada no verificada se actualizÃ³ con Ã©xito ."
 
 #: ../gui/subscription.go:15
 #, python-format
@@ -5171,7 +5171,7 @@ msgstr ""
 msgid ""
 "Make sure no one else\n"
 "is reading your messages"
-msgstr "Asegúrate de que nadie más está leyendo tus mensajes"
+msgstr "AsegÃºrate de que nadie mÃ¡s estÃ¡ leyendo tus mensajes"
 
 #: ../gui/verifier.go:182
 #, python-format
@@ -5210,7 +5210,7 @@ msgstr ""
 msgid ""
 "Finish verifying the \n"
 "security of this channel..."
-msgstr "Termina la verificación de la seguridad de este canal..."
+msgstr "Termina la verificaciÃ³n de la seguridad de este canal..."
 
 #: ../gui/verifier.go:378
 #, python-format
@@ -5267,7 +5267,7 @@ msgstr ""
 #: ../gui/master_password.go:126
 #, fuzzy
 msgid "Checking password..."
-msgstr "Verificando contraseña..."
+msgstr "Verificando contraseÃ±a..."
 
 #: ../gui/muc_room_close_confirm.go:53
 #, fuzzy

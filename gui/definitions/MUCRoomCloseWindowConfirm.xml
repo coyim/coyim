@@ -104,7 +104,7 @@
             <property name="spacing">12</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="room-close-cancel-button">
                 <property name="label" translatable="yes">Cancel</property>
                 <property name="visible">True</property>
                 <property name="receives_default">True</property>

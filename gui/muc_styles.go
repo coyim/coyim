@@ -319,11 +319,9 @@ func mergeStyles(merge ...style) style {
 func addClassStyle(className string, widget gtki.Widget) {
 	sc, _ := widget.GetStyleContext()
 	sc.AddClass(className)
-
 }
 
 func removeClassStyle(className string, widget gtki.Widget) {
 	sc, _ := widget.GetStyleContext()
 	sc.RemoveClass(className)
-
 }

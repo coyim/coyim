@@ -119,6 +119,8 @@ func (t *roomViewToolbar) initSubscribers() {
 			t.roomEnableEvent()
 		case reopenRoomEvent:
 			t.subjectReceivedEvent(e.subject)
+		case selfOccupantDisconnectedEvent:
+			t.selfOccupantDisconnectedEvent()
 		}
 	})
 }
@@ -305,4 +307,9 @@ func (t *roomViewToolbar) roomEnableEvent() {
 	removeClassStyle(roomToolbarDisableClassName, t.roomNameLabel)
 	t.roomStatusIcon.SetFromPixbuf(getMUCIconPixbuf(roomOfflineIconName))
 	t.roomMenuButton.SetSensitive(true)
+}
+
+// selfOccupantDisconnectedEvent MUST be called from the UI thread
+func (t *roomViewToolbar) selfOccupantDisconnectedEvent() {
+	t.handleEditSubjectComponents()
 }

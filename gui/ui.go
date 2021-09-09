@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"sync"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -52,7 +53,8 @@ type gtkUI struct {
 	unified       *unifiedLayout
 	unifiedCached *unifiedLayout
 
-	config *config.ApplicationConfig
+	internalConfig     *config.ApplicationConfig
+	internalConfigLock sync.Mutex
 
 	*accountManager
 
@@ -85,6 +87,8 @@ type gtkUI struct {
 	mainBuilder *builder
 
 	ouit *outsideUIThread
+
+	haveConfigEntries *callbacksSet
 }
 
 // Graphics represent the graphic configuration
@@ -157,6 +161,8 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 		hooks:       hooks,
 
 		ouit: outuit,
+
+		haveConfigEntries: newCallbacksSet(),
 	}
 
 	ret.initMUC()
@@ -295,7 +301,7 @@ func (u *gtkUI) initialSetupWindow() {
 
 func (u *gtkUI) initialSetupForConfigFile() {
 	u.wouldYouLikeToEncryptYourFile(func(res bool) {
-		u.config.SetShouldSaveFileEncrypted(res)
+		u.config().SetShouldSaveFileEncrypted(res)
 		k := func() {
 			go u.showFirstAccountWindow()
 		}
@@ -308,7 +314,7 @@ func (u *gtkUI) initialSetupForConfigFile() {
 }
 
 func (u *gtkUI) loadConfig(configFile string) {
-	u.config.WhenLoaded(u.configLoaded)
+	u.config().WhenLoaded(u.configLoaded)
 
 	ok := false
 	var conf *config.ApplicationConfig
@@ -324,7 +330,7 @@ func (u *gtkUI) loadConfig(configFile string) {
 
 	// We assign config here, AFTER the return - so that a nil config means we are in a state of incorrectness and shouldn't do stuff.
 	// We never check, since a panic here is a serious programming error
-	u.config = conf
+	u.setConfig(conf)
 
 	if err != nil {
 		u.log.WithError(err).Warn("something went wrong")
@@ -332,7 +338,7 @@ func (u *gtkUI) loadConfig(configFile string) {
 		return
 	}
 
-	if u.config.UpdateToLatestVersion() {
+	if u.config().UpdateToLatestVersion() {
 		_ = u.saveConfigOnlyInternal()
 	}
 }
@@ -384,7 +390,7 @@ func (u *gtkUI) saveConfigInternal() error {
 		return err
 	}
 
-	u.addNewAccountsFromConfig(u.config, u.sessionFactory, u.dialerFactory)
+	u.addNewAccountsFromConfig(u.config(), u.sessionFactory, u.dialerFactory)
 
 	if u.window != nil {
 		_, _ = u.window.Emit(accountChangedSignal.String())
@@ -394,7 +400,7 @@ func (u *gtkUI) saveConfigInternal() error {
 }
 
 func (u *gtkUI) saveConfigOnlyInternal() error {
-	return u.config.Save(u.keySupplier)
+	return u.config().Save(u.keySupplier)
 }
 
 func (u *gtkUI) SaveConfig() {
@@ -409,7 +415,7 @@ func (u *gtkUI) SaveConfig() {
 func (u *gtkUI) removeSaveReload(acc *config.Account) {
 	//TODO: the account configs should be managed by the account manager
 	u.accountManager.removeAccount(acc, func() {
-		u.config.Remove(acc)
+		u.config().Remove(acc)
 		u.SaveConfig()
 	})
 }
@@ -505,7 +511,7 @@ func (u *gtkUI) mainWindow() {
 	u.unified = newUnifiedLayout(u, vbox, hbox)
 	u.unifiedCached = u.unified
 
-	u.config.WhenLoaded(func(a *config.ApplicationConfig) {
+	u.config().WhenLoaded(func(a *config.ApplicationConfig) {
 		if a.Display.HideFeedbackBar {
 			return
 		}
@@ -572,7 +578,7 @@ func (u *gtkUI) addFeedbackInfoBar() {
 			infobar.Hide()
 			infobar.Destroy()
 
-			u.config.Display.HideFeedbackBar = true
+			u.config().Display.HideFeedbackBar = true
 			u.saveConfigOnly()
 		},
 	})
@@ -653,7 +659,7 @@ func (u *gtkUI) feedbackDialog() {
 }
 
 func (u *gtkUI) shouldViewAccounts() bool {
-	return !u.config.Display.MergeAccounts
+	return !u.config().Display.MergeAccounts
 }
 
 func (u *gtkUI) aboutDialog() {
@@ -770,7 +776,7 @@ func (u *gtkUI) addContactWindow() {
 func (u *gtkUI) listenToToggleConnectAllAutomatically() {
 	for {
 		val := <-u.toggleConnectAllAutomaticallyRequest
-		u.config.ConnectAutomatically = val
+		u.config().ConnectAutomatically = val
 		u.saveConfigOnly()
 	}
 }
@@ -786,7 +792,7 @@ func (u *gtkUI) setShowAdvancedSettings(val bool) {
 func (u *gtkUI) listenToSetShowAdvancedSettings() {
 	for {
 		val := <-u.setShowAdvancedSettingsRequest
-		u.config.AdvancedOptions = val
+		u.config().AdvancedOptions = val
 		u.saveConfigOnly()
 	}
 }
@@ -813,7 +819,7 @@ func (u *gtkUI) initMenuBar() {
 
 	u.setMenuBarSensitive(false)
 
-	u.config.WhenLoaded(func(_ *config.ApplicationConfig) {
+	u.whenHaveConfig(func() {
 		u.setMenuBarSensitive(true)
 	})
 }
@@ -889,4 +895,35 @@ func (u *gtkUI) openConversationView(account *account, peer jid.Any, userInitiat
 
 func (u *gtkUI) openTargetedConversationView(account *account, peer jid.Any, userInitiated bool) conversationView {
 	return u.NewConversationViewFactory(account, peer, true).OpenConversationView(userInitiated)
+}
+
+func (u *gtkUI) config() *config.ApplicationConfig {
+	u.internalConfigLock.Lock()
+	defer u.internalConfigLock.Unlock()
+
+	c := u.internalConfig
+
+	return c
+}
+
+func (u *gtkUI) setConfig(c *config.ApplicationConfig) {
+	u.internalConfigLock.Lock()
+	u.internalConfig = c
+	u.internalConfigLock.Unlock()
+
+	u.haveConfig()
+}
+
+func (u *gtkUI) whenHaveConfig(f func()) {
+	if u.config() != nil {
+		f()
+		return
+	}
+	u.haveConfigEntries.add(f)
+}
+
+func (u *gtkUI) haveConfig() {
+	cs := u.haveConfigEntries
+	u.haveConfigEntries = nil
+	cs.invokeAll()
 }

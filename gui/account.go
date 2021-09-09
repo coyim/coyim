@@ -143,7 +143,7 @@ func (u *gtkUI) showAddAccountWindow() {
 	c, _ := config.NewAccount()
 
 	u.accountDialog(nil, c, func() {
-		_, exists := u.config.GetAccount(c.Account)
+		_, exists := u.config().GetAccount(c.Account)
 		if exists {
 			u.log.WithFields(log.Fields{
 				"feature": "addAccount",
@@ -168,7 +168,7 @@ func (u *gtkUI) showAddAccountWindow() {
 func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) error {
 	accountsLock.Lock()
 
-	u.config.Add(c)
+	u.config().Add(c)
 	accountsLock.Unlock()
 
 	err := u.saveConfigInternal()

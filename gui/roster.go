@@ -461,8 +461,8 @@ func (r *roster) addItem(item *rosters.Peer, parentIter gtki.TreeIter, indent st
 }
 
 func (r *roster) redrawMerged() {
-	showOffline := !r.ui.config.Display.ShowOnlyOnline
-	showWaiting := !r.ui.config.Display.ShowOnlyConfirmed
+	showOffline := !r.ui.config().Display.ShowOnlyOnline
+	showWaiting := !r.ui.config().Display.ShowOnlyConfirmed
 
 	r.ui.accountManager.RLock()
 	defer r.ui.accountManager.RUnlock()
@@ -498,7 +498,7 @@ func (c *counter) inc(total, online bool) {
 }
 
 func (r *roster) sortedPeers(ps []*rosters.Peer) []*rosters.Peer {
-	if r.ui.config.Display.SortByStatus {
+	if r.ui.config().Display.SortByStatus {
 		sort.Sort(byStatus(ps))
 	} else {
 		sort.Sort(byNameForPresentation(ps))
@@ -647,8 +647,8 @@ func (r *roster) showEmptyGroups() bool {
 }
 
 func (r *roster) redrawSeparate() {
-	showOffline := !r.ui.config.Display.ShowOnlyOnline
-	showWaiting := !r.ui.config.Display.ShowOnlyConfirmed
+	showOffline := !r.ui.config().Display.ShowOnlyOnline
+	showWaiting := !r.ui.config().Display.ShowOnlyConfirmed
 
 	r.ui.accountManager.RLock()
 	defer r.ui.accountManager.RUnlock()

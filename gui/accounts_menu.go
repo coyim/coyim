@@ -18,7 +18,7 @@ var accountsLock sync.Mutex
 
 func (u *gtkUI) buildStaticAccountsMenu(submenu gtki.Menu) {
 	connectAutomaticallyItem, _ := g.gtk.CheckMenuItemNewWithMnemonic(i18n.Local("Connect On _Startup"))
-	u.config.WhenLoaded(func(a *config.ApplicationConfig) {
+	u.config().WhenLoaded(func(a *config.ApplicationConfig) {
 		connectAutomaticallyItem.SetActive(a.ConnectAutomatically)
 	})
 
@@ -57,7 +57,7 @@ func (u *gtkUI) buildStaticAccountsMenu(submenu gtki.Menu) {
 	addAccMenu.SetSensitive(false)
 	importMenu.SetSensitive(false)
 
-	u.config.WhenLoaded(func(_ *config.ApplicationConfig) {
+	u.whenHaveConfig(func() {
 		connectAutomaticallyItem.SetSensitive(true)
 		connectAllMenu.SetSensitive(true)
 		disconnectAllMenu.SetSensitive(true)

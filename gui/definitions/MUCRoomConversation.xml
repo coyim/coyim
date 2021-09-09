@@ -19,14 +19,13 @@
             <child>
               <object class="GtkTextView" id="chat-text-view">
                 <property name="visible">True</property>
-                <property name="pixels_below_lines">4</property>
-                <property name="pixels_inside_wrap">2</property>
+                <property name="pixels_below_lines">5</property>
                 <property name="editable">False</property>
                 <property name="wrap_mode">word</property>
-                <property name="left_margin">12</property>
-                <property name="right_margin">12</property>
-                <property name="top_margin">6</property>
-                <property name="bottom_margin">6</property>
+                <property name="left_margin">5</property>
+                <property name="right_margin">5</property>
+                <property name="top_margin">5</property>
+                <property name="bottom_margin">5</property>
                 <property name="cursor_visible">False</property>
                 <property name="accepts_tab">False</property>
               </object>

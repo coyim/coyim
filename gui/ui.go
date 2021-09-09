@@ -144,6 +144,8 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 
 	registerFinalizerReaping(gx.glib)
 
+	log.WithField("dir", translationDirectory).Info("Using translations from")
+
 	//*.mo files should be in ./i18n/locale_code.utf8/LC_MESSAGES/
 	g.glib.InitI18n(localizationDomain, translationDirectory)
 	g.gtk.Init(argsWithApplicationName())

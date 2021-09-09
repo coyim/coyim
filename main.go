@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"path/filepath"
 	"runtime/pprof"
 
 	log "github.com/sirupsen/logrus"
@@ -85,14 +84,6 @@ func stopProfileIfNecessary() {
 
 func printFinalNewline() {
 	_, _ = os.Stdout.Write([]byte("\n"))
-}
-
-func translationsDirectory() string {
-	return filepath.Join(config.XdgDataHome(), "coyim", "translations")
-}
-
-func initTranslations() {
-	i18n.UnpackTranslationFilesInto(translationsDirectory(), BuildCommit)
 }
 
 func main() {

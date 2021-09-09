@@ -1,27 +1,28 @@
-# Portuguese translations for coy package
-# Traduções em português brasileiro para o pacote coy.
-# Copyright (C) 2016 THE coy'S COPYRIGHT HOLDER
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the coy package.
-# Automatically generated, 2016.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-09 17:10+0000\n"
-"PO-Revision-Date: 2016-02-16 14:02-0500\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
-"Language: pt\n"
+"PO-Revision-Date: 2021-09-09 16:59+0000\n"
+"Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
+"Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/coyim/"
+"main/nb_NO/>\n"
+"Language: nb_NO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.8.1-dev\n"
 
 #: ../gui/definitions/AccountDetails.xml:22
 #: ../gui/definitions/GlobalPreferences.xml:35
 msgid "Account Details"
-msgstr ""
+msgstr "Kontodetaljer"
 
 #: ../gui/definitions/AccountDetails.xml:34
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:55
@@ -45,20 +46,22 @@ msgstr ""
 #: ../gui/file_transfer_notification.go:125
 #: ../gui/file_transfer_notification.go:401
 msgid "Cancel"
-msgstr ""
+msgstr "Avbryt"
 
 #: ../gui/definitions/AccountDetails.xml:47
 #: ../gui/definitions/EditProxy.xml:151
 #: ../gui/definitions/GlobalPreferences.xml:397
 #: ../gui/definitions/PeerDetails.xml:197
 msgid "Save"
-msgstr ""
+msgstr "Lagre"
 
 #: ../gui/definitions/AccountDetails.xml:108
 msgid ""
 "Your account\n"
 "(example: kim42@jabber.otr.im)"
 msgstr ""
+"Din konto\n"
+"(eksempel:  kim42@jabber.otr.im)"
 
 #: ../gui/definitions/AccountDetails.xml:128
 #: ../gui/definitions/AskForPassword.xml:50
@@ -66,30 +69,30 @@ msgstr ""
 #: ../gui/definitions/MUCRoomLobby.xml:82 ../gui/definitions/Password.xml:11
 #: ../gui/muc_room_config_texts.go:178
 msgid "Password"
-msgstr ""
+msgstr "Passord"
 
 #: ../gui/definitions/AccountDetails.xml:149
 msgid "Account name (optional)"
-msgstr ""
+msgstr "Kontonavn (valgfritt)"
 
 #: ../gui/definitions/AccountDetails.xml:169
 msgid "Display all settings"
-msgstr ""
+msgstr "Vis alle innstillinger"
 
 #: ../gui/definitions/AccountDetails.xml:198
 #: ../gui/definitions/AskForPassword.xml:27
 #: ../gui/definitions/MUCCreateRoomForm.xml:39
 #: ../gui/definitions/MUCJoinRoomDialog.xml:139
 msgid "Account"
-msgstr ""
+msgstr "Konto"
 
 #: ../gui/definitions/AccountDetails.xml:219
 msgid "Server (leave empty for default)"
-msgstr ""
+msgstr "Tjener (la stå tom for forvalg)"
 
 #: ../gui/definitions/AccountDetails.xml:239
 msgid "Port (leave empty for default)"
-msgstr ""
+msgstr "Port (la stå tom for forvalg)"
 
 #: ../gui/definitions/AccountDetails.xml:259
 msgid "Pinning policy"
@@ -101,31 +104,31 @@ msgstr ""
 #: ../gui/muc_room_roster.go:417 ../gui/muc_room_occupant_affiliation.go:175
 #: ../gui/muc_room_occupant_affiliation.go:189
 msgid "None"
-msgstr ""
+msgstr "Ingen"
 
 #: ../gui/definitions/AccountDetails.xml:272
 msgid "Deny"
-msgstr ""
+msgstr "Nekt"
 
 #: ../gui/definitions/AccountDetails.xml:273
 msgid "Always add"
-msgstr ""
+msgstr "Alltid legg til"
 
 #: ../gui/definitions/AccountDetails.xml:274
 msgid "Add the first, ask for the rest"
-msgstr ""
+msgstr "Legg til første, spør om resten"
 
 #: ../gui/definitions/AccountDetails.xml:275
 msgid "Add the first, deny the rest"
-msgstr ""
+msgstr "Legg til første, nekt resten"
 
 #: ../gui/definitions/AccountDetails.xml:276
 msgid "Always ask"
-msgstr ""
+msgstr "Alltid spør"
 
 #: ../gui/definitions/AccountDetails.xml:365 ../gui/account.go:306
 msgid "_Remove"
-msgstr ""
+msgstr "_Fjern"
 
 #: ../gui/definitions/AccountDetails.xml:407
 msgid ""
@@ -175,11 +178,11 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:550 ../gui/account.go:293
 msgid "_Edit..."
-msgstr ""
+msgstr "_Rediger …"
 
 #: ../gui/definitions/AccountDetails.xml:583
 msgid "Proxies"
-msgstr ""
+msgstr "Mellomtjenere"
 
 #: ../gui/definitions/AccountDetails.xml:622
 msgid ""
@@ -197,11 +200,11 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:637
 msgid "Import Private _Keys..."
-msgstr ""
+msgstr "Importer private _nøkler …"
 
 #: ../gui/definitions/AccountDetails.xml:651
 msgid "Import _Fingerprints..."
-msgstr ""
+msgstr "Importer _fingeravtrykk …"
 
 #: ../gui/definitions/AccountDetails.xml:666
 msgid ""
@@ -212,27 +215,27 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:679
 msgid "Export Private Keys..."
-msgstr ""
+msgstr "Eksporter private nøkler …"
 
 #: ../gui/definitions/AccountDetails.xml:692
 msgid "Export Fingerprints..."
-msgstr ""
+msgstr "Eksporter fingeravtrykk …"
 
 #: ../gui/definitions/AccountDetails.xml:717
 msgid "Encryption"
-msgstr ""
+msgstr "Kryptering"
 
 #: ../gui/definitions/AccountRegistration.xml:17
 msgid "Recommended servers: "
-msgstr ""
+msgstr "Anbefalte tjenere: "
 
 #: ../gui/definitions/AccountRegistration.xml:38
 msgid "1. Choose a server"
-msgstr ""
+msgstr "1. Velg en tjener"
 
 #: ../gui/definitions/AccountRegistration.xml:72
 msgid "2. Create account"
-msgstr ""
+msgstr "2. Opprett en konto"
 
 #: ../gui/definitions/AddContact.xml:3
 msgid "I would like to add you to my contact list."
@@ -240,21 +243,21 @@ msgstr ""
 
 #: ../gui/definitions/AddContact.xml:9
 msgid "Add new contact"
-msgstr ""
+msgstr "Legg til en ny kontakt"
 
 #: ../gui/definitions/AddContact.xml:50
 #: ../gui/definitions/MUCPublicRoomsDialog.xml:93
 #: ../gui/definitions/PeerDetails.xml:31
 msgid "Account:"
-msgstr ""
+msgstr "Konto:"
 
 #: ../gui/definitions/AddContact.xml:79
 msgid "Contact to add:"
-msgstr ""
+msgstr "Kontakt å legge til:"
 
 #: ../gui/definitions/AddContact.xml:103 ../gui/definitions/PeerDetails.xml:73
 msgid "Nickname:"
-msgstr ""
+msgstr "Kallenavn:"
 
 #: ../gui/definitions/AddContact.xml:133
 msgid "A_llow this contact to view my status"
@@ -271,54 +274,60 @@ msgstr ""
 #: ../gui/definitions/MUCRoomConfigListAddDialog.xml:33
 #: ../gui/muc_room_config_list_add_component.go:196
 msgid "Add"
-msgstr ""
+msgstr "Legg til"
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:49
 msgid "Answer: "
-msgstr ""
+msgstr "Svar: "
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:71
+#, fuzzy
 msgid "Your peer must have previously shared it with you. If not, try to:"
-msgstr ""
+msgstr "Din kontakt må ha delt tidligere med deg. Hvis ikke, prøv:"
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:90
 msgid "Ask them in person"
-msgstr ""
+msgstr "Spør vedkommende på tomannshånd"
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:109
 msgid "Ask them in a different encrypted channel"
-msgstr ""
+msgstr "Spør vedkommende i en annen kryptert kanal"
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:128
 msgid "Ask them over the phone"
-msgstr ""
+msgstr "Spør vedkommende på telefonen"
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:144
 msgid "Verify Answer"
-msgstr ""
+msgstr "Bekreft svar"
 
 #: ../gui/definitions/AskForPassword.xml:4
 msgid "Enter your password"
-msgstr ""
+msgstr "Skriv inn passordet ditt"
 
 #: ../gui/definitions/AskForPassword.xml:72
 msgid "Save password"
-msgstr ""
+msgstr "Lagre passord"
 
 #: ../gui/definitions/AskForPassword.xml:101
 msgid "Connect"
-msgstr ""
+msgstr "Koble til"
 
 #: ../gui/definitions/AskToEncrypt.xml:6
+#, fuzzy
 msgid "Encrypt your account's information"
-msgstr ""
+msgstr "Krypter info på din konto"
 
 #: ../gui/definitions/AskToEncrypt.xml:7
+#, fuzzy
 msgid ""
 "\n"
 "Would you like to encrypt your account's information?\n"
 "    "
 msgstr ""
+"\n"
+"Ønsker du å kryptere info på din konto?\n"
+"    "
 
 #: ../gui/definitions/AskToEncrypt.xml:10
 msgid ""
@@ -331,20 +340,21 @@ msgstr ""
 
 #: ../gui/definitions/AuthorizeSubscription.xml:3
 msgid "Subscription request"
-msgstr ""
+msgstr "Abonnementsforespørsel"
 
 #: ../gui/definitions/CannotVerifyWithSMP.xml:46
 #: ../gui/definitions/VerificationFailed.xml:47
 msgid "Try again later"
-msgstr ""
+msgstr "Prøv igjen senere"
 
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:5
 msgid "Configure your master password"
-msgstr ""
+msgstr "Sett opp ditt hovedpassord"
 
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:16
+#, fuzzy
 msgid "Please enter the master password for the configuration file twice."
-msgstr ""
+msgstr "Skriv inn og gjenta hovedpassordet for oppsettsfilen."
 
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:61
 #: ../gui/definitions/GroupDetails.xml:40
@@ -352,66 +362,66 @@ msgstr ""
 #: ../gui/definitions/VerificationSucceeded.xml:25
 #: ../gui/definitions/VerifyFingerprintUnknown.xml:18
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: ../gui/definitions/CertificateDialog.xml:3
 msgid "Problem with secure connection for ACCOUNT_NAME"
-msgstr ""
+msgstr "Problem med sikker tilkobling for ACCOUNT_NAME"
 
 #: ../gui/definitions/CertificateDialog.xml:25
 msgid "Issued to:"
-msgstr ""
+msgstr "Utstedt til:"
 
 #: ../gui/definitions/CertificateDialog.xml:44
 #: ../gui/definitions/CertificateDialog.xml:187
 msgid "Common Name (CN):"
-msgstr ""
+msgstr "Vanlig navn (CN):"
 
 #: ../gui/definitions/CertificateDialog.xml:68
 msgid "Other names:"
-msgstr ""
+msgstr "Andre navn:"
 
 #: ../gui/definitions/CertificateDialog.xml:94
 #: ../gui/definitions/CertificateDialog.xml:211
 msgid "Organization (O):"
-msgstr ""
+msgstr "Organisasjon (O):"
 
 #: ../gui/definitions/CertificateDialog.xml:118
 #: ../gui/definitions/CertificateDialog.xml:235
 msgid "Organizational Unit (OU):"
-msgstr ""
+msgstr "Organisasjonsenhet (OU):"
 
 #: ../gui/definitions/CertificateDialog.xml:142
 msgid "Serial Number:"
-msgstr ""
+msgstr "Serienummer:"
 
 #: ../gui/definitions/CertificateDialog.xml:168
 msgid "Issued by:"
-msgstr ""
+msgstr "Utstedt av:"
 
 #: ../gui/definitions/CertificateDialog.xml:261
 msgid "Validity:"
-msgstr ""
+msgstr "Gyldighet:"
 
 #: ../gui/definitions/CertificateDialog.xml:280
 msgid "Issued on:"
-msgstr ""
+msgstr "Utstedt:"
 
 #: ../gui/definitions/CertificateDialog.xml:304
 msgid "Expires on:"
-msgstr ""
+msgstr "Utløper:"
 
 #: ../gui/definitions/CertificateDialog.xml:338
 msgid "SHA-1 fingerprint:"
-msgstr ""
+msgstr "SHA-1-fingeravtrykk:"
 
 #: ../gui/definitions/CertificateDialog.xml:365
 msgid "SHA-256 fingerprint:"
-msgstr ""
+msgstr "SHA-256-fingeravtrykk:"
 
 #: ../gui/definitions/CertificateDialog.xml:392
 msgid "SHA3-256 fingerprint:"
-msgstr ""
+msgstr "SHA3-256-fingeravtrykk:"
 
 #: ../gui/definitions/CertificateDialog.xml:421
 msgid ""
@@ -423,53 +433,54 @@ msgstr ""
 
 #: ../gui/definitions/CertificateDialog.xml:436
 msgid "Don't connect"
-msgstr ""
+msgstr "Ikke koble til"
 
 #: ../gui/definitions/CertificateDialog.xml:441
 msgid "Accept temporarily"
-msgstr ""
+msgstr "Godta midlertidig"
 
 #: ../gui/definitions/CertificateDialog.xml:446
 msgid "Accept permanently"
-msgstr ""
+msgstr "Godta permanent"
 
 #: ../gui/definitions/ChangePasswordMessageResponse.xml:4
 msgid "Change password"
-msgstr ""
+msgstr "Endre passord"
 
 #: ../gui/definitions/ChangePasswordMessageResponse.xml:24
 #: ../gui/definitions/ChangePassword.xml:44
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:42
 msgid "Ok"
-msgstr ""
+msgstr "OK"
 
 #: ../gui/definitions/ChangePassword.xml:4
 msgid "Change account password"
-msgstr ""
+msgstr "Endre kontopassord"
 
 #: ../gui/definitions/ChangePassword.xml:32
 msgid "Change Password"
-msgstr ""
+msgstr "Endre passord"
 
 #: ../gui/definitions/ChangePassword.xml:79
 msgid "Enter new password:"
-msgstr ""
+msgstr "Skriv inn nytt passord:"
 
 #: ../gui/definitions/ChangePassword.xml:104
 msgid "Confirm new password:"
-msgstr ""
+msgstr "Bekreft nytt passord:"
 
 #: ../gui/definitions/ChangePassword.xml:127
+#, fuzzy
 msgid "Save new password ?"
-msgstr ""
+msgstr "Lagre nytt passord?"
 
 #: ../gui/definitions/ChangePassword.xml:186
 msgid "label"
-msgstr ""
+msgstr "etikett"
 
 #: ../gui/definitions/ChooseKeyToImport.xml:3
 msgid "Choose a key to import"
-msgstr ""
+msgstr "Velg nøkkel å importere"
 
 #: ../gui/definitions/ChooseKeyToImport.xml:12
 msgid ""
@@ -480,19 +491,20 @@ msgstr ""
 #: ../gui/definitions/ChooseKeyToImport.xml:35
 #: ../gui/definitions/Importer.xml:97
 msgid "Import"
-msgstr ""
+msgstr "Importer"
 
 #: ../gui/definitions/ConfirmAccountRemoval.xml:3
 msgid "Confirm account removal"
-msgstr ""
+msgstr "Bekreft kontofjerning"
 
 #: ../gui/definitions/ConfirmAccountRemoval.xml:5
 msgid "Are you sure you want to remove this account?"
-msgstr ""
+msgstr "Fjern denne kontoen?"
 
 #: ../gui/definitions/ConnectionInformation.xml:3
+#, fuzzy
 msgid "Connection Information"
-msgstr ""
+msgstr "Tilkoblingsinfo"
 
 #: ../gui/definitions/ConnectionInformation.xml:18
 msgid "Server connected to:"
@@ -521,114 +533,117 @@ msgstr ""
 #: ../gui/file_transfer_notification.go:198
 #: ../gui/file_transfer_notification.go:308
 msgid "Close"
-msgstr ""
+msgstr "Lukk"
 
 #: ../gui/definitions/ContactPopupMenu.xml:5
 msgid "Edit..."
-msgstr ""
+msgstr "Rediger …"
 
 #: ../gui/definitions/ContactPopupMenu.xml:11
 #: ../gui/definitions/MUCRoomConfigFieldPositions.xml:135
 #: ../gui/muc_room_config_list_component.go:101
 msgid "Remove"
-msgstr ""
+msgstr "Fjern"
 
 #: ../gui/definitions/ContactPopupMenu.xml:21
 msgid "Talk to..."
-msgstr ""
+msgstr "Snakk med …"
 
 #: ../gui/definitions/ContactPopupMenu.xml:26
 msgid "Send file..."
-msgstr ""
+msgstr "Send fil …"
 
 #: ../gui/definitions/ContactPopupMenu.xml:32
 msgid "Send directory..."
-msgstr ""
+msgstr "Send mappe …"
 
 #: ../gui/definitions/ContactPopupMenu.xml:41
 msgid "Ask contact to see their status"
 msgstr ""
 
 #: ../gui/definitions/ContactPopupMenu.xml:47
+#, fuzzy
 msgid "Allow contact to see my status"
-msgstr ""
+msgstr "Del egen status med kontakt"
 
 #: ../gui/definitions/ContactPopupMenu.xml:53
+#, fuzzy
 msgid "Forbid contact to see my status"
-msgstr ""
+msgstr "Ikke del egen status med kontakt"
 
 #: ../gui/definitions/ContactPopupMenu.xml:62 ../gui/account.go:326
 msgid "Dump info"
-msgstr ""
+msgstr "Dump info"
 
 #: ../gui/definitions/ConversationPane.xml:15
 #: ../gui/definitions/ConversationPane.xml:135
 msgid "Secure Chat"
-msgstr ""
+msgstr "Sikker sludring"
 
 #: ../gui/definitions/ConversationPane.xml:25
 msgid "Start encrypted chat"
-msgstr ""
+msgstr "Start kryptert sludring"
 
 #: ../gui/definitions/ConversationPane.xml:32
 msgid "End encrypted chat"
-msgstr ""
+msgstr "Sluttfør kryptert sludring"
 
 #: ../gui/definitions/ConversationPane.xml:39
 msgid "Verify fingerprint"
-msgstr ""
+msgstr "Bekreft fingeravtrykk"
 
 #: ../gui/definitions/ConversationPane.xml:53
 msgid "Transfer"
-msgstr ""
+msgstr "Overfør"
 
 #: ../gui/definitions/ConversationPane.xml:63
 msgid "Send File"
-msgstr ""
+msgstr "Send fil"
 
 #: ../gui/definitions/ConversationPane.xml:70
 msgid "Send Dir"
-msgstr ""
+msgstr "Send mappe"
 
 #: ../gui/definitions/EditProxy.xml:3
 msgid "Edit Proxy"
-msgstr ""
+msgstr "Rediger mellomtjener"
 
 #: ../gui/definitions/EditProxy.xml:17
 msgid "Proxy type:"
-msgstr ""
+msgstr "Mellomtjenertype:"
 
 #: ../gui/definitions/EditProxy.xml:39
 msgid "User:"
-msgstr ""
+msgstr "Bruker:"
 
 #: ../gui/definitions/EditProxy.xml:59
 msgid "Password:"
-msgstr ""
+msgstr "Passord:"
 
 #: ../gui/definitions/EditProxy.xml:80
 msgid "Server:"
-msgstr ""
+msgstr "Tjener:"
 
 #: ../gui/definitions/EditProxy.xml:100
 msgid "Port:"
-msgstr ""
+msgstr "Port:"
 
 #: ../gui/definitions/EditProxy.xml:120
 msgid "Path:"
-msgstr ""
+msgstr "Sti:"
 
 #: ../gui/definitions/FeedbackInfo.xml:12
+#, fuzzy
 msgid "Are you liking it?"
-msgstr ""
+msgstr "Liker du programmet?"
 
 #: ../gui/definitions/FeedbackInfo.xml:22 ../gui/definitions/Main.xml:164
 msgid "Feedback"
-msgstr ""
+msgstr "Tilbakemelding"
 
 #: ../gui/definitions/Feedback.xml:4
 msgid "We would like to receive your feedback"
-msgstr ""
+msgstr "Vi ønsker din tilbakemelding"
 
 #: ../gui/definitions/Feedback.xml:14
 msgid ""
@@ -652,31 +667,32 @@ msgstr ""
 
 #: ../gui/definitions/FileTransferAskToReceive.xml:6
 msgid "File transfer"
-msgstr ""
+msgstr "Filoverføring"
 
 #: ../gui/definitions/FileTransferContinueWithoutEncryption.xml:6
 msgid "File transfer without encryption?"
-msgstr ""
+msgstr "Filoverføring uten kryptering?"
 
 #: ../gui/definitions/FirstAccountDialog.xml:4
+#, fuzzy
 msgid "Setup your first account"
-msgstr ""
+msgstr "Sett opp din første konto"
 
 #: ../gui/definitions/FirstAccountDialog.xml:15
 msgid "Welcome to CoyIM!"
-msgstr ""
+msgstr "Velkommen til CoyIM"
 
 #: ../gui/definitions/FirstAccountDialog.xml:36
 msgid "Create a new account"
-msgstr ""
+msgstr "Opprett en ny konto"
 
 #: ../gui/definitions/FirstAccountDialog.xml:43
 msgid "Add an existing account"
-msgstr ""
+msgstr "Legg til eksisterende konto"
 
 #: ../gui/definitions/FirstAccountDialog.xml:50
 msgid "Import account from your computer"
-msgstr ""
+msgstr "Importer konto fra datamaskinen din"
 
 #: ../gui/definitions/GeneratePIN.xml:45
 msgid "Share in person"
@@ -688,11 +704,11 @@ msgstr ""
 
 #: ../gui/definitions/GeneratePIN.xml:83
 msgid "Share in a phone call"
-msgstr ""
+msgstr "Del i en telefonsamtale"
 
 #: ../gui/definitions/GlobalPreferences.xml:11
 msgid "No notifications"
-msgstr ""
+msgstr "Ingen merknader"
 
 #: ../gui/definitions/GlobalPreferences.xml:15
 msgid "Only show that a new message arrived"
@@ -700,31 +716,31 @@ msgstr ""
 
 #: ../gui/definitions/GlobalPreferences.xml:19
 msgid "Show who sent the message"
-msgstr ""
+msgstr "Vis hvem som sendte meldingen"
 
 #: ../gui/definitions/GlobalPreferences.xml:23
 msgid "Show message"
-msgstr ""
+msgstr "Vis melding"
 
 #: ../gui/definitions/GlobalPreferences.xml:65
 msgid "Unify conversations in one window"
-msgstr ""
+msgstr "Samle samtaler i ett vindu"
 
 #: ../gui/definitions/GlobalPreferences.xml:84
 msgid "Send messages with Shift-Enter"
-msgstr ""
+msgstr "Send meldinger med Shift+Enter"
 
 #: ../gui/definitions/GlobalPreferences.xml:103
 msgid "Display empty groups"
-msgstr ""
+msgstr "Vis tomme grupper"
 
 #: ../gui/definitions/GlobalPreferences.xml:122
 msgid "Use Emacs key bindings"
-msgstr ""
+msgstr "Bruk Emacs-tastatursnarveier"
 
 #: ../gui/definitions/GlobalPreferences.xml:143
 msgid "General"
-msgstr ""
+msgstr "Generelt"
 
 #: ../gui/definitions/GlobalPreferences.xml:161
 msgid ""
@@ -737,7 +753,7 @@ msgstr ""
 
 #: ../gui/definitions/GlobalPreferences.xml:174
 msgid "Notification type"
-msgstr ""
+msgstr "Merknadstype"
 
 #: ../gui/definitions/GlobalPreferences.xml:202
 msgid ""
@@ -758,7 +774,7 @@ msgstr ""
 
 #: ../gui/definitions/GlobalPreferences.xml:247
 msgid "Should notifications expire?"
-msgstr ""
+msgstr "Skal merknader utløpe?"
 
 #: ../gui/definitions/GlobalPreferences.xml:266
 msgid ""
@@ -770,15 +786,16 @@ msgstr ""
 
 #: ../gui/definitions/GlobalPreferences.xml:279
 msgid "Notification command"
-msgstr ""
+msgstr "Merknadskommando"
 
 #: ../gui/definitions/GlobalPreferences.xml:299
+#, fuzzy
 msgid "Minimum time between notifications in seconds"
-msgstr ""
+msgstr "Antall sekunder mellom merknader"
 
 #: ../gui/definitions/GlobalPreferences.xml:323
 msgid "Notifications"
-msgstr ""
+msgstr "Merknader"
 
 #: ../gui/definitions/GlobalPreferences.xml:341
 msgid ""
@@ -792,23 +809,23 @@ msgstr ""
 
 #: ../gui/definitions/GlobalPreferences.xml:354
 msgid "Raw log file"
-msgstr ""
+msgstr "Rå loggfil"
 
 #: ../gui/definitions/GlobalPreferences.xml:376
 msgid "Debugging"
-msgstr ""
+msgstr "Avlusing"
 
 #: ../gui/definitions/GroupDetails.xml:4
 msgid "Add Group"
-msgstr ""
+msgstr "Legg til gruppe"
 
 #: ../gui/definitions/GroupDetails.xml:11
 msgid "Group name"
-msgstr ""
+msgstr "Gruppenavn"
 
 #: ../gui/definitions/Importer.xml:12
 msgid "Import Accounts"
-msgstr ""
+msgstr "Importer kontoer"
 
 #: ../gui/definitions/Importer.xml:22
 msgid ""
@@ -817,96 +834,97 @@ msgstr ""
 
 #: ../gui/definitions/Importer.xml:41
 msgid "Import this"
-msgstr ""
+msgstr "Importer dette"
 
 #: ../gui/definitions/Importer.xml:55
 msgid "From application"
-msgstr ""
+msgstr "Fra program"
 
 #: ../gui/definitions/Importer.xml:67
 msgid "Account name"
-msgstr ""
+msgstr "Kontonavn"
 
 #: ../gui/definitions/Main.xml:22
 msgid "_Contacts"
-msgstr ""
+msgstr "_Kontakter"
 
 #: ../gui/definitions/Main.xml:30
 msgid "Add..."
-msgstr ""
+msgstr "Legg til …"
 
 #: ../gui/definitions/Main.xml:37
 msgid "New Conversation..."
-msgstr ""
+msgstr "Ny samtale …"
 
 #: ../gui/definitions/Main.xml:48
 msgid "_Accounts"
-msgstr ""
+msgstr "_Kontoer"
 
 #: ../gui/definitions/Main.xml:55
 msgid "Chat _Rooms"
-msgstr ""
+msgstr "Sludre_rom"
 
 #: ../gui/definitions/Main.xml:63 ../gui/muc_room_config_assistant.go:140
 #: ../gui/muc_create_room_form.go:283
 msgid "Create Room"
-msgstr ""
+msgstr "Opprett rom"
 
 #: ../gui/definitions/Main.xml:71
 msgid "Show public rooms..."
-msgstr ""
+msgstr "Vis offentlige rom …"
 
 #: ../gui/definitions/Main.xml:78
 msgid "Join a Room"
-msgstr ""
+msgstr "Ta del i rom"
 
 #: ../gui/definitions/Main.xml:89
 msgid "_View"
-msgstr ""
+msgstr "_Vis"
 
 #: ../gui/definitions/Main.xml:97
 msgid "Merge Accounts"
-msgstr ""
+msgstr "Flett kontoer"
 
 #: ../gui/definitions/Main.xml:104
 msgid "Show Offline Contacts"
-msgstr ""
+msgstr "Vis frakoblede kontakter"
 
 #: ../gui/definitions/Main.xml:111
 msgid "Show Waiting Contacts"
-msgstr ""
+msgstr "Vis ventende kontakter"
 
 #: ../gui/definitions/Main.xml:118
 msgid "Sort By Status"
-msgstr ""
+msgstr "Sorter etter status"
 
 #: ../gui/definitions/Main.xml:129
 msgid "_Options"
-msgstr ""
+msgstr "_Innstillinger"
 
 #: ../gui/definitions/Main.xml:137
+#, fuzzy
 msgid "Encrypt configuration file"
-msgstr ""
+msgstr "Krypter oppsettsfil"
 
 #: ../gui/definitions/Main.xml:144 ../gui/menubar.go:49
 msgid "Preferences..."
-msgstr ""
+msgstr "Innstillinger …"
 
 #: ../gui/definitions/Main.xml:156
 msgid "_Help"
-msgstr ""
+msgstr "_Hjelp"
 
 #: ../gui/definitions/Main.xml:171
 msgid "About"
-msgstr ""
+msgstr "Om"
 
 #: ../gui/definitions/Main.xml:199
 msgid "Search..."
-msgstr ""
+msgstr "Søk …"
 
 #: ../gui/definitions/MasterPassword.xml:4
 msgid "Enter master password"
-msgstr ""
+msgstr "Skriv inn hovedpassord"
 
 #: ../gui/definitions/MasterPassword.xml:15
 msgid ""
@@ -916,48 +934,49 @@ msgstr ""
 
 #: ../gui/definitions/MUCCreateRoomDialog.xml:4
 msgid "Create chat room"
-msgstr ""
+msgstr "Opprett sludrerom"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:68
 #: ../gui/definitions/MUCJoinRoomDialog.xml:115
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:230
 msgid "Room"
-msgstr ""
+msgstr "Rom"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:80
 #: ../gui/definitions/MUCJoinRoomDialog.xml:126
 msgid "Enter the room name"
-msgstr ""
+msgstr "Skriv inn romnavnet"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:96
 msgid "Enter the location or select one from the list"
-msgstr ""
+msgstr "Skriv inn plassering eller velg en fra listen"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:112
 #: ../gui/definitions/MUCJoinRoomDialog.xml:167
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:253
 msgid "Where"
-msgstr ""
+msgstr "Hvor"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:127
 msgid "_Automatically join the room"
-msgstr ""
+msgstr "_Ta del i rommet automatisk"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:130
 msgid "Automatically join the room when created"
-msgstr ""
+msgstr "Ta del i rommet automatisk når opprettet"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:145
 msgid "Add custom room configuration"
-msgstr ""
+msgstr "Legg til egendefinert romoppsett"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:224
 msgid "_Create Room"
-msgstr ""
+msgstr "_Opprett rom"
 
 #: ../gui/definitions/MUCCreateRoomSuccess.xml:31
+#, fuzzy
 msgid "Congratulations, the room has been created"
-msgstr ""
+msgstr "Rom opprettet"
 
 #: ../gui/definitions/MUCCreateRoomSuccess.xml:46
 msgid "Create another room"
@@ -966,39 +985,39 @@ msgstr ""
 #: ../gui/definitions/MUCCreateRoomSuccess.xml:58
 #: ../gui/definitions/MUCPublicRoomsDialog.xml:41
 msgid "Join"
-msgstr ""
+msgstr "Ta del"
 
 #: ../gui/definitions/MUCJoinRoomDialog.xml:4
 msgid "Join a chat room"
-msgstr ""
+msgstr "Ta del i sludrerom"
 
 #: ../gui/definitions/MUCJoinRoomDialog.xml:39
 #: ../gui/definitions/MUCRoomLobby.xml:118 ../gui/importer.go:299
 #: ../gui/importer.go:324 ../gui/importer.go:348 ../gui/importer.go:370
 #: ../gui/file_transfer.go:156 ../gui/file_transfer.go:266
 msgid "_Cancel"
-msgstr ""
+msgstr "_Avbryt"
 
 #: ../gui/definitions/MUCJoinRoomDialog.xml:54
 msgid "_Continue"
-msgstr ""
+msgstr "_Fortsett"
 
 #: ../gui/definitions/MUCJoinRoomDialog.xml:185
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:267
 msgid "Enter or select the service"
-msgstr ""
+msgstr "Skriv inn eller velg tjenesten"
 
 #: ../gui/definitions/MUCPublicRoomsDialog.xml:3
 msgid "Chat rooms"
-msgstr ""
+msgstr "Sludrerom"
 
 #: ../gui/definitions/MUCPublicRoomsDialog.xml:121
 msgid "List all rooms"
-msgstr ""
+msgstr "List opp alle rom"
 
 #: ../gui/definitions/MUCPublicRoomsDialog.xml:137
 msgid "Service:"
-msgstr ""
+msgstr "Tjeneste:"
 
 #: ../gui/definitions/MUCPublicRoomsDialog.xml:160
 msgid "List rooms in service"
@@ -1007,14 +1026,14 @@ msgstr ""
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:4
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:99
 msgid "Change position"
-msgstr ""
+msgstr "Endre posisjon"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:42
 #: ../gui/definitions/MUCRoomPositionsDialog.xml:87
 #: ../gui/definitions/MUCRoomRoleDialog.xml:42
 #: ../gui/definitions/MUCRoomToolbar.xml:375
 msgid "Apply"
-msgstr ""
+msgstr "Bruk"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:110
 msgid ""
@@ -1025,7 +1044,7 @@ msgstr ""
 #: ../gui/definitions/MUCRoomRosterInfo.xml:596 ../gui/muc_room_roster.go:389
 #: ../gui/muc_room_occupant_affiliation.go:167
 msgid "Owner"
-msgstr ""
+msgstr "Eier"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:178
 msgid ""
@@ -1036,7 +1055,7 @@ msgstr ""
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:225
 #: ../gui/definitions/MUCRoomRosterInfo.xml:511
 msgid "Administrator"
-msgstr ""
+msgstr "Administrator"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:243
 msgid ""
@@ -1047,7 +1066,7 @@ msgstr ""
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:290
 #: ../gui/muc_room_occupant_affiliation.go:171
 msgid "Member"
-msgstr ""
+msgstr "Medlem"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:308
 msgid ""
@@ -1068,15 +1087,15 @@ msgstr ""
 
 #: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:4
 msgid "Close room"
-msgstr ""
+msgstr "Lukk rom"
 
 #: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:53
 msgid "Do you want to leave the room?"
-msgstr ""
+msgstr "Ønsker du å forlate rommet?"
 
 #: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:74
 msgid "Yes, leave the room"
-msgstr ""
+msgstr "Ja, forlat rommet"
 
 #: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:122
 #: ../gui/muc_room_close_confirm.go:55
@@ -1085,7 +1104,7 @@ msgstr ""
 
 #: ../gui/definitions/MUCRoomConfigAssistant.xml:4
 msgid "Room configuration"
-msgstr ""
+msgstr "Romoppsett"
 
 #: ../gui/definitions/MUCRoomConfigFieldPositions.xml:47
 msgid "Position description here"
@@ -1097,79 +1116,81 @@ msgstr ""
 #: ../gui/definitions/MUCRoomRosterInfo.xml:62
 #: ../gui/definitions/MUCRoomRosterInfo.xml:77
 msgid "Account address"
-msgstr ""
+msgstr "Kontoadresse"
 
 #: ../gui/definitions/MUCRoomConfigFormFieldAdvancedOptionsContainer.xml:28
 #: ../gui/definitions/MUCRoomConfigSummaryAdvancedOptionsField.xml:22
 msgid "Advanced options"
-msgstr ""
+msgstr "Avanserte innstillinger"
 
 #: ../gui/definitions/MUCRoomConfigFormFieldPassword.xml:31
 #: ../gui/muc_room_config_texts.go:177
 msgid "Enter the room password"
-msgstr ""
+msgstr "Skriv inn rompassordet"
 
 #: ../gui/definitions/MUCRoomConfigFormFieldPassword.xml:61
 #: ../gui/definitions/Password.xml:22 ../gui/password_component.go:46
 #: ../gui/muc_room_config_field_password.go:125
 msgid "Show"
-msgstr ""
+msgstr "Vis"
 
 #: ../gui/definitions/MUCRoomConfigFormFieldPassword.xml:79
 msgid "Confirm the room password"
-msgstr ""
+msgstr "Bekreft rompassordet"
 
 #: ../gui/definitions/MUCRoomConfigFormFieldPassword.xml:92
 msgid "Passwords don't match"
-msgstr ""
+msgstr "Passordene stemmer ikke overens"
 
 #: ../gui/definitions/MUCRoomConfigListAddDialog.xml:138
 msgid "Clear"
-msgstr ""
+msgstr "Tøm"
 
 #: ../gui/definitions/MUCRoomConfigPage.xml:100
 msgid "Automatically join the room"
-msgstr ""
+msgstr "Ta del i rommet automatisk"
 
 #: ../gui/definitions/MUCRoomConfirmationRoomDialog.xml:3
 msgid "Cancel room creation"
-msgstr ""
+msgstr "Avbryt romopprettelse"
 
 #: ../gui/definitions/MUCRoomConfirmationRoomDialog.xml:20
 #: ../gui/definitions/VerifyFingerprint.xml:31
 #: ../gui/muc_room_config_summary_field.go:155
 msgid "No"
-msgstr ""
+msgstr "Nei"
 
 #: ../gui/definitions/MUCRoomConfirmationRoomDialog.xml:36
 #: ../gui/definitions/VerifyFingerprint.xml:36
 #: ../gui/muc_room_config_summary_field.go:153
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: ../gui/definitions/MUCRoomConfirmationRoomDialog.xml:81
+#, fuzzy
 msgid "Are you sure you want to cancel the room creation? "
-msgstr ""
+msgstr "Avbryt romopprettelse? "
 
 #: ../gui/definitions/MUCRoomConversation.xml:122 ../gui/file_transfer.go:268
 msgid "Send"
-msgstr ""
+msgstr "Send"
 
 #: ../gui/definitions/MUCRoomDestroyDialogError.xml:3
+#, fuzzy
 msgid "Room destroy error"
-msgstr ""
+msgstr "Kunne ikke ødelegge rom"
 
 #: ../gui/definitions/MUCRoomDestroyDialogError.xml:39
 msgid "Retry"
-msgstr ""
+msgstr "Prøv igjen"
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:37
 msgid "Destroy Room"
-msgstr ""
+msgstr "Ødelegg rom"
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:105
 msgid "You are about to permanently destroy this room."
-msgstr ""
+msgstr "Du vil ødelegge rommet for godt."
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:119
 msgid "You may want to provide the following information:"
@@ -1181,13 +1202,13 @@ msgstr ""
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:189
 msgid "Add information about the new room"
-msgstr ""
+msgstr "Legg til info om det nye rommet"
 
 #: ../gui/definitions/MUCRoomLobby.xml:58
 #: ../gui/definitions/MUCRoomRosterInfo.xml:17
 #: ../gui/definitions/MUCRoomRosterInfo.xml:32
 msgid "Nickname"
-msgstr ""
+msgstr "Kallenavn"
 
 #: ../gui/definitions/MUCRoomLobby.xml:132
 msgid "_Join"
@@ -1199,7 +1220,7 @@ msgstr ""
 
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:4
 msgid "Remove person from the room"
-msgstr ""
+msgstr "Fjern person fra rommet"
 
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:123
 msgid "You are about to temporarily remove the person from the room."
@@ -1225,18 +1246,18 @@ msgstr ""
 
 #: ../gui/definitions/MUCRoomPositionsDialog.xml:24
 msgid "Here you can define who the banned people are."
-msgstr ""
+msgstr "Her kan du skrive hvem de bannlyste er."
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:4
 #: ../gui/definitions/MUCRoomRoleDialog.xml:94
 msgid "Change role"
-msgstr ""
+msgstr "Endre rolle"
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:128
 #: ../gui/muc_room_config_component.go:159 ../gui/muc_room_roster.go:423
 #: ../gui/muc_room_occupant_affiliation.go:183
 msgid "Moderator"
-msgstr ""
+msgstr "Moderator"
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:146
 msgid ""
@@ -1249,7 +1270,7 @@ msgstr ""
 #: ../gui/muc_room_config_component.go:155 ../gui/muc_room_roster.go:419
 #: ../gui/muc_room_occupant_affiliation.go:185
 msgid "Participant"
-msgstr ""
+msgstr "Deltager"
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:213
 msgid ""
@@ -1275,15 +1296,15 @@ msgstr ""
 #: ../gui/definitions/MUCRoomRosterInfo.xml:146
 #: ../gui/definitions/MUCRoomRosterInfo.xml:391
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:229
 msgid "Back"
-msgstr ""
+msgstr "Tilbake"
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:264
 msgid "Information"
-msgstr ""
+msgstr "Info"
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:468
 msgid ""
@@ -1293,7 +1314,7 @@ msgstr ""
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:488
 msgid "Position"
-msgstr ""
+msgstr "Posisjon"
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:563
 msgid ""
@@ -1303,7 +1324,7 @@ msgstr ""
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:580
 msgid "Role"
-msgstr ""
+msgstr "Rolle"
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:632
 msgid ""
@@ -1313,11 +1334,11 @@ msgstr ""
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:691
 msgid "Expel"
-msgstr ""
+msgstr "Kast ut"
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:698
 msgid "Ban"
-msgstr ""
+msgstr "Bannlys"
 
 #: ../gui/definitions/MUCRoomRoster.xml:36
 msgid "Expander"
@@ -1329,12 +1350,12 @@ msgstr ""
 
 #: ../gui/definitions/MUCRoomToolbar.xml:6
 msgid "Security properties"
-msgstr ""
+msgstr "Sikkerhetsegenskaper"
 
 #: ../gui/definitions/MUCRoomToolbar.xml:14
 #: ../gui/muc_room_config_assistant.go:96
 msgid "Configure room"
-msgstr ""
+msgstr "Sett opp rom"
 
 #: ../gui/definitions/MUCRoomToolbar.xml:22
 msgid "Modify positions"
@@ -1342,19 +1363,19 @@ msgstr ""
 
 #: ../gui/definitions/MUCRoomToolbar.xml:34
 msgid "Destroy room"
-msgstr ""
+msgstr "Ødelegg rom"
 
 #: ../gui/definitions/MUCRoomToolbar.xml:42
 msgid "Leave room"
-msgstr ""
+msgstr "Forlat rom"
 
 #: ../gui/definitions/MUCRoomToolbar.xml:133 ../gui/muc_room_toolbar.go:255
 msgid "Show room subject"
-msgstr ""
+msgstr "Vis romemne"
 
 #: ../gui/definitions/MUCRoomToolbar.xml:301
 msgid "Edit subject"
-msgstr ""
+msgstr "Rediger emne"
 
 #: ../gui/definitions/MUCRoomWarningsDialog.xml:13
 msgid "Security properties warnings"
@@ -1379,8 +1400,9 @@ msgid "Go to previous [Ctrl + left]"
 msgstr ""
 
 #: ../gui/definitions/MUCRoomWarningsDialog.xml:185
+#, fuzzy
 msgid "Go to next [Ctrl + right]"
-msgstr ""
+msgstr "Gå til neste [Ctrl+→]"
 
 #: ../gui/definitions/MUCRoomWarningsDialog.xml:234
 msgid "Close dialog"
@@ -1392,31 +1414,31 @@ msgstr ""
 
 #: ../gui/definitions/NewCustomConversation.xml:13
 msgid "Start new conversation"
-msgstr ""
+msgstr "Start ny samtale"
 
 #: ../gui/definitions/NewCustomConversation.xml:33
 msgid "From:"
-msgstr ""
+msgstr "Fra:"
 
 #: ../gui/definitions/NewCustomConversation.xml:61
 msgid "With:"
-msgstr ""
+msgstr "Med:"
 
 #: ../gui/definitions/NewCustomConversation.xml:100
 msgid "Start"
-msgstr ""
+msgstr "Start"
 
 #: ../gui/definitions/PeerDetails.xml:9
 msgid "New Group..."
-msgstr ""
+msgstr "Ny gruppe …"
 
 #: ../gui/definitions/PeerDetails.xml:16
 msgid "Edit contact"
-msgstr ""
+msgstr "Rediger kontakt"
 
 #: ../gui/definitions/PeerDetails.xml:52
 msgid "Contact:"
-msgstr ""
+msgstr "Kontakt:"
 
 #: ../gui/definitions/PeerDetails.xml:92
 msgid "Require encryption with this peer"
@@ -1424,11 +1446,11 @@ msgstr ""
 
 #: ../gui/definitions/PeerDetails.xml:110
 msgid "Groups:"
-msgstr ""
+msgstr "Grupper:"
 
 #: ../gui/definitions/PeerRequestsSMP.xml:87
 msgid "Finish Verification"
-msgstr ""
+msgstr "Fullfør bekreftelse"
 
 #: ../gui/definitions/RegistrationForm.xml:41
 msgid "Register"
@@ -1436,7 +1458,7 @@ msgstr ""
 
 #: ../gui/definitions/TorHelper.xml:6
 msgid "Warning!"
-msgstr ""
+msgstr "Advarsel"
 
 #: ../gui/definitions/TorHelper.xml:7
 msgid ""
@@ -1476,23 +1498,23 @@ msgstr ""
 
 #: ../gui/definitions/UnifiedLayout.xml:138
 msgid "Conversations"
-msgstr ""
+msgstr "Samtaler"
 
 #: ../gui/definitions/UnifiedLayout.xml:164
 msgid "icon"
-msgstr ""
+msgstr "ikon"
 
 #: ../gui/definitions/UnifiedLayout.xml:178
 msgid "column"
-msgstr ""
+msgstr "kolonne"
 
 #: ../gui/definitions/UnverifiedWarning.xml:87
 msgid "Validate Channel"
-msgstr ""
+msgstr "Bekreft kanal"
 
 #: ../gui/definitions/VerificationFailed.xml:17
 msgid "Verification Failed"
-msgstr ""
+msgstr "Bekrefting mislyktes"
 
 #: ../gui/definitions/VerifyFingerprint.xml:16
 msgid "Tag (optional name for this fingerprint):"
@@ -1500,15 +1522,15 @@ msgstr ""
 
 #: ../gui/definitions/XMLConsole.xml:3
 msgid "Hello world"
-msgstr ""
+msgstr "Hei verden"
 
 #: ../gui/definitions/XMLConsole.xml:8
 msgid "XMPP Console: ACCOUNT_NAME"
-msgstr ""
+msgstr "XMPP-konsoll: ACCOUNT_NAME"
 
 #: ../gui/definitions/XMLConsole.xml:56
 msgid "_Close"
-msgstr ""
+msgstr "_Lukk"
 
 #: ../gui/muc_notification_messages.go:21
 #: ../gui/muc_notification_messages.go:238
@@ -1559,7 +1581,7 @@ msgstr ""
 #: ../gui/muc_notification_messages.go:39
 #, python-format
 msgid "$nickname{%s} has been banned from the room."
-msgstr ""
+msgstr "$nickname{%s} har blitt bannlyst fra rommet."
 
 #: ../gui/muc_notification_messages.go:41
 #: ../gui/muc_notification_messages.go:413
@@ -1654,16 +1676,16 @@ msgstr ""
 #: ../gui/muc_notification_messages.go:109
 #, python-format
 msgid "$nickname{%s} couldn't be banned."
-msgstr ""
+msgstr "$nickname{%s} kunne ikke bannlyses"
 
 #: ../gui/muc_notification_messages.go:110
 msgid "Banning failed"
-msgstr ""
+msgstr "Bannlysning mislyktes"
 
 #: ../gui/muc_notification_messages.go:111
 #, python-format
 msgid "%s couldn't be banned"
-msgstr ""
+msgstr "%s kunne ikke bannlyses"
 
 #: ../gui/muc_notification_messages.go:118
 msgid ""
@@ -1703,7 +1725,7 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:144
 msgid "Changing the role failed"
-msgstr ""
+msgstr "Endring av rollen mislyktes"
 
 #: ../gui/muc_notification_messages.go:145
 #, python-format
@@ -1737,12 +1759,12 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:165
 msgid "Expelling failed"
-msgstr ""
+msgstr "Utkastelse mislyktes"
 
 #: ../gui/muc_notification_messages.go:166
 #, python-format
 msgid "%s couldn't be expelled"
-msgstr ""
+msgstr "%s kunne ikke kastes ut"
 
 #: ../gui/muc_notification_messages.go:176
 #, python-format
@@ -2241,7 +2263,7 @@ msgstr ""
 #: ../gui/muc_notification_messages.go:683
 #, python-brace-format
 msgid "Your role was changed from $role{moderator} to $role{participant}."
-msgstr ""
+msgstr "Din rolle ble endret fra $role{moderator} til $role{participant}."
 
 #: ../gui/muc_notification_messages.go:685
 msgid "You have been expelled."
@@ -2249,7 +2271,7 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:687
 msgid "Your role was changed."
-msgstr ""
+msgstr "Din rolle ble endret."
 
 #: ../gui/muc_notification_messages.go:703
 #, python-format
@@ -2360,6 +2382,7 @@ msgstr ""
 msgid ""
 "$nickname{%s} changed your role from $role{participant} to $role{visitor}."
 msgstr ""
+"$nickname{%s} endret din rolle fra $role{participant} til $role{visitor}."
 
 #: ../gui/muc_notification_messages.go:762
 #, python-format
@@ -2372,12 +2395,14 @@ msgstr ""
 msgid ""
 "$nickname{%s} changed your role from $role{visitor} to $role{participant}."
 msgstr ""
+"$nickname{%s} endret din rolle fra $role{visitor} til $role{participant}."
 
 #: ../gui/muc_notification_messages.go:768
 #, python-format
 msgid ""
 "$nickname{%s} changed your role from $role{visitor} to $role{moderator}."
 msgstr ""
+"$nickname{%s} endret din rolle fra $role{visitor} til $role{moderator}."
 
 #: ../gui/muc_notification_messages.go:771
 #, python-format
@@ -2390,16 +2415,17 @@ msgstr ""
 msgid ""
 "$nickname{%s} changed your role from $role{moderator} to $role{participant}."
 msgstr ""
+"$nickname{%s} endret din rolle fra $role{moderator} til $role{participant}."
 
 #: ../gui/muc_notification_messages.go:777
 #, python-format
 msgid "$nickname{%s} has expelled you from the room."
-msgstr ""
+msgstr "$nickname{%s} har kastet deg ut av rommet."
 
 #: ../gui/muc_notification_messages.go:780
 #, python-format
 msgid "$nickname{%s} changed your role."
-msgstr ""
+msgstr "$nickname{%s} endret din rolle."
 
 #: ../gui/muc_notification_messages.go:789
 #: ../gui/muc_notification_messages.go:1168
@@ -2718,7 +2744,7 @@ msgstr ""
 #: ../gui/muc_notification_messages.go:1246
 #, python-format
 msgid "The owner $nickname{%s} changed your position to $affiliation{owner}."
-msgstr ""
+msgstr "Eieren $nickname{%s} endret din posisjon til $affiliation{owner}."
 
 #: ../gui/muc_notification_messages.go:1249
 #, python-format
@@ -2989,7 +3015,7 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1466
 msgid "You are now banned."
-msgstr ""
+msgstr "Du er nå bannlyst."
 
 #: ../gui/muc_notification_messages.go:1479
 #, python-format
@@ -3095,7 +3121,7 @@ msgstr ""
 
 #: ../gui/muc_room_config_texts.go:41
 msgid "Permissions"
-msgstr ""
+msgstr "Tilganger"
 
 #: ../gui/muc_room_config_texts.go:42
 msgid ""
@@ -3194,19 +3220,20 @@ msgstr ""
 
 #: ../gui/muc_room_config_texts.go:140 ../gui/muc_room_config_texts.go:141
 msgid "People can send private messages"
-msgstr ""
+msgstr "Folk kan sende private meldinger"
 
 #: ../gui/muc_room_config_texts.go:144 ../gui/muc_room_config_texts.go:145
 msgid "Maximum number of people in the room"
 msgstr ""
 
 #: ../gui/muc_room_config_texts.go:148
+#, fuzzy
 msgid "Make this room public"
-msgstr ""
+msgstr "Gjør dette rommet offentlig"
 
 #: ../gui/muc_room_config_texts.go:149
 msgid "Include in public lists"
-msgstr ""
+msgstr "Inkluder i offentlige lister"
 
 #: ../gui/muc_room_config_texts.go:150
 msgid "A public room can be found by all users in any public listing."
@@ -3214,11 +3241,11 @@ msgstr ""
 
 #: ../gui/muc_room_config_texts.go:154
 msgid "Make this room persistent"
-msgstr ""
+msgstr "Gjør dette rommet vedvarende"
 
 #: ../gui/muc_room_config_texts.go:155
 msgid "Persistent"
-msgstr ""
+msgstr "Vedvarende"
 
 #: ../gui/muc_room_config_texts.go:156
 msgid ""
@@ -3231,11 +3258,11 @@ msgstr ""
 
 #: ../gui/muc_room_config_texts.go:164
 msgid "Make this room moderated"
-msgstr ""
+msgstr "Gjør dette rommet moderert"
 
 #: ../gui/muc_room_config_texts.go:165
 msgid "Moderated"
-msgstr ""
+msgstr "Moderert"
 
 #: ../gui/muc_room_config_texts.go:166
 msgid "In a moderated room, visitors must be given permission to speak."
@@ -3387,7 +3414,7 @@ msgstr ""
 
 #: ../gui/muc_room_lobby.go:110
 msgid "That nickname is already being used."
-msgstr ""
+msgstr "Det kallenavnet er allerede i bruk."
 
 #: ../gui/muc_room_lobby.go:167
 msgid ""
@@ -3431,43 +3458,44 @@ msgstr ""
 
 #: ../gui/muc_room_config_summary_field.go:148
 #: ../gui/muc_room_config_summary_field.go:162
+#, fuzzy
 msgid "Not assigned"
-msgstr ""
+msgstr "Ikke tildelt"
 
 #: ../gui/muc_room_config_summary_field.go:168
 msgid "One result"
-msgstr ""
+msgstr "Ett resultat"
 
 #: ../gui/muc_room_config_summary_field.go:170
 #, python-format
 msgid "%d results"
-msgstr ""
+msgstr "%d resultater"
 
 #: ../gui/muc_room_config_summary_field.go:178
 msgid "One role"
-msgstr ""
+msgstr "Én rolle"
 
 #: ../gui/muc_room_config_summary_field.go:180
 #, python-format
 msgid "%d roles"
-msgstr ""
+msgstr "%d roller"
 
 #: ../gui/muc_room_config_summary_field.go:182
 msgid "No roles"
-msgstr ""
+msgstr "Ingen roller"
 
 #: ../gui/muc_room_config_summary_field.go:188
 msgid "One account"
-msgstr ""
+msgstr "Én konto"
 
 #: ../gui/muc_room_config_summary_field.go:190
 #, python-format
 msgid "%d accounts"
-msgstr ""
+msgstr "%d kontoer"
 
 #: ../gui/muc_room_config_summary_field.go:192
 msgid "No accounts"
-msgstr ""
+msgstr "Ingen kontoer"
 
 #: ../gui/muc_room.go:203
 msgid ""
@@ -3477,7 +3505,7 @@ msgstr ""
 
 #: ../gui/muc_room.go:206 ../gui/muc_room.go:734
 msgid "Yes, try again"
-msgstr ""
+msgstr "Ja, prøv igjen"
 
 #: ../gui/muc_room.go:266
 msgid ""
@@ -3486,7 +3514,7 @@ msgstr ""
 
 #: ../gui/muc_room.go:376
 msgid "The room has been destroyed"
-msgstr ""
+msgstr "Rommet har blitt ødelagt"
 
 #: ../gui/muc_room.go:511
 msgid "The room subject couldn't be updated."
@@ -3522,7 +3550,7 @@ msgstr ""
 
 #: ../gui/muc_room.go:793
 msgid "Connecting to the room..."
-msgstr ""
+msgstr "Kobler til rommet …"
 
 #: ../gui/muc_room_config_component.go:131
 msgid ""
@@ -3576,39 +3604,39 @@ msgstr ""
 
 #: ../gui/muc_room_config_component.go:157 ../gui/muc_room_roster.go:406
 msgid "Moderators"
-msgstr ""
+msgstr "Moderatorer"
 
 #: ../gui/muc_room_config_component.go:163
 msgid "Anyone"
-msgstr ""
+msgstr "Alle"
 
 #: ../gui/muc_room_config_component.go:165
 msgid "Nobody"
-msgstr ""
+msgstr "Ingen"
 
 #: ../gui/muc_room_config_component.go:167
 msgid "No maximum"
-msgstr ""
+msgstr "Uten tak"
 
 #: ../gui/muc_room_config_component.go:169
 msgid "10"
-msgstr ""
+msgstr "10"
 
 #: ../gui/muc_room_config_component.go:171
 msgid "20"
-msgstr ""
+msgstr "20"
 
 #: ../gui/muc_room_config_component.go:173
 msgid "30"
-msgstr ""
+msgstr "30"
 
 #: ../gui/muc_room_config_component.go:175
 msgid "50"
-msgstr ""
+msgstr "50"
 
 #: ../gui/muc_room_config_component.go:177
 msgid "100"
-msgstr ""
+msgstr "100"
 
 #: ../gui/muc_room_roster.go:293
 msgid "%s (%v)"
@@ -3617,11 +3645,11 @@ msgstr ""
 #: ../gui/muc_room_roster.go:327
 #, python-format
 msgid "%s (You)"
-msgstr ""
+msgstr "%s (deg)"
 
 #: ../gui/muc_room_roster.go:387 ../gui/muc_room_occupant_affiliation.go:169
 msgid "Admin"
-msgstr ""
+msgstr "Administrator"
 
 #: ../gui/muc_room_roster.go:391 ../gui/muc_room_occupant_affiliation.go:173
 msgid "Outcast"
@@ -3653,19 +3681,19 @@ msgstr ""
 
 #: ../gui/muc_room_loading.go:29
 msgid "Joining room..."
-msgstr ""
+msgstr "Tar del i rom …"
 
 #: ../gui/muc_room_loading.go:36
 msgid "Destroying room..."
-msgstr ""
+msgstr "Ødelegger rommet …"
 
 #: ../gui/muc_room_loading.go:43
 msgid "Updating position..."
-msgstr ""
+msgstr "Oppdaterer posisjon …"
 
 #: ../gui/muc_room_loading.go:50
 msgid "Updating role..."
-msgstr ""
+msgstr "Oppdaterer rolle …"
 
 #: ../gui/muc_room_loading.go:52
 msgid "Expelling person from the room..."
@@ -3681,11 +3709,11 @@ msgstr ""
 
 #: ../gui/muc_room_loading.go:75
 msgid "Saving room positions..."
-msgstr ""
+msgstr "Lagrer romposisjoner …"
 
 #: ../gui/importer.go:53
 msgid "Unable to Import Account"
-msgstr ""
+msgstr "Kunne ikke importere konto"
 
 #: ../gui/importer.go:53
 msgid ""
@@ -3696,15 +3724,15 @@ msgstr ""
 
 #: ../gui/importer.go:296
 msgid "Import private keys"
-msgstr ""
+msgstr "Importer private nøkler"
 
 #: ../gui/importer.go:301 ../gui/importer.go:350
 msgid "_Import"
-msgstr ""
+msgstr "_Importer"
 
 #: ../gui/importer.go:310
 msgid "Keys imported"
-msgstr ""
+msgstr "Nøkler importert"
 
 #: ../gui/importer.go:310
 msgid "The key was imported correctly."
@@ -3712,24 +3740,24 @@ msgstr ""
 
 #: ../gui/importer.go:312
 msgid "Failure importing keys"
-msgstr ""
+msgstr "Klarte ikke å importere nøkler"
 
 #: ../gui/importer.go:312
 #, python-format
 msgid "Couldn't import any keys from %s."
-msgstr ""
+msgstr "Kunne ikke importere noen nøkler fra %s."
 
 #: ../gui/importer.go:321
 msgid "Export private keys"
-msgstr ""
+msgstr "Eksporter private nøkler"
 
 #: ../gui/importer.go:326 ../gui/importer.go:372
 msgid "_Export"
-msgstr ""
+msgstr "_Eksporter"
 
 #: ../gui/importer.go:335
 msgid "Keys exported"
-msgstr ""
+msgstr "Nøkler eksportert"
 
 #: ../gui/importer.go:335
 msgid "Keys were exported correctly."
@@ -3737,20 +3765,20 @@ msgstr ""
 
 #: ../gui/importer.go:337
 msgid "Failure exporting keys"
-msgstr ""
+msgstr "Klarte ikke å eksportere nøkler"
 
 #: ../gui/importer.go:337
 #, python-format
 msgid "Couldn't export keys to %s."
-msgstr ""
+msgstr "Kunne ikke eksportere nøkler til %s."
 
 #: ../gui/importer.go:345
 msgid "Import fingerprints"
-msgstr ""
+msgstr "Importer fingeravtrykk"
 
 #: ../gui/importer.go:357
 msgid "Fingerprints imported"
-msgstr ""
+msgstr "Fingeravtrykk importert"
 
 #: ../gui/importer.go:357
 #, python-format
@@ -4015,11 +4043,11 @@ msgstr ""
 
 #: ../gui/muc_room_config.go:173
 msgid "This room doesn't support user registration."
-msgstr ""
+msgstr "Dette rommet støtter ikke brukerregistrering."
 
 #: ../gui/muc_room_config.go:178
 msgid "This room is now persistent."
-msgstr ""
+msgstr "Dette rommet er nå vedvarende."
 
 #: ../gui/muc_room_config.go:180
 msgid "This room is not persistent anymore."
@@ -4098,8 +4126,9 @@ msgid "There are no connected accounts."
 msgstr ""
 
 #: ../gui/account.go:154
+#, fuzzy
 msgid "Unable to Add Account"
-msgstr ""
+msgstr "Kunne ikke legge til konto"
 
 #: ../gui/account.go:154
 msgid ""
@@ -4110,7 +4139,7 @@ msgstr ""
 
 #: ../gui/account.go:164
 msgid "Account added"
-msgstr ""
+msgstr "Konto lagt til"
 
 #: ../gui/account.go:164
 #, python-format
@@ -4119,35 +4148,36 @@ msgstr ""
 
 #: ../gui/account.go:242
 msgid "_Check Connection"
-msgstr ""
+msgstr "_Sjekk tilkobling"
 
 #: ../gui/account.go:255
 msgid "_Connect"
-msgstr ""
+msgstr "_Koble til"
 
 #: ../gui/account.go:265
 msgid "_Disconnect"
-msgstr ""
+msgstr "_Koble fra"
 
 #: ../gui/account.go:283
 msgid "Connection _information..."
-msgstr ""
+msgstr "Tilkoblings_info …"
 
 #: ../gui/account.go:299
 msgid "_Change Password..."
-msgstr ""
+msgstr "_Endre passord …"
 
 #: ../gui/account.go:312
 msgid "Connect _Automatically"
-msgstr ""
+msgstr "Koble til _automatisk …"
 
 #: ../gui/account.go:319
+#, fuzzy
 msgid "Always Encrypt Conversation"
-msgstr ""
+msgstr "Alltid krypter samtaler"
 
 #: ../gui/account.go:340
 msgid "XML Console"
-msgstr ""
+msgstr "XML-konsoll"
 
 #: ../gui/account.go:441
 #, python-format
@@ -4188,7 +4218,7 @@ msgstr ""
 
 #: ../gui/muc_room_warnings.go:50
 msgid "Non-anonymous room"
-msgstr ""
+msgstr "Ikke-anonymt rom"
 
 #: ../gui/muc_room_warnings.go:51
 msgid ""

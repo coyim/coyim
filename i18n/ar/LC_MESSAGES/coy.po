@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-08 16:02+0000\n"
+"POT-Creation-Date: 2021-09-09 17:10+0000\n"
 "PO-Revision-Date: 2021-09-08 16:02+0000\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -29,7 +29,7 @@ msgstr ""
 #: ../gui/definitions/GroupDetails.xml:35 ../gui/definitions/Importer.xml:92
 #: ../gui/definitions/MasterPassword.xml:43
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:29
-#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:62
+#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:108
 #: ../gui/definitions/MUCRoomConfigListAddDialog.xml:19
 #: ../gui/definitions/MUCRoomDestroyDialogError.xml:23
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:24
@@ -39,7 +39,7 @@ msgstr ""
 #: ../gui/definitions/MUCRoomToolbar.xml:362
 #: ../gui/definitions/PeerDetails.xml:191
 #: ../gui/definitions/RegistrationForm.xml:35
-#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:528
+#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:529
 #: ../gui/file_transfer_notification.go:125
 #: ../gui/file_transfer_notification.go:401
 msgid "Cancel"
@@ -1065,17 +1065,20 @@ msgid ""
 msgstr ""
 
 #: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:4
-#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:76
-#: ../gui/muc_room_close_confirm.go:51
 msgid "Close room"
 msgstr ""
 
-#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:22
+#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:53
 msgid "Do you want to leave the room?"
 msgstr ""
 
-#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:34
+#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:74
 msgid "Yes, leave the room"
+msgstr ""
+
+#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:122
+#: ../gui/muc_room_close_confirm.go:55
+msgid "Close Room"
 msgstr ""
 
 #: ../gui/definitions/MUCRoomConfigAssistant.xml:4
@@ -1146,7 +1149,7 @@ msgstr ""
 msgid "Are you sure you want to cancel the room creation? "
 msgstr ""
 
-#: ../gui/definitions/MUCRoomConversation.xml:123 ../gui/file_transfer.go:268
+#: ../gui/definitions/MUCRoomConversation.xml:122 ../gui/file_transfer.go:268
 msgid "Send"
 msgstr ""
 
@@ -3464,34 +3467,34 @@ msgstr ""
 msgid "No accounts"
 msgstr ""
 
-#: ../gui/muc_room.go:202
+#: ../gui/muc_room.go:203
 msgid ""
 "Loading the room information took longer than usual, perhaps the connection "
 "to the server was lost. Do you want to try again?"
 msgstr ""
 
-#: ../gui/muc_room.go:205 ../gui/muc_room.go:735
+#: ../gui/muc_room.go:206 ../gui/muc_room.go:734
 msgid "Yes, try again"
 msgstr ""
 
-#: ../gui/muc_room.go:265
+#: ../gui/muc_room.go:266
 msgid ""
 "You have been removed from this room because it's now a members only room."
 msgstr ""
 
-#: ../gui/muc_room.go:375
+#: ../gui/muc_room.go:376
 msgid "The room has been destroyed"
 msgstr ""
 
-#: ../gui/muc_room.go:510
+#: ../gui/muc_room.go:511
 msgid "The room subject couldn't be updated."
 msgstr ""
 
-#: ../gui/muc_room.go:517
+#: ../gui/muc_room.go:518
 msgid "The room subject has been updated."
 msgstr ""
 
-#: ../gui/muc_room.go:530
+#: ../gui/muc_room.go:531
 msgid "Return"
 msgstr ""
 
@@ -3499,23 +3502,23 @@ msgstr ""
 msgid "Your connection has been restored; you can join this room again."
 msgstr ""
 
-#: ../gui/muc_room.go:728
+#: ../gui/muc_room.go:727
 msgid ""
 "Your connection was recovered but loading the room information took longer "
 "than usual, perhaps the connection to the server was lost. Do you want to "
 "try again?"
 msgstr ""
 
-#: ../gui/muc_room.go:741
+#: ../gui/muc_room.go:740
 msgid "Trying to connect to the room..."
 msgstr ""
 
-#: ../gui/muc_room.go:784 ../gui/muc_room_conversation.go:212
+#: ../gui/muc_room.go:781
 msgid ""
 "The connection to the server has been lost, please verify your connection."
 msgstr ""
 
-#: ../gui/muc_room.go:797
+#: ../gui/muc_room.go:793
 msgid "Connecting to the room..."
 msgstr ""
 
@@ -3856,7 +3859,7 @@ msgstr ""
 msgid "You must provide a valid account address."
 msgstr ""
 
-#: ../gui/ui.go:605
+#: ../gui/ui.go:611
 msgid ""
 "You are trying to connect to a Google account - sometimes Google will not "
 "allow connections even if you have entered the correct password. Try turning "
@@ -3864,15 +3867,15 @@ msgid ""
 "access the account (don't worry, CoyIM is plenty secure)."
 msgstr ""
 
-#: ../gui/ui.go:663
+#: ../gui/ui.go:669
 msgid "CoyIM!"
 msgstr ""
 
-#: ../gui/ui.go:743
+#: ../gui/ui.go:749
 msgid "There is no account with the id %q"
 msgstr ""
 
-#: ../gui/ui.go:747
+#: ../gui/ui.go:753
 msgid "Can't send a contact request from an offline account"
 msgstr ""
 
@@ -3962,7 +3965,7 @@ msgstr ""
 msgid "Remove all"
 msgstr ""
 
-#: ../gui/infobar_component.go:154
+#: ../gui/infobar_component.go:155
 msgid "January 2, 2006 at 15:04:05"
 msgstr ""
 
@@ -4559,7 +4562,7 @@ msgstr ""
 msgid "%[1]s [%[2]s]"
 msgstr ""
 
-#: ../gui/muc_room_conversation_display.go:164
+#: ../gui/muc_room_conversation_display.go:163
 msgid ""
 "You can no longer receive any messages in this room and the list of people "
 "in the room will not be updated anymore."
@@ -4713,28 +4716,24 @@ msgid ""
 "%[2]s"
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:223
+#: ../gui/muc_room_conversation.go:220
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an owner}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:225
+#: ../gui/muc_room_conversation.go:222
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an administrator}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:227
+#: ../gui/muc_room_conversation.go:224
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{a member}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:229
+#: ../gui/muc_room_conversation.go:226
 #, python-format
 msgid "$nickname{%s} has been added to the ban list."
-msgstr ""
-
-#: ../gui/muc_room_conversation.go:272
-msgid "Your connection was restored."
 msgstr ""
 
 #: ../gui/file_transfer_notification.go:148
@@ -5181,6 +5180,6 @@ msgstr ""
 msgid "Checking password..."
 msgstr ""
 
-#: ../gui/muc_room_close_confirm.go:53
-msgid "Close & leave room"
+#: ../gui/muc_room_close_confirm.go:57
+msgid "Close & Leave Room"
 msgstr ""

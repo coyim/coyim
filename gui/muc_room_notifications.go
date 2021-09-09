@@ -45,12 +45,12 @@ type roomNotificationAction struct {
 type roomNotificationActions []roomNotificationAction
 
 type roomNotificationOptions struct {
-	message     string
-	showTime    bool
-	showSpinner bool
-	closeable   bool
-	mustRemain  bool
-	actions     roomNotificationActions
+	message           string
+	showTime          bool
+	showSpinner       bool
+	closeable         bool
+	onlyCloseManually bool
+	actions           roomNotificationActions
 }
 
 // other MUST be called from the UI thread
@@ -91,7 +91,7 @@ func (rn *roomNotifications) newNotification(mt gtki.MessageType, n roomNotifica
 		})
 	}
 
-	nb.mustRemain = n.mustRemain
+	nb.onlyCloseManually = n.onlyCloseManually
 
 	for _, action := range n.actions {
 		nb.addAction(action.label, action.responseType, action.signals)

@@ -856,7 +856,7 @@ func getAffiliationRoleUpateForAffiliationRemovedWithoutActor(affiliationRoleUpd
 		return i18n.Localf("$nickname{%s} is not $affiliation{a member} anymore.",
 			affiliationRoleUpdate.Nickname)
 	}
-	return i18n.Localf("$nickname{%s} is $affiliation{not banned} anymore.",
+	return i18n.Localf("$nickname{%s} is not banned anymore.",
 		affiliationRoleUpdate.Nickname)
 }
 
@@ -885,7 +885,7 @@ func getAffiliationRoleUpateForAffiliationRemovedWithOwnerActor(affiliationRoleU
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	}
-	return i18n.Localf("The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is $affiliation{not banned} anymore.",
+	return i18n.Localf("The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is not banned anymore.",
 		affiliationRoleUpdate.Actor.Nickname,
 		affiliationRoleUpdate.Nickname)
 }
@@ -905,7 +905,7 @@ func getAffiliationRoleUpateForAffiliationRemovedWithAdminActor(affiliationRoleU
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	}
-	return i18n.Localf("The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is $affiliation{not banned} anymore.",
+	return i18n.Localf("The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is not banned anymore.",
 		affiliationRoleUpdate.Actor.Nickname,
 		affiliationRoleUpdate.Nickname)
 }
@@ -925,7 +925,7 @@ func getAffiliationRoleUpateForAffiliationRemovedForActor(affiliationRoleUpdate 
 			affiliationRoleUpdate.Actor.Nickname,
 			affiliationRoleUpdate.Nickname)
 	}
-	return i18n.Localf("$nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is $affiliation{not banned} anymore.",
+	return i18n.Localf("$nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} is not banned anymore.",
 		affiliationRoleUpdate.Actor.Nickname,
 		affiliationRoleUpdate.Nickname)
 }

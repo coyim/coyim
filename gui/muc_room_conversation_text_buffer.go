@@ -29,7 +29,15 @@ const newLineText = "\n"
 
 // addNewLine MUST be called from the UI thread
 func (c *roomViewConversation) addNewLine() {
-	c.addText(newLineText)
+	if c.hasContentDisplayed() {
+		c.addText(newLineText)
+	}
+}
+
+// hasContentDisplayed MUST be called from the UI thread
+func (c *roomViewConversation) hasContentDisplayed() bool {
+	b := c.getTextBuffer()
+	return b.GetText(b.GetStartIter(), b.GetEndIter(), false) != ""
 }
 
 // addText MUST be called from the UI thread

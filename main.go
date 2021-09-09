@@ -4,7 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/signal"
 	"runtime/pprof"
+	"syscall"
 
 	log "github.com/sirupsen/logrus"
 
@@ -47,6 +49,27 @@ func mainInit() {
 	}
 }
 
+var logFile *os.File
+
+func initLogFile(name string) {
+	var err error
+	logFile, err = os.OpenFile(name, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	if err != nil {
+		log.WithError(err).WithField("file", name).Error("Couldn't open file for logging")
+		return
+	}
+
+	log.SetOutput(logFile)
+
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-sigs
+		logFile.Close()
+		os.Exit(1)
+	}()
+}
+
 func initLog() {
 	log.SetLevel(log.InfoLevel)
 	if *config.DebugFlag {
@@ -55,6 +78,10 @@ func initLog() {
 	if *config.TraceFlag {
 		log.SetLevel(log.TraceLevel)
 	}
+	if *config.LogFile != "" {
+		initLogFile(*config.LogFile)
+	}
+
 	log.SetReportCaller(*config.DebugFunctionCalls)
 }
 
@@ -100,9 +127,15 @@ func main() {
 	defer stopProfileIfNecessary()
 
 	initLog()
+
+	log.WithField("version", coyimVersion).Info("Welcome to CoyIM!")
+
 	initTranslations()
 	runClient()
 	printFinalNewline()
+	if logFile != nil {
+		logFile.Close()
+	}
 }
 
 type looper interface {

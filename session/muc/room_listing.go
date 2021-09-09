@@ -1,7 +1,6 @@
 package muc
 
 import (
-	"fmt"
 	"strconv"
 	"sync"
 
@@ -136,8 +135,6 @@ func (rl *RoomListing) setFeature(feature string) {
 		rl.Public = true
 	case "muc_hidden":
 		rl.Public = false
-	default:
-		fmt.Printf("UNKNOWN FEATURE: %s\n", feature)
 	}
 }
 
@@ -221,8 +218,6 @@ func (rl *RoomListing) updateWithFormField(field string, values []string) {
 				rl.MaxHistoryFetch = res
 			}
 		}
-	default:
-		fmt.Printf("UNKNOWN FORM VAR: %s\n", field)
 	}
 }
 

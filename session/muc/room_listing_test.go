@@ -126,12 +126,6 @@ func captureStdout(f func()) string {
 	return buf.String()
 }
 
-func (*MucRoomListingSuite) Test_RoomListing_setFeature_unknownFeature(c *C) {
-	rl := &RoomListing{}
-	stdout := captureStdout(func() { rl.setFeature("something unknown") })
-	c.Assert(stdout, Equals, "UNKNOWN FEATURE: something unknown\n")
-}
-
 func (*MucRoomListingSuite) Test_RoomListing_SetFormsData(c *C) {
 	rl := &RoomListing{}
 	rl.SetFormsData(nil)
@@ -227,10 +221,4 @@ func (*MucRoomListingSuite) Test_RoomListing_updateWithFormField(c *C) {
 	c.Assert(rl.MaxHistoryFetch, Equals, 42)
 	rl.updateWithFormField("muc#maxhistoryfetch", []string{"55"})
 	c.Assert(rl.MaxHistoryFetch, Equals, 55)
-}
-
-func (*MucRoomListingSuite) Test_RoomListing_updateWithFormField_fails(c *C) {
-	rl := &RoomListing{}
-	stdout := captureStdout(func() { rl.updateWithFormField("something unknown", []string{}) })
-	c.Assert(stdout, Equals, "UNKNOWN FORM VAR: something unknown\n")
 }

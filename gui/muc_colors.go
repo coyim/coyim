@@ -11,8 +11,9 @@ const (
 	colorThemeBackground            = "@theme_bg_color"
 	colorThemeForeground            = "@theme_fg_color"
 	colorThemeInsensitiveBackground = "@insensitive_bg_color"
-	colorThemeInsensitiveForeground = "@insensitive_fg_color"
 )
+
+var colorThemeInsensitiveForeground = colorFormat(rgb{131, 119, 119}, 1)
 
 type mucColorSet struct {
 	warningForeground                      string

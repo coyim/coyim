@@ -9,7 +9,7 @@
         <property name="spacing">10</property>
         <child>
           <object class="GtkLabel" id="message">
-            <property name="label" translatable="yes">The file you choose contains more than one private key. Choose from the list below the key you would like to import.</property>
+            <property name="label" translatable="yes">The file you chose contains more than one private key. Choose from the list below the key you would like to import.</property>
             <property name="wrap">true</property>
           </object>
           <packing>

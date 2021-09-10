@@ -28,19 +28,21 @@ func (qt informationQueryType) String() string {
 }
 
 type mucRequest struct {
-	roomID       jid.Bare
-	conn         xi.Conn
-	errorChannel chan error
-	onResponse   func(response []byte) error
-	log          coylog.Logger
+	roomID            jid.Bare
+	conn              xi.Conn
+	errorChannel      chan error
+	onResponse        func(response []byte) error
+	addIgnorePresence func(presence string)
+	log               coylog.Logger
 }
 
 func (m *mucManager) newMUCRoomRequest(roomID jid.Bare, requestType mucRequestType, onResponse func(response []byte) error) *mucRequest {
 	return &mucRequest{
-		roomID:       roomID,
-		conn:         m.conn(),
-		errorChannel: make(chan error),
-		onResponse:   onResponse,
+		roomID:            roomID,
+		conn:              m.conn(),
+		errorChannel:      make(chan error),
+		addIgnorePresence: m.addIgnorePresence,
+		onResponse:        onResponse,
 		log: m.log.WithFields(log.Fields{
 			"where":       "mucRequest",
 			"requestType": requestType.String(),
@@ -104,7 +106,9 @@ func errorBasedOnStanzaError(se data.StanzaError) error {
 }
 
 func (r *mucRequest) sendMUCPresence() bool {
-	_, err := r.conn.SendMUCPresence(r.roomID.String(), &data.MUC{})
+	presenceID, err := r.conn.SendMUCPresence(r.roomID.String(), &data.MUC{})
+	r.addIgnorePresence(presenceID)
+
 	if err != nil {
 		r.error(ErrUnexpectedResponse)
 		return false

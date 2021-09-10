@@ -234,20 +234,19 @@ func (m *mucManager) addIgnorePresence(presence string) {
 	m.presenceToIgnore[presence] = true
 }
 
-func (m *mucManager) removeIgnorePresence(presence string) bool {
-	m.presenceToIgnoreLock.Lock()
-	defer m.presenceToIgnoreLock.Unlock()
+func (s *session) removePresenceIgnored(presence string) {
+	s.muc.presenceToIgnoreLock.Lock()
+	defer s.muc.presenceToIgnoreLock.Unlock()
 
-	if ignore, ok := m.presenceToIgnore[presence]; ok && ignore {
-		delete(m.presenceToIgnore, presence)
-		return true
+	if ignore, ok := s.muc.presenceToIgnore[presence]; ok && ignore {
+		delete(s.muc.presenceToIgnore, presence)
 	}
-	return false
 }
 
-func (s *session) removeIgnorePresence(presence string) bool {
+func (s *session) shouldIgnore(presence string) bool {
 	if s.muc != nil {
-		return s.muc.removeIgnorePresence(presence)
+		_, ok := s.muc.presenceToIgnore[presence]
+		return ok
 	}
 	return false
 }

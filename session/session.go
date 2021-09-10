@@ -269,7 +269,8 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 	jj := jid.Parse(stanza.From)
 	jjnr := jj.NoResource()
 
-	if s.removeIgnorePresence(stanza.ID) {
+	if s.shouldIgnore(stanza.ID) {
+		s.removePresenceIgnored(stanza.ID)
 		return true
 	}
 

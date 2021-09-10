@@ -112,6 +112,13 @@ func (rn *roomNotifications) remove(nb *notificationBar) {
 	}
 }
 
+// removeAll MUST be called from the UI thread
+func (rn *roomNotifications) removeAll(nbs ...*notificationBar) {
+	for _, nb := range append([]*notificationBar{}, nbs...) {
+		rn.remove(nb)
+	}
+}
+
 // notificationsBox MUST be called from the UI thread
 func (rn *roomNotifications) notificationsBox() gtki.Widget {
 	return rn.notifications.contentBox()

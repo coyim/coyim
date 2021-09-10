@@ -25,17 +25,21 @@ type mucManager struct {
 	roomManager *muc.RoomManager
 	roomLock    sync.Mutex
 
+	presenceToIgnore     map[string]bool
+	presenceToIgnoreLock sync.Mutex
+
 	roomConfigChangesHandlers     map[int]func(jid.Bare)
 	roomConfigChangesHandlersLock sync.Mutex
 }
 
 func newMUCManager(log coylog.Logger, conn func() xi.Conn, publishEvent func(ev interface{})) *mucManager {
 	m := &mucManager{
-		log:          log,
-		conn:         conn,
-		publishEvent: publishEvent,
-		roomManager:  muc.NewRoomManager(),
-		roomInfos:    make(map[jid.Bare]*muc.RoomListing),
+		log:              log,
+		conn:             conn,
+		publishEvent:     publishEvent,
+		roomManager:      muc.NewRoomManager(),
+		roomInfos:        make(map[jid.Bare]*muc.RoomListing),
+		presenceToIgnore: make(map[string]bool),
 	}
 
 	return m
@@ -221,6 +225,31 @@ func (m *mucManager) handleMUCErrorPresence(from string, e *xmppData.StanzaError
 
 func (m *mucManager) handleMUCErrorMessage(roomID jid.Bare, e *xmppData.StanzaError) {
 	m.publishMUCMessageError(roomID, e)
+}
+
+func (m *mucManager) addIgnorePresence(presence string) {
+	m.presenceToIgnoreLock.Lock()
+	defer m.presenceToIgnoreLock.Unlock()
+
+	m.presenceToIgnore[presence] = true
+}
+
+func (m *mucManager) removeIgnorePresence(presence string) bool {
+	m.presenceToIgnoreLock.Lock()
+	defer m.presenceToIgnoreLock.Unlock()
+
+	if ignore, ok := m.presenceToIgnore[presence]; ok && ignore {
+		delete(m.presenceToIgnore, presence)
+		return true
+	}
+	return false
+}
+
+func (s *session) removeIgnorePresence(presence string) bool {
+	if s.muc != nil {
+		return s.muc.removeIgnorePresence(presence)
+	}
+	return false
 }
 
 func isMUCPresence(stanza *xmppData.ClientPresence) bool {

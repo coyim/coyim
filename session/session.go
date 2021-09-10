@@ -269,6 +269,10 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 	jj := jid.Parse(stanza.From)
 	jjnr := jj.NoResource()
 
+	if s.removeIgnorePresence(stanza.ID) {
+		return true
+	}
+
 	switch stanza.Type {
 	case "subscribe":
 		jjr := jjnr.String()

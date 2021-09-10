@@ -226,7 +226,7 @@
                                 <property name="sizing">autosize</property>
                                 <property name="fixed_width">200</property>
                                 <property name="min_width">150</property>
-                                <property name="title">Name</property>
+                                <property name="title" translatable="true">Name</property>
                                 <property name="expand">True</property>
                                 <property name="clickable">True</property>
                                 <property name="sort_indicator">True</property>
@@ -245,7 +245,7 @@
                                 <property name="sizing">autosize</property>
                                 <property name="fixed_width">150</property>
                                 <property name="min_width">50</property>
-                                <property name="title">ID</property>
+                                <property name="title" translatable="true">ID</property>
                                 <property name="clickable">True</property>
                                 <property name="sort_indicator">True</property>
                                 <property name="sort_column_id">0</property>
@@ -263,7 +263,7 @@
                                 <property name="sizing">autosize</property>
                                 <property name="fixed_width">200</property>
                                 <property name="min_width">100</property>
-                                <property name="title">Description</property>
+                                <property name="title" translatable="true">Description</property>
                                 <property name="expand">True</property>
                                 <property name="clickable">True</property>
                                 <property name="sort_indicator">True</property>
@@ -282,7 +282,7 @@
                                 <property name="sizing">autosize</property>
                                 <property name="fixed_width">100</property>
                                 <property name="min_width">50</property>
-                                <property name="title">Occupants</property>
+                                <property name="title" translatable="true">People</property>
                                 <property name="clickable">True</property>
                                 <property name="sort_indicator">True</property>
                                 <property name="sort_column_id">4</property>

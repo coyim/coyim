@@ -128,3 +128,7 @@ func (*RealGlib) SetFinalizerStrategy(f func(func())) {
 		f(ff)
 	}
 }
+
+func (*RealGlib) MarkupEscapeText(input string) string {
+	return glib.MarkupEscapeText(input)
+}

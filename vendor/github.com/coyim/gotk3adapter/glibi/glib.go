@@ -37,6 +37,8 @@ type Glib interface {
 	PropertyActionNew(name string, object Object, propertyName string) PropertyAction
 
 	SetFinalizerStrategy(func(func()))
+
+	MarkupEscapeText(string) string
 } // end of Glib
 
 func AssertGlib(_ Glib) {}

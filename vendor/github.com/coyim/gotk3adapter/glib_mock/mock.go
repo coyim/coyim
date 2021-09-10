@@ -116,3 +116,7 @@ func (*Mock) PropertyActionNew(name string, object glibi.Object, propertyName st
 
 func (*Mock) SetFinalizerStrategy(func(func())) {
 }
+
+func (*Mock) MarkupEscapeText(string) string {
+	return ""
+}

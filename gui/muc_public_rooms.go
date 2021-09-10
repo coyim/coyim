@@ -34,7 +34,7 @@ func (u *gtkUI) updatedRoomListing(rl *muc.RoomListing, data interface{}) {
 	// If we get an old update, we don't want to do anything at all
 	if d.view.generation == d.generation {
 		doInUIThread(func() {
-			_ = d.view.roomsModel.SetValue(d.iter, mucListRoomsIndexDescription, rl.Description)
+			_ = d.view.roomsModel.SetValue(d.iter, mucListRoomsIndexDescription, g.glib.MarkupEscapeText(rl.Description))
 			_ = d.view.roomsModel.SetValue(d.iter, mucListRoomsIndexOccupants, rl.Occupants)
 		})
 	}
@@ -374,8 +374,8 @@ func (prv *mucPublicRoomsView) addNewServiceToModel(roomName, serviceName string
 	serv := prv.roomsModel.Append(nil)
 
 	prv.serviceGroups[roomName] = serv
-	_ = prv.roomsModel.SetValue(serv, mucListRoomsIndexJid, roomName)
-	_ = prv.roomsModel.SetValue(serv, mucListRoomsIndexName, serviceName)
+	_ = prv.roomsModel.SetValue(serv, mucListRoomsIndexJid, g.glib.MarkupEscapeText(roomName))
+	_ = prv.roomsModel.SetValue(serv, mucListRoomsIndexName, g.glib.MarkupEscapeText(serviceName))
 
 	return serv
 }
@@ -384,7 +384,7 @@ func (prv *mucPublicRoomsView) addNewRoomToModel(parentIter gtki.TreeIter, rl *m
 	iter := prv.roomsModel.Append(parentIter)
 
 	_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexJid, rl.Jid.Local().String())
-	_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexName, rl.Name)
+	_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexName, g.glib.MarkupEscapeText(rl.Name))
 	_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexService, rl.Service.String())
 
 	// This will block while finding an unused identifier. However, since

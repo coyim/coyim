@@ -61,8 +61,8 @@ type roomView struct {
 	backToPreviousStep func()
 	onJoinFinished     *callbacksSet // onJoinFinished WILL be called from the UI thread
 
-	notifications             *roomNotifications
-	connectingNotificationBar *notificationBar
+	notifications           *roomNotifications
+	connectingNotifications []*notificationBar
 
 	warnings           *roomViewWarnings
 	warningsInfoBar    *roomViewWarningsInfoBar
@@ -709,7 +709,7 @@ func (v *roomView) handleDiscoInfoTimeout() {
 
 // onReconnectingRoomInfoReceived MUST be called from the UI thread
 func (v *roomView) onReconnectingRoomInfoReceived(di data.RoomDiscoInfo) {
-	v.notifications.remove(v.connectingNotificationBar)
+	v.notifications.removeAll(v.connectingNotifications...)
 	v.notifications.info(
 		roomNotificationOptions{
 			message:   i18n.Local("Your connection has been restored; you can join this room again."),
@@ -722,7 +722,7 @@ func (v *roomView) onReconnectingRoomInfoReceived(di data.RoomDiscoInfo) {
 
 // onReconnectingRoomInfoTimeout MUST be called from the UI thread
 func (v *roomView) onReconnectingRoomInfoTimeout() {
-	v.notifications.remove(v.connectingNotificationBar)
+	v.notifications.removeAll(v.connectingNotifications...)
 	v.notifications.error(roomNotificationOptions{
 		message: i18n.Local("Your connection was recovered but " +
 			"loading the room information took longer than usual, " +
@@ -789,11 +789,12 @@ func (v *roomView) selfOccupantDisconnectedEvent() {
 
 // selfOccupantConnectingEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantConnectingEvent() {
-	v.connectingNotificationBar = v.notifications.newNotification(gtki.MESSAGE_OTHER, roomNotificationOptions{
+	n := v.notifications.newNotification(gtki.MESSAGE_OTHER, roomNotificationOptions{
 		message:     i18n.Local("Connecting to the room..."),
 		showTime:    true,
 		showSpinner: true,
 	})
+	v.connectingNotifications = append(v.connectingNotifications, n)
 }
 
 // mainWindow MUST be called from the UI thread

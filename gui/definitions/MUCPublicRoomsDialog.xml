@@ -234,7 +234,7 @@
                                 <child>
                                   <object class="GtkCellRendererText" id="name-column-rendered"/>
                                   <attributes>
-                                    <attribute name="text">1</attribute>
+                                    <attribute name="markup">1</attribute>
                                   </attributes>
                                 </child>
                               </object>
@@ -271,7 +271,7 @@
                                 <child>
                                   <object class="GtkCellRendererText" id="description-column-rendered"/>
                                   <attributes>
-                                    <attribute name="text">3</attribute>
+                                    <attribute name="markup">3</attribute>
                                   </attributes>
                                 </child>
                               </object>

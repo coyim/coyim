@@ -93,7 +93,7 @@ func (c *roomViewConversation) displayDiscussionHistoryDate(d time.Time) {
 
 	c.chatTextView.SetJustification(gtki.JUSTIFY_CENTER)
 
-	c.addTextWithTag(timeToFriendlyString(d), conversationTagDateGroup)
+	c.addTextWithTag(timeToFriendlyDate(d), conversationTagDateGroup)
 }
 
 // displayDiscussionHistoryMessages MUST be called from the UI thread

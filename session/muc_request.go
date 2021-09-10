@@ -104,7 +104,8 @@ func errorBasedOnStanzaError(se data.StanzaError) error {
 }
 
 func (r *mucRequest) sendMUCPresence() bool {
-	if err := r.conn.SendMUCPresence(r.roomID.String(), &data.MUC{}); err != nil {
+	_, err := r.conn.SendMUCPresence(r.roomID.String(), &data.MUC{})
+	if err != nil {
 		r.error(ErrUnexpectedResponse)
 		return false
 	}

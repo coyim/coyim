@@ -93,7 +93,7 @@ func (s *PresenceXMPPSuite) Test_conn_SendMUCPresence_works(c *C) {
 		out: mockOut,
 	}
 
-	err := cn.SendMUCPresence("fo'o", &data.MUC{
+	_, err := cn.SendMUCPresence("fo'o", &data.MUC{
 		Password: "bla",
 	})
 	c.Assert(err, IsNil)

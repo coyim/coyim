@@ -44,13 +44,14 @@ func (c *conn) SendPresence(to, typ, id, status string) error {
 }
 
 // SendMUCPresence sends a presence as first step for create a new room
-func (c *conn) SendMUCPresence(to string, m *data.MUC) error {
+func (c *conn) SendMUCPresence(to string, m *data.MUC) (string, error) {
 	p := &data.ClientPresence{
 		To:  to,
 		MUC: m,
 	}
 
-	return c.sendPresence(p)
+	e := c.sendPresence(p)
+	return p.ID, e
 }
 
 // SignalPresence will signal the current presence

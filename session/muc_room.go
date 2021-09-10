@@ -14,7 +14,7 @@ func (s *session) JoinRoom(roomID jid.Bare, nickname string, password string) er
 	// TODO: The problem with this method is that it only _starts_ the process of joining the room
 	// It would be good to have a method that takes responsibility for the whole flow
 	to := roomID.WithResource(jid.NewResource(nickname))
-	err := s.conn.SendMUCPresence(to.String(), &data.MUC{Password: password})
+	_, err := s.conn.SendMUCPresence(to.String(), &data.MUC{Password: password})
 	if err != nil {
 		s.log.WithFields(log.Fields{
 			"room":     roomID,

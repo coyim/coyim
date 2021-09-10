@@ -3,6 +3,7 @@ package gui
 import (
 	"errors"
 	"math/rand"
+	"strings"
 	"sync"
 
 	"github.com/coyim/coyim/coylog"
@@ -383,8 +384,14 @@ func (prv *mucPublicRoomsView) addNewServiceToModel(roomName, serviceName string
 func (prv *mucPublicRoomsView) addNewRoomToModel(parentIter gtki.TreeIter, rl *muc.RoomListing, gen int) {
 	iter := prv.roomsModel.Append(parentIter)
 
-	_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexJid, rl.Jid.Local().String())
-	_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexName, g.glib.MarkupEscapeText(rl.Name))
+	id := rl.Jid.Local().String()
+	name := rl.Name
+	if strings.TrimSpace(name) == "" {
+		name = id
+	}
+
+	_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexJid, id)
+	_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexName, g.glib.MarkupEscapeText(name))
 	_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexService, rl.Service.String())
 
 	// This will block while finding an unused identifier. However, since

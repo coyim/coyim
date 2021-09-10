@@ -47,7 +47,7 @@ type ConnectionData interface {
 // Presence contains functionality related to signaling presence for the XMPP connection
 type Presence interface {
 	SendPresence(string, string, string, string) error
-	SendMUCPresence(string, *data.MUC) (cockie string, err error)
+	SendMUCPresence(string, *data.MUC) (presenceID string, err error)
 	SignalPresence(string) error
 }
 

@@ -169,7 +169,7 @@ func (*Conn) SendPresence(string, string, string, string) error {
 }
 
 // SendMUCPresence implements the XMPP connection interface
-func (*Conn) SendMUCPresence(string, *data.MUC) (cockie string, err error) {
+func (*Conn) SendMUCPresence(string, *data.MUC) (presenceID string, err error) {
 	return "", nil
 }
 

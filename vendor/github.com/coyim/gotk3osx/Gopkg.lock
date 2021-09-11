@@ -3,7 +3,7 @@
 
 [[projects]]
   branch = "main"
-  digest = "1:ae00fe15de39133dfa63f055dc29c6e5167ceef472c52344fabf3dc0128b0e3c"
+  digest = "1:f111532711c13d4c5371a4c48f2fb09988fa56794f1ee251c02880fdb5fe8d9e"
   name = "github.com/coyim/gotk3adapter"
   packages = [
     "gdka",
@@ -16,19 +16,19 @@
     "pangoi",
   ]
   pruneopts = "UT"
-  revision = "507cc30cc350a4c265df17230a7039a10b854d0e"
+  revision = "b2233985742304179983acbd1d499d1c1ae82b02"
 
 [[projects]]
   branch = "main"
-  digest = "1:747a4b41aed90e1cc0f87e2d089280a72cbf62fde4c830b80120947333b8204e"
+  digest = "1:16f52926d5ab5a807f6fecad459a640a4136736692ed8516055aacd892ccd7ca"
   name = "github.com/coyim/gotk3extra"
   packages = ["."]
   pruneopts = "UT"
-  revision = "ca5e6253054c55b0bc7c898f5c796f8b2394b10c"
+  revision = "5bc6dc4e0c794d4eae9dc886e639251c5e1d52a0"
 
 [[projects]]
   branch = "master"
-  digest = "1:0f165beb6fdcf9e1ff33bee21c30f1502f533987c8df43360188ccb338f4f271"
+  digest = "1:5173b3e86a1528977b16d06cdaa4a7f58c2e2841ea888290ffd005c6df6140fe"
   name = "github.com/gotk3/gotk3"
   packages = [
     "cairo",
@@ -41,7 +41,7 @@
     "pango",
   ]
   pruneopts = "UT"
-  revision = "beb3d8d8e677c861b09c075c3d2ff8a53e6a5f50"
+  revision = "bae3fb677ee0fc4a42ed9d5b4cb0baf392407fc7"
 
 [solve-meta]
   analyzer-name = "dep"

@@ -162,8 +162,8 @@ func roomConfigSupportsVoiceRequests(di data.RoomDiscoInfo) string {
 	if di.SupportsVoiceRequests {
 		return i18n.Local("Visitors can now request permission to speak.")
 	}
-	return i18n.Local("This room's doesn't support \"voice\" request " +
-		"now, which means that visitors can't ask for permission to speak.")
+	return i18n.Local("This room doesn't support \"voice\" requests " +
+		"anymore, which means that visitors can't ask for permission to speak.")
 }
 
 func roomConfigAllowsRegistration(di data.RoomDiscoInfo) string {

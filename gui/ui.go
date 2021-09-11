@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"runtime"
-	"sync"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -53,9 +52,6 @@ type gtkUI struct {
 	unified       *unifiedLayout
 	unifiedCached *unifiedLayout
 
-	internalConfig     *config.ApplicationConfig
-	internalConfigLock sync.Mutex
-
 	*accountManager
 
 	displaySettings  *displaySettings
@@ -88,7 +84,7 @@ type gtkUI struct {
 
 	ouit *outsideUIThread
 
-	haveConfigEntries *callbacksSet
+	configurable
 }
 
 // Graphics represent the graphic configuration
@@ -163,9 +159,9 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 		hooks:       hooks,
 
 		ouit: outuit,
-
-		haveConfigEntries: newCallbacksSet(),
 	}
+
+	ret.haveConfigEntries = newCallbacksSet()
 
 	ret.initMUC()
 
@@ -899,35 +895,4 @@ func (u *gtkUI) openConversationView(account *account, peer jid.Any, userInitiat
 
 func (u *gtkUI) openTargetedConversationView(account *account, peer jid.Any, userInitiated bool) conversationView {
 	return u.NewConversationViewFactory(account, peer, true).OpenConversationView(userInitiated)
-}
-
-func (u *gtkUI) config() *config.ApplicationConfig {
-	u.internalConfigLock.Lock()
-	defer u.internalConfigLock.Unlock()
-
-	c := u.internalConfig
-
-	return c
-}
-
-func (u *gtkUI) setConfig(c *config.ApplicationConfig) {
-	u.internalConfigLock.Lock()
-	u.internalConfig = c
-	u.internalConfigLock.Unlock()
-
-	u.haveConfig()
-}
-
-func (u *gtkUI) whenHaveConfig(f func()) {
-	if u.config() != nil {
-		f()
-		return
-	}
-	u.haveConfigEntries.add(f)
-}
-
-func (u *gtkUI) haveConfig() {
-	cs := u.haveConfigEntries
-	u.haveConfigEntries = nil
-	cs.invokeAll()
 }

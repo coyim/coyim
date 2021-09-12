@@ -8,16 +8,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-12 18:26+0000\n"
-"PO-Revision-Date: 2021-09-09 16:58+0000\n"
-"Last-Translator: sara-la-loca-de-los-gatos <sara@autonomia.digital>\n"
+"POT-Creation-Date: 2021-09-08 16:02+0000\n"
+"PO-Revision-Date: 2021-09-11 06:17+0000\n"
+"Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/coyim/main/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.8.1-dev\n"
+"X-Generator: Weblate 4.9-dev\n"
 
 #: ../gui/definitions/AccountDetails.xml:22
 #: ../gui/definitions/GlobalPreferences.xml:35
@@ -32,7 +32,7 @@ msgstr "Detalles de la cuenta"
 #: ../gui/definitions/GroupDetails.xml:35 ../gui/definitions/Importer.xml:92
 #: ../gui/definitions/MasterPassword.xml:43
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:29
-#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:108
+#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:62
 #: ../gui/definitions/MUCRoomConfigListAddDialog.xml:19
 #: ../gui/definitions/MUCRoomDestroyDialogError.xml:23
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:24
@@ -42,7 +42,7 @@ msgstr "Detalles de la cuenta"
 #: ../gui/definitions/MUCRoomToolbar.xml:362
 #: ../gui/definitions/PeerDetails.xml:191
 #: ../gui/definitions/RegistrationForm.xml:35
-#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:529
+#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:528
 #: ../gui/file_transfer_notification.go:125
 #: ../gui/file_transfer_notification.go:401
 msgid "Cancel"
@@ -98,8 +98,9 @@ msgid "Port (leave empty for default)"
 msgstr "Puerto (dejar en blanco para puerto predeterminado)"
 
 #: ../gui/definitions/AccountDetails.xml:259
+#, fuzzy
 msgid "Pinning policy"
-msgstr ""
+msgstr "Política de Fijación"
 
 #: ../gui/definitions/AccountDetails.xml:271
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:355
@@ -119,11 +120,11 @@ msgstr "Agregar siempre"
 
 #: ../gui/definitions/AccountDetails.xml:274
 msgid "Add the first, ask for the rest"
-msgstr ""
+msgstr "Agrega el primero, pregunta por el resto"
 
 #: ../gui/definitions/AccountDetails.xml:275
 msgid "Add the first, deny the rest"
-msgstr ""
+msgstr "Agrega el primero, deniega el resto"
 
 #: ../gui/definitions/AccountDetails.xml:276
 msgid "Always ask"
@@ -135,6 +136,7 @@ msgid "_Remove"
 msgstr "_Remover"
 
 #: ../gui/definitions/AccountDetails.xml:407
+#, fuzzy
 msgid ""
 "<b>Certificate pinning policy</b>\n"
 "\n"
@@ -167,6 +169,37 @@ msgid ""
 "<b>Always ask</b>: Ask the user every time we encounter a new unpinned "
 "certificate to accept or to reject it."
 msgstr ""
+"<b> Política de fijación de certificados </b>\n"
+"\n"
+"La política de fijación determina si consideraremos guardar información "
+"sobre los certificados que hemos visto antes y cómo reaccionaremos en "
+"diferentes casos. Un certificado fijado implica que confiamos en ese "
+"certificado para asegurar la conexión. Las opciones disponibles y su "
+"significado se describen a continuación:\n"
+"\n"
+"<b> Ninguno </b>: Inhabilitar la fijación de certificados.\n"
+"\n"
+"<b> Denegar </b>: No fijar nuevos certificados y sólo usar los certificados "
+"fijados existentes. En caso de que no se encuentre un certificado ofrecido "
+"por el servidor, se rechaza la conexión.\n"
+"\n"
+"<b> Agregar siempre </b>: Fijar automáticamente nuevos certificados desde el "
+"servidor. Un caso de uso es cuando se conecta a varios servidores "
+"inicialmente para almacenar su certificado, luego cambia la opción más tarde "
+"a una más restringida y los selecciona manualmente.\n"
+"\n"
+"<i> NOTA: esta opción debe usarse con precaución. </i>\n"
+"\n"
+"<b> Agregar el primero, preguntar por el resto </b>: Fije automáticamente el "
+"primer certificado que veamos y luego, para futuros certificados no fijados "
+"que encontremos, le preguntaremos al usuario si acepta o rechaza.\n"
+"\n"
+"<b> Agregar el primero, rechazar el resto </b>: Fijar automáticamente el "
+"primer certificado que veamos y luego, para futuros certificados no fijados, "
+"los rechazamos todos.\n"
+"\n"
+"<b> Preguntar siempre </b>: Preguntar al usuario cada vez que encontremos un "
+"nuevo certificado sin fijar para aceptarlo o rechazarlo."
 
 #: ../gui/definitions/AccountDetails.xml:445
 msgid "Server"
@@ -203,6 +236,17 @@ msgid ""
 "in question to find out where the files are located for your platform. The "
 "filenames to look for are \"otr.fingerprints\" and \"otr.private_key\"."
 msgstr ""
+"Los siguientes botones te permiten importar llaves privadas y fingerprints. "
+"Ambos deben estar en formato Pidgin / libotr. Si importas llaves privadas, "
+"tus claves privadas existentes se eliminarán, ya que actualmente no hay "
+"forma de elegir qué llave usar para el chat encriptado.\n"
+"\n"
+"Hay varias aplicaciones que utilizan el formato libotr, como Pidgin, Adium o "
+"Tor Messenger. Dependiendo de su plataforma, estos archivos se pueden "
+"encontrar en varios lugares diferentes. Consulta la documentación de la "
+"aplicación en cuestión para averiguar dónde se encuentran los archivos para "
+"tu plataforma. Los nombres de archivo a buscar son \"otr.fingerprints\" y "
+"\"otr.private_key\"."
 
 #: ../gui/definitions/AccountDetails.xml:637
 #, fuzzy
@@ -215,11 +259,16 @@ msgid "Import _Fingerprints..."
 msgstr "Importar_fingerprints..."
 
 #: ../gui/definitions/AccountDetails.xml:666
+#, fuzzy
 msgid ""
 "The below buttons allow you to export private keys and fingerprints. Be "
 "careful with the files that come out of this process as they contain "
 "potentially sensitive data. The export will be in the Pidgin/libotr format."
 msgstr ""
+"Los siguientes botones te permiten exportar llaves privadas y fingerprints. "
+"Ten cuidado con los archivos que salen de este proceso, ya que contienen "
+"datos potencialmente confidenciales. La exportación estará en formato Pidgin "
+"/ libotr."
 
 #: ../gui/definitions/AccountDetails.xml:679
 msgid "Export Private Keys..."
@@ -265,11 +314,12 @@ msgstr "Contacto a agregar:"
 
 #: ../gui/definitions/AddContact.xml:103 ../gui/definitions/PeerDetails.xml:73
 msgid "Nickname:"
-msgstr ""
+msgstr "Nickname:"
 
 #: ../gui/definitions/AddContact.xml:133
+#, fuzzy
 msgid "A_llow this contact to view my status"
-msgstr ""
+msgstr "Permitir que este contacto vea mi status"
 
 #: ../gui/definitions/AddContact.xml:175
 #, fuzzy
@@ -289,23 +339,29 @@ msgstr "Agregar"
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:49
 msgid "Answer: "
-msgstr ""
+msgstr "Respuesta: "
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:71
+#, fuzzy
 msgid "Your peer must have previously shared it with you. If not, try to:"
 msgstr ""
+"Tu compañero debe haberlo compartido previamente contigo. Si no es así, "
+"intenta:"
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:90
+#, fuzzy
 msgid "Ask them in person"
-msgstr ""
+msgstr "Pregúntale en persona"
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:109
+#, fuzzy
 msgid "Ask them in a different encrypted channel"
-msgstr ""
+msgstr "Pregúntale en un canal cifrado diferente"
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:128
+#, fuzzy
 msgid "Ask them over the phone"
-msgstr ""
+msgstr "Pregúntale por teléfono"
 
 #: ../gui/definitions/AnswerSMPQuestion.xml:144
 msgid "Verify Answer"
@@ -345,10 +401,15 @@ msgid ""
 "password. You will only be asked for it when CoyIM starts.\n"
 "    "
 msgstr ""
+"No podrás acceder al archivo de información de tu cuenta si pierdes la\n"
+"\n"
+"contraseña. Esta sólo te será pedida cuando se inicie CoyIM.\n"
+"    "
 
 #: ../gui/definitions/AuthorizeSubscription.xml:3
+#, fuzzy
 msgid "Subscription request"
-msgstr ""
+msgstr "Solicitud de suscripción"
 
 #: ../gui/definitions/CannotVerifyWithSMP.xml:46
 #: ../gui/definitions/VerificationFailed.xml:47
@@ -364,8 +425,8 @@ msgstr "Configura tu contraseña master"
 #, fuzzy
 msgid "Please enter the master password for the configuration file twice."
 msgstr ""
-"Por favor, ingresa la contraseña master para el archivo de configuración "
-"dos veces."
+"Por favor, ingresa la contraseña master para el archivo de configuración dos "
+"veces."
 
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:61
 #: ../gui/definitions/GroupDetails.xml:40
@@ -377,16 +438,16 @@ msgstr "OK"
 
 #: ../gui/definitions/CertificateDialog.xml:3
 msgid "Problem with secure connection for ACCOUNT_NAME"
-msgstr ""
+msgstr "Problema con la conexión segura de ACCOUNT_NAME"
 
 #: ../gui/definitions/CertificateDialog.xml:25
 msgid "Issued to:"
-msgstr ""
+msgstr "Emitido para:"
 
 #: ../gui/definitions/CertificateDialog.xml:44
 #: ../gui/definitions/CertificateDialog.xml:187
 msgid "Common Name (CN):"
-msgstr ""
+msgstr "Nombre Habitual (CN):"
 
 #: ../gui/definitions/CertificateDialog.xml:68
 msgid "Other names:"
@@ -400,7 +461,7 @@ msgstr "Organización (O):"
 #: ../gui/definitions/CertificateDialog.xml:118
 #: ../gui/definitions/CertificateDialog.xml:235
 msgid "Organizational Unit (OU):"
-msgstr ""
+msgstr "Unidad Organizacional (OU):"
 
 #: ../gui/definitions/CertificateDialog.xml:142
 msgid "Serial Number:"
@@ -408,7 +469,7 @@ msgstr "Número de serie:"
 
 #: ../gui/definitions/CertificateDialog.xml:168
 msgid "Issued by:"
-msgstr ""
+msgstr "Emitido por:"
 
 #: ../gui/definitions/CertificateDialog.xml:261
 #, fuzzy
@@ -417,7 +478,7 @@ msgstr "Validez:"
 
 #: ../gui/definitions/CertificateDialog.xml:280
 msgid "Issued on:"
-msgstr ""
+msgstr "Emitido en:"
 
 #: ../gui/definitions/CertificateDialog.xml:304
 msgid "Expires on:"
@@ -436,12 +497,18 @@ msgid "SHA3-256 fingerprint:"
 msgstr "Fingerprint SHA3-256:"
 
 #: ../gui/definitions/CertificateDialog.xml:421
+#, fuzzy
 msgid ""
 "Depending on whether you judge the above information correct, or how much "
 "risk you are willing to take, you have three choices: Decide to not connect, "
 "connect using this information this time but request that we ask again next "
 "time, or connect using this information and remember it for the future."
 msgstr ""
+"Dependiendo de si juzgas que la información anterior es correcta, o de "
+"cuánto riesgo estás dispuesto a correr, tienes tres opciones: decidir no "
+"conectarte, conectarte usando esta información por esta ocasión pero "
+"solicitar que te preguntemos nuevamente la próxima vez o conectarte usando "
+"esta información y recordarla para el futuro."
 
 #: ../gui/definitions/CertificateDialog.xml:436
 msgid "Don't connect"
@@ -495,10 +562,13 @@ msgid "Choose a key to import"
 msgstr "Selecciona una llave a importar"
 
 #: ../gui/definitions/ChooseKeyToImport.xml:12
+#, fuzzy
 msgid ""
-"The file you chose contains more than one private key. Choose from the list "
+"The file you choose contains more than one private key. Choose from the list "
 "below the key you would like to import."
 msgstr ""
+"El archivo que seleccionaste contiene más de una llave privada. Selecciona "
+"la llave que te gustaría importar de la siguiente lista."
 
 #: ../gui/definitions/ChooseKeyToImport.xml:35
 #: ../gui/definitions/Importer.xml:97
@@ -569,16 +639,17 @@ msgid "Send directory..."
 msgstr "Enviar directorio..."
 
 #: ../gui/definitions/ContactPopupMenu.xml:41
+#, fuzzy
 msgid "Ask contact to see their status"
-msgstr ""
+msgstr "Pide al contacto ver su estuado"
 
 #: ../gui/definitions/ContactPopupMenu.xml:47
 msgid "Allow contact to see my status"
-msgstr ""
+msgstr "Permitir al contacto ver mi estado"
 
 #: ../gui/definitions/ContactPopupMenu.xml:53
 msgid "Forbid contact to see my status"
-msgstr ""
+msgstr "Prohibir al contacto ver mi estado"
 
 #: ../gui/definitions/ContactPopupMenu.xml:62 ../gui/account.go:326
 msgid "Dump info"
@@ -586,8 +657,9 @@ msgstr ""
 
 #: ../gui/definitions/ConversationPane.xml:15
 #: ../gui/definitions/ConversationPane.xml:135
+#, fuzzy
 msgid "Secure Chat"
-msgstr ""
+msgstr "Chat seguro"
 
 #: ../gui/definitions/ConversationPane.xml:25
 #, fuzzy
@@ -613,15 +685,16 @@ msgstr "Enviar archivo"
 
 #: ../gui/definitions/ConversationPane.xml:70
 msgid "Send Dir"
-msgstr ""
+msgstr "Enviar directorio"
 
 #: ../gui/definitions/EditProxy.xml:3
 msgid "Edit Proxy"
 msgstr "Editar proxy"
 
 #: ../gui/definitions/EditProxy.xml:17
+#, fuzzy
 msgid "Proxy type:"
-msgstr ""
+msgstr "Tipo de proxy:"
 
 #: ../gui/definitions/EditProxy.xml:39
 msgid "User:"
@@ -641,7 +714,7 @@ msgstr "Puerto:"
 
 #: ../gui/definitions/EditProxy.xml:120
 msgid "Path:"
-msgstr ""
+msgstr "Ruta:"
 
 #: ../gui/definitions/FeedbackInfo.xml:12
 #, fuzzy
@@ -650,11 +723,11 @@ msgstr "Te está gustando?"
 
 #: ../gui/definitions/FeedbackInfo.xml:22 ../gui/definitions/Main.xml:164
 msgid "Feedback"
-msgstr ""
+msgstr "Comentarios"
 
 #: ../gui/definitions/Feedback.xml:4
 msgid "We would like to receive your feedback"
-msgstr ""
+msgstr "Nos gustaría recibir tus comentarios"
 
 #: ../gui/definitions/Feedback.xml:14
 msgid ""
@@ -662,6 +735,9 @@ msgid ""
 "              Visit the website to get in touch with us:\n"
 "            "
 msgstr ""
+"\n"
+"              Visita el sitio web para ponerte en contacto con nosotros:\n"
+"            "
 
 #: ../gui/definitions/Feedback.xml:28
 msgid "https://coy.im"
@@ -675,6 +751,12 @@ msgid ""
 "              This is the only way we can create a better privacy tool.\n"
 "            "
 msgstr ""
+"\n"
+"              Coméntanos lo que piensas  de CoyIM.\n"
+"\n"
+"              Esa es la única manera en la que podemos crear una mejor "
+"herramienta para la privacidad.\n"
+"            "
 
 #: ../gui/definitions/FileTransferAskToReceive.xml:6
 #, fuzzy
@@ -683,7 +765,7 @@ msgstr "Transferencia de archivo"
 
 #: ../gui/definitions/FileTransferContinueWithoutEncryption.xml:6
 msgid "File transfer without encryption?"
-msgstr ""
+msgstr "Transferir archivo sin cifrar?"
 
 #: ../gui/definitions/FirstAccountDialog.xml:4
 #, fuzzy
@@ -691,8 +773,9 @@ msgid "Setup your first account"
 msgstr "Configura tu primera cuenta"
 
 #: ../gui/definitions/FirstAccountDialog.xml:15
+#, fuzzy
 msgid "Welcome to CoyIM!"
-msgstr ""
+msgstr "Bienvenido a CoyIM!"
 
 #: ../gui/definitions/FirstAccountDialog.xml:36
 msgid "Create a new account"
@@ -725,7 +808,7 @@ msgstr "Sin notificaciones"
 
 #: ../gui/definitions/GlobalPreferences.xml:15
 msgid "Only show that a new message arrived"
-msgstr ""
+msgstr "Mostrar únicamente que un nuevo mensaje llegó"
 
 #: ../gui/definitions/GlobalPreferences.xml:19
 msgid "Show who sent the message"
@@ -750,7 +833,7 @@ msgstr "Mostrar grupos vacíos"
 
 #: ../gui/definitions/GlobalPreferences.xml:122
 msgid "Use Emacs key bindings"
-msgstr ""
+msgstr "Usar vinculación de teclas de Emacs"
 
 #: ../gui/definitions/GlobalPreferences.xml:143
 msgid "General"
@@ -764,6 +847,12 @@ msgid ""
 "message, or even the author, could potentially be a privacy leak if you're "
 "ever in settings where someone can see your screen."
 msgstr ""
+"CoyIM tiene soporte para notificarte cuando llega un nuevo mensaje; estas "
+"notificaciones se pueden desactivar o configurar para mostrar diferentes "
+"cantidades de información. Es importante recordar que mostrar el texto del "
+"mensaje, o incluso el autor, podría ser una filtración de privacidad si "
+"alguna vez te encuentras en situaciones en las que alguien puede ver tu "
+"pantalla."
 
 #: ../gui/definitions/GlobalPreferences.xml:174
 msgid "Notification type"
@@ -775,32 +864,45 @@ msgid ""
 "fullscreen mode. If the notification is not urgent, it will not display over "
 "a fullscreen window."
 msgstr ""
+"Las notificaciones se pueden configurar para que se muestren con urgencia; "
+"esto es útil si trabajas en modo de pantalla completa. Si la notificación no "
+"es urgente, no se mostrará en una ventana de pantalla completa."
 
 #: ../gui/definitions/GlobalPreferences.xml:215
+#, fuzzy
 msgid "Should notifications be displayed urgently?"
-msgstr ""
+msgstr "Se deben mostrar las notificaciones con urgencia?"
 
 #: ../gui/definitions/GlobalPreferences.xml:234
 msgid ""
 "Notifications can stay on the screen until you've gone back to CoyIM, or "
 "they can expire after a while. The below setting changes this behavior."
 msgstr ""
+"Las notificaciones pueden permanecer en la pantalla hasta que estés de "
+"vuelta en CoyIM, o pueden expirar después de un tiempo. Los siguientes "
+"ajustes cambian este comportamiento."
 
 #: ../gui/definitions/GlobalPreferences.xml:247
 msgid "Should notifications expire?"
 msgstr "Las notificaciones deben expirar?"
 
 #: ../gui/definitions/GlobalPreferences.xml:266
+#, fuzzy
 msgid ""
 "You can specify a custom command to run whenever a message is received. If "
 "specificed, this command will run on every messages except it will wait for "
 "a timeout period before running the next time. The command and timeout is "
 "specified below. "
 msgstr ""
+"Puedes especificar un comando personalizado para que se ejecute siempre que "
+"se recibas un mensaje. Si se especifica, este comando se ejecutará en todos "
+"los mensajes, mas existirá un período de tiempo de espera antes de "
+"ejecutarse la próxima vez. El comando y el tiempo de espera se especifican a "
+"continuación. "
 
 #: ../gui/definitions/GlobalPreferences.xml:279
 msgid "Notification command"
-msgstr ""
+msgstr "Comando de notificación"
 
 #: ../gui/definitions/GlobalPreferences.xml:299
 msgid "Minimum time between notifications in seconds"
@@ -819,10 +921,16 @@ msgid ""
 "traffic information. This setting will only take effect after a restart of "
 "CoyIM."
 msgstr ""
+"Si aplicas esta propiedad en un nombre de archivo, la información de bajo "
+"nivel se registrará allí. Ten mucho cuidado: esta información es "
+"confidencial y podría contener detalles muy privados. Sólo activa esta "
+"configuración si es absolutamente necesaria para hacer debugging. Este "
+"archivo registrará específicamente la información de tráfico de XMPP. Esta "
+"configuración sólo tendrá efecto después de reiniciar CoyIM."
 
 #: ../gui/definitions/GlobalPreferences.xml:354
 msgid "Raw log file"
-msgstr ""
+msgstr "Raw log file"
 
 #: ../gui/definitions/GlobalPreferences.xml:376
 msgid "Debugging"
@@ -841,11 +949,10 @@ msgid "Import Accounts"
 msgstr "Importar cuentas"
 
 #: ../gui/definitions/Importer.xml:22
-#, fuzzy
 msgid ""
 "Choose the accounts you would like to import and start using from CoyIM."
 msgstr ""
-"Selecciona las cuentas que te gustaría importar y empezar a usar desde CoyIM"
+"Selecciona las cuentas que te gustaría importar y empezar a usar desde CoyIM."
 
 #: ../gui/definitions/Importer.xml:41
 msgid "Import this"
@@ -861,7 +968,7 @@ msgstr "Nombre de la cuenta"
 
 #: ../gui/definitions/Main.xml:22
 msgid "_Contacts"
-msgstr ""
+msgstr "_Contactos"
 
 #: ../gui/definitions/Main.xml:30
 msgid "Add..."
@@ -894,7 +1001,7 @@ msgstr "Unirte a una sala"
 
 #: ../gui/definitions/Main.xml:89
 msgid "_View"
-msgstr ""
+msgstr "_Vista"
 
 #: ../gui/definitions/Main.xml:97
 #, fuzzy
@@ -917,7 +1024,7 @@ msgstr "Ordenar por status"
 
 #: ../gui/definitions/Main.xml:129
 msgid "_Options"
-msgstr ""
+msgstr "_Opciones"
 
 #: ../gui/definitions/Main.xml:137
 #, fuzzy
@@ -930,7 +1037,7 @@ msgstr "Preferencias..."
 
 #: ../gui/definitions/Main.xml:156
 msgid "_Help"
-msgstr ""
+msgstr "_Ayuda"
 
 #: ../gui/definitions/Main.xml:171
 msgid "About"
@@ -941,8 +1048,9 @@ msgid "Search..."
 msgstr "Buscar..."
 
 #: ../gui/definitions/MasterPassword.xml:4
+#, fuzzy
 msgid "Enter master password"
-msgstr ""
+msgstr "Ingresar contraseña principal"
 
 #: ../gui/definitions/MasterPassword.xml:15
 msgid ""
@@ -974,68 +1082,69 @@ msgstr "Ingresa la ubicación o selecciona una de la lista"
 #: ../gui/definitions/MUCJoinRoomDialog.xml:167
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:253
 msgid "Where"
-msgstr "Donde"
+msgstr "Dónde"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:127
 msgid "_Automatically join the room"
-msgstr ""
+msgstr "_Unirse automáticamente a la sala"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:130
 msgid "Automatically join the room when created"
-msgstr ""
+msgstr "Unirse automáticamente a la sala tras ser creada"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:145
+#, fuzzy
 msgid "Add custom room configuration"
-msgstr ""
+msgstr "Agregar configuración personalizada a la sala"
 
 #: ../gui/definitions/MUCCreateRoomForm.xml:224
 msgid "_Create Room"
-msgstr ""
+msgstr "_Crear sala"
 
 #: ../gui/definitions/MUCCreateRoomSuccess.xml:31
 msgid "Congratulations, the room has been created"
-msgstr ""
+msgstr "Felicidades, la sala ha sido creada"
 
 #: ../gui/definitions/MUCCreateRoomSuccess.xml:46
 msgid "Create another room"
-msgstr ""
+msgstr "Crear otra sala"
 
 #: ../gui/definitions/MUCCreateRoomSuccess.xml:58
 #: ../gui/definitions/MUCPublicRoomsDialog.xml:41
 msgid "Join"
-msgstr ""
+msgstr "Unirse"
 
 #: ../gui/definitions/MUCJoinRoomDialog.xml:4
 msgid "Join a chat room"
-msgstr ""
+msgstr "Unirse a una sala de chat"
 
 #: ../gui/definitions/MUCJoinRoomDialog.xml:39
 #: ../gui/definitions/MUCRoomLobby.xml:118 ../gui/importer.go:299
 #: ../gui/importer.go:324 ../gui/importer.go:348 ../gui/importer.go:370
 #: ../gui/file_transfer.go:156 ../gui/file_transfer.go:266
 msgid "_Cancel"
-msgstr ""
+msgstr "_Cancelar"
 
 #: ../gui/definitions/MUCJoinRoomDialog.xml:54
 msgid "_Continue"
-msgstr ""
+msgstr "_Continuar"
 
 #: ../gui/definitions/MUCJoinRoomDialog.xml:185
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:267
 msgid "Enter or select the service"
-msgstr ""
+msgstr "Ingresar o seleccionar el servicio"
 
 #: ../gui/definitions/MUCPublicRoomsDialog.xml:3
 msgid "Chat rooms"
-msgstr ""
+msgstr "Salas de chat"
 
 #: ../gui/definitions/MUCPublicRoomsDialog.xml:121
 msgid "List all rooms"
-msgstr ""
+msgstr "Enlistar todas las salas"
 
 #: ../gui/definitions/MUCPublicRoomsDialog.xml:137
 msgid "Service:"
-msgstr ""
+msgstr "Servicio:"
 
 #: ../gui/definitions/MUCPublicRoomsDialog.xml:160
 msgid "List rooms in service"
@@ -1044,57 +1153,68 @@ msgstr ""
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:4
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:99
 msgid "Change position"
-msgstr ""
+msgstr "Cambiar posición"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:42
 #: ../gui/definitions/MUCRoomPositionsDialog.xml:87
 #: ../gui/definitions/MUCRoomRoleDialog.xml:42
 #: ../gui/definitions/MUCRoomToolbar.xml:375
 msgid "Apply"
-msgstr ""
+msgstr "Aplicar"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:110
 msgid ""
 "As an administrator you can't make others into administrators or owners."
 msgstr ""
+"Como administrador no puedes convertir a otros en administradores o "
+"propietarios."
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:159
 #: ../gui/definitions/MUCRoomRosterInfo.xml:596 ../gui/muc_room_roster.go:389
 #: ../gui/muc_room_occupant_affiliation.go:167
 msgid "Owner"
-msgstr ""
+msgstr "Propietario"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:178
 msgid ""
 "An owner is allowed to change the room configuration and destroy the room, "
 "in addition to all administrator privileges."
 msgstr ""
+"Un propietario puede cambiar la configuración de la sala y destruirla, "
+"además de todos los privilegios de administrador."
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:225
 #: ../gui/definitions/MUCRoomRosterInfo.xml:511
 msgid "Administrator"
-msgstr ""
+msgstr "Administrador"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:243
 msgid ""
 "An administrator is responsible for memberships for the room, and "
 "automatically becomes a moderator when entering it."
 msgstr ""
+"Un administrador es responsable de las membresías de la sala y "
+"automáticamente se convierte en moderador al ingresar."
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:290
 #: ../gui/muc_room_occupant_affiliation.go:171
 msgid "Member"
-msgstr ""
+msgstr "MIembro"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:308
 msgid ""
 "A person with this position can enter a members-only room, and can also "
 "immediately speak in all rooms they are a member of."
 msgstr ""
+"Una persona con esta posición puede ingresar a una sala exclusiva para "
+"miembros y también puede hablar inmediatamente en todas las salas de las que "
+"es miembro."
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:373
 msgid "Without a position, a person can't enter a members-only room."
 msgstr ""
+"Sin una posición, una persona no puede ingresar a una sala exclusiva para "
+"miembros."
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:425
 #: ../gui/definitions/MUCRoomRoleDialog.xml:325
@@ -1102,31 +1222,30 @@ msgid ""
 "Here you can provide an optional reason for the change. Everyone in the room "
 "will see this reason."
 msgstr ""
+"Aquí puedes proporcionar una razón opcional para el cambio. Todos en la sala "
+"verán esta razón."
 
 #: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:4
+#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:76
+#: ../gui/muc_room_close_confirm.go:51
 msgid "Close room"
-msgstr ""
+msgstr "Cerrar sala"
 
-#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:53
+#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:22
 msgid "Do you want to leave the room?"
-msgstr ""
+msgstr "Quieres dejar la sala?"
 
-#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:74
+#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:34
 msgid "Yes, leave the room"
-msgstr ""
-
-#: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:122
-#: ../gui/muc_room_close_confirm.go:55
-msgid "Close Room"
-msgstr ""
+msgstr "Sí, dejar la sala"
 
 #: ../gui/definitions/MUCRoomConfigAssistant.xml:4
 msgid "Room configuration"
-msgstr ""
+msgstr "Configuración de la sala"
 
 #: ../gui/definitions/MUCRoomConfigFieldPositions.xml:47
 msgid "Position description here"
-msgstr ""
+msgstr "Descripción de la posición aquí"
 
 #: ../gui/definitions/MUCRoomConfigFieldPositions.xml:201
 #: ../gui/definitions/MUCRoomConfigListAddForm.xml:16
@@ -1134,71 +1253,73 @@ msgstr ""
 #: ../gui/definitions/MUCRoomRosterInfo.xml:62
 #: ../gui/definitions/MUCRoomRosterInfo.xml:77
 msgid "Account address"
-msgstr ""
+msgstr "Dirección de la cuenta"
 
 #: ../gui/definitions/MUCRoomConfigFormFieldAdvancedOptionsContainer.xml:28
 #: ../gui/definitions/MUCRoomConfigSummaryAdvancedOptionsField.xml:22
 msgid "Advanced options"
-msgstr ""
+msgstr "Opciones avanzadas"
 
 #: ../gui/definitions/MUCRoomConfigFormFieldPassword.xml:31
 #: ../gui/muc_room_config_texts.go:177
 msgid "Enter the room password"
-msgstr ""
+msgstr "Ingresa la contraseña de la sala"
 
 #: ../gui/definitions/MUCRoomConfigFormFieldPassword.xml:61
 #: ../gui/definitions/Password.xml:22 ../gui/password_component.go:46
 #: ../gui/muc_room_config_field_password.go:125
 msgid "Show"
-msgstr ""
+msgstr "Mostrar"
 
 #: ../gui/definitions/MUCRoomConfigFormFieldPassword.xml:79
 msgid "Confirm the room password"
-msgstr ""
+msgstr "Confirmar la contraseña de la sala"
 
 #: ../gui/definitions/MUCRoomConfigFormFieldPassword.xml:92
 msgid "Passwords don't match"
-msgstr ""
+msgstr "Las contraseñas no coinciden"
 
 #: ../gui/definitions/MUCRoomConfigListAddDialog.xml:138
+#, fuzzy
 msgid "Clear"
-msgstr ""
+msgstr "Limpiar"
 
 #: ../gui/definitions/MUCRoomConfigPage.xml:100
 msgid "Automatically join the room"
-msgstr ""
+msgstr "Unirse automáticamente a la sala"
 
 #: ../gui/definitions/MUCRoomConfirmationRoomDialog.xml:3
 msgid "Cancel room creation"
-msgstr ""
+msgstr "Cancelar creación de la sala"
 
 #: ../gui/definitions/MUCRoomConfirmationRoomDialog.xml:20
 #: ../gui/definitions/VerifyFingerprint.xml:31
 #: ../gui/muc_room_config_summary_field.go:155
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #: ../gui/definitions/MUCRoomConfirmationRoomDialog.xml:36
 #: ../gui/definitions/VerifyFingerprint.xml:36
 #: ../gui/muc_room_config_summary_field.go:153
 msgid "Yes"
-msgstr ""
+msgstr "Sí"
 
 #: ../gui/definitions/MUCRoomConfirmationRoomDialog.xml:81
 msgid "Are you sure you want to cancel the room creation? "
-msgstr ""
+msgstr "Estás seguro de que quieres cancelar la creación de la sala? "
 
-#: ../gui/definitions/MUCRoomConversation.xml:122 ../gui/file_transfer.go:268
+#: ../gui/definitions/MUCRoomConversation.xml:123 ../gui/file_transfer.go:268
 msgid "Send"
-msgstr ""
+msgstr "Enviar"
 
 #: ../gui/definitions/MUCRoomDestroyDialogError.xml:3
+#, fuzzy
 msgid "Room destroy error"
-msgstr ""
+msgstr "Error al destruir la sala"
 
 #: ../gui/definitions/MUCRoomDestroyDialogError.xml:39
 msgid "Retry"
-msgstr ""
+msgstr "Reintentar"
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:37
 msgid "Destroy Room"
@@ -1225,29 +1346,31 @@ msgstr "Agrega información acerca de la nueva sala"
 #: ../gui/definitions/MUCRoomRosterInfo.xml:17
 #: ../gui/definitions/MUCRoomRosterInfo.xml:32
 msgid "Nickname"
-msgstr ""
+msgstr "Nickname"
 
 #: ../gui/definitions/MUCRoomLobby.xml:132
 msgid "_Join"
-msgstr ""
+msgstr "_Unirse"
 
 #: ../gui/definitions/MUCRoomMessageBoxNotification.xml:29
 msgid "You don't have the permissions to send messages."
-msgstr ""
+msgstr "No tienes los permisos para enviar mensajes."
 
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:4
 msgid "Remove person from the room"
-msgstr ""
+msgstr "Remover persona de la sala"
 
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:123
 msgid "You are about to temporarily remove the person from the room."
-msgstr ""
+msgstr "Estás a punto de remover temporalmente a la persona de la sala."
 
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:138
 #: ../gui/muc_room_occupant_action.go:93
 msgid ""
 "They will be able to join the room again. Are you sure you want to continue?"
 msgstr ""
+"La persona podrá unirse a la sala de nuevo. Estás seguro de que quieres "
+"continuar?"
 
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:171
 #: ../gui/muc_room_occupant_action.go:94
@@ -1255,26 +1378,28 @@ msgid ""
 "Here you can provide an optional reason for removing the person. Everyone in "
 "the room will see this reason."
 msgstr ""
+"Aquí puedes proporcionar una razón opcional para remover a la persona. Todos "
+"en la sala verán esta razón."
 
 #: ../gui/definitions/MUCRoomPositionsDialog.xml:3
 #: ../gui/muc_room_config_texts.go:46
 msgid "Positions"
-msgstr ""
+msgstr "Posiciones"
 
 #: ../gui/definitions/MUCRoomPositionsDialog.xml:24
 msgid "Here you can define who the banned people are."
-msgstr ""
+msgstr "Aquí puedes definir quiénes son las personas bloqueadas."
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:4
 #: ../gui/definitions/MUCRoomRoleDialog.xml:94
 msgid "Change role"
-msgstr ""
+msgstr "Cambiar rol"
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:128
 #: ../gui/muc_room_config_component.go:159 ../gui/muc_room_roster.go:423
 #: ../gui/muc_room_occupant_affiliation.go:183
 msgid "Moderator"
-msgstr ""
+msgstr "Moderador"
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:146
 msgid ""
@@ -1282,12 +1407,16 @@ msgid ""
 "Administrators and owners will automatically become moderators when they "
 "enter a room, but they can also make other occupants into moderators."
 msgstr ""
+"Un moderador puede expulsar a los usuarios, otorgar o revocar la voz y "
+"asignar la moderación. Los administradores y propietarios se convertirán "
+"automáticamente en moderadores cuando ingresen a una sala, pero también "
+"pueden convertir a otros ocupantes en moderadores."
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:194
 #: ../gui/muc_room_config_component.go:155 ../gui/muc_room_roster.go:419
 #: ../gui/muc_room_occupant_affiliation.go:185
 msgid "Participant"
-msgstr ""
+msgstr "Participante"
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:213
 msgid ""
@@ -1295,12 +1424,15 @@ msgid ""
 "the room. In non-moderated rooms, there's no difference between a "
 "participant and a visitor."
 msgstr ""
+"En una sala moderada, sólo los participantes y los moderadores pueden enviar "
+"mensajes a la misma. En las salas no moderadas, no hay diferencia entre un "
+"participante y un visitante."
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:261
 #: ../gui/muc_room_config_component.go:161 ../gui/muc_room_roster.go:421
 #: ../gui/muc_room_occupant_affiliation.go:187
 msgid "Visitor"
-msgstr ""
+msgstr "Visitante"
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:279
 msgid ""
@@ -1308,100 +1440,110 @@ msgid ""
 "still read the conversation. In an unmoderated room there is no difference "
 "between a participant and a visitor."
 msgstr ""
+"En una sala moderada, un visitante no podrá enviar mensajes, pero aún así "
+"podrá leer la conversación. En una sala no moderada no hay diferencia entre "
+"un participante y un visitante."
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:108
 #: ../gui/definitions/MUCRoomRosterInfo.xml:146
 #: ../gui/definitions/MUCRoomRosterInfo.xml:391
 msgid "Status"
-msgstr ""
+msgstr "Estado"
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:229
 msgid "Back"
-msgstr ""
+msgstr "Atrás"
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:264
 msgid "Information"
-msgstr ""
+msgstr "Información"
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:468
 msgid ""
 "A position is a long-lived association with the room. The position of the "
 "person is maintained between visits."
 msgstr ""
+"Una posición es una asociación duradera con la habitación. La posición de la "
+"persona se mantiene entre visitas."
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:488
 msgid "Position"
-msgstr ""
+msgstr "Posición"
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:563
 msgid ""
 "A role controls what a person can do within the room. A role only lasts for "
 "the duration of the visit."
 msgstr ""
+"Un rol controla lo que una persona puede hacer dentro de la sala. Un rol "
+"sólo persiste durante la visita."
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:580
 msgid "Role"
-msgstr ""
+msgstr "Rol"
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:632
 msgid ""
 "Administrators and owners will automatically be moderators for a room. "
 "Therefore, the role of Juanito can't be changed."
 msgstr ""
+"Los administradores y propietarios serán automáticamente moderadores de una "
+"sala. Por tanto, el papel de Juanito no se puede cambiar."
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:691
 msgid "Expel"
-msgstr ""
+msgstr "Expulsar"
 
 #: ../gui/definitions/MUCRoomRosterInfo.xml:698
 msgid "Ban"
-msgstr ""
+msgstr "Bloquear"
 
 #: ../gui/definitions/MUCRoomRoster.xml:36
+#, fuzzy
 msgid "Expander"
-msgstr ""
+msgstr "Expansor"
 
 #: ../gui/definitions/MUCRoomRoster.xml:47
 msgid "Occupant"
-msgstr ""
+msgstr "Ocupante"
 
 #: ../gui/definitions/MUCRoomToolbar.xml:6
 msgid "Security properties"
-msgstr ""
+msgstr "Propiedades de seguridad"
 
 #: ../gui/definitions/MUCRoomToolbar.xml:14
 #: ../gui/muc_room_config_assistant.go:96
 msgid "Configure room"
-msgstr ""
+msgstr "Configurar sala"
 
 #: ../gui/definitions/MUCRoomToolbar.xml:22
 msgid "Modify positions"
-msgstr ""
+msgstr "Modificar posiciones"
 
 #: ../gui/definitions/MUCRoomToolbar.xml:34
 msgid "Destroy room"
-msgstr ""
+msgstr "Destruir sala"
 
 #: ../gui/definitions/MUCRoomToolbar.xml:42
 msgid "Leave room"
-msgstr ""
+msgstr "Dejar sala"
 
-#: ../gui/definitions/MUCRoomToolbar.xml:133 ../gui/muc_room_toolbar.go:257
+#: ../gui/definitions/MUCRoomToolbar.xml:133 ../gui/muc_room_toolbar.go:255
 msgid "Show room subject"
-msgstr ""
+msgstr "Mostrar tema de la sala"
 
 #: ../gui/definitions/MUCRoomToolbar.xml:301
 msgid "Edit subject"
-msgstr ""
+msgstr "Editar tema"
 
 #: ../gui/definitions/MUCRoomWarningsDialog.xml:13
 msgid "Security properties warnings"
-msgstr ""
+msgstr "Advertencias de las propiedades de seguridad"
 
 #: ../gui/definitions/MUCRoomWarningsDialog.xml:67
 #: ../gui/muc_room_warnings.go:31
 msgid "Communication in this room is not encrypted"
-msgstr ""
+msgstr "Las comunicaciones en esta sala no están cifradas"
 
 #: ../gui/definitions/MUCRoomWarningsDialog.xml:86
 msgid ""
@@ -1411,26 +1553,31 @@ msgid ""
 "join this room and communicate here if you trust the server to not be "
 "hostile."
 msgstr ""
+"Toma en cuenta que la comunicación en las salas de chat no está cifrada; "
+"cualquier persona que pueda interceptar la comunicación entre el servidor y "
+"tú, y del servidor en sí, podrá ver lo que estás diciendo en esta sala de "
+"chat. Únete a esta sala y comunícate por aquí sólo si confías en que el "
+"servidor no será hostil."
 
 #: ../gui/definitions/MUCRoomWarningsDialog.xml:166
 msgid "Go to previous [Ctrl + left]"
-msgstr ""
+msgstr "Ir al anterior [Ctrl + izquierda]"
 
 #: ../gui/definitions/MUCRoomWarningsDialog.xml:185
 msgid "Go to next [Ctrl + right]"
-msgstr ""
+msgstr "Ir al siguiente [Ctrl + derecha]"
 
 #: ../gui/definitions/MUCRoomWarningsDialog.xml:234
 msgid "Close dialog"
-msgstr ""
+msgstr "Cerrar diálogo"
 
 #: ../gui/definitions/MUCRoomWarningsOverlay.xml:31
 msgid "Warnings related to room configuration"
-msgstr ""
+msgstr "Advertencias relacionadas a la configuración de la sala"
 
 #: ../gui/definitions/NewCustomConversation.xml:13
 msgid "Start new conversation"
-msgstr ""
+msgstr "Empezar nueva conversación"
 
 #: ../gui/definitions/NewCustomConversation.xml:33
 msgid "From:"
@@ -1438,35 +1585,36 @@ msgstr ""
 
 #: ../gui/definitions/NewCustomConversation.xml:61
 msgid "With:"
-msgstr ""
+msgstr "Con:"
 
 #: ../gui/definitions/NewCustomConversation.xml:100
 msgid "Start"
-msgstr ""
+msgstr "Empezar"
 
 #: ../gui/definitions/PeerDetails.xml:9
 msgid "New Group..."
-msgstr ""
+msgstr "Nuevo grupo..."
 
 #: ../gui/definitions/PeerDetails.xml:16
 msgid "Edit contact"
-msgstr ""
+msgstr "Editar contacto"
 
 #: ../gui/definitions/PeerDetails.xml:52
 msgid "Contact:"
-msgstr ""
+msgstr "Contacto:"
 
 #: ../gui/definitions/PeerDetails.xml:92
+#, fuzzy
 msgid "Require encryption with this peer"
-msgstr ""
+msgstr "REquerir cifrado con este compañero"
 
 #: ../gui/definitions/PeerDetails.xml:110
 msgid "Groups:"
-msgstr ""
+msgstr "Grupos:"
 
 #: ../gui/definitions/PeerRequestsSMP.xml:87
 msgid "Finish Verification"
-msgstr ""
+msgstr "Finalizar verificación"
 
 #: ../gui/definitions/RegistrationForm.xml:41
 msgid "Register"
@@ -1474,9 +1622,10 @@ msgstr ""
 
 #: ../gui/definitions/TorHelper.xml:6
 msgid "Warning!"
-msgstr ""
+msgstr "Advertencia!"
 
 #: ../gui/definitions/TorHelper.xml:7
+#, fuzzy
 msgid ""
 "\n"
 "We could not find a running installation of Tor.\n"
@@ -1488,6 +1637,15 @@ msgid ""
 "Would you like to install it?\n"
 "    "
 msgstr ""
+"\n"
+"No pudimos encontrar una instalación en funcionamiento de Tor.\n"
+"\n"
+"Para tener una experiencia más segura, te recomendamos que lo instales.\n"
+"\n"
+"Tor es una herramienta para el anonimato.\n"
+"\n"
+"Quieres instalarlo?\n"
+"    "
 
 #: ../gui/definitions/TorInstallHelper.xml:14
 msgid ""
@@ -1495,6 +1653,9 @@ msgid ""
 "              Installing Tor for CoyIM:\n"
 "            "
 msgstr ""
+"\n"
+"              Instalando Tor para CoyIM:\n"
+"            "
 
 #: ../gui/definitions/TorInstallHelper.xml:31
 msgid ""
@@ -1507,46 +1668,54 @@ msgid ""
 "              3. Start Tor (or the Tor Browser)\n"
 "            "
 msgstr ""
+"\n"
+"\n"
+"              1. Visita https://www.torproject.org/\n"
+"\n"
+"              2. Descarga e instala Tor (o el paquete de Tor Browser)\n"
+"\n"
+"              3. Inicia Tor (o el Tor Browser)\n"
+"            "
 
 #: ../gui/definitions/TorInstallHelper.xml:58
 msgid "4. Click here to check if Tor is now running"
-msgstr ""
+msgstr "4. Da clic aquí para verificar si Tor está funcionando ahora"
 
 #: ../gui/definitions/UnifiedLayout.xml:138
 msgid "Conversations"
-msgstr ""
+msgstr "Conversaciones"
 
 #: ../gui/definitions/UnifiedLayout.xml:164
 msgid "icon"
-msgstr ""
+msgstr "ícono"
 
 #: ../gui/definitions/UnifiedLayout.xml:178
 msgid "column"
-msgstr ""
+msgstr "columna"
 
 #: ../gui/definitions/UnverifiedWarning.xml:87
 msgid "Validate Channel"
-msgstr ""
+msgstr "Validar canal"
 
 #: ../gui/definitions/VerificationFailed.xml:17
 msgid "Verification Failed"
-msgstr ""
+msgstr "La verificación falló"
 
 #: ../gui/definitions/VerifyFingerprint.xml:16
 msgid "Tag (optional name for this fingerprint):"
-msgstr ""
+msgstr "Etiqueta (nombre opcional para este fingerprint):"
 
 #: ../gui/definitions/XMLConsole.xml:3
 msgid "Hello world"
-msgstr ""
+msgstr "Hola mundo"
 
 #: ../gui/definitions/XMLConsole.xml:8
 msgid "XMPP Console: ACCOUNT_NAME"
-msgstr ""
+msgstr "Consola XMPP: ACCOUNT_NAME"
 
 #: ../gui/definitions/XMLConsole.xml:56
 msgid "_Close"
-msgstr ""
+msgstr "_Cerrar"
 
 #: ../gui/muc_notification_messages.go:21
 #: ../gui/muc_notification_messages.go:238
@@ -1571,7 +1740,6 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:27
 #: ../gui/muc_notification_messages.go:244
-#: ../gui/muc_notification_messages.go:859
 #, python-format
 msgid "$nickname{%s} is not banned anymore."
 msgstr ""
@@ -2099,37 +2267,37 @@ msgstr ""
 #: ../gui/muc_notification_messages.go:531
 #, python-format
 msgid "The role of %s was changed from moderator to participant."
-msgstr ""
+msgstr "El rol de %s fue cambiado de moderador a participante."
 
 #: ../gui/muc_notification_messages.go:534
 #, python-format
 msgid "The role of %s was changed from moderator to visitor."
-msgstr ""
+msgstr "El rol de %s fue cambiado de moderador a visitante."
 
 #: ../gui/muc_notification_messages.go:537
 #, python-format
 msgid "The role of %s was changed from participant to moderator."
-msgstr ""
+msgstr "El rol de %s fue cambiado de participante a moderador."
 
 #: ../gui/muc_notification_messages.go:540
 #, python-format
 msgid "The role of %s was changed from participant to visitor."
-msgstr ""
+msgstr "El rol de %s fue cambiado de participante a visitante."
 
 #: ../gui/muc_notification_messages.go:543
 #, python-format
 msgid "The role of %s was changed from visitor to moderator."
-msgstr ""
+msgstr "El rol de %s fue cambiado de visitante a moderador."
 
 #: ../gui/muc_notification_messages.go:546
 #, python-format
 msgid "The role of %s was changed from visitor to participant."
-msgstr ""
+msgstr "El rol de %s fue cambiado de visitante a participante."
 
 #: ../gui/muc_notification_messages.go:549
 #, python-format
 msgid "The role of %s was changed."
-msgstr ""
+msgstr "El rol de %s fue cambiado."
 
 #: ../gui/muc_notification_messages.go:566
 msgid ""
@@ -2253,32 +2421,26 @@ msgid "$nickname{%[1]s} changed the role of $nickname{%[2]s}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:673
-#, python-brace-format
 msgid "Your role was changed from $role{participant} to $role{visitor}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:675
-#, python-brace-format
 msgid "Your role was changed from $role{participant} to $role{moderator}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:677
-#, python-brace-format
 msgid "Your role was changed from $role{visitor} to $role{participant}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:679
-#, python-brace-format
 msgid "Your role was changed from $role{visitor} to $role{moderator}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:681
-#, python-brace-format
 msgid "Your role was changed from $role{moderator} to $role{visitor}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:683
-#, python-brace-format
 msgid "Your role was changed from $role{moderator} to $role{participant}."
 msgstr ""
 
@@ -2355,6 +2517,8 @@ msgid ""
 "The administrator $nickname{%s} changed your role from $role{participant} to "
 "$role{moderator}."
 msgstr ""
+"El administrador $nickname{%s} cambió tu rol de $role{participante} a "
+"$role{moderador}."
 
 #: ../gui/muc_notification_messages.go:737
 #, python-format
@@ -2362,6 +2526,8 @@ msgid ""
 "The administrator $nickname{%s} changed your role from $role{visitor} to "
 "$role{participant}."
 msgstr ""
+"El administrador $nickname{%s} cambió tu rol de $role{visitante} a "
+"$role{participante}."
 
 #: ../gui/muc_notification_messages.go:740
 #, python-format
@@ -2369,6 +2535,8 @@ msgid ""
 "The administrator $nickname{%s} changed your role from $role{visitor} to "
 "$role{moderator}."
 msgstr ""
+"El administrador $nickname{%s} cambió tu rol de $role{visitante} a "
+"$role{moderador}."
 
 #: ../gui/muc_notification_messages.go:743
 #, python-format
@@ -2376,6 +2544,8 @@ msgid ""
 "The administrator $nickname{%s} changed your role from $role{moderator} to "
 "$role{visitor}."
 msgstr ""
+"El administrador $nickname{%s} cambió tu rol de $role{moderador} a "
+"$role{visitante}."
 
 #: ../gui/muc_notification_messages.go:746
 #, python-format
@@ -2383,164 +2553,167 @@ msgid ""
 "The administrator $nickname{%s} changed your role from $role{moderator} to "
 "$role{participant}."
 msgstr ""
+"El administrador $nickname{%s} cambió tu rol de $role{moderador} a "
+"$role{participante}."
 
 #: ../gui/muc_notification_messages.go:749
 #, python-format
 msgid "The administrator $nickname{%s} has expelled you from the room."
-msgstr ""
+msgstr "El administrador $nickname{%s} te ha expulsado de la sala."
 
 #: ../gui/muc_notification_messages.go:752
 #, python-format
 msgid "The administrator $nickname{%s} changed your role."
-msgstr ""
+msgstr "El administrador $nickname{%s} cambió tu rol."
 
 #: ../gui/muc_notification_messages.go:759
 #, python-format
 msgid ""
 "$nickname{%s} changed your role from $role{participant} to $role{visitor}."
-msgstr ""
+msgstr "$nickname{%s} cambió tu rol de $role{participante} a $role{visitante}."
 
 #: ../gui/muc_notification_messages.go:762
 #, python-format
 msgid ""
 "$nickname{%s} changed your role from $role{participant} to $role{moderator}."
-msgstr ""
+msgstr "$nickname{%s} cambió tu rol de $role{participante} a $role{moderador}."
 
 #: ../gui/muc_notification_messages.go:765
 #, python-format
 msgid ""
 "$nickname{%s} changed your role from $role{visitor} to $role{participant}."
-msgstr ""
+msgstr "$nickname{%s} cambió tu rol de $role{visitante} a $role{participante}."
 
 #: ../gui/muc_notification_messages.go:768
 #, python-format
 msgid ""
 "$nickname{%s} changed your role from $role{visitor} to $role{moderator}."
-msgstr ""
+msgstr "$nickname{%s} cambió tu rol de $role{visitante} a $role{moderador}."
 
 #: ../gui/muc_notification_messages.go:771
 #, python-format
 msgid ""
 "$nickname{%s} changed your role from $role{moderator} to $role{visitor}."
-msgstr ""
+msgstr "$nickname{%s} cambió tu rol de $role{moderador} a $role{visitante}."
 
 #: ../gui/muc_notification_messages.go:774
 #, python-format
 msgid ""
 "$nickname{%s} changed your role from $role{moderator} to $role{participant}."
-msgstr ""
+msgstr "$nickname{%s} cambió tu rol de $role{moderador} a $role{participante}."
 
 #: ../gui/muc_notification_messages.go:777
 #, python-format
 msgid "$nickname{%s} has expelled you from the room."
-msgstr ""
+msgstr "$nickname{%s} te ha expulsado de la sala."
 
 #: ../gui/muc_notification_messages.go:780
 #, python-format
 msgid "$nickname{%s} changed your role."
-msgstr ""
+msgstr "$nickname{%s} cambió tu rol."
 
 #: ../gui/muc_notification_messages.go:789
 #: ../gui/muc_notification_messages.go:1168
 msgid "%[1]s %[2]s"
-msgstr ""
+msgstr "%[1]s %[2]s"
 
 #: ../gui/muc_notification_messages.go:807
-#, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{visitor} to "
 "$role{participant}."
 msgstr ""
+"Como resultado, su rol cambió de $role{visitante} a $role{participante}."
 
 #: ../gui/muc_notification_messages.go:809
-#, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{visitor} to $role{moderator}."
-msgstr ""
+msgstr "Como resultado, su rol cambió de $role{visitante} a $role{moderador}."
 
 #: ../gui/muc_notification_messages.go:811
-#, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{participant} to "
 "$role{visitor}."
 msgstr ""
+"Como resultado, su rol cambió de $role{participante} a $role{visitante}."
 
 #: ../gui/muc_notification_messages.go:813
-#, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{participant} to "
 "$role{moderator}."
 msgstr ""
+"Como resultado, su rol cambió de $role{participante} a $role{moderador}."
 
 #: ../gui/muc_notification_messages.go:815
-#, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{moderator} to $role{visitor}."
-msgstr ""
+msgstr "Como resultado, su rol cambió de $role{moderador} a $role{visitante}."
 
 #: ../gui/muc_notification_messages.go:817
-#, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{moderator} to "
 "$role{participant}."
 msgstr ""
+"Como resultado, su rol cambió de $role{moderador} a $role{participante}."
 
 #: ../gui/muc_notification_messages.go:819
 msgid "As a result, their role was also changed."
-msgstr ""
+msgstr "Como resultado, su rol también cambió."
 
 #: ../gui/muc_notification_messages.go:825
-#, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{visitor} to $role{participant}."
 msgstr ""
+"Como resultado, tu rol cambió de $role{visitante} a $role{participante}."
 
 #: ../gui/muc_notification_messages.go:827
-#, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{visitor} to $role{moderator}."
-msgstr ""
+msgstr "Como resultado, tu rol cambió de $role{visitante} a $role{moderador}."
 
 #: ../gui/muc_notification_messages.go:829
-#, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{participant} to $role{visitor}."
 msgstr ""
+"Como resultado, tu role cambió de $role{participante} a $role{visitante}."
 
 #: ../gui/muc_notification_messages.go:831
-#, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{participant} to "
 "$role{moderator}."
 msgstr ""
+"Como resultado, tu rol cambió de $role{participante} a $role{moderador}."
 
 #: ../gui/muc_notification_messages.go:833
-#, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{moderator} to $role{visitor}."
-msgstr ""
+msgstr "Como resultado, tu rol cambió de $role{moderador} a $role{visitante}."
 
 #: ../gui/muc_notification_messages.go:835
-#, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{moderator} to "
 "$role{participant}."
 msgstr ""
+"Como resultado, tu rol cambió de $role{moderador} a $role{participante}."
 
 #: ../gui/muc_notification_messages.go:837
 msgid "As a result, your role was also changed."
+msgstr "Como resultado, tu rol también cambió."
+
+#: ../gui/muc_notification_messages.go:859
+#, python-format
+msgid "$nickname{%s} is $affiliation{not banned} anymore."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:888
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
-"$nickname{%[2]s} is not banned anymore."
+"$nickname{%[2]s} is $affiliation{not banned} anymore."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:908
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
-"$nickname{%[2]s} is not banned anymore."
+"$nickname{%[2]s} is $affiliation{not banned} anymore."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:916
@@ -2564,7 +2737,7 @@ msgstr ""
 #: ../gui/muc_notification_messages.go:928
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} "
-"is not banned anymore."
+"is $affiliation{not banned} anymore."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:969
@@ -2735,17 +2908,14 @@ msgid "The administrator $nickname{%s} changed your position."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:1236
-#, python-brace-format
 msgid "Your position was changed to $affiliation{owner}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:1238
-#, python-brace-format
 msgid "Your position was changed to $affiliation{administrator}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:1240
-#, python-brace-format
 msgid "Your position was changed to $affiliation{member}."
 msgstr ""
 
@@ -2787,7 +2957,6 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1276
 #: ../gui/muc_notification_messages.go:1518
-#, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{owner} to "
 "$affiliation{administrator}."
@@ -2795,14 +2964,12 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1278
 #: ../gui/muc_notification_messages.go:1520
-#, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{owner} to $affiliation{member}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:1280
 #: ../gui/muc_notification_messages.go:1522
-#, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{administrator} to "
 "$affiliation{owner}."
@@ -2810,7 +2977,6 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1282
 #: ../gui/muc_notification_messages.go:1524
-#, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{administrator} to "
 "$affiliation{member}."
@@ -2818,14 +2984,12 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1284
 #: ../gui/muc_notification_messages.go:1528
-#, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{member} to $affiliation{owner}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:1286
 #: ../gui/muc_notification_messages.go:1526
-#, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{member} to "
 "$affiliation{administrator}."
@@ -3141,16 +3305,16 @@ msgstr "Permisos"
 msgid ""
 "Here you can change settings that impact who can do what inside the room."
 msgstr ""
-"Aquí puedes cambiar la configuración respecto a quién puede hacer qué "
-"dentro de la habitación."
+"Aquí puedes cambiar la configuración respecto a quién puede hacer qué dentro "
+"de la habitación."
 
 #: ../gui/muc_room_config_texts.go:47
 #, fuzzy
 msgid ""
 "Here you can define who the owners, administrators and banned people are."
 msgstr ""
-"Aquí puedes definir quiénes son los propietarios, administradores y "
-"personas bloqueadas."
+"Aquí puedes definir quiénes son los propietarios, administradores y personas "
+"bloqueadas."
 
 #: ../gui/muc_room_config_texts.go:50
 #, fuzzy
@@ -3164,10 +3328,10 @@ msgid ""
 "Note that if archiving is enabled, all the discussions in the room might be "
 "logged and potentially made publicly accessible."
 msgstr ""
-"Aquí puedes encontrar otras opciones de configuración que te pueden "
-"resultar útiles. Ten en cuenta que si el archivo está habilitado, se podrí"
-"a acceder a todas las discusiones en la sala y potencialmente volverse "
-"accesibles al público."
+"Aquí puedes encontrar otras opciones de configuración que te pueden resultar "
+"útiles. Ten en cuenta que si el archivo está habilitado, se podría acceder a "
+"todas las discusiones en la sala y potencialmente volverse accesibles al "
+"público."
 
 #: ../gui/muc_room_config_texts.go:56 ../gui/muc_room_config_assistant.go:121
 msgid "Summary"
@@ -3180,8 +3344,7 @@ msgstr "Título"
 #: ../gui/muc_room_config_texts.go:102
 #, fuzzy
 msgid "The room title can be used to find the room in the public list."
-msgstr ""
-"El título de la sala puede ser usado para ubicarla en la lista pública."
+msgstr "El título de la sala puede ser usado para ubicarla en la lista pública."
 
 #: ../gui/muc_room_config_texts.go:105 ../gui/muc_room_config_texts.go:106
 msgid "Description"
@@ -3208,10 +3371,10 @@ msgid ""
 "accessed publicly. CoyIM users will be notified about this when joining the "
 "room, however, other clients might not."
 msgstr ""
-"La conversación de esta sala se almacenará en un archivo al que se "
-"podrá acceder públicamente. Los usuarios de CoyIM serán notificados sobre "
-"esto cuando se unan a la sala, sin embargo, es posible que otros clientes no "
-"lo hagan."
+"La conversación de esta sala se almacenará en un archivo al que se podrá "
+"acceder públicamente. Los usuarios de CoyIM serán notificados sobre esto "
+"cuando se unan a la sala, sin embargo, es posible que otros clientes no lo "
+"hagan."
 
 #: ../gui/muc_room_config_texts.go:118 ../gui/muc_room_config_texts.go:119
 msgid "Primary language of discussion"
@@ -3237,9 +3400,8 @@ msgid ""
 "be left empty unless you know what it means."
 msgstr ""
 "Una sala de chat puede tener un lugar asociado donde se puede realizar la "
-"publicación y suscripción de cierta información. Esta es una "
-"configuración técnica, que debe dejarse en blanco a menos que sepas lo que "
-"significa."
+"publicación y suscripción de cierta información. Esta es una configuración "
+"técnica, que debe dejarse en blanco a menos que sepas lo que significa."
 
 #: ../gui/muc_room_config_texts.go:131
 msgid "Allow anyone to set the subject of the room"
@@ -3274,9 +3436,8 @@ msgid "Maximum number of people in the room"
 msgstr "Máximo número de personas en la sala"
 
 #: ../gui/muc_room_config_texts.go:148
-#, fuzzy
 msgid "Make this room public"
-msgstr "Hacer pública esta sala"
+msgstr "Hacer que esta sala sea pública"
 
 #: ../gui/muc_room_config_texts.go:149
 msgid "Include in public lists"
@@ -3301,17 +3462,15 @@ msgstr "Persistente"
 msgid ""
 "A persistent room won't be destroyed when the last person leaves the room."
 msgstr ""
-"Una sala persistente no será destruida cuando la última persona deje la "
-"sala."
+"Una sala persistente no será destruida cuando la última persona deje la sala."
 
 #: ../gui/muc_room_config_texts.go:160 ../gui/muc_room_config_texts.go:161
 msgid "Roles that will receive information about other people in the room"
 msgstr "Roles que recibirán información acerca de otras personas en la sala"
 
 #: ../gui/muc_room_config_texts.go:164
-#, fuzzy
 msgid "Make this room moderated"
-msgstr "Hacer esta sala moderada"
+msgstr "Hacer que esta sala sea moderada"
 
 #: ../gui/muc_room_config_texts.go:165
 msgid "Moderated"
@@ -3324,100 +3483,125 @@ msgstr "En una sala moderada, les visitantes deben tener permiso para hablar."
 
 #: ../gui/muc_room_config_texts.go:170
 msgid "Make this room members-only"
-msgstr ""
+msgstr "Hacer que esta sala sea sólo para miembros"
 
 #: ../gui/muc_room_config_texts.go:171
 msgid "Only allow members to join"
-msgstr ""
+msgstr "Permitir que sólo los miembros se unan"
 
 #: ../gui/muc_room_config_texts.go:174
 msgid "Members"
-msgstr ""
+msgstr "Miembros"
 
 #: ../gui/muc_room_config_texts.go:181 ../gui/muc_room_config_texts.go:260
 #: ../gui/muc_room_config_texts.go:262 ../gui/muc_room_config_page.go:279
 msgid "Owners"
-msgstr ""
+msgstr "Propietarios"
 
 #: ../gui/muc_room_config_texts.go:184
 msgid "The account address of others in the room may be viewed by:"
 msgstr ""
+"La dirección de la cuenta de otras personas en la sala puede ser vista por:"
 
 #: ../gui/muc_room_config_texts.go:185
+#, fuzzy
 msgid "Account address of occupants can be viewed by"
-msgstr ""
+msgstr "La dirección de la cuenta de los ocupantes puede ser vista por"
 
 #: ../gui/muc_room_config_texts.go:188 ../gui/muc_room_config_texts.go:189
+#, fuzzy
 msgid "Maximum previous messages sent to people when joining the room"
-msgstr ""
+msgstr "Máximo de mensajes previos enviados a las personas al unirse a la sala"
 
 #: ../gui/muc_room_config_texts.go:192 ../gui/muc_room_config_texts.go:266
 #: ../gui/muc_room_config_texts.go:268 ../gui/muc_room_config_page.go:280
 msgid "Administrators"
-msgstr ""
+msgstr "Administradores"
 
 #: ../gui/muc_room_config_texts.go:195 ../gui/muc_room_config_texts.go:196
 msgid "A person can find out more information about other people in the room"
 msgstr ""
+"Una persona puede descubrir más información sobre otras personas en la sala"
 
 #: ../gui/muc_room_config_texts.go:199 ../gui/muc_room_config_texts.go:200
+#, fuzzy
 msgid "Visitors to a room can change their custom status information"
 msgstr ""
+"Los visitantes de una sala pueden cambiar su información de estado "
+"personalizada"
 
 #: ../gui/muc_room_config_texts.go:201
+#, fuzzy
 msgid ""
 "Since visitors are not allowed to speak in moderated rooms, this setting "
 "would allow visitors to still communicate with others by means of their "
 "status text."
 msgstr ""
+"Dado que los visitantes no pueden hablar en salas moderadas, esta "
+"configuración permitiría a los visitantes comunicarse con otros mediante su "
+"texto de estado."
 
 #: ../gui/muc_room_config_texts.go:205 ../gui/muc_room_config_texts.go:206
+#, fuzzy
 msgid "Visitors can change their nickname"
-msgstr ""
+msgstr "Los visitantes pueden cambiar su nickname"
 
 #: ../gui/muc_room_config_texts.go:207
 msgid ""
 "Just as with the status updates, this setting could allow visitors to show "
 "information to others in the room by changing their nickname."
 msgstr ""
+"Del mismo modo que con las actualizaciones de estado, este ajuste podría "
+"permitir a los visitantes mostrar información de otros en la sala al cambiar "
+"su nickname."
 
 #: ../gui/muc_room_config_texts.go:211 ../gui/muc_room_config_texts.go:212
 msgid "Visitors can ask for permission to speak"
-msgstr ""
+msgstr "Los visitantes pueden pedir permiso para hablar"
 
 #: ../gui/muc_room_config_texts.go:215 ../gui/muc_room_config_texts.go:216
+#, fuzzy
 msgid "Allow subscription"
-msgstr ""
+msgstr "Permitir suscripción"
 
 #: ../gui/muc_room_config_texts.go:217
+#, fuzzy
 msgid ""
 "This is a technical setting which allows a new, experimental, version of "
 "group chat to be used with this room. CoyIM does not support this, but if "
 "you turn on this setting, other clients might utilize the setting when "
 "connecting to the room."
 msgstr ""
+"Esta es una configuración técnica que permite utilizar una nueva versión "
+"experimental del chat grupal con esta sala. CoyIM no tiene soporte para "
+"esto, pero sí activa esta configuración, es posible que otros clientes "
+"utilicen este ajuste cuando se conecten a la sala."
 
 #: ../gui/muc_room_config_texts.go:222 ../gui/muc_room_config_texts.go:223
 msgid "When joining the room, people will be able to talk"
-msgstr ""
+msgstr "Al unirse a la sala, la gente podrá hablar"
 
 #: ../gui/muc_room_config_texts.go:226 ../gui/muc_room_config_texts.go:227
+#, fuzzy
 msgid "Minimum interval between voice requests (in seconds)"
-msgstr ""
+msgstr "Intervalo mínimo entre solicitudes para hablar (en segundos)"
 
 #: ../gui/muc_room_config_texts.go:230 ../gui/muc_room_config_texts.go:231
 msgid "Allow visitors to send private messages to"
-msgstr ""
+msgstr "Permitir a los visitantes enviar mensajes privados a"
 
 #: ../gui/muc_room_config_texts.go:234 ../gui/muc_room_config_texts.go:235
 msgid "Make list of participants public"
-msgstr ""
+msgstr "Hacer pública la lista de participantes"
 
 #: ../gui/muc_room_config_texts.go:261
+#, fuzzy
 msgid ""
 "Owners will always be moderators in a room. They can give or take away any "
 "position or role and control any aspect of the room."
 msgstr ""
+"Los propietarios siempre serán moderadores en una sala. Estos pueden otorgar "
+"o remover cualquier posición o rol y controlar cualquier aspecto de la sala."
 
 #: ../gui/muc_room_config_texts.go:263
 msgid ""
@@ -3426,12 +3610,20 @@ msgid ""
 "can either be a simple one, such as user@example.org or a full one, such as "
 "user@example.org/abcdef."
 msgstr ""
+"Aquí puedes agregar uno o más nuevos propietarios a la sala. Deberás "
+"utilizar la dirección de la cuenta del usuario para convertirlo en "
+"propietario. Esta dirección puede ser simple, como user@example.org o "
+"completa, como user@example.org/abcdef."
 
 #: ../gui/muc_room_config_texts.go:267
+#, fuzzy
 msgid ""
 "A room administrator will automatically become a moderator when entering the "
 "room. They can't change the room configuration or destroy the room."
 msgstr ""
+"Un administrador de la sala se convertirá automáticamente en moderador "
+"cuando ingrese a esta. Los administradores no pueden cambiar la "
+"configuración de la habitación ni destruirla."
 
 #: ../gui/muc_room_config_texts.go:269
 msgid ""
@@ -3440,18 +3632,23 @@ msgid ""
 "administrator. This address can either be a simple one, such as user@example."
 "org or a full one, such as user@example.org/abcdef."
 msgstr ""
+"Aquí puedes agregar uno o más administradores nuevos a la sala. Deberás "
+"utilizar la dirección de cuenta del usuario para convertirlo en "
+"administrador. Esta dirección puede ser simple, como user@example.org o "
+"completa, como user@example.org/abcdef."
 
 #: ../gui/muc_room_config_texts.go:272
 msgid "Banned people"
-msgstr ""
+msgstr "Personas bloqueadas"
 
 #: ../gui/muc_room_config_texts.go:273
 msgid "A banned person will not be able to join the room."
-msgstr ""
+msgstr "Una persona bloqueada no podrá unirse a la sala."
 
 #: ../gui/muc_room_config_texts.go:274
+#, fuzzy
 msgid "Ban people"
-msgstr ""
+msgstr "Bloquear personas"
 
 #: ../gui/muc_room_config_texts.go:275
 msgid ""
@@ -3460,64 +3657,74 @@ msgid ""
 "This address can either be a simple one, such as user@example.org or a full "
 "one, such as user@example.org/abcdef."
 msgstr ""
+"Aquí puedes agregar una o más personas que no podrán unirse a esta sala. "
+"Deberás utilizar la dirección de la cuenta del usuario para bloquearlos. "
+"Esta dirección puede ser simple, como user@example.org o completa, como "
+"user@example.org/abcdef."
 
 #: ../gui/muc_room_lobby.go:63
 #, python-format
 msgid "You are joining %s"
-msgstr ""
+msgstr "Te estás uniendo a %s"
 
 #: ../gui/muc_room_lobby.go:110
 msgid "That nickname is already being used."
-msgstr ""
+msgstr "Ese nickname ya está siendo usado."
 
 #: ../gui/muc_room_lobby.go:167
 msgid ""
 "An unknown error occurred while trying to join the room, please check your "
 "connection or try again."
 msgstr ""
+"Se produjo un error desconocido al intentar unirse a la sala, por favor "
+"verifica tu conexión o intenta nuevamente."
 
 #: ../gui/roster.go:446
 msgid " (waiting for approval)"
-msgstr ""
+msgstr " (esperando la aprobación)"
 
 #: ../gui/muc_join_room.go:142
 msgid "We couldn't find a room with that name."
-msgstr ""
+msgstr "No pudimos encontrar una sala con ese nombre."
 
 #: ../gui/muc_join_room.go:152
 msgid ""
 "It looks like the room you are trying to connect to doesn't exist, please "
 "verify the provided information."
 msgstr ""
+"Al parecer la sala a la que estás intentando conectarte no existe. Verifica "
+"la información proporcionada."
 
 #: ../gui/muc_join_room.go:162
 msgid ""
 "We can't get access to the service, please check your Internet connection or "
 "make sure the service exists."
 msgstr ""
+"No podemos acceder al servicio, verifica tu conexión a Internet o asegúrate "
+"de que el servicio exista."
 
 #: ../gui/muc_join_room.go:184 ../gui/muc_room_destroy.go:132
 #: ../gui/muc_room_form_component.go:141
 msgid "You must provide a valid room name."
-msgstr ""
+msgstr "Debes proporcionar un nombre de sala válido."
 
 #: ../gui/muc_join_room.go:190 ../gui/muc_room_destroy.go:134
 #: ../gui/muc_room_form_component.go:147
 msgid "You must provide a valid service name."
-msgstr ""
+msgstr "Debes proporcionar un nombre de servicio válido."
 
 #: ../gui/muc_room_config_summary_field.go:146
 msgid "**********"
-msgstr ""
+msgstr "**********"
 
 #: ../gui/muc_room_config_summary_field.go:148
 #: ../gui/muc_room_config_summary_field.go:162
 msgid "Not assigned"
-msgstr ""
+msgstr "No asignado"
 
 #: ../gui/muc_room_config_summary_field.go:168
 msgid "One result"
-msgstr ""
+msgstr "Un resultado"
 
 #: ../gui/muc_room_config_summary_field.go:170
 #, python-format
@@ -3550,34 +3757,34 @@ msgstr ""
 msgid "No accounts"
 msgstr ""
 
-#: ../gui/muc_room.go:203
+#: ../gui/muc_room.go:202
 msgid ""
 "Loading the room information took longer than usual, perhaps the connection "
 "to the server was lost. Do you want to try again?"
 msgstr ""
 
-#: ../gui/muc_room.go:206 ../gui/muc_room.go:734
+#: ../gui/muc_room.go:205 ../gui/muc_room.go:735
 msgid "Yes, try again"
 msgstr ""
 
-#: ../gui/muc_room.go:266
+#: ../gui/muc_room.go:265
 msgid ""
 "You have been removed from this room because it's now a members only room."
 msgstr ""
 
-#: ../gui/muc_room.go:376
+#: ../gui/muc_room.go:375
 msgid "The room has been destroyed"
 msgstr ""
 
-#: ../gui/muc_room.go:511
+#: ../gui/muc_room.go:510
 msgid "The room subject couldn't be updated."
 msgstr ""
 
-#: ../gui/muc_room.go:518
+#: ../gui/muc_room.go:517
 msgid "The room subject has been updated."
 msgstr ""
 
-#: ../gui/muc_room.go:531
+#: ../gui/muc_room.go:530
 msgid "Return"
 msgstr ""
 
@@ -3585,23 +3792,23 @@ msgstr ""
 msgid "Your connection has been restored; you can join this room again."
 msgstr ""
 
-#: ../gui/muc_room.go:727
+#: ../gui/muc_room.go:728
 msgid ""
 "Your connection was recovered but loading the room information took longer "
 "than usual, perhaps the connection to the server was lost. Do you want to "
 "try again?"
 msgstr ""
 
-#: ../gui/muc_room.go:740
+#: ../gui/muc_room.go:741
 msgid "Trying to connect to the room..."
 msgstr ""
 
-#: ../gui/muc_room.go:782
+#: ../gui/muc_room.go:784 ../gui/muc_room_conversation.go:212
 msgid ""
 "The connection to the server has been lost, please verify your connection."
 msgstr ""
 
-#: ../gui/muc_room.go:794
+#: ../gui/muc_room.go:797
 msgid "Connecting to the room..."
 msgstr ""
 
@@ -3880,41 +4087,41 @@ msgstr ""
 msgid "You must provide a valid service and room name."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:344
+#: ../gui/muc_public_rooms.go:343
 msgid "That service doesn't seem to exist."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:346
+#: ../gui/muc_public_rooms.go:345
 msgid "Your XMPP server doesn't seem to have any chat room services."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:430
+#: ../gui/muc_public_rooms.go:423
 msgid "Something went wrong when trying to get chat rooms."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:506
+#: ../gui/muc_public_rooms.go:499
 msgid "An unknown error occurred, please try again."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:510
+#: ../gui/muc_public_rooms.go:503
 msgid "We cant't determinate what has been selected, please try again."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:512
+#: ../gui/muc_public_rooms.go:505
 msgid ""
 "The selected item is not a room, select one room from the list to join to."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:514
+#: ../gui/muc_public_rooms.go:507
 msgid "Please, select one room from the list to join to."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:516
+#: ../gui/muc_public_rooms.go:509
 msgid ""
 "We cant't determinate which service has been selected, please try again."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:537
+#: ../gui/muc_public_rooms.go:530
 msgid "No account was selected, please select one account from the list."
 msgstr ""
 
@@ -3942,7 +4149,7 @@ msgstr ""
 msgid "You must provide a valid account address."
 msgstr ""
 
-#: ../gui/ui.go:609
+#: ../gui/ui.go:605
 msgid ""
 "You are trying to connect to a Google account - sometimes Google will not "
 "allow connections even if you have entered the correct password. Try turning "
@@ -3950,21 +4157,22 @@ msgid ""
 "access the account (don't worry, CoyIM is plenty secure)."
 msgstr ""
 
-#: ../gui/ui.go:667
+#: ../gui/ui.go:663
 msgid "CoyIM!"
-msgstr ""
+msgstr "CoyIM!"
 
-#: ../gui/ui.go:747
+#: ../gui/ui.go:743
 msgid "There is no account with the id %q"
 msgstr ""
 
-#: ../gui/ui.go:751
+#: ../gui/ui.go:747
 msgid "Can't send a contact request from an offline account"
 msgstr ""
+"No se puede enviar una solicitud de contacto desde una cuenta sin conexión"
 
 #: ../gui/connection.go:28
 msgid "Connection lost"
-msgstr ""
+msgstr "Conexión perdida"
 
 #: ../gui/connection.go:28
 msgid ""
@@ -3972,10 +4180,13 @@ msgid ""
 "\n"
 "We will try to reconnect."
 msgstr ""
+"Perdimos conexión con el servidor for razones desconocidas.\n"
+"\n"
+"Trataremos re reconectarnos."
 
 #: ../gui/connection.go:32 ../gui/connection.go:36 ../gui/connection.go:41
 msgid "Connection failure"
-msgstr ""
+msgstr "Fallo de conexión"
 
 #: ../gui/connection.go:32
 msgid ""
@@ -3984,6 +4195,10 @@ msgid ""
 "\n"
 "We will try to reconnect."
 msgstr ""
+"No pudimos conectarnos al servidor porque no pudimos determinar una "
+"dirección de servidor para el dominio dado.\n"
+"\n"
+"Trataremos de reconectarnos."
 
 #: ../gui/connection.go:36
 msgid ""
@@ -3992,6 +4207,11 @@ msgid ""
 "\n"
 "We will try to reconnect."
 msgstr ""
+"Por alguna razón, no pudimos conectarnos al servidor - verifica que la "
+"dirección del servidor sea correcta y que estés realmente conectado a "
+"Internet.\n"
+"\n"
+"Trataremos de reconectarnos."
 
 #: ../gui/connection.go:42
 #, python-format
@@ -4010,134 +4230,142 @@ msgstr ""
 
 #: ../gui/accounts_menu.go:30
 msgid "_Connect All"
-msgstr ""
+msgstr "_Conectar todas"
 
 #: ../gui/accounts_menu.go:34
 msgid "_Disconnect All"
-msgstr ""
+msgstr "_Desconectar todas"
 
 #: ../gui/accounts_menu.go:41
 msgid "_New Account"
-msgstr ""
+msgstr "_Nueva cuenta"
 
 #: ../gui/accounts_menu.go:45
 msgid "_Add Account"
-msgstr ""
+msgstr "_Agregar cuenta"
 
 #: ../gui/accounts_menu.go:49
 msgid "_Import Account"
-msgstr ""
+msgstr "_Importar cuenta"
 
-#: ../gui/muc_room_toolbar.go:156
+#: ../gui/muc_room_toolbar.go:154
 msgid "You are no longer allowed to continue updating the room subject."
-msgstr ""
+msgstr "Ya no puedes continuar actualizando el tema de la sala."
 
-#: ../gui/muc_room_toolbar.go:250
+#: ../gui/muc_room_toolbar.go:248
 msgid "Hide room subject"
-msgstr ""
+msgstr "Ocultar tema de la sala"
 
 #: ../gui/password_component.go:48 ../gui/muc_room_config_field_password.go:122
 msgid "Hide"
-msgstr ""
+msgstr "Ocultar"
 
 #: ../gui/language_selector_component.go:205
+#, fuzzy
 msgid "%[1]s (%[2]s)"
-msgstr ""
+msgstr "%[1]s (%[2]s)"
 
 #: ../gui/muc_room_config_list_component.go:103
+#, fuzzy
 msgid "Remove all"
-msgstr ""
+msgstr "Remover todos"
 
-#: ../gui/infobar_component.go:155
+#: ../gui/infobar_component.go:154
 msgid "January 2, 2006 at 15:04:05"
-msgstr ""
+msgstr "2 de enero, 2006 a las 15:04:05"
 
 #: ../gui/muc_room_occupant_role.go:133
 #, python-format
 msgid "You are changing the role of %s from moderator to:"
-msgstr ""
+msgstr "Estás cambiando el rol de %s de moderador a:"
 
 #: ../gui/muc_room_occupant_role.go:135
 #, python-format
 msgid "You are changing the role of %s from participant to:"
-msgstr ""
+msgstr "Estás cambiando el rol de %s de participante a:"
 
 #: ../gui/muc_room_occupant_role.go:137
 #, python-format
 msgid "You are changing the role of %s from visitor to:"
-msgstr ""
+msgstr "Estás cambiando el rol de %s de visitante a:"
 
 #: ../gui/muc_room_occupant_role.go:140
 #, python-format
 msgid "You are changing the role of %s to:"
-msgstr ""
+msgstr "Estás cambiando el rol de %s a:"
 
 #: ../gui/muc_room_config.go:96
 msgid "The room configuration changed."
-msgstr ""
+msgstr "La configuración de la sala cambió."
 
 #: ../gui/muc_room_config.go:108
 msgid "Unable to open the room configuration. Please, try again."
 msgstr ""
+"No se puede abrir la configuración de la sala. Por favor, inténtalo de nuevo."
 
 #: ../gui/muc_room_config.go:163
 msgid "Visitors can now request permission to speak."
-msgstr ""
+msgstr "Ahora los visitantes pueden solicitar permiso para hablar."
 
 #: ../gui/muc_room_config.go:165
 msgid ""
-"This room doesn't support \"voice\" requests anymore, which means that "
-"visitors can't ask for permission to speak."
+"This room's doesn't support \"voice\" request now, which means that visitors "
+"can't ask for permission to speak."
 msgstr ""
+"Ahora esta sala no admite la solicitud de \"voz\", lo que significa que los "
+"visitantes no pueden pedir permiso para hablar."
 
 #: ../gui/muc_room_config.go:171
 msgid "This room supports user registration."
-msgstr ""
+msgstr "Esta sala admite el registro de usuarios."
 
 #: ../gui/muc_room_config.go:173
 msgid "This room doesn't support user registration."
-msgstr ""
+msgstr "Esta sala no admite el registro de usuarios."
 
 #: ../gui/muc_room_config.go:178
 msgid "This room is now persistent."
-msgstr ""
+msgstr "Ahora esta sala es persistente."
 
 #: ../gui/muc_room_config.go:180
 msgid "This room is not persistent anymore."
-msgstr ""
+msgstr "Esta sala ya no es persistente."
 
 #: ../gui/muc_room_config.go:185
 msgid "Only participants and moderators can now send messages in this room."
 msgstr ""
+"Ahora sólo los participantes y los moderadores pueden enviar mensajes en "
+"esta sala."
 
 #: ../gui/muc_room_config.go:187
+#, fuzzy
 msgid "Everyone can now send messages in this room."
-msgstr ""
+msgstr "Ahora todos pueden enviar mensajes en esta sala."
 
 #: ../gui/muc_room_config.go:192
 msgid "This room is now protected by a password."
-msgstr ""
+msgstr "Ahora esta sala está protegida por una contraseña."
 
 #: ../gui/muc_room_config.go:194
 msgid "This room is not protected by a password."
-msgstr ""
+msgstr "Esta sala no está protegida por una contraseña."
 
 #: ../gui/muc_room_config.go:199
 msgid "This room is publicly listed."
-msgstr ""
+msgstr "Esta sala aparece en listas públicas."
 
 #: ../gui/muc_room_config.go:201
 msgid "This room is not publicly listed anymore."
-msgstr ""
+msgstr "Esta sala ya no aparece en listas públicas."
 
 #: ../gui/muc_room_config.go:205
 #, python-format
 msgid "The language of this room was changed to %s."
-msgstr ""
+msgstr "El idioma de esta sala cambió a %s."
 
 #: ../gui/muc_room_config.go:219
 msgid "Participants and moderators can change the room subject."
-msgstr ""
+msgstr "Los participantes y moderadores pueden cambiar el tema de la sala."
 
 #: ../gui/muc_room_config.go:221
 msgid "Only moderators can change the room subject."
@@ -4146,41 +4374,41 @@ msgstr ""
 #: ../gui/muc_room_config.go:225
 #, python-format
 msgid "Title was changed to \"%s\"."
-msgstr ""
+msgstr "El título cambió a \"%s\"."
 
 #: ../gui/muc_room_config.go:229
 #, python-format
 msgid "Description was changed to \"%s\"."
-msgstr ""
+msgstr "La descripción cambió a \"%s\"."
 
 #: ../gui/muc_room_config.go:234
 msgid "Anyone can send private messages to people in the room."
-msgstr ""
+msgstr "Cualquiera puede enviar mensajes privados a las personas de la sala."
 
 #: ../gui/muc_room_config.go:236
 msgid "No one in this room can send private messages now."
-msgstr ""
+msgstr "Ahora nadie en esta sala puede enviar mensajes privados."
 
 #: ../gui/muc_room_config.go:241
 msgid "Members can now invite other users to join."
-msgstr ""
+msgstr "Ahora los miembros pueden invitar a otros usarios a unirsre."
 
 #: ../gui/muc_room_config.go:243
 msgid "Members cannot invite other users to join anymore."
-msgstr ""
+msgstr "Los miembros ya no pueden invitar a otros usuarios a unirse."
 
 #: ../gui/muc_room_config.go:247
 #, python-format
 msgid "The room's max history length was changed to %d."
-msgstr ""
+msgstr "La extensión máxima del historial de la sala se cambió a %d."
 
 #: ../gui/connected_accounts_component.go:82
 msgid "There are no connected accounts."
-msgstr ""
+msgstr "No hay cuentas conectadas."
 
 #: ../gui/account.go:154
 msgid "Unable to Add Account"
-msgstr ""
+msgstr "No se pudo agregar la cuenta"
 
 #: ../gui/account.go:154
 msgid ""
@@ -4188,47 +4416,50 @@ msgid ""
 "\n"
 "You already have an account with this name."
 msgstr ""
+"No se puede agregar la cuenta:\n"
+"\n"
+"Ya tienes una cuenta con este nombre."
 
 #: ../gui/account.go:164
 msgid "Account added"
-msgstr ""
+msgstr "Cuenta agregada"
 
 #: ../gui/account.go:164
 #, python-format
 msgid "%s successfully added."
-msgstr ""
+msgstr "%s agregada con éxito."
 
 #: ../gui/account.go:242
 msgid "_Check Connection"
-msgstr ""
+msgstr "_Revisar conexión"
 
 #: ../gui/account.go:255
 msgid "_Connect"
-msgstr ""
+msgstr "_Conectar"
 
 #: ../gui/account.go:265
 msgid "_Disconnect"
-msgstr ""
+msgstr "_Desconectar"
 
 #: ../gui/account.go:283
 msgid "Connection _information..."
-msgstr ""
+msgstr "_Información de la conexión..."
 
 #: ../gui/account.go:299
 msgid "_Change Password..."
-msgstr ""
+msgstr "_Cambiar contraseña..."
 
 #: ../gui/account.go:312
 msgid "Connect _Automatically"
-msgstr ""
+msgstr "Conectar _automáticamente"
 
 #: ../gui/account.go:319
 msgid "Always Encrypt Conversation"
-msgstr ""
+msgstr "Siempre cifrar la conversación"
 
 #: ../gui/account.go:340
 msgid "XML Console"
-msgstr ""
+msgstr "Consola XML"
 
 #: ../gui/account.go:441
 #, python-format
@@ -4236,6 +4467,8 @@ msgid ""
 "Connecting account\n"
 "%s"
 msgstr ""
+"Conectando la cuenta\n"
+"%s"
 
 #: ../gui/account.go:445
 #, python-format
@@ -4243,10 +4476,12 @@ msgid ""
 "Connection failure\n"
 "%s"
 msgstr ""
+"Fallo de conexión\n"
+"%s"
 
 #: ../gui/account.go:449
 msgid "Tor is not currently running"
-msgstr ""
+msgstr "Tor no se está ejecutando actualmente"
 
 #: ../gui/muc_room_warnings.go:32
 msgid ""
@@ -4647,7 +4882,7 @@ msgstr ""
 msgid "%[1]s [%[2]s]"
 msgstr ""
 
-#: ../gui/muc_room_conversation_display.go:163
+#: ../gui/muc_room_conversation_display.go:164
 msgid ""
 "You can no longer receive any messages in this room and the list of people "
 "in the room will not be updated anymore."
@@ -4801,24 +5036,28 @@ msgid ""
 "%[2]s"
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:225
+#: ../gui/muc_room_conversation.go:223
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an owner}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:227
+#: ../gui/muc_room_conversation.go:225
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an administrator}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:229
+#: ../gui/muc_room_conversation.go:227
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{a member}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:231
+#: ../gui/muc_room_conversation.go:229
 #, python-format
 msgid "$nickname{%s} has been added to the ban list."
+msgstr ""
+
+#: ../gui/muc_room_conversation.go:272
+msgid "Your connection was restored."
 msgstr ""
 
 #: ../gui/file_transfer_notification.go:148
@@ -4896,27 +5135,27 @@ msgstr ""
 #: ../gui/file_transfer_notification.go:379
 #, python-format
 msgid "Sent encrypted: %s"
-msgstr ""
+msgstr "Enviado cifrado: %s"
 
 #: ../gui/file_transfer_notification.go:381
 #, python-format
 msgid "Sent insecurely: %s"
-msgstr ""
+msgstr "Enviado de forma insegura: %s"
 
 #: ../gui/file_transfer_notification.go:383
 #, python-format
 msgid "Received securely: %s"
-msgstr ""
+msgstr "Recibido de forma segura: %s"
 
 #: ../gui/file_transfer_notification.go:385
 #, python-format
 msgid "Received encrypted: %s"
-msgstr ""
+msgstr "Recibido cifrado: %s"
 
 #: ../gui/file_transfer_notification.go:387
 #, python-format
 msgid "Received insecurely: %s"
-msgstr ""
+msgstr "Recibido de forma insegura: %s"
 
 #: ../gui/muc_room_manager.go:40
 msgid "You are already in the room."
@@ -5169,7 +5408,9 @@ msgstr ""
 msgid ""
 "Make sure no one else\n"
 "is reading your messages"
-msgstr "Asegúrate de que nadie más está leyendo tus mensajes"
+msgstr ""
+"Asegúrate de que nadie\n"
+"más está leyendo tus mensajes"
 
 #: ../gui/verifier.go:182
 #, python-format
@@ -5204,11 +5445,12 @@ msgid ""
 msgstr ""
 
 #: ../gui/verifier.go:353
-#, fuzzy
 msgid ""
 "Finish verifying the \n"
 "security of this channel..."
-msgstr "Termina la verificación de la seguridad de este canal..."
+msgstr ""
+"Termina la verificación\n"
+"de la seguridad de este canal…"
 
 #: ../gui/verifier.go:378
 #, python-format
@@ -5267,10 +5509,7 @@ msgstr ""
 msgid "Checking password..."
 msgstr "Verificando contraseña..."
 
-#: ../gui/muc_room_close_confirm.go:57
-msgid "Close & Leave Room"
-msgstr ""
-
+#: ../gui/muc_room_close_confirm.go:53
 #, fuzzy
-#~ msgid "Close & leave room"
-#~ msgstr "Cerrar & salir de la sala"
+msgid "Close & leave room"
+msgstr "Cerrar & salir de la sala"

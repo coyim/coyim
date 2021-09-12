@@ -6,20 +6,22 @@ import (
 	"github.com/coyim/coyim/config"
 )
 
-type configurable struct {
+type mainConfiguration struct {
 	internalConfig     *config.ApplicationConfig
 	internalConfigLock sync.Mutex
 	haveConfigEntries  *callbacksSet
+
+	keySupplier config.KeySupplier
 }
 
-func (c *configurable) config() *config.ApplicationConfig {
+func (c *mainConfiguration) config() *config.ApplicationConfig {
 	c.internalConfigLock.Lock()
 	defer c.internalConfigLock.Unlock()
 
 	return c.internalConfig
 }
 
-func (c *configurable) setConfig(conf *config.ApplicationConfig) {
+func (c *mainConfiguration) setConfig(conf *config.ApplicationConfig) {
 	c.internalConfigLock.Lock()
 	c.internalConfig = conf
 	c.internalConfigLock.Unlock()
@@ -27,7 +29,7 @@ func (c *configurable) setConfig(conf *config.ApplicationConfig) {
 	c.haveConfig()
 }
 
-func (c *configurable) whenHaveConfig(f func()) {
+func (c *mainConfiguration) whenHaveConfig(f func()) {
 	if c.config() != nil {
 		f()
 		return
@@ -35,7 +37,7 @@ func (c *configurable) whenHaveConfig(f func()) {
 	c.haveConfigEntries.add(f)
 }
 
-func (c *configurable) haveConfig() {
+func (c *mainConfiguration) haveConfig() {
 	cs := c.haveConfigEntries
 	c.haveConfigEntries = nil
 	cs.invokeAll()

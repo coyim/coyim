@@ -10,7 +10,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/config"
-	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/gui/settings"
 	"github.com/coyim/coyim/i18n"
 	ournet "github.com/coyim/coyim/net"
@@ -32,59 +31,19 @@ const (
 )
 
 type gtkUI struct {
-	roster *roster
-	app    gtki.Application
-	window gtki.ApplicationWindow `gtk-widget:"mainWindow"`
+	roster
+	accountManager
 
-	contactsMenuItem  gtki.MenuItem `gtk-widget:"ContactsMenu"`
-	accountsMenuItem  gtki.MenuItem `gtk-widget:"AccountsMenu"`
-	chatRoomsMenuItem gtki.MenuItem `gtk-widget:"ChatRoomsMenu"`
-	viewMenuItem      gtki.MenuItem `gtk-widget:"ViewMenu"`
-	optionsMenuItem   gtki.MenuItem `gtk-widget:"OptionsMenu"`
+	mainConfiguration
+	mainUserInterface
+	mainSettings
+	mainNotifications
+	mainCommands
+	mainUIThread
 
-	searchBox        gtki.Box       `gtk-widget:"search-box"`
-	search           gtki.SearchBar `gtk-widget:"search-area"`
-	searchEntry      gtki.Entry     `gtk-widget:"search-entry"`
-	notificationArea gtki.Box       `gtk-widget:"notification-area"`
-	viewMenu         *viewMenu
-	optionsMenu      *optionsMenu
-
-	unified       *unifiedLayout
-	unifiedCached *unifiedLayout
-
-	*accountManager
-
-	displaySettings  *displaySettings
-	keyboardSettings *keyboardSettings
-
-	keySupplier config.KeySupplier
-
-	tags *tags
-
-	toggleConnectAllAutomaticallyRequest chan bool
-	setShowAdvancedSettingsRequest       chan bool
-
-	commands chan interface{}
-
-	sessionFactory sessions.Factory
-
-	dialerFactory interfaces.DialerFactory
-
-	settings *settings.Settings
-
-	//Desktop notifications
-	deNotify    *desktopNotifications
-	actionTimes map[string]time.Time
-
-	log coylog.Logger
-
-	hooks OSHooks
-
-	mainBuilder *builder
-
-	ouit *outsideUIThread
-
-	configurable
+	hasLog
+	hasHooks
+	hasUnifiedView
 }
 
 // Graphics represent the graphic configuration
@@ -147,19 +106,20 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	g.gtk.Init(argsWithApplicationName())
 	ensureInstalled()
 
-	ret := &gtkUI{
-		commands:                             make(chan interface{}, 5),
-		toggleConnectAllAutomaticallyRequest: make(chan bool, 100),
-		setShowAdvancedSettingsRequest:       make(chan bool, 100),
-		dialerFactory:                        df,
+	ret := &gtkUI{}
 
-		actionTimes: make(map[string]time.Time),
-		deNotify:    newDesktopNotifications(),
-		log:         log.StandardLogger().WithField("component", "gui"),
-		hooks:       hooks,
+	ret.commands = make(chan interface{}, 5)
+	ret.hasLog.log = log.StandardLogger().WithField("component", "gui")
 
-		ouit: outuit,
-	}
+	ret.toggleConnectAllAutomaticallyRequest = make(chan bool, 100)
+	ret.setShowAdvancedSettingsRequest = make(chan bool, 100)
+	ret.dialerFactory = df
+
+	ret.actionTimes = make(map[string]time.Time)
+	ret.deNotify = newDesktopNotifications()
+	ret.hooks = hooks
+
+	ret.ouit = outuit
 
 	ret.haveConfigEntries = newCallbacksSet()
 
@@ -179,7 +139,7 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 
 	ret.keySupplier = config.CachingKeySupplier(ret.getMasterPassword)
 
-	ret.accountManager = newAccountManager(ret, ret.log)
+	ret.accountManager.init(ret, ret.hasLog.log)
 
 	ret.sessionFactory = sf
 
@@ -188,6 +148,8 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	ret.addAction(ret.app, "quit", ret.quit)
 	ret.addAction(ret.app, "about", ret.aboutDialog)
 	ret.addAction(ret.app, "preferences", ret.showGlobalPreferences)
+
+	fmt.Printf("all objs: %#v\n", ret)
 
 	return ret
 }
@@ -253,11 +215,11 @@ func (u *gtkUI) installTor() {
 			if !ournet.Tor.Detect() {
 				err := "Tor is still not running"
 				torNotif.renderTorNotification(err, "software-update-urgent")
-				u.log.Info("Tor is still not running")
+				u.hasLog.log.Info("Tor is still not running")
 			} else {
 				err := "Tor is now running"
 				torNotif.renderTorNotification(err, "emblem-default")
-				u.log.Info("Tor is now running")
+				u.hasLog.log.Info("Tor is now running")
 			}
 		},
 	})
@@ -284,7 +246,7 @@ func (u *gtkUI) wouldYouLikeToInstallTor(k func(bool)) {
 
 func (u *gtkUI) initialSetupWindow() {
 	if !ournet.Tor.Detect() {
-		u.log.Info("Tor is not running")
+		u.hasLog.log.Info("Tor is not running")
 		u.wouldYouLikeToInstallTor(func(res bool) {
 			if res {
 				u.installTor()
@@ -320,7 +282,7 @@ func (u *gtkUI) loadConfig(configFile string) {
 	for !ok {
 		conf, ok, err = config.LoadOrCreate(configFile, u.keySupplier)
 		if !ok {
-			u.log.WithError(err).Warn("couldn't open encrypted file - either the user didn't supply a password, or the password was incorrect")
+			u.hasLog.log.WithError(err).Warn("couldn't open encrypted file - either the user didn't supply a password, or the password was incorrect")
 			u.keySupplier.Invalidate()
 			u.keySupplier.LastAttemptFailed()
 		}
@@ -331,7 +293,7 @@ func (u *gtkUI) loadConfig(configFile string) {
 	u.setConfig(conf)
 
 	if err != nil {
-		u.log.WithError(err).Warn("something went wrong")
+		u.hasLog.log.WithError(err).Warn("something went wrong")
 		doInUIThread(u.initialSetupWindow)
 		return
 	}
@@ -405,7 +367,7 @@ func (u *gtkUI) SaveConfig() {
 	go func() {
 		err := u.saveConfigInternal()
 		if err != nil {
-			u.log.WithError(err).Warn("Failed to save config file")
+			u.hasLog.log.WithError(err).Warn("Failed to save config file")
 		}
 	}()
 }
@@ -422,7 +384,7 @@ func (u *gtkUI) saveConfigOnly() {
 	go func() {
 		err := u.saveConfigOnlyInternal()
 		if err != nil {
-			u.log.WithError(err).Warn("Failed to save config file")
+			u.hasLog.log.WithError(err).Warn("Failed to save config file")
 		}
 	}()
 }
@@ -445,15 +407,8 @@ func (u *gtkUI) Loop() {
 	u.app.Run([]string{})
 }
 
-func (u *gtkUI) initRoster() {
-	u.roster = u.newRoster()
-}
-
-func (u *gtkUI) mainWindow() {
-	builder := newBuilder("Main")
-	u.mainBuilder = builder
-
-	builder.ConnectSignals(map[string]interface{}{
+func (u *gtkUI) connectUISignals() {
+	u.mainBuilder.ConnectSignals(map[string]interface{}{
 		"on_close_window":                       u.quit,
 		"on_add_contact_window":                 u.addContactWindow,
 		"on_new_conversation":                   u.newCustomConversation,
@@ -469,8 +424,12 @@ func (u *gtkUI) mainWindow() {
 		"on_muc_show_join_room":                 u.mucShowJoinRoom,
 		"on_create_chat_room":                   u.mucShowCreateRoom,
 	})
+}
 
-	panicOnDevError(builder.bindObjects(u))
+func (u *gtkUI) mainWindow() {
+	u.mainBuilder = newBuilder("Main")
+	u.connectUISignals()
+	u.loadUIDefinitions()
 
 	u.window.SetApplication(u.app)
 
@@ -479,15 +438,15 @@ func (u *gtkUI) mainWindow() {
 
 	// This must happen after u.displaySettings is initialized
 	// So now, roster depends on displaySettings which depends on mainWindow
-	u.initRoster()
+	u.roster.init(u)
 
-	addItemsThatShouldToggleOnGlobalMenuStatus(builder.getObj("newConvMenu").(isSensitive))
-	addItemsThatShouldToggleOnGlobalMenuStatus(builder.getObj("addMenu").(isSensitive))
+	addItemsThatShouldToggleOnGlobalMenuStatus(u.mainBuilder.getObj("newConvMenu").(isSensitive))
+	addItemsThatShouldToggleOnGlobalMenuStatus(u.mainBuilder.getObj("addMenu").(isSensitive))
 
 	// ViewMenu
 	u.viewMenu = new(viewMenu)
 
-	panicOnDevError(builder.bindObjects(u.viewMenu))
+	panicOnDevError(u.mainBuilder.bindObjects(u.viewMenu))
 
 	u.displaySettings.defaultSettingsOn(u.viewMenu.merge)
 	u.displaySettings.defaultSettingsOn(u.viewMenu.offline)
@@ -496,15 +455,15 @@ func (u *gtkUI) mainWindow() {
 
 	// OptionsMenu
 	u.optionsMenu = new(optionsMenu)
-	u.optionsMenu.encryptConfig = builder.getObj("EncryptConfigurationFileCheckMenuItem").(gtki.CheckMenuItem)
+	u.optionsMenu.encryptConfig = u.mainBuilder.getObj("EncryptConfigurationFileCheckMenuItem").(gtki.CheckMenuItem)
 	u.displaySettings.defaultSettingsOn(u.optionsMenu.encryptConfig)
 
 	u.initMenuBar()
-	obj := builder.getObj("Vbox")
+	obj := u.mainBuilder.getObj("Vbox")
 	vbox := obj.(gtki.Box)
 	vbox.PackStart(u.roster.widget, true, true, 0)
 
-	obj = builder.getObj("Hbox")
+	obj = u.mainBuilder.getObj("Hbox")
 	hbox := obj.(gtki.Box)
 	u.unified = newUnifiedLayout(u, vbox, hbox)
 	u.unifiedCached = u.unified
@@ -709,12 +668,12 @@ func (u *gtkUI) newCustomConversation() {
 		"on_start": func() {
 			iter, err := accountInput.GetActiveIter()
 			if err != nil {
-				u.log.WithError(err).Warn("Error encountered when getting account")
+				u.hasLog.log.WithError(err).Warn("Error encountered when getting account")
 				return
 			}
 			val, err := model.GetValue(iter, 1)
 			if err != nil {
-				u.log.WithError(err).Warn("Error encountered when getting account")
+				u.hasLog.log.WithError(err).Warn("Error encountered when getting account")
 				return
 			}
 			accountID, _ := val.GetString()
@@ -879,7 +838,7 @@ func (u *gtkUI) presenceUpdated(account *account, peer jid.WithResource, ev even
 
 	u.NewConversationViewFactory(account, peer, false).IfConversationView(func(c conversationView) {
 		doInUIThread(func() {
-			c.appendStatus(u.roster.displayNameFor(account, peer.NoResource()), time.Now(), ev.Show, ev.Status, ev.Gone)
+			c.appendStatus(u.displayNameFor(account, peer.NoResource()), time.Now(), ev.Show, ev.Status, ev.Gone)
 		})
 	}, func() {})
 }

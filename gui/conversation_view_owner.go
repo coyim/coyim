@@ -248,7 +248,7 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 		currentPeer: func() (*rosters.Peer, bool) {
 			p, ok := cvf.ui.getPeer(cvf.account, cvf.peer.NoResource())
 			if !ok {
-				cvf.ui.log.WithField("peer", cvf.peer.NoResource().String()).Warn("Failure to look up peer from account")
+				cvf.ui.hasLog.log.WithField("peer", cvf.peer.NoResource().String()).Warn("Failure to look up peer from account")
 			}
 			return p, ok
 		},

@@ -9,6 +9,7 @@ import (
 	"github.com/coyim/coyim/otrclient"
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
+	sessions "github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/jid"
 )
@@ -26,18 +27,19 @@ type accountManager struct {
 
 	log coylog.Logger
 
+	sessionFactory sessions.Factory
+	dialerFactory  interfaces.DialerFactory
+
 	sync.RWMutex
 }
 
-func newAccountManager(c otrclient.CommandManager, log coylog.Logger) *accountManager {
-	return &accountManager{
-		events:                     make(chan interface{}, 10),
-		accounts:                   make([]*account, 0, 5),
-		contacts:                   make(map[*account]*rosters.List),
-		CommandManager:             c,
-		log:                        log,
-		connectedAccountsObservers: make(map[int]func()),
-	}
+func (m *accountManager) init(c otrclient.CommandManager, log coylog.Logger) {
+	m.events = make(chan interface{}, 10)
+	m.accounts = make([]*account, 0, 5)
+	m.contacts = make(map[*account]*rosters.List)
+	m.CommandManager = c
+	m.log = log
+	m.connectedAccountsObservers = make(map[int]func())
 }
 
 func (m *accountManager) getAllAccounts() []*account {
@@ -139,7 +141,7 @@ func (u *gtkUI) addAccount(appConfig *config.ApplicationConfig, account *config.
 
 	acc := newAccount(appConfig, account, sf, df)
 	go u.observeAccountEvents(acc)
-	acc.log = u.log.WithField("account", account.Account)
+	acc.log = u.accountManager.log.WithField("account", account.Account)
 	acc.session.Subscribe(acc.events)
 	acc.session.SetCommandManager(u)
 	acc.session.SetConnector(acc)

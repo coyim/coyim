@@ -39,13 +39,11 @@ const (
 	indexRowType           = 8
 )
 
-func (u *gtkUI) newRoster() *roster {
+func (r *roster) init(u *gtkUI) {
 	builder := newBuilder("Roster")
 
-	r := &roster{
-		isCollapsed: make(map[string]bool),
-		ui:          u,
-	}
+	r.isCollapsed = make(map[string]bool)
+	r.ui = u
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_activate_buddy": r.onActivateRosterRow,
@@ -83,8 +81,6 @@ func (u *gtkUI) newRoster() *roster {
 
 	r.model = model
 	r.view.SetModel(r.model)
-
-	return r
 }
 
 func getFromModelIter(m gtki.TreeStore, iter gtki.TreeIter, index int) string {
@@ -350,15 +346,6 @@ func (r *roster) onActivateRosterRow(v gtki.TreeView, path gtki.TreePath) {
 	default:
 		panic(fmt.Sprintf("unknown roster row type: %s", rowType))
 	}
-}
-
-func (r *roster) displayNameFor(account *account, from jid.WithoutResource) string {
-	p, ok := r.ui.getPeer(account, from)
-	if !ok {
-		return from.String()
-	}
-
-	return p.NameForPresentation()
 }
 
 func (r *roster) update(account *account, entries *rosters.List) {
@@ -633,7 +620,7 @@ func (r *roster) sortedAccounts() []*account {
 	var as []*account
 	for account := range r.ui.accountManager.getAllContacts() {
 		if account == nil {
-			r.ui.log.Warn("adding an account that is nil...")
+			r.ui.hasLog.log.Warn("adding an account that is nil...")
 		}
 		as = append(as, account)
 	}

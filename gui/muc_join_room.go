@@ -166,7 +166,7 @@ func (v *mucJoinRoomView) onServiceUnavailable(a *account, roomID jid.Bare) {
 }
 
 func (v *mucJoinRoomView) log() coylog.Logger {
-	l := v.u.log
+	l := v.u.hasLog.log
 
 	ca := v.roomFormComponent.currentAccount()
 	if ca != nil {

@@ -25,7 +25,7 @@ func (u *gtkUI) maybeNotify(timestamp time.Time, account *account, peer jid.With
 	dname := u.displayNameFor(account, peer)
 
 	if timestamp.Before(u.lastActionTimeFor(peer.String()).Add(time.Duration(mergeNotificationsThreshold) * time.Second)) {
-		u.log.Debug("Decided to not show notification, since the time is not ready")
+		u.hasLog.log.Debug("Decided to not show notification, since the time is not ready")
 		return
 	}
 
@@ -33,7 +33,7 @@ func (u *gtkUI) maybeNotify(timestamp time.Time, account *account, peer jid.With
 
 	err := u.deNotify.show(peer.String(), dname, message)
 	if err != nil {
-		u.log.WithError(err).Warn("Error when showing notification")
+		u.hasLog.log.WithError(err).Warn("Error when showing notification")
 	}
 }
 

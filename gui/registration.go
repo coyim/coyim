@@ -236,7 +236,7 @@ func (w *serverSelectionWindow) renderForm(pg gtki.Widget) func(string, string, 
 func (w *serverSelectionWindow) doRendering(pg gtki.Widget) {
 	err := requestAndRenderRegistrationForm(w.form.server, w.renderForm(pg), w.u.dialerFactory, w.u.unassociatedVerifier(), w.u.config())
 	if err != nil {
-		w.u.log.WithError(err).Debug("error while rendering registration form")
+		w.u.hasLog.log.WithError(err).Debug("error while rendering registration form")
 		// TODO: refactor me!
 		if err == config.ErrTorNotRunning || err == xmppErr.ErrAuthenticationFailed || err == xmpp.ErrRegistrationFailed || err == ourNet.ErrTimeout {
 			w.assistant.SetPageType(pg, gtki.ASSISTANT_PAGE_SUMMARY)
@@ -270,7 +270,7 @@ func (w *serverSelectionWindow) formSubmittedPage() {
 	w.spinner.Stop()
 
 	if err != nil {
-		w.u.log.WithError(err).Debug("error for submitted page")
+		w.u.hasLog.log.WithError(err).Debug("error for submitted page")
 		w.renderErrorFor(err)
 		return
 	}
@@ -279,7 +279,7 @@ func (w *serverSelectionWindow) formSubmittedPage() {
 	err = w.u.addAndSaveAccountConfig(w.form.conf)
 
 	if err != nil {
-		w.u.log.WithError(err).Debug("error when adding or saving account config")
+		w.u.hasLog.log.WithError(err).Debug("error when adding or saving account config")
 		renderError(w.doneMessage, storeAccountInfoError, storeAccountInfoLog, err, w.u)
 		return
 	}

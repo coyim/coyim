@@ -145,7 +145,7 @@ func (u *gtkUI) showAddAccountWindow() {
 	u.accountDialog(nil, c, func() {
 		_, exists := u.config().GetAccount(c.Account)
 		if exists {
-			u.log.WithFields(log.Fields{
+			u.hasLog.log.WithFields(log.Fields{
 				"feature": "addAccount",
 				"account": c.Account,
 			}).Warn("Can't add account since you already have an account " +
@@ -157,7 +157,7 @@ func (u *gtkUI) showAddAccountWindow() {
 		}
 
 		_ = u.addAndSaveAccountConfig(c)
-		u.log.WithFields(log.Fields{
+		u.hasLog.log.WithFields(log.Fields{
 			"feature": "addAccount",
 			"account": c.Account,
 		}).Info("Account sucessfully added")
@@ -173,7 +173,7 @@ func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) error {
 
 	err := u.saveConfigInternal()
 	if err != nil {
-		u.log.WithField("account", c.Account).WithError(err).Warn("Failed to save config")
+		u.hasLog.log.WithField("account", c.Account).WithError(err).Warn("Failed to save config")
 	}
 
 	doInUIThread(func() {

@@ -58,7 +58,7 @@ func (u *gtkUI) newMUCRoomConfigComponent(account *account, data *roomConfigData
 		setCurrentPage:       setCurrentPage,
 		onValidationErrors:   newCallbacksSet(),
 		onNoValidationErrors: newCallbacksSet(),
-		log: u.log.WithFields(log.Fields{
+		log: u.hasLog.log.WithFields(log.Fields{
 			"room":  data.roomID,
 			"where": "roomConfigComponent",
 		}),

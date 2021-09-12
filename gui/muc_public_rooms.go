@@ -147,7 +147,7 @@ func (prv *mucPublicRoomsView) initDefaults() {
 }
 
 func (prv *mucPublicRoomsView) log() coylog.Logger {
-	l := prv.u.log
+	l := prv.u.hasLog.log
 	if prv.currentAccount != nil {
 		l = prv.currentAccount.log
 	}

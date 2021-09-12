@@ -36,7 +36,7 @@ func (u *gtkUI) doActualImportOf(choices map[applicationAndAccount]bool, potenti
 		for _, accs := range potential[k.app] {
 			for _, a := range accs.Accounts {
 				if a.Account == k.acc {
-					u.log.WithFields(log.Fields{
+					u.hasLog.log.WithFields(log.Fields{
 						"feature":       "import",
 						"importAccount": k.acc,
 						"importApp":     k.app,
@@ -44,7 +44,7 @@ func (u *gtkUI) doActualImportOf(choices map[applicationAndAccount]bool, potenti
 					u.config().WhenLoaded(func(conf *config.ApplicationConfig) {
 						_, exists := conf.GetAccount(k.acc)
 						if exists {
-							u.log.WithFields(log.Fields{
+							u.hasLog.log.WithFields(log.Fields{
 								"feature":       "import",
 								"importAccount": k.acc,
 							}).Warn("Can't import account since you already have an account " +
@@ -140,7 +140,7 @@ func (u *gtkUI) importFingerprintsFor(account *config.Account, file string) (int
 	num := 0
 	for _, kfprs := range fprs {
 		for _, kfpr := range kfprs {
-			u.log.WithFields(log.Fields{
+			u.hasLog.log.WithFields(log.Fields{
 				"feature":     "import",
 				"fingerprint": fmt.Sprintf("%X", kfpr.Fingerprint),
 				"user":        kfpr.UserID,

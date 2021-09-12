@@ -46,7 +46,7 @@ func (u *gtkUI) newRoomConfigAssistant(data *roomConfigData) *roomConfigAssistan
 		doAfterConfigCanceled:           data.doAfterConfigCanceled,
 		doNotAskForConfirmationOnCancel: data.doNotAskForConfirmationOnCancel,
 		parentWindow:                    data.parentWindow,
-		log: u.log.WithFields(log.Fields{
+		log: u.hasLog.log.WithFields(log.Fields{
 			"room":  data.roomID,
 			"where": "configureRoomAssistant",
 		}),

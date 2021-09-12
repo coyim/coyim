@@ -17,3 +17,7 @@ func (*NoHooks) AfterInit() {}
 
 // BeforeMainWindow implements the OSHooks interface
 func (*NoHooks) BeforeMainWindow(*gtkUI) {}
+
+type hasHooks struct {
+	hooks OSHooks
+}

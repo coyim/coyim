@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-09 17:10+0000\n"
+"POT-Creation-Date: 2021-09-12 18:26+0000\n"
 "PO-Revision-Date: 2016-02-23 03:48-0500\n"
 "Last-Translator: Fan Jiang <fan.torchz@gmail.com>\n"
 "Language-Team: Chinese (Simplified, China)\n"
@@ -469,7 +469,7 @@ msgstr ""
 
 #: ../gui/definitions/ChooseKeyToImport.xml:12
 msgid ""
-"The file you choose contains more than one private key. Choose from the list "
+"The file you chose contains more than one private key. Choose from the list "
 "below the key you would like to import."
 msgstr ""
 
@@ -1344,7 +1344,7 @@ msgstr ""
 msgid "Leave room"
 msgstr ""
 
-#: ../gui/definitions/MUCRoomToolbar.xml:133 ../gui/muc_room_toolbar.go:255
+#: ../gui/definitions/MUCRoomToolbar.xml:133 ../gui/muc_room_toolbar.go:257
 msgid "Show room subject"
 msgstr ""
 
@@ -1529,6 +1529,7 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:27
 #: ../gui/muc_notification_messages.go:244
+#: ../gui/muc_notification_messages.go:859
 #, python-format
 msgid "$nickname{%s} is not banned anymore."
 msgstr ""
@@ -2488,21 +2489,16 @@ msgstr ""
 msgid "As a result, your role was also changed."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:859
-#, python-format
-msgid "$nickname{%s} is $affiliation{not banned} anymore."
-msgstr ""
-
 #: ../gui/muc_notification_messages.go:888
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
-"$nickname{%[2]s} is $affiliation{not banned} anymore."
+"$nickname{%[2]s} is not banned anymore."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:908
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
-"$nickname{%[2]s} is $affiliation{not banned} anymore."
+"$nickname{%[2]s} is not banned anymore."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:916
@@ -2526,7 +2522,7 @@ msgstr ""
 #: ../gui/muc_notification_messages.go:928
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} "
-"is $affiliation{not banned} anymore."
+"is not banned anymore."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:969
@@ -3511,12 +3507,12 @@ msgstr ""
 msgid "Trying to connect to the room..."
 msgstr ""
 
-#: ../gui/muc_room.go:781
+#: ../gui/muc_room.go:782
 msgid ""
 "The connection to the server has been lost, please verify your connection."
 msgstr ""
 
-#: ../gui/muc_room.go:793
+#: ../gui/muc_room.go:794
 msgid "Connecting to the room..."
 msgstr ""
 
@@ -3795,41 +3791,41 @@ msgstr ""
 msgid "You must provide a valid service and room name."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:343
+#: ../gui/muc_public_rooms.go:344
 msgid "That service doesn't seem to exist."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:345
+#: ../gui/muc_public_rooms.go:346
 msgid "Your XMPP server doesn't seem to have any chat room services."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:423
+#: ../gui/muc_public_rooms.go:430
 msgid "Something went wrong when trying to get chat rooms."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:499
+#: ../gui/muc_public_rooms.go:506
 msgid "An unknown error occurred, please try again."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:503
+#: ../gui/muc_public_rooms.go:510
 msgid "We cant't determinate what has been selected, please try again."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:505
+#: ../gui/muc_public_rooms.go:512
 msgid ""
 "The selected item is not a room, select one room from the list to join to."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:507
+#: ../gui/muc_public_rooms.go:514
 msgid "Please, select one room from the list to join to."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:509
+#: ../gui/muc_public_rooms.go:516
 msgid ""
 "We cant't determinate which service has been selected, please try again."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:530
+#: ../gui/muc_public_rooms.go:537
 msgid "No account was selected, please select one account from the list."
 msgstr ""
 
@@ -3857,7 +3853,7 @@ msgstr ""
 msgid "You must provide a valid account address."
 msgstr ""
 
-#: ../gui/ui.go:611
+#: ../gui/ui.go:609
 msgid ""
 "You are trying to connect to a Google account - sometimes Google will not "
 "allow connections even if you have entered the correct password. Try turning "
@@ -3865,15 +3861,15 @@ msgid ""
 "access the account (don't worry, CoyIM is plenty secure)."
 msgstr ""
 
-#: ../gui/ui.go:669
+#: ../gui/ui.go:667
 msgid "CoyIM!"
 msgstr ""
 
-#: ../gui/ui.go:749
+#: ../gui/ui.go:747
 msgid "There is no account with the id %q"
 msgstr "ID为%q的账号不存在"
 
-#: ../gui/ui.go:753
+#: ../gui/ui.go:751
 msgid "Can't send a contact request from an offline account"
 msgstr "无法使用离线账号发送联系人请求"
 
@@ -3943,11 +3939,11 @@ msgstr ""
 msgid "_Import Account"
 msgstr ""
 
-#: ../gui/muc_room_toolbar.go:154
+#: ../gui/muc_room_toolbar.go:156
 msgid "You are no longer allowed to continue updating the room subject."
 msgstr ""
 
-#: ../gui/muc_room_toolbar.go:248
+#: ../gui/muc_room_toolbar.go:250
 msgid "Hide room subject"
 msgstr ""
 
@@ -4001,8 +3997,8 @@ msgstr ""
 
 #: ../gui/muc_room_config.go:165
 msgid ""
-"This room's doesn't support \"voice\" request now, which means that visitors "
-"can't ask for permission to speak."
+"This room doesn't support \"voice\" requests anymore, which means that "
+"visitors can't ask for permission to speak."
 msgstr ""
 
 #: ../gui/muc_room_config.go:171
@@ -4718,22 +4714,22 @@ msgid ""
 "%[2]s"
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:220
+#: ../gui/muc_room_conversation.go:225
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an owner}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:222
+#: ../gui/muc_room_conversation.go:227
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an administrator}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:224
+#: ../gui/muc_room_conversation.go:229
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{a member}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:226
+#: ../gui/muc_room_conversation.go:231
 #, python-format
 msgid "$nickname{%s} has been added to the ban list."
 msgstr ""

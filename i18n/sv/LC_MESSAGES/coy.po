@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-09 19:39+0000\n"
-"PO-Revision-Date: 2021-09-09 16:58+0000\n"
+"POT-Creation-Date: 2021-09-12 18:26+0000\n"
+"PO-Revision-Date: 2021-09-11 16:20+0000\n"
 "Last-Translator: Ola Bini <ola@autonomia.digital>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/coyim/main/sv/>\n"
 "Language: sv\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.8.1-dev\n"
+"X-Generator: Weblate 4.9-dev\n"
 
 #: ../gui/definitions/AccountDetails.xml:22
 #: ../gui/definitions/GlobalPreferences.xml:35
@@ -421,7 +421,7 @@ msgstr "Utfärdat till:"
 #: ../gui/definitions/CertificateDialog.xml:44
 #: ../gui/definitions/CertificateDialog.xml:187
 msgid "Common Name (CN):"
-msgstr "Common Name (CN):"
+msgstr "Vanligt namn (CN):"
 
 #: ../gui/definitions/CertificateDialog.xml:68
 msgid "Other names:"
@@ -534,11 +534,9 @@ msgstr "Välj en nyckel att importera"
 
 #: ../gui/definitions/ChooseKeyToImport.xml:12
 msgid ""
-"The file you choose contains more than one private key. Choose from the list "
+"The file you chose contains more than one private key. Choose from the list "
 "below the key you would like to import."
 msgstr ""
-"Filen du valde innehåller mer än en privat nyckel. Välj från listan nedanför "
-"vilken nyckel du vill importera."
 
 #: ../gui/definitions/ChooseKeyToImport.xml:35
 #: ../gui/definitions/Importer.xml:97
@@ -1007,7 +1005,7 @@ msgid ""
 "asked for this password again until you restart CoyIM."
 msgstr ""
 "Var god skriv in huvudlösenordet för konfigurationsfilen. Du kommer inte bli "
-"tillfrågad om detta lösenord igen förräns du startar om CoyIM."
+"tillfrågad om detta lösenord igen tills du startar om CoyIM."
 
 #: ../gui/definitions/MUCCreateRoomDialog.xml:4
 msgid "Create chat room"
@@ -1129,7 +1127,7 @@ msgid ""
 "in addition to all administrator privileges."
 msgstr ""
 "En ägare kan ändra rumsinställningarna och förstöra rummet, förutom alla "
-"andra administratörsprivilegier"
+"andra administratörsprivilegier."
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:225
 #: ../gui/definitions/MUCRoomRosterInfo.xml:511
@@ -1168,7 +1166,7 @@ msgid ""
 "will see this reason."
 msgstr ""
 "Här kan du ge en frivillig anledning för ändringen. Alla i rummet kan se den "
-"här anledningen"
+"här anledningen."
 
 #: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:4
 msgid "Close room"
@@ -1277,7 +1275,7 @@ msgstr "Du kommer att permanent förstöra det här rummet."
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:119
 msgid "You may want to provide the following information:"
-msgstr "Du bör kanske lämna följande information"
+msgstr "Du bör kanske lämna följande information:"
 
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:151
 msgid "Enter the reason for destroying the room"
@@ -1469,7 +1467,7 @@ msgstr "Förstör rummet"
 msgid "Leave room"
 msgstr "Lämna rummet"
 
-#: ../gui/definitions/MUCRoomToolbar.xml:133 ../gui/muc_room_toolbar.go:255
+#: ../gui/definitions/MUCRoomToolbar.xml:133 ../gui/muc_room_toolbar.go:257
 msgid "Show room subject"
 msgstr "Visa rumsämne"
 
@@ -1679,6 +1677,7 @@ msgstr "$nickname{%s} är inte $affiliation{en medlem} längre."
 
 #: ../gui/muc_notification_messages.go:27
 #: ../gui/muc_notification_messages.go:244
+#: ../gui/muc_notification_messages.go:859
 #, python-format
 msgid "$nickname{%s} is not banned anymore."
 msgstr "$nickname{%s} är inte bannlyst längre."
@@ -1945,6 +1944,8 @@ msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not $affiliation{an administrator} anymore."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; "
+"$nickname{%[2]s} är inte längre $affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:265
 #: ../gui/muc_notification_messages.go:884
@@ -1952,13 +1953,15 @@ msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not $affiliation{a member} anymore."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; "
+"$nickname{%[2]s} är inte längre $affiliation{en medlem}."
 
 #: ../gui/muc_notification_messages.go:269
 #: ../gui/muc_notification_messages.go:450
 #: ../gui/muc_notification_messages.go:981
 #: ../gui/muc_notification_messages.go:1095
 msgid "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}."
-msgstr ""
+msgstr "Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}."
 
 #: ../gui/muc_notification_messages.go:277
 #: ../gui/muc_notification_messages.go:896
@@ -1966,6 +1969,8 @@ msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not $affiliation{an owner} anymore."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; "
+"$nickname{%[2]s} är inte längre $affiliation{en ägare}."
 
 #: ../gui/muc_notification_messages.go:281
 #: ../gui/muc_notification_messages.go:900
@@ -1973,6 +1978,8 @@ msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not $affiliation{an administrator} anymore."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; "
+"$nickname{%[2]s} är inte längre $affiliation{en administratör}."
 
 #: ../gui/muc_notification_messages.go:285
 #: ../gui/muc_notification_messages.go:904
@@ -1980,6 +1987,8 @@ msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not $affiliation{a member} anymore."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; "
+"$nickname{%[2]s} är inte längre $affiliation{en medlem}."
 
 #: ../gui/muc_notification_messages.go:289
 #: ../gui/muc_notification_messages.go:482
@@ -1988,92 +1997,110 @@ msgstr ""
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}."
 
 #: ../gui/muc_notification_messages.go:302
 #, python-format
 msgid "$nickname{%s} was banned from the room."
-msgstr ""
+msgstr "$nickname{%s} blev bannlyst från rummet."
 
 #: ../gui/muc_notification_messages.go:308
 msgid "The owner $nickname{%[1]s} banned $nickname{%[2]s} from the room."
-msgstr ""
+msgstr "Ägaren $nickname{%[1]s} bannlyste $nickname{%[2]s} från rummet."
 
 #: ../gui/muc_notification_messages.go:312
 msgid ""
 "The administrator $nickname{%[1]s} banned $nickname{%[2]s} from the room."
 msgstr ""
+"Administratören $nickname{%[1]s} bannlyste $nickname{%[2]s} från rummet."
 
 #: ../gui/muc_notification_messages.go:316
 msgid "$nickname{%[1]s} banned $nickname{%[2]s} from the room."
-msgstr ""
+msgstr "$nickname{%[1]s} bannlyste $nickname{%[2]s} från rummet."
 
 #: ../gui/muc_notification_messages.go:329
 #, python-format
 msgid "$nickname{%s} is now $affiliation{an owner}."
-msgstr ""
+msgstr "$nickname{%s} är nu $affiliation{en ägare}."
 
 #: ../gui/muc_notification_messages.go:331
 #, python-format
 msgid "$nickname{%s} is now $affiliation{an administrator}."
-msgstr ""
+msgstr "$nickname{%s} är nu $affiliation{en administratör}."
 
 #: ../gui/muc_notification_messages.go:333
 #, python-format
 msgid "$nickname{%s} is now $affiliation{a member}."
-msgstr ""
+msgstr "$nickname{%s} är nu $affiliation{en medlem}."
 
 #: ../gui/muc_notification_messages.go:335
 #, python-format
 msgid "$nickname{%s} is now banned."
-msgstr ""
+msgstr "$nickname{%s} är nu bannlyst."
 
 #: ../gui/muc_notification_messages.go:348
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is now $affiliation{an owner}."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; "
+"$nickname{%[2]s} är nu $affiliation{en ägare}."
 
 #: ../gui/muc_notification_messages.go:352
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is now $affiliation{an administrator}."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; "
+"$nickname{%[2]s} är nu $affiliation{en administratör}."
 
 #: ../gui/muc_notification_messages.go:356
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is now $affiliation{a member}."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; "
+"$nickname{%[2]s} är nu $affiliation{en medlem}."
 
 #: ../gui/muc_notification_messages.go:360
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is now banned."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; "
+"$nickname{%[2]s} är nu bannlyst."
 
 #: ../gui/muc_notification_messages.go:368
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is now $affiliation{an owner}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; "
+"$nickname{%[2]s} är nu $affiliation{en ägare}."
 
 #: ../gui/muc_notification_messages.go:372
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is now $affiliation{an administrator}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; "
+"$nickname{%[2]s} är nu $affiliation{en administratör}."
 
 #: ../gui/muc_notification_messages.go:376
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is now $affiliation{a member}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; "
+"$nickname{%[2]s} är nu $affiliation{en medlem}."
 
 #: ../gui/muc_notification_messages.go:380
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is now banned."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; "
+"$nickname{%[2]s} är nu bannlyst."
 
 #: ../gui/muc_notification_messages.go:395
 #: ../gui/muc_notification_messages.go:1042
@@ -2082,6 +2109,8 @@ msgid ""
 "The position of $nickname{%s} was changed from $affiliation{owner} to "
 "$affiliation{administrator}."
 msgstr ""
+"Ställningen föë $nickname{%s} ändrades från $affiliation{ägare} till "
+"$affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:398
 #: ../gui/muc_notification_messages.go:1036
@@ -2090,6 +2119,8 @@ msgid ""
 "The position of $nickname{%s} was changed from $affiliation{owner} to "
 "$affiliation{member}."
 msgstr ""
+"Ställningen för $nickname{%s} ändrades från $affiliation{ägare} till "
+"$affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:401
 #: ../gui/muc_notification_messages.go:1039
@@ -2098,6 +2129,8 @@ msgid ""
 "The position of $nickname{%s} was changed from $affiliation{administrator} "
 "to $affiliation{member}."
 msgstr ""
+"Ställningen för $nickname{%s} ändrades från $affiliation{administratör} till "
+"$affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:404
 #: ../gui/muc_notification_messages.go:1048
@@ -2106,6 +2139,8 @@ msgid ""
 "The position of $nickname{%s} was changed from $affiliation{administrator} "
 "to $affiliation{owner}."
 msgstr ""
+"Ställningen för $nickname{%s} ändrades från $affiliation{administratör} till "
+"$affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:407
 #: ../gui/muc_notification_messages.go:1045
@@ -2114,6 +2149,8 @@ msgid ""
 "The position of $nickname{%s} was changed from $affiliation{member} to "
 "$affiliation{administrator}."
 msgstr ""
+"Ställningen för $nickname{%s} ändrades från $affiliation{medlem} till "
+"$affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:410
 #: ../gui/muc_notification_messages.go:1051
@@ -2122,6 +2159,8 @@ msgid ""
 "The position of $nickname{%s} was changed from $affiliation{member} to "
 "$affiliation{owner}."
 msgstr ""
+"Ställningen för $nickname{%s} ändrades från $affiliation{medlem} till "
+"$affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:426
 #: ../gui/muc_notification_messages.go:1091
@@ -2129,6 +2168,8 @@ msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{owner} to $affiliation{administrator}."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} från "
+"$affiliation{ägare} till $affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:430
 #: ../gui/muc_notification_messages.go:1087
@@ -2136,6 +2177,8 @@ msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{owner} to $affiliation{member}."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} från "
+"$affiliation{ägare} till $affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:434
 #: ../gui/muc_notification_messages.go:1083
@@ -2143,6 +2186,8 @@ msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{administrator} to $affiliation{owner}."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} från "
+"$affiliation{administratör} till $affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:438
 #: ../gui/muc_notification_messages.go:1079
@@ -2150,6 +2195,8 @@ msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{administrator} to $affiliation{member}."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} från "
+"$affiliation{administratör} till $affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:442
 #: ../gui/muc_notification_messages.go:1075
@@ -2157,6 +2204,8 @@ msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{member} to $affiliation{owner}."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} från "
+"$affiliation{medlem} till $affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:446
 #: ../gui/muc_notification_messages.go:1071
@@ -2164,6 +2213,8 @@ msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{member} to $affiliation{administrator}."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} från "
+"$affiliation{medlem} till $affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:458
 #: ../gui/muc_notification_messages.go:1122
@@ -2171,6 +2222,8 @@ msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} "
 "from $affiliation{owner} to $affiliation{administrator}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} "
+"från $affiliation{ägare} till $affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:462
 #: ../gui/muc_notification_messages.go:1118
@@ -2178,6 +2231,8 @@ msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} "
 "from $affiliation{owner} to $affiliation{member}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} "
+"från $affiliation{ägare} till $affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:466
 #: ../gui/muc_notification_messages.go:1114
@@ -2185,6 +2240,8 @@ msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} "
 "from $affiliation{administrator} to $affiliation{owner}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} "
+"från $affiliation{administratör} till $affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:470
 #: ../gui/muc_notification_messages.go:1110
@@ -2192,6 +2249,8 @@ msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} "
 "from $affiliation{administrator} to $affiliation{member}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} "
+"från $affiliation{administratör} till $affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:474
 #: ../gui/muc_notification_messages.go:1106
@@ -2199,6 +2258,8 @@ msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} "
 "from $affiliation{member} to $affiliation{owner}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} "
+"från $affiliation{medlem} till $affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:478
 #: ../gui/muc_notification_messages.go:1102
@@ -2206,213 +2267,246 @@ msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} "
 "from $affiliation{member} to $affiliation{administrator}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} "
+"från $affiliation{medlem} till $affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:508
 msgid "The owner $nickname{%[1]s} expelled $nickname{%[2]s} from the room."
-msgstr ""
+msgstr "Ägaren $nickname{%[1]s} kastade ut $nickname{%[2]s} från rummet."
 
 #: ../gui/muc_notification_messages.go:512
 msgid ""
 "The administrator $nickname{%[1]s} expelled $nickname{%[2]s} from the room."
 msgstr ""
+"Administratören $nickname{%[1]s} kastade ut $nickname{%[2]s} från rummet."
 
 #: ../gui/muc_notification_messages.go:516
 msgid "$nickname{%[1]s} expelled $nickname{%[2]s} from the room."
-msgstr ""
+msgstr "$nickname{%[1]s} kastade ut $nickname{%[2]s} från rummet."
 
 #: ../gui/muc_notification_messages.go:531
 #, python-format
 msgid "The role of %s was changed from moderator to participant."
-msgstr ""
+msgstr "Rollen för %s ändrades från moderatör till deltagare."
 
 #: ../gui/muc_notification_messages.go:534
 #, python-format
 msgid "The role of %s was changed from moderator to visitor."
-msgstr ""
+msgstr "Rollen för %s ändrades från moderatör till besökare."
 
 #: ../gui/muc_notification_messages.go:537
 #, python-format
 msgid "The role of %s was changed from participant to moderator."
-msgstr ""
+msgstr "Rollen för %s ändrades från deltagare till moderatör."
 
 #: ../gui/muc_notification_messages.go:540
 #, python-format
 msgid "The role of %s was changed from participant to visitor."
-msgstr ""
+msgstr "Rollen för %s ändrades från deltagare till besökare."
 
 #: ../gui/muc_notification_messages.go:543
 #, python-format
 msgid "The role of %s was changed from visitor to moderator."
-msgstr ""
+msgstr "Rollen för %s ändrades från besökare till moderatör."
 
 #: ../gui/muc_notification_messages.go:546
 #, python-format
 msgid "The role of %s was changed from visitor to participant."
-msgstr ""
+msgstr "Rollen för %s ändrades från besökare till deltagare."
 
 #: ../gui/muc_notification_messages.go:549
 #, python-format
 msgid "The role of %s was changed."
-msgstr ""
+msgstr "Rollen för %s ändrades."
 
 #: ../gui/muc_notification_messages.go:566
 msgid ""
 "The owner $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{moderator} to $role{participant}."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade rollen för $nickname{%[2]s} från "
+"$role{moderatör} till $role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:570
 msgid ""
 "The owner $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{moderator} to $role{visitor}."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade rollen för $nickname{%[2]s} från "
+"$role{moderatör} to $role{besökare}."
 
 #: ../gui/muc_notification_messages.go:574
 msgid ""
 "The owner $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{participant} to $role{moderator}."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade rollen för $nickname{%[2]s} från "
+"$role{delatagare} till $role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:578
 msgid ""
 "The owner $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{participant} to $role{visitor}."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade rollen för $nickname{%[2]s} från "
+"$role{deltagare} to $role{besökare}."
 
 #: ../gui/muc_notification_messages.go:582
 msgid ""
 "The owner $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{visitor} to $role{moderator}."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade rollen för $nickname{%[2]s} från "
+"$role{besökare} to $role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:586
 msgid ""
 "The owner $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{visitor} to $role{participant}."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade rollen för $nickname{%[2]s} från "
+"$role{besökare} till $role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:590
 msgid "The owner $nickname{%[1]s} changed the role of $nickname{%[2]s}."
-msgstr ""
+msgstr "Ägaren $nickname{%[1]s} ändrade rollen för $nickname{%[2]s}."
 
 #: ../gui/muc_notification_messages.go:598
 msgid ""
 "The administrator $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{moderator} to $role{participant}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade rollen för $nickname{%[2]s} från "
+"$role{moderatör} till $role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:602
 msgid ""
 "The administrator $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{moderator} to $role{visitor}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade rollen för $nickname{%[2]s} från "
+"$role{moderatör} till $role{besökare}."
 
 #: ../gui/muc_notification_messages.go:606
 msgid ""
 "The administrator $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{participant} to $role{moderator}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade rollen för $nickname{%[2]s} från "
+"$role{deltagare} till $role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:610
 msgid ""
 "The administrator $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{participant} to $role{visitor}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade rollen för $nickname{%[2]s} från "
+"$role{deltagare} till $role{besökare}."
 
 #: ../gui/muc_notification_messages.go:614
 msgid ""
 "The administrator $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{visitor} to $role{moderator}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade rollen för $nickname{%[2]s} från "
+"$role{besökare} till $role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:618
 msgid ""
 "The administrator $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{visitor} to $role{participant}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade rollen för $nickname{%[2]s} från "
+"$role{besökare} till $role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:622
 msgid ""
 "The administrator $nickname{%[1]s} changed the role of $nickname{%[2]s}."
-msgstr ""
+msgstr "Administratören $nickname{%[1]s} ändrade rollen för $nickname{%[2]s}."
 
 #: ../gui/muc_notification_messages.go:630
 msgid ""
 "$nickname{%[1]s} changed the role of $nickname{%[2]s} from $role{moderator} "
 "to $role{participant}."
 msgstr ""
+"$nickname{%[1]s} ändrade rollen för $nickname{%[2]s} från $role{moderatör} "
+"till $role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:634
 msgid ""
 "$nickname{%[1]s} changed the role of $nickname{%[2]s} from $role{moderator} "
 "to $role{visitor}."
 msgstr ""
+"$nickname{%[1]s} ändrade rollen för $nickname{%[2]s} från $role{moderatör} "
+"till $role{besökare}."
 
 #: ../gui/muc_notification_messages.go:638
 msgid ""
 "$nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{participant} to $role{moderator}."
 msgstr ""
+"$nickname{%[1]s} ändrade rollen för $nickname{%[2]s} från $role{deltagare} "
+"till $role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:642
 msgid ""
 "$nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{participant} to $role{visitor}."
 msgstr ""
+"$nickname{%[1]s} ändrade rollen för $nickname{%[2]s} från $role{deltagare} "
+"till $role{besökare}."
 
 #: ../gui/muc_notification_messages.go:646
 msgid ""
 "$nickname{%[1]s} changed the role of $nickname{%[2]s} from $role{visitor} to "
 "$role{moderator}."
 msgstr ""
+"$nickname{%[1]s} ändrade rollen för $nickname{%[2]s} från $role{besökare} "
+"till $role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:650
 msgid ""
 "$nickname{%[1]s} changed the role of $nickname{%[2]s} from $role{visitor} to "
 "$role{participant}."
 msgstr ""
+"$nickname{%[1]s} ändrade rollen för $nickname{%[2]s} från $role{besökare} "
+"till $role{besökare}."
 
 #: ../gui/muc_notification_messages.go:654
 msgid "$nickname{%[1]s} changed the role of $nickname{%[2]s}."
-msgstr ""
+msgstr "$nickname{%[1]s} ändrade rollen för $nickname{%[2]s}."
 
 #: ../gui/muc_notification_messages.go:673
-#, python-brace-format
 msgid "Your role was changed from $role{participant} to $role{visitor}."
-msgstr ""
+msgstr "Din roll ändrades från $role{deltagare} till $role{besökare}."
 
 #: ../gui/muc_notification_messages.go:675
-#, python-brace-format
 msgid "Your role was changed from $role{participant} to $role{moderator}."
-msgstr ""
+msgstr "Din roll ändrades från $role{deltagare} till $role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:677
-#, python-brace-format
 msgid "Your role was changed from $role{visitor} to $role{participant}."
-msgstr ""
+msgstr "Din roll ändrades från $role{besökare} till $role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:679
-#, python-brace-format
 msgid "Your role was changed from $role{visitor} to $role{moderator}."
-msgstr ""
+msgstr "Din roll ändrades från $role{besökare} till $role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:681
-#, python-brace-format
 msgid "Your role was changed from $role{moderator} to $role{visitor}."
-msgstr ""
+msgstr "Din roll ändrades från $role{moderatör} till $role{besökare}."
 
 #: ../gui/muc_notification_messages.go:683
-#, python-brace-format
 msgid "Your role was changed from $role{moderator} to $role{participant}."
-msgstr ""
+msgstr "Din roll ändrades från $role{moderatör} till $role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:685
 msgid "You have been expelled."
-msgstr ""
+msgstr "Du har blivit utkastad."
 
 #: ../gui/muc_notification_messages.go:687
 msgid "Your role was changed."
-msgstr ""
+msgstr "Din roll ändrades."
 
 #: ../gui/muc_notification_messages.go:703
 #, python-format
@@ -2420,6 +2514,8 @@ msgid ""
 "The owner $nickname{%s} changed your role from $role{participant} to "
 "$role{visitor}."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din roll från $role{deltagare} till "
+"$role{besökare}."
 
 #: ../gui/muc_notification_messages.go:706
 #, python-format
@@ -2427,6 +2523,8 @@ msgid ""
 "The owner $nickname{%s} changed your role from $role{participant} to "
 "$role{moderator}."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din roll från $role{deltagare} till "
+"$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:709
 #, python-format
@@ -2434,6 +2532,8 @@ msgid ""
 "The owner $nickname{%s} changed your role from $role{visitor} to "
 "$role{participant}."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din roll från $role{besökare} till "
+"$role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:712
 #, python-format
@@ -2441,6 +2541,8 @@ msgid ""
 "The owner $nickname{%s} changed your role from $role{visitor} to "
 "$role{moderator}."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din roll från $role{besökare} till "
+"$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:715
 #, python-format
@@ -2448,6 +2550,8 @@ msgid ""
 "The owner $nickname{%s} changed your role from $role{moderator} to "
 "$role{visitor}."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din roll från $role{moderatör} till "
+"$role{besökare}."
 
 #: ../gui/muc_notification_messages.go:718
 #, python-format
@@ -2455,16 +2559,18 @@ msgid ""
 "The owner $nickname{%s} changed your role from $role{moderator} to "
 "$role{participant}."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din roll från $role{moderatör} till "
+"$role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:721
 #, python-format
 msgid "The owner $nickname{%s} has expelled you from the room."
-msgstr ""
+msgstr "Ägaren $nickname{%s} har kastat ut dig från rummet."
 
 #: ../gui/muc_notification_messages.go:724
 #, python-format
 msgid "The owner $nickname{%s} changed your role."
-msgstr ""
+msgstr "Ägaren $nickname{%s} har ändrat din roll."
 
 #: ../gui/muc_notification_messages.go:731
 #, python-format
@@ -2472,6 +2578,8 @@ msgid ""
 "The administrator $nickname{%s} changed your role from $role{participant} to "
 "$role{visitor}."
 msgstr ""
+"Administratören $nickname{%s} ändrade din roll från $role{deltagare} till "
+"$role{besökare}."
 
 #: ../gui/muc_notification_messages.go:734
 #, python-format
@@ -2479,6 +2587,8 @@ msgid ""
 "The administrator $nickname{%s} changed your role from $role{participant} to "
 "$role{moderator}."
 msgstr ""
+"Administratören $nickname{%s} ändrade din roll från $role{deltagare} till "
+"$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:737
 #, python-format
@@ -2486,6 +2596,8 @@ msgid ""
 "The administrator $nickname{%s} changed your role from $role{visitor} to "
 "$role{participant}."
 msgstr ""
+"Administratören $nickname{%s} ändrade din roll från $role{besökare} till "
+"$role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:740
 #, python-format
@@ -2493,6 +2605,8 @@ msgid ""
 "The administrator $nickname{%s} changed your role from $role{visitor} to "
 "$role{moderator}."
 msgstr ""
+"Administratören $nickname{%s} ändrade din roll från $role{besökare} till "
+"$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:743
 #, python-format
@@ -2500,6 +2614,8 @@ msgid ""
 "The administrator $nickname{%s} changed your role from $role{moderator} to "
 "$role{visitor}."
 msgstr ""
+"Administratören $nickname{%s} ändrade din roll från $role{moderatör} till "
+"$role{besökare}."
 
 #: ../gui/muc_notification_messages.go:746
 #, python-format
@@ -2507,169 +2623,184 @@ msgid ""
 "The administrator $nickname{%s} changed your role from $role{moderator} to "
 "$role{participant}."
 msgstr ""
+"Administratören $nickname{%s} ändrade din roll från $role{moderatör} till "
+"$role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:749
 #, python-format
 msgid "The administrator $nickname{%s} has expelled you from the room."
-msgstr ""
+msgstr "Administratören $nickname{%s} har kastat ut dig från rummet."
 
 #: ../gui/muc_notification_messages.go:752
 #, python-format
 msgid "The administrator $nickname{%s} changed your role."
-msgstr ""
+msgstr "Administratören $nickname{%s} ändrade din roll."
 
 #: ../gui/muc_notification_messages.go:759
 #, python-format
 msgid ""
 "$nickname{%s} changed your role from $role{participant} to $role{visitor}."
 msgstr ""
+"$nickname{%s} ändrade din roll från $role{deltagare} till $role{besökare}."
 
 #: ../gui/muc_notification_messages.go:762
 #, python-format
 msgid ""
 "$nickname{%s} changed your role from $role{participant} to $role{moderator}."
 msgstr ""
+"$nickname{%s} ändrade din roll från $role{deltagare} till $role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:765
 #, python-format
 msgid ""
 "$nickname{%s} changed your role from $role{visitor} to $role{participant}."
 msgstr ""
+"$nickname{%s} ändrade din roll från $role{besökare} till $role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:768
 #, python-format
 msgid ""
 "$nickname{%s} changed your role from $role{visitor} to $role{moderator}."
 msgstr ""
+"$nickname{%s} ändrade din roll från $role{besökare} to $role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:771
 #, python-format
 msgid ""
 "$nickname{%s} changed your role from $role{moderator} to $role{visitor}."
 msgstr ""
+"$nickname{%s} ändrade din roll från $role{moderatör} till $role{besökare}."
 
 #: ../gui/muc_notification_messages.go:774
 #, python-format
 msgid ""
 "$nickname{%s} changed your role from $role{moderator} to $role{participant}."
 msgstr ""
+"$nickname{%s} ändrade din roll från $role{moderatör} till $role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:777
 #, python-format
 msgid "$nickname{%s} has expelled you from the room."
-msgstr ""
+msgstr "$nickname{%s} har kastat ut dig från rummet."
 
 #: ../gui/muc_notification_messages.go:780
 #, python-format
 msgid "$nickname{%s} changed your role."
-msgstr ""
+msgstr "$nickname{%s} ändrade din roll."
 
 #: ../gui/muc_notification_messages.go:789
 #: ../gui/muc_notification_messages.go:1168
 msgid "%[1]s %[2]s"
-msgstr ""
+msgstr "%[1]s %[2]s"
 
 #: ../gui/muc_notification_messages.go:807
-#, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{visitor} to "
 "$role{participant}."
 msgstr ""
+"Som ett resultat av detta har deras roll ändrats från $role{besökare} till "
+"$role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:809
-#, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{visitor} to $role{moderator}."
 msgstr ""
+"Som ett resultat av detta har deras roll ändrats från $role{besökare} to "
+"$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:811
-#, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{participant} to "
 "$role{visitor}."
 msgstr ""
+"Som ett resultat av detta har deras roll ändrats från $role{deltagare} to "
+"$role{besökare}."
 
 #: ../gui/muc_notification_messages.go:813
-#, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{participant} to "
 "$role{moderator}."
 msgstr ""
+"Som ett resultat av detta har deras roll ändrats från $role{deltagare} till "
+"$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:815
-#, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{moderator} to $role{visitor}."
 msgstr ""
+"Som ett resultat av detta har deras roll ändrats från $role{moderatör} till "
+"$role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:817
-#, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{moderator} to "
 "$role{participant}."
 msgstr ""
+"Som ett resultat av detta har deras roll ändrats från $role{moderatör} till "
+"$role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:819
 msgid "As a result, their role was also changed."
-msgstr ""
+msgstr "Som ett resultat av detta har deras roll också ändrats."
 
 #: ../gui/muc_notification_messages.go:825
-#, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{visitor} to $role{participant}."
 msgstr ""
+"Som ett resultat av detta har din roll ändrats från $role{besökare} till "
+"$role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:827
-#, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{visitor} to $role{moderator}."
 msgstr ""
+"Som ett resultat av detta har din roll ändrats från $role{besökare} till "
+"$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:829
-#, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{participant} to $role{visitor}."
 msgstr ""
+"Som ett resultat av detta har din roll ändrats från $role{deltagare} till "
+"$role{besökare}."
 
 #: ../gui/muc_notification_messages.go:831
-#, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{participant} to "
 "$role{moderator}."
 msgstr ""
+"Som ett resultat av detta har din roll ändrats från $role{deltagare} till "
+"$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:833
-#, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{moderator} to $role{visitor}."
 msgstr ""
+"Som ett resultat av detta har din roll ändrats från $role{moderatör} till "
+"$role{besökare}."
 
 #: ../gui/muc_notification_messages.go:835
-#, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{moderator} to "
 "$role{participant}."
 msgstr ""
+"Som ett resultat av detta har din roll ändrats från $role{moderatör} till "
+"$role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:837
 msgid "As a result, your role was also changed."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:859
-#, python-format
-msgid "$nickname{%s} is $affiliation{not banned} anymore."
-msgstr ""
+msgstr "Som ett resultat av detta har din roll också ändrats."
 
 #: ../gui/muc_notification_messages.go:888
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
-"$nickname{%[2]s} is $affiliation{not banned} anymore."
+"$nickname{%[2]s} is not banned anymore."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:908
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
-"$nickname{%[2]s} is $affiliation{not banned} anymore."
+"$nickname{%[2]s} is not banned anymore."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:916
@@ -2677,23 +2808,29 @@ msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} "
 "is not $affiliation{an owner} anymore."
 msgstr ""
+"$nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; $nickname{%[2]s} "
+"är inte $affiliation{en ägare} längre."
 
 #: ../gui/muc_notification_messages.go:920
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} "
 "is not $affiliation{an administrator} anymore."
 msgstr ""
+"$nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; $nickname{%[2]s} "
+"är inte $affiliation{en administratör} längre."
 
 #: ../gui/muc_notification_messages.go:924
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} "
 "is not $affiliation{a member} anymore."
 msgstr ""
+"$nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; $nickname{%[2]s} "
+"är inte $affiliation{en medlem} längre."
 
 #: ../gui/muc_notification_messages.go:928
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} "
-"is $affiliation{not banned} anymore."
+"is not banned anymore."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:969
@@ -2701,113 +2838,143 @@ msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} to "
 "$affiliation{owner}."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} till "
+"$affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:973
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} to "
 "$affiliation{administrator}."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} till "
+"$affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:977
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} to "
 "$affiliation{member}."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} till "
+"$affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:989
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} "
 "to $affiliation{owner}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} "
+"till $affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:993
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} "
 "to $affiliation{administrator}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} "
+"till $affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:997
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} "
 "to $affiliation{member}."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} "
+"till $affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:1009
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s} to "
 "$affiliation{owner}."
 msgstr ""
+"$nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} till "
+"$affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:1013
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s} to "
 "$affiliation{administrator}."
 msgstr ""
+"$nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} till "
+"$affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:1017
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s} to "
 "$affiliation{member}."
 msgstr ""
+"$nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} till "
+"$affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:1021
 msgid "$nickname{%[1]s} changed the position of $nickname{%[2]s}."
-msgstr ""
+msgstr "$nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}."
 
 #: ../gui/muc_notification_messages.go:1134
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{member} to $affiliation{administrator}."
 msgstr ""
+"$nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} från "
+"$affiliation{medlem} till $affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:1138
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{member} to $affiliation{owner}."
 msgstr ""
+"$nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} från "
+"$affiliation{medlem} till $affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:1142
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{administrator} to $affiliation{member}."
 msgstr ""
+"$nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} från "
+"$affiliation{administratör} till $affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:1146
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{administrator} to $affiliation{owner}."
 msgstr ""
+"$nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} från "
+"$affiliation{administratör} till $affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:1150
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{owner} to $affiliation{member}."
 msgstr ""
+"$nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} från "
+"$affiliation{ägare} till $affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:1154
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{owner} to $affiliation{administrator}."
 msgstr ""
+"$nickname{%[1]s} ändrade ställningen för $nickname{%[2]s} från "
+"$affiliation{ägare} till $affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:1158
 msgid "%[1]s changed the position of %[2]s."
-msgstr ""
+msgstr "%[1]s ändrade ställningen för %[2]s."
 
 #: ../gui/muc_notification_messages.go:1194
 #: ../gui/muc_notification_messages.go:1402
 msgid "You are not $affiliation{an owner} anymore."
-msgstr ""
+msgstr "Du är inte $affiliation{en ägare} längre."
 
 #: ../gui/muc_notification_messages.go:1196
 #: ../gui/muc_notification_messages.go:1404
 msgid "You are not $affiliation{an administrator} anymore."
-msgstr ""
+msgstr "Du är inte $affiliation{en administratör} längre."
 
 #: ../gui/muc_notification_messages.go:1198
 #: ../gui/muc_notification_messages.go:1406
 msgid "You are not $affiliation{a member} anymore."
-msgstr ""
+msgstr "Du är inte längre $affiliation{en medlem}."
 
 #: ../gui/muc_notification_messages.go:1204
 #: ../gui/muc_notification_messages.go:1421
@@ -2816,6 +2983,8 @@ msgid ""
 "The owner $nickname{%s} changed your position; you are not $affiliation{an "
 "owner} anymore."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din ställning; du är inte $affiliation{en "
+"ägare} längre."
 
 #: ../gui/muc_notification_messages.go:1207
 #: ../gui/muc_notification_messages.go:1424
@@ -2824,6 +2993,8 @@ msgid ""
 "The owner $nickname{%s} changed your position; you are not $affiliation{an "
 "administrator} anymore."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din ställning; du är inte $affiliation{en "
+"administratör} längre."
 
 #: ../gui/muc_notification_messages.go:1210
 #: ../gui/muc_notification_messages.go:1427
@@ -2832,6 +3003,8 @@ msgid ""
 "The owner $nickname{%s} changed your position; you are not $affiliation{a "
 "member} anymore."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din ställning; du är inte $affiliation{en "
+"medlem} längre."
 
 #: ../gui/muc_notification_messages.go:1213
 #: ../gui/muc_notification_messages.go:1437
@@ -2840,6 +3013,8 @@ msgid ""
 "The administrator $nickname{%s} changed your position; you are not "
 "$affiliation{an owner} anymore."
 msgstr ""
+"Administratören $nickname{%s} ändrade din ställning; du är inte "
+"$affiliation{en ägare längre} anymore."
 
 #: ../gui/muc_notification_messages.go:1216
 #, python-format
@@ -2847,6 +3022,8 @@ msgid ""
 "The administrator$nickname{%s} changed your position; you are not "
 "$affiliation{an administrator} anymore."
 msgstr ""
+"Administratören $nickname{%s} ändrade din ställning; du är inte "
+"$affiliation{en administratör} längre."
 
 #: ../gui/muc_notification_messages.go:1219
 #: ../gui/muc_notification_messages.go:1443
@@ -2855,50 +3032,51 @@ msgid ""
 "The administrator $nickname{%s} changed your position; you are not "
 "$affiliation{a member} anymore."
 msgstr ""
+"Administratören $nickname{%s} ändrade din ställning; du är inte "
+"$affiliation{en medlem} längre."
 
 #: ../gui/muc_notification_messages.go:1222
 #: ../gui/muc_notification_messages.go:1347
 #: ../gui/muc_notification_messages.go:1586
 #, python-format
 msgid "The administrator $nickname{%s} changed your position."
-msgstr ""
+msgstr "Administratören $nickname{%s} ändrade din ställning."
 
 #: ../gui/muc_notification_messages.go:1236
-#, python-brace-format
 msgid "Your position was changed to $affiliation{owner}."
-msgstr ""
+msgstr "Din ställning ändrades till $affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:1238
-#, python-brace-format
 msgid "Your position was changed to $affiliation{administrator}."
-msgstr ""
+msgstr "Din ställning ändrades till $affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:1240
-#, python-brace-format
 msgid "Your position was changed to $affiliation{member}."
-msgstr ""
+msgstr "Din ställning ändrades till $affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:1246
 #, python-format
 msgid "The owner $nickname{%s} changed your position to $affiliation{owner}."
-msgstr ""
+msgstr "Ägaren $nickname{%s} ändrade din ställning till $affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:1249
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your position to $affiliation{administrator}."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din ställning till $affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:1252
 #, python-format
 msgid "The owner $nickname{%s} changed your position to $affiliation{member}."
-msgstr ""
+msgstr "Ägaren $nickname{%s} ändrade din ställning till $affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:1255
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position to $affiliation{owner}."
 msgstr ""
+"Administratören $nickname{%s} ändrade din ställning till $affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:1258
 #, python-format
@@ -2906,6 +3084,8 @@ msgid ""
 "The administrator $nickname{%s} changed your position to "
 "$affiliation{administrator}."
 msgstr ""
+"Administratören $nickname{%s} ändrade din ställning till "
+"$affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:1261
 #, python-format
@@ -2913,57 +3093,63 @@ msgid ""
 "The administrator $nickname{%s} changed your position to "
 "$affiliation{member}."
 msgstr ""
+"Administratören $nickname{%s} ändrade din ställning till "
+"$affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:1276
 #: ../gui/muc_notification_messages.go:1518
-#, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{owner} to "
 "$affiliation{administrator}."
 msgstr ""
+"Din ställning ändrades från $affiliation{ägare} till "
+"$affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:1278
 #: ../gui/muc_notification_messages.go:1520
-#, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{owner} to $affiliation{member}."
 msgstr ""
+"Din ställning ändrades från $affiliation{ägare} till $affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:1280
 #: ../gui/muc_notification_messages.go:1522
-#, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{administrator} to "
 "$affiliation{owner}."
 msgstr ""
+"Din ställning ändrades från $affiliation{administratör} till "
+"$affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:1282
 #: ../gui/muc_notification_messages.go:1524
-#, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{administrator} to "
 "$affiliation{member}."
 msgstr ""
+"Din ställning ändrades från $affiliation{administratör} till "
+"$affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:1284
 #: ../gui/muc_notification_messages.go:1528
-#, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{member} to $affiliation{owner}."
 msgstr ""
+"Din ställning ändrades från $affiliation{medlem} till $affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:1286
 #: ../gui/muc_notification_messages.go:1526
-#, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{member} to "
 "$affiliation{administrator}."
 msgstr ""
+"Din ställning ändrades från $affiliation{medlem} till "
+"$affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:1288
 #: ../gui/muc_notification_messages.go:1530
 msgid "Your position was changed."
-msgstr ""
+msgstr "Din ställning ändrades."
 
 #: ../gui/muc_notification_messages.go:1304
 #: ../gui/muc_notification_messages.go:1543
@@ -2972,6 +3158,8 @@ msgid ""
 "The owner $nickname{%s} changed your position from $affiliation{owner} to "
 "$affiliation{administrator}."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din ställning från $affiliation{ägare} till "
+"$affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:1307
 #: ../gui/muc_notification_messages.go:1546
@@ -2980,6 +3168,8 @@ msgid ""
 "The owner $nickname{%s} changed your position from $affiliation{owner} to "
 "$affiliation{member}."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din ställning från $affiliation{ägare} till "
+"$affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:1310
 #: ../gui/muc_notification_messages.go:1549
@@ -2988,6 +3178,8 @@ msgid ""
 "The owner $nickname{%s} changed your position from "
 "$affiliation{administrator} to $affiliation{owner}."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din ställning från $affiliation{administratör} "
+"till $affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:1313
 #: ../gui/muc_notification_messages.go:1552
@@ -2996,6 +3188,8 @@ msgid ""
 "The owner $nickname{%s} changed your position from "
 "$affiliation{administrator} to $affiliation{member}."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din ställning från $affiliation{administratör} "
+"till $affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:1316
 #: ../gui/muc_notification_messages.go:1558
@@ -3004,6 +3198,8 @@ msgid ""
 "The owner $nickname{%s} changed your position from $affiliation{member} to "
 "$affiliation{owner}."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din ställning från $affiliation{medlem} till "
+"$affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:1319
 #: ../gui/muc_notification_messages.go:1555
@@ -3012,12 +3208,14 @@ msgid ""
 "The owner $nickname{%s} changed your position from $affiliation{member} to "
 "$affiliation{administrator}."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din ställning från $affiliation{medlem} till "
+"$affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:1322
 #: ../gui/muc_notification_messages.go:1561
 #, python-format
 msgid "The owner $nickname{%s} changed your position."
-msgstr ""
+msgstr "Ägaren $nickname{%s} ändrade din ställning."
 
 #: ../gui/muc_notification_messages.go:1329
 #: ../gui/muc_notification_messages.go:1568
@@ -3026,6 +3224,8 @@ msgid ""
 "The administrator $nickname{%s} changed your position from "
 "$affiliation{owner} to $affiliation{administrator}."
 msgstr ""
+"Administratören $nickname{%s} ändrade din ställning från $affiliation{ägare} "
+"till $affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:1332
 #: ../gui/muc_notification_messages.go:1571
@@ -3034,6 +3234,8 @@ msgid ""
 "The administrator $nickname{%s} changed your position from "
 "$affiliation{owner} to $affiliation{member}."
 msgstr ""
+"Administratören $nickname{%s} ändrade din ställning från $affiliation{ägare} "
+"till $affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:1335
 #: ../gui/muc_notification_messages.go:1574
@@ -3042,6 +3244,8 @@ msgid ""
 "The administrator $nickname{%s} changed your position from "
 "$affiliation{administrator} to $affiliation{owner}."
 msgstr ""
+"Administratören $nickname{%s} ändrade din ställning från "
+"$affiliation{administratör} till $affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:1338
 #: ../gui/muc_notification_messages.go:1577
@@ -3050,6 +3254,8 @@ msgid ""
 "The administrator $nickname{%s} changed your position from "
 "$affiliation{administrator} to $affiliation{member}."
 msgstr ""
+"Administratören $nickname{%s} ändrade din ställning från "
+"$affiliation{administratör} till $affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:1341
 #: ../gui/muc_notification_messages.go:1583
@@ -3058,6 +3264,8 @@ msgid ""
 "The administrator $nickname{%s} changed your position from "
 "$affiliation{member} to $affiliation{owner}."
 msgstr ""
+"Administratören $nickname{%s} ändrade din ställning från "
+"$affiliation{medlem} till $affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:1344
 #: ../gui/muc_notification_messages.go:1580
@@ -3066,6 +3274,8 @@ msgid ""
 "The administrator $nickname{%s} changed your position from "
 "$affiliation{member} to $affiliation{administrator}."
 msgstr ""
+"Administratören $nickname{%s} ändrade din ställning från "
+"$affiliation{medlem} till $affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:1354
 #, python-format
@@ -3073,6 +3283,8 @@ msgid ""
 "$nickname{%s} changed your position from $affiliation{owner} to "
 "$affiliation{administrator}."
 msgstr ""
+"$nickname{%s} ändrade din ställning från $affiliation{ägare} till "
+"$affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:1357
 #, python-format
@@ -3080,6 +3292,8 @@ msgid ""
 "$nickname{%s} changed your position from $affiliation{owner} to "
 "$affiliation{member}."
 msgstr ""
+"$nickname{%s} ändrade din ställning från $affiliation{ägare} till "
+"$affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:1360
 #, python-format
@@ -3087,6 +3301,8 @@ msgid ""
 "$nickname{%s} changed your position from $affiliation{administrator} to "
 "$affiliation{owner}."
 msgstr ""
+"$nickname{%s} ändrade din ställning från $affiliation{administratör} till "
+"$affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:1363
 #, python-format
@@ -3094,6 +3310,8 @@ msgid ""
 "$nickname{%s} changed your position from $affiliation{administrator} to "
 "$affiliation{member}."
 msgstr ""
+"$nickname{%s} ändrade din ställning från $affiliation{administratör} till "
+"$affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:1366
 #, python-format
@@ -3101,6 +3319,8 @@ msgid ""
 "$nickname{%s} changed your position from $affiliation{member} to "
 "$affiliation{owner}."
 msgstr ""
+"$nickname{%s} ändrade din ställning från $affiliation{medlem} till "
+"$affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:1369
 #, python-format
@@ -3108,21 +3328,24 @@ msgid ""
 "$nickname{%s} changed your position from $affiliation{member} to "
 "$affiliation{administrator}."
 msgstr ""
+"$nickname{%s} ändrade din ställning från $affiliation{medlem} till "
+"$affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:1372
 #, python-format
 msgid "$nickname{%s} changed your position."
-msgstr ""
+msgstr "$nickname{%s} ändrade din ställning."
 
 #: ../gui/muc_notification_messages.go:1408
 msgid "You are not banned anymore."
-msgstr ""
+msgstr "Du är inte längre bannlyst."
 
 #: ../gui/muc_notification_messages.go:1430
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your position; you are not banned anymore."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din ställning; du är inte längre bannlyst."
 
 #: ../gui/muc_notification_messages.go:1440
 #, python-format
@@ -3130,6 +3353,8 @@ msgid ""
 "The administrator $nickname{%s} changed your position; you are not "
 "$affiliation{an administrator} anymore."
 msgstr ""
+"Administratören $nickname{%s} ändrade din ställning; du är inte längre "
+"$affiliation{en administratör}."
 
 #: ../gui/muc_notification_messages.go:1446
 #, python-format
@@ -3137,22 +3362,24 @@ msgid ""
 "The administrator $nickname{%s} changed your position; you are not banned "
 "anymore."
 msgstr ""
+"Administratören $nickname{%s} ändrade din ställning; du är inte längre "
+"bannlyst."
 
 #: ../gui/muc_notification_messages.go:1460
 msgid "You are now $affiliation{an owner}."
-msgstr ""
+msgstr "Du är nu $affiliation{en ägare}."
 
 #: ../gui/muc_notification_messages.go:1462
 msgid "You are now $affiliation{an administrator}."
-msgstr ""
+msgstr "Du är nu $affiliation{en administratör}."
 
 #: ../gui/muc_notification_messages.go:1464
 msgid "You are now $affiliation{a member}."
-msgstr ""
+msgstr "Du är nu $affiliation{en medlem}."
 
 #: ../gui/muc_notification_messages.go:1466
 msgid "You are now banned."
-msgstr ""
+msgstr "Du är nu bannlyst."
 
 #: ../gui/muc_notification_messages.go:1479
 #, python-format
@@ -3160,6 +3387,7 @@ msgid ""
 "The owner $nickname{%s} changed your position; you are now $affiliation{an "
 "owner}."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din ställning; du är nu $affiliation{en ägare}."
 
 #: ../gui/muc_notification_messages.go:1482
 #, python-format
@@ -3167,6 +3395,8 @@ msgid ""
 "The owner $nickname{%s} changed your position; you are now $affiliation{an "
 "administrator}."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din ställning; du är nu $affiliation{en "
+"administratör}."
 
 #: ../gui/muc_notification_messages.go:1485
 #, python-format
@@ -3174,11 +3404,12 @@ msgid ""
 "The owner $nickname{%s} changed your position; you are now $affiliation{a "
 "member}."
 msgstr ""
+"Ägaren $nickname{%s} ändrade din ställning; du är nu $affiliation{en medlem}."
 
 #: ../gui/muc_notification_messages.go:1488
 #, python-format
 msgid "The owner $nickname{%s} changed your position; you are now banned."
-msgstr ""
+msgstr "Ägaren $nickname{%s} ändrade din ställning; du är nu bannlyst."
 
 #: ../gui/muc_notification_messages.go:1495
 #, python-format
@@ -3186,6 +3417,8 @@ msgid ""
 "The administrator $nickname{%s} changed your position; you are now "
 "$affiliation{an owner}."
 msgstr ""
+"Administratören $nickname{%s} ändrade din ställning; du är nu "
+"$affiliation{en ägare}."
 
 #: ../gui/muc_notification_messages.go:1498
 #, python-format
@@ -3193,6 +3426,8 @@ msgid ""
 "The administrator $nickname{%s} changed your position; you are now "
 "$affiliation{an administrator}."
 msgstr ""
+"Administratören $nickname{%s} ändrade din ställning; du är nu "
+"$affiliation{en administratör}."
 
 #: ../gui/muc_notification_messages.go:1501
 #, python-format
@@ -3200,52 +3435,57 @@ msgid ""
 "The administrator $nickname{%s} changed your position; you are now "
 "$affiliation{a member}."
 msgstr ""
+"Administratören $nickname{%s} ändrade din ställning; du är nu "
+"$affiliation{en medlem}."
 
 #: ../gui/muc_notification_messages.go:1504
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position; you are now banned."
 msgstr ""
+"Administratören $nickname{%s} ändrade din ställning; du är nu bannlyst."
 
 #: ../gui/muc_notification_messages.go:1592
 msgid "You have been banned from the room."
-msgstr ""
+msgstr "Du är nu bannlyst från rummet."
 
 #: ../gui/muc_notification_messages.go:1599
 #, python-format
 msgid "The owner $nickname{%s} banned you from the room."
-msgstr ""
+msgstr "Ägaren $nickname{%s} bannlyste dig från rummet."
 
 #: ../gui/muc_notification_messages.go:1602
 #, python-format
 msgid "The administrator $nickname{%s} banned you from the room."
-msgstr ""
+msgstr "Administratören $nickname{%s} bannlyste dig från rummet."
 
 #: ../gui/muc_notification_messages.go:1608
 msgid "%[1]s The reason given was: %[2]s."
-msgstr ""
+msgstr "%[1]s Anledning: %[2]s."
 
 #: ../gui/menubar.go:45
 msgid "About CoyIM"
-msgstr ""
+msgstr "Om CoyIM"
 
 #: ../gui/menubar.go:53
 msgid "Quit CoyIM"
-msgstr ""
+msgstr "Avsluta CoyIM"
 
 #: ../gui/muc_room_config_texts.go:28
 msgid "Basic information"
-msgstr ""
+msgstr "Grundläggande information"
 
 #: ../gui/muc_room_config_texts.go:29
 msgid ""
 "This section contains basic configuration options that you can set for the "
 "room."
 msgstr ""
+"Den här avdelningen innehåller grundläggande inställningar som du kan sätta "
+"för rummet."
 
 #: ../gui/muc_room_config_texts.go:33
 msgid "Access"
-msgstr ""
+msgstr "Tillgång"
 
 #: ../gui/muc_room_config_texts.go:34
 msgid ""
@@ -3255,24 +3495,31 @@ msgid ""
 "encrypted, so people that control the location of the room might still have "
 "access to it, even without providing a password."
 msgstr ""
+"Här kan du hantera tillgång till rummet. Om du ställer in ett lösenord för "
+"rummet bör du dela med dig av det på ett säkert sätt. Detta hjälper att "
+"skydda personerna i rummet. Kom ihåg att rumslösenord inte gör att rummet är "
+"krypterat, så personer som kontrollerar stället det rummet existerar kan "
+"fortfarande ha tillgång till det, även utan ett lösenord."
 
 #: ../gui/muc_room_config_texts.go:41
 msgid "Permissions"
-msgstr ""
+msgstr "Tillstånd"
 
 #: ../gui/muc_room_config_texts.go:42
 msgid ""
 "Here you can change settings that impact who can do what inside the room."
 msgstr ""
+"Här kan du ändra inställningar som bestämmer vem som kan göra vad i rummet."
 
 #: ../gui/muc_room_config_texts.go:47
 msgid ""
 "Here you can define who the owners, administrators and banned people are."
 msgstr ""
+"Här kan du definiera vilka som är ägare, administratörer och bannlysta."
 
 #: ../gui/muc_room_config_texts.go:50
 msgid "Other settings"
-msgstr ""
+msgstr "Andra inställningar"
 
 #: ../gui/muc_room_config_texts.go:51
 msgid ""
@@ -3280,32 +3527,39 @@ msgid ""
 "Note that if archiving is enabled, all the discussions in the room might be "
 "logged and potentially made publicly accessible."
 msgstr ""
+"Här finns andra inställningar som kan vara användbara. Håll i åtanke att om "
+"arkivering är påslaget, är det möjligt att alla konversationer i rummet blir "
+"loggade och möjligen också offentliggjorda."
 
 #: ../gui/muc_room_config_texts.go:56 ../gui/muc_room_config_assistant.go:121
 msgid "Summary"
-msgstr ""
+msgstr "Sammanfattning"
 
 #: ../gui/muc_room_config_texts.go:100 ../gui/muc_room_config_texts.go:101
 msgid "Title"
-msgstr ""
+msgstr "Rubrik"
 
 #: ../gui/muc_room_config_texts.go:102
 msgid "The room title can be used to find the room in the public list."
 msgstr ""
+"Rummets rubrik kan användas för att hitta rummet i den offentliga listan."
 
 #: ../gui/muc_room_config_texts.go:105 ../gui/muc_room_config_texts.go:106
 msgid "Description"
-msgstr ""
+msgstr "Beskrivning"
 
 #: ../gui/muc_room_config_texts.go:107
 msgid ""
 "The room description can be used to add more information about the room, "
 "such as the purpose, the discussion topics, interests, etc."
 msgstr ""
+"Rummets beskriving kan användas för att lägga till mer information om "
+"rummet, till exempel för att deskriva syftet, vilka ämnen som diskuteras och "
+"intressen."
 
 #: ../gui/muc_room_config_texts.go:111 ../gui/muc_room_config_texts.go:112
 msgid "Enable archiving of discussions"
-msgstr ""
+msgstr "Sätt på arkivering av diskussioner"
 
 #: ../gui/muc_room_config_texts.go:113
 msgid ""
@@ -3313,20 +3567,26 @@ msgid ""
 "accessed publicly. CoyIM users will be notified about this when joining the "
 "room, however, other clients might not."
 msgstr ""
+"Konversationen i rummet kommer att bli sparat i ett arkiv som kan bli "
+"offentligt åtkomligt. Användare av CoyIM kommer bli upplysta om detta när "
+"dem går in i ett rum, men andra program ger ofta inte en varning."
 
 #: ../gui/muc_room_config_texts.go:118 ../gui/muc_room_config_texts.go:119
 msgid "Primary language of discussion"
-msgstr ""
+msgstr "Huvudspråk för diskussion"
 
 #: ../gui/muc_room_config_texts.go:120
 msgid ""
 "This is the primary language in which conversations are held. Changing this "
 "will not impact the language of the application."
 msgstr ""
+"Det här är huvudspråket som används för konversationer i rummet. Även om du "
+"ändrar värdet här kommer inte språket för programmet att ändras."
 
 #: ../gui/muc_room_config_texts.go:124 ../gui/muc_room_config_texts.go:125
 msgid "XMPP URI of associated publish-subscribe node"
 msgstr ""
+"Addressen (XMPP URI) för publish-subscribe node som är ansluten till rummet"
 
 #: ../gui/muc_room_config_texts.go:126
 msgid ""
@@ -3334,117 +3594,123 @@ msgid ""
 "of certain information can happen. This is a technical setting, which should "
 "be left empty unless you know what it means."
 msgstr ""
+"Ett chattrum kan ha en plats där publicering och prenumeration av olika "
+"typer av information kan hända. Det här är en teknisk inställning som bör "
+"lämnas tom om du inte är fullt medveten om vad det innebär."
 
 #: ../gui/muc_room_config_texts.go:131
 msgid "Allow anyone to set the subject of the room"
-msgstr ""
+msgstr "Tillåt vem som helst att ändra ämnet för rummet"
 
 #: ../gui/muc_room_config_texts.go:132
 msgid "Occupants can change subject of the room"
-msgstr ""
+msgstr "Vem som helst i rummet kan ändra rumsämnet"
 
 #: ../gui/muc_room_config_texts.go:133
 msgid "If not set, only moderators can modify it."
-msgstr ""
+msgstr "Enbart moderatörer kan ändra det, om ingen inställning gjorts."
 
 #: ../gui/muc_room_config_texts.go:136
 msgid "Allow members to invite others to the room"
-msgstr ""
+msgstr "Tillåt medlemmar att bjuda in andra till rummet"
 
 #: ../gui/muc_room_config_texts.go:137
 msgid "Allow members to invite others"
-msgstr ""
+msgstr "Tillåt medlemmar att bjuda in andra"
 
 #: ../gui/muc_room_config_texts.go:140 ../gui/muc_room_config_texts.go:141
 msgid "People can send private messages"
-msgstr ""
+msgstr "Användare kan skicka privata meddelanden"
 
 #: ../gui/muc_room_config_texts.go:144 ../gui/muc_room_config_texts.go:145
 msgid "Maximum number of people in the room"
-msgstr ""
+msgstr "Högra nummer av besökare i rummet"
 
 #: ../gui/muc_room_config_texts.go:148
 msgid "Make this room public"
-msgstr ""
+msgstr "Gör rummet offentligt"
 
 #: ../gui/muc_room_config_texts.go:149
 msgid "Include in public lists"
-msgstr ""
+msgstr "Innefatta i offentliga listor"
 
 #: ../gui/muc_room_config_texts.go:150
 msgid "A public room can be found by all users in any public listing."
-msgstr ""
+msgstr "Ett offentligt rum kan hittas av alla användare i en offentlig lista."
 
 #: ../gui/muc_room_config_texts.go:154
 msgid "Make this room persistent"
-msgstr ""
+msgstr "Gör rummet permanent"
 
 #: ../gui/muc_room_config_texts.go:155
 msgid "Persistent"
-msgstr ""
+msgstr "Permanent"
 
 #: ../gui/muc_room_config_texts.go:156
 msgid ""
 "A persistent room won't be destroyed when the last person leaves the room."
 msgstr ""
+"Ett permanent rum blir inte förstört när den sista personen lämnar rummet."
 
 #: ../gui/muc_room_config_texts.go:160 ../gui/muc_room_config_texts.go:161
 msgid "Roles that will receive information about other people in the room"
-msgstr ""
+msgstr "Roller som kommer få information om andra personer i rummet"
 
 #: ../gui/muc_room_config_texts.go:164
 msgid "Make this room moderated"
-msgstr ""
+msgstr "Gör rummet modererat"
 
 #: ../gui/muc_room_config_texts.go:165
 msgid "Moderated"
-msgstr ""
+msgstr "Modererat"
 
 #: ../gui/muc_room_config_texts.go:166
 msgid "In a moderated room, visitors must be given permission to speak."
-msgstr ""
+msgstr "I ett modererat rum måste besökare få tillstånd för att prata."
 
 #: ../gui/muc_room_config_texts.go:170
 msgid "Make this room members-only"
-msgstr ""
+msgstr "Gör rummet tillgängligt enbart för medlemmar"
 
 #: ../gui/muc_room_config_texts.go:171
 msgid "Only allow members to join"
-msgstr ""
+msgstr "Tillåt enbart medlemmer att komma in"
 
 #: ../gui/muc_room_config_texts.go:174
 msgid "Members"
-msgstr ""
+msgstr "Medlemmar"
 
 #: ../gui/muc_room_config_texts.go:181 ../gui/muc_room_config_texts.go:260
 #: ../gui/muc_room_config_texts.go:262 ../gui/muc_room_config_page.go:279
 msgid "Owners"
-msgstr ""
+msgstr "Ägare"
 
 #: ../gui/muc_room_config_texts.go:184
 msgid "The account address of others in the room may be viewed by:"
-msgstr ""
+msgstr "Kontoadressen för andra i rummet kan ses av:"
 
 #: ../gui/muc_room_config_texts.go:185
 msgid "Account address of occupants can be viewed by"
-msgstr ""
+msgstr "Kontoadressen för personer kan ses av"
 
 #: ../gui/muc_room_config_texts.go:188 ../gui/muc_room_config_texts.go:189
 msgid "Maximum previous messages sent to people when joining the room"
 msgstr ""
+"Största mängd tidigare meddelanden som skickas till personer när dem går in "
+"i rummet"
 
 #: ../gui/muc_room_config_texts.go:192 ../gui/muc_room_config_texts.go:266
 #: ../gui/muc_room_config_texts.go:268 ../gui/muc_room_config_page.go:280
 msgid "Administrators"
-msgstr ""
+msgstr "Administratörer"
 
 #: ../gui/muc_room_config_texts.go:195 ../gui/muc_room_config_texts.go:196
 msgid "A person can find out more information about other people in the room"
-msgstr ""
+msgstr "En person kan få reda på mer information om andra personer i rummet"
 
 #: ../gui/muc_room_config_texts.go:199 ../gui/muc_room_config_texts.go:200
 msgid "Visitors to a room can change their custom status information"
-msgstr ""
+msgstr "Besökare ändra sin statusinformation i ett rum"
 
 #: ../gui/muc_room_config_texts.go:201
 msgid ""
@@ -3452,24 +3718,30 @@ msgid ""
 "would allow visitors to still communicate with others by means of their "
 "status text."
 msgstr ""
+"Eftersom besökare inte har tillstånd att prata i modererade rum, kan den här "
+"inställningen tillåta besökare att kommunicera med andra genom att använda "
+"deras status."
 
 #: ../gui/muc_room_config_texts.go:205 ../gui/muc_room_config_texts.go:206
 msgid "Visitors can change their nickname"
-msgstr ""
+msgstr "Besökare kan ändra deras namn"
 
 #: ../gui/muc_room_config_texts.go:207
 msgid ""
 "Just as with the status updates, this setting could allow visitors to show "
 "information to others in the room by changing their nickname."
 msgstr ""
+"Precis som med statusuppdateringar kan den här inställningen göra det "
+"möjligt för besökare att visa information för andra i rummet genom att ändra "
+"sitt namn."
 
 #: ../gui/muc_room_config_texts.go:211 ../gui/muc_room_config_texts.go:212
 msgid "Visitors can ask for permission to speak"
-msgstr ""
+msgstr "Besökare kan be om tillåtelse att prata"
 
 #: ../gui/muc_room_config_texts.go:215 ../gui/muc_room_config_texts.go:216
 msgid "Allow subscription"
-msgstr ""
+msgstr "Tillåt prenumeration"
 
 #: ../gui/muc_room_config_texts.go:217
 msgid ""
@@ -3478,28 +3750,34 @@ msgid ""
 "you turn on this setting, other clients might utilize the setting when "
 "connecting to the room."
 msgstr ""
+"Det här är en teknisk inställning som tillåter en ny experimentversion av "
+"gruppchatt att användas i rummet. CoyIM stöder inte detta, men om du "
+"använder den här inställningen är det möjligt att andra klienter kan använda "
+"detta system när dem ansluter till rummet."
 
 #: ../gui/muc_room_config_texts.go:222 ../gui/muc_room_config_texts.go:223
 msgid "When joining the room, people will be able to talk"
-msgstr ""
+msgstr "När personer kommer in i rummet kan dem omedelbart prata"
 
 #: ../gui/muc_room_config_texts.go:226 ../gui/muc_room_config_texts.go:227
 msgid "Minimum interval between voice requests (in seconds)"
-msgstr ""
+msgstr "Minsta tid mellan begäran att få prata (i sekunder)"
 
 #: ../gui/muc_room_config_texts.go:230 ../gui/muc_room_config_texts.go:231
 msgid "Allow visitors to send private messages to"
-msgstr ""
+msgstr "Tillåt besökare att skicka privata meddelanden till"
 
 #: ../gui/muc_room_config_texts.go:234 ../gui/muc_room_config_texts.go:235
 msgid "Make list of participants public"
-msgstr ""
+msgstr "Gör deltagarlistan offentlig"
 
 #: ../gui/muc_room_config_texts.go:261
 msgid ""
 "Owners will always be moderators in a room. They can give or take away any "
 "position or role and control any aspect of the room."
 msgstr ""
+"Ägare är alltid moderatörer i ett rum. De kan ge eller ta vilken ställning "
+"eller roll som helst, och kontrollera alla aspekter av rummet."
 
 #: ../gui/muc_room_config_texts.go:263
 msgid ""
@@ -3508,12 +3786,18 @@ msgid ""
 "can either be a simple one, such as user@example.org or a full one, such as "
 "user@example.org/abcdef."
 msgstr ""
+"Här kan du lägga till en eller flera nya ägare till rummet. Du måste använda "
+"kontoadressen för användaren för att göra dem till en ägare. Den här "
+"adressen kan antingen vara en enkel, såsom user@example.org, eller en full, "
+"såsom user@example.org/abcdef."
 
 #: ../gui/muc_room_config_texts.go:267
 msgid ""
 "A room administrator will automatically become a moderator when entering the "
 "room. They can't change the room configuration or destroy the room."
 msgstr ""
+"En rumsadministratör blir automatiskt moderatör när dem går in i ett rum. De "
+"kan inte ändra rummets inställningar eller förstöra rummet."
 
 #: ../gui/muc_room_config_texts.go:269
 msgid ""
@@ -3522,18 +3806,22 @@ msgid ""
 "administrator. This address can either be a simple one, such as user@example."
 "org or a full one, such as user@example.org/abcdef."
 msgstr ""
+"Här kan du lägga till en eller flera nya administratörer till rummet. Du "
+"måste använda kontoadressen för användaren för att göra dem till en "
+"administratör. Adressen kan antingen vara en enkel, såsom user@example.org, "
+"eller en full, såsom user@example.org/abcdef."
 
 #: ../gui/muc_room_config_texts.go:272
 msgid "Banned people"
-msgstr ""
+msgstr "Bannlysta personer"
 
 #: ../gui/muc_room_config_texts.go:273
 msgid "A banned person will not be able to join the room."
-msgstr ""
+msgstr "En bannlyst person kan inte gå in i rummet."
 
 #: ../gui/muc_room_config_texts.go:274
 msgid "Ban people"
-msgstr ""
+msgstr "Bannlys personer"
 
 #: ../gui/muc_room_config_texts.go:275
 msgid ""
@@ -3542,130 +3830,144 @@ msgid ""
 "This address can either be a simple one, such as user@example.org or a full "
 "one, such as user@example.org/abcdef."
 msgstr ""
+"Här kan du lägga till en eller flera personer som inte kan gå in i rummet. "
+"Du måste använda kontoadressen för användaren för att bannlysa dem. Adressen "
+"kan antingen vara en enkel, såsom user@example.org, eller en full, såsom "
+"user@example.org/abcdef."
 
 #: ../gui/muc_room_lobby.go:63
 #, python-format
 msgid "You are joining %s"
-msgstr ""
+msgstr "Du går in i %s"
 
 #: ../gui/muc_room_lobby.go:110
 msgid "That nickname is already being used."
-msgstr ""
+msgstr "Det namnet är redan taget."
 
 #: ../gui/muc_room_lobby.go:167
 msgid ""
 "An unknown error occurred while trying to join the room, please check your "
 "connection or try again."
 msgstr ""
+"Ett okänt fel uppstod när du försökte gå in i rummet. Var god kontrollera "
+"din ansluting och försök igen."
 
 #: ../gui/roster.go:446
 msgid " (waiting for approval)"
-msgstr ""
+msgstr " (väntar på godkännande)"
 
 #: ../gui/muc_join_room.go:142
 msgid "We couldn't find a room with that name."
-msgstr ""
+msgstr "Vi kunde inte hitta ett rum med det namnet."
 
 #: ../gui/muc_join_room.go:152
 msgid ""
 "It looks like the room you are trying to connect to doesn't exist, please "
 "verify the provided information."
 msgstr ""
+"Det verkar som att rummet du försöker ansluta till inte finns. Var god "
+"kontrollera den försedda informationen."
 
 #: ../gui/muc_join_room.go:162
 msgid ""
 "We can't get access to the service, please check your Internet connection or "
 "make sure the service exists."
 msgstr ""
+"Vi kan inte ansluta till tjänsten. Var god kontrollera din "
+"internetuppkoppling och försäkra dig om att tjänsten existerar."
 
 #: ../gui/muc_join_room.go:184 ../gui/muc_room_destroy.go:132
 #: ../gui/muc_room_form_component.go:141
 msgid "You must provide a valid room name."
-msgstr ""
+msgstr "Du måste ge ett giltigt rumsnamn."
 
 #: ../gui/muc_join_room.go:190 ../gui/muc_room_destroy.go:134
 #: ../gui/muc_room_form_component.go:147
 msgid "You must provide a valid service name."
-msgstr ""
+msgstr "Du måste ge ett giltigt tjänstnamn."
 
 #: ../gui/muc_room_config_summary_field.go:146
 msgid "**********"
-msgstr ""
+msgstr "**********"
 
 #: ../gui/muc_room_config_summary_field.go:148
 #: ../gui/muc_room_config_summary_field.go:162
 msgid "Not assigned"
-msgstr ""
+msgstr "Inget värde"
 
 #: ../gui/muc_room_config_summary_field.go:168
 msgid "One result"
-msgstr ""
+msgstr "Ett resultat"
 
 #: ../gui/muc_room_config_summary_field.go:170
 #, python-format
 msgid "%d results"
-msgstr ""
+msgstr "%d resultat"
 
 #: ../gui/muc_room_config_summary_field.go:178
 msgid "One role"
-msgstr ""
+msgstr "En roll"
 
 #: ../gui/muc_room_config_summary_field.go:180
 #, python-format
 msgid "%d roles"
-msgstr ""
+msgstr "%d roller"
 
 #: ../gui/muc_room_config_summary_field.go:182
 msgid "No roles"
-msgstr ""
+msgstr "Inga roller"
 
 #: ../gui/muc_room_config_summary_field.go:188
 msgid "One account"
-msgstr ""
+msgstr "Ett konto"
 
 #: ../gui/muc_room_config_summary_field.go:190
 #, python-format
 msgid "%d accounts"
-msgstr ""
+msgstr "%d konton"
 
 #: ../gui/muc_room_config_summary_field.go:192
 msgid "No accounts"
-msgstr ""
+msgstr "Inga konton"
 
 #: ../gui/muc_room.go:203
 msgid ""
 "Loading the room information took longer than usual, perhaps the connection "
 "to the server was lost. Do you want to try again?"
 msgstr ""
+"Laddning av rumsinformation tog längre än vanligt - det är möjligt att "
+"anslutningen till servern har tappats. Vill du försöka igen?"
 
 #: ../gui/muc_room.go:206 ../gui/muc_room.go:734
 msgid "Yes, try again"
-msgstr ""
+msgstr "Ja, försök igen"
 
 #: ../gui/muc_room.go:266
 msgid ""
 "You have been removed from this room because it's now a members only room."
 msgstr ""
+"Du har blivit borttagen från rummet eftersom det nu är ett rum för enbart "
+"medlemmar."
 
 #: ../gui/muc_room.go:376
 msgid "The room has been destroyed"
-msgstr ""
+msgstr "Rummet har blivit förstört"
 
 #: ../gui/muc_room.go:511
 msgid "The room subject couldn't be updated."
-msgstr ""
+msgstr "Rumsämnet kunde inte ändras."
 
 #: ../gui/muc_room.go:518
 msgid "The room subject has been updated."
-msgstr ""
+msgstr "Rumsämnet har ändrats."
 
 #: ../gui/muc_room.go:531
 msgid "Return"
-msgstr ""
+msgstr "Gå tillbaka"
 
 #: ../gui/muc_room.go:715
 msgid "Your connection has been restored; you can join this room again."
-msgstr ""
+msgstr "Din anslutning har blivit återställd; du kan gå in i rummet igen."
 
 #: ../gui/muc_room.go:727
 msgid ""
@@ -3673,25 +3975,31 @@ msgid ""
 "than usual, perhaps the connection to the server was lost. Do you want to "
 "try again?"
 msgstr ""
+"Din anslutning har blivit återställd men laddningen av rumsinformationen tog "
+"längre än vanligt. Det är möjligt att anslutningen till servern har tappts. "
+"Vill du försöka igen?"
 
 #: ../gui/muc_room.go:740
 msgid "Trying to connect to the room..."
-msgstr ""
+msgstr "Försöker ansluta till rummet..."
 
-#: ../gui/muc_room.go:781
+#: ../gui/muc_room.go:782
 msgid ""
 "The connection to the server has been lost, please verify your connection."
 msgstr ""
+"Anslutningen till servern har tappats, var god kontrollera din uppkoppling."
 
-#: ../gui/muc_room.go:793
+#: ../gui/muc_room.go:794
 msgid "Connecting to the room..."
-msgstr ""
+msgstr "Ansluter till rummet..."
 
 #: ../gui/muc_room_config_component.go:131
 msgid ""
 "We can't apply the given room configuration because an error occurred when "
 "trying to send the request for it. Please try again."
 msgstr ""
+"Vi kunde inte tillämpa de nya rumsinställningarna eftersom ett fel uppstod. "
+"Var god försök igen."
 
 #: ../gui/muc_room_config_component.go:133
 msgid ""
@@ -3699,12 +4007,17 @@ msgid ""
 "the permissions for doing it or the location is not available right now. "
 "Please try again."
 msgstr ""
+"Vi kunde inte tillämpa de nya rumsinställningarna eftersom du har inte "
+"tillåtelse att göra det, eller tjänsten är inte tillgänglig för tillfället. "
+"Var god försök igen."
 
 #: ../gui/muc_room_config_component.go:135
 msgid ""
 "We can't cancel the room configuration process because an error occurred "
 "when trying to send the request for it. Please try again."
 msgstr ""
+"Vi kunde inte avbryta inställningsprocessen för rummet eftersom ett fel "
+"uppstod. Var god försök igen."
 
 #: ../gui/muc_room_config_component.go:137
 msgid ""
@@ -3712,143 +4025,148 @@ msgid ""
 "the permissions for doing it or the location is not available right now. "
 "Please try again."
 msgstr ""
+"Vi kunde inte avbryta inställningsprocessen för rummet eftersom du har inte "
+"tillåtelse att göra det, eller tjänsten är inte tillgänglig för tillfället. "
+"Var god försök igen."
 
 #: ../gui/muc_room_config_component.go:139
 msgid ""
 "The list affiliations couldn't be updated. Verify your permissions and try "
 "again."
-msgstr ""
+msgstr "Ställningarna kunde inte uppdateras. Kontrollera din behörighet."
 
 #: ../gui/muc_room_config_component.go:143
 msgid ""
 "The settings couldn't be changed. Please verify the information in the form."
 msgstr ""
+"Inställningarna kunde inte ändras. Var god kontrollera informationen i "
+"formuläret."
 
 #: ../gui/muc_room_config_component.go:145 ../gui/muc_create_room_form.go:151
 msgid "We didn't receive a response from the server."
-msgstr ""
+msgstr "Vi fick inget svar från servern."
 
 #: ../gui/muc_room_config_component.go:147
 #, python-format
 msgid "Unsupported config error: %s"
-msgstr ""
+msgstr "Okänt inställningsfel: %s"
 
 #: ../gui/muc_room_config_component.go:153 ../gui/muc_room_roster.go:402
 msgid "Participants"
-msgstr ""
+msgstr "Deltagare"
 
 #: ../gui/muc_room_config_component.go:157 ../gui/muc_room_roster.go:406
 msgid "Moderators"
-msgstr ""
+msgstr "Moderatörer"
 
 #: ../gui/muc_room_config_component.go:163
 msgid "Anyone"
-msgstr ""
+msgstr "Vem som helst"
 
 #: ../gui/muc_room_config_component.go:165
 msgid "Nobody"
-msgstr ""
+msgstr "Ingen"
 
 #: ../gui/muc_room_config_component.go:167
 msgid "No maximum"
-msgstr ""
+msgstr "Inget max"
 
 #: ../gui/muc_room_config_component.go:169
 msgid "10"
-msgstr ""
+msgstr "10"
 
 #: ../gui/muc_room_config_component.go:171
 msgid "20"
-msgstr ""
+msgstr "20"
 
 #: ../gui/muc_room_config_component.go:173
 msgid "30"
-msgstr ""
+msgstr "30"
 
 #: ../gui/muc_room_config_component.go:175
 msgid "50"
-msgstr ""
+msgstr "50"
 
 #: ../gui/muc_room_config_component.go:177
 msgid "100"
-msgstr ""
+msgstr "100"
 
 #: ../gui/muc_room_roster.go:293
 msgid "%s (%v)"
-msgstr ""
+msgstr "%s (%v)"
 
 #: ../gui/muc_room_roster.go:327
 #, python-format
 msgid "%s (You)"
-msgstr ""
+msgstr "%s (Du)"
 
 #: ../gui/muc_room_roster.go:387 ../gui/muc_room_occupant_affiliation.go:169
 msgid "Admin"
-msgstr ""
+msgstr "Administratör"
 
 #: ../gui/muc_room_roster.go:391 ../gui/muc_room_occupant_affiliation.go:173
 msgid "Outcast"
-msgstr ""
+msgstr "Utstött"
 
 #: ../gui/muc_room_roster.go:404
 msgid "Visitors"
-msgstr ""
+msgstr "Besökare"
 
 #: ../gui/muc_room_config_list_form.go:91
 msgid "The account address is not valid."
-msgstr ""
+msgstr "Kontroadressen är inte giltig."
 
 #: ../gui/muc_room_config_list_form.go:93
 msgid "Please, fill in the form fields."
-msgstr ""
+msgstr "Var god fyll i formulärfälten."
 
 #: ../gui/muc_room_config_list_form.go:96
 msgid "Invalid form values."
-msgstr ""
+msgstr "Igiltiga formulärsvärden."
 
 #: ../gui/muc_room_loading.go:21
 msgid "Loading room information"
-msgstr ""
+msgstr "Laddar rumsinformation"
 
 #: ../gui/muc_room_loading.go:22
 msgid "This will only take a few moments."
-msgstr ""
+msgstr "Det är tar bara ett ögonblick."
 
 #: ../gui/muc_room_loading.go:29
 msgid "Joining room..."
-msgstr ""
+msgstr "Går in i rummet..."
 
 #: ../gui/muc_room_loading.go:36
 msgid "Destroying room..."
-msgstr ""
+msgstr "Förstör rummet..."
 
 #: ../gui/muc_room_loading.go:43
 msgid "Updating position..."
-msgstr ""
+msgstr "Updaterar ställning..."
 
 #: ../gui/muc_room_loading.go:50
 msgid "Updating role..."
-msgstr ""
+msgstr "Updaterar roll..."
 
 #: ../gui/muc_room_loading.go:52
 msgid "Expelling person from the room..."
-msgstr ""
+msgstr "Kastar ut person från rummet..."
 
 #: ../gui/muc_room_loading.go:61
 msgid "Loading room configuration..."
-msgstr ""
+msgstr "Laddar rumsinställningar..."
 
 #: ../gui/muc_room_loading.go:68
 msgid "Loading room positions..."
-msgstr ""
+msgstr "Laddar rumsställningar..."
 
 #: ../gui/muc_room_loading.go:75
 msgid "Saving room positions..."
-msgstr ""
+msgstr "Sparar rumsställningar..."
 
 #: ../gui/importer.go:53
 msgid "Unable to Import Account"
-msgstr ""
+msgstr "Kunde inte importera konto"
 
 #: ../gui/importer.go:53
 msgid ""
@@ -3856,197 +4174,206 @@ msgid ""
 "\n"
 "You already have an account with this name."
 msgstr ""
+"Kan inte importera konto:\n"
+"\n"
+"Du har redan ett konto med samma namn."
 
 #: ../gui/importer.go:296
 msgid "Import private keys"
-msgstr ""
+msgstr "Importera privata nycklar"
 
 #: ../gui/importer.go:301 ../gui/importer.go:350
 msgid "_Import"
-msgstr ""
+msgstr "_Importera"
 
 #: ../gui/importer.go:310
 msgid "Keys imported"
-msgstr ""
+msgstr "Nycklar importerade"
 
 #: ../gui/importer.go:310
 msgid "The key was imported correctly."
-msgstr ""
+msgstr "Nyckeln importerades korrekt."
 
 #: ../gui/importer.go:312
 msgid "Failure importing keys"
-msgstr ""
+msgstr "Kunde inte importera nycklar"
 
 #: ../gui/importer.go:312
 #, python-format
 msgid "Couldn't import any keys from %s."
-msgstr ""
+msgstr "Kunde inte importera nycklar från %s."
 
 #: ../gui/importer.go:321
 msgid "Export private keys"
-msgstr ""
+msgstr "Exportera privata nycklar"
 
 #: ../gui/importer.go:326 ../gui/importer.go:372
 msgid "_Export"
-msgstr ""
+msgstr "_Exportera"
 
 #: ../gui/importer.go:335
 msgid "Keys exported"
-msgstr ""
+msgstr "Nycklar exporterade"
 
 #: ../gui/importer.go:335
 msgid "Keys were exported correctly."
-msgstr ""
+msgstr "Nycklarna exporterades korrekt."
 
 #: ../gui/importer.go:337
 msgid "Failure exporting keys"
-msgstr ""
+msgstr "Kunde inte exportera nycklar"
 
 #: ../gui/importer.go:337
 #, python-format
 msgid "Couldn't export keys to %s."
-msgstr ""
+msgstr "Kunde inte exportera nycklar till %s."
 
 #: ../gui/importer.go:345
 msgid "Import fingerprints"
-msgstr ""
+msgstr "Importera fingeravtryck"
 
 #: ../gui/importer.go:357
 msgid "Fingerprints imported"
-msgstr ""
+msgstr "Fingeravtryck importerades"
 
 #: ../gui/importer.go:357
 #, python-format
 msgid "%d fingerprint(s) were imported correctly."
-msgstr ""
+msgstr "%d fingeravtryck importerades korrekt."
 
 #: ../gui/importer.go:359
 msgid "Failure importing fingerprints"
-msgstr ""
+msgstr "Kunde inte importera fingeravtryck"
 
 #: ../gui/importer.go:359
 #, python-format
 msgid "Couldn't import any fingerprints from %s."
-msgstr ""
+msgstr "Kunde inte importera fingeravtryck från %s."
 
 #: ../gui/importer.go:367
 msgid "Export fingerprints"
-msgstr ""
+msgstr "Exportera fingeravtryck"
 
 #: ../gui/importer.go:381
 msgid "Fingerprints exported"
-msgstr ""
+msgstr "Fingeravtryck exporterades"
 
 #: ../gui/importer.go:381
 msgid "Fingerprints were exported correctly."
-msgstr ""
+msgstr "Fingeravtryck exporterades korrekt."
 
 #: ../gui/importer.go:383
 msgid "Failure exporting fingerprints"
-msgstr ""
+msgstr "Kunde inte exportera fingeravtryck"
 
 #: ../gui/importer.go:383
 #, python-format
 msgid "Couldn't export fingerprints to %s."
-msgstr ""
+msgstr "Kunde inte exportera fingeravtryck till %s."
 
 #: ../gui/muc_room_destroy.go:128
 msgid "You must provide a service name."
-msgstr ""
+msgstr "Du måste ange ett namn för tjänsten."
 
 #: ../gui/muc_room_destroy.go:130
 msgid "You must provide a room name."
-msgstr ""
+msgstr "Du måste ange ett rumsnamn."
 
 #: ../gui/muc_room_destroy.go:136
 msgid "You must provide a valid service and room name."
-msgstr ""
+msgstr "Du måste ange ett giltigt tjänstnamn och rumsnamn."
 
-#: ../gui/muc_public_rooms.go:343
+#: ../gui/muc_public_rooms.go:344
 msgid "That service doesn't seem to exist."
-msgstr ""
+msgstr "Tjänsten du angav verkar inte existera."
 
-#: ../gui/muc_public_rooms.go:345
+#: ../gui/muc_public_rooms.go:346
 msgid "Your XMPP server doesn't seem to have any chat room services."
-msgstr ""
+msgstr "Din XMPP-server verkar inte ha några tjänster för chattrum."
 
-#: ../gui/muc_public_rooms.go:423
+#: ../gui/muc_public_rooms.go:430
 msgid "Something went wrong when trying to get chat rooms."
-msgstr ""
+msgstr "Något gick fel när vi försökte hämta chattrum."
 
-#: ../gui/muc_public_rooms.go:499
+#: ../gui/muc_public_rooms.go:506
 msgid "An unknown error occurred, please try again."
-msgstr ""
+msgstr "Ett okänt fel uppstod, var god försök igen."
 
-#: ../gui/muc_public_rooms.go:503
+#: ../gui/muc_public_rooms.go:510
 msgid "We cant't determinate what has been selected, please try again."
-msgstr ""
+msgstr "Vi kan inte fastställa vad som blivit valt, var god försök igen."
 
-#: ../gui/muc_public_rooms.go:505
+#: ../gui/muc_public_rooms.go:512
 msgid ""
 "The selected item is not a room, select one room from the list to join to."
 msgstr ""
+"Den valda artikeln är inte ett rum, var god välj ett rum från listan att gå "
+"in i."
 
-#: ../gui/muc_public_rooms.go:507
+#: ../gui/muc_public_rooms.go:514
 msgid "Please, select one room from the list to join to."
-msgstr ""
+msgstr "Var god välj ett rum från listan att gå in i."
 
-#: ../gui/muc_public_rooms.go:509
+#: ../gui/muc_public_rooms.go:516
 msgid ""
 "We cant't determinate which service has been selected, please try again."
-msgstr ""
+msgstr "Vi kan inte avgöra vilken tjänst som blivit vald, var god försök igen."
 
-#: ../gui/muc_public_rooms.go:530
+#: ../gui/muc_public_rooms.go:537
 msgid "No account was selected, please select one account from the list."
-msgstr ""
+msgstr "Inget konto valdes, var god välj ett konto från listan."
 
 #: ../gui/muc_room_config_page.go:281
 msgid "Banned"
-msgstr ""
+msgstr "Bannlysta"
 
 #: ../gui/muc_room_config_page.go:292
 msgid "The room must have at least one owner"
-msgstr ""
+msgstr "Rummet måste ha åtminstonde en ägare"
 
 #: ../gui/muc_room_config_page.go:359
 msgid "Saving room configuration"
-msgstr ""
+msgstr "Sparar rumsinställningar"
 
 #: ../gui/muc_room_config_list_add_component.go:198
 msgid "Add all"
-msgstr ""
+msgstr "Lägg till alla"
 
 #: ../gui/muc_room_config_list_add_component.go:312
 msgid "You must enter the account address."
-msgstr ""
+msgstr "Du måste ange kontoadressen."
 
 #: ../gui/muc_room_config_list_add_component.go:314
 msgid "You must provide a valid account address."
-msgstr ""
+msgstr "Du måste ange en giltig kontoadress."
 
-#: ../gui/ui.go:611
+#: ../gui/ui.go:609
 msgid ""
 "You are trying to connect to a Google account - sometimes Google will not "
 "allow connections even if you have entered the correct password. Try turning "
 "on App specific password, or if that fails allow less secure applications to "
 "access the account (don't worry, CoyIM is plenty secure)."
 msgstr ""
+"Du försöker ansluta till ett Googlekonto. Ibland tillåter inte Google "
+"anslutningar även om du har angivit rätt lösenord. Försök att sätta på "
+"applikationslösenord, eller om det inte går tillåt mindre säkra program att "
+"få tillgång till kontot (men oroa dig inte, CoyIM är definitivt säker)."
 
-#: ../gui/ui.go:669
+#: ../gui/ui.go:667
 msgid "CoyIM!"
-msgstr ""
+msgstr "CoyIM!"
 
-#: ../gui/ui.go:749
+#: ../gui/ui.go:747
 msgid "There is no account with the id %q"
-msgstr ""
+msgstr "Det finns inget konto med identifikationen %q"
 
-#: ../gui/ui.go:753
+#: ../gui/ui.go:751
 msgid "Can't send a contact request from an offline account"
-msgstr ""
+msgstr "Kan inte skicka kontaktbegäran från ett konto som inte är anslutet"
 
 #: ../gui/connection.go:28
 msgid "Connection lost"
-msgstr ""
+msgstr "Anslutningen tappades"
 
 #: ../gui/connection.go:28
 msgid ""
@@ -4054,10 +4381,13 @@ msgid ""
 "\n"
 "We will try to reconnect."
 msgstr ""
+"Vi tappade anslutningen till servern av någon anledning.\n"
+"\n"
+"Vi kommer försöka återuppta anslutningen."
 
 #: ../gui/connection.go:32 ../gui/connection.go:36 ../gui/connection.go:41
 msgid "Connection failure"
-msgstr ""
+msgstr "Anslutningsfel"
 
 #: ../gui/connection.go:32
 msgid ""
@@ -4066,6 +4396,10 @@ msgid ""
 "\n"
 "We will try to reconnect."
 msgstr ""
+"Vi kunde inte ansluta till servern för vi kunde inte lista ut serveradressen "
+"för domänen ifråga.\n"
+"\n"
+"Vi kommer försöka återuppta anslutningen."
 
 #: ../gui/connection.go:36
 msgid ""
@@ -4074,6 +4408,10 @@ msgid ""
 "\n"
 "We will try to reconnect."
 msgstr ""
+"Vi kunde inte ansluta till servern av någon anledning. Kontrollera att "
+"serveradressen är korrekt och att du faktiskt är ansluten till internet.\n"
+"\n"
+"Vi kommer försöka återuppta anslutningen."
 
 #: ../gui/connection.go:42
 #, python-format
@@ -4085,184 +4423,190 @@ msgid ""
 "\n"
 "We will try to reconnect."
 msgstr ""
+"Vi kunde inte ansluta till servern av någon anledning. Kontrollera att "
+"serveradressen är korrekt och att du faktiskt är ansluten till internet.\n"
+"\n"
+"Det här är felet vi fick: %s\n"
+"\n"
+"Vi kommer försöka återuppta anslutningen."
 
 #: ../gui/accounts_menu.go:20
 msgid "Connect On _Startup"
-msgstr ""
+msgstr "Anslut vid upp_start"
 
 #: ../gui/accounts_menu.go:30
 msgid "_Connect All"
-msgstr ""
+msgstr "An_slut alla"
 
 #: ../gui/accounts_menu.go:34
 msgid "_Disconnect All"
-msgstr ""
+msgstr "_Koppla ifrån alla"
 
 #: ../gui/accounts_menu.go:41
 msgid "_New Account"
-msgstr ""
+msgstr "_Nytt konto"
 
 #: ../gui/accounts_menu.go:45
 msgid "_Add Account"
-msgstr ""
+msgstr "_Lägg till konto"
 
 #: ../gui/accounts_menu.go:49
 msgid "_Import Account"
-msgstr ""
+msgstr "_Importera konto"
 
-#: ../gui/muc_room_toolbar.go:154
+#: ../gui/muc_room_toolbar.go:156
 msgid "You are no longer allowed to continue updating the room subject."
-msgstr ""
+msgstr "Du har inte längre tillstånd att ändra rumsämnet."
 
-#: ../gui/muc_room_toolbar.go:248
+#: ../gui/muc_room_toolbar.go:250
 msgid "Hide room subject"
-msgstr ""
+msgstr "Göm rumsämne"
 
 #: ../gui/password_component.go:48 ../gui/muc_room_config_field_password.go:122
 msgid "Hide"
-msgstr ""
+msgstr "Göm"
 
 #: ../gui/language_selector_component.go:205
 msgid "%[1]s (%[2]s)"
-msgstr ""
+msgstr "%[1]s (%[2]s)"
 
 #: ../gui/muc_room_config_list_component.go:103
 msgid "Remove all"
-msgstr ""
+msgstr "Ta bort alla"
 
 #: ../gui/infobar_component.go:155
 msgid "January 2, 2006 at 15:04:05"
-msgstr ""
+msgstr "January 2, 2006 klockan 15:04:05"
 
 #: ../gui/muc_room_occupant_role.go:133
 #, python-format
 msgid "You are changing the role of %s from moderator to:"
-msgstr ""
+msgstr "Du ändrar rollen för %s från moderatör till:"
 
 #: ../gui/muc_room_occupant_role.go:135
 #, python-format
 msgid "You are changing the role of %s from participant to:"
-msgstr ""
+msgstr "Du ändrar rollen för %s från deltagare till:"
 
 #: ../gui/muc_room_occupant_role.go:137
 #, python-format
 msgid "You are changing the role of %s from visitor to:"
-msgstr ""
+msgstr "Du ändrar rollen för %s från besökare till:"
 
 #: ../gui/muc_room_occupant_role.go:140
 #, python-format
 msgid "You are changing the role of %s to:"
-msgstr ""
+msgstr "Du ändrar rollen för %s till:"
 
 #: ../gui/muc_room_config.go:96
 msgid "The room configuration changed."
-msgstr ""
+msgstr "Rumsinställningarna ändrades."
 
 #: ../gui/muc_room_config.go:108
 msgid "Unable to open the room configuration. Please, try again."
-msgstr ""
+msgstr "Kunde inte öppna rumsinställningarna. Var god försök igen."
 
 #: ../gui/muc_room_config.go:163
 msgid "Visitors can now request permission to speak."
-msgstr ""
+msgstr "Besökare kan nu be om tillstånd att prata."
 
 #: ../gui/muc_room_config.go:165
 msgid ""
-"This room's doesn't support \"voice\" request now, which means that visitors "
-"can't ask for permission to speak."
+"This room doesn't support \"voice\" requests anymore, which means that "
+"visitors can't ask for permission to speak."
 msgstr ""
 
 #: ../gui/muc_room_config.go:171
 msgid "This room supports user registration."
-msgstr ""
+msgstr "Rummet stöder användarregistrering."
 
 #: ../gui/muc_room_config.go:173
 msgid "This room doesn't support user registration."
-msgstr ""
+msgstr "Rummet stöder inte användarregistrering."
 
 #: ../gui/muc_room_config.go:178
 msgid "This room is now persistent."
-msgstr ""
+msgstr "Rummet är now permanent."
 
 #: ../gui/muc_room_config.go:180
 msgid "This room is not persistent anymore."
-msgstr ""
+msgstr "Rummet är inte permanent längre."
 
 #: ../gui/muc_room_config.go:185
 msgid "Only participants and moderators can now send messages in this room."
-msgstr ""
+msgstr "Enbart deltagare och moderatörer kan nu prata i rummet."
 
 #: ../gui/muc_room_config.go:187
 msgid "Everyone can now send messages in this room."
-msgstr ""
+msgstr "Alla kan nu prata i rummet."
 
 #: ../gui/muc_room_config.go:192
 msgid "This room is now protected by a password."
-msgstr ""
+msgstr "Rummet är nu skyddat av ett lösenord."
 
 #: ../gui/muc_room_config.go:194
 msgid "This room is not protected by a password."
-msgstr ""
+msgstr "Rummet är inte skyddat av ett lösenord."
 
 #: ../gui/muc_room_config.go:199
 msgid "This room is publicly listed."
-msgstr ""
+msgstr "Rummet är now offenligtgjort."
 
 #: ../gui/muc_room_config.go:201
 msgid "This room is not publicly listed anymore."
-msgstr ""
+msgstr "Rummet är inte längre offentligt."
 
 #: ../gui/muc_room_config.go:205
 #, python-format
 msgid "The language of this room was changed to %s."
-msgstr ""
+msgstr "Språket i rummet har ändrats till %s."
 
 #: ../gui/muc_room_config.go:219
 msgid "Participants and moderators can change the room subject."
-msgstr ""
+msgstr "Deltagare och moderatörer kan ändra rumsämnet."
 
 #: ../gui/muc_room_config.go:221
 msgid "Only moderators can change the room subject."
-msgstr ""
+msgstr "Enbart moderatörer kan ändra rumsämnet."
 
 #: ../gui/muc_room_config.go:225
 #, python-format
 msgid "Title was changed to \"%s\"."
-msgstr ""
+msgstr "Rubriken ändrades till \"%s\"."
 
 #: ../gui/muc_room_config.go:229
 #, python-format
 msgid "Description was changed to \"%s\"."
-msgstr ""
+msgstr "Beskrivningen ändrades till \"%s\"."
 
 #: ../gui/muc_room_config.go:234
 msgid "Anyone can send private messages to people in the room."
-msgstr ""
+msgstr "Vem som helst kan skicka privata meddelanden till personer i rummet."
 
 #: ../gui/muc_room_config.go:236
 msgid "No one in this room can send private messages now."
-msgstr ""
+msgstr "Ingen kan nu skicka privata meddelanden till personer i rummet."
 
 #: ../gui/muc_room_config.go:241
 msgid "Members can now invite other users to join."
-msgstr ""
+msgstr "Medlemmar kan bjuda in andra användare att gå in i rummet."
 
 #: ../gui/muc_room_config.go:243
 msgid "Members cannot invite other users to join anymore."
-msgstr ""
+msgstr "Medlemmar kan inte längre bjuda in andra användare att gå in i rummet."
 
 #: ../gui/muc_room_config.go:247
 #, python-format
 msgid "The room's max history length was changed to %d."
-msgstr ""
+msgstr "Rummets max-längd av historiska meddelanden har ändrats till %d."
 
 #: ../gui/connected_accounts_component.go:82
 msgid "There are no connected accounts."
-msgstr ""
+msgstr "Inga kontor är anslutna."
 
 #: ../gui/account.go:154
 msgid "Unable to Add Account"
-msgstr ""
+msgstr "Kunde inte lägga till konto"
 
 #: ../gui/account.go:154
 msgid ""
@@ -4270,47 +4614,50 @@ msgid ""
 "\n"
 "You already have an account with this name."
 msgstr ""
+"Kan inte lägga till konto:\n"
+"\n"
+"Du har redan ett konto med samma namn."
 
 #: ../gui/account.go:164
 msgid "Account added"
-msgstr ""
+msgstr "Konto tillagt"
 
 #: ../gui/account.go:164
 #, python-format
 msgid "%s successfully added."
-msgstr ""
+msgstr "%s lades till."
 
 #: ../gui/account.go:242
 msgid "_Check Connection"
-msgstr ""
+msgstr "_Kontrollera anslutning"
 
 #: ../gui/account.go:255
 msgid "_Connect"
-msgstr ""
+msgstr "_Anslut"
 
 #: ../gui/account.go:265
 msgid "_Disconnect"
-msgstr ""
+msgstr "_Koppla ifrån"
 
 #: ../gui/account.go:283
 msgid "Connection _information..."
-msgstr ""
+msgstr "Anslutnings_information..."
 
 #: ../gui/account.go:299
 msgid "_Change Password..."
-msgstr ""
+msgstr "_Ändra lösenord..."
 
 #: ../gui/account.go:312
 msgid "Connect _Automatically"
-msgstr ""
+msgstr "Anslut _automatiskt"
 
 #: ../gui/account.go:319
 msgid "Always Encrypt Conversation"
-msgstr ""
+msgstr "Kryptera alltid konversationer"
 
 #: ../gui/account.go:340
 msgid "XML Console"
-msgstr ""
+msgstr "Kontrollpanel för XML"
 
 #: ../gui/account.go:441
 #, python-format
@@ -4318,6 +4665,8 @@ msgid ""
 "Connecting account\n"
 "%s"
 msgstr ""
+"Ansluter konto\n"
+"%s"
 
 #: ../gui/account.go:445
 #, python-format
@@ -4325,10 +4674,12 @@ msgid ""
 "Connection failure\n"
 "%s"
 msgstr ""
+"Misslyckande av anslutning\n"
+"%s"
 
 #: ../gui/account.go:449
 msgid "Tor is not currently running"
-msgstr ""
+msgstr "Tor körs inte för närvarande"
 
 #: ../gui/muc_room_warnings.go:32
 msgid ""
@@ -4338,177 +4689,191 @@ msgid ""
 "join this room and communicate here if you trust the server to not be "
 "hostile."
 msgstr ""
+"Var medveten om att kommunikation i chattrum inte är krypterad. Vem som "
+"helst som kan snappa upp kommunikation mellan dig och servern - och servern "
+"själv - kan se vad du säger i chattrummet. Gå enbart in i rummet och prata "
+"här om du litar på att servern inte är fientlig."
 
 #: ../gui/muc_room_warnings.go:43
 msgid "Partially anonymous room"
-msgstr ""
+msgstr "Delvist anonymt rum"
 
 #: ../gui/muc_room_warnings.go:44
 msgid ""
 "This room is partially anonymous. This means that only moderators can "
 "connect your nickname with your real username (your JID)."
 msgstr ""
+"Det här rummet är delvist anonymt. Detta innebär att enbart moderatörer kan "
+"kopplia ihop ditt namn med ditt riktiga användarnamn (ditt JID)."
 
 #: ../gui/muc_room_warnings.go:50
 msgid "Non-anonymous room"
-msgstr ""
+msgstr "Icke anonymt rum"
 
 #: ../gui/muc_room_warnings.go:51
 msgid ""
 "This room is not anonymous. This means that any person in this room can "
 "connect your nickname with your real username (your JID)."
 msgstr ""
+"Det här rummet är inte anonymt. Det innebär att vem som helst i rummet kan "
+"koppa ditt namn till ditt riktiga användarnamn (ditt JID)."
 
 #: ../gui/muc_room_warnings.go:62
 msgid "Publicly logged room"
-msgstr ""
+msgstr "Offentligt loggat rum"
 
 #: ../gui/muc_room_warnings.go:63
 msgid ""
 "This room is publicly logged, meaning that everything you and the others in "
 "the room say or do can be made public on a website."
 msgstr ""
+"Det här rummet är offentligt loggat, vilket betyder att allt du och andra i "
+"rummet säger eller gör kan bli offentliggjort på en hemsida."
 
 #: ../gui/muc_room_warnings.go:89
 msgid "Check out the security properties of this room!"
-msgstr ""
+msgstr "Kontrollera säkerhetsegenskaperna för rummet!"
 
 #: ../gui/muc_room_warnings.go:92
 msgid "Details"
-msgstr ""
+msgstr "Detaljer"
 
 #: ../gui/muc_room_warnings.go:217
 msgid "Warning %[1]d of %[2]d"
-msgstr ""
+msgstr "Varning %[1]d av %[2]d"
 
 #: ../gui/muc_room_positions.go:91
 msgid "The positions were updated."
-msgstr ""
+msgstr "Ställningarna har uppdaterats."
 
 #: ../gui/muc_room_positions.go:99
 msgid "Unable to update positions."
-msgstr ""
+msgstr "Kunde inte uppdatera ställningar."
 
 #: ../gui/muc_room_positions.go:154
 msgid "We couldn't get the occupants by affiliation"
-msgstr ""
+msgstr "Vi kunde inte hitta personer via deras ställning"
 
 #: ../gui/muc.go:19
 msgid "Something went wrong trying to communicate with the server."
-msgstr ""
+msgstr "Något gick fel när vi försökte kommunicera med servern."
 
 #: ../gui/muc.go:20
 msgid "The connection to the server can't be established."
-msgstr ""
+msgstr "Kunde inte ansluta till servern."
 
 #: ../gui/muc.go:21
 msgid "You don't have the permissions to create a room."
-msgstr ""
+msgstr "Du har inte tillstånd att skapa rum."
 
 #: ../gui/muc.go:22
 msgid ""
 "Could not create the room with the name provided. Please, change it and try "
 "again."
 msgstr ""
+"Kunde inte skapa ett rum med det givna namnet. Var god ändra det och försök "
+"igen."
 
 #: ../gui/muc_room_conversation_notification_messages.go:11
 msgid "You can't send messages because this room has been destroyed."
-msgstr ""
+msgstr "Du kan inte skicka meddelanden eftersom rummet har förstörts."
 
 #: ../gui/muc_room_conversation_notification_messages.go:15
 msgid "You can't send messages because you have been banned."
-msgstr ""
+msgstr "Du kan inte skicka meddelanden eftersom du har blivit bannlyst."
 
 #: ../gui/muc_room_conversation_notification_messages.go:19
 msgid "You can't send messages because you were expelled from the room."
 msgstr ""
+"Du kan inte skicka meddelanden eftersom du har blivit utkastad från rummet."
 
 #: ../gui/muc_room_conversation_notification_messages.go:23
 msgid "As a visitor, you can't send messages in a moderated room."
-msgstr ""
+msgstr "Som en besökare kan du inte skicka meddelanden i ett modererat rum."
 
 #: ../gui/muc_room_conversation_notification_messages.go:27
 msgid "You are forbidden to send messages to this room."
-msgstr ""
+msgstr "Du har inte tillåtelse att skicka meddelanden i rummet."
 
 #: ../gui/muc_room_conversation_notification_messages.go:31
 msgid "Your messages to this room aren't accepted."
-msgstr ""
+msgstr "Dina meddelanden till rummet blev inte accepterade."
 
 #: ../gui/muc_room_conversation_notification_messages.go:35
 msgid ""
 "You can't send messages because the room configuration has been changed."
 msgstr ""
+"Du kan inte skicka meddelanden eftersom rumsinställningarna har ändrats."
 
 #: ../gui/muc_room_conversation_notification_messages.go:39
 msgid "This room is now publicly logged."
-msgstr ""
+msgstr "Rummet är nu offentligt loggat."
 
 #: ../gui/muc_room_conversation_notification_messages.go:43
 msgid "This room is not publicly logged anymore."
-msgstr ""
+msgstr "Rummet är inte längre offentlig loggat."
 
 #: ../gui/muc_room_conversation_notification_messages.go:47
 msgid "Your real JID can now be seen by anyone."
-msgstr ""
+msgstr "Ditt riktiga JID can nu ses av vem som helst."
 
 #: ../gui/muc_room_conversation_notification_messages.go:51
 msgid "Your real JID can now be seen only by moderators."
-msgstr ""
+msgstr "Ditt riktiga JID can nu enbart ses av moderatörer."
 
 #: ../gui/muc_room_conversation_notification_messages.go:55
 msgid "The message couldn't be sent, please try again."
-msgstr ""
+msgstr "Meddelandet kunde inte skickas, var god försök igen."
 
 #: ../gui/muc_room_conversation_notification_messages.go:59
 msgid "You can't send messages because you lost connection."
-msgstr ""
+msgstr "Du kan inte skicka meddelanden eftersom du tappade anslutningen."
 
 #: ../gui/muc_room_conversation_notification_messages.go:63
 #, python-format
 msgid "[%s] "
-msgstr ""
+msgstr "[%s] "
 
 #: ../gui/muc_room_conversation_notification_messages.go:67
 #, python-format
 msgid "%s: "
-msgstr ""
+msgstr "%s: "
 
 #: ../gui/muc_room_conversation_notification_messages.go:71
 #, python-format
 msgid "$nickname{%s} joined the room."
-msgstr ""
+msgstr "$nickname{%s} kom in i rummet."
 
 #: ../gui/muc_room_conversation_notification_messages.go:75
 #, python-format
 msgid "$nickname{%s} left the room."
-msgstr ""
+msgstr "$nickname{%s} lämnade rummet."
 
 #: ../gui/muc_room_conversation_notification_messages.go:85
 msgid "Someone removed the room subject."
-msgstr ""
+msgstr "Någon tog bort rumsämnet."
 
 #: ../gui/muc_room_conversation_notification_messages.go:87
 msgid "$nickname{%[1]s} removed the room subject."
-msgstr ""
+msgstr "$nickname{%[1]s} tog bort rumsämnet."
 
 #: ../gui/muc_room_conversation_notification_messages.go:89
 msgid "$nickname{%[1]s} updated the room subject to: \"%[2]s\"."
-msgstr ""
+msgstr "$nickname{%[1]s} ändrade rumsämnet till: \"%[2]s\"."
 
 #: ../gui/muc_room_conversation_notification_messages.go:92
 #, python-format
 msgid "Someone has updated the room subject to: \"%s\"."
-msgstr ""
+msgstr "Någon ändrade rumsämnet till: %s\"."
 
 #: ../gui/muc_room_conversation_notification_messages.go:97
 msgid "The room does not have a subject."
-msgstr ""
+msgstr "Rummet har inget ämne."
 
 #: ../gui/muc_room_conversation_notification_messages.go:100
 #, python-format
 msgid "The room subject is \"%s\"."
-msgstr ""
+msgstr "Rummets ämne är: \"%s\"."
 
 #: ../gui/muc_room_conversation_notification_messages.go:104
 #, python-format
@@ -4516,40 +4881,47 @@ msgid ""
 "$nickname{%s} was removed from this room because it's now a members only "
 "room."
 msgstr ""
+"$nickname{%s} togs bort från rummet eftersom rummet är nu enbart för "
+"medlemmar."
 
 #: ../gui/muc_room_conversation_notification_messages.go:128
 msgid ""
 "The room was destroyed. The reason given was \"%[1]s\". Discussions will "
 "continue in this room: %[2]s, with this password: \"$password{%[3]s}\"."
 msgstr ""
+"Rummet har blivit förstört. Anledningen som gavs var: \"%[1]s\". "
+"Konversationer kommer fortsätta i det här rummet: %[2]s, med det här "
+"lösenordet: \"$password{%[3]s}\"."
 
 #: ../gui/muc_room_conversation_notification_messages.go:133
 msgid ""
 "The room was destroyed. The reason given was \"%[1]s\". Discussions will "
 "continue in this room: %[2]s."
 msgstr ""
+"Rummet har blivit förstört. Anledningen som gavs var: \"%[1]s\". "
+"Konversationer kommer fortsätta i det här rummet: %[2]s."
 
 #: ../gui/muc_room_conversation_notification_messages.go:138
 #, python-format
 msgid "The room was destroyed. The reason given was \"%s\"."
-msgstr ""
+msgstr "Rummet har blivit förstört. Anledningen som gavs var: \"%s\"."
 
 #: ../gui/muc_room_conversation_notification_messages.go:141
 msgid "The room was destroyed."
-msgstr ""
+msgstr "Rummet har blivit förstört."
 
 #: ../gui/change_password_details.go:42
 msgid "The passwords do not match"
-msgstr ""
+msgstr "Lösenorden stämmer inte överens"
 
 #: ../gui/change_password_details.go:44
 msgid "The password can't be empty"
-msgstr ""
+msgstr "Lösenordet kan inte vara tomt"
 
 #: ../gui/change_password_details.go:69
 #, python-format
 msgid "Password changed successfully for %s."
-msgstr ""
+msgstr "Lösenordet ändrades till %s."
 
 #: ../gui/change_password_details.go:75
 #, python-format
@@ -4557,15 +4929,17 @@ msgid ""
 "Password change failed.\n"
 " Error: %s"
 msgstr ""
+"Ändring av lösenordet misslyckades.\n"
+" Fel: %s"
 
 #: ../gui/change_password_details.go:96
 #, python-format
 msgid "Error: %s"
-msgstr ""
+msgstr "Fel: %s"
 
 #: ../gui/change_password_details.go:103
 msgid "Attempting to change password..."
-msgstr ""
+msgstr "Försöker ändra lösenord..."
 
 #: ../gui/certificate_window.go:133
 #, python-format
@@ -4577,6 +4951,12 @@ msgid ""
 "Try to verify that this information is correct before proceeding with the "
 "connection."
 msgstr ""
+"Vi kunde inte kontrollera certifikatet för anslutning till kontot %s. Detta "
+"kan hända om servern du använder inte använder traditionella certifikat-"
+"hierarkier. Det kan också vara ett tecken på ett anfall.\n"
+"\n"
+"Försök att kontrollera att informationen är korrekt innan du fortsätter med "
+"anslutningen."
 
 #: ../gui/certificate_window.go:135
 msgid ""
@@ -4590,6 +4970,15 @@ msgid ""
 "Try to verify that this information is correct before proceeding with the "
 "connection."
 msgstr ""
+"Certifikatet för anslutningen till konto %[1]s är korrekt, men namnen i det "
+"stämmer inte överens. Vi behöver ett certifikat för namnet %[2]s, men detta "
+"gavs inte. Detta kan hända om servern inte är korrekt inställd eller om det "
+"finns andra anledningar till att det rätta namnet inte kunde användas. Detta "
+"är väldigt vanligt med företagskonton från Google. Det kan också vara ett "
+"tecken på ett angrepp.\n"
+"\n"
+"Försök att kontrollera att informationen är korrekt innan du fortsätter med "
+"anslutningen."
 
 #: ../gui/certificate_window.go:137
 #, python-format
@@ -4602,60 +4991,71 @@ msgid ""
 "Try to verify that this information is correct before proceeding with the "
 "connection."
 msgstr ""
+"Certifikatet för anslutningen till kontot %s är korrekt - men du har en "
+"policy för certifikatstiftning som kräver att vi frågar dig om du vill "
+"fortsätta anslutningen med detta certifikat först, och om du vill spara det "
+"för framtiden eller avbryta anslutningen.\n"
+"\n"
+"Försök att kontrollera att informationen är korrekt innan du fortsätter med "
+"anslutningen."
 
 #: ../gui/muc_room_config_assistant.go:115
 #, python-format
 msgid "Configuration for room [%s]"
-msgstr ""
+msgstr "Rumsinställningar [%s]"
 
 #: ../gui/muc_room_config_assistant.go:142
 msgid "Update Configuration"
-msgstr ""
+msgstr "Uppdatera inställningar"
 
 #: ../gui/muc_room_config_assistant.go:234
 msgid "Cancel room settings"
-msgstr ""
+msgstr "Avbryt ruminställning"
 
 #: ../gui/muc_room_config_assistant.go:235
 msgid "We were unable to cancel the room configuration"
-msgstr ""
+msgstr "Vi kunde inte avbryt rumsinställningen"
 
 #: ../gui/muc_room_config_assistant.go:236
 msgid "An error occurred while trying to cancel the configuration of the room."
-msgstr ""
+msgstr "Ett fel uppstod när vi försökte avbryta rumsinställningen."
 
 #: ../gui/muc_create_room_form.go:147
 msgid ""
 "Couldn't connect to the service, please verify that it exists or try again "
 "later."
 msgstr ""
+"Kunde inte ansluta till tjänsten, var god kontrollera att den existerar "
+"eller försök igen senare."
 
 #: ../gui/muc_create_room_form.go:149
 msgid "That room already exists, try again with a different name."
-msgstr ""
+msgstr "Rummet finns read, försök med ett annat namn."
 
 #: ../gui/muc_create_room_form.go:168
 msgid "Could not create the room."
-msgstr ""
+msgstr "Kunde inte skapa rummet."
 
 #: ../gui/muc_create_room_form.go:276
 msgid "Configure Room"
-msgstr ""
+msgstr "Ställ in rum"
 
 #: ../gui/muc_create_room_form.go:280
 msgid "Create Room & Join"
-msgstr ""
+msgstr "Skapa rum & gå in"
 
 #: ../gui/file_transfer.go:79
 #, python-format
 msgid "The transfer to %s can't be done encrypted and securely."
-msgstr ""
+msgstr "Överföringen till %s kan inte göras krypterat och säkert."
 
 #: ../gui/file_transfer.go:80
 msgid ""
 "Do you want to continue anyway? This means an adversary or server "
 "administrator can potentially see the content of the file."
 msgstr ""
+"Vill du fortsätta ändå? Detta betyder att en fiend eller serveradministratör "
+"kan möjligen se innehållet i filen."
 
 #: ../gui/file_transfer.go:107
 #, python-format
@@ -4663,11 +5063,13 @@ msgid ""
 "%s wants to send you a directory - this transfer will be encrypted and "
 "secure - do you want to receive it?"
 msgstr ""
+"%s vill skicka en folder till dig - överföringen kommer ske krypterat och "
+"säkert - vill du ta emot den?"
 
 #: ../gui/file_transfer.go:108 ../gui/file_transfer.go:111
 #, python-format
 msgid "Directory name: %s"
-msgstr ""
+msgstr "Foldernamn: %s"
 
 #: ../gui/file_transfer.go:110
 #, python-format
@@ -4675,6 +5077,8 @@ msgid ""
 "%s wants to send you a directory - the transfer will NOT be encrypted or "
 "secure - do you want to receive it?"
 msgstr ""
+"%s vill skicka en folder till dig - överföringen kommer INTE ske krypterat "
+"och säkert - vill du ta emot den?"
 
 #: ../gui/file_transfer.go:115
 #, python-format
@@ -4682,11 +5086,13 @@ msgid ""
 "%s wants to send you a file - this transfer will be encrypted and secure - "
 "do you want to receive it?"
 msgstr ""
+"%s vill skicka en fil till dig - överföringen kommer ske krypterat och "
+"säkert - vill du ta emot den?"
 
 #: ../gui/file_transfer.go:116 ../gui/file_transfer.go:119
 #, python-format
 msgid "File name: %s"
-msgstr ""
+msgstr "Filnamn: %s"
 
 #: ../gui/file_transfer.go:118
 #, python-format
@@ -4694,44 +5100,56 @@ msgid ""
 "%s wants to send you a file - the transfer will NOT be encrypted or secure - "
 "do you want to receive it?"
 msgstr ""
+"%s vill skicka en fil till dig - överföringen kommer INTE ske krypterat och "
+"säkert - vill du ta emot den?"
 
 #: ../gui/file_transfer.go:123
 msgid ""
 "%[1]s\n"
 "Encrypted: %[2]v"
 msgstr ""
+"%[1]s\n"
+"Krypterad: %[2]v"
 
 #: ../gui/file_transfer.go:126
 msgid ""
 "%[1]s\n"
 "Description: %[2]s"
 msgstr ""
+"%[1]s\n"
+"Beskrivning: %[2]s"
 
 #: ../gui/file_transfer.go:129
 msgid ""
 "%[1]s\n"
 "Last modified: %[2]s"
 msgstr ""
+"%[1]s\n"
+"Senast ändrad: %[2]s"
 
 #: ../gui/file_transfer.go:132
 msgid ""
 "%[1]s\n"
 "Size: %[2]d bytes"
 msgstr ""
+"%[1]s\n"
+"Storlek: %[2]d bytes"
 
 #: ../gui/file_transfer.go:158
 msgid "_Save"
-msgstr ""
+msgstr "_Spara"
 
 #: ../gui/muc_room_window.go:25
 msgid "%[1]s [%[2]s]"
-msgstr ""
+msgstr "%[1]s [%[2]s]"
 
 #: ../gui/muc_room_conversation_display.go:163
 msgid ""
 "You can no longer receive any messages in this room and the list of people "
 "in the room will not be updated anymore."
 msgstr ""
+"Du kan inte längre ta emot meddelanden i det här rummet, och listan över "
+"personer i rummet kommer inte längre uppdateras."
 
 #: ../gui/muc_room_roster_info.go:220
 #, python-format
@@ -4739,272 +5157,286 @@ msgid ""
 "Administrators and owners will automatically be moderators for a room. "
 "Therefore, the role of %s can't be changed."
 msgstr ""
+"Administratörer och ägare blir automatiskt moderatörer i ett rum. På grund "
+"av detta kan rollen för %s inte ändras."
 
 #: ../gui/conversation.go:241
 msgid "Attempting to start a private conversation..."
-msgstr ""
+msgstr "Försöker starta privat konversation..."
 
 #: ../gui/conversation.go:254 ../gui/account_events.go:143
 msgid "Private conversation has ended."
-msgstr ""
+msgstr "Den privata konversationen har avslutats."
 
 #: ../gui/conversation.go:264
 #, python-format
 msgid "You have verified the identity of %s."
-msgstr ""
+msgstr "Du har kontrollerat identiteten för %s."
 
 #: ../gui/conversation.go:593
 msgid "Available"
-msgstr ""
+msgstr "Tillgänglig"
 
 #: ../gui/conversation.go:595
 msgid "Not Available"
-msgstr ""
+msgstr "Inte tillgänglig"
 
 #: ../gui/conversation.go:597
 msgid "Away"
-msgstr ""
+msgstr "Borta"
 
 #: ../gui/conversation.go:599
 msgid "Busy"
-msgstr ""
+msgstr "Upptagen"
 
 #: ../gui/conversation.go:601
 msgid "Free for Chat"
-msgstr ""
+msgstr "Tillgänglig för chatt"
 
 #: ../gui/conversation.go:603
 msgid "Invisible"
-msgstr ""
+msgstr "Osynlig"
 
 #: ../gui/conversation.go:638
 msgid "Offline"
-msgstr ""
+msgstr "Off-line"
 
 #: ../gui/conversation.go:644
 msgid " is now "
-msgstr ""
+msgstr " är nu "
 
 #: ../gui/conversation.go:760
 msgid "The peer is using a key we haven't seen before!"
-msgstr ""
+msgstr "Kontakten använder en nyckel som vi inte sett förut!"
 
 #: ../gui/muc_room_occupant_action.go:91
 msgid "Expel person"
-msgstr ""
+msgstr "Kasta ut person"
 
 #: ../gui/muc_room_occupant_action.go:92
 #, python-format
 msgid "You are about to expel %s from the room."
-msgstr ""
+msgstr "Du är på väg att kasta ut %s från rummet."
 
 #: ../gui/muc_room_occupant_action.go:109
 msgid "Ban person"
-msgstr ""
+msgstr "Bannlys person"
 
 #: ../gui/muc_room_occupant_action.go:110
 #, python-format
 msgid "You are about to ban %s from the room"
-msgstr ""
+msgstr "Du håller på att bannlysa %s från rummet"
 
 #: ../gui/muc_room_occupant_action.go:111
 msgid ""
 "They won't be able to join the room again. Are you sure you want to continue?"
 msgstr ""
+"De kommer inte kunna gå in i rummet igen. Är du säker på att du vill "
+"fortsätta?"
 
 #: ../gui/muc_room_occupant_action.go:112
 msgid ""
 "Here you can provide an optional reason for banning the person. Everyone in "
 "the room will see this reason."
 msgstr ""
+"Här kan du skriva in en anledning för bannlysningen av personen. Alla i "
+"rummet kan se den här anledningen."
 
 #: ../gui/muc_room_errors.go:77
 msgid "You must provide a valid nickname."
-msgstr ""
+msgstr "Du måste ange ett giltigt namn."
 
 #: ../gui/muc_room_errors.go:79
 msgid ""
 "You can't join the room using that nickname because it's already being used."
 msgstr ""
+"Du kan inte gå in i rummet med det namnet, eftersom det är redan använt."
 
 #: ../gui/muc_room_errors.go:81
 msgid "Sorry, this room only allows registered members."
-msgstr ""
+msgstr "Tyvärr är det här rummet enbart tillgängligt för medlemmar."
 
 #: ../gui/muc_room_errors.go:83
 msgid "You can't join the room because the password is not valid."
-msgstr ""
+msgstr "Du kan inte gå in i rummet eftersom lösenordet inte är korrekt."
 
 #: ../gui/muc_room_errors.go:85
 msgid ""
 "You can't join the room because the maximum number of occupants has been "
 "reached."
 msgstr ""
+"Du kan inte gå in i rummet eftersom det finns inte plats för mer personer i "
+"rummet."
 
 #: ../gui/muc_room_errors.go:87
 msgid ""
 "An unknown error occurred when trying to join the room. Please try again "
 "later."
 msgstr ""
+"Ett okänt fel uppstod när du försökte gå in i rummet. Var god försök igen."
 
 #: ../gui/muc_room_errors.go:89
 msgid "You can't join the room because your account is currently banned."
-msgstr ""
+msgstr "Du kan inte gå in i rummet eftersom du är bannlyst."
 
 #: ../gui/muc_room_errors.go:91
 msgid ""
 "An error occurred when trying to join the room. Please check your connection "
 "or make sure the room exists."
 msgstr ""
+"Ett fel uppstod när vi försökte gå in i rummet. Var god kontrollera din "
+"anslutning och att rummet existerar."
 
 #: ../gui/edit_contact.go:114
 #, python-format
 msgid "There are no known fingerprints for %s"
-msgstr ""
+msgstr "Det finns inga kända fingeravtryck för %s"
 
 #: ../gui/edit_contact.go:116
 #, python-format
 msgid "These are the fingerprints known for %s:"
-msgstr ""
+msgstr "De här är fingeravtrycken för %s:"
 
 #: ../gui/edit_contact.go:122
 msgid "not trusted"
-msgstr ""
+msgstr "inte betrodd"
 
 #: ../gui/edit_contact.go:124
 msgid "trusted"
-msgstr ""
+msgstr "betrodd"
 
 #: ../gui/account_details.go:199
 msgid ""
 "The fingerprints for %[1]s:\n"
 "%[2]s"
 msgstr ""
+"Fingeravtryck för %[1]s:\n"
+"%[2]s"
 
-#: ../gui/muc_room_conversation.go:220
+#: ../gui/muc_room_conversation.go:225
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an owner}."
-msgstr ""
+msgstr "$nickname{%s} har blivit tillagd som $affiliation{ägare}."
 
-#: ../gui/muc_room_conversation.go:222
+#: ../gui/muc_room_conversation.go:227
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an administrator}."
-msgstr ""
+msgstr "$nickname{%s} har blivit tillagd som $affiliation{administratör}."
 
-#: ../gui/muc_room_conversation.go:224
+#: ../gui/muc_room_conversation.go:229
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{a member}."
-msgstr ""
+msgstr "$nickname{%s} har blivit tillagd som $affiliation{medlem}."
 
-#: ../gui/muc_room_conversation.go:226
+#: ../gui/muc_room_conversation.go:231
 #, python-format
 msgid "$nickname{%s} has been added to the ban list."
-msgstr ""
+msgstr "$nickname{%s} har blivit tillagd till listan över bannlysta personer."
 
 #: ../gui/file_transfer_notification.go:148
 #, python-format
 msgid "Sending: %s"
-msgstr ""
+msgstr "Skickar: %s"
 
 #: ../gui/file_transfer_notification.go:150
 #, python-format
 msgid "Receiving: %s"
-msgstr ""
+msgstr "Tar emot: %s"
 
 #: ../gui/file_transfer_notification.go:152
 #, python-format
 msgid "Sending securely: %s"
-msgstr ""
+msgstr "Skickar säkert: %s"
 
 #: ../gui/file_transfer_notification.go:154
 #, python-format
 msgid "Sending encrypted: %s"
-msgstr ""
+msgstr "Skickar krypterad: %s"
 
 #: ../gui/file_transfer_notification.go:156
 #, python-format
 msgid "Sending insecurely: %s"
-msgstr ""
+msgstr "Skickar osäkert: %s"
 
 #: ../gui/file_transfer_notification.go:158
 #, python-format
 msgid "Receiving securely: %s"
-msgstr ""
+msgstr "Tar emot säkert: %s"
 
 #: ../gui/file_transfer_notification.go:160
 #, python-format
 msgid "Receiving encrypted: %s"
-msgstr ""
+msgstr "Tar emot krypterad: %s"
 
 #: ../gui/file_transfer_notification.go:162
 #, python-format
 msgid "Receiving insecurely: %s"
-msgstr ""
+msgstr "Tar emot osäkert: %s"
 
 #: ../gui/file_transfer_notification.go:262
 msgid "File and directory transfer(s) "
-msgstr ""
+msgstr "Fil och folderöverföring(ar) "
 
 #: ../gui/file_transfer_notification.go:264
 msgid "Directory transfer(s) "
-msgstr ""
+msgstr "Folderöverföring(ar) "
 
 #: ../gui/file_transfer_notification.go:266
 msgid "File transfer(s) "
-msgstr ""
+msgstr "Filöverföring(ar) "
 
 #: ../gui/file_transfer_notification.go:331
 #, python-format
 msgid "Declined: %s"
-msgstr ""
+msgstr "Nekad: %s"
 
 #: ../gui/file_transfer_notification.go:345
 #, python-format
 msgid "Canceled: %s"
-msgstr ""
+msgstr "Avbryten: %s"
 
 #: ../gui/file_transfer_notification.go:359
 #, python-format
 msgid "Failed: %s"
-msgstr ""
+msgstr "Misslyckad: %s"
 
 #: ../gui/file_transfer_notification.go:377
 #, python-format
 msgid "Sent securely: %s"
-msgstr ""
+msgstr "Skickad säkert: %s"
 
 #: ../gui/file_transfer_notification.go:379
 #, python-format
 msgid "Sent encrypted: %s"
-msgstr ""
+msgstr "Skickad krypterad: %s"
 
 #: ../gui/file_transfer_notification.go:381
 #, python-format
 msgid "Sent insecurely: %s"
-msgstr ""
+msgstr "Skickad osäkert: %s"
 
 #: ../gui/file_transfer_notification.go:383
 #, python-format
 msgid "Received securely: %s"
-msgstr ""
+msgstr "Mottagen säkert: %s"
 
 #: ../gui/file_transfer_notification.go:385
 #, python-format
 msgid "Received encrypted: %s"
-msgstr ""
+msgstr "Mottagen krypterad: %s"
 
 #: ../gui/file_transfer_notification.go:387
 #, python-format
 msgid "Received insecurely: %s"
-msgstr ""
+msgstr "Mottagen osäkert: %s"
 
 #: ../gui/muc_room_manager.go:40
 msgid "You are already in the room."
-msgstr ""
+msgstr "Du är redan i rummet."
 
 #: ../gui/muc_room_manager.go:52
 msgid "You were already connected to this room."
-msgstr ""
+msgstr "Du var redan ansluten till rummet."
 
 #: ../gui/registration.go:259
 msgid ""
@@ -5012,182 +5444,188 @@ msgid ""
 "\n"
 "This might take a while."
 msgstr ""
+"Ansluter till servern för registrering... \n"
+"\n"
+"Detta kan ta ett tag."
 
 #: ../gui/registration.go:292
 #, python-format
 msgid "<b>%s</b> successfully created."
-msgstr ""
+msgstr "<b>%s</b> skapades korrekt."
 
 #: ../gui/timeago.go:24
 msgid "Today"
-msgstr ""
+msgstr "Idag"
 
 #: ../gui/timeago.go:31
 msgid "Yesterday"
-msgstr ""
+msgstr "Igår"
 
 #: ../gui/timeago.go:38
 msgid "Two days ago"
-msgstr ""
+msgstr "Två dagar sedan"
 
 #: ../gui/timeago.go:45
 msgid "Three days ago"
-msgstr ""
+msgstr "Tre dagar sedan"
 
 #: ../gui/timeago.go:52
 msgid "Four days ago"
-msgstr ""
+msgstr "Fyra dagar sedan"
 
 #: ../gui/timeago.go:79
 msgid "%[1]s, %[2]s %[3]d, %[4]d"
-msgstr ""
+msgstr "%[1]s, %[2]s %[3]d, %[4]d"
 
 #: ../gui/timeago.go:85
 msgid "Monday"
-msgstr ""
+msgstr "Måndag"
 
 #: ../gui/timeago.go:87
 msgid "Thursday"
-msgstr ""
+msgstr "Torsdag"
 
 #: ../gui/timeago.go:89
 msgid "Wednesday"
-msgstr ""
+msgstr "Onsdag"
 
 #: ../gui/timeago.go:91
 msgid "Tuesday"
-msgstr ""
+msgstr "Tisdag"
 
 #: ../gui/timeago.go:93
 msgid "Friday"
-msgstr ""
+msgstr "Fredag"
 
 #: ../gui/timeago.go:95
 msgid "Saturday"
-msgstr ""
+msgstr "Lördag"
 
 #: ../gui/timeago.go:97
 msgid "Sunday"
-msgstr ""
+msgstr "Söndag"
 
 #: ../gui/timeago.go:106
 msgid "January"
-msgstr ""
+msgstr "Januari"
 
 #: ../gui/timeago.go:108
 msgid "February"
-msgstr ""
+msgstr "Februari"
 
 #: ../gui/timeago.go:110
 msgid "March"
-msgstr ""
+msgstr "Mars"
 
 #: ../gui/timeago.go:112
 msgid "April"
-msgstr ""
+msgstr "April"
 
 #: ../gui/timeago.go:114
 msgid "May"
-msgstr ""
+msgstr "Maj"
 
 #: ../gui/timeago.go:116
 msgid "June"
-msgstr ""
+msgstr "Juni"
 
 #: ../gui/timeago.go:118
 msgid "July"
-msgstr ""
+msgstr "Juli"
 
 #: ../gui/timeago.go:120
 msgid "August"
-msgstr ""
+msgstr "Augusti"
 
 #: ../gui/timeago.go:122
 msgid "September"
-msgstr ""
+msgstr "September"
 
 #: ../gui/timeago.go:124
 msgid "October"
-msgstr ""
+msgstr "Oktober"
 
 #: ../gui/timeago.go:126
 msgid "November"
-msgstr ""
+msgstr "Novemember"
 
 #: ../gui/timeago.go:128
 msgid "December"
-msgstr ""
+msgstr "December"
 
 #: ../gui/timeago.go:164
 msgid "An hour ago"
-msgstr ""
+msgstr "För en timma sidan"
 
 #: ../gui/timeago.go:166
 msgid "Few hours ago"
-msgstr ""
+msgstr "Några timmar sedan"
 
 #: ../gui/timeago.go:168
 msgid "%v hours ago"
-msgstr ""
+msgstr "%v timmar sidan"
 
 #: ../gui/timeago.go:170
 msgid "A minute ago"
-msgstr ""
+msgstr "För en minut sedan"
 
 #: ../gui/timeago.go:172
 msgid "A few minutes ago"
-msgstr ""
+msgstr "Några minuter sedan"
 
 #: ../gui/timeago.go:174
 msgid "%v minutes ago"
-msgstr ""
+msgstr "%v minuter sedan"
 
 #: ../gui/timeago.go:176
 msgid "A second ago"
-msgstr ""
+msgstr "För se sekund sedan"
 
 #: ../gui/timeago.go:178
 msgid "A few seconds ago"
-msgstr ""
+msgstr "Några sekunder sedan"
 
 #: ../gui/timeago.go:180
 msgid "%v seconds ago"
-msgstr ""
+msgstr "%v sekunder sedan"
 
 #: ../gui/timeago.go:182
 msgid "Now"
-msgstr ""
+msgstr "Nu"
 
 #: ../gui/muc_room_occupant_affiliation.go:154
 #, python-format
 msgid "You are changing the position of %s from owner to:"
-msgstr ""
+msgstr "Du ändrar ställningen för %s från ägare till:"
 
 #: ../gui/muc_room_occupant_affiliation.go:156
 #, python-format
 msgid "You are changing the position of %s from administrator to:"
-msgstr ""
+msgstr "Du ändrar ställningen för %s från administratör till:"
 
 #: ../gui/muc_room_occupant_affiliation.go:158
 #, python-format
 msgid "You are changing the position of %s from member to:"
-msgstr ""
+msgstr "Du ändrar ställningen för %s från medlem till:"
 
 #: ../gui/muc_room_occupant_affiliation.go:161
 #, python-format
 msgid "You are changing the position of %s to:"
-msgstr ""
+msgstr "Du ändrar ställningen för %s till:"
 
 #: ../gui/muc_room_occupant_affiliation.go:196
 msgid ""
 "We couldn't update the occupant affiliation because, either you don't have "
 "permission to do it or the server is busy. Please try again."
 msgstr ""
+"Vi kunde inte uppdatera ställningen, antingen för att du inte har tillstånd "
+"att göra så, eller för att servern är upptagen. Var god försök igen."
 
 #: ../gui/muc_room_occupant_affiliation.go:198
 msgid ""
 "An error occurred when updating the occupant affiliation. Please try again."
 msgstr ""
+"Ett fel uppstod när vi försökte uppdatera ställningen. Var god försök igen."
 
 #: ../gui/fingerprint_verification.go:19
 #, python-format
@@ -5196,85 +5634,94 @@ msgid ""
 "\n"
 "You first have to start an encrypted conversation with them."
 msgstr ""
+"Du kan inte kontrollera fingeravtrycket för %s ännu.\n"
+"\n"
+"Du måste först starta en krypterad konversation med dem."
 
 #: ../gui/fingerprint_verification.go:61
 #, python-format
 msgid "Verify fingerprint for %s"
-msgstr ""
+msgstr "Kontrollera fingeravtryck för %s"
 
 #: ../gui/account_events.go:154
 msgid "Private conversation started."
-msgstr ""
+msgstr "Privat konversation startad."
 
 #: ../gui/account_events.go:154
 #, python-format
 msgid "Private conversation started (tagged: '%s')."
-msgstr ""
+msgstr "Privat konversation startad (etikett: '%s')."
 
 #: ../gui/account_events.go:154
 msgid "Unverified conversation started."
-msgstr ""
+msgstr "Okontrollerad konversation startad."
 
 #: ../gui/account_events.go:163
 msgid "Successfully refreshed the private conversation."
-msgstr ""
+msgstr "Lyckades uppdatera den privata konversationen."
 
 #: ../gui/account_events.go:163
 #, python-format
 msgid "Successfully refreshed the private conversation (tagged: '%s')."
-msgstr ""
+msgstr "Lyckades uppdatera den privata konversationen (etikett: '%s')."
 
 #: ../gui/account_events.go:163
 msgid "Successfully refreshed the unverified private conversation."
-msgstr ""
+msgstr "Lyckades uppdatera den kontrollerade privata konversationen."
 
 #: ../gui/subscription.go:15
 #, python-format
 msgid "%s wants to talk to you. Is that ok?"
-msgstr ""
+msgstr "%s vill prata med dig. Är det OK?"
 
 #: ../gui/subscription.go:102
 msgid "There are no currently connected accounts."
-msgstr ""
+msgstr "Du har inga anslutna konton."
 
 #: ../gui/subscription.go:119
 msgid "There is no connected account selected."
-msgstr ""
+msgstr "Du har inte valt något anslutet konto."
 
 #: ../gui/subscription.go:126
 msgid "We couldn't send a subscription."
-msgstr ""
+msgstr "Vi kunde inte skicka en prenumeration."
 
 #: ../gui/verifier.go:161
 msgid ""
 "Make sure no one else\n"
 "is reading your messages"
 msgstr ""
+"Var säker på att ingen annan\n"
+"läser dina meddelanden"
 
 #: ../gui/verifier.go:182
 #, python-format
 msgid "Share this one-time PIN with <b>%s</b>"
-msgstr ""
+msgstr "Dela detta engångsnummer med <b>%s</b>"
 
 #: ../gui/verifier.go:187 ../gui/verifier.go:219 ../gui/verifier.go:230
 msgid ""
 "Waiting for peer to finish \n"
 "securing the channel..."
 msgstr ""
+"Väntar på att kontakten avslutar \n"
+"säkerställningen av kanalen..."
 
 #: ../gui/verifier.go:246
 msgid "Unable to verify at this time."
-msgstr ""
+msgstr "Kunde inte avsluta kontrollen för tillfället."
 
 #: ../gui/verifier.go:301
 #, python-format
 msgid "Enter the secret that <b>%s</b> shared with you"
-msgstr ""
+msgstr "Skriv in hemligheten som <b>%s</b> delade med dig"
 
 #: ../gui/verifier.go:303
 #, python-format
 msgid "Type the PIN that <b>%s</b> sent you. It can be used only once."
 msgstr ""
+"Skriv in engångsnumret som <b>%s</b> skickade till dig. Det kan enbart "
+"användas en gång."
 
 #: ../gui/verifier.go:305
 #, python-format
@@ -5282,69 +5729,122 @@ msgid ""
 "Enter the answer to\n"
 "<b>%s</b>"
 msgstr ""
+"Skriv in svaret till\n"
+"<b>%s</b>"
 
 #: ../gui/verifier.go:353
 msgid ""
 "Finish verifying the \n"
 "security of this channel..."
 msgstr ""
+"Avsluta kontrollen av \n"
+"säkerheten för den här kanalen..."
 
 #: ../gui/verifier.go:378
 #, python-format
 msgid "Hooray! No one is listening to your conversations with <b>%s</b>"
-msgstr ""
+msgstr "Hurra! Ingen lyssnar på din konversation med <b>%s</b>"
 
 #: ../gui/verifier.go:412
 #, python-format
 msgid "We could not verify this channel with <b>%s</b>."
-msgstr ""
+msgstr "Vi kunde inte kontrollera den här kanalen med <b>%s</b>."
 
 #: ../gui/muc_room_form_component.go:153
 msgid ""
 "No account is selected, please select one account from the list or connect "
 "to one."
 msgstr ""
+"Inget konto är valt, var god välj ett konto från listan eller anslut ett."
 
 #: ../gui/muc_room_destroy_dialog_error.go:30
 msgid "The room couldn't be destroyed"
-msgstr ""
+msgstr "Rummet kunde inte förstöras"
 
 #: ../gui/muc_room_destroy_dialog_error.go:60
 msgid ""
 "We were able to connect to the room service, but we received an invalid "
 "response from it. Please try again later."
 msgstr ""
+"Vi kunde ansluta till rumstjänsten, men vi fick ett ogiltigt svar från den. "
+"Var god försök igen senare."
 
 #: ../gui/muc_room_destroy_dialog_error.go:63
 msgid ""
 "You don't have the permission to destroy this room. Please contact one of "
 "the room owners."
 msgstr ""
+"Du har inte tillstånd att förstöra det här rummet. Var god kontakta en av "
+"rumsägarna."
 
 #: ../gui/muc_room_destroy_dialog_error.go:66
 msgid "We couldn't find the room."
-msgstr ""
+msgstr "Vi kunde inte hitta rummet."
 
 #: ../gui/muc_room_destroy_dialog_error.go:68
 msgid "An unknown error occurred during the process. Please try again later."
-msgstr ""
+msgstr "Ett okänt fel uppstod under processen. Var god försök igen senare."
 
 #: ../gui/master_password.go:30
 msgid "<b>Password can not be empty</b> - please try again"
-msgstr ""
+msgstr "<b>Lösenordet kan inte vara tomt</b> - försök igen"
 
 #: ../gui/master_password.go:33
 msgid "Passwords have to be the same - please try again"
-msgstr ""
+msgstr "Lösenorden måste vara likadana - försök igen"
 
 #: ../gui/master_password.go:115
 msgid "Incorrect password entered, please try again."
-msgstr ""
+msgstr "Ogiltigt lösenord givet, försök igen."
 
 #: ../gui/master_password.go:126
 msgid "Checking password..."
-msgstr ""
+msgstr "Kontrollerar lösenord..."
 
 #: ../gui/muc_room_close_confirm.go:57
 msgid "Close & Leave Room"
 msgstr ""
+
+#~ msgid ""
+#~ "The file you choose contains more than one private key. Choose from the "
+#~ "list below the key you would like to import."
+#~ msgstr ""
+#~ "Filen du valde innehåller mer än en privat nyckel. Välj från listan "
+#~ "nedanför vilken nyckel du vill importera."
+
+#~ msgid "$nickname{%s} is $affiliation{not banned} anymore."
+#~ msgstr "$nickname{%s} är inte $affiliation{bannlyst} längre."
+
+#~ msgid ""
+#~ "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
+#~ "$nickname{%[2]s} is $affiliation{not banned} anymore."
+#~ msgstr ""
+#~ "Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; "
+#~ "$nickname{%[2]s} är inte $affiliation{bannlyst} längre."
+
+#~ msgid ""
+#~ "The administrator $nickname{%[1]s} changed the position of "
+#~ "$nickname{%[2]s}; $nickname{%[2]s} is $affiliation{not banned} anymore."
+#~ msgstr ""
+#~ "Administratören $nickname{%[1]s} ändrade ställningen för "
+#~ "$nickname{%[2]s}; $nickname{%[2]s} är inte $affiliation{bannlyst} längre."
+
+#~ msgid ""
+#~ "$nickname{%[1]s} changed the position of $nickname{%[2]s}; "
+#~ "$nickname{%[2]s} is $affiliation{not banned} anymore."
+#~ msgstr ""
+#~ "$nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; "
+#~ "$nickname{%[2]s} är inte $affiliation{bannlyst} längre."
+
+#~ msgid ""
+#~ "This room's doesn't support \"voice\" request now, which means that "
+#~ "visitors can't ask for permission to speak."
+#~ msgstr ""
+#~ "Det här rummet stöder inte begäran att få prata (\"voice request\") "
+#~ "längre, vilket innebär att besökare inte kan be om tillåtelse att prata."
+
+#~ msgid "Your connection was restored."
+#~ msgstr "Din anslutning återställdes."
+
+#~ msgid "Close & leave room"
+#~ msgstr "Stäng & lämna rummet"

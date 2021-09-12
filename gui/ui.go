@@ -149,8 +149,6 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	ret.addAction(ret.app, "about", ret.aboutDialog)
 	ret.addAction(ret.app, "preferences", ret.showGlobalPreferences)
 
-	fmt.Printf("all objs: %#v\n", ret)
-
 	return ret
 }
 

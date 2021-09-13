@@ -90,6 +90,10 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 		v.publishSelfOccupantConnectingEvent()
 	case events.MUCAccountAffiliationUpdated:
 		v.publishAccountAffiliationUpdated(t.AccountAddress, t.Affiliation)
+	case events.MUCOccupantRemovedOnAffiliationChange:
+		v.publishOccupantRemovedOnAffiliationChangeEvent(t.Nickname)
+	case events.MUCSelfOccupantRemovedOnAffiliationChange:
+		v.publishSelfOccupantRemovedOnAffiliationChangeEvent()
 	default:
 		v.log.WithField("event", t).Warn("Unsupported room event received")
 	}
@@ -220,6 +224,16 @@ func (v *roomView) publishSelfOccupantConnectingEvent() {
 // publishAccountAffiliationUpdated MUST NOT be called from the UI thread
 func (v *roomView) publishAccountAffiliationUpdated(accountAddress jid.Any, affiliation data.Affiliation) {
 	v.publishEvent(accountAffiliationUpdated{accountAddress, affiliation})
+}
+
+// publishAccountAffiliationUpdated MUST NOT be called from the UI thread
+func (v *roomView) publishOccupantRemovedOnAffiliationChangeEvent(nickname string) {
+	v.publishEvent(occupantRemovedOnAffiliationChangeEvent{nickname})
+}
+
+// publishAccountAffiliationUpdated MUST NOT be called from the UI thread
+func (v *roomView) publishSelfOccupantRemovedOnAffiliationChangeEvent() {
+	v.publishEvent(selfOccupantRemovedOnAffiliationChangeEvent{})
 }
 
 func (v *roomView) handleOccupantJoinedEvent(nickname string) {

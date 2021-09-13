@@ -349,8 +349,8 @@ func (r *roster) onActivateRosterRow(v gtki.TreeView, path gtki.TreePath) {
 }
 
 func (r *roster) update(account *account, entries *rosters.List) {
-	r.ui.accountManager.Lock()
-	defer r.ui.accountManager.Unlock()
+	r.ui.accountManager.lock.Lock()
+	defer r.ui.accountManager.lock.Unlock()
 
 	r.ui.accountManager.setContacts(account, entries)
 }
@@ -451,8 +451,8 @@ func (r *roster) redrawMerged() {
 	showOffline := !r.ui.config().Display.ShowOnlyOnline
 	showWaiting := !r.ui.config().Display.ShowOnlyConfirmed
 
-	r.ui.accountManager.RLock()
-	defer r.ui.accountManager.RUnlock()
+	r.ui.accountManager.lock.RLock()
+	defer r.ui.accountManager.lock.RUnlock()
 
 	r.toCollapse = nil
 
@@ -637,8 +637,8 @@ func (r *roster) redrawSeparate() {
 	showOffline := !r.ui.config().Display.ShowOnlyOnline
 	showWaiting := !r.ui.config().Display.ShowOnlyConfirmed
 
-	r.ui.accountManager.RLock()
-	defer r.ui.accountManager.RUnlock()
+	r.ui.accountManager.lock.RLock()
+	defer r.ui.accountManager.lock.RUnlock()
 
 	r.toCollapse = nil
 

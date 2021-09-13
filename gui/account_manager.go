@@ -43,8 +43,8 @@ func (m *accountManager) init(c otrclient.CommandManager, log coylog.Logger) {
 }
 
 func (m *accountManager) getAllAccounts() []*account {
-	m.RLock()
-	defer m.RUnlock()
+	m.lock.RLock()
+	defer m.lock.RUnlock()
 
 	return append([]*account(nil), m.accounts...)
 }
@@ -81,8 +81,8 @@ func (m *accountManager) removeConnectedAccountsObserver(token int) {
 }
 
 func (m *accountManager) getAllConnectedAccounts() []*account {
-	m.RLock()
-	defer m.RUnlock()
+	m.lock.RLock()
+	defer m.lock.RUnlock()
 
 	accounts := make([]*account, 0, len(m.accounts))
 	for _, acc := range m.accounts {
@@ -97,8 +97,8 @@ func (m *accountManager) getAllConnectedAccounts() []*account {
 }
 
 func (m *accountManager) disconnectAll() {
-	m.RLock()
-	defer m.RUnlock()
+	m.lock.RLock()
+	defer m.lock.RUnlock()
 
 	for _, acc := range m.accounts {
 		acc.disconnect()
@@ -106,8 +106,8 @@ func (m *accountManager) disconnectAll() {
 }
 
 func (m *accountManager) getAccountByID(ID string) (*account, bool) {
-	m.RLock()
-	defer m.RUnlock()
+	m.lock.RLock()
+	defer m.lock.RUnlock()
 
 	for _, acc := range m.accounts {
 		if acc.ID() == ID {
@@ -136,8 +136,8 @@ func (m *accountManager) setContacts(account *account, contacts *rosters.List) {
 func (u *gtkUI) addAccount(appConfig *config.ApplicationConfig, account *config.Account, sf access.Factory, df interfaces.DialerFactory) {
 	defer u.notifyChangeOfConnectedAccounts()
 
-	u.Lock()
-	defer u.Unlock()
+	u.lock.Lock()
+	defer u.lock.Unlock()
 
 	acc := newAccount(appConfig, account, sf, df)
 	go u.observeAccountEvents(acc)
@@ -158,8 +158,8 @@ func (m *accountManager) removeAccount(conf *config.Account, k func()) {
 		return
 	}
 
-	m.Lock()
-	defer m.Unlock()
+	m.lock.Lock()
+	defer m.lock.Unlock()
 
 	accs := make([]*account, 0, len(m.accounts)-1)
 	for _, acc := range m.accounts {
@@ -213,8 +213,8 @@ func (u *gtkUI) addNewAccountsFromConfig(appConfig *config.ApplicationConfig, sf
 }
 
 func (m *accountManager) removePeer(account *account, peer jid.WithoutResource) {
-	m.Lock()
-	defer m.Unlock()
+	m.lock.Lock()
+	defer m.lock.Unlock()
 
 	l, ok := m.contacts[account]
 	if !ok {
@@ -225,8 +225,8 @@ func (m *accountManager) removePeer(account *account, peer jid.WithoutResource) 
 }
 
 func (m *accountManager) getPeer(account *account, peer jid.WithoutResource) (*rosters.Peer, bool) {
-	m.RLock()
-	defer m.RUnlock()
+	m.lock.RLock()
+	defer m.lock.RUnlock()
 
 	l, ok := m.contacts[account]
 	if !ok {
@@ -247,8 +247,8 @@ func (m *accountManager) displayNameFor(account *account, peer jid.WithoutResour
 }
 
 func (m *accountManager) debugPeersFor(account *account) {
-	m.RLock()
-	defer m.RUnlock()
+	m.lock.RLock()
+	defer m.lock.RUnlock()
 
 	rs, ok := m.getAllContacts()[account]
 	if ok {

@@ -40,6 +40,7 @@ Section "CoyIM"
   SectionIn 1 RO
 
   File /oname=CoyIM.exe win_installer\coyim_windows_amd64.exe
+  File win_installer\gdbus.exe
   File win_installer\toast.exe
   File win_installer\*.dll
   File /r win_installer\lib
@@ -62,6 +63,7 @@ SectionEnd
 Section "Uninstall"
   Delete "$INSTDIR\CoyIM.exe"
   Delete "$INSTDIR\toast.exe"
+  Delete "$INSTDIR\gdbus.dll"
   Delete "$INSTDIR\*.dll"
   RMDir /r "$INSTDIR\lib"
   RMDir /r "$INSTDIR\share"

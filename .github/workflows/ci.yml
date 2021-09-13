@@ -288,6 +288,7 @@ jobs:
           mkdir -p release/lib
           export LDIR=/mingw64/bin
 
+          cp $LDIR/gdbus.exe release
           cp $LDIR/libatk-1.0-0.dll release
           cp $LDIR/libbz2-1.dll release
           cp $LDIR/libbrotlicommon.dll release
@@ -314,6 +315,7 @@ jobs:
           cp $LDIR/libiconv-2.dll release
           cp $LDIR/libintl-8.dll release
           cp $LDIR/libjpeg-8.dll release
+          cp $LDIR/liblzma-5.dll release
           cp $LDIR/libpango-1.0-0.dll release
           cp $LDIR/libpangocairo-1.0-0.dll release
           cp $LDIR/libpangoft2-1.0-0.dll release
@@ -328,6 +330,7 @@ jobs:
           cp $LDIR/libtiffxx-5.dll release
           cp $LDIR/libturbojpeg.dll release
           cp $LDIR/libwinpthread-1.dll release
+          cp $LDIR/libxml2-2.dll release
           cp $LDIR/zlib1.dll release
 
           cp -r /mingw64/lib/gdk-pixbuf-2.0 release/lib

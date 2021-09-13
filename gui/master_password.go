@@ -33,9 +33,9 @@ func (u *gtkUI) captureInitialMasterPassword(k func(), onCancel func()) {
 				messageObj.SetLabel(i18n.Local("Passwords have to be the same - please try again"))
 				password.GrabFocus()
 			} else {
-				u.keySupplier = &onetimeSavedPassword{
+				u.config.keySupplier = &onetimeSavedPassword{
 					savedPassword: passText1,
-					realF:         u.keySupplier,
+					realF:         u.config.keySupplier,
 				}
 				pwdDialog.Destroy()
 				k()

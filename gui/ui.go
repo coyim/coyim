@@ -34,7 +34,7 @@ type gtkUI struct {
 	r  *roster
 	am *accountManager
 
-	mainConfiguration
+	config *mainConfiguration
 	mainUI *mainUserInterface
 	mainSettings
 	mainNotifications
@@ -112,6 +112,7 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 		mainUI:   &mainUserInterface{},
 		uiThread: &mainUIThread{},
 		hooks:    &hasHooks{},
+		config:   &mainConfiguration{},
 	}
 
 	ret.commands = make(chan interface{}, 5)
@@ -127,7 +128,7 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 
 	ret.uiThread.ouit = outuit
 
-	ret.haveConfigEntries = newCallbacksSet()
+	ret.config.haveConfigEntries = newCallbacksSet()
 
 	ret.initMUC()
 
@@ -143,7 +144,7 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 		panic(err)
 	}
 
-	ret.keySupplier = config.CachingKeySupplier(ret.getMasterPassword)
+	ret.config.keySupplier = config.CachingKeySupplier(ret.getMasterPassword)
 
 	ret.am.init(ret, ret.hasLog.log)
 
@@ -265,7 +266,7 @@ func (u *gtkUI) initialSetupWindow() {
 
 func (u *gtkUI) initialSetupForConfigFile() {
 	u.wouldYouLikeToEncryptYourFile(func(res bool) {
-		u.config().SetShouldSaveFileEncrypted(res)
+		u.config.config().SetShouldSaveFileEncrypted(res)
 		k := func() {
 			go u.showFirstAccountWindow()
 		}
@@ -278,23 +279,23 @@ func (u *gtkUI) initialSetupForConfigFile() {
 }
 
 func (u *gtkUI) loadConfig(configFile string) {
-	u.config().WhenLoaded(u.configLoaded)
+	u.config.config().WhenLoaded(u.configLoaded)
 
 	ok := false
 	var conf *config.ApplicationConfig
 	var err error
 	for !ok {
-		conf, ok, err = config.LoadOrCreate(configFile, u.keySupplier)
+		conf, ok, err = config.LoadOrCreate(configFile, u.config.keySupplier)
 		if !ok {
 			u.hasLog.log.WithError(err).Warn("couldn't open encrypted file - either the user didn't supply a password, or the password was incorrect")
-			u.keySupplier.Invalidate()
-			u.keySupplier.LastAttemptFailed()
+			u.config.keySupplier.Invalidate()
+			u.config.keySupplier.LastAttemptFailed()
 		}
 	}
 
 	// We assign config here, AFTER the return - so that a nil config means we are in a state of incorrectness and shouldn't do stuff.
 	// We never check, since a panic here is a serious programming error
-	u.setConfig(conf)
+	u.config.setConfig(conf)
 
 	if err != nil {
 		u.hasLog.log.WithError(err).Warn("something went wrong")
@@ -302,7 +303,7 @@ func (u *gtkUI) loadConfig(configFile string) {
 		return
 	}
 
-	if u.config().UpdateToLatestVersion() {
+	if u.config.config().UpdateToLatestVersion() {
 		_ = u.saveConfigOnlyInternal()
 	}
 }
@@ -354,7 +355,7 @@ func (u *gtkUI) saveConfigInternal() error {
 		return err
 	}
 
-	u.addNewAccountsFromConfig(u.config(), u.am.sessionFactory, u.am.dialerFactory)
+	u.addNewAccountsFromConfig(u.config.config(), u.am.sessionFactory, u.am.dialerFactory)
 
 	if u.mainUI.window != nil {
 		_, _ = u.mainUI.window.Emit(accountChangedSignal.String())
@@ -364,7 +365,7 @@ func (u *gtkUI) saveConfigInternal() error {
 }
 
 func (u *gtkUI) saveConfigOnlyInternal() error {
-	return u.config().Save(u.keySupplier)
+	return u.config.config().Save(u.config.keySupplier)
 }
 
 func (u *gtkUI) SaveConfig() {
@@ -379,7 +380,7 @@ func (u *gtkUI) SaveConfig() {
 func (u *gtkUI) removeSaveReload(acc *config.Account) {
 	//TODO: the account configs should be managed by the account manager
 	u.am.removeAccount(acc, func() {
-		u.config().Remove(acc)
+		u.config.config().Remove(acc)
 		u.SaveConfig()
 	})
 }
@@ -472,7 +473,7 @@ func (u *gtkUI) mainWindow() {
 	u.unified = newUnifiedLayout(u, vbox, hbox)
 	u.unifiedCached = u.unified
 
-	u.config().WhenLoaded(func(a *config.ApplicationConfig) {
+	u.config.config().WhenLoaded(func(a *config.ApplicationConfig) {
 		if a.Display.HideFeedbackBar {
 			return
 		}
@@ -539,7 +540,7 @@ func (u *gtkUI) addFeedbackInfoBar() {
 			infobar.Hide()
 			infobar.Destroy()
 
-			u.config().Display.HideFeedbackBar = true
+			u.config.config().Display.HideFeedbackBar = true
 			u.saveConfigOnly()
 		},
 	})
@@ -620,7 +621,7 @@ func (u *gtkUI) feedbackDialog() {
 }
 
 func (u *gtkUI) shouldViewAccounts() bool {
-	return !u.config().Display.MergeAccounts
+	return !u.config.config().Display.MergeAccounts
 }
 
 func (u *gtkUI) aboutDialog() {
@@ -737,7 +738,7 @@ func (u *gtkUI) addContactWindow() {
 func (u *gtkUI) listenToToggleConnectAllAutomatically() {
 	for {
 		val := <-u.mainUI.toggleConnectAllAutomaticallyRequest
-		u.config().ConnectAutomatically = val
+		u.config.config().ConnectAutomatically = val
 		u.saveConfigOnly()
 	}
 }
@@ -753,7 +754,7 @@ func (u *gtkUI) setShowAdvancedSettings(val bool) {
 func (u *gtkUI) listenToSetShowAdvancedSettings() {
 	for {
 		val := <-u.mainUI.setShowAdvancedSettingsRequest
-		u.config().AdvancedOptions = val
+		u.config.config().AdvancedOptions = val
 		u.saveConfigOnly()
 	}
 }
@@ -780,7 +781,7 @@ func (u *gtkUI) initMenuBar() {
 
 	u.setMenuBarSensitive(false)
 
-	u.whenHaveConfig(func() {
+	u.config.whenHaveConfig(func() {
 		doInUIThread(func() {
 			u.setMenuBarSensitive(true)
 		})

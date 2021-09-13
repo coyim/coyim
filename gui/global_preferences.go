@@ -60,7 +60,7 @@ func notifyCommand(cmd []string) string {
 
 func (u *gtkUI) showGlobalPreferences() {
 	settings := u.settings
-	config := u.config()
+	config := u.config.config()
 
 	panel := createSettingsPanel()
 

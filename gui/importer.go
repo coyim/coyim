@@ -41,7 +41,7 @@ func (u *gtkUI) doActualImportOf(choices map[applicationAndAccount]bool, potenti
 						"importAccount": k.acc,
 						"importApp":     k.app,
 					}).Info("Doing import")
-					u.config().WhenLoaded(func(conf *config.ApplicationConfig) {
+					u.config.config().WhenLoaded(func(conf *config.ApplicationConfig) {
 						_, exists := conf.GetAccount(k.acc)
 						if exists {
 							u.hasLog.log.WithFields(log.Fields{

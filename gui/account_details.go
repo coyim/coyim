@@ -266,7 +266,7 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 
 	data := getBuilderAndAccountDialogDetails()
 
-	data.otherSettings.SetActive(u.config().AdvancedOptions)
+	data.otherSettings.SetActive(u.config.config().AdvancedOptions)
 	data.acc.SetText(account.Account)
 
 	if s != nil {
@@ -375,8 +375,8 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 	})
 
 	data.notebook.SetCurrentPage(0)
-	data.notebook.SetShowTabs(u.config().AdvancedOptions)
-	if !u.config().AdvancedOptions {
+	data.notebook.SetShowTabs(u.config.config().AdvancedOptions)
+	if !u.config.config().AdvancedOptions {
 		p2.Hide()
 		p3.Hide()
 		p4.Hide()

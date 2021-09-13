@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-13 14:46+0000\n"
-"PO-Revision-Date: 2021-09-11 16:20+0000\n"
+"PO-Revision-Date: 2021-09-13 15:00+0000\n"
 "Last-Translator: Ola Bini <ola@autonomia.digital>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/coyim/main/sv/>\n"
 "Language: sv\n"
@@ -537,6 +537,8 @@ msgid ""
 "The file you chose contains more than one private key. Choose from the list "
 "below the key you would like to import."
 msgstr ""
+"Filen du valde innehöll mer än en privat nyckel. Välj från listan nedan "
+"vilken nyckel du vill importera."
 
 #: ../gui/definitions/ChooseKeyToImport.xml:35
 #: ../gui/definitions/Importer.xml:97
@@ -1183,7 +1185,7 @@ msgstr "Ja, lämna rummet"
 #: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:122
 #: ../gui/muc_room_close_confirm.go:55
 msgid "Close Room"
-msgstr ""
+msgstr "Stäng rum"
 
 #: ../gui/definitions/MUCRoomConfigAssistant.xml:4
 msgid "Room configuration"
@@ -2477,32 +2479,26 @@ msgid "$nickname{%[1]s} changed the role of $nickname{%[2]s}."
 msgstr "$nickname{%[1]s} ändrade rollen för $nickname{%[2]s}."
 
 #: ../gui/muc_notification_messages.go:673
-#, fuzzy, python-brace-format
 msgid "Your role was changed from $role{participant} to $role{visitor}."
 msgstr "Din roll ändrades från $role{deltagare} till $role{besökare}."
 
 #: ../gui/muc_notification_messages.go:675
-#, fuzzy, python-brace-format
 msgid "Your role was changed from $role{participant} to $role{moderator}."
 msgstr "Din roll ändrades från $role{deltagare} till $role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:677
-#, fuzzy, python-brace-format
 msgid "Your role was changed from $role{visitor} to $role{participant}."
 msgstr "Din roll ändrades från $role{besökare} till $role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:679
-#, fuzzy, python-brace-format
 msgid "Your role was changed from $role{visitor} to $role{moderator}."
 msgstr "Din roll ändrades från $role{besökare} till $role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:681
-#, fuzzy, python-brace-format
 msgid "Your role was changed from $role{moderator} to $role{visitor}."
 msgstr "Din roll ändrades från $role{moderatör} till $role{besökare}."
 
 #: ../gui/muc_notification_messages.go:683
-#, fuzzy, python-brace-format
 msgid "Your role was changed from $role{moderator} to $role{participant}."
 msgstr "Din roll ändrades från $role{moderatör} till $role{deltagare}."
 
@@ -2700,7 +2696,6 @@ msgid "%[1]s %[2]s"
 msgstr "%[1]s %[2]s"
 
 #: ../gui/muc_notification_messages.go:807
-#, fuzzy, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{visitor} to "
 "$role{participant}."
@@ -2709,7 +2704,6 @@ msgstr ""
 "$role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:809
-#, fuzzy, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{visitor} to $role{moderator}."
 msgstr ""
@@ -2717,7 +2711,6 @@ msgstr ""
 "$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:811
-#, fuzzy, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{participant} to "
 "$role{visitor}."
@@ -2726,7 +2719,6 @@ msgstr ""
 "$role{besökare}."
 
 #: ../gui/muc_notification_messages.go:813
-#, fuzzy, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{participant} to "
 "$role{moderator}."
@@ -2735,7 +2727,6 @@ msgstr ""
 "$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:815
-#, fuzzy, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{moderator} to $role{visitor}."
 msgstr ""
@@ -2743,7 +2734,6 @@ msgstr ""
 "$role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:817
-#, fuzzy, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{moderator} to "
 "$role{participant}."
@@ -2756,7 +2746,6 @@ msgid "As a result, their role was also changed."
 msgstr "Som ett resultat av detta har deras roll också ändrats."
 
 #: ../gui/muc_notification_messages.go:825
-#, fuzzy, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{visitor} to $role{participant}."
 msgstr ""
@@ -2764,7 +2753,6 @@ msgstr ""
 "$role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:827
-#, fuzzy, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{visitor} to $role{moderator}."
 msgstr ""
@@ -2772,7 +2760,6 @@ msgstr ""
 "$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:829
-#, fuzzy, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{participant} to $role{visitor}."
 msgstr ""
@@ -2780,7 +2767,6 @@ msgstr ""
 "$role{besökare}."
 
 #: ../gui/muc_notification_messages.go:831
-#, fuzzy, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{participant} to "
 "$role{moderator}."
@@ -2789,7 +2775,6 @@ msgstr ""
 "$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:833
-#, fuzzy, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{moderator} to $role{visitor}."
 msgstr ""
@@ -2797,7 +2782,6 @@ msgstr ""
 "$role{besökare}."
 
 #: ../gui/muc_notification_messages.go:835
-#, fuzzy, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{moderator} to "
 "$role{participant}."
@@ -2814,12 +2798,16 @@ msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not banned anymore."
 msgstr ""
+"Ägaren $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; "
+"$nickname{%[2]s} är inte längre bannlyst."
 
 #: ../gui/muc_notification_messages.go:908
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not banned anymore."
 msgstr ""
+"Administratören $nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; "
+"$nickname{%[2]s} är inte längre bannlyst."
 
 #: ../gui/muc_notification_messages.go:916
 msgid ""
@@ -2850,6 +2838,8 @@ msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} "
 "is not banned anymore."
 msgstr ""
+"$nickname{%[1]s} ändrade ställningen för $nickname{%[2]s}; $nickname{%[2]s} "
+"är inte längre bannlyst."
 
 #: ../gui/muc_notification_messages.go:969
 msgid ""
@@ -3061,17 +3051,14 @@ msgid "The administrator $nickname{%s} changed your position."
 msgstr "Administratören $nickname{%s} ändrade din ställning."
 
 #: ../gui/muc_notification_messages.go:1236
-#, fuzzy, python-brace-format
 msgid "Your position was changed to $affiliation{owner}."
 msgstr "Din ställning ändrades till $affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:1238
-#, fuzzy, python-brace-format
 msgid "Your position was changed to $affiliation{administrator}."
 msgstr "Din ställning ändrades till $affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:1240
-#, fuzzy, python-brace-format
 msgid "Your position was changed to $affiliation{member}."
 msgstr "Din ställning ändrades till $affiliation{medlem}."
 
@@ -3119,7 +3106,6 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1276
 #: ../gui/muc_notification_messages.go:1518
-#, fuzzy, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{owner} to "
 "$affiliation{administrator}."
@@ -3129,7 +3115,6 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1278
 #: ../gui/muc_notification_messages.go:1520
-#, fuzzy, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{owner} to $affiliation{member}."
 msgstr ""
@@ -3137,7 +3122,6 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1280
 #: ../gui/muc_notification_messages.go:1522
-#, fuzzy, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{administrator} to "
 "$affiliation{owner}."
@@ -3147,7 +3131,6 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1282
 #: ../gui/muc_notification_messages.go:1524
-#, fuzzy, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{administrator} to "
 "$affiliation{member}."
@@ -3157,7 +3140,6 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1284
 #: ../gui/muc_notification_messages.go:1528
-#, fuzzy, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{member} to $affiliation{owner}."
 msgstr ""
@@ -3165,7 +3147,6 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1286
 #: ../gui/muc_notification_messages.go:1526
-#, fuzzy, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{member} to "
 "$affiliation{administrator}."
@@ -4542,6 +4523,8 @@ msgid ""
 "This room doesn't support \"voice\" requests anymore, which means that "
 "visitors can't ask for permission to speak."
 msgstr ""
+"Det här rummet stöder inte begäran att få prata (\"voice request\") längre, "
+"vilket innebär att besökare inte kan be om tillåtelse att prata."
 
 #: ../gui/muc_room_config.go:171
 msgid "This room supports user registration."
@@ -5830,7 +5813,7 @@ msgstr "Kontrollerar lösenord..."
 
 #: ../gui/muc_room_close_confirm.go:57
 msgid "Close & Leave Room"
-msgstr ""
+msgstr "Stäng & lämna rummet"
 
 #~ msgid ""
 #~ "The file you choose contains more than one private key. Choose from the "

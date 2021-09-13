@@ -78,7 +78,7 @@ func windowConversationTitle(ui *gtkUI, peer jid.Any, account *account, potentia
 	// TODO: Can we put the security rating here, maybe?
 
 	otherName := peer.String()
-	if p, ok := ui.accountManager.getPeer(account, peer.NoResource()); ok {
+	if p, ok := ui.am.getPeer(account, peer.NoResource()); ok {
 		otherName = p.NameForPresentation()
 	}
 
@@ -246,7 +246,7 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 		afterNewMessage:      func() {},
 		delayed:              make(map[int]sentMessage),
 		currentPeer: func() (*rosters.Peer, bool) {
-			p, ok := cvf.ui.getPeer(cvf.account, cvf.peer.NoResource())
+			p, ok := cvf.ui.am.getPeer(cvf.account, cvf.peer.NoResource())
 			if !ok {
 				cvf.ui.hasLog.log.WithField("peer", cvf.peer.NoResource().String()).Warn("Failure to look up peer from account")
 			}

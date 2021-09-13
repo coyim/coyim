@@ -12,7 +12,7 @@ func addItemsThatShouldToggleOnGlobalMenuStatus(s isSensitive) {
 
 func (u *gtkUI) updateGlobalMenuStatus() {
 	haveOnline := false
-	for _, a := range u.accounts {
+	for _, a := range u.am.accounts {
 		if a.connected() {
 			haveOnline = true
 		}

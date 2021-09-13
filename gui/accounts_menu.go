@@ -75,7 +75,7 @@ func (u *gtkUI) buildAccountsMenu() {
 
 	submenu, _ := g.gtk.MenuNew()
 
-	allAccounts := u.getAllAccounts()
+	allAccounts := u.am.getAllAccounts()
 	for _, account := range allAccounts {
 		account.appendMenuTo(u, submenu)
 	}

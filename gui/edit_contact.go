@@ -134,7 +134,7 @@ func (ecd *editContactDialog) showFingerprintsForPeer(peer jid.WithoutResource, 
 
 func (r *roster) openEditContactDialog(peer jid.WithoutResource, acc *account) {
 	assertInUIThread()
-	p, ok := r.ui.accountManager.getPeer(acc, peer)
+	p, ok := r.ui.am.getPeer(acc, peer)
 	if !ok {
 		acc.log.WithField("peer", peer).Warn("Couldn't find peer in account")
 		return
@@ -148,7 +148,7 @@ func (r *roster) openEditContactDialog(peer jid.WithoutResource, acc *account) {
 	ecd.contactJID.SetText(peer.String())
 
 	//nickNameEntry.SetText(peer.Name)
-	if p, ok := r.ui.getPeer(acc, peer); ok {
+	if p, ok := r.ui.am.getPeer(acc, peer); ok {
 		ecd.nickname.SetText(p.Nickname)
 	}
 

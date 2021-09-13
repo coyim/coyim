@@ -103,7 +103,7 @@ func (r *roster) getAccountAndJidFromEvent(bt gdki.EventButton) (j jid.WithoutRe
 	j = jid.NR(getFromModelIter(r.model, iter, indexJid))
 	accountID := getFromModelIter(r.model, iter, indexAccountID)
 	rowType = getFromModelIter(r.model, iter, indexRowType)
-	account, ok = r.ui.accountManager.getAccountByID(accountID)
+	account, ok = r.ui.am.getAccountByID(accountID)
 	return j, account, rowType, ok
 }
 
@@ -120,7 +120,7 @@ func sortedGroupNames(groups map[string]bool) []string {
 
 func (r *roster) getGroupNamesFor(a *account) []string {
 	groups := map[string]bool{}
-	contacts := r.ui.accountManager.getAllContacts()[a]
+	contacts := r.ui.am.getAllContacts()[a]
 	for name := range contacts.GetGroupNames() {
 		if groups[name] {
 			continue
@@ -133,7 +133,7 @@ func (r *roster) getGroupNamesFor(a *account) []string {
 }
 
 func (r *roster) updatePeer(acc *account, jid jid.WithoutResource, nickname string, groups []string, updateRequireEncryption, requireEncryption bool) error {
-	peer, ok := r.ui.getPeer(acc, jid)
+	peer, ok := r.ui.am.getPeer(acc, jid)
 	if !ok {
 		return fmt.Errorf("Could not find peer %s", jid)
 	}
@@ -174,7 +174,7 @@ func toArray(groupList gtki.ListStore) []string {
 }
 
 func (r *roster) setSensitive(menuItem gtki.MenuItem, account *account, peer jid.WithoutResource) {
-	p, ok := r.ui.getPeer(account, peer)
+	p, ok := r.ui.am.getPeer(account, peer)
 	if !ok {
 		return
 	}
@@ -198,7 +198,7 @@ func (r *roster) createAccountPeerPopup(jid jid.WithoutResource, account *accoun
 	builder.ConnectSignals(map[string]interface{}{
 		"on_remove_contact": func() {
 			account.session.RemoveContact(jid.String())
-			r.ui.removePeer(account, jid)
+			r.ui.am.removePeer(account, jid)
 			r.redraw()
 		},
 		"on_edit_contact": func() {
@@ -214,7 +214,7 @@ func (r *roster) createAccountPeerPopup(jid jid.WithoutResource, account *accoun
 			_ = account.session.RequestPresenceSubscription(jid, "")
 		},
 		"on_dump_info": func() {
-			r.ui.accountManager.debugPeersFor(account)
+			r.ui.am.debugPeersFor(account)
 		},
 		"on_send_file_to_contact": func() {
 			account.sendFileTo(jid, r.ui, nil)
@@ -229,7 +229,7 @@ func (r *roster) createAccountPeerPopup(jid jid.WithoutResource, account *accoun
 }
 
 func (r *roster) appendResourcesAsMenuItems(jid jid.WithoutResource, account *account, menuItem gtki.MenuItem) {
-	peer, ok := r.ui.getPeer(account, jid)
+	peer, ok := r.ui.am.getPeer(account, jid)
 	if !ok {
 		return
 	}
@@ -334,7 +334,7 @@ func (r *roster) onActivateRosterRow(v gtki.TreeView, path gtki.TreePath) {
 
 		defer selection.UnselectPath(path)
 		accountID := getFromModelIter(r.model, iter, indexAccountID)
-		account, ok := r.ui.accountManager.getAccountByID(accountID)
+		account, ok := r.ui.am.getAccountByID(accountID)
 		if !ok {
 			return
 		}
@@ -349,10 +349,10 @@ func (r *roster) onActivateRosterRow(v gtki.TreeView, path gtki.TreePath) {
 }
 
 func (r *roster) update(account *account, entries *rosters.List) {
-	r.ui.accountManager.lock.Lock()
-	defer r.ui.accountManager.lock.Unlock()
+	r.ui.am.lock.Lock()
+	defer r.ui.am.lock.Unlock()
 
-	r.ui.accountManager.setContacts(account, entries)
+	r.ui.am.setContacts(account, entries)
 }
 
 func willDisplayTheirStatusToUs(p *rosters.Peer) bool {
@@ -451,13 +451,13 @@ func (r *roster) redrawMerged() {
 	showOffline := !r.ui.config().Display.ShowOnlyOnline
 	showWaiting := !r.ui.config().Display.ShowOnlyConfirmed
 
-	r.ui.accountManager.lock.RLock()
-	defer r.ui.accountManager.lock.RUnlock()
+	r.ui.am.lock.RLock()
+	defer r.ui.am.lock.RUnlock()
 
 	r.toCollapse = nil
 
 	grp := rosters.TopLevelGroup()
-	for account, contacts := range r.ui.accountManager.getAllContacts() {
+	for account, contacts := range r.ui.am.getAllContacts() {
 		contacts.AddTo(grp, account.session.GroupDelimiter())
 	}
 
@@ -618,7 +618,7 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 
 func (r *roster) sortedAccounts() []*account {
 	var as []*account
-	for account := range r.ui.accountManager.getAllContacts() {
+	for account := range r.ui.am.getAllContacts() {
 		if account == nil {
 			r.ui.hasLog.log.Warn("adding an account that is nil...")
 		}
@@ -637,13 +637,13 @@ func (r *roster) redrawSeparate() {
 	showOffline := !r.ui.config().Display.ShowOnlyOnline
 	showWaiting := !r.ui.config().Display.ShowOnlyConfirmed
 
-	r.ui.accountManager.lock.RLock()
-	defer r.ui.accountManager.lock.RUnlock()
+	r.ui.am.lock.RLock()
+	defer r.ui.am.lock.RUnlock()
 
 	r.toCollapse = nil
 
 	for _, account := range r.sortedAccounts() {
-		r.redrawSeparateAccount(account, r.ui.accountManager.getContacts(account), showOffline, showWaiting)
+		r.redrawSeparateAccount(account, r.ui.am.getContacts(account), showOffline, showWaiting)
 	}
 
 	r.view.ExpandAll()

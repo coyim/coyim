@@ -145,11 +145,11 @@ func (u *gtkUI) createConnectedAccountsComponent(input gtki.ComboBox, errorNot c
 	result.accountsInput = input
 	result.accountsInput.SetModel(result.accountsModel)
 
-	result.initOrReplaceAccounts(u.getAllConnectedAccounts())
+	result.initOrReplaceAccounts(u.am.getAllConnectedAccounts())
 
-	accountsObserverToken := u.onChangeOfConnectedAccounts(func() {
+	accountsObserverToken := u.am.onChangeOfConnectedAccounts(func() {
 		doInUIThread(func() {
-			result.initOrReplaceAccounts(u.getAllConnectedAccounts())
+			result.initOrReplaceAccounts(u.am.getAllConnectedAccounts())
 		})
 	})
 
@@ -168,7 +168,7 @@ func (u *gtkUI) createConnectedAccountsComponent(input gtki.ComboBox, errorNot c
 	}
 
 	result.onDestroyFunc = func() {
-		u.removeConnectedAccountsObserver(accountsObserverToken)
+		u.am.removeConnectedAccountsObserver(accountsObserverToken)
 	}
 
 	return result

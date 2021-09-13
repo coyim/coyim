@@ -134,20 +134,20 @@ func (m *accountManager) setContacts(account *account, contacts *rosters.List) {
 }
 
 func (u *gtkUI) addAccount(appConfig *config.ApplicationConfig, account *config.Account, sf access.Factory, df interfaces.DialerFactory) {
-	defer u.notifyChangeOfConnectedAccounts()
+	defer u.am.notifyChangeOfConnectedAccounts()
 
-	u.lock.Lock()
-	defer u.lock.Unlock()
+	u.am.lock.Lock()
+	defer u.am.lock.Unlock()
 
 	acc := newAccount(appConfig, account, sf, df)
 	go u.observeAccountEvents(acc)
-	acc.log = u.accountManager.log.WithField("account", account.Account)
+	acc.log = u.am.log.WithField("account", account.Account)
 	acc.session.Subscribe(acc.events)
 	acc.session.SetCommandManager(u)
 	acc.session.SetConnector(acc)
 
-	u.accounts = append(u.accounts, acc)
-	u.setContacts(acc, rosters.New())
+	u.am.accounts = append(u.am.accounts, acc)
+	u.am.setContacts(acc, rosters.New())
 }
 
 func (m *accountManager) removeAccount(conf *config.Account, k func()) {
@@ -177,11 +177,11 @@ func (m *accountManager) removeAccount(conf *config.Account, k func()) {
 }
 
 func (u *gtkUI) buildAccounts(appConfig *config.ApplicationConfig, sf access.Factory, df interfaces.DialerFactory) {
-	defer u.notifyChangeOfConnectedAccounts()
+	defer u.am.notifyChangeOfConnectedAccounts()
 
 	hasConfUpdates := false
 	for _, accountConf := range appConfig.Accounts {
-		if _, ok := u.getAccountByID(accountConf.ID()); ok {
+		if _, ok := u.am.getAccountByID(accountConf.ID()); ok {
 			continue
 		}
 
@@ -200,10 +200,10 @@ func (u *gtkUI) buildAccounts(appConfig *config.ApplicationConfig, sf access.Fac
 }
 
 func (u *gtkUI) addNewAccountsFromConfig(appConfig *config.ApplicationConfig, sf access.Factory, df interfaces.DialerFactory) {
-	defer u.notifyChangeOfConnectedAccounts()
+	defer u.am.notifyChangeOfConnectedAccounts()
 
 	for _, configAccount := range appConfig.Accounts {
-		_, found := u.getAccountByID(configAccount.ID())
+		_, found := u.am.getAccountByID(configAccount.ID())
 		if found {
 			continue
 		}

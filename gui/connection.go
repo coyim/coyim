@@ -111,7 +111,7 @@ func (u *gtkUI) connectWithRandomDelay(a *account) {
 }
 
 func (u *gtkUI) connectAllAutomatics(all bool) {
-	allAccounts := u.getAllAccounts()
+	allAccounts := u.am.getAllAccounts()
 	acc := make([]*account, 0, len(allAccounts))
 
 	for _, a := range allAccounts {
@@ -128,7 +128,7 @@ func (u *gtkUI) connectAllAutomatics(all bool) {
 }
 
 func (u *gtkUI) disconnectAll() {
-	for _, a := range u.getAllConnectedAccounts() {
+	for _, a := range u.am.getAllConnectedAccounts() {
 		go func(ca *account) {
 			ca.disconnect()
 		}(a)

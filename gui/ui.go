@@ -32,7 +32,7 @@ const (
 
 type gtkUI struct {
 	roster
-	accountManager
+	am *accountManager
 
 	mainConfiguration
 	mainUserInterface
@@ -106,14 +106,16 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	g.gtk.Init(argsWithApplicationName())
 	ensureInstalled()
 
-	ret := &gtkUI{}
+	ret := &gtkUI{
+		am: &accountManager{},
+	}
 
 	ret.commands = make(chan interface{}, 5)
 	ret.hasLog.log = log.StandardLogger().WithField("component", "gui")
 
 	ret.toggleConnectAllAutomaticallyRequest = make(chan bool, 100)
 	ret.setShowAdvancedSettingsRequest = make(chan bool, 100)
-	ret.dialerFactory = df
+	ret.am.dialerFactory = df
 
 	ret.actionTimes = make(map[string]time.Time)
 	ret.deNotify = newDesktopNotifications()
@@ -139,9 +141,9 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 
 	ret.keySupplier = config.CachingKeySupplier(ret.getMasterPassword)
 
-	ret.accountManager.init(ret, ret.hasLog.log)
+	ret.am.init(ret, ret.hasLog.log)
 
-	ret.sessionFactory = sf
+	ret.am.sessionFactory = sf
 
 	ret.settings = settings.For("")
 
@@ -316,7 +318,7 @@ func (u *gtkUI) configLoaded(c *config.ApplicationConfig) {
 	u.deNotify.updateWith(u.settings)
 	u.updateUnifiedOrNot()
 
-	u.buildAccounts(c, u.sessionFactory, u.dialerFactory)
+	u.buildAccounts(c, u.am.sessionFactory, u.am.dialerFactory)
 
 	doInUIThread(func() {
 		if u.viewMenu != nil {
@@ -348,7 +350,7 @@ func (u *gtkUI) saveConfigInternal() error {
 		return err
 	}
 
-	u.addNewAccountsFromConfig(u.config(), u.sessionFactory, u.dialerFactory)
+	u.addNewAccountsFromConfig(u.config(), u.am.sessionFactory, u.am.dialerFactory)
 
 	if u.window != nil {
 		_, _ = u.window.Emit(accountChangedSignal.String())
@@ -372,7 +374,7 @@ func (u *gtkUI) SaveConfig() {
 
 func (u *gtkUI) removeSaveReload(acc *config.Account) {
 	//TODO: the account configs should be managed by the account manager
-	u.accountManager.removeAccount(acc, func() {
+	u.am.removeAccount(acc, func() {
 		u.config().Remove(acc)
 		u.SaveConfig()
 	})
@@ -510,7 +512,7 @@ func (u *gtkUI) setupSystemTray() {
 }
 
 func (u *gtkUI) addInitialAccountsToRoster() {
-	for _, account := range u.getAllAccounts() {
+	for _, account := range u.am.getAllAccounts() {
 		u.roster.update(account, rosters.New())
 	}
 }
@@ -546,7 +548,7 @@ func (u *gtkUI) addFeedbackInfoBar() {
 }
 
 func (u *gtkUI) quit() {
-	u.accountManager.disconnectAll()
+	u.am.disconnectAll()
 	u.app.Quit()
 }
 
@@ -634,7 +636,7 @@ func (u *gtkUI) aboutDialog() {
 }
 
 func (u *gtkUI) newCustomConversation() {
-	accounts := u.getAllConnectedAccounts()
+	accounts := u.am.getAllConnectedAccounts()
 
 	var dialog gtki.Window
 	var model gtki.ListStore
@@ -676,7 +678,7 @@ func (u *gtkUI) newCustomConversation() {
 			}
 			accountID, _ := val.GetString()
 
-			account, ok := u.accountManager.getAccountByID(accountID)
+			account, ok := u.am.getAccountByID(accountID)
 			if !ok {
 				return
 			}
@@ -699,7 +701,7 @@ func (u *gtkUI) newCustomConversation() {
 
 func (u *gtkUI) addContactWindow() {
 	dialog := u.presenceSubscriptionDialog(func(accountID string, peer jid.WithoutResource, msg, nick string, autoAuth bool) error {
-		account, ok := u.accountManager.getAccountByID(accountID)
+		account, ok := u.am.getAccountByID(accountID)
 		if !ok {
 			return fmt.Errorf(i18n.Local("There is no account with the id %q"), accountID)
 		}
@@ -709,7 +711,7 @@ func (u *gtkUI) addContactWindow() {
 		}
 
 		err := account.session.RequestPresenceSubscription(peer, msg)
-		rl := u.accountManager.getContacts(account)
+		rl := u.am.getContacts(account)
 		rl.SubscribeRequest(peer, "", accountID)
 
 		if nick != "" {
@@ -836,7 +838,7 @@ func (u *gtkUI) presenceUpdated(account *account, peer jid.WithResource, ev even
 
 	u.NewConversationViewFactory(account, peer, false).IfConversationView(func(c conversationView) {
 		doInUIThread(func() {
-			c.appendStatus(u.displayNameFor(account, peer.NoResource()), time.Now(), ev.Show, ev.Status, ev.Gone)
+			c.appendStatus(u.am.displayNameFor(account, peer.NoResource()), time.Now(), ev.Show, ev.Status, ev.Gone)
 		})
 	}, func() {})
 }

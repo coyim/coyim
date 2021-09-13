@@ -208,7 +208,7 @@ func (u *gtkUI) ensureJidHasResource(account *account, p jid.Any) jid.Any {
 	if v, ok := p.(jid.WithResource); ok {
 		return v
 	}
-	if peer, ok := u.getPeer(account, p.NoResource()); ok {
+	if peer, ok := u.am.getPeer(account, p.NoResource()); ok {
 		res := peer.ResourceToUseFallback()
 		account.Log().WithFields(log.Fields{
 			"peer":     p,

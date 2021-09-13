@@ -64,7 +64,7 @@ func (u *gtkUI) handleMessageEvent(ev events.Message, a *account) {
 	encrypted := ev.Encrypted
 	message := ev.Body
 
-	p, ok := u.getPeer(a, ev.From.NoResource())
+	p, ok := u.am.getPeer(a, ev.From.NoResource())
 	if ok {
 		p.LastSeen(ev.From)
 	}
@@ -73,7 +73,7 @@ func (u *gtkUI) handleMessageEvent(ev events.Message, a *account) {
 		conv := u.openConversationView(a, ev.From, false)
 
 		sent := sentMessage{
-			from:            u.displayNameFor(a, ev.From.NoResource()),
+			from:            u.am.displayNameFor(a, ev.From.NoResource()),
 			timestamp:       timestamp,
 			isEncrypted:     encrypted,
 			isOutgoing:      false,
@@ -91,13 +91,13 @@ func (u *gtkUI) handleSessionEvent(ev events.Event, a *account) {
 	switch ev.Type {
 	case events.Connected:
 		a.enableExistingConversationWindows(true)
-		u.notifyChangeOfConnectedAccounts()
+		u.am.notifyChangeOfConnectedAccounts()
 	case events.Disconnected:
 		a.enableExistingConversationWindows(false)
-		u.notifyChangeOfConnectedAccounts()
+		u.am.notifyChangeOfConnectedAccounts()
 	case events.ConnectionLost:
 		u.notifyConnectionFailure(a, u.connectionFailureMoreInfoConnectionLost)
-		u.notifyChangeOfConnectedAccounts()
+		u.am.notifyChangeOfConnectedAccounts()
 		go u.connectWithRandomDelay(a)
 	case events.RosterReceived:
 		u.roster.update(a, a.session.R())

@@ -234,7 +234,7 @@ func (w *serverSelectionWindow) renderForm(pg gtki.Widget) func(string, string, 
 }
 
 func (w *serverSelectionWindow) doRendering(pg gtki.Widget) {
-	err := requestAndRenderRegistrationForm(w.form.server, w.renderForm(pg), w.u.dialerFactory, w.u.unassociatedVerifier(), w.u.config())
+	err := requestAndRenderRegistrationForm(w.form.server, w.renderForm(pg), w.u.am.dialerFactory, w.u.unassociatedVerifier(), w.u.config())
 	if err != nil {
 		w.u.hasLog.log.WithError(err).Debug("error while rendering registration form")
 		// TODO: refactor me!
@@ -284,7 +284,7 @@ func (w *serverSelectionWindow) formSubmittedPage() {
 		return
 	}
 
-	if acc, ok := w.u.getAccountByID(w.form.conf.ID()); ok {
+	if acc, ok := w.u.am.getAccountByID(w.form.conf.ID()); ok {
 		acc.Connect()
 	}
 

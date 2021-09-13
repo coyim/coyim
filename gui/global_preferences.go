@@ -159,7 +159,7 @@ func (u *gtkUI) showGlobalPreferences() {
 		},
 	})
 
-	panel.dialog.SetTransientFor(u.window)
+	panel.dialog.SetTransientFor(u.mainUI.window)
 	panel.dialog.ShowAll()
 
 	if notificationFeaturesSupported&notificationUrgency == 0 {

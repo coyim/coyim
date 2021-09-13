@@ -35,7 +35,7 @@ type gtkUI struct {
 	am *accountManager
 
 	mainConfiguration
-	mainUserInterface
+	mainUI *mainUserInterface
 	mainSettings
 	mainNotifications
 	mainCommands
@@ -107,15 +107,16 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	ensureInstalled()
 
 	ret := &gtkUI{
-		am: &accountManager{},
-		r:  &roster{},
+		am:     &accountManager{},
+		r:      &roster{},
+		mainUI: &mainUserInterface{},
 	}
 
 	ret.commands = make(chan interface{}, 5)
 	ret.hasLog.log = log.StandardLogger().WithField("component", "gui")
 
-	ret.toggleConnectAllAutomaticallyRequest = make(chan bool, 100)
-	ret.setShowAdvancedSettingsRequest = make(chan bool, 100)
+	ret.mainUI.toggleConnectAllAutomaticallyRequest = make(chan bool, 100)
+	ret.mainUI.setShowAdvancedSettingsRequest = make(chan bool, 100)
 	ret.am.dialerFactory = df
 
 	ret.actionTimes = make(map[string]time.Time)
@@ -135,7 +136,7 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	if *config.MultiFlag {
 		flags = glibi.APPLICATION_NON_UNIQUE
 	}
-	ret.app, err = g.gtk.ApplicationNew(applicationID, flags)
+	ret.mainUI.app, err = g.gtk.ApplicationNew(applicationID, flags)
 	if err != nil {
 		panic(err)
 	}
@@ -148,9 +149,9 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 
 	ret.settings = settings.For("")
 
-	ret.addAction(ret.app, "quit", ret.quit)
-	ret.addAction(ret.app, "about", ret.aboutDialog)
-	ret.addAction(ret.app, "preferences", ret.showGlobalPreferences)
+	ret.addAction(ret.mainUI.app, "quit", ret.quit)
+	ret.addAction(ret.mainUI.app, "about", ret.aboutDialog)
+	ret.addAction(ret.mainUI.app, "preferences", ret.showGlobalPreferences)
 
 	return ret
 }
@@ -160,7 +161,7 @@ func (u *gtkUI) confirmAccountRemoval(acc *config.Account, removeAccountFunc fun
 
 	obj := builder.getObj("RemoveAccount")
 	dialog := obj.(gtki.MessageDialog)
-	dialog.SetTransientFor(u.window)
+	dialog.SetTransientFor(u.mainUI.window)
 	_ = dialog.SetProperty("secondary-text", acc.Account)
 
 	response := dialog.Run()
@@ -226,7 +227,7 @@ func (u *gtkUI) installTor() {
 	})
 
 	doInUIThread(func() {
-		dialog.SetTransientFor(u.window)
+		dialog.SetTransientFor(u.mainUI.window)
 		dialog.ShowAll()
 	})
 }
@@ -237,7 +238,7 @@ func (u *gtkUI) wouldYouLikeToInstallTor(k func(bool)) {
 	dialog := builder.getObj("TorHelper")
 	torHelper := dialog.(gtki.MessageDialog)
 	torHelper.SetDefaultResponse(gtki.RESPONSE_YES)
-	torHelper.SetTransientFor(u.window)
+	torHelper.SetTransientFor(u.mainUI.window)
 
 	responseType := gtki.ResponseType(torHelper.Run())
 	result := responseType == gtki.RESPONSE_YES
@@ -322,16 +323,16 @@ func (u *gtkUI) configLoaded(c *config.ApplicationConfig) {
 	u.buildAccounts(c, u.am.sessionFactory, u.am.dialerFactory)
 
 	doInUIThread(func() {
-		if u.viewMenu != nil {
-			u.viewMenu.setFromConfig(c)
+		if u.mainUI.viewMenu != nil {
+			u.mainUI.viewMenu.setFromConfig(c)
 		}
 
-		if u.optionsMenu != nil {
-			u.optionsMenu.setFromConfig(c)
+		if u.mainUI.optionsMenu != nil {
+			u.mainUI.optionsMenu.setFromConfig(c)
 		}
 
-		if u.window != nil {
-			_, _ = u.window.Emit(accountChangedSignal.String())
+		if u.mainUI.window != nil {
+			_, _ = u.mainUI.window.Emit(accountChangedSignal.String())
 		}
 	})
 
@@ -353,8 +354,8 @@ func (u *gtkUI) saveConfigInternal() error {
 
 	u.addNewAccountsFromConfig(u.config(), u.am.sessionFactory, u.am.dialerFactory)
 
-	if u.window != nil {
-		_, _ = u.window.Emit(accountChangedSignal.String())
+	if u.mainUI.window != nil {
+		_, _ = u.mainUI.window.Emit(accountChangedSignal.String())
 	}
 
 	return nil
@@ -391,7 +392,7 @@ func (u *gtkUI) saveConfigOnly() {
 }
 
 func (u *gtkUI) onActivate() {
-	if activeWindow := u.app.GetActiveWindow(); activeWindow != nil {
+	if activeWindow := u.mainUI.app.GetActiveWindow(); activeWindow != nil {
 		activeWindow.Present()
 		return
 	}
@@ -404,12 +405,12 @@ func (u *gtkUI) onActivate() {
 }
 
 func (u *gtkUI) Loop() {
-	_ = u.app.Connect("activate", u.onActivate)
-	u.app.Run([]string{})
+	_ = u.mainUI.app.Connect("activate", u.onActivate)
+	u.mainUI.app.Run([]string{})
 }
 
 func (u *gtkUI) connectUISignals() {
-	u.mainBuilder.ConnectSignals(map[string]interface{}{
+	u.mainUI.mainBuilder.ConnectSignals(map[string]interface{}{
 		"on_close_window":                       u.quit,
 		"on_add_contact_window":                 u.addContactWindow,
 		"on_new_conversation":                   u.newCustomConversation,
@@ -428,43 +429,43 @@ func (u *gtkUI) connectUISignals() {
 }
 
 func (u *gtkUI) mainWindow() {
-	u.mainBuilder = newBuilder("Main")
+	u.mainUI.mainBuilder = newBuilder("Main")
 	u.connectUISignals()
-	u.loadUIDefinitions()
+	u.mainUI.loadUIDefinitions()
 
-	u.window.SetApplication(u.app)
+	u.mainUI.window.SetApplication(u.mainUI.app)
 
-	u.displaySettings = detectCurrentDisplaySettingsFrom(u.window)
+	u.displaySettings = detectCurrentDisplaySettingsFrom(u.mainUI.window)
 	u.keyboardSettings = newKeyboardSettings()
 
 	// This must happen after u.displaySettings is initialized
 	// So now, roster depends on displaySettings which depends on mainWindow
 	u.r.init(u)
 
-	addItemsThatShouldToggleOnGlobalMenuStatus(u.mainBuilder.getObj("newConvMenu").(isSensitive))
-	addItemsThatShouldToggleOnGlobalMenuStatus(u.mainBuilder.getObj("addMenu").(isSensitive))
+	addItemsThatShouldToggleOnGlobalMenuStatus(u.mainUI.mainBuilder.getObj("newConvMenu").(isSensitive))
+	addItemsThatShouldToggleOnGlobalMenuStatus(u.mainUI.mainBuilder.getObj("addMenu").(isSensitive))
 
 	// ViewMenu
-	u.viewMenu = new(viewMenu)
+	u.mainUI.viewMenu = new(viewMenu)
 
-	panicOnDevError(u.mainBuilder.bindObjects(u.viewMenu))
+	panicOnDevError(u.mainUI.mainBuilder.bindObjects(u.mainUI.viewMenu))
 
-	u.displaySettings.defaultSettingsOn(u.viewMenu.merge)
-	u.displaySettings.defaultSettingsOn(u.viewMenu.offline)
-	u.displaySettings.defaultSettingsOn(u.viewMenu.waiting)
-	u.displaySettings.defaultSettingsOn(u.viewMenu.sortStatus)
+	u.displaySettings.defaultSettingsOn(u.mainUI.viewMenu.merge)
+	u.displaySettings.defaultSettingsOn(u.mainUI.viewMenu.offline)
+	u.displaySettings.defaultSettingsOn(u.mainUI.viewMenu.waiting)
+	u.displaySettings.defaultSettingsOn(u.mainUI.viewMenu.sortStatus)
 
 	// OptionsMenu
-	u.optionsMenu = new(optionsMenu)
-	u.optionsMenu.encryptConfig = u.mainBuilder.getObj("EncryptConfigurationFileCheckMenuItem").(gtki.CheckMenuItem)
-	u.displaySettings.defaultSettingsOn(u.optionsMenu.encryptConfig)
+	u.mainUI.optionsMenu = new(optionsMenu)
+	u.mainUI.optionsMenu.encryptConfig = u.mainUI.mainBuilder.getObj("EncryptConfigurationFileCheckMenuItem").(gtki.CheckMenuItem)
+	u.displaySettings.defaultSettingsOn(u.mainUI.optionsMenu.encryptConfig)
 
 	u.initMenuBar()
-	obj := u.mainBuilder.getObj("Vbox")
+	obj := u.mainUI.mainBuilder.getObj("Vbox")
 	vbox := obj.(gtki.Box)
 	vbox.PackStart(u.r.widget, true, true, 0)
 
-	obj = u.mainBuilder.getObj("Hbox")
+	obj = u.mainUI.mainBuilder.getObj("Hbox")
 	hbox := obj.(gtki.Box)
 	u.unified = newUnifiedLayout(u, vbox, hbox)
 	u.unifiedCached = u.unified
@@ -479,9 +480,9 @@ func (u *gtkUI) mainWindow() {
 
 	u.initSearchBar()
 
-	u.connectShortcutsMainWindow(u.window)
+	u.connectShortcutsMainWindow(u.mainUI.window)
 
-	u.window.SetIcon(coyimIcon.GetPixbuf())
+	u.mainUI.window.SetIcon(coyimIcon.GetPixbuf())
 	g.gtk.WindowSetDefaultIcon(coyimIcon.GetPixbuf())
 
 	//Ideally, this should respect widgets initial value for "display",
@@ -494,7 +495,7 @@ func (u *gtkUI) mainWindow() {
 
 	u.setupSystemTray()
 
-	u.window.ShowAll()
+	u.mainUI.window.ShowAll()
 }
 
 func (u *gtkUI) setupSystemTray() {
@@ -504,10 +505,10 @@ func (u *gtkUI) setupSystemTray() {
 	si.SetTitle("CoyIM")
 	si.SetVisible(true)
 	_ = si.Connect("activate", func() {
-		if u.window.IsActive() {
-			u.window.Hide()
+		if u.mainUI.window.IsActive() {
+			u.mainUI.window.Hide()
 		} else {
-			u.window.Present()
+			u.mainUI.window.Present()
 		}
 	})
 }
@@ -524,7 +525,7 @@ func (u *gtkUI) addFeedbackInfoBar() {
 	obj := builder.getObj("feedbackInfo")
 	infobar := obj.(gtki.InfoBar)
 
-	u.notificationArea.PackEnd(infobar, true, true, 0)
+	u.mainUI.notificationArea.PackEnd(infobar, true, true, 0)
 	infobar.ShowAll()
 
 	builder.ConnectSignals(map[string]interface{}{
@@ -550,7 +551,7 @@ func (u *gtkUI) addFeedbackInfoBar() {
 
 func (u *gtkUI) quit() {
 	u.am.disconnectAll()
-	u.app.Quit()
+	u.mainUI.app.Quit()
 }
 
 func (u *gtkUI) askForPassword(accountName string, addGoogleWarning bool, cancel func(), connect func(string) error, savePass func(string)) {
@@ -594,7 +595,7 @@ func (u *gtkUI) askForPassword(accountName string, addGoogleWarning bool, cancel
 		},
 	})
 
-	dialog.SetTransientFor(u.window)
+	dialog.SetTransientFor(u.mainUI.window)
 	dialog.ShowAll()
 }
 
@@ -611,7 +612,7 @@ func (u *gtkUI) feedbackDialog() {
 	})
 
 	doInUIThread(func() {
-		dialog.SetTransientFor(u.window)
+		dialog.SetTransientFor(u.mainUI.window)
 		dialog.ShowAll()
 	})
 }
@@ -631,7 +632,7 @@ func (u *gtkUI) aboutDialog() {
 	dialog.SetLicense(`GNU GENERAL PUBLIC LICENSE, Version 3`)
 	dialog.SetWrapLicense(true)
 
-	dialog.SetTransientFor(u.window)
+	dialog.SetTransientFor(u.mainUI.window)
 	dialog.Run()
 	dialog.Destroy()
 }
@@ -652,7 +653,7 @@ func (u *gtkUI) newCustomConversation() {
 		"address", &peerInput,
 	)
 
-	dialog.SetApplication(u.app)
+	dialog.SetApplication(u.mainUI.app)
 
 	for _, acc := range accounts {
 		iter := model.Append()
@@ -696,7 +697,7 @@ func (u *gtkUI) newCustomConversation() {
 		},
 	})
 
-	dialog.SetTransientFor(u.window)
+	dialog.SetTransientFor(u.mainUI.window)
 	dialog.ShowAll()
 }
 
@@ -727,53 +728,53 @@ func (u *gtkUI) addContactWindow() {
 		return err
 	})
 
-	dialog.SetTransientFor(u.window)
+	dialog.SetTransientFor(u.mainUI.window)
 	dialog.Show()
 }
 
 func (u *gtkUI) listenToToggleConnectAllAutomatically() {
 	for {
-		val := <-u.toggleConnectAllAutomaticallyRequest
+		val := <-u.mainUI.toggleConnectAllAutomaticallyRequest
 		u.config().ConnectAutomatically = val
 		u.saveConfigOnly()
 	}
 }
 
 func (u *gtkUI) setConnectAllAutomatically(val bool) {
-	u.toggleConnectAllAutomaticallyRequest <- val
+	u.mainUI.toggleConnectAllAutomaticallyRequest <- val
 }
 
 func (u *gtkUI) setShowAdvancedSettings(val bool) {
-	u.setShowAdvancedSettingsRequest <- val
+	u.mainUI.setShowAdvancedSettingsRequest <- val
 }
 
 func (u *gtkUI) listenToSetShowAdvancedSettings() {
 	for {
-		val := <-u.setShowAdvancedSettingsRequest
+		val := <-u.mainUI.setShowAdvancedSettingsRequest
 		u.config().AdvancedOptions = val
 		u.saveConfigOnly()
 	}
 }
 
 func (u *gtkUI) setMenuBarSensitive(v bool) {
-	u.contactsMenuItem.SetSensitive(v)
-	u.accountsMenuItem.SetSensitive(v)
-	u.chatRoomsMenuItem.SetSensitive(v)
-	u.viewMenuItem.SetSensitive(v)
-	u.optionsMenuItem.SetSensitive(v)
+	u.mainUI.contactsMenuItem.SetSensitive(v)
+	u.mainUI.accountsMenuItem.SetSensitive(v)
+	u.mainUI.chatRoomsMenuItem.SetSensitive(v)
+	u.mainUI.viewMenuItem.SetSensitive(v)
+	u.mainUI.optionsMenuItem.SetSensitive(v)
 }
 
 func (u *gtkUI) initMenuBar() {
-	_ = u.window.Connect(accountChangedSignal.String(), func() {
+	_ = u.mainUI.window.Connect(accountChangedSignal.String(), func() {
 		doInUIThread(func() {
 			u.buildAccountsMenu()
-			u.accountsMenuItem.ShowAll()
+			u.mainUI.accountsMenuItem.ShowAll()
 			u.rosterUpdated()
 		})
 	})
 
 	u.buildAccountsMenu()
-	u.accountsMenuItem.ShowAll()
+	u.mainUI.accountsMenuItem.ShowAll()
 
 	u.setMenuBarSensitive(false)
 
@@ -785,23 +786,23 @@ func (u *gtkUI) initMenuBar() {
 }
 
 func (u *gtkUI) initSearchBar() {
-	u.searchEntry.SetCanFocus(true)
-	u.searchEntry.Map()
+	u.mainUI.searchEntry.SetCanFocus(true)
+	u.mainUI.searchEntry.Map()
 
-	u.search.SetHAlign(gtki.ALIGN_FILL)
-	u.search.SetHExpand(true)
-	u.search.ConnectEntry(u.searchEntry)
-	u.r.view.SetSearchEntry(u.searchEntry)
+	u.mainUI.search.SetHAlign(gtki.ALIGN_FILL)
+	u.mainUI.search.SetHExpand(true)
+	u.mainUI.search.ConnectEntry(u.mainUI.searchEntry)
+	u.r.view.SetSearchEntry(u.mainUI.searchEntry)
 
 	prov := providerWithCSS("entry { min-width: 300px; }")
-	updateWithStyle(u.searchEntry, prov)
+	updateWithStyle(u.mainUI.searchEntry, prov)
 
 	prov = providerWithCSS("box { border: none; }")
-	updateWithStyle(u.searchBox, prov)
+	updateWithStyle(u.mainUI.searchBox, prov)
 
 	// TODO: unify with dark themes
 	prov = providerWithCSS("searchbar {background-color: #e8e8e7; }")
-	updateWithStyle(u.search, prov)
+	updateWithStyle(u.mainUI.search, prov)
 }
 
 func (u *gtkUI) rosterUpdated() {

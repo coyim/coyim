@@ -74,7 +74,7 @@ func (u *gtkUI) askIfContinueUnencrypted(a *account, peer jid.Any) bool {
 
 	d := dialogOb.(gtki.MessageDialog)
 	d.SetDefaultResponse(gtki.RESPONSE_NO)
-	d.SetTransientFor(u.window)
+	d.SetTransientFor(u.mainUI.window)
 
 	message := i18n.Localf("The transfer to %s can't be done encrypted and securely.", peer.NoResource())
 	secondary := i18n.Localf("Do you want to continue anyway? This means an adversary or server administrator can potentially see the content of the file.")
@@ -96,7 +96,7 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer, a *account) {
 
 	d := dialogOb.(gtki.MessageDialog)
 	d.SetDefaultResponse(gtki.RESPONSE_YES)
-	d.SetTransientFor(u.window)
+	d.SetTransientFor(u.mainUI.window)
 
 	var message, secondary string
 
@@ -151,7 +151,7 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer, a *account) {
 
 		fdialog, _ := g.gtk.FileChooserDialogNewWith2Buttons(
 			i18n.Local(label),
-			u.window,
+			u.mainUI.window,
 			action,
 			i18n.Local("_Cancel"),
 			gtki.RESPONSE_CANCEL,
@@ -226,7 +226,7 @@ func (u *gtkUI) ensureJidHasResource(account *account, p jid.Any) jid.Any {
 
 func (account *account) sendFileTo(peer jid.Any, u *gtkUI, cp *conversationPane) {
 	peer = u.ensureJidHasResource(account, peer)
-	if file, ok := chooseFileToSend(u.window); ok {
+	if file, ok := chooseFileToSend(u.mainUI.window); ok {
 		encDecision := make(chan bool, 1)
 		ctl := account.session.SendFileTo(peer, file, func() bool {
 			result := make(chan bool)
@@ -243,7 +243,7 @@ func (account *account) sendFileTo(peer jid.Any, u *gtkUI, cp *conversationPane)
 
 func (account *account) sendDirectoryTo(peer jid.Any, u *gtkUI, cp *conversationPane) {
 	peer = u.ensureJidHasResource(account, peer)
-	if dir, ok := chooseDirToSend(u.window); ok {
+	if dir, ok := chooseDirToSend(u.mainUI.window); ok {
 		encDecision := make(chan bool, 1)
 		ctl := account.session.SendDirTo(peer, dir, func() bool {
 			result := make(chan bool)

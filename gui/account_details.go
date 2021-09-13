@@ -157,7 +157,7 @@ func (u *gtkUI) connectionInfoDialog(account *account) {
 		},
 	})
 
-	dialog.SetTransientFor(u.window)
+	dialog.SetTransientFor(u.mainUI.window)
 	dialog.ShowAll()
 }
 
@@ -382,6 +382,6 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 		p4.Hide()
 	}
 
-	data.dialog.SetTransientFor(u.window)
+	data.dialog.SetTransientFor(u.mainUI.window)
 	data.dialog.ShowAll()
 }

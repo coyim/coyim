@@ -138,7 +138,7 @@ func (u *gtkUI) certificateFailedToVerifyDisplayDialog(a *account, certs []*x509
 
 		}
 
-		md.SetTransientFor(u.window)
+		md.SetTransientFor(u.mainUI.window)
 
 		md.ShowAll()
 

@@ -525,7 +525,7 @@ func (u *gtkUI) mucShowPublicRooms() {
 
 	u.connectShortcutsChildWindow(view.dialog)
 
-	view.dialog.SetTransientFor(u.window)
+	view.dialog.SetTransientFor(u.mainUI.window)
 	view.dialog.Show()
 }
 

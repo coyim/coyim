@@ -48,7 +48,7 @@ func (u *gtkUI) captureInitialMasterPassword(k func(), onCancel func()) {
 	})
 
 	doInUIThread(func() {
-		pwdDialog.SetTransientFor(u.window)
+		pwdDialog.SetTransientFor(u.mainUI.window)
 		pwdDialog.ShowAll()
 	})
 }
@@ -60,7 +60,7 @@ func (u *gtkUI) wouldYouLikeToEncryptYourFile(k func(bool)) {
 	dialogOb := builder.getObj(dialogID)
 	encryptDialog := dialogOb.(gtki.MessageDialog)
 	encryptDialog.SetDefaultResponse(gtki.RESPONSE_YES)
-	encryptDialog.SetTransientFor(u.window)
+	encryptDialog.SetTransientFor(u.mainUI.window)
 
 	responseType := gtki.ResponseType(encryptDialog.Run())
 	result := responseType == gtki.RESPONSE_YES
@@ -138,7 +138,7 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters, lastAttemp
 			},
 		})
 
-		dialog.SetTransientFor(u.window)
+		dialog.SetTransientFor(u.mainUI.window)
 		dialog.ShowAll()
 	})
 

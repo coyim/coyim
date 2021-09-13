@@ -228,6 +228,6 @@ func (u *gtkUI) mucShowJoinRoom() {
 
 	u.connectShortcutsChildWindow(view.dialog)
 
-	view.dialog.SetTransientFor(u.window)
+	view.dialog.SetTransientFor(u.mainUI.window)
 	view.dialog.Show()
 }

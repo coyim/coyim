@@ -23,7 +23,7 @@ func (v *viewMenu) setFromConfig(c *config.ApplicationConfig) {
 
 func (u *gtkUI) toggleMergeAccounts() {
 	if u.config() != nil {
-		u.config().Display.MergeAccounts = u.viewMenu.merge.GetActive()
+		u.config().Display.MergeAccounts = u.mainUI.viewMenu.merge.GetActive()
 		u.saveConfigOnly()
 	}
 
@@ -32,7 +32,7 @@ func (u *gtkUI) toggleMergeAccounts() {
 
 func (u *gtkUI) toggleShowOffline() {
 	if u.config() != nil {
-		u.config().Display.ShowOnlyOnline = !u.viewMenu.offline.GetActive()
+		u.config().Display.ShowOnlyOnline = !u.mainUI.viewMenu.offline.GetActive()
 		u.saveConfigOnly()
 	}
 
@@ -41,7 +41,7 @@ func (u *gtkUI) toggleShowOffline() {
 
 func (u *gtkUI) toggleShowWaiting() {
 	if u.config() != nil {
-		u.config().Display.ShowOnlyConfirmed = !u.viewMenu.waiting.GetActive()
+		u.config().Display.ShowOnlyConfirmed = !u.mainUI.viewMenu.waiting.GetActive()
 		u.saveConfigOnly()
 	}
 
@@ -50,7 +50,7 @@ func (u *gtkUI) toggleShowWaiting() {
 
 func (u *gtkUI) toggleSortByStatus() {
 	if u.config() != nil {
-		u.config().Display.SortByStatus = u.viewMenu.sortStatus.GetActive()
+		u.config().Display.SortByStatus = u.mainUI.viewMenu.sortStatus.GetActive()
 		u.saveConfigOnly()
 	}
 

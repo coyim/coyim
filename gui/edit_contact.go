@@ -184,6 +184,6 @@ func (r *roster) openEditContactDialog(peer jid.WithoutResource, acc *account) {
 	})
 
 	ecd.save.GrabDefault()
-	ecd.dialog.SetTransientFor(r.ui.window)
+	ecd.dialog.SetTransientFor(r.ui.mainUI.window)
 	ecd.dialog.ShowAll()
 }

@@ -22,6 +22,6 @@ func (u *gtkUI) initializeMenus() {
 
 	if showsAppMenu {
 		appMenu := u.createSimpleAppMenu()
-		u.app.SetAppMenu(appMenu)
+		u.mainUI.app.SetAppMenu(appMenu)
 	}
 }

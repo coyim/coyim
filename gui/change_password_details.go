@@ -111,7 +111,7 @@ func (u *gtkUI) buildChangePasswordDialog(account *account) {
 		},
 	})
 
-	data.dialog.SetTransientFor(u.window)
+	data.dialog.SetTransientFor(u.mainUI.window)
 	data.dialog.ShowAll()
 	data.callbackGrid.Hide()
 	data.formBoxLabel.Hide()

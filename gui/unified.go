@@ -84,9 +84,9 @@ func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 		"on_switch_page": ul.onSwitchPage,
 	})
 
-	connectShortcut("<Primary>Page_Down", ul.ui.window, ul.nextTab)
-	connectShortcut("<Primary>Page_Up", ul.ui.window, ul.previousTab)
-	connectShortcut("F11", ul.ui.window, ul.toggleFullscreen)
+	connectShortcut("<Primary>Page_Down", ul.ui.mainUI.window, ul.nextTab)
+	connectShortcut("<Primary>Page_Up", ul.ui.mainUI.window, ul.previousTab)
+	connectShortcut("F11", ul.ui.mainUI.window, ul.toggleFullscreen)
 
 	parent.PackStart(ul.rightPane, false, true, 0)
 	parent.SetChildPacking(ul.leftPane, false, true, 0, gtki.PACK_START)
@@ -142,7 +142,7 @@ func (cl *conversationList) updateItem(csi *conversationStackItem) {
 }
 
 func (u *gtkUI) getPositionFromCurrent() *windowPosition {
-	posx, posy := u.window.GetPosition()
+	posx, posy := u.mainUI.window.GetPosition()
 	return &windowPosition{
 		posX: posx,
 		posY: posy,
@@ -163,7 +163,7 @@ func (ul *unifiedLayout) showConversations() {
 	ul.leftPane.SetHExpand(false)
 	ul.rightPane.SetHExpand(true)
 
-	ul.ui.window.Resize(934, 600)
+	ul.ui.mainUI.window.Resize(934, 600)
 	ul.rightPane.Show()
 
 	ul.convsVisible = true
@@ -178,7 +178,7 @@ func (ul *unifiedLayout) showConversations() {
 
 func moveTo(ul *unifiedLayout) {
 	time.Sleep(time.Duration(20) * time.Millisecond)
-	ul.ui.window.Move(ul.originalPosition.posX, ul.originalPosition.posY)
+	ul.ui.mainUI.window.Move(ul.originalPosition.posX, ul.originalPosition.posY)
 }
 
 func (ul *unifiedLayout) hideConversations() {
@@ -189,11 +189,11 @@ func (ul *unifiedLayout) hideConversations() {
 	currentPos := ul.ui.getPositionFromCurrent()
 
 	width := ul.leftPane.GetAllocatedWidth()
-	height := ul.ui.window.GetAllocatedHeight()
+	height := ul.ui.mainUI.window.GetAllocatedHeight()
 	ul.rightPane.SetHExpand(false)
 	ul.rightPane.Hide()
 	ul.leftPane.SetHExpand(true)
-	ul.ui.window.Resize(width, height)
+	ul.ui.mainUI.window.Resize(width, height)
 	ul.convsVisible = false
 
 	if currentPos.equals(ul.originalExpandedPosition) {
@@ -202,7 +202,7 @@ func (ul *unifiedLayout) hideConversations() {
 }
 
 func (csi *conversationStackItem) isVisible() bool {
-	return csi.isCurrent() && csi.layout.ui.window.HasToplevelFocus()
+	return csi.isCurrent() && csi.layout.ui.mainUI.window.HasToplevelFocus()
 }
 
 func (csi *conversationStackItem) setEnabled(enabled bool) {
@@ -282,7 +282,7 @@ func (csi *conversationStackItem) bringToFront() {
 	csi.applyTextWeight()
 	csi.layout.setCurrentPage(csi)
 	title := windowConversationTitle(csi.layout.ui, csi.currentPeerForSending(), csi.account, csi.potentialTarget())
-	csi.layout.ui.window.SetTitle(title)
+	csi.layout.ui.mainUI.window.SetTitle(title)
 	csi.entry.GrabFocus()
 	csi.layout.update()
 }
@@ -408,9 +408,9 @@ func (ul *unifiedLayout) previousTab(gtki.Window) {
 
 func (ul *unifiedLayout) toggleFullscreen(gtki.Window) {
 	if ul.isFullscreen {
-		ul.ui.window.Unfullscreen()
+		ul.ui.mainUI.window.Unfullscreen()
 	} else {
-		ul.ui.window.Fullscreen()
+		ul.ui.mainUI.window.Fullscreen()
 	}
 	ul.isFullscreen = !ul.isFullscreen
 }

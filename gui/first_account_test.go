@@ -76,7 +76,9 @@ func (*FirstAccountSuite) Test_thatDialogGetsShown(c *C) {
 	gtkm.builderToReturn = mb
 	g.gtk = gtkm
 
-	ui := &gtkUI{}
+	ui := &gtkUI{
+		mainUI: &mainUserInterface{},
+	}
 
 	methodDone := make(chan bool)
 

@@ -9,7 +9,7 @@ func (u *gtkUI) showFirstAccountWindow() {
 	doInUIThread(func() {
 		b := newBuilder("FirstAccountDialog")
 		dialog := b.getObj("dialog").(gtki.Dialog)
-		dialog.SetTransientFor(u.window)
+		dialog.SetTransientFor(u.mainUI.window)
 		cleanup = dialog.Destroy
 
 		b.ConnectSignals(map[string]interface{}{

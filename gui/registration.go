@@ -196,7 +196,7 @@ func createServerSelectionWindow(u *gtkUI) *serverSelectionWindow {
 
 	panicOnDevError(w.b.bindObjects(w))
 
-	w.assistant.SetTransientFor(u.window)
+	w.assistant.SetTransientFor(u.mainUI.window)
 
 	w.formSubmitted = make(chan error)
 	w.done = make(chan error)

@@ -90,7 +90,7 @@ func (cvf *ourConversationViewFactory) recreateWindowOn(conv *conversationWindow
 
 	builder := newBuilder("Conversation")
 	win := builder.getObj("conversation").(gtki.Window)
-	win.SetApplication(cvf.ui.app)
+	win.SetApplication(cvf.ui.mainUI.app)
 
 	win.SetTitle(windowConversationTitle(cvf.ui, cvf.peer, cvf.account, cvf.potentialTarget()))
 	winBox := builder.getObj("box").(gtki.Box)
@@ -154,7 +154,7 @@ func (cvf *ourConversationViewFactory) createWindowedConversationView(existing *
 	// fmt.Printf("createWindowedConversationView(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
 	builder := newBuilder("Conversation")
 	win := builder.getObj("conversation").(gtki.Window)
-	win.SetApplication(cvf.ui.app)
+	win.SetApplication(cvf.ui.mainUI.app)
 
 	win.SetTitle(windowConversationTitle(cvf.ui, cvf.peer, cvf.account, cvf.potentialTarget()))
 	winBox := builder.getObj("box").(gtki.Box)
@@ -180,13 +180,13 @@ func (cvf *ourConversationViewFactory) createWindowedConversationView(existing *
 
 	cvf.ui.connectShortcutsChildWindow(conv.win)
 	cvf.ui.connectShortcutsConversationWindow(conv)
-	conv.parentWin = cvf.ui.window
+	conv.parentWin = cvf.ui.mainUI.window
 	return conv
 }
 
 func (cvf *ourConversationViewFactory) createUnifiedConversationView(existing *conversationPane) conversationView {
 	// fmt.Printf("createUnifiedConversationView(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
-	cp := cvf.createConversationPane(cvf.ui.window)
+	cp := cvf.createConversationPane(cvf.ui.mainUI.window)
 
 	if existing != nil {
 		b, _ := existing.history.GetBuffer()

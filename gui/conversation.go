@@ -135,10 +135,10 @@ type tags struct {
 }
 
 func (u *gtkUI) getTags() *tags {
-	if u.tags == nil {
-		u.tags = u.newTags()
+	if u.mainUI.tags == nil {
+		u.mainUI.tags = u.newTags()
 	}
-	return u.tags
+	return u.mainUI.tags
 }
 
 func (u *gtkUI) newTags() *tags {

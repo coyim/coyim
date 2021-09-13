@@ -164,7 +164,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer, a *account) {
 		})
 
 	case events.SubscriptionRequest:
-		authorizePresenceSubscriptionDialog(u.window, ev.From.NoResource(), func(r gtki.ResponseType) {
+		authorizePresenceSubscriptionDialog(u.mainUI.window, ev.From.NoResource(), func(r gtki.ResponseType) {
 			switch r {
 			case gtki.RESPONSE_YES:
 				a.session.HandleConfirmOrDeny(ev.From.NoResource(), true)

@@ -42,7 +42,7 @@ func (u *gtkUI) showConnectAccountNotification(account *account) func() {
 
 	doInUIThread(func() {
 		notification = account.buildConnectionNotification()
-		account.setCurrentNotification(notification, u.notificationArea)
+		account.setCurrentNotification(notification, u.mainUI.notificationArea)
 	})
 
 	return func() {
@@ -55,14 +55,14 @@ func (u *gtkUI) showConnectAccountNotification(account *account) func() {
 func (u *gtkUI) notifyTorIsNotRunning(account *account, moreInfo func()) {
 	doInUIThread(func() {
 		notification := account.buildTorNotRunningNotification(moreInfo)
-		account.setCurrentNotification(notification, u.notificationArea)
+		account.setCurrentNotification(notification, u.mainUI.notificationArea)
 	})
 }
 
 func (u *gtkUI) notifyConnectionFailure(account *account, moreInfo func()) {
 	doInUIThread(func() {
 		notification := account.buildConnectionFailureNotification(moreInfo)
-		account.setCurrentNotification(notification, u.notificationArea)
+		account.setCurrentNotification(notification, u.mainUI.notificationArea)
 	})
 }
 
@@ -73,7 +73,7 @@ func (u *gtkUI) notify(title, message string) {
 
 	_ = dlg.SetProperty("title", title)
 	_ = dlg.SetProperty("text", message)
-	dlg.SetTransientFor(u.window)
+	dlg.SetTransientFor(u.mainUI.window)
 
 	doInUIThread(func() {
 		dlg.Run()

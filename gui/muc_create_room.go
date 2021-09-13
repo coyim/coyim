@@ -254,7 +254,7 @@ func (u *gtkUI) mucShowCreateRoomWithData(d *mucCreateRoomData, onViewCreated fu
 		onViewCreated(v)
 	}
 
-	v.dialog.SetTransientFor(u.window)
+	v.dialog.SetTransientFor(u.mainUI.window)
 	v.show()
 }
 

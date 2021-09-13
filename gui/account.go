@@ -177,8 +177,8 @@ func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) error {
 	}
 
 	doInUIThread(func() {
-		if u.window != nil {
-			_, _ = u.window.Emit(accountChangedSignal.String())
+		if u.mainUI.window != nil {
+			_, _ = u.mainUI.window.Emit(accountChangedSignal.String())
 		}
 	})
 

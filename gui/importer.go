@@ -126,7 +126,7 @@ func (u *gtkUI) runImporter() {
 
 	u.connectShortcutsChildWindow(w)
 	doInUIThread(func() {
-		w.SetTransientFor(u.window)
+		w.SetTransientFor(u.mainUI.window)
 		w.ShowAll()
 	})
 }
@@ -189,7 +189,7 @@ func (u *gtkUI) chooseKeyToImport(keys map[string][]byte) ([]byte, bool) {
 	doInUIThread(func() {
 		builder := newBuilder("ChooseKeyToImport")
 		d := builder.getObj("dialog").(gtki.Dialog)
-		d.SetTransientFor(u.window)
+		d.SetTransientFor(u.mainUI.window)
 		keyBox := builder.getObj("keys").(gtki.ComboBoxText)
 
 		for _, s := range sortedKeys {

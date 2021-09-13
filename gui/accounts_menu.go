@@ -89,5 +89,5 @@ func (u *gtkUI) buildAccountsMenu() {
 
 	submenu.ShowAll()
 
-	u.accountsMenuItem.SetSubmenu(submenu)
+	u.mainUI.accountsMenuItem.SetSubmenu(submenu)
 }

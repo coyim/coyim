@@ -17,7 +17,7 @@ func (v *optionsMenu) setFromConfig(c *config.ApplicationConfig) {
 
 func (u *gtkUI) toggleEncryptedConfig() {
 	if u.config() != nil {
-		val := u.optionsMenu.encryptConfig.GetActive()
+		val := u.mainUI.optionsMenu.encryptConfig.GetActive()
 		if u.config().SetShouldSaveFileEncrypted(val) {
 			if val {
 				u.captureInitialMasterPassword(u.saveConfigOnly, func() {

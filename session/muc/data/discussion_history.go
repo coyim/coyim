@@ -79,17 +79,17 @@ func (dm *DelayedMessages) GetMessages() []*DelayedMessage {
 	return result
 }
 
-func (dm *DelayedMessages) addMessageIfNewer(nickname, message string, timestamp time.Time, messageType MessageType) {
+func (dm *DelayedMessages) addMessageIfNewerOrAtSameTime(nickname, message string, timestamp time.Time, messageType MessageType) {
 	dm.lock.Lock()
 	defer dm.lock.Unlock()
 
-	if dm.isMessageNewerThanMessagesInHistory(timestamp) {
+	if dm.isMessageNewerOrAtSameTimeAsMessagesInHistory(timestamp) {
 		dm.addMessage(nickname, message, timestamp, messageType)
 	}
 }
 
-func (dm *DelayedMessages) isMessageNewerThanMessagesInHistory(timestamp time.Time) bool {
-	return dm.lastChatMessageTimestamp.Before(timestamp)
+func (dm *DelayedMessages) isMessageNewerOrAtSameTimeAsMessagesInHistory(timestamp time.Time) bool {
+	return !dm.lastChatMessageTimestamp.After(timestamp)
 }
 
 func (dm *DelayedMessages) addMessage(nickname, message string, timestamp time.Time, messageType MessageType) {
@@ -124,13 +124,13 @@ func (dh *DiscussionHistory) AddMessage(nickname, message string, timestamp time
 
 	for _, dm := range dh.GetHistory() {
 		if sameDate(dm.groupingDate, t) {
-			dm.addMessageIfNewer(nickname, message, t, messageType)
+			dm.addMessageIfNewerOrAtSameTime(nickname, message, t, messageType)
 			return
 		}
 	}
 
 	dm := dh.addNewMessagesGroup(t)
-	dm.addMessageIfNewer(nickname, message, t, messageType)
+	dm.addMessageIfNewerOrAtSameTime(nickname, message, t, messageType)
 }
 
 func (dh *DiscussionHistory) addNewMessagesGroup(date time.Time) *DelayedMessages {

@@ -20,7 +20,7 @@ func (s *MucSuite) Test_newDelayedMessages(c *C) {
 
 func (s *MucSuite) Test_DelayedMessages_GetMessages(c *C) {
 	dms := newDelayedMessages(time.Now().UTC())
-	dms.addMessageIfNewer("foo", "bar", time.Now().UTC(), Chat)
+	dms.addMessageIfNewerOrAtSameTime("foo", "bar", time.Now().UTC(), Chat)
 
 	res := dms.GetMessages()
 	c.Assert(res, HasLen, 1)

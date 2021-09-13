@@ -23,21 +23,21 @@ type accountManager struct {
 	connectedAccountsObservers      map[int]func()
 	connectedAccountsObserversLock  sync.RWMutex
 
-	otrclient.CommandManager
+	accountEncryption otrclient.CommandManager
 
 	log coylog.Logger
 
 	sessionFactory sessions.Factory
 	dialerFactory  interfaces.DialerFactory
 
-	sync.RWMutex
+	lock sync.RWMutex
 }
 
 func (m *accountManager) init(c otrclient.CommandManager, log coylog.Logger) {
 	m.events = make(chan interface{}, 10)
 	m.accounts = make([]*account, 0, 5)
 	m.contacts = make(map[*account]*rosters.List)
-	m.CommandManager = c
+	m.accountEncryption = c
 	m.log = log
 	m.connectedAccountsObservers = make(map[int]func())
 }

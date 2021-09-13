@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-12 18:26+0000\n"
+"POT-Creation-Date: 2021-09-13 14:46+0000\n"
 "PO-Revision-Date: 2021-09-11 16:20+0000\n"
 "Last-Translator: Ola Bini <ola@autonomia.digital>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/coyim/main/sv/>\n"
@@ -2477,26 +2477,32 @@ msgid "$nickname{%[1]s} changed the role of $nickname{%[2]s}."
 msgstr "$nickname{%[1]s} ändrade rollen för $nickname{%[2]s}."
 
 #: ../gui/muc_notification_messages.go:673
+#, fuzzy, python-brace-format
 msgid "Your role was changed from $role{participant} to $role{visitor}."
 msgstr "Din roll ändrades från $role{deltagare} till $role{besökare}."
 
 #: ../gui/muc_notification_messages.go:675
+#, fuzzy, python-brace-format
 msgid "Your role was changed from $role{participant} to $role{moderator}."
 msgstr "Din roll ändrades från $role{deltagare} till $role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:677
+#, fuzzy, python-brace-format
 msgid "Your role was changed from $role{visitor} to $role{participant}."
 msgstr "Din roll ändrades från $role{besökare} till $role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:679
+#, fuzzy, python-brace-format
 msgid "Your role was changed from $role{visitor} to $role{moderator}."
 msgstr "Din roll ändrades från $role{besökare} till $role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:681
+#, fuzzy, python-brace-format
 msgid "Your role was changed from $role{moderator} to $role{visitor}."
 msgstr "Din roll ändrades från $role{moderatör} till $role{besökare}."
 
 #: ../gui/muc_notification_messages.go:683
+#, fuzzy, python-brace-format
 msgid "Your role was changed from $role{moderator} to $role{participant}."
 msgstr "Din roll ändrades från $role{moderatör} till $role{deltagare}."
 
@@ -2694,6 +2700,7 @@ msgid "%[1]s %[2]s"
 msgstr "%[1]s %[2]s"
 
 #: ../gui/muc_notification_messages.go:807
+#, fuzzy, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{visitor} to "
 "$role{participant}."
@@ -2702,6 +2709,7 @@ msgstr ""
 "$role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:809
+#, fuzzy, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{visitor} to $role{moderator}."
 msgstr ""
@@ -2709,6 +2717,7 @@ msgstr ""
 "$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:811
+#, fuzzy, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{participant} to "
 "$role{visitor}."
@@ -2717,6 +2726,7 @@ msgstr ""
 "$role{besökare}."
 
 #: ../gui/muc_notification_messages.go:813
+#, fuzzy, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{participant} to "
 "$role{moderator}."
@@ -2725,6 +2735,7 @@ msgstr ""
 "$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:815
+#, fuzzy, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{moderator} to $role{visitor}."
 msgstr ""
@@ -2732,6 +2743,7 @@ msgstr ""
 "$role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:817
+#, fuzzy, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{moderator} to "
 "$role{participant}."
@@ -2744,6 +2756,7 @@ msgid "As a result, their role was also changed."
 msgstr "Som ett resultat av detta har deras roll också ändrats."
 
 #: ../gui/muc_notification_messages.go:825
+#, fuzzy, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{visitor} to $role{participant}."
 msgstr ""
@@ -2751,6 +2764,7 @@ msgstr ""
 "$role{deltagare}."
 
 #: ../gui/muc_notification_messages.go:827
+#, fuzzy, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{visitor} to $role{moderator}."
 msgstr ""
@@ -2758,6 +2772,7 @@ msgstr ""
 "$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:829
+#, fuzzy, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{participant} to $role{visitor}."
 msgstr ""
@@ -2765,6 +2780,7 @@ msgstr ""
 "$role{besökare}."
 
 #: ../gui/muc_notification_messages.go:831
+#, fuzzy, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{participant} to "
 "$role{moderator}."
@@ -2773,6 +2789,7 @@ msgstr ""
 "$role{moderatör}."
 
 #: ../gui/muc_notification_messages.go:833
+#, fuzzy, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{moderator} to $role{visitor}."
 msgstr ""
@@ -2780,6 +2797,7 @@ msgstr ""
 "$role{besökare}."
 
 #: ../gui/muc_notification_messages.go:835
+#, fuzzy, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{moderator} to "
 "$role{participant}."
@@ -3043,14 +3061,17 @@ msgid "The administrator $nickname{%s} changed your position."
 msgstr "Administratören $nickname{%s} ändrade din ställning."
 
 #: ../gui/muc_notification_messages.go:1236
+#, fuzzy, python-brace-format
 msgid "Your position was changed to $affiliation{owner}."
 msgstr "Din ställning ändrades till $affiliation{ägare}."
 
 #: ../gui/muc_notification_messages.go:1238
+#, fuzzy, python-brace-format
 msgid "Your position was changed to $affiliation{administrator}."
 msgstr "Din ställning ändrades till $affiliation{administratör}."
 
 #: ../gui/muc_notification_messages.go:1240
+#, fuzzy, python-brace-format
 msgid "Your position was changed to $affiliation{member}."
 msgstr "Din ställning ändrades till $affiliation{medlem}."
 
@@ -3098,6 +3119,7 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1276
 #: ../gui/muc_notification_messages.go:1518
+#, fuzzy, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{owner} to "
 "$affiliation{administrator}."
@@ -3107,6 +3129,7 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1278
 #: ../gui/muc_notification_messages.go:1520
+#, fuzzy, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{owner} to $affiliation{member}."
 msgstr ""
@@ -3114,6 +3137,7 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1280
 #: ../gui/muc_notification_messages.go:1522
+#, fuzzy, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{administrator} to "
 "$affiliation{owner}."
@@ -3123,6 +3147,7 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1282
 #: ../gui/muc_notification_messages.go:1524
+#, fuzzy, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{administrator} to "
 "$affiliation{member}."
@@ -3132,6 +3157,7 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1284
 #: ../gui/muc_notification_messages.go:1528
+#, fuzzy, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{member} to $affiliation{owner}."
 msgstr ""
@@ -3139,6 +3165,7 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1286
 #: ../gui/muc_notification_messages.go:1526
+#, fuzzy, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{member} to "
 "$affiliation{administrator}."
@@ -3852,7 +3879,7 @@ msgstr ""
 "Ett okänt fel uppstod när du försökte gå in i rummet. Var god kontrollera "
 "din ansluting och försök igen."
 
-#: ../gui/roster.go:446
+#: ../gui/roster.go:433
 msgid " (waiting for approval)"
 msgstr " (väntar på godkännande)"
 
@@ -4347,7 +4374,7 @@ msgstr "Du måste ange kontoadressen."
 msgid "You must provide a valid account address."
 msgstr "Du måste ange en giltig kontoadress."
 
-#: ../gui/ui.go:609
+#: ../gui/ui.go:566
 msgid ""
 "You are trying to connect to a Google account - sometimes Google will not "
 "allow connections even if you have entered the correct password. Try turning "
@@ -4359,15 +4386,15 @@ msgstr ""
 "applikationslösenord, eller om det inte går tillåt mindre säkra program att "
 "få tillgång till kontot (men oroa dig inte, CoyIM är definitivt säker)."
 
-#: ../gui/ui.go:667
+#: ../gui/ui.go:624
 msgid "CoyIM!"
 msgstr "CoyIM!"
 
-#: ../gui/ui.go:747
+#: ../gui/ui.go:704
 msgid "There is no account with the id %q"
 msgstr "Det finns inget konto med identifikationen %q"
 
-#: ../gui/ui.go:751
+#: ../gui/ui.go:708
 msgid "Can't send a contact request from an offline account"
 msgstr "Kan inte skicka kontaktbegäran från ett konto som inte är anslutet"
 

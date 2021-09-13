@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-12 18:26+0000\n"
+"POT-Creation-Date: 2021-09-13 14:46+0000\n"
 "PO-Revision-Date: 2016-02-23 03:48-0500\n"
 "Last-Translator: Fan Jiang <fan.torchz@gmail.com>\n"
 "Language-Team: Chinese (Simplified, China)\n"
@@ -3387,7 +3387,7 @@ msgid ""
 "connection or try again."
 msgstr ""
 
-#: ../gui/roster.go:446
+#: ../gui/roster.go:433
 msgid " (waiting for approval)"
 msgstr ""
 
@@ -3853,7 +3853,7 @@ msgstr ""
 msgid "You must provide a valid account address."
 msgstr ""
 
-#: ../gui/ui.go:609
+#: ../gui/ui.go:566
 msgid ""
 "You are trying to connect to a Google account - sometimes Google will not "
 "allow connections even if you have entered the correct password. Try turning "
@@ -3861,15 +3861,15 @@ msgid ""
 "access the account (don't worry, CoyIM is plenty secure)."
 msgstr ""
 
-#: ../gui/ui.go:667
+#: ../gui/ui.go:624
 msgid "CoyIM!"
 msgstr ""
 
-#: ../gui/ui.go:747
+#: ../gui/ui.go:704
 msgid "There is no account with the id %q"
 msgstr "ID为%q的账号不存在"
 
-#: ../gui/ui.go:751
+#: ../gui/ui.go:708
 msgid "Can't send a contact request from an offline account"
 msgstr "无法使用离线账号发送联系人请求"
 

@@ -69,21 +69,19 @@
                   <object class="GtkScrolledWindow" id="message-scrolled-window">
                     <property name="visible">True</property>
                     <property name="border_width">0</property>
-                    <property name="hscrollbar_policy">never</property>
+                    <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
+                    <property name="hscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
                     <property name="window_placement_set">False</property>
                     <property name="kinetic_scrolling">False</property>
-                    <property name="overlay_scrolling">False</property>
-                    <property name="max_content_height">100</property>
+                    <property name="max_content_height">60</property>
                     <property name="propagate_natural_height">True</property>
                     <child>
                       <object class="GtkTextView" id="message-text-view">
                         <property name="visible">True</property>
-                        <property name="hscroll_policy">natural</property>
-                        <property name="vscroll_policy">natural</property>
                         <property name="pixels_above_lines">1</property>
                         <property name="pixels_below_lines">1</property>
                         <property name="pixels_inside_wrap">2</property>
-                        <property name="wrap_mode">word</property>
+                        <property name="wrap-mode">GTK_WRAP_WORD_CHAR</property>
                         <property name="left_margin">12</property>
                         <property name="right_margin">12</property>
                         <property name="top_margin">6</property>

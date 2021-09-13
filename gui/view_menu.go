@@ -27,7 +27,7 @@ func (u *gtkUI) toggleMergeAccounts() {
 		u.saveConfigOnly()
 	}
 
-	u.roster.redraw()
+	u.r.redraw()
 }
 
 func (u *gtkUI) toggleShowOffline() {
@@ -36,7 +36,7 @@ func (u *gtkUI) toggleShowOffline() {
 		u.saveConfigOnly()
 	}
 
-	u.roster.redraw()
+	u.r.redraw()
 }
 
 func (u *gtkUI) toggleShowWaiting() {
@@ -45,7 +45,7 @@ func (u *gtkUI) toggleShowWaiting() {
 		u.saveConfigOnly()
 	}
 
-	u.roster.redraw()
+	u.r.redraw()
 }
 
 func (u *gtkUI) toggleSortByStatus() {
@@ -54,5 +54,5 @@ func (u *gtkUI) toggleSortByStatus() {
 		u.saveConfigOnly()
 	}
 
-	u.roster.redraw()
+	u.r.redraw()
 }

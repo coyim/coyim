@@ -31,7 +31,7 @@ const (
 )
 
 type gtkUI struct {
-	roster
+	r  *roster
 	am *accountManager
 
 	mainConfiguration
@@ -108,6 +108,7 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 
 	ret := &gtkUI{
 		am: &accountManager{},
+		r:  &roster{},
 	}
 
 	ret.commands = make(chan interface{}, 5)
@@ -314,7 +315,7 @@ func (u *gtkUI) updateUnifiedOrNot() {
 
 func (u *gtkUI) configLoaded(c *config.ApplicationConfig) {
 	u.settings = settings.For(c.GetUniqueID())
-	u.roster.restoreCollapseStatus()
+	u.r.restoreCollapseStatus()
 	u.deNotify.updateWith(u.settings)
 	u.updateUnifiedOrNot()
 
@@ -438,7 +439,7 @@ func (u *gtkUI) mainWindow() {
 
 	// This must happen after u.displaySettings is initialized
 	// So now, roster depends on displaySettings which depends on mainWindow
-	u.roster.init(u)
+	u.r.init(u)
 
 	addItemsThatShouldToggleOnGlobalMenuStatus(u.mainBuilder.getObj("newConvMenu").(isSensitive))
 	addItemsThatShouldToggleOnGlobalMenuStatus(u.mainBuilder.getObj("addMenu").(isSensitive))
@@ -461,7 +462,7 @@ func (u *gtkUI) mainWindow() {
 	u.initMenuBar()
 	obj := u.mainBuilder.getObj("Vbox")
 	vbox := obj.(gtki.Box)
-	vbox.PackStart(u.roster.widget, true, true, 0)
+	vbox.PackStart(u.r.widget, true, true, 0)
 
 	obj = u.mainBuilder.getObj("Hbox")
 	hbox := obj.(gtki.Box)
@@ -513,7 +514,7 @@ func (u *gtkUI) setupSystemTray() {
 
 func (u *gtkUI) addInitialAccountsToRoster() {
 	for _, account := range u.am.getAllAccounts() {
-		u.roster.update(account, rosters.New())
+		u.r.update(account, rosters.New())
 	}
 }
 
@@ -790,7 +791,7 @@ func (u *gtkUI) initSearchBar() {
 	u.search.SetHAlign(gtki.ALIGN_FILL)
 	u.search.SetHExpand(true)
 	u.search.ConnectEntry(u.searchEntry)
-	u.roster.view.SetSearchEntry(u.searchEntry)
+	u.r.view.SetSearchEntry(u.searchEntry)
 
 	prov := providerWithCSS("entry { min-width: 300px; }")
 	updateWithStyle(u.searchEntry, prov)
@@ -804,7 +805,7 @@ func (u *gtkUI) initSearchBar() {
 }
 
 func (u *gtkUI) rosterUpdated() {
-	doInUIThread(u.roster.redraw)
+	doInUIThread(u.r.redraw)
 	if u.unified != nil {
 		doInUIThread(u.unified.update)
 	}

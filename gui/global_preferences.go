@@ -150,7 +150,7 @@ func (u *gtkUI) showGlobalPreferences() {
 				u.saveConfigOnly()
 			}
 			panel.dialog.Destroy()
-			u.roster.redraw()
+			u.r.redraw()
 			u.deNotify.updateWith(settings)
 			u.updateUnifiedOrNot()
 		},

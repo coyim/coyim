@@ -100,7 +100,7 @@ func (u *gtkUI) handleSessionEvent(ev events.Event, a *account) {
 		u.am.notifyChangeOfConnectedAccounts()
 		go u.connectWithRandomDelay(a)
 	case events.RosterReceived:
-		u.roster.update(a, a.session.R())
+		u.r.update(a, a.session.R())
 	}
 
 	u.rosterUpdated()

@@ -39,10 +39,10 @@ type gtkUI struct {
 	mainSettings
 	mainNotifications
 	mainCommands
-	mainUIThread
+	uiThread *mainUIThread
 
 	hasLog
-	hasHooks
+	hooks *hasHooks
 	hasUnifiedView
 }
 
@@ -107,9 +107,11 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	ensureInstalled()
 
 	ret := &gtkUI{
-		am:     &accountManager{},
-		r:      &roster{},
-		mainUI: &mainUserInterface{},
+		am:       &accountManager{},
+		r:        &roster{},
+		mainUI:   &mainUserInterface{},
+		uiThread: &mainUIThread{},
+		hooks:    &hasHooks{},
 	}
 
 	ret.commands = make(chan interface{}, 5)
@@ -121,9 +123,9 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 
 	ret.actionTimes = make(map[string]time.Time)
 	ret.deNotify = newDesktopNotifications()
-	ret.hooks = hooks
+	ret.hooks.hooks = hooks
 
-	ret.ouit = outuit
+	ret.uiThread.ouit = outuit
 
 	ret.haveConfigEntries = newCallbacksSet()
 
@@ -491,7 +493,7 @@ func (u *gtkUI) mainWindow() {
 
 	u.initializeMenus()
 
-	u.hooks.BeforeMainWindow(u)
+	u.hooks.hooks.BeforeMainWindow(u)
 
 	u.setupSystemTray()
 

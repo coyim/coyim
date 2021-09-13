@@ -261,6 +261,7 @@
                               <object class="GtkLabel" id="room-subject-label">
                                 <property name="visible">True</property>
                                 <property name="wrap">True</property>
+                                <property name="wrap-mode">char</property>
                                 <property name="selectable">True</property>
                                 <property name="track-visited-links">False</property>
                                 <property name="xalign">0</property>

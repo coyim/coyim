@@ -262,7 +262,7 @@ func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.SelfRoleUpda
 
 // selfOccupantRemovedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantRemovedEvent() {
-	v.notifications.info(roomNotificationOptions{
+	v.notifications.error(roomNotificationOptions{
 		message:   i18n.Local("You have been removed from this room because it's now a members only room."),
 		showTime:  true,
 		closeable: true,

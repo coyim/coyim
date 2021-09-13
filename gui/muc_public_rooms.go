@@ -507,13 +507,13 @@ func (prv *mucPublicRoomsView) showUserMessageForError(err error) {
 
 	switch err {
 	case errNoPossibleSelection:
-		userMessage = i18n.Local("We cant't determine what has been selected, please try again.")
+		userMessage = i18n.Local("We can't determine what has been selected, please try again.")
 	case errNoRoomSelected:
 		userMessage = i18n.Local("The selected item is not a room, select one room from the list to join to.")
 	case errNoSelection:
 		userMessage = i18n.Local("Please, select one room from the list to join to.")
 	case errNoService:
-		userMessage = i18n.Local("We cant't determine which service has been selected, please try again.")
+		userMessage = i18n.Local("We can't determine which service has been selected, please try again.")
 	}
 
 	prv.notifications.error(userMessage)

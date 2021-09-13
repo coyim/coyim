@@ -244,3 +244,14 @@ func (m *mucManager) accountAffiliationUpdated(roomID jid.Bare, accountAddress j
 		Affiliation:    affiliation,
 	})
 }
+
+func (m *mucManager) occupantRemovedOnAffiliationChange(roomID jid.Bare, nickname string) {
+	ev := events.MUCOccupantRemovedOnAffiliationChange{}
+	ev.Nickname = nickname
+
+	m.publishRoomEvent(roomID, ev)
+}
+
+func (m *mucManager) selfOccupantRemovedOnAffiliationChange(roomID jid.Bare) {
+	m.publishRoomEvent(roomID, events.MUCSelfOccupantRemovedOnAffiliationChange{})
+}

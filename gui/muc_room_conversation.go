@@ -149,6 +149,10 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.roomEnableEvent()
 		case reopenRoomEvent:
 			c.reopenRoomWindowEvent(t.history)
+		case selfOccupantRemovedOnAffiliationChangeEvent:
+			c.selfOccupantRemovedOnAffiliationChangeEvent(v.room.SelfOccupantNickname())
+		case occupantRemovedOnAffiliationChangeEvent:
+			c.occupantRemovedOnAffiliationChangeEvent(t.nickname)
 		}
 	})
 }
@@ -433,6 +437,20 @@ func (c *roomViewConversation) selfOccupantRemovedEvent(nickname string) {
 func (c *roomViewConversation) occupantRemovedEvent(nickname string) {
 	doInUIThread(func() {
 		c.saveAndDisplayMessage(nickname, messageForMembersOnlyRoom(nickname), time.Now(), data.OccupantInformationChanged)
+	})
+}
+
+func (c *roomViewConversation) selfOccupantRemovedOnAffiliationChangeEvent(nickname string) {
+	c.occupantRemovedOnAffiliationChangeEvent(nickname)
+	doInUIThread(func() {
+		c.updateNotificationMessage(messageForSelfOccupantRemovedOnAffiliationChange())
+		c.disableSendCapabilities()
+	})
+}
+
+func (c *roomViewConversation) occupantRemovedOnAffiliationChangeEvent(nickname string) {
+	doInUIThread(func() {
+		c.saveAndDisplayMessage(nickname, messageForOccupantRemovedOnAffiliationChange(nickname), time.Now(), data.OccupantInformationChanged)
 	})
 }
 

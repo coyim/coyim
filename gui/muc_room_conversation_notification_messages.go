@@ -35,6 +35,10 @@ func messageForSelfOccupantRoomConfiguration() string {
 	return i18n.Local("You can't send messages because the room configuration has been changed.")
 }
 
+func messageForSelfOccupantRemovedOnAffiliationChange() string {
+	return i18n.Local("You can't send messages because you are not a member anymore.")
+}
+
 func messageForRoomPubliclyLogged() string {
 	return i18n.Local("This room is now publicly logged.")
 }
@@ -102,6 +106,10 @@ func messageForRoomSubject(subject string) string {
 
 func messageForMembersOnlyRoom(nickname string) string {
 	return i18n.Localf("$nickname{%s} was removed from this room because it's now a members only room.", nickname)
+}
+
+func messageForOccupantRemovedOnAffiliationChange(nickname string) string {
+	return i18n.Localf("$nickname{%s} was removed from this members only room since they are not $affiliation{a member} anymore.", nickname)
 }
 
 type roomDestroyedData struct {

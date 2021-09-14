@@ -567,6 +567,10 @@ func (c *roomViewConversation) sendMessage() {
 	}
 
 	c.displayLiveMessage(c.selfOccupantNickname(), m, time.Now())
+
+	doALittleBitLater(func() {
+		scrollToBottom(c.chatScrolledWindow)
+	})
 }
 
 func (c *roomViewConversation) updateNotificationMessage(m string) {

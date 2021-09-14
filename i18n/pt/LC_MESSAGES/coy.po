@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-14 18:45+0000\n"
-"PO-Revision-Date: 2021-09-14 12:26+0000\n"
+"POT-Creation-Date: 2021-09-14 14:42+0000\n"
+"PO-Revision-Date: 2021-09-14 19:51+0000\n"
 "Last-Translator: Palibg <palibetan@hotmail.com>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/coyim/main/pt/"
 ">\n"
@@ -43,7 +43,7 @@ msgstr "Dados da Conta"
 #: ../gui/definitions/MUCRoomToolbar.xml:364
 #: ../gui/definitions/PeerDetails.xml:191
 #: ../gui/definitions/RegistrationForm.xml:35
-#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:542
+#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:529
 #: ../gui/file_transfer_notification.go:125
 #: ../gui/file_transfer_notification.go:401
 msgid "Cancel"
@@ -101,8 +101,8 @@ msgstr "Política de fixação"
 
 #: ../gui/definitions/AccountDetails.xml:271
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:355
-#: ../gui/muc_room_config_summary_field.go:172 ../gui/muc_room_roster.go:402
-#: ../gui/muc_room_roster.go:419 ../gui/muc_room_occupant_affiliation.go:175
+#: ../gui/muc_room_config_summary_field.go:172 ../gui/muc_room_roster.go:400
+#: ../gui/muc_room_roster.go:417 ../gui/muc_room_occupant_affiliation.go:175
 #: ../gui/muc_room_occupant_affiliation.go:189
 msgid "None"
 msgstr "Nenhuma"
@@ -306,9 +306,8 @@ msgid "Nickname:"
 msgstr "Nome de usuário:"
 
 #: ../gui/definitions/AddContact.xml:133
-#, fuzzy
 msgid "A_llow this contact to view my status"
-msgstr "Permitir que este contato veja meu status"
+msgstr "P_ermitir que este contato veja meu status"
 
 #: ../gui/definitions/AddContact.xml:175
 msgid ""
@@ -723,7 +722,7 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"              Diga o que você acha do CoyIM.\n"
+"              Diga o que você acha de CoyIM.\n"
 "\n"
 "               Essa é a única maneira de criarmos uma ferramenta de "
 "privacidade melhor.\n"
@@ -854,10 +853,15 @@ msgstr "As notificações devem expirar?"
 #: ../gui/definitions/GlobalPreferences.xml:266
 msgid ""
 "You can specify a custom command to run whenever a message is received. If "
-"specified, this command will run on every messages except it will wait for a "
-"timeout period before running the next time. The command and timeout is "
+"specificed, this command will run on every messages except it will wait for "
+"a timeout period before running the next time. The command and timeout is "
 "specified below. "
 msgstr ""
+"Você pode especificar um comando personalizado para ser executado sempre que "
+"uma mensagem for recebida. Se for especificado, este comando será executado "
+"em todas as mensagens, mas haverá um período de tempo de espera antes de ser "
+"executado na próxima vez. O comando e o tempo limite são especificados a "
+"seguir. "
 
 #: ../gui/definitions/GlobalPreferences.xml:279
 msgid "Notification command"
@@ -1125,7 +1129,7 @@ msgstr ""
 "proprietários."
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:159
-#: ../gui/definitions/MUCRoomRosterInfo.xml:596 ../gui/muc_room_roster.go:391
+#: ../gui/definitions/MUCRoomRosterInfo.xml:596 ../gui/muc_room_roster.go:389
 #: ../gui/muc_room_occupant_affiliation.go:167
 msgid "Owner"
 msgstr "Proprietário"
@@ -1269,8 +1273,8 @@ msgid "Send"
 msgstr "Mandar"
 
 #: ../gui/definitions/MUCRoomDestroyDialogError.xml:3
-msgid "Room destruction error"
-msgstr ""
+msgid "Room destroy error"
+msgstr "Falha ao destruir a sala"
 
 #: ../gui/definitions/MUCRoomDestroyDialogError.xml:39
 msgid "Retry"
@@ -1307,8 +1311,8 @@ msgid "_Join"
 msgstr "_Entrar"
 
 #: ../gui/definitions/MUCRoomMessageBoxNotification.xml:29
-msgid "You don't have permission to send messages."
-msgstr ""
+msgid "You don't have the permissions to send messages."
+msgstr "Você não tem permissão para enviar mensagens."
 
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:4
 msgid "Remove person from the room"
@@ -1349,7 +1353,7 @@ msgid "Change role"
 msgstr "Mudar de função"
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:128
-#: ../gui/muc_room_config_component.go:159 ../gui/muc_room_roster.go:425
+#: ../gui/muc_room_config_component.go:159 ../gui/muc_room_roster.go:423
 #: ../gui/muc_room_occupant_affiliation.go:183
 msgid "Moderator"
 msgstr "Moderador"
@@ -1366,7 +1370,7 @@ msgstr ""
 "ocupantes em moderadores."
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:194
-#: ../gui/muc_room_config_component.go:155 ../gui/muc_room_roster.go:421
+#: ../gui/muc_room_config_component.go:155 ../gui/muc_room_roster.go:419
 #: ../gui/muc_room_occupant_affiliation.go:185
 msgid "Participant"
 msgstr "Participante"
@@ -1382,7 +1386,7 @@ msgstr ""
 "participante e um visitante."
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:261
-#: ../gui/muc_room_config_component.go:161 ../gui/muc_room_roster.go:423
+#: ../gui/muc_room_config_component.go:161 ../gui/muc_room_roster.go:421
 #: ../gui/muc_room_occupant_affiliation.go:187
 msgid "Visitor"
 msgstr "Visitante"
@@ -1674,28 +1678,28 @@ msgstr "_Fechar"
 #: ../gui/muc_notification_messages.go:850
 #, fuzzy, python-format
 msgid "$nickname{%s} is not $affiliation{an owner} anymore."
-msgstr "$nickname{% s} não é mais $affiliation {um proprietário}."
+msgstr "$nickname{%s} não é mais $affiliation{um proprietário}."
 
 #: ../gui/muc_notification_messages.go:23
 #: ../gui/muc_notification_messages.go:240
 #: ../gui/muc_notification_messages.go:853
 #, fuzzy, python-format
 msgid "$nickname{%s} is not $affiliation{an administrator} anymore."
-msgstr "$nickname {% s} não é mais $affiliation {um administrador}."
+msgstr "$nickname{%s} não é mais $affiliation{um administrador}."
 
 #: ../gui/muc_notification_messages.go:25
 #: ../gui/muc_notification_messages.go:242
 #: ../gui/muc_notification_messages.go:856
 #, fuzzy, python-format
 msgid "$nickname{%s} is not $affiliation{a member} anymore."
-msgstr "$nickname{%s} não é mais $affiliation {um membro}."
+msgstr "$nickname{%s} não é mais $affiliation{um membro}."
 
 #: ../gui/muc_notification_messages.go:27
 #: ../gui/muc_notification_messages.go:244
 #: ../gui/muc_notification_messages.go:859
 #, fuzzy, python-format
 msgid "$nickname{%s} is not banned anymore."
-msgstr "$nickname {%s} não foi mais banido."
+msgstr "$nickname{%s} não foi mais banido."
 
 #: ../gui/muc_notification_messages.go:33
 #: ../gui/muc_notification_messages.go:943
@@ -1708,7 +1712,7 @@ msgstr "A posição de $nickname {%s} mudou para $affiliation {proprietário}."
 #, fuzzy, python-format
 msgid ""
 "The position of $nickname{%s} was changed to $affiliation{administrator}."
-msgstr "A posição de $nickname {%s} mudou para $affiliation {administrator}."
+msgstr "A posição de $nickname{%s} mudou para $affiliation{administrator}."
 
 #: ../gui/muc_notification_messages.go:37
 #: ../gui/muc_notification_messages.go:949
@@ -1719,7 +1723,7 @@ msgstr "A posição de $nickname {%s} mudou para $affiliation {administrator}."
 #: ../gui/muc_notification_messages.go:39
 #, fuzzy, python-format
 msgid "$nickname{%s} has been banned from the room."
-msgstr "$nickname {%s} foi banido da sala."
+msgstr "$nickname{%s} foi banido da sala."
 
 #: ../gui/muc_notification_messages.go:41
 #: ../gui/muc_notification_messages.go:413
@@ -1727,13 +1731,13 @@ msgstr "$nickname {%s} foi banido da sala."
 #: ../gui/muc_notification_messages.go:1054
 #, fuzzy, python-format
 msgid "The position of $nickname{%s} was changed."
-msgstr "A posição de $nickname {%s} mudou."
+msgstr "A posição de $nickname{%s} mudou."
 
 #: ../gui/muc_notification_messages.go:52
 #: ../gui/muc_notification_messages.go:500
 #, fuzzy, python-format
 msgid "$nickname{%s} was expelled from the room."
-msgstr "$nickname {%s} foi expulso da sala."
+msgstr "$nickname{%s} foi expulso da sala."
 
 #: ../gui/muc_notification_messages.go:62
 #, fuzzy, python-format
@@ -1782,7 +1786,8 @@ msgid ""
 "The role of $nickname{%s} was changed from $role{participant} to "
 "$role{visitor}."
 msgstr ""
-"A função de $nickname {%s} mudou de $role{participant} para $role{visitante}."
+"A função de $nickname {%s} mudou de $role{participante} para "
+"$role{visitante}."
 
 #: ../gui/muc_notification_messages.go:80
 #, fuzzy, python-format
@@ -1849,7 +1854,7 @@ msgstr "Ocorreu um erro ao tentar alterar a posição de%s para proprietário."
 #: ../gui/muc_notification_messages.go:128
 #, fuzzy, python-format
 msgid "An error occurred trying to change the position of %s to administrator."
-msgstr "Ocorreu um erro ao tentar alterar a posição de %s para administrador."
+msgstr "Ocorreu um erro ao tentar mudar a posição de %s para administrador."
 
 #: ../gui/muc_notification_messages.go:130
 #, fuzzy, python-format
@@ -1864,247 +1869,300 @@ msgstr "Ocorreu um erro ao tentar banir %s."
 #: ../gui/muc_notification_messages.go:134
 #, python-format
 msgid "An error occurred trying to change the position of %s."
-msgstr ""
+msgstr "Ocorreu um erro ao tentar mudar a posição de%s."
 
 #: ../gui/muc_notification_messages.go:143
 #, python-format
 msgid "The role of $nickname{%s} couldn't be changed."
-msgstr ""
+msgstr "A função de $nickname {%s} não pôde ser alterada."
 
 #: ../gui/muc_notification_messages.go:144
 msgid "Changing the role failed"
-msgstr ""
+msgstr "A alteração da função falhou"
 
 #: ../gui/muc_notification_messages.go:145
-#, python-format
+#, fuzzy, python-format
 msgid "The role of %s couldn't be changed"
-msgstr ""
+msgstr "A função de%s não pôde ser alterada"
 
 #: ../gui/muc_notification_messages.go:153
-#, python-format
+#, fuzzy, python-format
 msgid "An error occurred trying to change the role of %s to moderator."
-msgstr ""
+msgstr "Ocorreu um erro ao tentar mudar a função de%s para moderador."
 
 #: ../gui/muc_notification_messages.go:155
-#, python-format
+#, fuzzy, python-format
 msgid "An error occurred trying to change the role of %s to participant."
-msgstr ""
+msgstr "Ocorreu um erro ao tentar mudar a função de%s para participante."
 
 #: ../gui/muc_notification_messages.go:157
 #, python-format
 msgid "An error occurred trying to change the role of %s to visitor."
-msgstr ""
+msgstr "Ocorreu um erro ao tentar mudar a função de%s para visitante."
 
 #: ../gui/muc_notification_messages.go:159
 #, python-format
 msgid "An error occurred trying to change the role of %s."
-msgstr ""
+msgstr "Ocorreu um erro ao tentar mudar a função de%s."
 
 #: ../gui/muc_notification_messages.go:164
-#, python-format
+#, fuzzy, python-format
 msgid "$nickname{%s} couldn't be expelled."
-msgstr ""
+msgstr "$nickname {%s} não pôde ser expulso."
 
 #: ../gui/muc_notification_messages.go:165
 msgid "Expelling failed"
-msgstr ""
+msgstr "Expulsão falhou"
 
 #: ../gui/muc_notification_messages.go:166
 #, python-format
 msgid "%s couldn't be expelled"
-msgstr ""
+msgstr "%s não pôde ser expulso"
 
 #: ../gui/muc_notification_messages.go:176
 #, python-format
 msgid "An error occurred expelling %s."
-msgstr ""
+msgstr "Ocorreu um erro ao expulsar%s."
 
 #: ../gui/muc_notification_messages.go:183
 #, python-format
-msgid "As an owner you don't have permission to expel %s."
-msgstr ""
+msgid "As an owner you don't have permissions to expel %s."
+msgstr "Como proprietário, você não tem permissão para expulsar%s."
 
 #: ../gui/muc_notification_messages.go:185
 #, python-format
-msgid "As an administrator you don't have permission to expel %s."
-msgstr ""
+msgid "As an administrator you don't have permissions to expel %s."
+msgstr "Como administrador, você não tem permissão para expulsar%s."
 
 #: ../gui/muc_notification_messages.go:187
 #, python-format
-msgid "As a member you don't have permission to expel %s."
-msgstr ""
+msgid "As a member you don't have permissions to expel %s."
+msgstr "Como membro, você não tem permissão para expulsar%s."
 
 #: ../gui/muc_notification_messages.go:191
 #, python-format
-msgid "You don't have permission to expel %s."
-msgstr ""
+msgid "You don't have permissions to expel %s."
+msgstr "Você não tem permissão para expulsar %s."
 
 #: ../gui/muc_notification_messages.go:257
 #: ../gui/muc_notification_messages.go:876
+#, fuzzy
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not $affiliation{an owner} anymore."
 msgstr ""
+"O proprietário $nickname {%[1]s} mudou a posição de $nickname {%[2]s}; $"
+"nickname {%[2]s} não é mais $affiliation {um proprietário}."
 
 #: ../gui/muc_notification_messages.go:261
 #: ../gui/muc_notification_messages.go:880
+#, fuzzy
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not $affiliation{an administrator} anymore."
 msgstr ""
+"O proprietário $nickname {%[1]s} mudou a posição de $nickname {%[2]s}; $"
+"nickname {%[2]s} não é mais $affiliation {um administrador}."
 
 #: ../gui/muc_notification_messages.go:265
 #: ../gui/muc_notification_messages.go:884
+#, fuzzy
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not $affiliation{a member} anymore."
 msgstr ""
+"O proprietário $nickname {%[1]s} mudou a posição de $nickname {%[2]s}; "
+"$nickname{%[2]s} não é mais $affiliation{um membro}."
 
 #: ../gui/muc_notification_messages.go:269
 #: ../gui/muc_notification_messages.go:450
 #: ../gui/muc_notification_messages.go:981
 #: ../gui/muc_notification_messages.go:1095
+#, fuzzy
 msgid "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}."
-msgstr ""
+msgstr "O proprietário $nickname{%[1]s} mudou a posição de $nickname{%[2]s}."
 
 #: ../gui/muc_notification_messages.go:277
 #: ../gui/muc_notification_messages.go:896
+#, fuzzy
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not $affiliation{an owner} anymore."
 msgstr ""
+"O administrador $nickname {%[1]s} mudou a posição de $nickname {%[2]s}; $"
+"nickname {%[2]s} não é mais $affiliation {um proprietário}."
 
 #: ../gui/muc_notification_messages.go:281
 #: ../gui/muc_notification_messages.go:900
+#, fuzzy
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not $affiliation{an administrator} anymore."
 msgstr ""
+"O administrador $nickname{%[1]s} mudou a posição de $nickname {%[2]s}; $"
+"nickname {%[2]s} não é mais $affiliation {um administrador}."
 
 #: ../gui/muc_notification_messages.go:285
 #: ../gui/muc_notification_messages.go:904
+#, fuzzy
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not $affiliation{a member} anymore."
 msgstr ""
+"O administrador $nickname {%[1]s} mudou a posição de $nickname{%[2]s}; "
+"$nickname{%[2]s} não é mais $affiliation {um membro}."
 
 #: ../gui/muc_notification_messages.go:289
 #: ../gui/muc_notification_messages.go:482
 #: ../gui/muc_notification_messages.go:1001
 #: ../gui/muc_notification_messages.go:1126
+#, fuzzy
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}."
-msgstr ""
+msgstr "O administrador $nickname{%[1]s} mudou a posição de $nickname{%[2]s}."
 
 #: ../gui/muc_notification_messages.go:302
-#, python-format
+#, fuzzy, python-format
 msgid "$nickname{%s} was banned from the room."
-msgstr ""
+msgstr "$nickname{%s} foi banido da sala."
 
 #: ../gui/muc_notification_messages.go:308
+#, fuzzy
 msgid "The owner $nickname{%[1]s} banned $nickname{%[2]s} from the room."
-msgstr ""
+msgstr "O proprietário $nickname{%[1]s} baniu $nickname{%[2]s} da sala."
 
 #: ../gui/muc_notification_messages.go:312
+#, fuzzy
 msgid ""
 "The administrator $nickname{%[1]s} banned $nickname{%[2]s} from the room."
-msgstr ""
+msgstr "O administrador $nickname{%[1]s} baniu $nickname{%[2]s} da sala."
 
 #: ../gui/muc_notification_messages.go:316
+#, fuzzy
 msgid "$nickname{%[1]s} banned $nickname{%[2]s} from the room."
-msgstr ""
+msgstr "$nickname{%[1]s} baniu $nickname{%[2]s} da sala."
 
 #: ../gui/muc_notification_messages.go:329
-#, python-format
+#, fuzzy, python-format
 msgid "$nickname{%s} is now $affiliation{an owner}."
-msgstr ""
+msgstr "$nickname{%s} agora é $affiliation {um proprietário}."
 
 #: ../gui/muc_notification_messages.go:331
-#, python-format
+#, fuzzy, python-format
 msgid "$nickname{%s} is now $affiliation{an administrator}."
-msgstr ""
+msgstr "$nickname{%s} agora é $affiliation {um administrador}."
 
 #: ../gui/muc_notification_messages.go:333
-#, python-format
+#, fuzzy, python-format
 msgid "$nickname{%s} is now $affiliation{a member}."
-msgstr ""
+msgstr "$nickname {%s} agora é $affiliation{um membro}."
 
 #: ../gui/muc_notification_messages.go:335
-#, python-format
+#, fuzzy, python-format
 msgid "$nickname{%s} is now banned."
-msgstr ""
+msgstr "$nickname{%s} foi banido."
 
 #: ../gui/muc_notification_messages.go:348
+#, fuzzy
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is now $affiliation{an owner}."
 msgstr ""
+"O proprietário $nickname{%[1]s} mudou a posição de $nickname{%[2]s}; "
+"$nickname{%[2]s} agora é $affiliation {um proprietário}."
 
 #: ../gui/muc_notification_messages.go:352
+#, fuzzy
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is now $affiliation{an administrator}."
 msgstr ""
+"O proprietário $nickname{%[1]s} mudou a posição de $nickname{%[2]s}; "
+"$nickname{%[2]s} agora é $affiliation {um administrador}."
 
 #: ../gui/muc_notification_messages.go:356
+#, fuzzy
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is now $affiliation{a member}."
 msgstr ""
+"O proprietário $nickname{%[1]s} mudou a posição de $nickname{%[2]s}; "
+"$nickname{%[2]s} agora é $affiliation{um membro}."
 
 #: ../gui/muc_notification_messages.go:360
+#, fuzzy
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is now banned."
 msgstr ""
+"O proprietário $nickname{%[1]s} mudou a posição de $nickname{%[2]s}; "
+"$nickname{%[2]s} foi banido."
 
 #: ../gui/muc_notification_messages.go:368
+#, fuzzy
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is now $affiliation{an owner}."
 msgstr ""
+"O administrador $nickname{%[1]s} mudou a posição de $nickname{%[2]s}; "
+"$nickname{%[2]s} agora é $affiliation {um proprietário}."
 
 #: ../gui/muc_notification_messages.go:372
+#, fuzzy
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is now $affiliation{an administrator}."
 msgstr ""
+"O administrador $nickname{%[1]s} mudou a posição de $nickname{%[2]s}; "
+"$nickname{%[2]s} agora é $affiliation{um administrador}."
 
 #: ../gui/muc_notification_messages.go:376
+#, fuzzy
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is now $affiliation{a member}."
 msgstr ""
+"O administrador $nickname{%[1]s} mudou a posição de $nickname{%[2]s}; "
+"$nickname{%[2]s} agora é $affiliation {um membro}."
 
 #: ../gui/muc_notification_messages.go:380
+#, fuzzy
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is now banned."
 msgstr ""
+"O administrador $nickname{%[1]s} mudou a posição de $nickname{%[2]s}; $"
+"nickname {%[2]s} agora é $affiliation {um membro}."
 
 #: ../gui/muc_notification_messages.go:395
 #: ../gui/muc_notification_messages.go:1042
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "The position of $nickname{%s} was changed from $affiliation{owner} to "
 "$affiliation{administrator}."
 msgstr ""
+"A posição de $nickname{%s} mudou de $affiliation{owner} para "
+"$affiliation{administrator}."
 
 #: ../gui/muc_notification_messages.go:398
 #: ../gui/muc_notification_messages.go:1036
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "The position of $nickname{%s} was changed from $affiliation{owner} to "
 "$affiliation{member}."
 msgstr ""
+"A posição de $nickname {%s} mudou de $affiliation{owner} para "
+"$affiliation{administrador}."
 
 #: ../gui/muc_notification_messages.go:401
 #: ../gui/muc_notification_messages.go:1039
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "The position of $nickname{%s} was changed from $affiliation{administrator} "
 "to $affiliation{member}."
 msgstr ""
+"A posição de $nickname{%s} mudou de $affiliation{administrador} para "
+"$affiliation{membro}."
 
 #: ../gui/muc_notification_messages.go:404
 #: ../gui/muc_notification_messages.go:1048
@@ -3634,64 +3692,58 @@ msgstr ""
 msgid "No accounts"
 msgstr ""
 
-#: ../gui/muc_room.go:205
+#: ../gui/muc_room.go:203
 msgid ""
 "Loading the room information took longer than usual, perhaps the connection "
 "to the server was lost. Do you want to try again?"
 msgstr ""
 
-#: ../gui/muc_room.go:208 ../gui/muc_room.go:747
+#: ../gui/muc_room.go:206 ../gui/muc_room.go:734
 msgid "Yes, try again"
 msgstr ""
 
-#: ../gui/muc_room.go:268
+#: ../gui/muc_room.go:266
 msgid ""
-"You have been removed from this room because it's now a members-only room."
+"You have been removed from this room because it's now a members only room."
 msgstr ""
 
-#: ../gui/muc_room.go:279
-msgid ""
-"You have been removed from this members-only room since you are not "
-"$affiliation{a member} anymore."
-msgstr ""
-
-#: ../gui/muc_room.go:389
+#: ../gui/muc_room.go:376
 msgid "The room has been destroyed"
 msgstr ""
 
-#: ../gui/muc_room.go:524
+#: ../gui/muc_room.go:511
 msgid "The room subject couldn't be updated."
 msgstr ""
 
-#: ../gui/muc_room.go:531
+#: ../gui/muc_room.go:518
 msgid "The room subject has been updated."
 msgstr ""
 
-#: ../gui/muc_room.go:544
+#: ../gui/muc_room.go:531
 msgid "Return"
 msgstr ""
 
-#: ../gui/muc_room.go:728
+#: ../gui/muc_room.go:715
 msgid "Your connection has been restored; you can join this room again."
 msgstr ""
 
-#: ../gui/muc_room.go:740
+#: ../gui/muc_room.go:727
 msgid ""
 "Your connection was recovered but loading the room information took longer "
 "than usual, perhaps the connection to the server was lost. Do you want to "
 "try again?"
 msgstr ""
 
-#: ../gui/muc_room.go:753
+#: ../gui/muc_room.go:740
 msgid "Trying to connect to the room..."
 msgstr ""
 
-#: ../gui/muc_room.go:795
+#: ../gui/muc_room.go:782
 msgid ""
 "The connection to the server has been lost, please verify your connection."
 msgstr ""
 
-#: ../gui/muc_room.go:807
+#: ../gui/muc_room.go:794
 msgid "Connecting to the room..."
 msgstr ""
 
@@ -3704,8 +3756,8 @@ msgstr ""
 #: ../gui/muc_room_config_component.go:133
 msgid ""
 "We can't apply the given room configuration because either you don't have "
-"permission to do it or the location is not available right now. Please try "
-"again."
+"the permissions for doing it or the location is not available right now. "
+"Please try again."
 msgstr ""
 
 #: ../gui/muc_room_config_component.go:135
@@ -3717,8 +3769,8 @@ msgstr ""
 #: ../gui/muc_room_config_component.go:137
 msgid ""
 "We can't cancel the room configuration process because either you don't have "
-"permission to do it or the location is not available right now. Please try "
-"again."
+"the permissions for doing it or the location is not available right now. "
+"Please try again."
 msgstr ""
 
 #: ../gui/muc_room_config_component.go:139
@@ -3741,11 +3793,11 @@ msgstr ""
 msgid "Unsupported config error: %s"
 msgstr ""
 
-#: ../gui/muc_room_config_component.go:153 ../gui/muc_room_roster.go:404
+#: ../gui/muc_room_config_component.go:153 ../gui/muc_room_roster.go:402
 msgid "Participants"
 msgstr ""
 
-#: ../gui/muc_room_config_component.go:157 ../gui/muc_room_roster.go:408
+#: ../gui/muc_room_config_component.go:157 ../gui/muc_room_roster.go:406
 msgid "Moderators"
 msgstr ""
 
@@ -3781,24 +3833,24 @@ msgstr ""
 msgid "100"
 msgstr ""
 
-#: ../gui/muc_room_roster.go:295
+#: ../gui/muc_room_roster.go:293
 msgid "%s (%v)"
 msgstr ""
 
-#: ../gui/muc_room_roster.go:329
+#: ../gui/muc_room_roster.go:327
 #, python-format
 msgid "%s (You)"
 msgstr ""
 
-#: ../gui/muc_room_roster.go:389 ../gui/muc_room_occupant_affiliation.go:169
+#: ../gui/muc_room_roster.go:387 ../gui/muc_room_occupant_affiliation.go:169
 msgid "Admin"
 msgstr ""
 
-#: ../gui/muc_room_roster.go:393 ../gui/muc_room_occupant_affiliation.go:173
+#: ../gui/muc_room_roster.go:391 ../gui/muc_room_occupant_affiliation.go:173
 msgid "Outcast"
 msgstr ""
 
-#: ../gui/muc_room_roster.go:406
+#: ../gui/muc_room_roster.go:404
 msgid "Visitors"
 msgstr ""
 
@@ -4409,7 +4461,7 @@ msgid "The connection to the server can't be established."
 msgstr ""
 
 #: ../gui/muc.go:21
-msgid "You don't have permission to create a room."
+msgid "You don't have the permissions to create a room."
 msgstr ""
 
 #: ../gui/muc.go:22
@@ -4448,111 +4500,100 @@ msgid ""
 msgstr ""
 
 #: ../gui/muc_room_conversation_notification_messages.go:39
-msgid "You can't send messages because you are not a member anymore."
-msgstr ""
-
-#: ../gui/muc_room_conversation_notification_messages.go:43
 msgid "This room is now publicly logged."
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:47
+#: ../gui/muc_room_conversation_notification_messages.go:43
 msgid "This room is not publicly logged anymore."
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:51
+#: ../gui/muc_room_conversation_notification_messages.go:47
 msgid "Your real JID can now be seen by anyone."
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:55
+#: ../gui/muc_room_conversation_notification_messages.go:51
 msgid "Your real JID can now be seen only by moderators."
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:59
+#: ../gui/muc_room_conversation_notification_messages.go:55
 msgid "The message couldn't be sent, please try again."
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:63
+#: ../gui/muc_room_conversation_notification_messages.go:59
 msgid "You can't send messages because you lost connection."
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:67
+#: ../gui/muc_room_conversation_notification_messages.go:63
 #, python-format
 msgid "[%s] "
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:71
+#: ../gui/muc_room_conversation_notification_messages.go:67
 #, python-format
 msgid "%s: "
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:75
+#: ../gui/muc_room_conversation_notification_messages.go:71
 #, python-format
 msgid "$nickname{%s} joined the room."
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:79
+#: ../gui/muc_room_conversation_notification_messages.go:75
 #, python-format
 msgid "$nickname{%s} left the room."
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:89
+#: ../gui/muc_room_conversation_notification_messages.go:85
 msgid "Someone removed the room subject."
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:91
+#: ../gui/muc_room_conversation_notification_messages.go:87
 msgid "$nickname{%[1]s} removed the room subject."
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:93
+#: ../gui/muc_room_conversation_notification_messages.go:89
 msgid "$nickname{%[1]s} updated the room subject to: \"%[2]s\"."
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:96
+#: ../gui/muc_room_conversation_notification_messages.go:92
 #, python-format
 msgid "Someone has updated the room subject to: \"%s\"."
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:101
+#: ../gui/muc_room_conversation_notification_messages.go:97
 msgid "The room does not have a subject."
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:104
+#: ../gui/muc_room_conversation_notification_messages.go:100
 #, python-format
 msgid "The room subject is \"%s\"."
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:108
+#: ../gui/muc_room_conversation_notification_messages.go:104
 #, python-format
 msgid ""
-"$nickname{%s} was removed from this room because it's now a members-only "
+"$nickname{%s} was removed from this room because it's now a members only "
 "room."
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:112
-#, python-format
-msgid ""
-"$nickname{%s} was removed from this members-only room since they are not "
-"$affiliation{a member} anymore."
-msgstr ""
-
-#: ../gui/muc_room_conversation_notification_messages.go:136
+#: ../gui/muc_room_conversation_notification_messages.go:128
 msgid ""
 "The room was destroyed. The reason given was \"%[1]s\". Discussions will "
 "continue in this room: %[2]s, with this password: \"$password{%[3]s}\"."
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:141
+#: ../gui/muc_room_conversation_notification_messages.go:133
 msgid ""
 "The room was destroyed. The reason given was \"%[1]s\". Discussions will "
 "continue in this room: %[2]s."
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:146
+#: ../gui/muc_room_conversation_notification_messages.go:138
 #, python-format
 msgid "The room was destroyed. The reason given was \"%s\"."
 msgstr ""
 
-#: ../gui/muc_room_conversation_notification_messages.go:149
+#: ../gui/muc_room_conversation_notification_messages.go:141
 msgid "The room was destroyed."
 msgstr ""
 
@@ -4751,7 +4792,7 @@ msgid ""
 "in the room will not be updated anymore."
 msgstr ""
 
-#: ../gui/muc_room_roster_info.go:222
+#: ../gui/muc_room_roster_info.go:220
 #, python-format
 msgid ""
 "Administrators and owners will automatically be moderators for a room. "
@@ -4855,7 +4896,7 @@ msgstr ""
 
 #: ../gui/muc_room_errors.go:85
 msgid ""
-"You can't join the room because the maximum number of people has been "
+"You can't join the room because the maximum number of occupants has been "
 "reached."
 msgstr ""
 
@@ -4899,22 +4940,22 @@ msgid ""
 "%[2]s"
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:229
+#: ../gui/muc_room_conversation.go:225
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an owner}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:231
+#: ../gui/muc_room_conversation.go:227
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an administrator}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:233
+#: ../gui/muc_room_conversation.go:229
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{a member}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:235
+#: ../gui/muc_room_conversation.go:231
 #, python-format
 msgid "$nickname{%s} has been added to the ban list."
 msgstr ""
@@ -5198,14 +5239,13 @@ msgstr ""
 
 #: ../gui/muc_room_occupant_affiliation.go:196
 msgid ""
-"We couldn't update the position for the person because either you don't have "
+"We couldn't update the occupant affiliation because, either you don't have "
 "permission to do it or the server is busy. Please try again."
 msgstr ""
 
 #: ../gui/muc_room_occupant_affiliation.go:198
 msgid ""
-"An error occurred when updating the position for the person. Please try "
-"again."
+"An error occurred when updating the occupant affiliation. Please try again."
 msgstr ""
 
 #: ../gui/fingerprint_verification.go:19
@@ -5367,24 +5407,6 @@ msgstr ""
 #: ../gui/muc_room_close_confirm.go:57
 msgid "Close & Leave Room"
 msgstr ""
-
-#~ msgid ""
-#~ "You can specify a custom command to run whenever a message is received. "
-#~ "If specificed, this command will run on every messages except it will "
-#~ "wait for a timeout period before running the next time. The command and "
-#~ "timeout is specified below. "
-#~ msgstr ""
-#~ "Você pode especificar um comando personalizado para ser executado sempre "
-#~ "que uma mensagem for recebida. Se for especificado, este comando será "
-#~ "executado em todas as mensagens, mas haverá um período de tempo de espera "
-#~ "antes de ser executado na próxima vez. O comando e o tempo limite são "
-#~ "especificados a seguir. "
-
-#~ msgid "Room destroy error"
-#~ msgstr "Falha ao destruir a sala"
-
-#~ msgid "You don't have the permissions to send messages."
-#~ msgstr "Você não tem permissão para enviar mensagens."
 
 #~ msgid ""
 #~ "The file you choose contains more than one private key. Choose from the "

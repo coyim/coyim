@@ -105,11 +105,11 @@ func messageForRoomSubject(subject string) string {
 }
 
 func messageForMembersOnlyRoom(nickname string) string {
-	return i18n.Localf("$nickname{%s} was removed from this room because it's now a members only room.", nickname)
+	return i18n.Localf("$nickname{%s} was removed from this room because it's now a members-only room.", nickname)
 }
 
 func messageForOccupantRemovedOnAffiliationChange(nickname string) string {
-	return i18n.Localf("$nickname{%s} was removed from this members only room since they are not $affiliation{a member} anymore.", nickname)
+	return i18n.Localf("$nickname{%s} was removed from this members-only room since they are not $affiliation{a member} anymore.", nickname)
 }
 
 type roomDestroyedData struct {

@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-14 14:42+0000\n"
-"PO-Revision-Date: 2021-09-14 12:26+0000\n"
-"Last-Translator: sara-la-loca-de-los-gatos <sara@autonomia.digital>\n"
+"PO-Revision-Date: 2021-09-14 15:21+0000\n"
+"Last-Translator: Ola Bini <ola@autonomia.digital>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/coyim/main/sv/>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
@@ -4309,7 +4309,7 @@ msgstr "Ett okänt fel uppstod, var god försök igen."
 
 #: ../gui/muc_public_rooms.go:510
 msgid "We can't determine what has been selected, please try again."
-msgstr ""
+msgstr "Vi kan inte avgöra vad som blivit valt - var god försöka igen."
 
 #: ../gui/muc_public_rooms.go:512
 msgid ""
@@ -4324,7 +4324,7 @@ msgstr "Var god välj ett rum från listan att gå in i."
 
 #: ../gui/muc_public_rooms.go:516
 msgid "We can't determine which service has been selected, please try again."
-msgstr ""
+msgstr "Vi kan inte avgöra vilken tjänst som valts - var god försöka igen."
 
 #: ../gui/muc_public_rooms.go:537
 msgid "No account was selected, please select one account from the list."

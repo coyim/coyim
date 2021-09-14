@@ -173,6 +173,8 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 		v.occupantForbiddenEvent()
 	case roomDisableEvent:
 		v.roomDisableEvent()
+	case selfOccupantRemovedOnAffiliationChangeEvent:
+		v.selfOccupantRemovedOnAffiliationChangeEvent()
 	}
 }
 
@@ -264,6 +266,17 @@ func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.SelfRoleUpda
 func (v *roomView) selfOccupantRemovedEvent() {
 	v.notifications.error(roomNotificationOptions{
 		message:   i18n.Local("You have been removed from this room because it's now a members only room."),
+		showTime:  true,
+		closeable: true,
+	})
+
+	v.disableRoomView()
+}
+
+// selfOccupantRemovedOnAffiliationChangeEvent MUST be called from the UI thread
+func (v *roomView) selfOccupantRemovedOnAffiliationChangeEvent() {
+	v.notifications.error(roomNotificationOptions{
+		message:   i18n.Local("You have been removed from this members only room since you are not $affiliation{a member} anymore."),
 		showTime:  true,
 		closeable: true,
 	})

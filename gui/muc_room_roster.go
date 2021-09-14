@@ -137,7 +137,9 @@ func (r *roomViewRoster) initSubscribers() {
 			occupantRoleUpdatedEvent,
 			selfOccupantAffiliationUpdatedEvent,
 			occupantAffiliationUpdatedEvent,
-			selfOccupantReconnectedEvent:
+			selfOccupantReconnectedEvent,
+			selfOccupantRemovedOnAffiliationChangeEvent,
+			occupantRemovedOnAffiliationChangeEvent:
 			r.onUpdateRoster()
 		case roomDisableEvent:
 			r.roomDisableEvent()

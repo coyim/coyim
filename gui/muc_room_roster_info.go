@@ -86,7 +86,7 @@ func (r *roomViewRosterInfo) initBuilder() {
 func (r *roomViewRosterInfo) initSubscribers() {
 	r.rosterView.roomView.subscribe("roster-info", func(ev roomViewEvent) {
 		switch t := ev.(type) {
-		case selfOccupantJoinedEvent, selfOccupantRemovedEvent, selfOccupantReconnectedEvent:
+		case selfOccupantJoinedEvent, selfOccupantRemovedEvent, selfOccupantReconnectedEvent, selfOccupantRemovedOnAffiliationChangeEvent:
 			r.selfOccupantUpdateEvent()
 		case occupantUpdatedEvent:
 			r.occupantUpdatedEvent(t.nickname)
@@ -94,6 +94,8 @@ func (r *roomViewRosterInfo) initSubscribers() {
 			r.occupantRemovedEvent(t.nickname)
 		case occupantLeftEvent:
 			r.occupantLeftEvent(t.nickname)
+		case occupantRemovedOnAffiliationChangeEvent:
+			r.occupantUpdatedEvent(t.nickname)
 		case roomDisableEvent:
 			r.roomDisableEvent()
 		case roomEnableEvent:

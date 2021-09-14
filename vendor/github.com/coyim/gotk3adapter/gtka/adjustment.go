@@ -44,3 +44,7 @@ func (v *adjustment) GetUpper() float64 {
 func (v *adjustment) SetValue(v1 float64) {
 	v.internal.SetValue(v1)
 }
+
+func (v *adjustment) GetValue() float64 {
+	return v.internal.GetValue()
+}

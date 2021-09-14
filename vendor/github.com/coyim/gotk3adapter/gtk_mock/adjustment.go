@@ -18,5 +18,9 @@ func (*MockAdjustment) GetUpper() float64 {
 	return 0
 }
 
+func (*MockAdjustment) GetValue() float64 {
+	return 0
+}
+
 func (*MockAdjustment) SetValue(v1 float64) {
 }

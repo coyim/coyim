@@ -8,6 +8,7 @@ type Adjustment interface {
 	GetLower() float64
 	GetPageSize() float64
 	GetUpper() float64
+	GetValue() float64
 	SetValue(float64)
 } // end of Adjustment
 

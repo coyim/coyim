@@ -51,7 +51,9 @@ TAGS := -tags $(GLIB_BUILD_TAG),$(GTK_BUILD_TAG),$(PANGO_BUILD_TAG),$(CAIRO_BUIL
 
 AUTOGEN := gui/settings/definitions/schemas.go gui/definitions.go
 
-LDFLAGS := -ldflags "-X 'main.BuildTimestamp=$(BUILD_TIMESTAMP)' -X 'main.BuildCommit=$(GIT_VERSION)' -X 'main.BuildShortCommit=$(GIT_SHORT_VERSION)' -X 'main.BuildTag=$(TAG_VERSION)'"
+LDFLAGS_VARS := -X 'main.BuildTimestamp=$(BUILD_TIMESTAMP)' -X 'main.BuildCommit=$(GIT_VERSION)' -X 'main.BuildShortCommit=$(GIT_SHORT_VERSION)' -X 'main.BuildTag=$(TAG_VERSION)'
+LDFLAGS_REGULAR = -ldflags "$(LDFLAGS_VARS)"
+LDFLAGS_WINDOWS = -ldflags "$(LDFLAGS_VARS) -H windowsgui"
 
 .PHONY: default check autogen build build-gui build-gui-memory-analyzer build-gui-address-san build-gui-win build-debug debug win-ci-deps reproducible-linux-create-image reproducible-linux-build sign-reproducible upload-reproducible-signature send-reproducible-signature check-reproducible-signatures clean clean-cache update-vendor gosec ineffassign i18n lint test test-named dep-supported-only deps run-cover clean-cover cover all
 
@@ -59,20 +61,20 @@ default: check
 check: lint test
 
 $(BUILD_DIR)/coyim: $(AUTOGEN) $(SRC)
-	$(GOBUILD) $(LDFLAGS) $(TAGS) -o $@
+	$(GOBUILD) $(LDFLAGS_REGULAR) $(TAGS) -o $@
 
 $(BUILD_DIR)/coyim-ma: $(AUTOGEN) $(SRC)
-	$(GOBUILD) $(LDFLAGS) -x -msan $(TAGS) -o $@
+	$(GOBUILD) $(LDFLAGS_REGULAR) -x -msan $(TAGS) -o $@
 
 # run with: export ASAN_OPTIONS=detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1:verbosity=1:handle_segv=0
 $(BUILD_DIR)/coyim-aa: $(AUTOGEN) $(SRC)
-	CC="clang" CGO_CFLAGS="-fsanitize=address -fsanitize-address-use-after-scope -g -O1 -fno-omit-frame-pointer" CGO_LDFLAGS="-fsanitize=address" $(GOBUILD) $(LDFLAGS) -x -ldflags '-extldflags "-fsanitize=address"' $(TAGS) -o $@
+	CC="clang" CGO_CFLAGS="-fsanitize=address -fsanitize-address-use-after-scope -g -O1 -fno-omit-frame-pointer" CGO_LDFLAGS="-fsanitize=address" $(GOBUILD) $(LDFLAGS_REGULAR) -x -ldflags '-extldflags "-fsanitize=address"' $(TAGS) -o $@
 
 $(BUILD_DIR)/coyim.exe: $(AUTOGEN) $(SRC)
-	CGO_LDFLAGS_ALLOW=".*" CGO_CFLAGS_ALLOW=".*" CGO_CXXFLAGS_ALLOW=".*" CGO_CPPFLAGS_ALLOW=".*" $(GOBUILD) $(LDFLAGS) $(TAGS) -ldflags "-H windowsgui" -o $@
+	CGO_LDFLAGS_ALLOW=".*" CGO_CFLAGS_ALLOW=".*" CGO_CXXFLAGS_ALLOW=".*" CGO_CPPFLAGS_ALLOW=".*" $(GOBUILD) $(LDFLAGS_WINDOWS) $(TAGS) -o $@
 
 $(BUILD_DIR)/coyim-debug: $(AUTOGEN) $(SRC)
-	$(GOBUILD) $(LDFLAGS) -v -gcflags "-N -l" $(TAGS) -o $@
+	$(GOBUILD) $(LDFLAGS_REGULAR) -v -gcflags "-N -l" $(TAGS) -o $@
 
 build: build-gui
 build-gui: $(BUILD_DIR)/coyim

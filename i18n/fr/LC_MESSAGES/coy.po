@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-13 14:46+0000\n"
+"POT-Creation-Date: 2021-09-14 14:42+0000\n"
 "PO-Revision-Date: 2021-09-13 14:39+0000\n"
 "Last-Translator: ivanjijon <ivanjijon@hotmail.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/coyim/main/fr/>\n"
@@ -38,7 +38,7 @@ msgstr "Détails du compte"
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:29
 #: ../gui/definitions/MUCRoomPositionsDialog.xml:74
 #: ../gui/definitions/MUCRoomRoleDialog.xml:29
-#: ../gui/definitions/MUCRoomToolbar.xml:362
+#: ../gui/definitions/MUCRoomToolbar.xml:364
 #: ../gui/definitions/PeerDetails.xml:191
 #: ../gui/definitions/RegistrationForm.xml:35
 #: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:529
@@ -1119,7 +1119,7 @@ msgstr "Changer la position"
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:42
 #: ../gui/definitions/MUCRoomPositionsDialog.xml:87
 #: ../gui/definitions/MUCRoomRoleDialog.xml:42
-#: ../gui/definitions/MUCRoomToolbar.xml:375
+#: ../gui/definitions/MUCRoomToolbar.xml:377
 msgid "Apply"
 msgstr "Valider"
 
@@ -1271,7 +1271,7 @@ msgstr "Oui"
 msgid "Are you sure you want to cancel the room creation? "
 msgstr "Êtes-vous sûr de vouloir annuler la création de la salle ? "
 
-#: ../gui/definitions/MUCRoomConversation.xml:122 ../gui/file_transfer.go:268
+#: ../gui/definitions/MUCRoomConversation.xml:120 ../gui/file_transfer.go:268
 msgid "Send"
 msgstr "Envoyer"
 
@@ -1496,7 +1496,7 @@ msgstr "Quitter la salle"
 msgid "Show room subject"
 msgstr "Sujet de la salle"
 
-#: ../gui/definitions/MUCRoomToolbar.xml:301
+#: ../gui/definitions/MUCRoomToolbar.xml:302
 msgid "Edit subject"
 msgstr "Modifier le sujet"
 
@@ -3987,7 +3987,7 @@ msgid "An unknown error occurred, please try again."
 msgstr ""
 
 #: ../gui/muc_public_rooms.go:510
-msgid "We cant't determinate what has been selected, please try again."
+msgid "We can't determine what has been selected, please try again."
 msgstr ""
 
 #: ../gui/muc_public_rooms.go:512
@@ -4000,8 +4000,7 @@ msgid "Please, select one room from the list to join to."
 msgstr ""
 
 #: ../gui/muc_public_rooms.go:516
-msgid ""
-"We cant't determinate which service has been selected, please try again."
+msgid "We can't determine which service has been selected, please try again."
 msgstr ""
 
 #: ../gui/muc_public_rooms.go:537

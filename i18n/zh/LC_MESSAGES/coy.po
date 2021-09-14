@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-13 14:46+0000\n"
+"POT-Creation-Date: 2021-09-14 14:42+0000\n"
 "PO-Revision-Date: 2016-02-23 03:48-0500\n"
 "Last-Translator: Fan Jiang <fan.torchz@gmail.com>\n"
 "Language-Team: Chinese (Simplified, China)\n"
@@ -34,7 +34,7 @@ msgstr "账号详情"
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:29
 #: ../gui/definitions/MUCRoomPositionsDialog.xml:74
 #: ../gui/definitions/MUCRoomRoleDialog.xml:29
-#: ../gui/definitions/MUCRoomToolbar.xml:362
+#: ../gui/definitions/MUCRoomToolbar.xml:364
 #: ../gui/definitions/PeerDetails.xml:191
 #: ../gui/definitions/RegistrationForm.xml:35
 #: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:529
@@ -1008,7 +1008,7 @@ msgstr ""
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:42
 #: ../gui/definitions/MUCRoomPositionsDialog.xml:87
 #: ../gui/definitions/MUCRoomRoleDialog.xml:42
-#: ../gui/definitions/MUCRoomToolbar.xml:375
+#: ../gui/definitions/MUCRoomToolbar.xml:377
 msgid "Apply"
 msgstr "申请"
 
@@ -1147,7 +1147,7 @@ msgstr ""
 msgid "Are you sure you want to cancel the room creation? "
 msgstr ""
 
-#: ../gui/definitions/MUCRoomConversation.xml:122 ../gui/file_transfer.go:268
+#: ../gui/definitions/MUCRoomConversation.xml:120 ../gui/file_transfer.go:268
 msgid "Send"
 msgstr ""
 
@@ -1348,7 +1348,7 @@ msgstr ""
 msgid "Show room subject"
 msgstr ""
 
-#: ../gui/definitions/MUCRoomToolbar.xml:301
+#: ../gui/definitions/MUCRoomToolbar.xml:302
 msgid "Edit subject"
 msgstr ""
 
@@ -3808,7 +3808,7 @@ msgid "An unknown error occurred, please try again."
 msgstr ""
 
 #: ../gui/muc_public_rooms.go:510
-msgid "We cant't determinate what has been selected, please try again."
+msgid "We can't determine what has been selected, please try again."
 msgstr ""
 
 #: ../gui/muc_public_rooms.go:512
@@ -3821,8 +3821,7 @@ msgid "Please, select one room from the list to join to."
 msgstr ""
 
 #: ../gui/muc_public_rooms.go:516
-msgid ""
-"We cant't determinate which service has been selected, please try again."
+msgid "We can't determine which service has been selected, please try again."
 msgstr ""
 
 #: ../gui/muc_public_rooms.go:537

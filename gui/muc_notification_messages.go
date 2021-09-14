@@ -180,15 +180,15 @@ func getRoleRemoveFailureMessageWithActor(nickname string, actorAffiliation data
 	if actorAffiliation != nil {
 		switch {
 		case actorAffiliation.IsOwner():
-			return i18n.Localf("As an owner you don't have permissions to expel %s.", nickname)
+			return i18n.Localf("As an owner you don't have permission to expel %s.", nickname)
 		case actorAffiliation.IsAdmin():
-			return i18n.Localf("As an administrator you don't have permissions to expel %s.", nickname)
+			return i18n.Localf("As an administrator you don't have permission to expel %s.", nickname)
 		case actorAffiliation.IsMember():
-			return i18n.Localf("As a member you don't have permissions to expel %s.", nickname)
+			return i18n.Localf("As a member you don't have permission to expel %s.", nickname)
 		}
 	}
 
-	return i18n.Localf("You don't have permissions to expel %s.", nickname)
+	return i18n.Localf("You don't have permission to expel %s.", nickname)
 }
 
 func getMUCNotificationMessageFrom(d interface{}) string {

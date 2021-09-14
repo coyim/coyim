@@ -82,7 +82,7 @@ func (v *roomView) userFriendlyRoomErrorMessage(err error) string {
 	case errJoinNotAuthorized:
 		return i18n.Local("You can't join the room because the password is not valid.")
 	case errServiceUnavailable:
-		return i18n.Local("You can't join the room because the maximum number of occupants has been reached.")
+		return i18n.Local("You can't join the room because the maximum number of people has been reached.")
 	case errUnknownError:
 		return i18n.Local("An unknown error occurred when trying to join the room. Please try again later.")
 	case errOccupantForbidden:

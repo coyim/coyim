@@ -601,13 +601,13 @@ func (*MUCNotificationMessagesSuite) Test_getRoleRemoveFailureMessage(c *C) {
 	c.Assert(messages.notificationMessage, Equals, "[localized] $nickname{nil} couldn't be expelled.")
 	c.Assert(messages.errorDialogTitle, Equals, "[localized] Expelling failed")
 	c.Assert(messages.errorDialogHeader, Equals, "[localized] nil couldn't be expelled")
-	c.Assert(messages.errorDialogMessage, Equals, "[localized] You don't have permissions to expel nil.")
+	c.Assert(messages.errorDialogMessage, Equals, "[localized] You don't have permission to expel nil.")
 
 	messages = getRoleRemoveFailureMessage("bla", newTestAffiliationFromString(data.AffiliationAdmin), session.ErrNotAllowedKickOccupant)
 	c.Assert(messages.notificationMessage, Equals, "[localized] $nickname{bla} couldn't be expelled.")
 	c.Assert(messages.errorDialogTitle, Equals, "[localized] Expelling failed")
 	c.Assert(messages.errorDialogHeader, Equals, "[localized] bla couldn't be expelled")
-	c.Assert(messages.errorDialogMessage, Equals, "[localized] As an administrator you don't have permissions to expel bla.")
+	c.Assert(messages.errorDialogMessage, Equals, "[localized] As an administrator you don't have permission to expel bla.")
 }
 
 func (*MUCNotificationMessagesSuite) Test_getSelfAffiliationUpdateMessage_affiliationOutcast(c *C) {

@@ -193,7 +193,7 @@ func occupantRoleName(a data.Role) string {
 
 func affiliationUpdateErrorMessage(err error) string {
 	if err == session.ErrUpdateOccupantResponse {
-		return i18n.Local("We couldn't update the occupant affiliation because, either you don't have permission to do it or the server is busy. Please try again.")
+		return i18n.Local("We couldn't update the position for the person because either you don't have permission to do it or the server is busy. Please try again.")
 	}
-	return i18n.Local("An error occurred when updating the occupant affiliation. Please try again.")
+	return i18n.Local("An error occurred when updating the position for the person. Please try again.")
 }

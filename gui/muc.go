@@ -18,7 +18,7 @@ func initMUCSupportedErrors() {
 	supportedCreateMUCErrors = map[error]string{
 		session.ErrInvalidInformationQueryRequest:      i18n.Local("Something went wrong trying to communicate with the server."),
 		session.ErrUnexpectedResponse:                  i18n.Local("The connection to the server can't be established."),
-		session.ErrInformationQueryResponse:            i18n.Local("You don't have the permissions to create a room."),
+		session.ErrInformationQueryResponse:            i18n.Local("You don't have permission to create a room."),
 		session.ErrInformationQueryResponseWithGoneTag: i18n.Local("Could not create the room with the name provided. Please, change it and try again."),
 	}
 }

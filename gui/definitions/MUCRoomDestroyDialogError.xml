@@ -1,6 +1,6 @@
 <interface>
   <object class="GtkDialog" id="room-destory-error-dialog">
-    <property name="title" translatable="yes">Room destroy error</property>
+    <property name="title" translatable="yes">Room destruction error</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="destroy_with_parent">True</property>

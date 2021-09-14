@@ -263,7 +263,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="notificationCommandInstructions">
-                    <property name="label" translatable="yes">You can specify a custom command to run whenever a message is received. If specificed, this command will run on every messages except it will wait for a timeout period before running the next time. The command and timeout is specified below. </property>
+                    <property name="label" translatable="yes">You can specify a custom command to run whenever a message is received. If specified, this command will run on every messages except it will wait for a timeout period before running the next time. The command and timeout is specified below. </property>
                     <property name="visible">true</property>
                     <property name="wrap">true</property>
                     <property name="max-width-chars">50</property>

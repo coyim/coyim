@@ -89,7 +89,7 @@ func (r *roomViewRosterInfo) initSubscribers() {
 		case selfOccupantJoinedEvent, selfOccupantRemovedEvent, selfOccupantReconnectedEvent:
 			r.selfOccupantUpdateEvent()
 		case occupantUpdatedEvent:
-			r.occupantUpdatedEvent(t.nickname, t.role)
+			r.occupantUpdatedEvent(t.nickname)
 		case occupantRemovedEvent:
 			r.occupantRemovedEvent(t.nickname)
 		case occupantLeftEvent:
@@ -338,7 +338,7 @@ func (r *roomViewRosterInfo) selfOccupantUpdateEvent() {
 }
 
 // occupantUpdatedEvent MUST be called from the UI thread
-func (r *roomViewRosterInfo) occupantUpdatedEvent(nickname string, role data.Role) {
+func (r *roomViewRosterInfo) occupantUpdatedEvent(nickname string) {
 	r.onOccupantUpdate(nickname)
 }
 

@@ -137,7 +137,7 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 		panic(err)
 	}
 
-	ret.keySupplier = config.CachingKeySupplier(ret.getMasterPassword)
+	ret.keySupplier = config.CachingKeySupplier(ret.getMainPassword)
 
 	ret.accountManager.init(ret, ret.hasLog.log)
 
@@ -264,7 +264,7 @@ func (u *gtkUI) initialSetupForConfigFile() {
 			go u.showFirstAccountWindow()
 		}
 		if res {
-			u.captureInitialMasterPassword(k, func() {})
+			u.captureInitialMainPassword(k, func() {})
 		} else {
 			k()
 		}

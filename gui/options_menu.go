@@ -20,7 +20,7 @@ func (u *gtkUI) toggleEncryptedConfig() {
 		val := u.optionsMenu.encryptConfig.GetActive()
 		if u.config().SetShouldSaveFileEncrypted(val) {
 			if val {
-				u.captureInitialMasterPassword(u.saveConfigOnly, func() {
+				u.captureInitialMainPassword(u.saveConfigOnly, func() {
 					u.config().SetShouldSaveFileEncrypted(false)
 					u.saveConfigOnly()
 				})

@@ -3,7 +3,7 @@
 For convenience, we generate binaries as part of our automated build
 environment in the following URL:
 
-`https://dl.bintray.com/coyim/coyim-bin/master`
+`https://dl.bintray.com/coyim/coyim-bin/main`
 
 All binaries are signed using Bintray's GPG key:
 

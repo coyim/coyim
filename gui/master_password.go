@@ -6,8 +6,8 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-func (u *gtkUI) captureInitialMasterPassword(k func(), onCancel func()) {
-	dialogID := "CaptureInitialMasterPassword"
+func (u *gtkUI) captureInitialMainPassword(k func(), onCancel func()) {
+	dialogID := "CaptureInitialMainPassword"
 	builder := newBuilder(dialogID)
 	dialogOb := builder.getObj(dialogID)
 	pwdDialog := dialogOb.(gtki.Dialog)
@@ -92,8 +92,8 @@ func (o *onetimeSavedPassword) GenerateKey(params config.EncryptionParameters) (
 	return o.realF.GenerateKey(params)
 }
 
-func (u *gtkUI) getMasterPassword(params config.EncryptionParameters, lastAttemptFailed bool) ([]byte, []byte, bool) {
-	dialogID := "MasterPassword"
+func (u *gtkUI) getMainPassword(params config.EncryptionParameters, lastAttemptFailed bool) ([]byte, []byte, bool) {
+	dialogID := "MainPassword"
 	pwdResultChan := make(chan string)
 	var cleanup func()
 

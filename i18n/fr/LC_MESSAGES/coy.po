@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-14 18:45+0000\n"
+"POT-Creation-Date: 2021-09-14 22:24+0000\n"
 "PO-Revision-Date: 2021-09-13 14:39+0000\n"
 "Last-Translator: ivanjijon <ivanjijon@hotmail.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/coyim/main/fr/>\n"
@@ -24,12 +24,12 @@ msgid "Account Details"
 msgstr "Détails du compte"
 
 #: ../gui/definitions/AccountDetails.xml:34
-#: ../gui/definitions/CaptureInitialMasterPassword.xml:55
+#: ../gui/definitions/CaptureInitialMainPassword.xml:55
 #: ../gui/definitions/ChooseKeyToImport.xml:29
 #: ../gui/definitions/EditProxy.xml:145
 #: ../gui/definitions/GlobalPreferences.xml:391
 #: ../gui/definitions/GroupDetails.xml:35 ../gui/definitions/Importer.xml:92
-#: ../gui/definitions/MasterPassword.xml:43
+#: ../gui/definitions/MainPassword.xml:43
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:29
 #: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:108
 #: ../gui/definitions/MUCRoomConfigListAddDialog.xml:19
@@ -401,19 +401,17 @@ msgstr "Demande d'abonnement"
 msgid "Try again later"
 msgstr "Réessayez plus tard"
 
-#: ../gui/definitions/CaptureInitialMasterPassword.xml:5
-msgid "Configure your master password"
-msgstr "Configurez votre mot de passe principal"
-
-#: ../gui/definitions/CaptureInitialMasterPassword.xml:16
-msgid "Please enter the master password for the configuration file twice."
+#: ../gui/definitions/CaptureInitialMainPassword.xml:5
+msgid "Configure your main password"
 msgstr ""
-"Veuillez saisir deux fois le mot de passe principal pour le fichier de "
-"configuration."
 
-#: ../gui/definitions/CaptureInitialMasterPassword.xml:61
+#: ../gui/definitions/CaptureInitialMainPassword.xml:16
+msgid "Please enter the main password for the configuration file twice."
+msgstr ""
+
+#: ../gui/definitions/CaptureInitialMainPassword.xml:61
 #: ../gui/definitions/GroupDetails.xml:40
-#: ../gui/definitions/MasterPassword.xml:49
+#: ../gui/definitions/MainPassword.xml:49
 #: ../gui/definitions/VerificationSucceeded.xml:25
 #: ../gui/definitions/VerifyFingerprintUnknown.xml:18
 msgid "OK"
@@ -926,6 +924,16 @@ msgstr "De l'application"
 msgid "Account name"
 msgstr "Nom du compte"
 
+#: ../gui/definitions/MainPassword.xml:4
+msgid "Enter main password"
+msgstr ""
+
+#: ../gui/definitions/MainPassword.xml:15
+msgid ""
+"Please enter the main password for the configuration file. You will not be "
+"asked for this password again until you restart CoyIM."
+msgstr ""
+
 #: ../gui/definitions/Main.xml:22
 msgid "_Contacts"
 msgstr "_Contacts"
@@ -1002,19 +1010,6 @@ msgstr "À propos"
 #: ../gui/definitions/Main.xml:199
 msgid "Search..."
 msgstr "Chercher..."
-
-#: ../gui/definitions/MasterPassword.xml:4
-msgid "Enter master password"
-msgstr "Entrez le mot de passe principal"
-
-#: ../gui/definitions/MasterPassword.xml:15
-msgid ""
-"Please enter the master password for the configuration file. You will not be "
-"asked for this password again until you restart CoyIM."
-msgstr ""
-"Veuillez saisir le mot de passe principal pour le fichier de configuration. "
-"Ce mot de passe ne vous sera plus demandé tant que vous n'aurez pas "
-"redémarré CoyIM."
 
 #: ../gui/definitions/MUCCreateRoomDialog.xml:4
 msgid "Create chat room"
@@ -5368,6 +5363,25 @@ msgstr ""
 #: ../gui/muc_room_close_confirm.go:57
 msgid "Close & Leave Room"
 msgstr ""
+
+#~ msgid "Configure your master password"
+#~ msgstr "Configurez votre mot de passe principal"
+
+#~ msgid "Please enter the master password for the configuration file twice."
+#~ msgstr ""
+#~ "Veuillez saisir deux fois le mot de passe principal pour le fichier de "
+#~ "configuration."
+
+#~ msgid "Enter master password"
+#~ msgstr "Entrez le mot de passe principal"
+
+#~ msgid ""
+#~ "Please enter the master password for the configuration file. You will not "
+#~ "be asked for this password again until you restart CoyIM."
+#~ msgstr ""
+#~ "Veuillez saisir le mot de passe principal pour le fichier de "
+#~ "configuration. Ce mot de passe ne vous sera plus demandé tant que vous "
+#~ "n'aurez pas redémarré CoyIM."
 
 #~ msgid ""
 #~ "You can specify a custom command to run whenever a message is received. "

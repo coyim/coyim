@@ -23,11 +23,11 @@ gtk_version=$(pkg-config gtk+-3.0 --variable gtk_binary_version)
 rm -rf $OUTPUT
 mkdir -p $macos $frameworks $resources
 
-cp -av bin/coyim $binary
-cp -av build/osx/mac-bundle/coyim-launcher.sh $wrapper
-cp -av build/osx/mac-bundle/Info.plist $OUTPUT/Contents/Info.plist
-cp -av build/osx/mac-bundle/coyim.icns $resources
-cp -av build/osx/mac-bundle/environment.sh $resources
+cp -a bin/coyim $binary
+cp -a build/osx/mac-bundle/coyim-launcher.sh $wrapper
+cp -a build/osx/mac-bundle/Info.plist $OUTPUT/Contents/Info.plist
+cp -a build/osx/mac-bundle/coyim.icns $resources
+cp -a build/osx/mac-bundle/environment.sh $resources
 
 chmod a+x $wrapper $binary
 
@@ -58,7 +58,7 @@ echo "** Copying libpango modules"
 
 # FIXME Why in resources?
 pango_lib=$(strings $frameworks/libpango-1.0.0.dylib | grep usr/local | grep lib)
-cp -av $(dirname $pango_lib) $resources
+cp -a $(dirname $pango_lib) $resources
 
 # There is no pango modules anymore
 #pango_etc=$(strings $frameworks/libpango-1.0.0.dylib  | grep usr/local | grep etc)
@@ -107,17 +107,17 @@ echo "** Copying icons and themes"
 
 # Icons and themes
 mkdir -p $resources/share/icons
-cp -av $(brew --prefix adwaita-icon-theme)/share/icons/* $resources/share/icons
-cp -av $(brew --prefix hicolor-icon-theme)/share/icons/* $resources/share/icons
+cp -a $(brew --prefix adwaita-icon-theme)/share/icons/* $resources/share/icons
+cp -a $(brew --prefix hicolor-icon-theme)/share/icons/* $resources/share/icons
 
 mkdir -p $resources/share/themes/Mac
-cp -av $(brew --prefix gtk+3)/share/themes/Mac/* $resources/share/themes/Mac
+cp -a $(brew --prefix gtk+3)/share/themes/Mac/* $resources/share/themes/Mac
 
 # GSetting Schemas
 # FIXME this will include schemas with org.gnome.* prefix which I think are
 # not relevant to our application in this bundle (see the schemas folder below)
 mkdir -p $resources/share/glib-2.0/schemas
-cp -av $(brew --prefix)/share/glib-2.0/schemas/gschemas.compiled $resources/share/glib-2.0/schemas
+cp -a $(brew --prefix)/share/glib-2.0/schemas/gschemas.compiled $resources/share/glib-2.0/schemas
 
 mkdir -p $resources/etc/gtk-3.0
 cat > $resources/etc/gtk-3.0/settings.ini << EOF
@@ -128,11 +128,11 @@ EOF
 echo "** Copying locale files and mime database"
 
 # Copy locales from our app - but only the .mo files
-rsync -avz --include='*/' --include='*.mo' --exclude='*' i18n $macos/
+rsync -az --include='*/' --include='*.mo' --exclude='*' i18n $macos/
 
 # Copy mime database
 mkdir -p $resources/share/mime
-cp -av $(pkg-config shared-mime-info --variable=prefix)/share/mime/mime.cache \
+cp -a $(pkg-config shared-mime-info --variable=prefix)/share/mime/mime.cache \
   $resources/share/mime
 
 #TODO: copy GTK/GLIB/* locales

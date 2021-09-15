@@ -38,11 +38,11 @@ clean-mac-bundle:
 	$(RM) -r ../bin/mac-bundle
 
 mac-bundle:
-	make -C ../ build-gui
+#	make -C ../ build-gui
 	iconutil -c icns -o ../build/osx/mac-bundle/coyim.icns ../build/osx/mac-bundle/coyim.iconset
 	cd .. && build/osx/build-bundle bin/mac-bundle/CoyIM.app
 
-release-dmg: clean-mac-bundle mac-bundle
+release-dmg: 
 	mkdir -p ../release
 	create-dmg --volname "CoyIM Installer" --volicon ../build/osx/mac-bundle/coyim.icns --window-pos 200 120 --window-size 800 400 --icon-size 100 --hide-extension "CoyIM.app" --app-drop-link 600 185 ../release/coyim.dmg ../bin/mac-bundle/CoyIM.app
 	fileicon set ../release/coyim.dmg ../build/osx/mac-bundle/coyim.icns

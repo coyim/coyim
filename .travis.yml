@@ -31,7 +31,12 @@ addons:
 before_install:
   - "export DISPLAY=:99.0"
 install: travis_wait make -C ci/ deps
-script: travis_wait make -C ci/ release-dmg clean-mac-bundle release-gui
+script:
+  - travis_wait make -C ci/ clean-mac-bundle
+  - travis_wait make build-gui
+  - travis_wait make -C ci/ mac-bundle
+  - travis_wait make -C ci/ release-dmg
+  - travis_wait make -C ci/ release-gui
 
 deploy:
   provider: releases

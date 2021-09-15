@@ -2,9 +2,9 @@ os: osx
 osx_image: xcode11.3
 language: go
 
-#branches:
-#  except:
-#    - main
+branches:
+ except:
+   - main
 
 git:
   depth: false
@@ -33,3 +33,11 @@ before_install:
 install: travis_wait make -C ci/ deps
 script: travis_wait make -C ci/ release-dmg clean-mac-bundle release-gui
 
+deploy:
+  provider: releases
+  api_key: $GH_DEPLOY_TOKEN
+  file_glob: true
+  file: release/*
+  skip_cleanup: true
+  on:
+    tags: true

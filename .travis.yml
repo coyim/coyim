@@ -18,6 +18,7 @@ services:
 
 addons:
   homebrew:
+    update: true
     packages:
       - gtk+3
       - adwaita-icon-theme

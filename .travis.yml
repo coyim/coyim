@@ -2,9 +2,10 @@ os: osx
 osx_image: xcode11.3
 language: go
 
-branches:
-  except:
-    - main
+#branches:
+#  except:
+#    - main
+
 git:
   depth: false
   quiet: true

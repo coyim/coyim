@@ -42,7 +42,7 @@ jobs:
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
 
   test-osx:
-    runs-on: macos-latest
+    runs-on: macos-10.15
 
     env:
       GOPATH: ${{ github.workspace }}
@@ -202,7 +202,7 @@ jobs:
   build-release-osx:
     name: Build release (OS X)
     needs: test-osx
-    runs-on: macos-latest
+    runs-on: macos-10.15
     if: startsWith( github.ref, 'refs/tags/')
 
     env:

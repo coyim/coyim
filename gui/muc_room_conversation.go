@@ -24,6 +24,8 @@ type roomViewConversation struct {
 	selfOccupantJoined       chan bool
 	historyPrinted           chan bool
 	disconnectMessagePrinted bool
+	currentAdjustment        float64
+	maxAdjustment            float64
 
 	view                  gtki.Box            `gtk-widget:"room-conversation"`
 	chatScrolledWindow    gtki.ScrolledWindow `gtk-widget:"chat-scrolled-window"`

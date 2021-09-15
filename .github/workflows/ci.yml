@@ -47,8 +47,8 @@ jobs:
     env:
       GOPATH: ${{ github.workspace }}
       GO111MODULE: off
-      # found in https://formulae.brew.sh/api/formula/gtk-mac-integration.json
-      GTK_MAC_INTEGRATION_URL: https://ghcr.io/v2/homebrew/core/gtk-mac-integration/blobs/sha256:a6b21fe6cda9fd1a06aacd818ac646380e878969f95a6964729f950371e68255
+      # # found in https://formulae.brew.sh/api/formula/gtk-mac-integration.json
+      # GTK_MAC_INTEGRATION_URL: https://ghcr.io/v2/homebrew/core/gtk-mac-integration/blobs/sha256:a6b21fe6cda9fd1a06aacd818ac646380e878969f95a6964729f950371e68255
     defaults:
       run:
         working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
@@ -60,12 +60,12 @@ jobs:
         with:
           path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
       - name: install OS dependencies
-        run: brew install gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info create-dmg fileicon
-      - name: download mojave version of gtk-mac-integration bottle
-        run: |
-          curl -L -H 'Authorization: Bearer QQ==' ${{ env.GTK_MAC_INTEGRATION_URL }} -o gtk-mac-integration--3.0.1.mojave.bottle.tar.gz
-      - name: install mojave version of gtk-mac-integration from file
-        run: brew install ./gtk-mac-integration--3.0.1.mojave.bottle.tar.gz
+        run: brew install gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info gtk-mac-integration fileicon
+      # - name: download mojave version of gtk-mac-integration bottle
+      #   run: |
+      #     curl -L -H 'Authorization: Bearer QQ==' ${{ env.GTK_MAC_INTEGRATION_URL }} -o gtk-mac-integration--3.0.1.mojave.bottle.tar.gz
+      # - name: install mojave version of gtk-mac-integration from file
+      #   run: brew install ./gtk-mac-integration--3.0.1.mojave.bottle.tar.gz
       - uses: actions/setup-go@v2
         with:
           go-version: 1.14

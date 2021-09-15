@@ -1,0 +1,33 @@
+os: osx
+osx_image: xcode11.3
+language: go
+
+branches:
+  except:
+    - main
+
+git:
+  depth: false
+  quiet: true
+
+go:
+  - "1.14.x"
+
+services:
+  - docker
+
+addons:
+  homebrew:
+    packages:
+      - gtk+3
+      - adwaita-icon-theme
+      - hicolor-icon-theme
+      - shared-mime-info
+      - create-dmg
+      - fileicon
+      - gtk-mac-integration
+
+before_install:
+  - "export DISPLAY=:99.0"
+install: travis_wait make -C ci/ deps
+script: travis_wait make -C ci/ release-dmg clean-mac-bundle release-gui

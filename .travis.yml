@@ -5,7 +5,6 @@ language: go
 branches:
   except:
     - main
-
 git:
   depth: false
   quiet: true
@@ -31,3 +30,4 @@ before_install:
   - "export DISPLAY=:99.0"
 install: travis_wait make -C ci/ deps
 script: travis_wait make -C ci/ release-dmg clean-mac-bundle release-gui
+

@@ -76,8 +76,8 @@ func (c *roomViewConversation) displayConfigurationMessage(message string) {
 	c.addTextWithTag(message, conversationTagRoomConfigChange)
 }
 
-// displayLiveMessage MUST be called from the UI thread
-func (c *roomViewConversation) displayLiveMessage(nickname, message string, timestamp time.Time) {
+// displayNewMessage MUST be called from the UI thread
+func (c *roomViewConversation) displayNewMessage(nickname, message string, timestamp time.Time) {
 	c.addNewLine()
 	c.displayTimestamp(timestamp)
 	c.displayNickname(nickname)
@@ -100,21 +100,11 @@ func (c *roomViewConversation) displayDiscussionHistoryDate(d time.Time) {
 func (c *roomViewConversation) displayDiscussionHistoryMessages(messages []*data.DelayedMessage) {
 	for _, m := range messages {
 		if m.MessageType == data.Chat {
-			c.displayDelayedMessage(m.Nickname, m.Message, m.Timestamp)
+			c.displayNewMessage(m.Nickname, m.Message, m.Timestamp)
 		} else {
 			c.displayMessageFromData(m)
 		}
 	}
-}
-
-// displayDelayedMessage MUST be called from the UI thread
-func (c *roomViewConversation) displayDelayedMessage(nickname, message string, timestamp time.Time) {
-	c.addNewLine()
-
-	c.displayTimestamp(timestamp)
-
-	c.displayNickname(nickname)
-	c.displayMessage(message)
 }
 
 // displayNewInfoMessage MUST be called from the UI thread

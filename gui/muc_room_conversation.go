@@ -313,12 +313,12 @@ func (c *roomViewConversation) messageEvent(tp, nickname, message string, timest
 		// we already have those messages in the conversation's textview
 		if c.selfOccupantNickname() != nickname {
 			doInUIThread(func() {
-				c.displayLiveMessage(nickname, message, timestamp)
+				c.displayNewMessage(nickname, message, timestamp)
 			})
 		}
 	case "delayed":
 		doInUIThread(func() {
-			c.displayDelayedMessage(nickname, message, timestamp)
+			c.displayNewMessage(nickname, message, timestamp)
 		})
 	default:
 		c.log.WithField("type", tp).Warn("Unknown message event type")
@@ -566,7 +566,7 @@ func (c *roomViewConversation) sendMessage() {
 		return
 	}
 
-	c.displayLiveMessage(c.selfOccupantNickname(), m, time.Now())
+	c.displayNewMessage(c.selfOccupantNickname(), m, time.Now())
 
 	doALittleBitLater(func() {
 		scrollToBottom(c.chatScrolledWindow)

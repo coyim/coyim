@@ -62,7 +62,8 @@ jobs:
       - name: install OS dependencies
         run: brew install gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info create-dmg fileicon
       - name: download mojave version of gtk-mac-integration bottle
-        run: curl -L -H 'Authorization: Bearer QQ==' ${{ env.GTK_MAC_INTEGRATION_URL }} -o gtk_mac_integration_mojave.tar.gz
+        run: |
+          curl -L -H 'Authorization: Bearer QQ==' ${{ env.GTK_MAC_INTEGRATION_URL }} -o gtk_mac_integration_mojave.tar.gz
       - name: install mojave version of gtk-mac-integration from file
         run: brew install ./gtk_mac_integration_mojave.tar.gz
       - uses: actions/setup-go@v2
@@ -228,7 +229,8 @@ jobs:
       - name: install OS dependencies
         run: brew install gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info create-dmg fileicon
       - name: download mojave version of gtk-mac-integration bottle
-        run: curl -L -H 'Authorization: Bearer QQ==' ${{ env.GTK_MAC_INTEGRATION_URL }} -o gtk_mac_integration_mojave.tar.gz
+        run: |
+          curl -L -H 'Authorization: Bearer QQ==' ${{ env.GTK_MAC_INTEGRATION_URL }} -o gtk_mac_integration_mojave.tar.gz
       - name: install mojave version of gtk-mac-integration from file
         run: brew install ./gtk_mac_integration_mojave.tar.gz
       - uses: actions/setup-go@v2

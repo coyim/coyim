@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-14 22:24+0000\n"
+"POT-Creation-Date: 2021-09-16 20:21+0000\n"
 "PO-Revision-Date: 2021-09-11 06:17+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/coyim/"
@@ -1172,7 +1172,7 @@ msgstr "Ja"
 msgid "Are you sure you want to cancel the room creation? "
 msgstr "Avbryt romopprettelse? "
 
-#: ../gui/definitions/MUCRoomConversation.xml:120 ../gui/file_transfer.go:268
+#: ../gui/definitions/MUCRoomConversation.xml:121 ../gui/file_transfer.go:268
 msgid "Send"
 msgstr "Send"
 
@@ -4610,7 +4610,7 @@ msgstr ""
 msgid "%[1]s [%[2]s]"
 msgstr ""
 
-#: ../gui/muc_room_conversation_display.go:163
+#: ../gui/muc_room_conversation_display.go:153
 msgid ""
 "You can no longer receive any messages in this room and the list of people "
 "in the room will not be updated anymore."
@@ -4764,22 +4764,22 @@ msgid ""
 "%[2]s"
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:229
+#: ../gui/muc_room_conversation.go:238
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an owner}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:231
+#: ../gui/muc_room_conversation.go:240
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an administrator}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:233
+#: ../gui/muc_room_conversation.go:242
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{a member}."
 msgstr ""
 
-#: ../gui/muc_room_conversation.go:235
+#: ../gui/muc_room_conversation.go:244
 #, python-format
 msgid "$nickname{%s} has been added to the ban list."
 msgstr ""

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-14 22:33+0000\n"
-"PO-Revision-Date: 2021-09-14 15:21+0000\n"
+"POT-Creation-Date: 2021-09-16 20:23+0000\n"
+"PO-Revision-Date: 2021-09-15 17:26+0000\n"
 "Last-Translator: Ola Bini <ola@autonomia.digital>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/coyim/main/sv/>\n"
 "Language: sv\n"
@@ -396,11 +396,11 @@ msgstr "Försök igen senare"
 
 #: ../gui/definitions/CaptureInitialMainPassword.xml:5
 msgid "Configure your main password"
-msgstr ""
+msgstr "Ställ in ditt huvudlösenord"
 
 #: ../gui/definitions/CaptureInitialMainPassword.xml:16
 msgid "Please enter the main password for the configuration file twice."
-msgstr ""
+msgstr "Var god skriv in huvudlösenordet för konfigurationsfile två gånger."
 
 #: ../gui/definitions/CaptureInitialMainPassword.xml:61
 #: ../gui/definitions/GroupDetails.xml:40
@@ -850,6 +850,10 @@ msgid ""
 "timeout period before running the next time. The command and timeout is "
 "specified below. "
 msgstr ""
+"Du kan välja ett anpassat kommando som kommer köras varje gång ett "
+"meddelande är mottaget. Om du väljer att göra detta kommer kommandet köras "
+"varje för varje meddelande, med undantag för en paus innan det körs nästa "
+"gång. Både kommandot och paus-tiden kan skrivas nedan. "
 
 #: ../gui/definitions/GlobalPreferences.xml:279
 msgid "Notification command"
@@ -918,13 +922,15 @@ msgstr "Kontonamn"
 
 #: ../gui/definitions/MainPassword.xml:4
 msgid "Enter main password"
-msgstr ""
+msgstr "Skriv in huvudlösenord"
 
 #: ../gui/definitions/MainPassword.xml:15
 msgid ""
 "Please enter the main password for the configuration file. You will not be "
 "asked for this password again until you restart CoyIM."
 msgstr ""
+"Var god skriv in huvudlösenordet för konfigurationsfilen. Du kommer inte bli "
+"tillfrågad om detta lösenord igen tills du startar om CoyIM."
 
 #: ../gui/definitions/Main.xml:22
 msgid "_Contacts"
@@ -1249,13 +1255,13 @@ msgstr "Ja"
 msgid "Are you sure you want to cancel the room creation? "
 msgstr "Är du säker på att du vill avbryta skapelsen av rummet? "
 
-#: ../gui/definitions/MUCRoomConversation.xml:120 ../gui/file_transfer.go:268
+#: ../gui/definitions/MUCRoomConversation.xml:121 ../gui/file_transfer.go:268
 msgid "Send"
 msgstr "Skicka"
 
 #: ../gui/definitions/MUCRoomDestroyDialogError.xml:3
 msgid "Room destruction error"
-msgstr ""
+msgstr "Fel vid förstörelse av rummet"
 
 #: ../gui/definitions/MUCRoomDestroyDialogError.xml:39
 msgid "Retry"
@@ -1293,7 +1299,7 @@ msgstr "_Gå in"
 
 #: ../gui/definitions/MUCRoomMessageBoxNotification.xml:29
 msgid "You don't have permission to send messages."
-msgstr ""
+msgstr "Du har inte tillstånd att skicka meddelanden."
 
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:4
 msgid "Remove person from the room"
@@ -1908,22 +1914,22 @@ msgstr "Ett fel uppstod när vi försökte kasta ut %s."
 #: ../gui/muc_notification_messages.go:183
 #, python-format
 msgid "As an owner you don't have permission to expel %s."
-msgstr ""
+msgstr "Som ägare har du inte tillåtelse att kasta ut %s."
 
 #: ../gui/muc_notification_messages.go:185
 #, python-format
 msgid "As an administrator you don't have permission to expel %s."
-msgstr ""
+msgstr "Som administratör har du inte tillåtelse att kasta ut %s."
 
 #: ../gui/muc_notification_messages.go:187
 #, python-format
 msgid "As a member you don't have permission to expel %s."
-msgstr ""
+msgstr "Som medlem har du inte tillåtelse att kasta ut %s."
 
 #: ../gui/muc_notification_messages.go:191
 #, python-format
 msgid "You don't have permission to expel %s."
-msgstr ""
+msgstr "Du har inte tillåtelse att kasta ut %s."
 
 #: ../gui/muc_notification_messages.go:257
 #: ../gui/muc_notification_messages.go:876
@@ -3975,12 +3981,16 @@ msgstr "Ja, försök igen"
 msgid ""
 "You have been removed from this room because it's now a members-only room."
 msgstr ""
+"Du har blivit borttagen från rummet eftersom det nu är ett rum för enbart "
+"medlemmar."
 
 #: ../gui/muc_room.go:279
 msgid ""
 "You have been removed from this members-only room since you are not "
 "$affiliation{a member} anymore."
 msgstr ""
+"Du har blivit borttagen från det här rummet för medlemmar, eftersom du inte "
+"längre är $affiliation{en medlem}."
 
 #: ../gui/muc_room.go:389
 msgid "The room has been destroyed"
@@ -4040,6 +4050,9 @@ msgid ""
 "permission to do it or the location is not available right now. Please try "
 "again."
 msgstr ""
+"Vi kunde inte tillämpa de nya rumsinställningarna eftersom du har inte "
+"tillåtelse att göra det, eller tjänsten är inte tillgänglig för tillfället. "
+"Var god försök igen."
 
 #: ../gui/muc_room_config_component.go:135
 msgid ""
@@ -4055,6 +4068,9 @@ msgid ""
 "permission to do it or the location is not available right now. Please try "
 "again."
 msgstr ""
+"Vi kunde inte avbryta inställningsprocessen för rummet eftersom du har inte "
+"tillåtelse att göra det, eller tjänsten är inte tillgänglig för tillfället. "
+"Var god försök igen."
 
 #: ../gui/muc_room_config_component.go:139
 msgid ""
@@ -4792,7 +4808,7 @@ msgstr "Kunde inte ansluta till servern."
 
 #: ../gui/muc.go:21
 msgid "You don't have permission to create a room."
-msgstr ""
+msgstr "Du har inte tillstånd att skapa rum."
 
 #: ../gui/muc.go:22
 msgid ""
@@ -4835,7 +4851,7 @@ msgstr ""
 
 #: ../gui/muc_room_conversation_notification_messages.go:39
 msgid "You can't send messages because you are not a member anymore."
-msgstr ""
+msgstr "Du kan inte skicka meddelanden eftersom du är inte längre en medlem."
 
 #: ../gui/muc_room_conversation_notification_messages.go:43
 msgid "This room is now publicly logged."
@@ -4913,6 +4929,8 @@ msgid ""
 "$nickname{%s} was removed from this room because it's now a members-only "
 "room."
 msgstr ""
+"$nickname{%s} blev borttagen från rummet eftersom det är nu ett rum för "
+"enbart medlemmar."
 
 #: ../gui/muc_room_conversation_notification_messages.go:112
 #, python-format
@@ -4920,6 +4938,8 @@ msgid ""
 "$nickname{%s} was removed from this members-only room since they are not "
 "$affiliation{a member} anymore."
 msgstr ""
+"$nickname{%s} togs bort från det här rummet för medlemmer, eftersom dem är "
+"inte $affiliation{en medlem} längre."
 
 #: ../gui/muc_room_conversation_notification_messages.go:136
 msgid ""
@@ -5180,7 +5200,7 @@ msgstr "_Spara"
 msgid "%[1]s [%[2]s]"
 msgstr "%[1]s [%[2]s]"
 
-#: ../gui/muc_room_conversation_display.go:163
+#: ../gui/muc_room_conversation_display.go:153
 msgid ""
 "You can no longer receive any messages in this room and the list of people "
 "in the room will not be updated anymore."
@@ -5302,6 +5322,8 @@ msgid ""
 "You can't join the room because the maximum number of people has been "
 "reached."
 msgstr ""
+"Du kan inte gå in i rummet eftersom det finns inte plats för mer personer i "
+"rummet."
 
 #: ../gui/muc_room_errors.go:87
 msgid ""
@@ -5348,22 +5370,22 @@ msgstr ""
 "Fingeravtryck för %[1]s:\n"
 "%[2]s"
 
-#: ../gui/muc_room_conversation.go:229
+#: ../gui/muc_room_conversation.go:238
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an owner}."
 msgstr "$nickname{%s} har blivit tillagd som $affiliation{ägare}."
 
-#: ../gui/muc_room_conversation.go:231
+#: ../gui/muc_room_conversation.go:240
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an administrator}."
 msgstr "$nickname{%s} har blivit tillagd som $affiliation{administratör}."
 
-#: ../gui/muc_room_conversation.go:233
+#: ../gui/muc_room_conversation.go:242
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{a member}."
 msgstr "$nickname{%s} har blivit tillagd som $affiliation{medlem}."
 
-#: ../gui/muc_room_conversation.go:235
+#: ../gui/muc_room_conversation.go:244
 #, python-format
 msgid "$nickname{%s} has been added to the ban list."
 msgstr "$nickname{%s} har blivit tillagd till listan över bannlysta personer."
@@ -5653,12 +5675,15 @@ msgid ""
 "We couldn't update the position for the person because either you don't have "
 "permission to do it or the server is busy. Please try again."
 msgstr ""
+"Vi kunde inte uppdatera ställningen, antingen för att du inte har tillstånd "
+"att göra så, eller för att servern är upptagen. Var god försök igen."
 
 #: ../gui/muc_room_occupant_affiliation.go:198
 msgid ""
 "An error occurred when updating the position for the person. Please try "
 "again."
 msgstr ""
+"Ett fel uppstod när vi försökte uppdatera ställningen. Var god försök igen."
 
 #: ../gui/fingerprint_verification.go:19
 #, python-format

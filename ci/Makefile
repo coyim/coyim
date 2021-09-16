@@ -54,10 +54,7 @@ $(RELEASE_DIR)/coyim.dmg: $(RELEASE_DIR)
 	appdmg $(BUILD_MAC)/dmg-spec.json $@
 	fileicon set $@ $(MAC_BUNDLE_DEF)/coyim.icns
 
-$(RELEASE_DIR)/coyim.dmg.zip: $(RELEASE_DIR)/coyim.dmg
-	cd $(RELEASE_DIR) && zip coyim.dmg.zip coyim.dmg
-
-make-dmg: $(RELEASE_DIR)/coyim.dmg $(RELEASE_DIR)/coyim.dmg_checksum $(RELEASE_DIR)/coyim.dmg.zip $(RELEASE_DIR)/coyim.dmg.zip_checksum
+make-dmg: $(RELEASE_DIR)/coyim.dmg $(RELEASE_DIR)/coyim.dmg_checksum
 
 ../bin/coyim:
 	make -C ../ build-gui

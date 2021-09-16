@@ -36,13 +36,14 @@ addons:
 #      - create-dmg
       - fileicon
       - gtk-mac-integration
-      - graphicsmagick
-      - imagemagick
+#      - graphicsmagick
+#      - imagemagick
       - node
 
 before_install:
   - "export DISPLAY=:99.0"
-  - npm install --global create-dmg
+#  - npm install --global create-dmg
+  - npm install --global appdmg
 
 install: make -C ci/ deps
 script:

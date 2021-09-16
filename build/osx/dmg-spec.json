@@ -1,8 +1,8 @@
 {
   "title": "CoyIM Installer",
-  "icon": "../build/osx/mac-bundle/coyim.icns",
+  "icon": "build/osx/mac-bundle/coyim.icns",
   "contents": [
     { "x": 448, "y": 344, "type": "link", "path": "/Applications" },
-    { "x": 192, "y": 344, "type": "file", "path": "../bin/mac-bundle/CoyIM.app" }
+    { "x": 192, "y": 344, "type": "file", "path": "bin/mac-bundle/CoyIM.app" }
   ]
 }

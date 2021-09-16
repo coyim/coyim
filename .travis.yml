@@ -16,6 +16,15 @@ go:
 services:
   - docker
 
+cache:
+  directories:
+    - $HOME/Library/Caches/Homebrew
+    - /usr/local/Homebrew
+
+before_cache:
+  - brew cleanup
+  - find /usr/local/Homebrew \! -regex ".+\.git.+" -delete
+
 addons:
   homebrew:
     update: true

@@ -5,7 +5,6 @@ on: [push]
 jobs:
   build-release-osx:
     name: Build release test (OS X)
-    needs: test-osx
     runs-on: macos-10.15
 
     env:

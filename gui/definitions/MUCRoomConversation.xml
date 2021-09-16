@@ -16,6 +16,7 @@
             <property name="window_placement_set">False</property>
             <property name="kinetic_scrolling">False</property>
             <property name="overlay_scrolling">True</property>
+            <signal name="edge-reached" handler="on_edge_reached" swapped="no"/>
             <child>
               <object class="GtkTextView" id="chat-text-view">
                 <property name="visible">True</property>

@@ -12,6 +12,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+const bottomPositionValue = 3
+
 type roomViewConversation struct {
 	u                        *gtkUI
 	tags                     *conversationTags
@@ -74,6 +76,7 @@ func (c *roomViewConversation) initBuilder() {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_send_message": c.onSendMessage,
 		"on_key_press":    c.onKeyPress,
+		"on_edge_reached": c.onEdgeReached,
 	})
 
 	mucStyles.setScrolledWindowStyle(c.chatScrolledWindow)
@@ -573,6 +576,13 @@ func (c *roomViewConversation) sendMessage() {
 	doALittleBitLater(func() {
 		scrollToBottom(c.chatScrolledWindow)
 	})
+}
+
+// onEdgeReached MUST be called from the UI thread
+func (c *roomViewConversation) onEdgeReached(_ gtki.ScrolledWindow, pos int) {
+	if pos == bottomPositionValue {
+		c.maxAdjustment = c.chatScrolledWindow.GetVAdjustment().GetValue()
+	}
 }
 
 func (c *roomViewConversation) updateNotificationMessage(m string) {

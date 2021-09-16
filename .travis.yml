@@ -2,6 +2,9 @@ os: osx
 osx_image: xcode11.3
 language: go
 
+env:
+  CACHE_NAME: all_caches
+
 branches:
  except:
    - main

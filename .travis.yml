@@ -35,6 +35,7 @@ addons:
       - gtk+3
       - adwaita-icon-theme
       - hicolor-icon-theme
+      - gnome-icon-theme
       - shared-mime-info
       - fileicon
       - gtk-mac-integration

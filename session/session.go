@@ -303,6 +303,10 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		})
 	case "":
 		if jj.NoResource().String() == jj.String() {
+			// Presence with a vcard-temp:x:update tag received,this is not handled yet.
+			if stanza.VCardXUpdate != nil {
+				return true
+			}
 			// This happens if a malfunctioning client/server is
 			// sending presence information without a resource.
 			// This is likely a bug

@@ -14,6 +14,11 @@ type VCard struct {
 	Nickname string `xml:"NICKNAME"`
 }
 
+// VCardXUpdate contains 'vcard-temp:x:update' tag
+type VCardXUpdate struct {
+	XMLName xml.Name `xml:"vcard-temp:x:update x"`
+}
+
 // ParseVCard extracts vcard information from the given Stanza.
 func ParseVCard(reply Stanza) (VCard, error) {
 	iq, ok := reply.Value.(*ClientIQ)

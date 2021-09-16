@@ -1,9 +1,10 @@
 GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
-AS_CREATE_DMG=/usr/local/Cellar/create-dmg/1.0.9/bin/create-dmg
 
 PLATFORM := _$(shell go env GOOS)_$(shell go env GOARCH)
 RELEASE_DIR := ../release
-MAC_BUNDLE_DEF := ../build/osx/mac-bundle
+BUILD_MAC := ../build/osx
+BUILD_WIN := ../build/windows
+MAC_BUNDLE_DEF := $(BUILD_MAC)/mac-bundle
 MAC_BUNDLE_OUT := ../bin/mac-bundle
 
 default: doctor test coveralls
@@ -37,9 +38,6 @@ else
 	@echo "Not running in CI, so skipping sending coverage results to Coveralls"
 endif
 
-clean-release:
-	$(RM) bin/*
-
 clean-mac-bundle:
 	$(RM) -r $(MAC_BUNDLE_OUT)
 
@@ -52,21 +50,14 @@ $(MAC_BUNDLE_OUT)/CoyIM.app:
 make-mac-bundle: $(MAC_BUNDLE_OUT)/CoyIM.app
 #	make -C ../ build-gui
 
-make-dmg: $(RELEASE_DIR)
-#	$(AS_CREATE_DMG) --sandbox-safe --volname "CoyIM Installer" --volicon ../build/osx/mac-bundle/coyim.icns --window-pos 200 120 --window-size 800 400 --icon-size 100 --hide-extension "CoyIM.app" --app-drop-link 600 185 ../release/coyim.dmg ../bin/mac-bundle/CoyIM.app
-#	create-dmg --help
-#	create-dmg --dmg-title="CoyIM Installer" ../bin/mac-bundle/CoyIM.app ../release
-#	ls -alF ../release
-#	mv ../release/*.dmg ../release/coyim.dmg
-#	fileicon set ../release/coyim.dmg ../build/osx/mac-bundle/coyim.icns
-#	openssl dgst -sha256 ../release/coyim.dmg >> ../release/coyim.dmg_checksum
-#	(cd ../release; zip coyim_installer.zip coyim.dmg)
-	cd .. &&  appdmg build/osx/dmg-spec.json release/coyim-appdmg.dmg
-	(cd ../release; zip coyim_installer_appdmg.zip coyim-appdmg.dmg)
-	cp ../release/coyim-appdmg.dmg ../release/coyim-appdmg2.dmg
-	fileicon set ../release/coyim-appdmg2.dmg ../build/osx/mac-bundle/coyim.icns
-	(cd ../release; zip coyim_installer_appdmg.zip coyim-appdmg.dmg)
-	(cd ../release; zip coyim_installer_appdmg2.zip coyim-appdmg2.dmg)
+$(RELEASE_DIR)/coyim.dmg: $(RELEASE_DIR)
+	appdmg $(BUILD_MAC)/dmg-spec.json $@
+	fileicon set $@ $(MAC_BUNDLE_DEF)/coyim.icns
+
+$(RELEASE_DIR)/coyim.dmg.zip: $(RELEASE_DIR)/coyim.dmg
+	cd $(RELEASE_DIR) && zip coyim.dmg.zip coyim.dmg
+
+make-dmg: $(RELEASE_DIR)/coyim.dmg $(RELEASE_DIR)/coyim.dmg_checksum $(RELEASE_DIR)/coyim.dmg.zip $(RELEASE_DIR)/coyim.dmg.zip_checksum
 
 ../bin/coyim:
 	make -C ../ build-gui
@@ -86,7 +77,7 @@ make-gui-for-release-linux: build-linux $(RELEASE_DIR)
 	openssl dgst -sha256 $(RELEASE_DIR)/coyim$(PLATFORM) >> $(RELEASE_DIR)/coyim$(PLATFORM)_checksum
 
 $(RELEASE_DIR)/toast.exe: $(RELEASE_DIR)
-	cp ../build/windows/toast.exe $@
+	cp $(BUILD_WIN)/toast.exe $@
 
 $(RELEASE_DIR)/coyim$(PLATFORM): ../bin/coyim $(RELEASE_DIR)
 	cp ../bin/coyim $@

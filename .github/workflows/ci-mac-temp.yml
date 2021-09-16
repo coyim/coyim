@@ -35,5 +35,16 @@ jobs:
           make -C ci/ make-mac-bundle
           make -C ci/ make-dmg
           make -C ci/ make-gui-for-release
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-osx-dmg
+          path: |
+            ${{ env.GOPATH }}/src/github.com/${{ github.repository }}/release/coyim.dmg
+            ${{ env.GOPATH }}/src/github.com/${{ github.repository }}/release/coyim.dmg_checksum
+            ${{ env.GOPATH }}/src/github.com/${{ github.repository }}/release/coyim.dmg.zip
+            ${{ env.GOPATH }}/src/github.com/${{ github.repository }}/release/coyim.dmg.zip_checksum
+          retention-days: 5
+          if-no-files-found: error
 
   

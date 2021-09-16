@@ -47,7 +47,6 @@ before_install:
 
 install: make -C ci/ deps
 script:
-  - ls -alF /usr/local/bin
   - make -C ci/ clean-mac-bundle
   - make build-gui
   - make -C ci/ mac-bundle

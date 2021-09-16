@@ -1,4 +1,5 @@
 GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
+AS_CREATE_DMG=/usr/local/Cellar/create-dmg/1.0.9/bin/create-dmg
 
 default: doctor test coveralls
 
@@ -44,7 +45,7 @@ mac-bundle:
 
 release-dmg:
 	mkdir -p ../release
-	create-dmg --sandbox-safe --volname "CoyIM Installer" --volicon ../build/osx/mac-bundle/coyim.icns --window-pos 200 120 --window-size 800 400 --icon-size 100 --hide-extension "CoyIM.app" --app-drop-link 600 185 ../release/coyim.dmg ../bin/mac-bundle/CoyIM.app
+	$(AS_CREATE_DMG) --sandbox-safe --volname "CoyIM Installer" --volicon ../build/osx/mac-bundle/coyim.icns --window-pos 200 120 --window-size 800 400 --icon-size 100 --hide-extension "CoyIM.app" --app-drop-link 600 185 ../release/coyim.dmg ../bin/mac-bundle/CoyIM.app
 	fileicon set ../release/coyim.dmg ../build/osx/mac-bundle/coyim.icns
 	openssl dgst -sha256 ../release/coyim.dmg >> ../release/checksum
 

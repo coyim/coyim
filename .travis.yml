@@ -42,12 +42,10 @@ addons:
 
 before_install:
   - "export DISPLAY=:99.0"
-#  - npm install --global create-dmg
+  - npm install --global create-dmg
 
 install: make -C ci/ deps
 script:
-  - which create-dmg
-  - find /usr/local/lib/node_modules
   - ls -alF /usr/local/bin
   - make -C ci/ clean-mac-bundle
   - make build-gui

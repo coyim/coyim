@@ -65,13 +65,13 @@ make-dmg: $(RELEASE_DIR)/coyim.dmg $(RELEASE_DIR)/coyim.dmg_checksum $(RELEASE_D
 ../bin/coyim.exe:
 	make -C ../ build-gui-win
 
-build-linux:
+build-linux-reproducible:
 	make -C ../reproducible/docker create-image
 	make -C ../reproducible/docker build
 
 make-gui-for-release: $(RELEASE_DIR)/coyim$(PLATFORM) $(RELEASE_DIR)/coyim$(PLATFORM)_checksum
 
-make-gui-for-release-linux: build-linux $(RELEASE_DIR)
+make-gui-for-release-linux: build-linux-reproducible $(RELEASE_DIR)
 	cp ../bin/coyim $(RELEASE_DIR)/coyim$(PLATFORM)
 	cp ../bin/build_info $(RELEASE_DIR)/build_info$(PLATFORM)
 	openssl dgst -sha256 $(RELEASE_DIR)/coyim$(PLATFORM) >> $(RELEASE_DIR)/coyim$(PLATFORM)_checksum

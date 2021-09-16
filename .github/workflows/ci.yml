@@ -410,14 +410,14 @@ jobs:
           script-file: build/windows/installer_definition.nsi
           arguments: "/V3 /NOCD /DVERSION=${{ steps.current_tag.outputs.VERSION }}"
       - name: Create checksum for installer file
-        run: openssl dgst -sha256 "CoyIM installer.exe" >> "release/CoyIM installer.exe_checksum"
+        run: openssl dgst -sha256 "CoyIM installer.exe" >> "CoyIM installer.exe_checksum"
       - name: Archive installer artifacts
         uses: actions/upload-artifact@v2
         with:
           name: installer-win
           path: |
             CoyIM installer.exe
-            release/CoyIM installer.exe_checksum
+            CoyIM installer.exe_checksum
           retention-days: 5
           if-no-files-found: error
 

@@ -38,7 +38,6 @@ addons:
       - gtk-mac-integration
 #      - graphicsmagick
 #      - imagemagick
-      - node
 
 before_install:
   - "export DISPLAY=:99.0"
@@ -49,9 +48,9 @@ install: make -C ci/ deps
 script:
   - make -C ci/ clean-mac-bundle
   - make build-gui
-  - make -C ci/ mac-bundle
-  - make -C ci/ release-dmg
-  - make -C ci/ release-gui
+  - make -C ci/ make-mac-bundle
+  - make -C ci/ make-dmg
+  - make -C ci/ make-gui-for-release
 
 deploy:
   provider: releases

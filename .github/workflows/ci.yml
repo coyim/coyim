@@ -197,7 +197,7 @@ jobs:
         with:
           go-version: '1.14'
       - name: build release
-        run: make -C ci/ release-gui-linux
+        run: make -C ci/ make-gui-for-release-linux
       - name: Archive build artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -353,7 +353,7 @@ jobs:
       - name: Install Windows deps
         run: make win-ci-deps
       - name: Build release
-        run: make -C ci/ release-gui-win
+        run: make -C ci/ make-gui-for-release-win
       - name: Create zip file
         run: cd release && 7z a -tzip coyim.zip *
       - name: Create checksum for zip-file

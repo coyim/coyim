@@ -167,12 +167,14 @@ func (prv *mucPublicRoomsView) onAccountsUpdated(ca *account) {
 func (prv *mucPublicRoomsView) onNoAccounts() {
 	prv.currentAccount = nil
 
-	prv.disableRoomsView()
-	prv.hideSpinner()
+	doInUIThread(func() {
+		prv.disableRoomsView()
+		prv.hideSpinner()
 
-	prv.roomsModel.Clear()
-	prv.refreshButton.SetSensitive(false)
-	prv.customServiceButton.SetSensitive(false)
+		prv.roomsModel.Clear()
+		prv.refreshButton.SetSensitive(false)
+		prv.customServiceButton.SetSensitive(false)
+	})
 }
 
 func (prv *mucPublicRoomsView) onCancel() {

@@ -80,6 +80,7 @@ func (c *roomViewConversation) initBuilder() {
 	})
 
 	adj := c.chatScrolledWindow.GetVAdjustment()
+	adj.Connect("changed", c.onAdjustmentChanged)
 	adj.Connect("value-changed", c.updateCurrentAdjustmentValue)
 
 	mucStyles.setScrolledWindowStyle(c.chatScrolledWindow)
@@ -585,6 +586,14 @@ func (c *roomViewConversation) sendMessage() {
 func (c *roomViewConversation) onEdgeReached(_ gtki.ScrolledWindow, pos int) {
 	if pos == bottomPositionValue {
 		c.maxAdjustment = c.chatScrolledWindow.GetVAdjustment().GetValue()
+	}
+}
+
+func (c *roomViewConversation) onAdjustmentChanged() {
+	if c.currentAdjustment == c.maxAdjustment {
+		doALittleBitLater(func() {
+			scrollToBottom(c.chatScrolledWindow)
+		})
 	}
 }
 

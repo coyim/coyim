@@ -20,7 +20,7 @@ jobs:
         with:
           path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
       - name: install OS dependencies
-        run: brew install gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info fileicon
+        run: brew install gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info fileicon gtk-mac-integration
       - name: install DMG dependencies
         run: npm install --global appdmg
       - uses: actions/setup-go@v2

@@ -27,16 +27,24 @@ addons:
       - create-dmg
       - fileicon
       - gtk-mac-integration
+      - graphicsmagick
+      - imagemagick
+      - node
 
 before_install:
   - "export DISPLAY=:99.0"
-install: travis_wait make -C ci/ deps
+#  - npm install --global create-dmg
+
+install: make -C ci/ deps
 script:
-  - travis_wait make -C ci/ clean-mac-bundle
-  - travis_wait make build-gui
-  - travis_wait make -C ci/ mac-bundle
-  - travis_wait make -C ci/ release-dmg
-  - travis_wait make -C ci/ release-gui
+  - which create-dmg
+  - find /usr/local/lib/node_modules
+  - ls -alF /usr/local/bin
+  - make -C ci/ clean-mac-bundle
+  - make build-gui
+  - make -C ci/ mac-bundle
+  - make -C ci/ release-dmg
+  - make -C ci/ release-gui
 
 deploy:
   provider: releases

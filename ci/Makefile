@@ -52,7 +52,7 @@ release-dmg:
 #	mv ../release/*.dmg ../release/coyim.dmg
 #	fileicon set ../release/coyim.dmg ../build/osx/mac-bundle/coyim.icns
 #	openssl dgst -sha256 ../release/coyim.dmg >> ../release/coyim.dmg_checksum
-	(cd ../release; zip coyim_installer.zip coyim.dmg)
+#	(cd ../release; zip coyim_installer.zip coyim.dmg)
 	appdmg ../build/osx/dmg-spec.json ../release/coyim-appdmg.dmg
 	(cd ../release; zip coyim_installer_appdmg.zip coyim-appdmg.dmg)
 	cp ../release/coyim-appdmg.dmg ../release/coyim-appdmg2.dmg

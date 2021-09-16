@@ -33,7 +33,7 @@ addons:
       - adwaita-icon-theme
       - hicolor-icon-theme
       - shared-mime-info
-      - create-dmg
+#      - create-dmg
       - fileicon
       - gtk-mac-integration
       - graphicsmagick

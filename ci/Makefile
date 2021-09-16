@@ -45,7 +45,11 @@ mac-bundle:
 
 release-dmg:
 	mkdir -p ../release
-	$(AS_CREATE_DMG) --sandbox-safe --volname "CoyIM Installer" --volicon ../build/osx/mac-bundle/coyim.icns --window-pos 200 120 --window-size 800 400 --icon-size 100 --hide-extension "CoyIM.app" --app-drop-link 600 185 ../release/coyim.dmg ../bin/mac-bundle/CoyIM.app
+#	$(AS_CREATE_DMG) --sandbox-safe --volname "CoyIM Installer" --volicon ../build/osx/mac-bundle/coyim.icns --window-pos 200 120 --window-size 800 400 --icon-size 100 --hide-extension "CoyIM.app" --app-drop-link 600 185 ../release/coyim.dmg ../bin/mac-bundle/CoyIM.app
+	create-dmg --help
+	create-dmg --dmg-title="CoyIM Installer" ../bin/mac-bundle/CoyIM.app ../release
+	ls -alF ../release
+	mv ../release/*.dmg ../release/coyim.dmg
 	fileicon set ../release/coyim.dmg ../build/osx/mac-bundle/coyim.icns
 	openssl dgst -sha256 ../release/coyim.dmg >> ../release/coyim.dmg_checksum
 

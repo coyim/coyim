@@ -356,11 +356,15 @@ jobs:
         run: make -C ci/ release-gui-win
       - name: Create zip file
         run: cd release && 7z a -tzip coyim.zip *
+      - name: Create checksum for zip-file
+        run: openssl dgst -sha256 release/coyim.zip >> release/coyim.zip_checksum
       - name: Archive build artifacts
         uses: actions/upload-artifact@v2
         with:
           name: dist-win
-          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}/release/coyim.zip
+          path: |
+            ${{ env.GOPATH }}/src/github.com/${{ github.repository }}/release/coyim.zip
+            ${{ env.GOPATH }}/src/github.com/${{ github.repository }}/release/coyim.zip_checksum
           retention-days: 5
           if-no-files-found: error
 
@@ -405,11 +409,15 @@ jobs:
         with:
           script-file: build/windows/installer_definition.nsi
           arguments: "/V3 /NOCD /DVERSION=${{ steps.current_tag.outputs.VERSION }}"
+      - name: Create checksum for installer file
+        run: openssl dgst -sha256 "CoyIM installer.exe" >> "release/CoyIM installer.exe_checksum"
       - name: Archive installer artifacts
         uses: actions/upload-artifact@v2
         with:
           name: installer-win
-          path: "CoyIM installer.exe"
+          path: |
+            CoyIM installer.exe
+            release/CoyIM installer.exe_checksum
           retention-days: 5
           if-no-files-found: error
 
@@ -464,7 +472,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-release-from-tag.outputs.upload-url }}
-          asset_path: dist-linux/checksum
+          asset_path: dist-linux/coyim_linux_amd64_checksum
           asset_name: coyim_linux_amd64_checksum
           asset_content_type: text/plain
 
@@ -487,6 +495,15 @@ jobs:
           asset_path: dist-win/coyim.zip
           asset_name: "CoyIM (Windows).zip"
           asset_content_type: application/zip
+      - name: Upload Windows zip checksum
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release-from-tag.outputs.upload-url }}
+          asset_path: dist-win/coyim.zip_checksum
+          asset_name: "CoyIM (Windows).zip_checksum"
+          asset_content_type: text/plain
       - name: Upload Windows Installer
         uses: actions/upload-release-asset@v1
         env:
@@ -496,6 +513,15 @@ jobs:
           asset_path: "installer-win/CoyIM installer.exe"
           asset_name: "CoyIM Installer.exe"
           asset_content_type: application/octet-stream
+      - name: Upload Windows Installer checksum
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release-from-tag.outputs.upload-url }}
+          asset_path: "installer-win/CoyIM installer.exe_checksum"
+          asset_name: "CoyIM Installer.exe_checksum"
+          asset_content_type: text/plain
 
   # upload-release-osx:
   #   name: Upload release (OS X)

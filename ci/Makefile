@@ -47,7 +47,7 @@ release-dmg:
 	mkdir -p ../release
 	$(AS_CREATE_DMG) --sandbox-safe --volname "CoyIM Installer" --volicon ../build/osx/mac-bundle/coyim.icns --window-pos 200 120 --window-size 800 400 --icon-size 100 --hide-extension "CoyIM.app" --app-drop-link 600 185 ../release/coyim.dmg ../bin/mac-bundle/CoyIM.app
 	fileicon set ../release/coyim.dmg ../build/osx/mac-bundle/coyim.icns
-	openssl dgst -sha256 ../release/coyim.dmg >> ../release/checksum
+	openssl dgst -sha256 ../release/coyim.dmg >> ../release/coyim.dmg_checksum
 
 ../bin/coyim:
 	make -C ../ build-gui
@@ -59,13 +59,13 @@ build-linux:
 release-gui: ../bin/coyim
 	mkdir -p ../release
 	cp ../bin/coyim ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH)
-	openssl dgst -sha256 ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH) >> ../release/checksum
+	openssl dgst -sha256 ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH) >> ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH)_checksum
 
 release-gui-linux: build-linux
 	mkdir -p ../release
 	cp ../bin/coyim ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH)
 	cp ../bin/build_info ../release/build_info_$(shell go env GOOS)_$(shell go env GOARCH)
-	openssl dgst -sha256 ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH) >> ../release/checksum
+	openssl dgst -sha256 ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH) >> ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH)_checksum
 
 ../bin/coyim.exe:
 	make -C ../ build-gui-win
@@ -74,4 +74,4 @@ release-gui-win: ../bin/coyim.exe
 	mkdir -p ../release
 	cp ../build/windows/toast.exe ../release/toast.exe
 	cp ../bin/coyim.exe ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH).exe
-	openssl dgst -sha256 ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH).exe >> ../release/checksum
+	openssl dgst -sha256 ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH).exe >> ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH).exe_checksum

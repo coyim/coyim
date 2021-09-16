@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"math/big"
 	"time"
 
 	"github.com/coyim/coyim/coylog"
@@ -590,7 +591,7 @@ func (c *roomViewConversation) onEdgeReached(_ gtki.ScrolledWindow, pos int) {
 }
 
 func (c *roomViewConversation) onAdjustmentChanged() {
-	if c.currentAdjustment == c.maxAdjustment {
+	if big.NewFloat(c.currentAdjustment).Cmp(big.NewFloat(c.maxAdjustment)) == 0 {
 		doALittleBitLater(func() {
 			scrollToBottom(c.chatScrolledWindow)
 		})

@@ -12,6 +12,13 @@ var proxyTypes = [][]string{
 	[]string{"socks5+unix", "SOCKS5 Unix Domain"},
 }
 
+func init() {
+	// Force translation of these strings
+	_ = i18n.Local("Automatic Tor")
+	_ = i18n.Local("SOCKS5")
+	_ = i18n.Local("SOCKS5 Unix Domain")
+}
+
 // findProxyTypeFor returns the index of the proxy type given
 func findProxyTypeFor(s string) int {
 	for ix, px := range proxyTypes {

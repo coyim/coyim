@@ -94,9 +94,7 @@ func (dm *DelayedMessages) isMessageNewerOrAtSameTimeAsMessagesInHistory(timesta
 
 func (dm *DelayedMessages) addMessage(nickname, message string, timestamp time.Time, messageType MessageType) {
 	dm.messages = append(dm.messages, NewDelayedMessage(nickname, message, timestamp, messageType))
-	if messageType == Chat {
-		dm.lastChatMessageTimestamp = timestamp
-	}
+	dm.lastChatMessageTimestamp = timestamp
 }
 
 // DiscussionHistory contains the discussion history of the room

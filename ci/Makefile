@@ -58,6 +58,7 @@ $(RELEASE_DIR)/coyim.dmg: $(RELEASE_DIR)
 
 $(RELEASE_DIR)/coyim.dmg.zip: $(RELEASE_DIR)/coyim.dmg
 	zip -r -v $@ $(RELEASE_DIR)/coyim.dmg .DS_Store __MACOSX
+	fileicon set $@ $(MAC_BUNDLE_DEF)/coyim.icns
 
 make-dmg: $(RELEASE_DIR)/coyim.dmg $(RELEASE_DIR)/coyim.dmg_checksum $(RELEASE_DIR)/coyim.dmg.zip
 	ls -alF $(RELEASE_DIR)

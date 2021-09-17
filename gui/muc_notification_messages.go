@@ -1213,7 +1213,7 @@ func getSelfAffiliationRoleUpateForAffiliationRemovedWithActor(selfAffiliationRo
 		return i18n.Localf("The administrator $nickname{%s} changed your position; you are not $affiliation{an owner} anymore.",
 			selfAffiliationRoleUpdate.Actor.Nickname)
 	case selfAffiliationRoleUpdate.Actor.Affiliation.IsAdmin() && selfAffiliationRoleUpdate.PreviousAffiliation.IsAdmin():
-		return i18n.Localf("The administrator$nickname{%s} changed your position; you are not $affiliation{an administrator} anymore.",
+		return i18n.Localf("The administrator $nickname{%s} changed your position; you are not $affiliation{an administrator} anymore.",
 			selfAffiliationRoleUpdate.Actor.Nickname)
 	case selfAffiliationRoleUpdate.Actor.Affiliation.IsAdmin() && selfAffiliationRoleUpdate.PreviousAffiliation.IsMember():
 		return i18n.Localf("The administrator $nickname{%s} changed your position; you are not $affiliation{a member} anymore.",

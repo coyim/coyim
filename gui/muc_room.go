@@ -601,8 +601,7 @@ func (v *roomView) finishJoinRequestWithError(err error) {
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
 
-		// TODO: This will change to something more proper in this case.
-		// For now, we assume that we are in the lobby when joining the room.
+		v.switchToLobbyView()
 		v.lobby.onJoinFailed(err)
 	})
 }

@@ -721,7 +721,7 @@ func (v *roomView) handleDiscoInfoTimeout() {
 
 // onReconnectingRoomInfoReceived MUST be called from the UI thread
 func (v *roomView) onReconnectingRoomInfoReceived(di data.RoomDiscoInfo) {
-	v.lobby.clearConflictedNicknamesList()
+	v.lobby.clearNicknameConflictList()
 
 	v.notifications.removeAll(v.connectingNotifications...)
 	v.notifications.info(

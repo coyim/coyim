@@ -180,3 +180,7 @@ func (l *roomViewLobby) onJoinFailed(err error) {
 
 	setFieldSensitive(l.joinButton, shouldEnableJoin)
 }
+
+func (l *roomViewLobby) clearConflictedNicknamesList() {
+	l.nicknamesWithConflict = set.New()
+}

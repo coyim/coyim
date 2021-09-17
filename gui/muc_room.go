@@ -731,7 +731,11 @@ func (v *roomView) onReconnectingRoomInfoReceived(di data.RoomDiscoInfo) {
 			closeable: true,
 		})
 
-	go v.sendJoinRoomRequest(v.room.SelfOccupantNickname(), "", func() { v.enableRoomView() })
+	password := ""
+	if di.PasswordProtected {
+		password = v.passwordProvider()
+	}
+	go v.sendJoinRoomRequest(v.room.SelfOccupantNickname(), password, func() { v.enableRoomView() })
 }
 
 // onReconnectingRoomInfoTimeout MUST be called from the UI thread

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-16 20:23+0000\n"
+"POT-Creation-Date: 2021-09-17 22:58+0000\n"
 "PO-Revision-Date: 2021-09-15 17:26+0000\n"
 "Last-Translator: Ola Bini <ola@autonomia.digital>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/coyim/main/sv/>\n"
@@ -3043,13 +3043,14 @@ msgstr ""
 "$affiliation{en ägare längre} anymore."
 
 #: ../gui/muc_notification_messages.go:1216
+#: ../gui/muc_notification_messages.go:1440
 #, python-format
 msgid ""
-"The administrator$nickname{%s} changed your position; you are not "
+"The administrator $nickname{%s} changed your position; you are not "
 "$affiliation{an administrator} anymore."
 msgstr ""
-"Administratören $nickname{%s} ändrade din ställning; du är inte "
-"$affiliation{en administratör} längre."
+"Administratören $nickname{%s} ändrade din ställning; du är inte längre "
+"$affiliation{en administratör}."
 
 #: ../gui/muc_notification_messages.go:1219
 #: ../gui/muc_notification_messages.go:1443
@@ -3381,15 +3382,6 @@ msgid ""
 "The owner $nickname{%s} changed your position; you are not banned anymore."
 msgstr ""
 "Ägaren $nickname{%s} ändrade din ställning; du är inte längre bannlyst."
-
-#: ../gui/muc_notification_messages.go:1440
-#, python-format
-msgid ""
-"The administrator $nickname{%s} changed your position; you are not "
-"$affiliation{an administrator} anymore."
-msgstr ""
-"Administratören $nickname{%s} ändrade din ställning; du är inte längre "
-"$affiliation{en administratör}."
 
 #: ../gui/muc_notification_messages.go:1446
 #, python-format
@@ -3973,7 +3965,7 @@ msgstr ""
 "Laddning av rumsinformation tog längre än vanligt - det är möjligt att "
 "anslutningen till servern har tappats. Vill du försöka igen?"
 
-#: ../gui/muc_room.go:208 ../gui/muc_room.go:747
+#: ../gui/muc_room.go:208 ../gui/muc_room.go:752
 msgid "Yes, try again"
 msgstr "Ja, försök igen"
 
@@ -4008,11 +4000,11 @@ msgstr "Rumsämnet har ändrats."
 msgid "Return"
 msgstr "Gå tillbaka"
 
-#: ../gui/muc_room.go:728
+#: ../gui/muc_room.go:729
 msgid "Your connection has been restored; you can join this room again."
 msgstr "Din anslutning har blivit återställd; du kan gå in i rummet igen."
 
-#: ../gui/muc_room.go:740
+#: ../gui/muc_room.go:745
 msgid ""
 "Your connection was recovered but loading the room information took longer "
 "than usual, perhaps the connection to the server was lost. Do you want to "
@@ -4022,17 +4014,17 @@ msgstr ""
 "längre än vanligt. Det är möjligt att anslutningen till servern har tappts. "
 "Vill du försöka igen?"
 
-#: ../gui/muc_room.go:753
+#: ../gui/muc_room.go:758
 msgid "Trying to connect to the room..."
 msgstr "Försöker ansluta till rummet..."
 
-#: ../gui/muc_room.go:795
+#: ../gui/muc_room.go:800
 msgid ""
 "The connection to the server has been lost, please verify your connection."
 msgstr ""
 "Anslutningen till servern har tappats, var god kontrollera din uppkoppling."
 
-#: ../gui/muc_room.go:807
+#: ../gui/muc_room.go:812
 msgid "Connecting to the room..."
 msgstr "Ansluter till rummet..."
 
@@ -4326,42 +4318,54 @@ msgstr "Du måste ange ett rumsnamn."
 msgid "You must provide a valid service and room name."
 msgstr "Du måste ange ett giltigt tjänstnamn och rumsnamn."
 
-#: ../gui/muc_public_rooms.go:344
+#: ../gui/proxy_edit.go:17
+msgid "Automatic Tor"
+msgstr ""
+
+#: ../gui/proxy_edit.go:18
+msgid "SOCKS5"
+msgstr ""
+
+#: ../gui/proxy_edit.go:19
+msgid "SOCKS5 Unix Domain"
+msgstr ""
+
+#: ../gui/muc_public_rooms.go:346
 msgid "That service doesn't seem to exist."
 msgstr "Tjänsten du angav verkar inte existera."
 
-#: ../gui/muc_public_rooms.go:346
+#: ../gui/muc_public_rooms.go:348
 msgid "Your XMPP server doesn't seem to have any chat room services."
 msgstr "Din XMPP-server verkar inte ha några tjänster för chattrum."
 
-#: ../gui/muc_public_rooms.go:430
+#: ../gui/muc_public_rooms.go:432
 msgid "Something went wrong when trying to get chat rooms."
 msgstr "Något gick fel när vi försökte hämta chattrum."
 
-#: ../gui/muc_public_rooms.go:506
+#: ../gui/muc_public_rooms.go:508
 msgid "An unknown error occurred, please try again."
 msgstr "Ett okänt fel uppstod, var god försök igen."
 
-#: ../gui/muc_public_rooms.go:510
+#: ../gui/muc_public_rooms.go:512
 msgid "We can't determine what has been selected, please try again."
 msgstr "Vi kan inte avgöra vad som blivit valt - var god försöka igen."
 
-#: ../gui/muc_public_rooms.go:512
+#: ../gui/muc_public_rooms.go:514
 msgid ""
 "The selected item is not a room, select one room from the list to join to."
 msgstr ""
 "Den valda artikeln är inte ett rum, var god välj ett rum från listan att gå "
 "in i."
 
-#: ../gui/muc_public_rooms.go:514
+#: ../gui/muc_public_rooms.go:516
 msgid "Please, select one room from the list to join to."
 msgstr "Var god välj ett rum från listan att gå in i."
 
-#: ../gui/muc_public_rooms.go:516
+#: ../gui/muc_public_rooms.go:518
 msgid "We can't determine which service has been selected, please try again."
 msgstr "Vi kan inte avgöra vilken tjänst som valts - var god försöka igen."
 
-#: ../gui/muc_public_rooms.go:537
+#: ../gui/muc_public_rooms.go:539
 msgid "No account was selected, please select one account from the list."
 msgstr "Inget konto valdes, var god välj ett konto från listan."
 
@@ -5862,6 +5866,13 @@ msgstr "Kontrollerar lösenord..."
 #: ../gui/muc_room_close_confirm.go:57
 msgid "Close & Leave Room"
 msgstr "Stäng & lämna rummet"
+
+#~ msgid ""
+#~ "The administrator$nickname{%s} changed your position; you are not "
+#~ "$affiliation{an administrator} anymore."
+#~ msgstr ""
+#~ "Administratören $nickname{%s} ändrade din ställning; du är inte "
+#~ "$affiliation{en administratör} längre."
 
 #~ msgid "Configure your master password"
 #~ msgstr "Ställ in ditt huvudlösenord"

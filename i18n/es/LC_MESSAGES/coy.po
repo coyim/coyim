@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-16 20:23+0000\n"
-"PO-Revision-Date: 2021-09-16 20:20+0000\n"
+"POT-Creation-Date: 2021-09-17 22:58+0000\n"
+"PO-Revision-Date: 2021-09-17 22:53+0000\n"
 "Last-Translator: sara-la-loca-de-los-gatos <sara@autonomia.digital>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/coyim/main/es/>\n"
 "Language: es\n"
@@ -1790,7 +1790,7 @@ msgstr ""
 msgid ""
 "The role of $nickname{%s} was changed from $role{visitor} to "
 "$role{moderator}."
-msgstr "El rol de {%s} cambió de $role{visitante} a $role{moderador}."
+msgstr "El rol de $nickname{%s} cambió de $role{visitante} a $role{moderador}."
 
 #: ../gui/muc_notification_messages.go:82
 #, python-format
@@ -3031,9 +3031,10 @@ msgstr ""
 "$affiliation{un propietario}."
 
 #: ../gui/muc_notification_messages.go:1216
+#: ../gui/muc_notification_messages.go:1440
 #, python-format
 msgid ""
-"The administrator$nickname{%s} changed your position; you are not "
+"The administrator $nickname{%s} changed your position; you are not "
 "$affiliation{an administrator} anymore."
 msgstr ""
 "El administrador $nickname{%s} cambió tu posición; ya no eres "
@@ -3374,15 +3375,6 @@ msgid ""
 "The owner $nickname{%s} changed your position; you are not banned anymore."
 msgstr ""
 "El propietario $nickname{%s} cambió tu posición; ya no estás bloqueado."
-
-#: ../gui/muc_notification_messages.go:1440
-#, python-format
-msgid ""
-"The administrator $nickname{%s} changed your position; you are not "
-"$affiliation{an administrator} anymore."
-msgstr ""
-"El administrador $nickname{%s} cambió tu posición; ya no eres "
-"$affiliation{un administrador}."
 
 #: ../gui/muc_notification_messages.go:1446
 #, python-format
@@ -3977,7 +3969,7 @@ msgstr ""
 "La carga de la información de la sala tardó más de lo habitual, quizás se "
 "perdió la conexión con el servidor. ¿Quieres intentarlo de nuevo?"
 
-#: ../gui/muc_room.go:208 ../gui/muc_room.go:747
+#: ../gui/muc_room.go:208 ../gui/muc_room.go:752
 msgid "Yes, try again"
 msgstr "Sí, intentar de nuevo"
 
@@ -4012,12 +4004,12 @@ msgstr "El tema de la sala ha sido actualizado."
 msgid "Return"
 msgstr "Volver"
 
-#: ../gui/muc_room.go:728
+#: ../gui/muc_room.go:729
 msgid "Your connection has been restored; you can join this room again."
 msgstr ""
 "Tu conexión ha sido restaurada; ahora puedes unirte a esta sala de nuevo."
 
-#: ../gui/muc_room.go:740
+#: ../gui/muc_room.go:745
 msgid ""
 "Your connection was recovered but loading the room information took longer "
 "than usual, perhaps the connection to the server was lost. Do you want to "
@@ -4027,17 +4019,17 @@ msgstr ""
 "más de lo habitual, quizás se perdió la conexión con el servidor. ¿Quieres "
 "intentarlo de nuevo?"
 
-#: ../gui/muc_room.go:753
+#: ../gui/muc_room.go:758
 msgid "Trying to connect to the room..."
 msgstr "Tratando de conectarse con la sala..."
 
-#: ../gui/muc_room.go:795
+#: ../gui/muc_room.go:800
 msgid ""
 "The connection to the server has been lost, please verify your connection."
 msgstr ""
 "Se ha perdido la conexión con el servidor, por favor verifica tu conexión."
 
-#: ../gui/muc_room.go:807
+#: ../gui/muc_room.go:812
 msgid "Connecting to the room..."
 msgstr "Conectándose a la sala..."
 
@@ -4224,7 +4216,7 @@ msgid ""
 "\n"
 "You already have an account with this name."
 msgstr ""
-"No se puede importar la sala:\n"
+"No se puede importar la cuenta:\n"
 "\n"
 "Ya tienes una cuenta con ese nombre."
 
@@ -4333,45 +4325,57 @@ msgstr "Debes proveer un nombre para la sala."
 msgid "You must provide a valid service and room name."
 msgstr "Debes proveer un servicio y nombre para la sala válidos."
 
-#: ../gui/muc_public_rooms.go:344
+#: ../gui/proxy_edit.go:17
+msgid "Automatic Tor"
+msgstr ""
+
+#: ../gui/proxy_edit.go:18
+msgid "SOCKS5"
+msgstr ""
+
+#: ../gui/proxy_edit.go:19
+msgid "SOCKS5 Unix Domain"
+msgstr ""
+
+#: ../gui/muc_public_rooms.go:346
 msgid "That service doesn't seem to exist."
 msgstr "Al parecer ese servicio no existe."
 
-#: ../gui/muc_public_rooms.go:346
+#: ../gui/muc_public_rooms.go:348
 msgid "Your XMPP server doesn't seem to have any chat room services."
 msgstr "Al parecer tu servidor XMPP no tiene ningún servicio de salas de chat."
 
-#: ../gui/muc_public_rooms.go:430
+#: ../gui/muc_public_rooms.go:432
 msgid "Something went wrong when trying to get chat rooms."
 msgstr "Algo salió mal al intentar cargar las salas de chat."
 
-#: ../gui/muc_public_rooms.go:506
+#: ../gui/muc_public_rooms.go:508
 msgid "An unknown error occurred, please try again."
 msgstr "Ocurrió un error desconocido, por favor inténtalo de nuevo."
 
-#: ../gui/muc_public_rooms.go:510
+#: ../gui/muc_public_rooms.go:512
 msgid "We can't determine what has been selected, please try again."
 msgstr ""
 "No podemos determinar lo que ha sido seleccionado, por favor inténtalo de "
 "nuevo."
 
-#: ../gui/muc_public_rooms.go:512
+#: ../gui/muc_public_rooms.go:514
 msgid ""
 "The selected item is not a room, select one room from the list to join to."
 msgstr ""
 "El ítem seleccionado no es una sala, selecciona una de la lista para unirte."
 
-#: ../gui/muc_public_rooms.go:514
+#: ../gui/muc_public_rooms.go:516
 msgid "Please, select one room from the list to join to."
 msgstr "Por favor, selecciona una sala de la lista para unirte."
 
-#: ../gui/muc_public_rooms.go:516
+#: ../gui/muc_public_rooms.go:518
 msgid "We can't determine which service has been selected, please try again."
 msgstr ""
 "No podemos determinar qué servicio ha sido seleccionado, por favor inténtalo "
 "de nuevo."
 
-#: ../gui/muc_public_rooms.go:537
+#: ../gui/muc_public_rooms.go:539
 msgid "No account was selected, please select one account from the list."
 msgstr ""
 "Ninguna cuenta ha sido seleccionada, por favor selecciona una de la lista."
@@ -5886,6 +5890,13 @@ msgstr "Verificando contraseña..."
 #: ../gui/muc_room_close_confirm.go:57
 msgid "Close & Leave Room"
 msgstr "Cerrar & salir de la sala"
+
+#~ msgid ""
+#~ "The administrator$nickname{%s} changed your position; you are not "
+#~ "$affiliation{an administrator} anymore."
+#~ msgstr ""
+#~ "El administrador $nickname{%s} cambió tu posición; ya no eres "
+#~ "$affiliation{un administrador}."
 
 #~ msgid "Configure your master password"
 #~ msgstr "Configura tu contraseña principal"

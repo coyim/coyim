@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-16 20:23+0000\n"
+"POT-Creation-Date: 2021-09-17 22:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2674,9 +2674,10 @@ msgid ""
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:1216
+#: ../gui/muc_notification_messages.go:1440
 #, python-format
 msgid ""
-"The administrator$nickname{%s} changed your position; you are not "
+"The administrator $nickname{%s} changed your position; you are not "
 "$affiliation{an administrator} anymore."
 msgstr ""
 
@@ -2954,13 +2955,6 @@ msgstr ""
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your position; you are not banned anymore."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:1440
-#, python-format
-msgid ""
-"The administrator $nickname{%s} changed your position; you are not "
-"$affiliation{an administrator} anymore."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:1446
@@ -3470,7 +3464,7 @@ msgid ""
 "to the server was lost. Do you want to try again?"
 msgstr ""
 
-#: ../gui/muc_room.go:208 ../gui/muc_room.go:747
+#: ../gui/muc_room.go:208 ../gui/muc_room.go:752
 msgid "Yes, try again"
 msgstr ""
 
@@ -3501,27 +3495,27 @@ msgstr ""
 msgid "Return"
 msgstr ""
 
-#: ../gui/muc_room.go:728
+#: ../gui/muc_room.go:729
 msgid "Your connection has been restored; you can join this room again."
 msgstr ""
 
-#: ../gui/muc_room.go:740
+#: ../gui/muc_room.go:745
 msgid ""
 "Your connection was recovered but loading the room information took longer "
 "than usual, perhaps the connection to the server was lost. Do you want to "
 "try again?"
 msgstr ""
 
-#: ../gui/muc_room.go:753
+#: ../gui/muc_room.go:758
 msgid "Trying to connect to the room..."
 msgstr ""
 
-#: ../gui/muc_room.go:795
+#: ../gui/muc_room.go:800
 msgid ""
 "The connection to the server has been lost, please verify your connection."
 msgstr ""
 
-#: ../gui/muc_room.go:807
+#: ../gui/muc_room.go:812
 msgid "Connecting to the room..."
 msgstr ""
 
@@ -3800,40 +3794,52 @@ msgstr ""
 msgid "You must provide a valid service and room name."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:344
-msgid "That service doesn't seem to exist."
+#: ../gui/proxy_edit.go:17
+msgid "Automatic Tor"
+msgstr ""
+
+#: ../gui/proxy_edit.go:18
+msgid "SOCKS5"
+msgstr ""
+
+#: ../gui/proxy_edit.go:19
+msgid "SOCKS5 Unix Domain"
 msgstr ""
 
 #: ../gui/muc_public_rooms.go:346
+msgid "That service doesn't seem to exist."
+msgstr ""
+
+#: ../gui/muc_public_rooms.go:348
 msgid "Your XMPP server doesn't seem to have any chat room services."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:430
+#: ../gui/muc_public_rooms.go:432
 msgid "Something went wrong when trying to get chat rooms."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:506
+#: ../gui/muc_public_rooms.go:508
 msgid "An unknown error occurred, please try again."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:510
+#: ../gui/muc_public_rooms.go:512
 msgid "We can't determine what has been selected, please try again."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:512
+#: ../gui/muc_public_rooms.go:514
 msgid ""
 "The selected item is not a room, select one room from the list to join to."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:514
+#: ../gui/muc_public_rooms.go:516
 msgid "Please, select one room from the list to join to."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:516
+#: ../gui/muc_public_rooms.go:518
 msgid "We can't determine which service has been selected, please try again."
 msgstr ""
 
-#: ../gui/muc_public_rooms.go:537
+#: ../gui/muc_public_rooms.go:539
 msgid "No account was selected, please select one account from the list."
 msgstr ""
 

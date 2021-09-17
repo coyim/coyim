@@ -730,8 +730,8 @@ func (v *roomView) onReconnectingRoomInfoReceived(di data.RoomDiscoInfo) {
 			showTime:  true,
 			closeable: true,
 		})
-	v.enableRoomView()
-	v.switchToLobbyView()
+
+	go v.sendJoinRoomRequest(v.room.SelfOccupantNickname(), "", func() { v.enableRoomView() })
 }
 
 // onReconnectingRoomInfoTimeout MUST be called from the UI thread

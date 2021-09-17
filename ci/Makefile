@@ -48,13 +48,16 @@ $(MAC_BUNDLE_OUT)/CoyIM.app:
 	cd .. && build/osx/build-bundle bin/mac-bundle/CoyIM.app
 
 make-mac-bundle: $(MAC_BUNDLE_OUT)/CoyIM.app
+	ls -alF $(MAC_BUNDLE_OUT)
 #	make -C ../ build-gui
 
 $(RELEASE_DIR)/coyim.dmg: $(RELEASE_DIR)
 	appdmg $(BUILD_MAC)/dmg-spec.json $@
 	fileicon set $@ $(MAC_BUNDLE_DEF)/coyim.icns
+	ls -alF $(RELEASE_DIR)
 
 make-dmg: $(RELEASE_DIR)/coyim.dmg $(RELEASE_DIR)/coyim.dmg_checksum
+	ls -alF $(RELEASE_DIR)
 
 ../bin/coyim:
 	make -C ../ build-gui

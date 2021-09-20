@@ -84,6 +84,15 @@ func (s *MucSuite) Test_Room_Publish(c *C) {
 	c.Assert(called2, Equals, true)
 }
 
+func (s *MucSuite) Test_Room_Password(c *C) {
+	r := NewRoom(jid.ParseBare("foo@bar.com"))
+
+	c.Assert(r.Password(), Equals, "")
+
+	r.UpdatePassword("newpwd")
+	c.Assert(r.Password(), Equals, "newpwd")
+}
+
 func (s *MucSuite) Test_Room_History(c *C) {
 	r := NewRoom(jid.ParseBare("foo@bar.com"))
 

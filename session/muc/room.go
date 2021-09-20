@@ -15,6 +15,7 @@ import (
 type Room struct {
 	ID jid.Bare
 
+	password      string
 	subject       string
 	subjectIsNew  bool
 	subjectLocker sync.Mutex
@@ -105,6 +106,16 @@ func (r *Room) UpdateSubject(s string) bool {
 	r.subjectIsNew = false
 
 	return isUpdated
+}
+
+// Password returns the room password
+func (r *Room) Password() string {
+	return r.password
+}
+
+// UpdatePassword updates the room password
+func (r *Room) UpdatePassword(password string) {
+	r.password = password
 }
 
 // GetDiscussionHistory returns the room history

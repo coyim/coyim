@@ -131,6 +131,9 @@ func (v *roomView) initRoomViewComponents() {
 	v.lobby = v.newRoomViewLobby()
 	v.main = v.newRoomMainView()
 
+	v.window.content.PackStart(v.lobby.content, true, true, 0)
+	v.window.content.PackStart(v.main.content, true, true, 0)
+
 	v.window.notificationsArea.Add(v.notifications.notificationsBox())
 	v.window.privacyWarningBox.Add(v.warningsInfoBar.view())
 	v.window.overlay.AddOverlay(v.loadingViewOverlay.view())
@@ -561,25 +564,21 @@ func (v *roomView) switchToMainView() {
 
 // showLobbyView MUST be called from the UI thread
 func (v *roomView) showLobbyView() {
-	v.window.addContentWidget(v.lobby.content)
 	v.lobby.content.Show()
 }
 
 // hideLobbyView MUST be called from the UI thread
 func (v *roomView) hideLobbyView() {
-	v.window.removeContentWidget(v.lobby.content)
 	v.lobby.content.Hide()
 }
 
 // showMainView MUST be called from the UI thread
 func (v *roomView) showMainView() {
-	v.window.addContentWidget(v.main.content)
 	v.main.content.Show()
 }
 
 // hideMainView MUST be called from the UI thread
 func (v *roomView) hideMainView() {
-	v.window.removeContentWidget(v.main.content)
 	v.main.content.Hide()
 }
 

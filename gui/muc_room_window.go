@@ -66,17 +66,6 @@ func (vw *roomViewWindow) onNoNotifications() {
 	vw.notificationsArea.SetRevealChild(false)
 }
 
-// addContent MUST be called from the UI thread
-func (vw *roomViewWindow) addContentWidget(c gtki.Widget) {
-	vw.content.Remove(c)
-	vw.content.Add(c)
-}
-
-// removeContentWidget MUST be called from the UI thread
-func (vw *roomViewWindow) removeContentWidget(c gtki.Widget) {
-	vw.content.Remove(c)
-}
-
 // present MUST be called from the UI thread
 func (vw *roomViewWindow) present() {
 	vw.window.Present()

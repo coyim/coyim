@@ -585,6 +585,8 @@ func (v *roomView) hideMainView() {
 
 // sendJoinRoomRequest MUST NOT be called from the UI thread
 func (v *roomView) sendJoinRoomRequest(nickname, password string, doAfterRequestSent func()) {
+	v.room.UpdatePassword(password)
+
 	err := v.account.session.JoinRoom(v.roomID(), nickname, password)
 	if err != nil {
 		v.finishJoinRequestWithError(err)
@@ -733,7 +735,7 @@ func (v *roomView) onReconnectingRoomInfoReceived(di data.RoomDiscoInfo) {
 
 	password := ""
 	if di.PasswordProtected {
-		password = v.passwordProvider()
+		password = v.room.Password()
 	}
 	go v.sendJoinRoomRequest(v.room.SelfOccupantNickname(), password, func() { v.enableRoomView() })
 }

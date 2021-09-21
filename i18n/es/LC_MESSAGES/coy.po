@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-17 22:58+0000\n"
-"PO-Revision-Date: 2021-09-17 22:53+0000\n"
+"POT-Creation-Date: 2021-09-21 16:46+0000\n"
+"PO-Revision-Date: 2021-09-21 16:33+0000\n"
 "Last-Translator: sara-la-loca-de-los-gatos <sara@autonomia.digital>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/coyim/main/es/>\n"
 "Language: es\n"
@@ -42,7 +42,7 @@ msgstr "Detalles de la cuenta"
 #: ../gui/definitions/MUCRoomToolbar.xml:364
 #: ../gui/definitions/PeerDetails.xml:191
 #: ../gui/definitions/RegistrationForm.xml:35
-#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:542
+#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:545
 #: ../gui/file_transfer_notification.go:125
 #: ../gui/file_transfer_notification.go:401
 msgid "Cancel"
@@ -690,7 +690,7 @@ msgstr "Ruta:"
 
 #: ../gui/definitions/FeedbackInfo.xml:12
 msgid "Are you liking it?"
-msgstr "Te está gustando?"
+msgstr "Estás disfrutando CoyIM?"
 
 #: ../gui/definitions/FeedbackInfo.xml:22 ../gui/definitions/Main.xml:164
 msgid "Feedback"
@@ -3961,7 +3961,7 @@ msgstr "%d cuenta(s)"
 msgid "No accounts"
 msgstr "NInguna cuenta"
 
-#: ../gui/muc_room.go:205
+#: ../gui/muc_room.go:208
 msgid ""
 "Loading the room information took longer than usual, perhaps the connection "
 "to the server was lost. Do you want to try again?"
@@ -3969,18 +3969,18 @@ msgstr ""
 "La carga de la información de la sala tardó más de lo habitual, quizás se "
 "perdió la conexión con el servidor. ¿Quieres intentarlo de nuevo?"
 
-#: ../gui/muc_room.go:208 ../gui/muc_room.go:752
+#: ../gui/muc_room.go:211 ../gui/muc_room.go:753
 msgid "Yes, try again"
 msgstr "Sí, intentar de nuevo"
 
-#: ../gui/muc_room.go:268
+#: ../gui/muc_room.go:271
 msgid ""
 "You have been removed from this room because it's now a members-only room."
 msgstr ""
 "Has sido removido de esta sala porque ahora es una sala exclusiva para "
 "miembros."
 
-#: ../gui/muc_room.go:279
+#: ../gui/muc_room.go:282
 msgid ""
 "You have been removed from this members-only room since you are not "
 "$affiliation{a member} anymore."
@@ -3988,28 +3988,28 @@ msgstr ""
 "Has sido removido de esta sala exclusiva para miembros pues ya no eres "
 "$affiliation{un miembro}."
 
-#: ../gui/muc_room.go:389
+#: ../gui/muc_room.go:392
 msgid "The room has been destroyed"
 msgstr "La sala ha sido destruida"
 
-#: ../gui/muc_room.go:524
+#: ../gui/muc_room.go:527
 msgid "The room subject couldn't be updated."
 msgstr "No se pudo actualizar el tema de la sala."
 
-#: ../gui/muc_room.go:531
+#: ../gui/muc_room.go:534
 msgid "The room subject has been updated."
 msgstr "El tema de la sala ha sido actualizado."
 
-#: ../gui/muc_room.go:544
+#: ../gui/muc_room.go:547
 msgid "Return"
 msgstr "Volver"
 
-#: ../gui/muc_room.go:729
+#: ../gui/muc_room.go:730
 msgid "Your connection has been restored; you can join this room again."
 msgstr ""
 "Tu conexión ha sido restaurada; ahora puedes unirte a esta sala de nuevo."
 
-#: ../gui/muc_room.go:745
+#: ../gui/muc_room.go:746
 msgid ""
 "Your connection was recovered but loading the room information took longer "
 "than usual, perhaps the connection to the server was lost. Do you want to "
@@ -4019,17 +4019,17 @@ msgstr ""
 "más de lo habitual, quizás se perdió la conexión con el servidor. ¿Quieres "
 "intentarlo de nuevo?"
 
-#: ../gui/muc_room.go:758
+#: ../gui/muc_room.go:759
 msgid "Trying to connect to the room..."
 msgstr "Tratando de conectarse con la sala..."
 
-#: ../gui/muc_room.go:800
+#: ../gui/muc_room.go:801
 msgid ""
 "The connection to the server has been lost, please verify your connection."
 msgstr ""
 "Se ha perdido la conexión con el servidor, por favor verifica tu conexión."
 
-#: ../gui/muc_room.go:812
+#: ../gui/muc_room.go:813
 msgid "Connecting to the room..."
 msgstr "Conectándose a la sala..."
 
@@ -4327,15 +4327,15 @@ msgstr "Debes proveer un servicio y nombre para la sala válidos."
 
 #: ../gui/proxy_edit.go:17
 msgid "Automatic Tor"
-msgstr ""
+msgstr "Tor automático"
 
 #: ../gui/proxy_edit.go:18
 msgid "SOCKS5"
-msgstr ""
+msgstr "SOCKS5"
 
 #: ../gui/proxy_edit.go:19
 msgid "SOCKS5 Unix Domain"
-msgstr ""
+msgstr "SOCKS5 Unix Domain"
 
 #: ../gui/muc_public_rooms.go:346
 msgid "That service doesn't seem to exist."
@@ -4536,7 +4536,7 @@ msgstr "Remover todos"
 
 #: ../gui/infobar_component.go:155
 msgid "January 2, 2006 at 15:04:05"
-msgstr "2 de enero, 2006 a las 15:04:05"
+msgstr "2 de January, 2006 a las 15:04:05"
 
 #: ../gui/muc_room_occupant_role.go:133
 #, python-format

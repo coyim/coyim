@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-17 22:58+0000\n"
-"PO-Revision-Date: 2021-09-15 17:26+0000\n"
+"POT-Creation-Date: 2021-09-21 16:46+0000\n"
+"PO-Revision-Date: 2021-09-18 23:37+0000\n"
 "Last-Translator: Ola Bini <ola@autonomia.digital>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/coyim/main/sv/>\n"
 "Language: sv\n"
@@ -42,7 +42,7 @@ msgstr "Kontodetaljer"
 #: ../gui/definitions/MUCRoomToolbar.xml:364
 #: ../gui/definitions/PeerDetails.xml:191
 #: ../gui/definitions/RegistrationForm.xml:35
-#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:542
+#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:545
 #: ../gui/file_transfer_notification.go:125
 #: ../gui/file_transfer_notification.go:401
 msgid "Cancel"
@@ -3957,7 +3957,7 @@ msgstr "%d konton"
 msgid "No accounts"
 msgstr "Inga konton"
 
-#: ../gui/muc_room.go:205
+#: ../gui/muc_room.go:208
 msgid ""
 "Loading the room information took longer than usual, perhaps the connection "
 "to the server was lost. Do you want to try again?"
@@ -3965,18 +3965,18 @@ msgstr ""
 "Laddning av rumsinformation tog längre än vanligt - det är möjligt att "
 "anslutningen till servern har tappats. Vill du försöka igen?"
 
-#: ../gui/muc_room.go:208 ../gui/muc_room.go:752
+#: ../gui/muc_room.go:211 ../gui/muc_room.go:753
 msgid "Yes, try again"
 msgstr "Ja, försök igen"
 
-#: ../gui/muc_room.go:268
+#: ../gui/muc_room.go:271
 msgid ""
 "You have been removed from this room because it's now a members-only room."
 msgstr ""
 "Du har blivit borttagen från rummet eftersom det nu är ett rum för enbart "
 "medlemmar."
 
-#: ../gui/muc_room.go:279
+#: ../gui/muc_room.go:282
 msgid ""
 "You have been removed from this members-only room since you are not "
 "$affiliation{a member} anymore."
@@ -3984,27 +3984,27 @@ msgstr ""
 "Du har blivit borttagen från det här rummet för medlemmar, eftersom du inte "
 "längre är $affiliation{en medlem}."
 
-#: ../gui/muc_room.go:389
+#: ../gui/muc_room.go:392
 msgid "The room has been destroyed"
 msgstr "Rummet har blivit förstört"
 
-#: ../gui/muc_room.go:524
+#: ../gui/muc_room.go:527
 msgid "The room subject couldn't be updated."
 msgstr "Rumsämnet kunde inte ändras."
 
-#: ../gui/muc_room.go:531
+#: ../gui/muc_room.go:534
 msgid "The room subject has been updated."
 msgstr "Rumsämnet har ändrats."
 
-#: ../gui/muc_room.go:544
+#: ../gui/muc_room.go:547
 msgid "Return"
 msgstr "Gå tillbaka"
 
-#: ../gui/muc_room.go:729
+#: ../gui/muc_room.go:730
 msgid "Your connection has been restored; you can join this room again."
 msgstr "Din anslutning har blivit återställd; du kan gå in i rummet igen."
 
-#: ../gui/muc_room.go:745
+#: ../gui/muc_room.go:746
 msgid ""
 "Your connection was recovered but loading the room information took longer "
 "than usual, perhaps the connection to the server was lost. Do you want to "
@@ -4014,17 +4014,17 @@ msgstr ""
 "längre än vanligt. Det är möjligt att anslutningen till servern har tappts. "
 "Vill du försöka igen?"
 
-#: ../gui/muc_room.go:758
+#: ../gui/muc_room.go:759
 msgid "Trying to connect to the room..."
 msgstr "Försöker ansluta till rummet..."
 
-#: ../gui/muc_room.go:800
+#: ../gui/muc_room.go:801
 msgid ""
 "The connection to the server has been lost, please verify your connection."
 msgstr ""
 "Anslutningen till servern har tappats, var god kontrollera din uppkoppling."
 
-#: ../gui/muc_room.go:812
+#: ../gui/muc_room.go:813
 msgid "Connecting to the room..."
 msgstr "Ansluter till rummet..."
 
@@ -4320,15 +4320,15 @@ msgstr "Du måste ange ett giltigt tjänstnamn och rumsnamn."
 
 #: ../gui/proxy_edit.go:17
 msgid "Automatic Tor"
-msgstr ""
+msgstr "Automatisk Tor-koppling"
 
 #: ../gui/proxy_edit.go:18
 msgid "SOCKS5"
-msgstr ""
+msgstr "SOCKS5"
 
 #: ../gui/proxy_edit.go:19
 msgid "SOCKS5 Unix Domain"
-msgstr ""
+msgstr "SOCKS5 Unix-domän"
 
 #: ../gui/muc_public_rooms.go:346
 msgid "That service doesn't seem to exist."

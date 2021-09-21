@@ -12,7 +12,7 @@ var (
 	errJoinNoConnection     = errors.New("join request failed because maybe no connection available")
 	errJoinNicknameConflict = errors.New("join failed because the nickname is being used")
 	errJoinOnlyMembers      = errors.New("join failed because only registered members are allowed")
-	errJoinNotAuthorized    = errors.New("join failed because the password provided is incorrect")
+	errJoinNotAuthorized    = errors.New("join failed because the password provided was incorrect")
 	errServiceUnavailable   = errors.New("join failed because the service is unavailable")
 	errUnknownError         = errors.New("join failed because an unknown error occurred")
 	errOccupantForbidden    = errors.New("join failed because the occupant is banned")

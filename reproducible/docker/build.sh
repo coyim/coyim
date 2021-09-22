@@ -33,22 +33,27 @@ cp /builds/coyim /src/bin
 
 chown "$SRCUID:$SRCGID" /src/bin/coyim
 
-export GTK_VERSION; GTK_VERSION=$(pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
+export GLIB_VERSION;  GLIB_VERSION=$(pkg-config --modversion glib-2.0 | tr . _ | cut -d '_' -f 1-2)
+export GTK_VERSION;   GTK_VERSION=$(pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
+export PANGO_VERSION; PANGO_VERSION=$(pkg-config --modversion pango | tr . _ | cut -d '_' -f 1-2)
+export CAIRO_VERSION; CAIRO_VERSION=$(pkg-config --modversion cairo | tr . _ | cut -d '_' -f 1-2)
 export GIT_VERSION; GIT_VERSION=$(git rev-parse HEAD)
 export TAG_VERSION; TAG_VERSION=$(git tag -l --contains "$GIT_VERSION" | tail -1)
-export GO_VERSION;   GO_VERSION=$(go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
-export SUM1; SUM1=$(sha256sum /builds/coyim)
-
+export GO_VERSION;   GO_VERSION=$(go version | egrep  -o 'go[[:digit:]]\.[[:digit:]]+')
+export SUM; SUM=$(sha256sum /builds/coyim)
 
 cat <<EOF > /src/bin/build_info
 CoyIM buildinfo
 Revision: $GIT_VERSION
 Tag: $TAG_VERSION
 
+GLib: $GLIB_VERSION
 GTK: $GTK_VERSION
+Pango: $PANGO_VERSION
+Cairo: $CAIRO_VERSION
 Go: $GO_VERSION
 
-$SUM1
+$SUM
 EOF
 
 chown "$SRCUID:$SRCGID" /src/bin/build_info

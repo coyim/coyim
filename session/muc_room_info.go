@@ -7,7 +7,7 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-const maxTimeForRoomDiscoInfoRequest = time.Second * 10
+const maxTimeForRoomDiscoInfoRequest = 25 * time.Second
 
 func (m *mucManager) requestRoomDiscoInfo(roomID jid.Bare) {
 	result := make(chan *muc.RoomListing)

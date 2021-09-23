@@ -2,70 +2,44 @@ package gui
 
 import (
 	"strings"
+
+	"github.com/coyim/coyim/i18n"
 )
 
 // Method to validate a jabber id is correct according to the RFC-6122
 // on Address Format
 func verifyXMPPAddress(address string) (bool, string) {
-	var err string
-	var isValid bool
-
 	tldIndex := strings.LastIndex(address, ".")
 	atIndex := strings.Index(address, "@")
 
 	if !isValidAccount(address, atIndex) {
-		err = "Validation failed: \nThe XMPP address is invalid. An XMPP address should look like this: local@domain.com."
-		return isValid, err
+		err := i18n.Local("Validation failed: \nThe XMPP address is invalid. An XMPP address should look like this: local@domain.com.")
+		return false, err
 	}
 
-	isValidDomain, errDomain := verifyDomainPart(tldIndex, atIndex, address)
-	isValidPart, errLocal := verifyLocalPart(atIndex)
-	isValid = isValidDomain && isValidPart
+	isValidDomain := verifyDomainPart(tldIndex, atIndex, address)
+	isValidPart := verifyLocalPart(atIndex)
 
-	if !isValid {
-		result := "Validation failed:\n"
-		sep := ""
-		if errDomain != "" {
-			result += errDomain
-			sep = ", "
-		}
-		if errLocal != "" {
-			result += sep + errLocal
-		}
-		err = result + ". An XMPP address should look like this: local@domain.com."
+	switch {
+	case !isValidDomain && !isValidPart:
+		return false, i18n.Local("Validation failed:\nThe XMPP address has an invalid domain part, The XMMP address has an invalid local part. An XMPP address should look like this: local@domain.com.")
+	case !isValidDomain:
+		return false, i18n.Local("Validation failed:\nThe XMPP address has an invalid domain part. An XMPP address should look like this: local@domain.com.")
+	case !isValidPart:
+		return false, i18n.Local("Validation failed:\nThe XMMP address has an invalid local part. An XMPP address should look like this: local@domain.com.")
 	}
 
-	return isValid, err
+	return true, ""
 }
 
 func isValidAccount(address string, atIndex int) bool {
-	if len(address) != 0 && atIndex != -1 {
-		return true
-	}
-
-	return false
+	return len(address) != 0 && atIndex != -1
 }
 
-func verifyDomainPart(tldIndex, atIndex int, address string) (bool, string) {
-	isValid := true
-	var err string
-
-	if tldIndex < 0 || tldIndex == len(address)-1 || tldIndex-atIndex < 2 {
-		isValid = false
-		err = "The XMPP address has an invalid domain part"
-	}
-
-	return isValid, err
+func verifyDomainPart(tldIndex, atIndex int, address string) bool {
+	return !(tldIndex < 0 || tldIndex == len(address)-1 || tldIndex-atIndex < 2)
 }
 
-func verifyLocalPart(atIndex int) (bool, string) {
-	isValid := true
-	var err string
-
-	if atIndex == 0 {
-		isValid = false
-		err = "The XMMP address has an invalid local part"
-	}
-
-	return isValid, err
+func verifyLocalPart(atIndex int) bool {
+	return atIndex != 0
 }

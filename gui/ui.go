@@ -192,7 +192,7 @@ func (n *torRunningNotification) renderTorNotification(label, imgName string) {
 		updateWithStyle(n.area, prov)
 	})
 
-	n.label.SetText(i18n.Local(label))
+	n.label.SetText(label)
 	n.image.SetFromIconName(imgName, gtki.ICON_SIZE_BUTTON)
 }
 
@@ -211,11 +211,11 @@ func (u *gtkUI) installTor() {
 		// TODO: change logos
 		"on_press_label": func() {
 			if !ournet.Tor.Detect() {
-				err := "Tor is still not running"
+				err := i18n.Local("Tor is still not running")
 				torNotif.renderTorNotification(err, "software-update-urgent")
 				u.hasLog.log.Info("Tor is still not running")
 			} else {
-				err := "Tor is now running"
+				err := i18n.Local("Tor is now running")
 				torNotif.renderTorNotification(err, "emblem-default")
 				u.hasLog.log.Info("Tor is now running")
 			}

@@ -142,15 +142,15 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer, a *account) {
 	var name string
 
 	if result {
-		label := "Choose where to save file"
+		label := i18n.Local("Choose where to save file")
 		action := gtki.FILE_CHOOSER_ACTION_SAVE
 		if ev.IsDirectory {
-			label = "Choose where to save folder"
+			label = i18n.Local("Choose where to save folder")
 			action = gtki.FILE_CHOOSER_ACTION_CREATE_FOLDER
 		}
 
 		fdialog, _ := g.gtk.FileChooserDialogNewWith2Buttons(
-			i18n.Local(label),
+			label,
 			u.window,
 			action,
 			i18n.Local("_Cancel"),
@@ -260,7 +260,7 @@ func (account *account) sendDirectoryTo(peer jid.Any, u *gtkUI, cp *conversation
 
 func chooseItemToSend(w gtki.Window, action gtki.FileChooserAction, title string) (string, bool) {
 	dialog, _ := g.gtk.FileChooserDialogNewWith2Buttons(
-		i18n.Local(title),
+		title,
 		w,
 		action,
 		i18n.Local("_Cancel"),
@@ -277,9 +277,9 @@ func chooseItemToSend(w gtki.Window, action gtki.FileChooserAction, title string
 }
 
 func chooseFileToSend(w gtki.Window) (string, bool) {
-	return chooseItemToSend(w, gtki.FILE_CHOOSER_ACTION_OPEN, "Choose file to send")
+	return chooseItemToSend(w, gtki.FILE_CHOOSER_ACTION_OPEN, i18n.Local("Choose file to send"))
 }
 
 func chooseDirToSend(w gtki.Window) (string, bool) {
-	return chooseItemToSend(w, gtki.FILE_CHOOSER_ACTION_SELECT_FOLDER, "Choose directory to send")
+	return chooseItemToSend(w, gtki.FILE_CHOOSER_ACTION_SELECT_FOLDER, i18n.Local("Choose directory to send"))
 }

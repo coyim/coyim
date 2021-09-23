@@ -20,7 +20,7 @@ func buildVerifyFingerprintDialog(accountName string, ourFp []byte, peer jid.Wit
 				"You first have to start an encrypted conversation with them.", peer)
 
 	} else {
-		m := `
+		message = i18n.Localf(`
 Is this the correct fingerprint for %[1]s?
 
 Fingerprint for you (%[3]s):
@@ -28,9 +28,7 @@ Fingerprint for you (%[3]s):
 
 Purported fingerprint for %[1]s:
   %[2]s
-	`
-
-		message = i18n.Localf(m,
+	`,
 			peer,
 			config.FormatFingerprint(theirFp),
 			accountName,

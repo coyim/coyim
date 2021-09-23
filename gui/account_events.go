@@ -186,7 +186,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer, a *account) {
 
 func (u *gtkUI) handleNotificationEvent(ev events.Notification, a *account) {
 	convWin := u.openConversationView(a, ev.Peer, false)
-	convWin.displayNotification(i18n.Local(ev.Notification))
+	convWin.displayNotification(ev.Notification)
 }
 
 func (u *gtkUI) handleDelayedMessageSentEvent(ev events.DelayedMessageSent, a *account) {

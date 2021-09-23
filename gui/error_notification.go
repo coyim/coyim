@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -20,6 +19,7 @@ func newErrorNotification(info gtki.Box) *errorNotification {
 	return view
 }
 
+// ShowMessage will display the already internationalized label
 func (n *errorNotification) ShowMessage(label string) {
 	prov := providerWithStyle("box", style{
 		"background-color": "#e53e3e",
@@ -31,7 +31,7 @@ func (n *errorNotification) ShowMessage(label string) {
 
 	n.label.SetMarginTop(10)
 	n.label.SetMarginBottom(10)
-	n.label.SetText(i18n.Local(label))
+	n.label.SetText(label)
 
 	parent, _ := n.area.GetParent()
 	if parent != nil {

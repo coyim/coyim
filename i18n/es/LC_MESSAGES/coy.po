@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-21 16:46+0000\n"
+"POT-Creation-Date: 2021-09-23 17:28+0000\n"
 "PO-Revision-Date: 2021-09-21 16:33+0000\n"
 "Last-Translator: sara-la-loca-de-los-gatos <sara@autonomia.digital>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/coyim/main/es/>\n"
@@ -5253,6 +5253,12 @@ msgstr "La conversación privada ha terminado."
 #, python-format
 msgid "You have verified the identity of %s."
 msgstr "Has verificado la identidad de %s."
+
+#: ../gui/conversation.go:397
+msgid ""
+"You are talking over an \n"
+"unprotected chat"
+msgstr ""
 
 #: ../gui/conversation.go:593
 msgid "Available"

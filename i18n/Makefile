@@ -22,11 +22,13 @@ TRANSLATIONS=\
 gettext: $(TRANSLATIONS)
 
 $(DOMAIN).pot: $(DEFINITIONS) $(IN_FILES)
-	xgettext --package-name=$(DOMAIN) --default-domain=$(DOMAIN) --from-code=utf-8 -L glade $(DEFINITIONS) -o $(DOMAIN).pot
-	xgettext --package-name=$(DOMAIN) --default-domain=$(DOMAIN) --from-code=utf-8 -L python $(IN_FILES) --keyword=Local --keyword=Localf -j -o $(DOMAIN).pot
+	xgettext --package-name=$(DOMAIN) --default-domain=$(DOMAIN) --from-code=utf-8 -L glade $(DEFINITIONS) -o $@
+	xgettext --package-name=$(DOMAIN) --default-domain=$(DOMAIN) --from-code=utf-8 -L python $(IN_FILES) --keyword=Local --keyword=Localf -j -o $@
+	./remove-python-brace-format $@
 
 %.po: $(DOMAIN).pot
 	./update-locales $(DOMAIN).pot $@
+	./remove-python-brace-format $@
 
 %.mo: %.po
 	msgfmt -c -v -o $@ $<

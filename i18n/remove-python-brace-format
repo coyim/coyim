@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -e
+
+sed -i '/#, python-brace-format/d' $@

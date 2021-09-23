@@ -2213,32 +2213,26 @@ msgid "$nickname{%[1]s} changed the role of $nickname{%[2]s}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:673
-#, python-brace-format
 msgid "Your role was changed from $role{participant} to $role{visitor}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:675
-#, python-brace-format
 msgid "Your role was changed from $role{participant} to $role{moderator}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:677
-#, python-brace-format
 msgid "Your role was changed from $role{visitor} to $role{participant}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:679
-#, python-brace-format
 msgid "Your role was changed from $role{visitor} to $role{moderator}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:681
-#, python-brace-format
 msgid "Your role was changed from $role{moderator} to $role{visitor}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:683
-#, python-brace-format
 msgid "Your role was changed from $role{moderator} to $role{participant}."
 msgstr ""
 
@@ -2406,40 +2400,34 @@ msgid "%[1]s %[2]s"
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:807
-#, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{visitor} to "
 "$role{participant}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:809
-#, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{visitor} to $role{moderator}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:811
-#, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{participant} to "
 "$role{visitor}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:813
-#, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{participant} to "
 "$role{moderator}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:815
-#, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{moderator} to $role{visitor}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:817
-#, python-brace-format
 msgid ""
 "As a result, their role was changed from $role{moderator} to "
 "$role{participant}."
@@ -2450,38 +2438,32 @@ msgid "As a result, their role was also changed."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:825
-#, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{visitor} to $role{participant}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:827
-#, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{visitor} to $role{moderator}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:829
-#, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{participant} to $role{visitor}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:831
-#, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{participant} to "
 "$role{moderator}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:833
-#, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{moderator} to $role{visitor}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:835
-#, python-brace-format
 msgid ""
 "As a result, your role was changed from $role{moderator} to "
 "$role{participant}."
@@ -2696,17 +2678,14 @@ msgid "The administrator $nickname{%s} changed your position."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:1236
-#, python-brace-format
 msgid "Your position was changed to $affiliation{owner}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:1238
-#, python-brace-format
 msgid "Your position was changed to $affiliation{administrator}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:1240
-#, python-brace-format
 msgid "Your position was changed to $affiliation{member}."
 msgstr ""
 
@@ -2748,7 +2727,6 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1276
 #: ../gui/muc_notification_messages.go:1518
-#, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{owner} to "
 "$affiliation{administrator}."
@@ -2756,14 +2734,12 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1278
 #: ../gui/muc_notification_messages.go:1520
-#, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{owner} to $affiliation{member}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:1280
 #: ../gui/muc_notification_messages.go:1522
-#, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{administrator} to "
 "$affiliation{owner}."
@@ -2771,7 +2747,6 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1282
 #: ../gui/muc_notification_messages.go:1524
-#, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{administrator} to "
 "$affiliation{member}."
@@ -2779,14 +2754,12 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1284
 #: ../gui/muc_notification_messages.go:1528
-#, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{member} to $affiliation{owner}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:1286
 #: ../gui/muc_notification_messages.go:1526
-#, python-brace-format
 msgid ""
 "Your position was changed from $affiliation{member} to "
 "$affiliation{administrator}."

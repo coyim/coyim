@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-23 17:28+0000\n"
+"POT-Creation-Date: 2021-09-23 17:56+0000\n"
 "PO-Revision-Date: 2021-09-21 16:33+0000\n"
 "Last-Translator: ivanjijon <ivanjijon@hotmail.com>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/coyim/main/pt/"
@@ -2481,32 +2481,32 @@ msgid "$nickname{%[1]s} changed the role of $nickname{%[2]s}."
 msgstr "$nickname{%[1]s} mudou a função de $nickname{%[2]s}."
 
 #: ../gui/muc_notification_messages.go:673
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid "Your role was changed from $role{participant} to $role{visitor}."
 msgstr "Sua função foi mudada de $role{participante} para $role{visitante}."
 
 #: ../gui/muc_notification_messages.go:675
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid "Your role was changed from $role{participant} to $role{moderator}."
 msgstr "Sua função foi mudada de $role{participante} para $role{moderador}."
 
 #: ../gui/muc_notification_messages.go:677
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid "Your role was changed from $role{visitor} to $role{participant}."
 msgstr "Sua função foi mudada de $role{participante} para $role{visitante}."
 
 #: ../gui/muc_notification_messages.go:679
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid "Your role was changed from $role{visitor} to $role{moderator}."
 msgstr "Sua função foi mudada de $role{visitante} para $role{moderador}."
 
 #: ../gui/muc_notification_messages.go:681
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid "Your role was changed from $role{moderator} to $role{visitor}."
 msgstr "Sua função foi mudada de $role{moderador} para $role{visitante}."
 
 #: ../gui/muc_notification_messages.go:683
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid "Your role was changed from $role{moderator} to $role{participant}."
 msgstr "Sua função foi mudada de $role{moderador} para $role{participante}."
 
@@ -2704,7 +2704,7 @@ msgid "%[1]s %[2]s"
 msgstr "%[1]s %[2]s"
 
 #: ../gui/muc_notification_messages.go:807
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "As a result, their role was changed from $role{visitor} to "
 "$role{participant}."
@@ -2713,7 +2713,7 @@ msgstr ""
 "$role{participante}."
 
 #: ../gui/muc_notification_messages.go:809
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "As a result, their role was changed from $role{visitor} to $role{moderator}."
 msgstr ""
@@ -2721,7 +2721,7 @@ msgstr ""
 "$role{moderador}."
 
 #: ../gui/muc_notification_messages.go:811
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "As a result, their role was changed from $role{participant} to "
 "$role{visitor}."
@@ -2730,7 +2730,7 @@ msgstr ""
 "$role{visitante}."
 
 #: ../gui/muc_notification_messages.go:813
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "As a result, their role was changed from $role{participant} to "
 "$role{moderator}."
@@ -2739,7 +2739,7 @@ msgstr ""
 "$role{moderador}."
 
 #: ../gui/muc_notification_messages.go:815
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "As a result, their role was changed from $role{moderator} to $role{visitor}."
 msgstr ""
@@ -2747,7 +2747,7 @@ msgstr ""
 "$role{visitante}."
 
 #: ../gui/muc_notification_messages.go:817
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "As a result, their role was changed from $role{moderator} to "
 "$role{participant}."
@@ -2760,7 +2760,7 @@ msgid "As a result, their role was also changed."
 msgstr "Como resultado, sua função também foi mudada."
 
 #: ../gui/muc_notification_messages.go:825
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "As a result, your role was changed from $role{visitor} to $role{participant}."
 msgstr ""
@@ -2768,7 +2768,7 @@ msgstr ""
 "$role{participante}."
 
 #: ../gui/muc_notification_messages.go:827
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "As a result, your role was changed from $role{visitor} to $role{moderator}."
 msgstr ""
@@ -2776,7 +2776,7 @@ msgstr ""
 "$role{moderador}."
 
 #: ../gui/muc_notification_messages.go:829
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "As a result, your role was changed from $role{participant} to $role{visitor}."
 msgstr ""
@@ -2784,7 +2784,7 @@ msgstr ""
 "$role{visitante}."
 
 #: ../gui/muc_notification_messages.go:831
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "As a result, your role was changed from $role{participant} to "
 "$role{moderator}."
@@ -2793,7 +2793,7 @@ msgstr ""
 "$role{moderador}."
 
 #: ../gui/muc_notification_messages.go:833
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "As a result, your role was changed from $role{moderator} to $role{visitor}."
 msgstr ""
@@ -2801,7 +2801,7 @@ msgstr ""
 "$role{visitante}."
 
 #: ../gui/muc_notification_messages.go:835
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "As a result, your role was changed from $role{moderator} to "
 "$role{participant}."
@@ -3074,17 +3074,17 @@ msgid "The administrator $nickname{%s} changed your position."
 msgstr "O administrador $nickname{%s} mudou sua posição."
 
 #: ../gui/muc_notification_messages.go:1236
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid "Your position was changed to $affiliation{owner}."
 msgstr "Sua posição foi mudada para $affiliation{propietário}."
 
 #: ../gui/muc_notification_messages.go:1238
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid "Your position was changed to $affiliation{administrator}."
 msgstr "Sua posição foi mudada para $affiliation{administrador}."
 
 #: ../gui/muc_notification_messages.go:1240
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid "Your position was changed to $affiliation{member}."
 msgstr "Sua posição foi mudada para $affiliation{membro}."
 
@@ -3136,7 +3136,7 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1276
 #: ../gui/muc_notification_messages.go:1518
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "Your position was changed from $affiliation{owner} to "
 "$affiliation{administrator}."
@@ -3146,7 +3146,7 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1278
 #: ../gui/muc_notification_messages.go:1520
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "Your position was changed from $affiliation{owner} to $affiliation{member}."
 msgstr ""
@@ -3155,7 +3155,7 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1280
 #: ../gui/muc_notification_messages.go:1522
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "Your position was changed from $affiliation{administrator} to "
 "$affiliation{owner}."
@@ -3165,7 +3165,7 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1282
 #: ../gui/muc_notification_messages.go:1524
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "Your position was changed from $affiliation{administrator} to "
 "$affiliation{member}."
@@ -3175,7 +3175,7 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1284
 #: ../gui/muc_notification_messages.go:1528
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "Your position was changed from $affiliation{member} to $affiliation{owner}."
 msgstr ""
@@ -3184,7 +3184,7 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1286
 #: ../gui/muc_notification_messages.go:1526
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid ""
 "Your position was changed from $affiliation{member} to "
 "$affiliation{administrator}."

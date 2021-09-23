@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-23 17:56+0000\n"
+"POT-Creation-Date: 2021-09-23 19:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3840,6 +3840,14 @@ msgstr ""
 msgid "You must provide a valid account address."
 msgstr ""
 
+#: ../gui/ui.go:214
+msgid "Tor is still not running"
+msgstr ""
+
+#: ../gui/ui.go:218
+msgid "Tor is now running"
+msgstr ""
+
 #: ../gui/ui.go:566
 msgid ""
 "You are trying to connect to a Google account - sometimes Google will not "
@@ -4546,8 +4554,24 @@ msgid ""
 "Size: %[2]d bytes"
 msgstr ""
 
+#: ../gui/file_transfer.go:145
+msgid "Choose where to save file"
+msgstr ""
+
+#: ../gui/file_transfer.go:148
+msgid "Choose where to save folder"
+msgstr ""
+
 #: ../gui/file_transfer.go:158
 msgid "_Save"
+msgstr ""
+
+#: ../gui/file_transfer.go:280
+msgid "Choose file to send"
+msgstr ""
+
+#: ../gui/file_transfer.go:284
+msgid "Choose directory to send"
 msgstr ""
 
 #: ../gui/muc_room_window.go:25
@@ -4688,6 +4712,34 @@ msgstr ""
 msgid ""
 "An error occurred when trying to join the room. Please check your connection "
 "or make sure the room exists."
+msgstr ""
+
+#: ../gui/jid.go:16
+msgid ""
+"Validation failed: \n"
+"The XMPP address is invalid. An XMPP address should look like this: "
+"local@domain.com."
+msgstr ""
+
+#: ../gui/jid.go:25
+msgid ""
+"Validation failed:\n"
+"The XMPP address has an invalid domain part, The XMMP address has an invalid "
+"local part. An XMPP address should look like this: local@domain.com."
+msgstr ""
+
+#: ../gui/jid.go:27
+msgid ""
+"Validation failed:\n"
+"The XMPP address has an invalid domain part. An XMPP address should look "
+"like this: local@domain.com."
+msgstr ""
+
+#: ../gui/jid.go:29
+msgid ""
+"Validation failed:\n"
+"The XMMP address has an invalid local part. An XMPP address should look like "
+"this: local@domain.com."
 msgstr ""
 
 #: ../gui/edit_contact.go:114
@@ -4839,14 +4891,69 @@ msgstr ""
 msgid "You were already connected to this room."
 msgstr ""
 
-#: ../gui/registration.go:259
+#: ../gui/registration.go:130
+msgid ""
+"We had an error:\n"
+"\n"
+"Timeout."
+msgstr ""
+
+#: ../gui/registration.go:132
+msgid ""
+"The registration process currently requires Tor in order to ensure your "
+"safety.\n"
+"\n"
+"You don't have Tor running. Please, start it.\n"
+"\n"
+msgstr ""
+
+#: ../gui/registration.go:135 ../gui/registration.go:152
+msgid ""
+"Could not contact the server.\n"
+"\n"
+"Please, correct your server choice and try again."
+msgstr ""
+
+#: ../gui/registration.go:144
+msgid ""
+"We had an error:\n"
+"\n"
+"Some required fields are missing. Please, try again and fill all fields."
+msgstr ""
+
+#: ../gui/registration.go:146
+msgid ""
+"We had an error:\n"
+"\n"
+"Incorrect Username"
+msgstr ""
+
+#: ../gui/registration.go:148
+msgid ""
+"We had an error:\n"
+"\n"
+"The captcha entered is wrong"
+msgstr ""
+
+#: ../gui/registration.go:150
+msgid ""
+"We had an error:\n"
+"\n"
+"too many requests for creating account."
+msgstr ""
+
+#: ../gui/registration.go:240
 msgid ""
 "Connecting to server for registration... \n"
 "\n"
 "This might take a while."
 msgstr ""
 
-#: ../gui/registration.go:292
+#: ../gui/registration.go:264
+msgid "We had an error when trying to store your account information."
+msgstr ""
+
+#: ../gui/registration.go:273
 #, python-format
 msgid "<b>%s</b> successfully created."
 msgstr ""
@@ -5031,7 +5138,7 @@ msgid ""
 "You first have to start an encrypted conversation with them."
 msgstr ""
 
-#: ../gui/fingerprint_verification.go:61
+#: ../gui/fingerprint_verification.go:59
 #, python-format
 msgid "Verify fingerprint for %s"
 msgstr ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-23 17:56+0000\n"
+"POT-Creation-Date: 2021-09-23 19:23+0000\n"
 "PO-Revision-Date: 2021-09-21 16:33+0000\n"
 "Last-Translator: ivanjijon <ivanjijon@hotmail.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/coyim/main/fr/>\n"
@@ -4468,6 +4468,14 @@ msgstr "Vous devez saisir l'adresse du compte."
 msgid "You must provide a valid account address."
 msgstr "Vous devez fournir une adresse de compte valide."
 
+#: ../gui/ui.go:214
+msgid "Tor is still not running"
+msgstr ""
+
+#: ../gui/ui.go:218
+msgid "Tor is now running"
+msgstr ""
+
 #: ../gui/ui.go:566
 msgid ""
 "You are trying to connect to a Google account - sometimes Google will not "
@@ -5296,9 +5304,25 @@ msgstr ""
 "%[1]s\n"
 "Taille : %[2]d octets"
 
+#: ../gui/file_transfer.go:145
+msgid "Choose where to save file"
+msgstr ""
+
+#: ../gui/file_transfer.go:148
+msgid "Choose where to save folder"
+msgstr ""
+
 #: ../gui/file_transfer.go:158
 msgid "_Save"
 msgstr "_Sauvegarder"
+
+#: ../gui/file_transfer.go:280
+msgid "Choose file to send"
+msgstr ""
+
+#: ../gui/file_transfer.go:284
+msgid "Choose directory to send"
+msgstr ""
 
 #: ../gui/muc_room_window.go:25
 msgid "%[1]s [%[2]s]"
@@ -5460,6 +5484,34 @@ msgstr ""
 "Une erreur s'est produite lors de la tentative de connexion au salon. "
 "Veuillez vérifier votre connexion ou vous assurer que la salle existe."
 
+#: ../gui/jid.go:16
+msgid ""
+"Validation failed: \n"
+"The XMPP address is invalid. An XMPP address should look like this: "
+"local@domain.com."
+msgstr ""
+
+#: ../gui/jid.go:25
+msgid ""
+"Validation failed:\n"
+"The XMPP address has an invalid domain part, The XMMP address has an invalid "
+"local part. An XMPP address should look like this: local@domain.com."
+msgstr ""
+
+#: ../gui/jid.go:27
+msgid ""
+"Validation failed:\n"
+"The XMPP address has an invalid domain part. An XMPP address should look "
+"like this: local@domain.com."
+msgstr ""
+
+#: ../gui/jid.go:29
+msgid ""
+"Validation failed:\n"
+"The XMMP address has an invalid local part. An XMPP address should look like "
+"this: local@domain.com."
+msgstr ""
+
 #: ../gui/edit_contact.go:114
 #, python-format
 msgid "There are no known fingerprints for %s"
@@ -5611,7 +5663,58 @@ msgstr "Vous êtes déjà dans la salle."
 msgid "You were already connected to this room."
 msgstr "Vous étiez déjà connecté à cette salle."
 
-#: ../gui/registration.go:259
+#: ../gui/registration.go:130
+msgid ""
+"We had an error:\n"
+"\n"
+"Timeout."
+msgstr ""
+
+#: ../gui/registration.go:132
+msgid ""
+"The registration process currently requires Tor in order to ensure your "
+"safety.\n"
+"\n"
+"You don't have Tor running. Please, start it.\n"
+"\n"
+msgstr ""
+
+#: ../gui/registration.go:135 ../gui/registration.go:152
+msgid ""
+"Could not contact the server.\n"
+"\n"
+"Please, correct your server choice and try again."
+msgstr ""
+
+#: ../gui/registration.go:144
+msgid ""
+"We had an error:\n"
+"\n"
+"Some required fields are missing. Please, try again and fill all fields."
+msgstr ""
+
+#: ../gui/registration.go:146
+msgid ""
+"We had an error:\n"
+"\n"
+"Incorrect Username"
+msgstr ""
+
+#: ../gui/registration.go:148
+msgid ""
+"We had an error:\n"
+"\n"
+"The captcha entered is wrong"
+msgstr ""
+
+#: ../gui/registration.go:150
+msgid ""
+"We had an error:\n"
+"\n"
+"too many requests for creating account."
+msgstr ""
+
+#: ../gui/registration.go:240
 msgid ""
 "Connecting to server for registration... \n"
 "\n"
@@ -5621,7 +5724,11 @@ msgstr ""
 "\n"
 "Cela peut prendre un certain temps."
 
-#: ../gui/registration.go:292
+#: ../gui/registration.go:264
+msgid "We had an error when trying to store your account information."
+msgstr ""
+
+#: ../gui/registration.go:273
 #, python-format
 msgid "<b>%s</b> successfully created."
 msgstr "<b>%s</b> créé avec succès."
@@ -5814,7 +5921,7 @@ msgstr ""
 "\n"
 "Vous devez d'abord démarrer une conversation cryptée avec la personne."
 
-#: ../gui/fingerprint_verification.go:61
+#: ../gui/fingerprint_verification.go:59
 #, python-format
 msgid "Verify fingerprint for %s"
 msgstr "Vérifier l'empreinte pour %s"

@@ -6,7 +6,13 @@ aliases = {
   "Fab Torchz J" => "Fan Jiang",
   "fanjiang" => "Fan Jiang",
   "Fan Jiang Torchz" => "Fan Jiang",
+  "Pedro Enrique Palau" => "Pedro Palau",
   "Reinaldo de Souza Jr" => "Reinaldo de Souza Junior",
+  "sacurio" => "Sandy Acurio",
+  "Sandy" => "Sandy Acurio",
+  "cnaranjo" => "Cristian Naranjo",
+  "ivanjijon" => "Ivan Jijon",
+  "mvelasco" => "Mauro Velasco",
 }
 
 all = `git log --format='%aN  -  %aE' | sort -u`

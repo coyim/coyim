@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-24 16:49+0000\n"
-"PO-Revision-Date: 2021-09-21 16:33+0000\n"
+"PO-Revision-Date: 2021-09-24 20:56+0000\n"
 "Last-Translator: ivanjijon <ivanjijon@hotmail.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/coyim/main/fr/>\n"
 "Language: fr\n"
@@ -615,7 +615,7 @@ msgstr "Envoyer le fichier…"
 
 #: ../gui/definitions/ContactPopupMenu.xml:32
 msgid "Send directory..."
-msgstr "Envoyer le répertoire…"
+msgstr "Envoyer le dossier…"
 
 #: ../gui/definitions/ContactPopupMenu.xml:41
 msgid "Ask contact to see their status"
@@ -2518,32 +2518,26 @@ msgid "$nickname{%[1]s} changed the role of $nickname{%[2]s}."
 msgstr "$nickname{%[1]s} a changé le rôle de $nickname{%[2]s}."
 
 #: ../gui/muc_notification_messages.go:673
-#, fuzzy
 msgid "Your role was changed from $role{participant} to $role{visitor}."
 msgstr "Votre rôle est passé de $role{participant} à $role{visiteur}."
 
 #: ../gui/muc_notification_messages.go:675
-#, fuzzy
 msgid "Your role was changed from $role{participant} to $role{moderator}."
 msgstr "Votre rôle est passé de $role{participant} à $role{modérateur}."
 
 #: ../gui/muc_notification_messages.go:677
-#, fuzzy
 msgid "Your role was changed from $role{visitor} to $role{participant}."
 msgstr "Votre rôle est passé de $role{visiteur} à $role{participant}."
 
 #: ../gui/muc_notification_messages.go:679
-#, fuzzy
 msgid "Your role was changed from $role{visitor} to $role{moderator}."
 msgstr "Votre rôle est passé de $role{visiteur} à $role{modérateur}."
 
 #: ../gui/muc_notification_messages.go:681
-#, fuzzy
 msgid "Your role was changed from $role{moderator} to $role{visitor}."
 msgstr "Votre rôle est passé de $role{modérateur} à $role{visiteur}."
 
 #: ../gui/muc_notification_messages.go:683
-#, fuzzy
 msgid "Your role was changed from $role{moderator} to $role{participant}."
 msgstr "Votre rôle est passé de $role{modérateur} à $role{participant}."
 
@@ -2741,7 +2735,6 @@ msgid "%[1]s %[2]s"
 msgstr "%[1]s %[2]s"
 
 #: ../gui/muc_notification_messages.go:807
-#, fuzzy
 msgid ""
 "As a result, their role was changed from $role{visitor} to "
 "$role{participant}."
@@ -2749,14 +2742,12 @@ msgstr ""
 "En conséquence, son rôle est passé de $role{visiteur} à $role{participant}."
 
 #: ../gui/muc_notification_messages.go:809
-#, fuzzy
 msgid ""
 "As a result, their role was changed from $role{visitor} to $role{moderator}."
 msgstr ""
 "En conséquence, son rôle est passé de $role{visiteur} à $role{modérateur}."
 
 #: ../gui/muc_notification_messages.go:811
-#, fuzzy
 msgid ""
 "As a result, their role was changed from $role{participant} to "
 "$role{visitor}."
@@ -2764,7 +2755,6 @@ msgstr ""
 "En conséquence, son rôle est passé de $role{participant} à $role{visiteur}."
 
 #: ../gui/muc_notification_messages.go:813
-#, fuzzy
 msgid ""
 "As a result, their role was changed from $role{participant} to "
 "$role{moderator}."
@@ -2772,14 +2762,12 @@ msgstr ""
 "En conséquence, son rôle est passé de $role{participant} à $role{modérateur}."
 
 #: ../gui/muc_notification_messages.go:815
-#, fuzzy
 msgid ""
 "As a result, their role was changed from $role{moderator} to $role{visitor}."
 msgstr ""
 "En conséquence, son rôle est passé de $role{modérateur} à $role{visiteur}."
 
 #: ../gui/muc_notification_messages.go:817
-#, fuzzy
 msgid ""
 "As a result, their role was changed from $role{moderator} to "
 "$role{participant}."
@@ -2791,28 +2779,24 @@ msgid "As a result, their role was also changed."
 msgstr "En conséquence, son rôle a également été modifié."
 
 #: ../gui/muc_notification_messages.go:825
-#, fuzzy
 msgid ""
 "As a result, your role was changed from $role{visitor} to $role{participant}."
 msgstr ""
 "Par conséquent, votre rôle est passé de $role{visiteur} à $role{participant}."
 
 #: ../gui/muc_notification_messages.go:827
-#, fuzzy
 msgid ""
 "As a result, your role was changed from $role{visitor} to $role{moderator}."
 msgstr ""
 "Par conséquent, votre rôle est passé de $role{visiteur} à $role{modérateur}."
 
 #: ../gui/muc_notification_messages.go:829
-#, fuzzy
 msgid ""
 "As a result, your role was changed from $role{participant} to $role{visitor}."
 msgstr ""
 "Par conséquent, votre rôle est passé de $role{participant} à $role{visiteur}."
 
 #: ../gui/muc_notification_messages.go:831
-#, fuzzy
 msgid ""
 "As a result, your role was changed from $role{participant} to "
 "$role{moderator}."
@@ -2821,14 +2805,12 @@ msgstr ""
 "$role{modérateur}."
 
 #: ../gui/muc_notification_messages.go:833
-#, fuzzy
 msgid ""
 "As a result, your role was changed from $role{moderator} to $role{visitor}."
 msgstr ""
 "Par conséquent, votre rôle est passé de $role{modérateur} à $role{visiteur}."
 
 #: ../gui/muc_notification_messages.go:835
-#, fuzzy
 msgid ""
 "As a result, your role was changed from $role{moderator} to "
 "$role{participant}."
@@ -3099,17 +3081,14 @@ msgid "The administrator $nickname{%s} changed your position."
 msgstr "L'administrateur $nickname{%s} a changé votre position."
 
 #: ../gui/muc_notification_messages.go:1236
-#, fuzzy
 msgid "Your position was changed to $affiliation{owner}."
 msgstr "Votre position a été changée en $affiliation{propriétaire}."
 
 #: ../gui/muc_notification_messages.go:1238
-#, fuzzy
 msgid "Your position was changed to $affiliation{administrator}."
 msgstr "Votre position a été changée en $affiliation{administrateur}."
 
 #: ../gui/muc_notification_messages.go:1240
-#, fuzzy
 msgid "Your position was changed to $affiliation{member}."
 msgstr "Votre position a été changée en $affiliation{membre}."
 
@@ -3163,7 +3142,6 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1276
 #: ../gui/muc_notification_messages.go:1518
-#, fuzzy
 msgid ""
 "Your position was changed from $affiliation{owner} to "
 "$affiliation{administrator}."
@@ -3173,7 +3151,6 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1278
 #: ../gui/muc_notification_messages.go:1520
-#, fuzzy
 msgid ""
 "Your position was changed from $affiliation{owner} to $affiliation{member}."
 msgstr ""
@@ -3182,7 +3159,6 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1280
 #: ../gui/muc_notification_messages.go:1522
-#, fuzzy
 msgid ""
 "Your position was changed from $affiliation{administrator} to "
 "$affiliation{owner}."
@@ -3192,7 +3168,6 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1282
 #: ../gui/muc_notification_messages.go:1524
-#, fuzzy
 msgid ""
 "Your position was changed from $affiliation{administrator} to "
 "$affiliation{member}."
@@ -3202,7 +3177,6 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1284
 #: ../gui/muc_notification_messages.go:1528
-#, fuzzy
 msgid ""
 "Your position was changed from $affiliation{member} to $affiliation{owner}."
 msgstr ""
@@ -3211,7 +3185,6 @@ msgstr ""
 
 #: ../gui/muc_notification_messages.go:1286
 #: ../gui/muc_notification_messages.go:1526
-#, fuzzy
 msgid ""
 "Your position was changed from $affiliation{member} to "
 "$affiliation{administrator}."
@@ -4470,11 +4443,11 @@ msgstr "Vous devez fournir une adresse de compte valide."
 
 #: ../gui/ui.go:214
 msgid "Tor is still not running"
-msgstr ""
+msgstr "Tor ne s'exécute toujours pas"
 
 #: ../gui/ui.go:218
 msgid "Tor is now running"
-msgstr ""
+msgstr "Tor est maintenant en cours d'exécution"
 
 #: ../gui/ui.go:566
 msgid ""
@@ -5232,13 +5205,13 @@ msgid ""
 "%s wants to send you a directory - this transfer will be encrypted and "
 "secure - do you want to receive it?"
 msgstr ""
-"%s souhaite vous envoyer un répertoire - ce transfert sera crypté et "
-"sécurisé - voulez-vous le recevoir ?"
+"%s souhaite vous envoyer un dossier - ce transfert sera crypté et sécurisé - "
+"voulez-vous le recevoir ?"
 
 #: ../gui/file_transfer.go:108 ../gui/file_transfer.go:111
 #, python-format
 msgid "Directory name: %s"
-msgstr "Nom du répertoire : %s"
+msgstr "Nom du dossier : %s"
 
 #: ../gui/file_transfer.go:110
 #, python-format
@@ -5246,7 +5219,7 @@ msgid ""
 "%s wants to send you a directory - the transfer will NOT be encrypted or "
 "secure - do you want to receive it?"
 msgstr ""
-"%s veut vous envoyer un répertoire - le transfert NE SERA PAS crypté ou "
+"%s veut vous envoyer un dossier - le transfert NE SERA PAS crypté ou "
 "sécurisé - voulez-vous le recevoir ?"
 
 #: ../gui/file_transfer.go:115
@@ -5306,11 +5279,11 @@ msgstr ""
 
 #: ../gui/file_transfer.go:145
 msgid "Choose where to save file"
-msgstr ""
+msgstr "Choisissez où enregistrer le fichier"
 
 #: ../gui/file_transfer.go:148
 msgid "Choose where to save folder"
-msgstr ""
+msgstr "Choisissez où enregistrer le dossier"
 
 #: ../gui/file_transfer.go:158
 msgid "_Save"
@@ -5318,11 +5291,11 @@ msgstr "_Sauvegarder"
 
 #: ../gui/file_transfer.go:280
 msgid "Choose file to send"
-msgstr ""
+msgstr "Choisissez le fichier à envoyer"
 
 #: ../gui/file_transfer.go:284
 msgid "Choose directory to send"
-msgstr ""
+msgstr "Choisissez le dossier à envoyer"
 
 #: ../gui/muc_room_window.go:25
 msgid "%[1]s [%[2]s]"
@@ -5364,6 +5337,8 @@ msgid ""
 "You are talking over an \n"
 "unprotected chat"
 msgstr ""
+"Vous parlez sur un \n"
+"chat non protégé"
 
 #: ../gui/conversation.go:593
 msgid "Available"
@@ -5490,6 +5465,9 @@ msgid ""
 "The XMPP address is invalid. An XMPP address should look like this: "
 "local@domain.com."
 msgstr ""
+"Validation échouée : \n"
+"L'adresse XMPP n'est pas valide. Une adresse XMPP doit ressembler à ceci : "
+"local@domain.com."
 
 #: ../gui/jid.go:25
 msgid ""
@@ -5497,6 +5475,9 @@ msgid ""
 "The XMPP address has an invalid domain part, The XMPP address has an invalid "
 "local part. An XMPP address should look like this: local@domain.com."
 msgstr ""
+"Validation échouée :\n"
+"L'adresse XMPP a un domaine invalide, L'adresse XMPP a sa partie locale "
+"invalide. Une adresse XMPP doit ressembler à ceci : local@domain.com."
 
 #: ../gui/jid.go:27
 msgid ""
@@ -5504,6 +5485,9 @@ msgid ""
 "The XMPP address has an invalid domain part. An XMPP address should look "
 "like this: local@domain.com."
 msgstr ""
+"Validation échouée :\n"
+"L'adresse XMPP a un domaine non valide. Une adresse XMPP doit ressembler à "
+"ceci : local@domain.com."
 
 #: ../gui/jid.go:29
 msgid ""
@@ -5511,6 +5495,9 @@ msgid ""
 "The XMPP address has an invalid local part. An XMPP address should look like "
 "this: local@domain.com."
 msgstr ""
+"Validation échouée :\n"
+"L'adresse XMPP a sa partie locale non valide. Une adresse XMPP doit "
+"ressembler à ceci : local@domain.com."
 
 #: ../gui/edit_contact.go:114
 #, python-format
@@ -5600,11 +5587,11 @@ msgstr "Réception non sécurisée : %s"
 
 #: ../gui/file_transfer_notification.go:262
 msgid "File and directory transfer(s) "
-msgstr "Transfert(s) de fichier et de répertoire "
+msgstr "Transfert(s) de fichier et de dossier "
 
 #: ../gui/file_transfer_notification.go:264
 msgid "Directory transfer(s) "
-msgstr "Transfert(s) de répertoire "
+msgstr "Transfert(s) de dossier "
 
 #: ../gui/file_transfer_notification.go:266
 msgid "File transfer(s) "
@@ -5669,6 +5656,9 @@ msgid ""
 "\n"
 "Timeout."
 msgstr ""
+"Nous avons eu une erreur :\n"
+"\n"
+"Temps d'attente dépassé."
 
 #: ../gui/registration.go:132
 msgid ""
@@ -5678,6 +5668,11 @@ msgid ""
 "You don't have Tor running. Please, start it.\n"
 "\n"
 msgstr ""
+"Le processus d'enregistrement a maintenant besoin de Tor afin d'assurer "
+"votre sécurité.\n"
+"\n"
+"Tor n'est pas en cours d'exécution. S'il vous plaît, démarrez-le.\n"
+"\n"
 
 #: ../gui/registration.go:135 ../gui/registration.go:152
 msgid ""
@@ -5685,6 +5680,9 @@ msgid ""
 "\n"
 "Please, correct your server choice and try again."
 msgstr ""
+"Impossible de contacter le serveur.\n"
+"\n"
+"Veuillez corriger votre choix de serveur et réessayer."
 
 #: ../gui/registration.go:144
 msgid ""
@@ -5692,6 +5690,10 @@ msgid ""
 "\n"
 "Some required fields are missing. Please, try again and fill all fields."
 msgstr ""
+"Nous avons eu une erreur :\n"
+"\n"
+"Certains champs obligatoires sont manquants. Veuillez réessayer en "
+"remplissant tous les champs."
 
 #: ../gui/registration.go:146
 msgid ""
@@ -5699,6 +5701,9 @@ msgid ""
 "\n"
 "Incorrect username"
 msgstr ""
+"Nous avons eu une erreur :\n"
+"\n"
+"Nom d'utilisateur incorrect"
 
 #: ../gui/registration.go:148
 msgid ""
@@ -5706,6 +5711,9 @@ msgid ""
 "\n"
 "The captcha entered is wrong"
 msgstr ""
+"Nous avons eu une erreur :\n"
+"\n"
+"Le captcha saisi est erroné"
 
 #: ../gui/registration.go:150
 msgid ""
@@ -5713,6 +5721,9 @@ msgid ""
 "\n"
 "The server received too many requests to create an account at the same time."
 msgstr ""
+"Nous avons eu une erreur :\n"
+"\n"
+"Le serveur a reçu trop de demandes de création de compte en même temps."
 
 #: ../gui/registration.go:240
 msgid ""
@@ -5727,6 +5738,8 @@ msgstr ""
 #: ../gui/registration.go:264
 msgid "We had an error when trying to store your account information."
 msgstr ""
+"Une erreur s'est produite lors de la tentative de stockage des informations "
+"de votre compte."
 
 #: ../gui/registration.go:273
 #, python-format

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-23 19:28+0000\n"
-"PO-Revision-Date: 2021-09-23 19:27+0000\n"
+"POT-Creation-Date: 2021-09-24 16:49+0000\n"
+"PO-Revision-Date: 2021-09-24 16:47+0000\n"
 "Last-Translator: Ola Bini <ola@autonomia.digital>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/coyim/main/sv/>\n"
 "Language: sv\n"
@@ -4368,11 +4368,11 @@ msgstr "Du måste ange en giltig kontoadress."
 
 #: ../gui/ui.go:214
 msgid "Tor is still not running"
-msgstr ""
+msgstr "Tor är fortfarande inte aktivt"
 
 #: ../gui/ui.go:218
 msgid "Tor is now running"
-msgstr ""
+msgstr "Tor är nu aktivt"
 
 #: ../gui/ui.go:566
 msgid ""
@@ -5179,11 +5179,11 @@ msgstr ""
 
 #: ../gui/file_transfer.go:145
 msgid "Choose where to save file"
-msgstr ""
+msgstr "Välj var du vill spara filen"
 
 #: ../gui/file_transfer.go:148
 msgid "Choose where to save folder"
-msgstr ""
+msgstr "Välj var du vill spara foldern"
 
 #: ../gui/file_transfer.go:158
 msgid "_Save"
@@ -5191,11 +5191,11 @@ msgstr "_Spara"
 
 #: ../gui/file_transfer.go:280
 msgid "Choose file to send"
-msgstr ""
+msgstr "Välj fil att skicka"
 
 #: ../gui/file_transfer.go:284
 msgid "Choose directory to send"
-msgstr ""
+msgstr "Välj folder att skicka"
 
 #: ../gui/muc_room_window.go:25
 msgid "%[1]s [%[2]s]"
@@ -5359,6 +5359,9 @@ msgid ""
 "The XMPP address is invalid. An XMPP address should look like this: "
 "local@domain.com."
 msgstr ""
+"Valideringen misslyckades: \n"
+"Kontoadressen är inte giltig. En kontoadress ska se ut så här: local@domain."
+"com."
 
 #: ../gui/jid.go:25
 msgid ""
@@ -5366,6 +5369,9 @@ msgid ""
 "The XMPP address has an invalid domain part, The XMMP address has an invalid "
 "local part. An XMPP address should look like this: local@domain.com."
 msgstr ""
+"Valideringen misslyckades:\n"
+"Kontoadressen har en ogiltig domän. Kontoadressen har också en ogiltig lokal "
+"del. En kontoadress bör se ut så här: local@domain.com."
 
 #: ../gui/jid.go:27
 msgid ""
@@ -5373,6 +5379,9 @@ msgid ""
 "The XMPP address has an invalid domain part. An XMPP address should look "
 "like this: local@domain.com."
 msgstr ""
+"Valideringen misslyckades:\n"
+"Kontoadressen har en ogiltig domän. En kontoadress bör se ut så här: "
+"local@domain.com."
 
 #: ../gui/jid.go:29
 msgid ""
@@ -5380,6 +5389,9 @@ msgid ""
 "The XMMP address has an invalid local part. An XMPP address should look like "
 "this: local@domain.com."
 msgstr ""
+"Valideringen misslyckades:\n"
+"Kontoadressen har en ogiltig lokal del. En kontoadress bör se ut så här: "
+"local@domain.com."
 
 #: ../gui/edit_contact.go:114
 #, python-format
@@ -5538,6 +5550,9 @@ msgid ""
 "\n"
 "Timeout."
 msgstr ""
+"Ett fel uppstod:\n"
+"\n"
+"Tiden gick ut."
 
 #: ../gui/registration.go:132
 msgid ""
@@ -5547,6 +5562,11 @@ msgid ""
 "You don't have Tor running. Please, start it.\n"
 "\n"
 msgstr ""
+"Registreringsprocessen kräver att du använder Tor för att skydda din "
+"säkerhet.\n"
+"\n"
+"Tor är inte aktiverat pä din maskin. Var god starta Tor och försök igen.\n"
+"\n"
 
 #: ../gui/registration.go:135 ../gui/registration.go:152
 msgid ""
@@ -5554,6 +5574,9 @@ msgid ""
 "\n"
 "Please, correct your server choice and try again."
 msgstr ""
+"Kunde inte ansluta till servern.\n"
+"\n"
+"Var god korrigera ditt serverval och försök igen."
 
 #: ../gui/registration.go:144
 msgid ""
@@ -5561,12 +5584,15 @@ msgid ""
 "\n"
 "Some required fields are missing. Please, try again and fill all fields."
 msgstr ""
+"Ett fel uppstod:\n"
+"\n"
+"Nödvändiga fält saknas. Var god försök igen och fyll i alla fälten."
 
 #: ../gui/registration.go:146
 msgid ""
 "We had an error:\n"
 "\n"
-"Incorrect Username"
+"Incorrect username"
 msgstr ""
 
 #: ../gui/registration.go:148
@@ -5575,12 +5601,15 @@ msgid ""
 "\n"
 "The captcha entered is wrong"
 msgstr ""
+"Ett fel uppstod:\n"
+"\n"
+"Captchan du skrev in är fel"
 
 #: ../gui/registration.go:150
 msgid ""
 "We had an error:\n"
 "\n"
-"too many requests for creating account."
+"The server received too many requests to create an account at the same time."
 msgstr ""
 
 #: ../gui/registration.go:240
@@ -5595,7 +5624,7 @@ msgstr ""
 
 #: ../gui/registration.go:264
 msgid "We had an error when trying to store your account information."
-msgstr ""
+msgstr "Ett fel uppstod när vi försökta spara din kontoinformation."
 
 #: ../gui/registration.go:273
 #, python-format
@@ -5954,6 +5983,24 @@ msgstr "Kontrollerar lösenord..."
 #: ../gui/muc_room_close_confirm.go:57
 msgid "Close & Leave Room"
 msgstr "Stäng & lämna rummet"
+
+#~ msgid ""
+#~ "We had an error:\n"
+#~ "\n"
+#~ "Incorrect Username"
+#~ msgstr ""
+#~ "Ett fel uppstod:\n"
+#~ "\n"
+#~ "Ogiltigt användarnamn"
+
+#~ msgid ""
+#~ "We had an error:\n"
+#~ "\n"
+#~ "too many requests for creating account."
+#~ msgstr ""
+#~ "Ett fel uppstod:\n"
+#~ "\n"
+#~ "För många samtidiga förfrågningar att skapa nytt konto."
 
 #~ msgid ""
 #~ "The administrator$nickname{%s} changed your position; you are not "

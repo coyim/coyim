@@ -14,4 +14,4 @@ send-reproducible-signature:
 	./mail_build_info.sh $(BINDIR)/build_info.$(KEYID).rasc $(TAG_VERSION)
 
 check-reproducible-signatures:
-	./check_build_info_signatures.rb $(TAG_VERSION)
+	./check_build_info_signatures_gh.rb $(TAG_VERSION)

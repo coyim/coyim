@@ -91,3 +91,9 @@ We have instructions here on how you [can get started contributing to CoyIM](CON
 
 CoyIM supports reproducible builds for Linux on AMD64. See [REPRODUCIBILITY](REPRODUCIBILITY.md) for instructions on how
 to build and verify these builds.
+
+
+## License
+
+The CoyIM project and all source files licensed under the [GPL version 3](https://www.gnu.org/licenses/gpl-3.0.html),
+unless otherwise noted.

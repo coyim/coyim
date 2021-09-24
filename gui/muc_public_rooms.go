@@ -89,7 +89,7 @@ func (prv *mucPublicRoomsView) initBuilder() {
 
 	prv.builder.ConnectSignals(map[string]interface{}{
 		"on_cancel":            prv.onCancel,
-		"on_window_closed":     prv.onWindowClose,
+		"on_close_window":      prv.onWindowClose,
 		"on_join":              prv.onJoinRoom,
 		"on_activate_room_row": prv.onActivateRoomRow,
 		"on_selection_changed": prv.onSelectionChanged,

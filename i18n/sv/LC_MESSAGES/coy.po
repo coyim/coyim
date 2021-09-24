@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-24 21:48+0000\n"
-"PO-Revision-Date: 2021-09-24 20:56+0000\n"
+"PO-Revision-Date: 2021-09-24 22:07+0000\n"
 "Last-Translator: Ola Bini <ola@autonomia.digital>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/coyim/main/sv/>\n"
 "Language: sv\n"
@@ -4985,7 +4985,7 @@ msgstr "Försöker ändra lösenord..."
 
 #: ../gui/certificate_window.go:124
 msgid "this account"
-msgstr ""
+msgstr "detta kontot"
 
 #: ../gui/certificate_window.go:133
 #, python-format

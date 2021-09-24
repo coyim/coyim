@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-24 21:48+0000\n"
-"PO-Revision-Date: 2021-09-24 20:56+0000\n"
-"Last-Translator: Palibg <palibetan@hotmail.com>\n"
+"PO-Revision-Date: 2021-09-24 22:07+0000\n"
+"Last-Translator: ivanjijon <ivanjijon@hotmail.com>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/coyim/main/pt/"
 ">\n"
 "Language: pt\n"
@@ -5009,7 +5009,7 @@ msgstr "Tentando mudar a senha..."
 
 #: ../gui/certificate_window.go:124
 msgid "this account"
-msgstr ""
+msgstr "esta conta"
 
 #: ../gui/certificate_window.go:133
 #, python-format

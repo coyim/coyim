@@ -121,7 +121,7 @@ $(BUILD_TOOLS_DIR):
 	mkdir -p $@
 
 $(BUILD_TOOLS_DIR)/esc: $(BUILD_TOOLS_DIR)
-	./find_esc.sh $(BUILD_TOOLS_DIR)
+	./build/find_esc.sh $(BUILD_TOOLS_DIR)
 
 gui/definitions.go: $(BUILD_TOOLS_DIR)/esc gui/definitions/*.xml
 	(cd gui; go generate -x ui_reader.go)
@@ -129,9 +129,9 @@ gui/definitions.go: $(BUILD_TOOLS_DIR)/esc gui/definitions/*.xml
 gui/muc/definitions.go: $(BUILD_TOOLS_DIR)/esc gui/muc/definitions/*.xml
 	(cd gui/muc; go generate -x ui_reader.go)
 
-gui/authors.go: authors.rb
+gui/authors.go: build/authors.rb
 	rm -rf $@
-	./authors.rb > $@
+	./build/authors.rb > $@
 	gofmt -w $@
 
 touch-authors:

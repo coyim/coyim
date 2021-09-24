@@ -724,6 +724,10 @@ func (u *gtkUI) addContactWindow() {
 			account.session.AutoApprove(peer.String())
 		}
 
+		if u.window != nil {
+			_, _ = u.window.Emit(accountChangedSignal.String())
+		}
+
 		return err
 	})
 

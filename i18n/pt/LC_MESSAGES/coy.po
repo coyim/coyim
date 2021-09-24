@@ -5392,11 +5392,11 @@ msgstr ""
 #: ../gui/jid.go:25
 msgid ""
 "Validation failed:\n"
-"The XMPP address has an invalid domain part, The XMMP address has an invalid "
+"The XMPP address has an invalid domain part, The XMPP address has an invalid "
 "local part. An XMPP address should look like this: local@domain.com."
 msgstr ""
 "Falha na validação:\n"
-"O endereço XMPP tem uma parte de domínio inválida. O endereço XMMP tem uma "
+"O endereço XMPP tem uma parte de domínio inválida. O endereço XMPP tem uma "
 "parte local inválida. Um endereço XMPP deve ser semelhante a este: "
 "local@domain.com."
 
@@ -5413,11 +5413,11 @@ msgstr ""
 #: ../gui/jid.go:29
 msgid ""
 "Validation failed:\n"
-"The XMMP address has an invalid local part. An XMPP address should look like "
+"The XMPP address has an invalid local part. An XMPP address should look like "
 "this: local@domain.com."
 msgstr ""
 "Falha na validação:\n"
-"O endereço XMMP tem uma parte local inválida. Um endereço XMPP deve ser "
+"O endereço XMPP tem uma parte local inválida. Um endereço XMPP deve ser "
 "semelhante a este: local@domain.com."
 
 #: ../gui/edit_contact.go:114

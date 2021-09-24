@@ -7,9 +7,6 @@ KEYID=$(shell gpg2 --keyid-format 0xlong -K | grep '^sec' | head -1 | cut -d\  -
 sign-reproducible:
 	./sign_build_info_with_key.sh $(KEYID) $(BINDIR)
 
-upload-reproducible-signature:
-	./push_build_info.sh $(BINDIR)/build_info.$(KEYID).rasc $(TAG_VERSION) build_info.$(KEYID).rasc
-
 send-reproducible-signature:
 	./mail_build_info.sh $(BINDIR)/build_info.$(KEYID).rasc $(TAG_VERSION)
 

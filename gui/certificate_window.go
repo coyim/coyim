@@ -121,7 +121,7 @@ func (u *gtkUI) certificateFailedToVerifyDisplayDialog(a *account, certs []*x509
 		sha256Fingerprint.SetLabel(displayChunked(digests.Sha256(certs[0].Raw)))
 		sha3_256Fingerprint.SetLabel(displayChunked(digests.Sha3_256(certs[0].Raw)))
 
-		accountName := "this account"
+		accountName := i18n.Local("this account")
 		if a != nil {
 			accountName = a.Account()
 		}

@@ -3,6 +3,7 @@ package xmpp
 import (
 	"errors"
 	"io"
+	"sort"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -89,7 +90,16 @@ func (s *KeepaliveSuite) Test_conn_watchKeepAlive_workingOnce(c *C) {
 	// the connection is already closed.
 	c.Assert(ll == 2 || ll == 3, Equals, true)
 	c.Assert(hook.Entries[0].Level, Equals, log.InfoLevel)
-	c.Assert(hook.Entries[0].Message, Equals, "xmpp: keepalive failed")
 	c.Assert(hook.Entries[1].Level, Equals, log.InfoLevel)
-	c.Assert(hook.Entries[1].Message, Equals, "xmpp: no more watching keepalives")
+
+	messages := []string{hook.Entries[0].Message, hook.Entries[1].Message}
+	if ll == 3 {
+		messages = append(messages, hook.Entries[2].Message)
+	}
+
+	sort.Strings(messages)
+	c.Assert(messages[0:2], DeepEquals, []string{
+		"xmpp: keepalive failed",
+		"xmpp: no more watching keepalives",
+	})
 }

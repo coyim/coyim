@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# It is not clear whether this script works or is necessary anymore. Use at your own risk.
+
 set -xe
 
 sudo apt-get update && sudo apt-get -y --force-yes install -t testing golang

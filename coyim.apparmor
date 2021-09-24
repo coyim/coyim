@@ -7,7 +7,7 @@
 #
 
 #include <tunables/global>
-/usr/bin/coim {
+/usr/bin/coyim {
   #include <abstractions/consoles>
   #include <abstractions/ssl_certs>
 

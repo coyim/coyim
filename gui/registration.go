@@ -143,11 +143,11 @@ func (w *serverSelectionWindow) renderErrorFor(err error) {
 	case xmpp.ErrMissingRequiredRegistrationInfo:
 		renderError(w.doneMessage, i18n.Local("We had an error:\n\nSome required fields are missing. Please, try again and fill all fields."), "Error when trying to get registration form", err, w.u)
 	case xmpp.ErrUsernameConflict:
-		renderError(w.doneMessage, i18n.Local("We had an error:\n\nIncorrect Username"), "We had an error when trying to create your account", err, w.u)
+		renderError(w.doneMessage, i18n.Local("We had an error:\n\nIncorrect username"), "We had an error when trying to create your account", err, w.u)
 	case xmpp.ErrWrongCaptcha:
 		renderError(w.doneMessage, i18n.Local("We had an error:\n\nThe captcha entered is wrong"), "We had an error when trying to create your account", err, w.u)
 	case xmpp.ErrResourceConstraint:
-		renderError(w.doneMessage, i18n.Local("We had an error:\n\ntoo many requests for creating account."), "We had an error when trying to create your account", err, w.u)
+		renderError(w.doneMessage, i18n.Local("We had an error:\n\nThe server received too many requests to create an account at the same time."), "We had an error when trying to create your account", err, w.u)
 	default:
 		renderError(w.doneMessage, i18n.Local("Could not contact the server.\n\nPlease, correct your server choice and try again."), "Error when trying to get registration form", err, w.u)
 	}

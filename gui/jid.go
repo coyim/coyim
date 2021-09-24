@@ -22,11 +22,11 @@ func verifyXMPPAddress(address string) (bool, string) {
 
 	switch {
 	case !isValidDomain && !isValidPart:
-		return false, i18n.Local("Validation failed:\nThe XMPP address has an invalid domain part, The XMMP address has an invalid local part. An XMPP address should look like this: local@domain.com.")
+		return false, i18n.Local("Validation failed:\nThe XMPP address has an invalid domain part, The XMPP address has an invalid local part. An XMPP address should look like this: local@domain.com.")
 	case !isValidDomain:
 		return false, i18n.Local("Validation failed:\nThe XMPP address has an invalid domain part. An XMPP address should look like this: local@domain.com.")
 	case !isValidPart:
-		return false, i18n.Local("Validation failed:\nThe XMMP address has an invalid local part. An XMPP address should look like this: local@domain.com.")
+		return false, i18n.Local("Validation failed:\nThe XMPP address has an invalid local part. An XMPP address should look like this: local@domain.com.")
 	}
 
 	return true, ""

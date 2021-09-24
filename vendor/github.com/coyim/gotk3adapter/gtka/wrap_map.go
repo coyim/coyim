@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/coyim/gotk3adapter/gliba"
+	"github.com/coyim/gotk3adapter/glibi"
+	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/coyim/gotk3extra"
 	"github.com/gotk3/gotk3/gtk"
 )
@@ -12,6 +14,34 @@ func init() {
 	gliba.AddWrapper(WrapLocal)
 
 	gliba.AddUnwrapper(UnwrapLocal)
+}
+
+func nilOrObject(o interface{}) glibi.Object {
+	if wobj := Wrap(o); wobj != nil {
+		return wobj.(glibi.Object)
+	}
+	return nil
+}
+
+func nilErrorOrObject(o interface{}, e error) (glibi.Object, error) {
+	if e != nil {
+		return nil, e
+	}
+	return nilOrObject(o), nil
+}
+
+func nilOrWidget(o interface{}) gtki.Widget {
+	if wobj := Wrap(o); wobj != nil {
+		return wobj.(gtki.Widget)
+	}
+	return nil
+}
+
+func nilErrorOrWidget(o interface{}, e error) (gtki.Widget, error) {
+	if e != nil {
+		return nil, e
+	}
+	return nilOrWidget(o), nil
 }
 
 func Wrap(o interface{}) interface{} {
@@ -31,6 +61,9 @@ func Unwrap(o interface{}) interface{} {
 }
 
 func WrapLocal(o interface{}) (interface{}, bool) {
+	if o == nil {
+		return nil, true
+	}
 	switch oo := o.(type) {
 	case *gtk.AboutDialog:
 		val := WrapAboutDialogSimple(oo)
@@ -446,6 +479,9 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 }
 
 func UnwrapLocal(o interface{}) (interface{}, bool) {
+	if o == nil {
+		return nil, true
+	}
 	switch oo := o.(type) {
 	case *aboutDialog:
 		val := UnwrapAboutDialog(oo)

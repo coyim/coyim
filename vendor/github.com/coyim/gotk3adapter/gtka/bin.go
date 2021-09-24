@@ -30,5 +30,5 @@ func UnwrapBin(v gtki.Bin) *gtk.Bin {
 
 func (v *bin) GetChild() gtki.Widget {
 	vx, _ := v.Bin.GetChild()
-	return Wrap(vx).(gtki.Widget)
+	return nilOrWidget(vx)
 }

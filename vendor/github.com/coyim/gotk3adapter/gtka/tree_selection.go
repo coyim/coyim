@@ -47,7 +47,12 @@ func (v *treeSelection) GetSelectedRows(m gtki.TreeModel) []gtki.TreePath {
 
 	result := []gtki.TreePath{}
 	for cc := ll; cc != nil; cc = cc.Next() {
-		result = append(result, Wrap(cc.Data()).(gtki.TreePath))
+		wobj := Wrap(cc.Data())
+		if wobj == nil {
+			result = append(result, nil)
+		} else {
+			result = append(result, wobj.(gtki.TreePath))
+		}
 	}
 
 	return result

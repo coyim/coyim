@@ -110,13 +110,11 @@ func (v *widget) GetName() (string, error) {
 }
 
 func (v *widget) GetParent() (gtki.Widget, error) {
-	parent, err := v.internal.GetParent()
-	return Wrap(parent).(gtki.Widget), err
+	return nilErrorOrWidget(v.internal.GetParent())
 }
 
 func (v *widget) GetParentX() (gtki.Widget, error) {
-	parent, err := gotk3extra.GetParent(v.internal)
-	return Wrap(parent).(gtki.Widget), err
+	return nilErrorOrWidget(gotk3extra.GetParent(v.internal))
 }
 
 func (v *widget) GrabFocus() {

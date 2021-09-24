@@ -53,7 +53,7 @@ func (v *container) GetChildren() []gtki.Widget {
 	result := []gtki.Widget{}
 
 	cc.Foreach(func(item interface{}) {
-		result = append(result, Wrap(item).(gtki.Widget))
+		result = append(result, nilOrWidget(item))
 	})
 
 	return result

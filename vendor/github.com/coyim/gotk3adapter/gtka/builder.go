@@ -39,8 +39,7 @@ func (v *builder) AddFromResource(v1 string) error {
 }
 
 func (v *builder) GetObject(v1 string) (glibi.Object, error) {
-	vx1, vx2 := v.internal.GetObject(v1)
-	return Wrap(vx1).(glibi.Object), vx2
+	return nilErrorOrObject(v.internal.GetObject(v1))
 }
 
 func (v *builder) ConnectSignals(v1 map[string]interface{}) {

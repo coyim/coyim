@@ -1,4 +1,4 @@
-# The philosophy, mission, guide lines and goals of CoyIM
+# The philosophy, mission, guidelines and goals of CoyIM
 
 This document aims to expand a bit on the philosophy we use when developing
 CoyIM - what the mission is, and guidelines for what features we choose to

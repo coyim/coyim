@@ -135,7 +135,7 @@ gui/authors.go: build/authors.rb
 	gofmt -w $@
 
 touch-authors:
-	touch authors.rb
+	touch build/authors.rb
 
 authors: touch-authors gui/authors.go
 

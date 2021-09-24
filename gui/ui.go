@@ -714,7 +714,10 @@ func (u *gtkUI) addContactWindow() {
 
 		if nick != "" {
 			account.session.GetConfig().SavePeerDetails(peer.String(), nick, []string{})
-			u.SaveConfig()
+			err = u.saveConfigOnlyInternal()
+			if err != nil {
+				u.hasLog.log.WithError(err).Warn("Failed to save config file")
+			}
 		}
 
 		if autoAuth {

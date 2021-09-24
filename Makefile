@@ -55,7 +55,7 @@ LDFLAGS_VARS := -X 'main.BuildTimestamp=$(BUILD_TIMESTAMP)' -X 'main.BuildCommit
 LDFLAGS_REGULAR = -ldflags "$(LDFLAGS_VARS)"
 LDFLAGS_WINDOWS = -ldflags "$(LDFLAGS_VARS) -H windowsgui"
 
-.PHONY: default check autogen build build-gui build-gui-memory-analyzer build-gui-address-san build-gui-win build-debug debug win-ci-deps reproducible-linux-create-image reproducible-linux-build sign-reproducible upload-reproducible-signature send-reproducible-signature check-reproducible-signatures clean clean-cache update-vendor gosec ineffassign i18n lint test test-named dep-supported-only deps run-cover clean-cover cover all
+.PHONY: default check autogen build build-gui build-gui-memory-analyzer build-gui-address-san build-gui-win build-debug debug win-ci-deps reproducible-linux-create-image reproducible-linux-build sign-reproducible upload-reproducible-signature send-reproducible-signature check-reproducible-signatures clean clean-cache update-vendor gosec ineffassign i18n lint test test-named dep-supported-only deps run-cover clean-cover cover all authors
 
 default: check
 check: lint test
@@ -130,9 +130,14 @@ gui/muc/definitions.go: $(BUILD_TOOLS_DIR)/esc gui/muc/definitions/*.xml
 	(cd gui/muc; go generate -x ui_reader.go)
 
 gui/authors.go: authors.rb
-	rm -rf gui/authors.go
-	./authors.rb > gui/authors.go
-	gofmt -w gui/authors.go
+	rm -rf $@
+	./authors.rb > $@
+	gofmt -w $@
+
+touch-authors:
+	touch authors.rb
+
+authors: touch-authors gui/authors.go
 
 golangci:
 	golangci-lint run

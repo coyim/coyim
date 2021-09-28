@@ -282,6 +282,10 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 
 	cp.history.SetBuffer(cvf.ui.getTags().createTextBuffer())
 
+	adj := cp.scrollHistory.GetVAdjustment()
+	adj.Connect("changed", cp.onAdjustmentChanged)
+	adj.Connect("value-changed", cp.updateCurrentAdjustmentValue)
+
 	cp.pending.SetBuffer(cvf.ui.getTags().createTextBuffer())
 
 	_ = cp.entry.Connect("key-release-event", cp.doPotentialEntryResize)

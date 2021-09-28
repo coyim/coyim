@@ -292,6 +292,19 @@ func (conv *conversationPane) onEdgeReached(_ gtki.ScrolledWindow, pos int) {
 	}
 }
 
+// onAdjustmentChanged MUST be called from the UI thread
+func (conv *conversationPane) onAdjustmentChanged() {
+	if int64(conv.currentAdjustment) == int64(conv.maxAdjustment) {
+		doALittleBitLater(func() {
+			scrollToBottom(conv.scrollHistory)
+		})
+	}
+}
+
+func (conv *conversationPane) updateCurrentAdjustmentValue() {
+	conv.currentAdjustment = conv.scrollHistory.GetVAdjustment().GetValue()
+}
+
 func (conv *conversationPane) calculateHeight(lines uint) uint {
 	return lines * 2 * getFontSizeFrom(conv.entry)
 }

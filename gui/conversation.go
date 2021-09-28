@@ -367,6 +367,7 @@ func (conv *conversationPane) connectEnterHandler(target gtki.Widget) {
 			insertEnter(conv.entry)
 			ret = true
 		} else if isSend(evk, conv.shiftEnterSends) {
+			scrollToBottom(conv.scrollHistory)
 			conv.onSendMessageSignal()
 			ret = true
 		}

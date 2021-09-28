@@ -608,14 +608,14 @@ func showForDisplay(show string, gone bool) string {
 func onlineStatus(show, showStatus string) string {
 	sshow := showForDisplay(show, false)
 	if sshow != "" {
-		return sshow + showStatusForDisplay(showStatus)
+		return i18n.Localf("%[1]s%[2]s", sshow, showStatusForDisplay(showStatus))
 	}
 	return ""
 }
 
 func showStatusForDisplay(showStatus string) string {
 	if showStatus != "" {
-		return " (" + showStatus + ")"
+		return i18n.Localf(" (%s)", showStatus)
 	}
 	return ""
 }
@@ -627,9 +627,9 @@ func extraOfflineStatus(show, showStatus string) string {
 	}
 
 	if showStatus != "" {
-		return " (" + sshow + ": " + showStatus + ")"
+		return i18n.Localf(" (%[1]s: %[2]s)", sshow, showStatus)
 	}
-	return " (" + sshow + ")"
+	return i18n.Localf(" (%s)", sshow)
 }
 
 func createStatusMessage(from, show, showStatus string, gone bool) string {
@@ -641,7 +641,7 @@ func createStatusMessage(from, show, showStatus string, gone bool) string {
 	}
 
 	if tail != "" {
-		return from + i18n.Local(" is now ") + tail
+		return i18n.Localf("%[1]s is now %[2]s", from, tail)
 	}
 	return ""
 }

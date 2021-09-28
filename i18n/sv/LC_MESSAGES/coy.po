@@ -5269,16 +5269,16 @@ msgstr "Osynlig"
 
 #: ../gui/conversation.go:611
 msgid "%[1]s%[2]s"
-msgstr ""
+msgstr "%[1]s%[2]s"
 
 #: ../gui/conversation.go:618 ../gui/conversation.go:632
 #, python-format
 msgid " (%s)"
-msgstr ""
+msgstr " (%s)"
 
 #: ../gui/conversation.go:630
 msgid " (%[1]s: %[2]s)"
-msgstr ""
+msgstr " (%[1]s: %[2]s)"
 
 #: ../gui/conversation.go:638
 msgid "Offline"
@@ -5286,7 +5286,7 @@ msgstr "Off-line"
 
 #: ../gui/conversation.go:644
 msgid "%[1]s is now %[2]s"
-msgstr ""
+msgstr "%[1]s är nu %[2]s"
 
 #: ../gui/conversation.go:760
 msgid "The peer is using a key we haven't seen before!"

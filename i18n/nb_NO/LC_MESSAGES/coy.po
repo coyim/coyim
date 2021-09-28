@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-24 21:48+0000\n"
+"POT-Creation-Date: 2021-09-28 19:11+0000\n"
 "PO-Revision-Date: 2021-09-28 18:20+0000\n"
 "Last-Translator: Ola Bini <ola@autonomia.digital>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/coyim/"
@@ -2023,7 +2023,8 @@ msgstr "Innehaveren $nickname{%[1]s} bannlyste $nickname{%[2]s} fra rommet."
 #: ../gui/muc_notification_messages.go:312
 msgid ""
 "The administrator $nickname{%[1]s} banned $nickname{%[2]s} from the room."
-msgstr "Administratoren $nickname{%[1]s} bannlyste $nickname{%[2]s} fra rommet."
+msgstr ""
+"Administratoren $nickname{%[1]s} bannlyste $nickname{%[2]s} fra rommet."
 
 #: ../gui/muc_notification_messages.go:316
 msgid "$nickname{%[1]s} banned $nickname{%[2]s} from the room."
@@ -3202,8 +3203,8 @@ msgid ""
 "The owner $nickname{%s} changed your position from "
 "$affiliation{administrator} to $affiliation{member}."
 msgstr ""
-"Innehaveren $nickname{%s} endret din stilling fra $affiliation{administrator}"
-" til $affiliation{medlem}."
+"Innehaveren $nickname{%s} endret din stilling fra "
+"$affiliation{administrator} til $affiliation{medlem}."
 
 #: ../gui/muc_notification_messages.go:1316
 #: ../gui/muc_notification_messages.go:1558
@@ -5271,13 +5272,26 @@ msgstr "Ledig for sludring"
 msgid "Invisible"
 msgstr "Usynglig"
 
+#: ../gui/conversation.go:611
+msgid "%[1]s%[2]s"
+msgstr ""
+
+#: ../gui/conversation.go:618 ../gui/conversation.go:632
+#, python-format
+msgid " (%s)"
+msgstr ""
+
+#: ../gui/conversation.go:630
+msgid " (%[1]s: %[2]s)"
+msgstr ""
+
 #: ../gui/conversation.go:638
 msgid "Offline"
 msgstr "Frakoblet"
 
 #: ../gui/conversation.go:644
-msgid " is now "
-msgstr " er nå "
+msgid "%[1]s is now %[2]s"
+msgstr ""
 
 #: ../gui/conversation.go:760
 msgid "The peer is using a key we haven't seen before!"
@@ -6004,6 +6018,9 @@ msgstr "Sjekker passord …"
 #: ../gui/muc_room_close_confirm.go:57
 msgid "Close & Leave Room"
 msgstr "Lukk og forlat rom"
+
+#~ msgid " is now "
+#~ msgstr " er nå "
 
 #~ msgid "Configure your master password"
 #~ msgstr "Sett opp ditt hovedpassord"

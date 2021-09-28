@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-24 21:48+0000\n"
+"POT-Creation-Date: 2021-09-28 19:11+0000\n"
 "PO-Revision-Date: 2016-02-23 03:48-0500\n"
 "Last-Translator: Fan Jiang <fan.torchz@gmail.com>\n"
 "Language-Team: Chinese (Simplified, China)\n"
@@ -4639,13 +4639,26 @@ msgstr "随时可谈"
 msgid "Invisible"
 msgstr "不可见"
 
+#: ../gui/conversation.go:611
+msgid "%[1]s%[2]s"
+msgstr ""
+
+#: ../gui/conversation.go:618 ../gui/conversation.go:632
+#, python-format
+msgid " (%s)"
+msgstr ""
+
+#: ../gui/conversation.go:630
+msgid " (%[1]s: %[2]s)"
+msgstr ""
+
 #: ../gui/conversation.go:638
 msgid "Offline"
 msgstr "离线"
 
 #: ../gui/conversation.go:644
-msgid " is now "
-msgstr "状态为"
+msgid "%[1]s is now %[2]s"
+msgstr ""
 
 #: ../gui/conversation.go:760
 msgid "The peer is using a key we haven't seen before!"
@@ -5294,6 +5307,9 @@ msgstr "验证密码中..."
 #: ../gui/muc_room_close_confirm.go:57
 msgid "Close & Leave Room"
 msgstr ""
+
+#~ msgid " is now "
+#~ msgstr "状态为"
 
 #~ msgid "Enter master password"
 #~ msgstr "输入主密码"

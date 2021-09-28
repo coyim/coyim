@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-24 21:48+0000\n"
+"POT-Creation-Date: 2021-09-28 19:11+0000\n"
 "PO-Revision-Date: 2021-09-08 16:02+0000\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -4637,12 +4637,25 @@ msgstr ""
 msgid "Invisible"
 msgstr ""
 
+#: ../gui/conversation.go:611
+msgid "%[1]s%[2]s"
+msgstr ""
+
+#: ../gui/conversation.go:618 ../gui/conversation.go:632
+#, python-format
+msgid " (%s)"
+msgstr ""
+
+#: ../gui/conversation.go:630
+msgid " (%[1]s: %[2]s)"
+msgstr ""
+
 #: ../gui/conversation.go:638
 msgid "Offline"
 msgstr ""
 
 #: ../gui/conversation.go:644
-msgid " is now "
+msgid "%[1]s is now %[2]s"
 msgstr ""
 
 #: ../gui/conversation.go:760

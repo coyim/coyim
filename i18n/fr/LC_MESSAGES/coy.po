@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-24 21:48+0000\n"
+"POT-Creation-Date: 2021-09-28 19:11+0000\n"
 "PO-Revision-Date: 2021-09-24 22:07+0000\n"
 "Last-Translator: ivanjijon <ivanjijon@hotmail.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/coyim/main/fr/>\n"
@@ -5368,13 +5368,26 @@ msgstr "Libre pour Discuter"
 msgid "Invisible"
 msgstr "Invisible"
 
+#: ../gui/conversation.go:611
+msgid "%[1]s%[2]s"
+msgstr ""
+
+#: ../gui/conversation.go:618 ../gui/conversation.go:632
+#, python-format
+msgid " (%s)"
+msgstr ""
+
+#: ../gui/conversation.go:630
+msgid " (%[1]s: %[2]s)"
+msgstr ""
+
 #: ../gui/conversation.go:638
 msgid "Offline"
 msgstr "Hors Ligne"
 
 #: ../gui/conversation.go:644
-msgid " is now "
-msgstr " est maintenant "
+msgid "%[1]s is now %[2]s"
+msgstr ""
 
 #: ../gui/conversation.go:760
 msgid "The peer is using a key we haven't seen before!"
@@ -6107,6 +6120,9 @@ msgstr "Vérification du mot de passe..."
 #: ../gui/muc_room_close_confirm.go:57
 msgid "Close & Leave Room"
 msgstr "Fermer et Quitter la Salle"
+
+#~ msgid " is now "
+#~ msgstr " est maintenant "
 
 #~ msgid ""
 #~ "The administrator$nickname{%s} changed your position; you are not "

@@ -286,6 +286,12 @@ func countVisibleLines(v gtki.TextView) uint {
 	return lines
 }
 
+func (conv *conversationPane) onEdgeReached(_ gtki.ScrolledWindow, pos int) {
+	if pos == bottomPositionValue {
+		conv.maxAdjustment = conv.scrollHistory.GetVAdjustment().GetValue()
+	}
+}
+
 func (conv *conversationPane) calculateHeight(lines uint) uint {
 	return lines * 2 * getFontSizeFrom(conv.entry)
 }

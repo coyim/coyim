@@ -263,6 +263,7 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 		"on_connect":               cp.onConnect,
 		"on_disconnect":            cp.onDisconnect,
 		"on_destroy_file_transfer": cp.onDestroyFileTransferNotif,
+		"on_edge_reached":          cp.onEdgeReached,
 		"on_send_file_to_contact": func() {
 			cvf.account.sendFileTo(cp.currentPeerForSending(), cvf.ui, cp)
 		},

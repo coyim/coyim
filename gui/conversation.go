@@ -97,7 +97,9 @@ type conversationPane struct {
 	// opened - then it will be the full JID
 	target jid.Any
 
-	isTargeted bool
+	isTargeted        bool
+	maxAdjustment     float64
+	currentAdjustment float64
 
 	account              *account
 	widget               gtki.Box            `gtk-widget:"box"`

@@ -77,7 +77,7 @@ func (u *gtkUI) handleMessageEvent(ev events.Message, a *account) {
 			timestamp:       timestamp,
 			isEncrypted:     encrypted,
 			isOutgoing:      false,
-			strippedMessage: ui.StripSomeHTML(message),
+			strippedMessage: message,
 		}
 		conv.appendMessage(sent)
 

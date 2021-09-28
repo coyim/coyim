@@ -11,7 +11,6 @@ import (
 	"github.com/coyim/coyim/otrclient"
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
-	"github.com/coyim/coyim/ui"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/glibi"
@@ -540,7 +539,7 @@ func (conv *conversationPane) sendMessage(message string) error {
 
 		sent := sentMessage{
 			message:         message,
-			strippedMessage: ui.StripSomeHTML([]byte(message)),
+			strippedMessage: []byte(message),
 			from:            conv.account.session.DisplayName(),
 			to:              conv.currentPeerForSending().NoResource(),
 			timestamp:       time.Now(),

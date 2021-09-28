@@ -281,9 +281,6 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 	updateWithStyle(cp.entryScroll, prov)
 
 	cp.history.SetBuffer(cvf.ui.getTags().createTextBuffer())
-	_ = cp.history.Connect("size-allocate", func() {
-		scrollToBottom(cp.scrollHistory)
-	})
 
 	cp.pending.SetBuffer(cvf.ui.getTags().createTextBuffer())
 

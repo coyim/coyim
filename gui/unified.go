@@ -266,6 +266,8 @@ func (csi *conversationStackItem) show(userInitiated bool) {
 		csi.needsAttention = true
 		csi.applyTextWeight()
 	}
+
+	scrollToBottom(csi.scrollHistory)
 }
 
 func (csi *conversationStackItem) potentialTarget() string {

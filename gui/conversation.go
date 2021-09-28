@@ -859,6 +859,8 @@ func (conv *conversationPane) onShow() {
 		conv.reapOlderThan(time.Now().Add(-reapInterval))
 		conv.hidden = false
 	}
+
+	scrollToBottom(conv.scrollHistory)
 }
 
 func (conv *conversationPane) showDelayedMessagesWindow() {

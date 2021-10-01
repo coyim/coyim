@@ -21,6 +21,17 @@ import (
 
 // Internally it will use a buffer, and a lock, and then a separate goroutine that pushes things to the file
 
+// The public interface of a receiver is quite small:
+// type receiver interface{
+//   io.Reader
+//   io.Writer
+// }
+// - wait() ([]byte, string, bool, error)
+// - cancel()
+
+// Also, the io.Reader implementation seems to be incidental to the actual implementation
+// It would be great to hide these implementation details
+
 type receiver struct {
 	sync.Mutex
 
@@ -172,7 +183,7 @@ func (r *receiver) cancel() {
 	r.saveError(errLocalCancel)
 }
 
-// addData adds the data for processing
+// Write adds the data for processing
 // It will return any potential errors found during the process
 func (r *receiver) Write(d []byte) (int, error) {
 	if r.err != nil {
@@ -189,6 +200,14 @@ func (r *receiver) Write(d []byte) (int, error) {
 	return len(d), nil
 }
 
+// wait will wait until the receipt of information has finished
+// or an error has been encountered.
+// if the transfer went well, it will return a true signalling all
+// is ok, and no error. it will also optionally return
+// some bytes to send back to the sender, as a "receipt"
+// it wil return the file name where the received data
+// was stored
+// if an error happens, this will be returned instead.
 func (r *receiver) wait() ([]byte, string, bool, error) {
 	r.Lock()
 	defer r.Unlock()

@@ -93,6 +93,7 @@ func (enc *encryptionParameters) wrapForReceiving(r io.Reader) (io.Reader, func(
 	if n != 16 {
 		err = errors.New("couldn't read the IV")
 	}
+	// TODO: this error code is not correct.
 	if err != nil {
 		hadError = true
 		errorHad = &err

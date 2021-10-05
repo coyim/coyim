@@ -135,6 +135,13 @@ func (r *receiver) readAndRun() {
 
 	fstat, _ := ff.Stat()
 
+	// TODO: this seems like it can only happen if the encryption doesn't generate
+	// the correct amount of data. If the transfer is cancelled from our
+	// side, the previous error handling will trigger.
+	// If the other side cancels, that will leave the whole code hanging, so we
+	// likely will never get here.
+	// I've tried to test this code, and I simply can't get it to trigger. It might
+	// be dead.
 	if totalWritten != r.ctx.size || fstat.Size() != totalWritten {
 		r.ctx.s.Log().WithFields(log.Fields{
 			"expected": r.ctx.size,

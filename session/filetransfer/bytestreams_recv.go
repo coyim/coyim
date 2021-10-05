@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"encoding/xml"
 	"errors"
-	"io"
 	"net"
 	"os"
 
@@ -72,7 +71,7 @@ func (ctx *recvContext) bytestreamDoReceive(conn net.Conn) {
 		}
 	}()
 
-	_, err := io.Copy(recv, conn)
+	_, err := ioCopy(recv, conn)
 
 	if err != nil && err != errLocalCancel {
 		closeAndIgnore(conn)

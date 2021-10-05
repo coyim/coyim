@@ -121,9 +121,9 @@ func bytestreamsSendData(ctx *sendContext, c net.Conn) {
 
 	ctx.totalSize = ctx.enc.totalSize(ctx.size)
 
-	ww, beforeFinish := ctx.enc.wrapForSending(c, io.MultiWriter(c, rep))
+	ww, beforeFinish := ctx.enc.wrapForSending(c, ioMultiWriter(c, rep))
 
-	_, err = io.Copy(io.MultiWriter(ww, rep), r)
+	_, err = ioCopy(ioMultiWriter(ww, rep), r)
 	if err != nil && err != errLocalCancel {
 		ctx.onError(err)
 	} else {

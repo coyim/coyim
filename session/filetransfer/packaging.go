@@ -48,7 +48,7 @@ func pack(dir string, zf *os.File) error {
 			return err
 		}
 		defer closeAndIgnore(file)
-		_, err = io.Copy(writer, file)
+		_, err = ioCopy(writer, file)
 		return err
 	})
 }
@@ -93,7 +93,7 @@ func unpack(file string, intoDir string) error {
 		}
 		defer closeAndIgnore(targetFile)
 
-		if _, err := io.Copy(targetFile, limReader); err != nil {
+		if _, err := ioCopy(targetFile, limReader); err != nil {
 			return err
 		}
 

@@ -53,13 +53,13 @@ func ibbReadAndWrite(ctx *sendContext) io.ReadCloser {
 		return nil
 	}
 
-	r, w := io.Pipe()
+	r, w := ioPipe()
 
 	ctx.totalSize = ctx.enc.totalSize(ctx.size)
 
 	go func() {
 		w2, beforeFinish := ctx.enc.wrapForSending(w, w)
-		_, err = io.Copy(w2, f)
+		_, err = ioCopy(w2, f)
 		if err != nil && err != errLocalCancel {
 			ctx.onError(err)
 		}

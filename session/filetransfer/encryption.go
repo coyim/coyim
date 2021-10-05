@@ -71,7 +71,7 @@ func (enc *encryptionParameters) wrapForSending(data io.WriteCloser, ivMacWriter
 
 	_, _ = ivMacWriter.Write(enc.iv)
 
-	ww := &cipher.StreamWriter{S: blockc, W: io.MultiWriter(data, mac)}
+	ww := &cipher.StreamWriter{S: blockc, W: ioMultiWriter(data, mac)}
 	beforeFinish := func() {
 		sum := mac.Sum(nil)
 		_, _ = ivMacWriter.Write(sum)
@@ -89,7 +89,7 @@ func (enc *encryptionParameters) wrapForReceiving(r io.Reader) (io.Reader, func(
 	var errorHad *error
 
 	var iv [16]byte
-	n, err := io.ReadFull(r, iv[:])
+	n, err := ioReadFull(r, iv[:])
 	if n != 16 {
 		err = errors.New("couldn't read the IV")
 	}
@@ -105,7 +105,7 @@ func (enc *encryptionParameters) wrapForReceiving(r io.Reader) (io.Reader, func(
 
 	blockc := cipher.NewCTR(aesc, iv[:])
 
-	rr := &cipher.StreamReader{S: blockc, R: io.TeeReader(r, mac)}
+	rr := &cipher.StreamReader{S: blockc, R: ioTeeReader(r, mac)}
 
 	return rr, func() ([]byte, error) {
 		if hadError {

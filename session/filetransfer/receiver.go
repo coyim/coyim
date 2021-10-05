@@ -101,6 +101,13 @@ func (r *receiver) saveError(e error) {
 	r.Unlock()
 }
 
+var ioCopy = io.Copy
+var ioCopyN = io.CopyN
+var ioMultiWriter = io.MultiWriter
+var ioPipe = io.Pipe
+var ioReadFull = io.ReadFull
+var ioTeeReader = io.TeeReader
+
 func (r *receiver) readAndRun() {
 	ff, err := r.ctx.openDestinationTempFile()
 	if err != nil {
@@ -122,7 +129,7 @@ func (r *receiver) readAndRun() {
 
 	rr, afterFinish := r.ctx.enc.wrapForReceiving(r)
 
-	_, err = io.CopyN(io.MultiWriter(ff, &reportingWriter{report: reporting}), rr, r.ctx.size)
+	_, err = ioCopyN(ioMultiWriter(ff, &reportingWriter{report: reporting}), rr, r.ctx.size)
 	if err != nil {
 		r.ctx.s.Log().WithError(err).Warn("Had error when trying to write to file")
 		r.ctx.control.ReportError(errors.New("Error writing to file"))

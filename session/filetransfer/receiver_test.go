@@ -144,6 +144,49 @@ func (s *ReceiverSuite) Test_receiver_receiptOfEncryptedDataWorks(c *C) {
 	c.Assert(content, DeepEquals, testDataContent)
 }
 
+func (s *ReceiverSuite) Test_receiver_receiptWithTooLittleDataForIV(c *C) {
+	destDir := c.MkDir()
+	l, hook := test.NewNullLogger()
+	sess := &sessionMockWithCustomLog{
+		log: l,
+	}
+	ctx := &recvContext{
+		s:           sess,
+		size:        7,
+		control:     sdata.CreateFileTransferControl(nil, nil),
+		destination: filepath.Join(destDir, "simple_receipt_test_file"),
+		enc: &encryptionParameters{
+			macKey:        testDataMacKey,
+			encryptionKey: testDataEncryptionKey,
+		},
+	}
+
+	hadError := make(chan error)
+	go ctx.control.WaitForError(func(e error) {
+		hadError <- e
+	})
+
+	recv := ctx.createReceiver()
+
+	go func() {
+		_, _ = recv.Write(testDataIV[0:5])
+		recv.Close()
+	}()
+
+	toSend, fileName, ok, err := recv.wait()
+
+	c.Assert(ok, Equals, false)
+	c.Assert(err, ErrorMatches, "couldn't read the IV")
+	c.Assert(<-hadError, ErrorMatches, "Error while reading encryption parameters")
+	c.Assert(toSend, IsNil)
+	c.Assert(fileName, Equals, "")
+
+	c.Assert(len(hook.Entries), Equals, 1)
+	c.Assert(hook.LastEntry().Level, Equals, log.WarnLevel)
+	c.Assert(hook.LastEntry().Message, Equals, "Couldn't read encryption parameters")
+	c.Assert(hook.LastEntry().Data["error"], ErrorMatches, "couldn't read the IV")
+}
+
 func (s *ReceiverSuite) Test_receiver_receiptOfEncryptedDataWithIncorrectMac(c *C) {
 	destDir := c.MkDir()
 	l, hook := test.NewNullLogger()

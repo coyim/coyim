@@ -107,7 +107,8 @@ func (s *EncryptionSuite) Test_wrapForReceiving_failsIfNotEnoughDataReadForIV(c 
 
 	testReader := &bytes.Buffer{}
 
-	res, f := enc.wrapForReceiving(testReader)
+	res, f, err := enc.wrapForReceiving(testReader)
+	c.Assert(err, ErrorMatches, "couldn't read the IV")
 	c.Assert(res, DeepEquals, testReader)
 	c.Assert(f, IsNil)
 }
@@ -124,7 +125,8 @@ func (s *EncryptionSuite) Test_wrapForReceiving_failsIfReaderIsBroken(c *C) {
 
 	testReader := &bytes.Buffer{}
 
-	res, f := enc.wrapForReceiving(testReader)
+	res, f, err := enc.wrapForReceiving(testReader)
+	c.Assert(err, ErrorMatches, "something bad, right\\?")
 	c.Assert(res, DeepEquals, testReader)
 	c.Assert(f, IsNil)
 }
@@ -142,7 +144,7 @@ func (s *EncryptionSuite) Test_wrapForReceiving_works(c *C) {
 
 	testReader := bytes.NewBuffer(data)
 
-	res, f := enc.wrapForReceiving(testReader)
+	res, f, _ := enc.wrapForReceiving(testReader)
 	c.Assert(res, Not(DeepEquals), testReader)
 	c.Assert(f, Not(IsNil))
 
@@ -184,7 +186,7 @@ func (s *EncryptionSuite) Test_wrapForReceiving_failsWhenReadingMacTag(c *C) {
 
 	testReader := bytes.NewBuffer(data)
 
-	res, f := enc.wrapForReceiving(testReader)
+	res, f, _ := enc.wrapForReceiving(testReader)
 	c.Assert(res, Not(DeepEquals), testReader)
 	c.Assert(f, Not(IsNil))
 
@@ -213,7 +215,7 @@ func (s *EncryptionSuite) Test_wrapForReceiving_failsInAnotherWayWhenReadingMacT
 		n: 32,
 	}
 
-	res, f := enc.wrapForReceiving(testReader)
+	res, f, _ := enc.wrapForReceiving(testReader)
 	c.Assert(res, Not(DeepEquals), testReader)
 	c.Assert(f, Not(IsNil))
 
@@ -241,7 +243,7 @@ func (s *EncryptionSuite) Test_wrapForReceiving_incorrectMacTag(c *C) {
 
 	testReader := bytes.NewBuffer(data)
 
-	res, f := enc.wrapForReceiving(testReader)
+	res, f, _ := enc.wrapForReceiving(testReader)
 	c.Assert(res, Not(DeepEquals), testReader)
 	c.Assert(f, Not(IsNil))
 

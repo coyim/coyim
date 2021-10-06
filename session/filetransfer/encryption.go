@@ -80,24 +80,19 @@ func (enc *encryptionParameters) wrapForSending(data io.WriteCloser, ivMacWriter
 	return ww, beforeFinish
 }
 
-func (enc *encryptionParameters) wrapForReceiving(r io.Reader) (io.Reader, func() ([]byte, error)) {
+func (enc *encryptionParameters) wrapForReceiving(r io.Reader) (io.Reader, func() ([]byte, error), error) {
 	if enc == nil {
-		return r, func() ([]byte, error) { return nil, nil }
+		return r, func() ([]byte, error) { return nil, nil }, nil
 	}
-
-	hadError := false
-	var errorHad *error
 
 	var iv [16]byte
 	n, err := ioReadFull(r, iv[:])
 	if n != 16 {
-		err = errors.New("couldn't read the IV")
+		return r, nil, errors.New("couldn't read the IV")
 	}
-	// TODO: this error code is not correct.
+
 	if err != nil {
-		hadError = true
-		errorHad = &err
-		return r, nil
+		return r, nil, err
 	}
 
 	mac := hmac.New(sha256.New, enc.macKey)
@@ -108,10 +103,6 @@ func (enc *encryptionParameters) wrapForReceiving(r io.Reader) (io.Reader, func(
 	rr := &cipher.StreamReader{S: blockc, R: ioTeeReader(r, mac)}
 
 	return rr, func() ([]byte, error) {
-		if hadError {
-			return nil, *errorHad
-		}
-
 		readMAC := make([]byte, mac.Size())
 		n, err := r.Read(readMAC)
 		if n != mac.Size() {
@@ -131,5 +122,5 @@ func (enc *encryptionParameters) wrapForReceiving(r io.Reader) (io.Reader, func(
 		}
 
 		return enc.macKey, nil
-	}
+	}, nil
 }

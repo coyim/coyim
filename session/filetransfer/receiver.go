@@ -45,6 +45,7 @@ type receiver struct {
 	hadError bool
 	err      error
 	done     bool
+	closed   bool
 
 	toSendAtFinish   []byte
 	fileNameAtFinish string
@@ -66,6 +67,13 @@ func (ctx *recvContext) createReceiver() *receiver {
 	return r
 }
 
+func (r *receiver) Close() {
+	r.Lock()
+	defer r.Unlock()
+	r.closed = true
+	r.newData.Broadcast()
+}
+
 func (r *receiver) Read(b []byte) (int, error) {
 	neededLen := len(b)
 	r.Lock()
@@ -75,7 +83,7 @@ func (r *receiver) Read(b []byte) (int, error) {
 			return 0, errors.New("error happened somewhere else")
 		}
 
-		if r.done {
+		if r.done || r.closed {
 			return 0, io.EOF
 		}
 
@@ -127,7 +135,16 @@ func (r *receiver) readAndRun() {
 		return nil
 	}
 
-	rr, afterFinish := r.ctx.enc.wrapForReceiving(r)
+	rr, afterFinish, err := r.ctx.enc.wrapForReceiving(r)
+	if err != nil {
+		r.ctx.s.Log().WithError(err).Warn("Couldn't read encryption parameters")
+		r.ctx.control.ReportError(errors.New("Error while reading encryption parameters"))
+		closeAndIgnore(ff)
+		_ = os.Remove(ff.Name())
+		removeInflightRecv(r.ctx.sid)
+		r.saveError(err)
+		return
+	}
 
 	_, err = ioCopyN(ioMultiWriter(ff, &reportingWriter{report: reporting}), rr, r.ctx.size)
 	if err != nil {

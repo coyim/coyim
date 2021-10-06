@@ -8,6 +8,7 @@ import (
 	"crypto/sha256"
 	"crypto/subtle"
 	"errors"
+	"hash"
 	"io"
 )
 
@@ -85,42 +86,79 @@ func (enc *encryptionParameters) wrapForReceiving(r io.Reader) (io.Reader, func(
 		return r, func() ([]byte, error) { return nil, nil }, nil
 	}
 
-	var iv [16]byte
-	n, err := ioReadFull(r, iv[:])
+	er := &encryptedReceiver{enc: enc, r: r}
+	return er.receive()
+}
+
+type encryptedReceiver struct {
+	enc             *encryptionParameters
+	r               io.Reader
+	iv              [16]byte
+	mac             hash.Hash
+	encryptedReader *cipher.StreamReader
+}
+
+func (er *encryptedReceiver) readIV() error {
+	n, err := ioReadFull(er.r, er.iv[:])
 	if n != 16 {
-		return r, nil, errors.New("couldn't read the IV")
+		return errors.New("couldn't read the IV")
 	}
 
+	return err
+}
+
+func (er *encryptedReceiver) createMac() {
+	er.mac = hmac.New(sha256.New, er.enc.macKey)
+}
+
+func (er *encryptedReceiver) createBlockCipher() cipher.Stream {
+	aesc, _ := aes.NewCipher(er.enc.encryptionKey)
+	return cipher.NewCTR(aesc, er.iv[:])
+}
+
+func (er *encryptedReceiver) createEncryptedReader() {
+	er.createMac()
+
+	er.encryptedReader = &cipher.StreamReader{
+		S: er.createBlockCipher(),
+		R: ioTeeReader(er.r, er.mac),
+	}
+}
+
+func (er *encryptedReceiver) receive() (io.Reader, func() ([]byte, error), error) {
+	if err := er.readIV(); err != nil {
+		return er.r, nil, err
+	}
+
+	er.createEncryptedReader()
+
+	return er.encryptedReader, er.macVerifier, nil
+}
+
+func (er *encryptedReceiver) readMacFromSender() ([]byte, error) {
+	readMAC := make([]byte, er.mac.Size())
+	n, err := er.r.Read(readMAC)
+	if n != er.mac.Size() {
+		err = errors.New("couldn't read MAC tag")
+	}
+
+	return readMAC, err
+}
+
+func (er *encryptedReceiver) macVerifier() ([]byte, error) {
+	readMAC, err := er.readMacFromSender()
 	if err != nil {
-		return r, nil, err
+		return nil, err
 	}
 
-	mac := hmac.New(sha256.New, enc.macKey)
-	aesc, _ := aes.NewCipher(enc.encryptionKey)
+	sum := er.mac.Sum(nil)
 
-	blockc := cipher.NewCTR(aesc, iv[:])
+	// It's not strictly necessary to use constant time compare for MACs based on hashes, due to the random nature
+	// of hashes and also the fact that this MAC tag is a public value. But we do it anyway - there's no harm to it
+	// here.
+	if subtle.ConstantTimeCompare(readMAC, sum) == 0 {
+		return nil, errors.New("bad MAC - transfer integrity broken")
+	}
 
-	rr := &cipher.StreamReader{S: blockc, R: ioTeeReader(r, mac)}
-
-	return rr, func() ([]byte, error) {
-		readMAC := make([]byte, mac.Size())
-		n, err := r.Read(readMAC)
-		if n != mac.Size() {
-			err = errors.New("couldn't read MAC tag")
-		}
-		if err != nil {
-			return nil, err
-		}
-
-		sum := mac.Sum(nil)
-
-		// It's not strictly necessary to use constant time compare for MACs based on hashes, due to the random nature
-		// of hashes and also the fact that this MAC tag is a public value. But we do it anyway - there's no harm to it
-		// here.
-		if subtle.ConstantTimeCompare(readMAC, sum) == 0 {
-			return nil, errors.New("bad MAC - transfer integrity broken")
-		}
-
-		return enc.macKey, nil
-	}, nil
+	return er.enc.macKey, nil
 }

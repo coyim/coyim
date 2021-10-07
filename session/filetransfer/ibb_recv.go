@@ -169,6 +169,7 @@ func IbbClose(s coylog.Has, stanza *data.ClientIQ) (ret interface{}, iqtype stri
 	}
 
 	toSend, fname, ok, ee := ictx.recv.wait()
+
 	if !ok {
 		s.Log().WithError(ee).Warn("Had error when waiting for receiving")
 		ctx.control.ReportError(errors.New("Couldn't recv final data"))

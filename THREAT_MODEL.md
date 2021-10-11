@@ -264,7 +264,7 @@ attacks:
    A more basic textual transcript is possible for the same entitites that can 
    collect user communication.
    
-All the multi-user chat rooms share the threats. All the following chat room threats share these properties:
+All the multi-user chat rooms share these threats. All the following chat room threats share these properties:
   - The users server
      - The users server has full access.
   - The server of a chat room
@@ -320,36 +320,194 @@ other parties. Finally, we have to accept some issues, since they might not have
 
 ### Categories of threats
 
+Overall, we can divide the threats into these categories:
+
+
+#### Network-based attacks
+
+Any kind of attack that can be executed by adversaries positioned in the network at some point are covered by this
+category.
+
+
+#### Server-based attacks
+
+Since XMPP and CoyIM relies on server software, many attacks are possible if you have access to such a server. These
+attacks are put into this category.
+
+
+#### Peer-based attacks
+
+Some attacks are only possible for peers to execute. They are not very common, but the ones that exist belong to this
+category.
+
+
+#### Project and delivery attacks
+
+All the attacks that rely on problems or access to the build servers, to the download servers (or networks) or hostile
+developers are put into this category.
+
+
+#### Local privilege attacks
+
+This include the three types of attacks based on physical or software access to the computer, but also the possibility
+of unknown vulnerabilities in the code-base.
+
+
+#### Other attacks
+
+Any other possibility of attack are put here, as the catch-all for anything else.
+
+
 ### Specific mitigations for categories of threats
+
+CoyIM contains a large amount of mitigations against various specific or general types of attacks. Some only protect
+against one single attack, while others make it possible to avoid whole categories of attacks. Not all mitigations are
+covered here - we will only cover the most important ones.
+
+It's important to note that we rely on OTR, Tor and TLS for various mitigations. These tools and specifications have
+their own threat models, and you should assume that these are integrated into the below. We will not specifically not
+that Tor is vulnerable to a global passive adversary, for example.
+
+
+#### Network-based attacks
+
+The network can see a lot of different things, and in many cases will also be able to modify data. Finally, the network
+can execute denial of service attacks. CoyIM primarily mitigates these risks by using TLS for all connections, and by
+using Tor as much as possible. The encryption of both Tor and TLS stop both attacks against the confidentiality of the
+content, but also against the integrity. Finally, denial of service attacks also becomes harder to mount, since Tor
+increases the difficulty in targeting a specific user.
+
+There's still a risk for network attacks involving connections server-to-server. The only thing we can do to mitigate
+this is to ensure that content is end-to-end-encrypted as much as possible, and encourage users to use servers with good
+security practices.
+
+
+#### Server-based attacks
+
+Most of the server-based attacks are not possible to protect against, without actually losing compatibility with
+XMPP. For this reason, we have to accept some potential problems from the server. Outside of those that we accept, the
+most important mitigation against server-based attacks is end-to-end encryption using the OTR protocol. This stops
+servers from being able to read or modify communication between peers.
+
+When it comes to the server-based attacks on multi-user chat, the only mitigations we implement are based on warning the
+user about the risks of entering rooms with various configurations, so that they are informed about the risks. Since
+XMPP doesn't support encrypted group chat, we have to accept these risks for multi-user chat.
+
+In terms of impersonating attacks, the server is a real problem as well. In order to protect against this, OTR allows
+for verification of identities using fingerprint verification or SMP. If these features are used as part of a good opsec
+strategy with all contacts, it will serve to protect against impersonation.
+
+Correlation attacks are possible for a server to execute. However, CoyIM implements two different mitigations to avoid
+this attack. The first one is based on randomizing connection and reconnection intervals between accounts, and the
+second uses different Tor circuits for any account, which means that the connections for the different accounts look
+like they come from different places. Finally, some XMPP clients use the same resource for different accounts. This is
+usually not enough information to reliably correlate two accounts, but it will reduce the anonymity set. For this and
+other reasons, CoyIM randomizes the resource on every connection.
+
+Finally, the server for a user can find out location information about the user, including the IP address. As a
+mitigation against this, CoyIM will use Tor for all connections, if possible. By default, it will not connect without
+Tor available, to protect against user mistakes. In general, CoyIM will fail _closed_, not _open_.
+
+CoyIM cannot protect against Denial of Service attacks from servers.
+
+
+#### Peer-based attacks
+
+All peer-based attacks are fundamentally based on the functioning of XMPP. As such, we have to accept them, and can't
+implement any mitigations against them. There exists one peer-based attack that we do implement mitigations against, but
+this will be covered in the section about "Threats against mitigations".
+
+
+#### Project and delivery attacks
+
+The attacks that use the project or delivery as vectors are protected against in a number of different ways. First, in
+order to protect the downloads, these are managed using TLS connections to the servers. The downloads also provide
+checksums which can give a small amount of additional security.
+
+In order to protect against builds with injected code of some kind, we use reproducible builds to reduce the trust
+necessary in the build systems. Finally, the CoyIM project is open source, and both the code itself and the recipes for
+building the binary distributions are publicly available and easily inspected. In this way, we mitigate the risk that
+the project developers could do something hostile. Together, reproducible builds and open source should minimize the
+amount of trust in the project team needed. The open source distribution also makes it possible for technically minded
+people to build their own binaries, to minimize the trust needed in the build and distribution mechanisms.
+
+
+#### Local privilege attacks
+
+In general, local privilege attacks are very hard to defend against. CoyIM tries to do a few things, but none of them
+will ever be completely effective. Perhaps the most important mitigation is that the configuration file will be
+encrypted, so that when CoyIM is not running, an attacker can't get access to the content of this file, even with local
+privilege. Of course, once CoyIM starts, the information is decrypted and put into memory.
+
+The OTR library that CoyIM uses also prevents timing side channel attacks, and locks information to specific memory
+pages, which also prevents certain local attacks.
+
+
+#### Other attacks
+
+One attack that is not covered above is the one about finding out information about a specific user. This attack is
+mitigated by CoyIM being implemented in such a way that it leaks a minimum of information through features of XMPP and
+resources.
+
+The risk of vulnerabilities in the code base are mitigated by the choice of Golang as the programming language. This
+reduces the risk of many types of vulnerabilities, and specifically makes remote execution vulnerabilities much less
+likely. The CoyIM project also tries to reduce the complexity of the implementation by carefully choosing and rejecting
+features. In this way, the attack surface is kept as small as possible. The decision to avoid HTML, CSS and JavaScript
+for the implementation of the user interface is based on the same need to reduce complexity. Since embedded browser
+functionality usually has similar problems as the full browser, it can be a significant risk to use this
+functionality. We decided to mitigate this risk by not using these technologies.
+
+A common method to attack users is to convince them to click links. While this doesn't involve a direct attack on CoyIM,
+we still made the decision to minimize the amounts of links in the application, to avoid the risk that users would be
+fooled into clicking hostile links, which would open up attacks on other applications.
+
 
 ### Threats against mitigations
 
-  - Through a compromise that happens _after_ the conversation happens
-    - A contact
-    - The users server
-    - The server of a contact
-    - The server of a chat room
-    - The ISP (or inbetween network provider) of a user
-    - The ISP (or inbetween network provider) of a contact
-    - The ISP (or inbetween network provider) of a server
-  - Through a compromise that happened _before_ a conversation happens
-    - A contact
-    - The users server
-    - The server of a contact
-    - The server of a chat room
-    - The ISP (or inbetween network provider) of a user
-    - The ISP (or inbetween network provider) of a contact
-    - The ISP (or inbetween network provider) of a server
-- Proving to a third party that a user said something
-  - A contact
-  - The users server
-  - The server of a contact
-  - The server of a chat room
-  - The ISP (or inbetween network provider) of a user
-  - The ISP (or inbetween network provider) of a contact
-  - The ISP (or inbetween network provider) of a server
+When introducing a mitigation, it can be important to also look at whether there are new threats that are applicable
+only against that mitigation. In some cases, this leads to greater threats in one specific area, if the mitigation opens
+up new "territory". If this happens, you have to balance this threat against the original threat which the mitigation
+tries to address.
+
+In CoyIM, there exists one new threat that is a side-effect of a mitigation, and two threats that are still possible
+against the confidentiality. All three of these threats are related to end-to-end encryption.
+
+In general, end-to-end encryption can protect the confidentiality and integrity of messages, but if an attacker gets
+hold of any encryption keys involved in the conversation, they can decrypt or modify content. However, there exists two
+special cases - one where an attacker collects cipher text, and then at some later point gets access to the current
+encryption material from a user. However, CoyIM actually mitigates against this threat by its use of OTR. OTR provides a
+property known as forward secrecy, which continuously ratchets key material forward and throws away the old
+material. Since this process is one-way, having the encryption material at one point will not allow the attacker to get
+eaerlier encryption material.
+
+The other scenario is where an attacker at one point gets access to the encryption material, and then later starts
+collecting cipher text. In this scenario, in a traditional setting an attacker would be able to always continue
+decrypting. However, once again, OTR mitigates this attack by continuously creating new key material from scratch and
+mixing that into the process. In this way, old key material will not be sufficient to decrypt newer cipher texts. This
+property is called post-compromise security (and sometimes backwards secrecy).
+
+Now, one threat that CoyIM can't easily protect against are cryptographically enhanced impersonation attacks. This
+happens if an attacker manages to steal your long-lived keys and then uses that to talk to another individual. Because
+of the long-lived keys, the other user will see a person that seems to have access to your private keys. Thus, the trust
+from that person will likely be increased. CoyIM tries to mitigate this risk by making it harder for an attacker to
+access the long-term keys.
+
+Finally, when using authenticated end-to-end encryption, it is often possible for an attacker (which is also the person
+you're talking to) to prove to someone else that you said something. In a naive setting with cryptographic signatures
+over content, this can be clearly seen. You could simply show the signature and the content to someone else, and they
+would know that you said it. Or, you could not take back saying it. This property is called non-repudiation. It's
+something a very useful property - for example for digital contracts. But for conversations it goes against our
+intuitions, and it's not great that introducing more security could lead to this kind of attack. In CoyIM, this is also
+mitigated by our use of OTR, which is designed to be deniable. What that means is that after the messages have been
+sent, someone else could in theory forge these messages. That means that there's no proof that any single private key is
+responsible for the conversation.
 
 
-## Summary - current threat model
+## Summary
 
-(Who can get what with current model of CoyIM)
+CoyIM has a fairly extensive threat model. It tries to protect against many kinds of risks, but due to the limitations
+of XMPP, not everything is possible. This document should make it quite clear exactly where the limits for the
+protection from CoyIM are. One final thing to note is that this document is based on the default configuration of
+CoyIM. You can reduce this security, and by doing that expose yourself to more threats than those described here, but
+the fundamental design idea for CoyIM is that you don't have to do anything to increase your security. This threat model
+matches the top level of protection CoyIM can give you.

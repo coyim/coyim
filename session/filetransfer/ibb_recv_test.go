@@ -1,6 +1,7 @@
 package filetransfer
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
 
@@ -121,18 +122,22 @@ func (s *IBBReceiverSuite) Test_IbbClose_works(c *C) {
 		destination: filepath.Join(destDir, "simple_receipt_test_file"),
 	}
 
-	go ctx.control.WaitForError(func(e error) {})
-
 	finished := make(chan bool)
 	go ctx.control.WaitForFinish(func(ok bool) {
 		finished <- ok
+	})
+
+	go ctx.control.WaitForError(func(e error) {
+		fmt.Printf("Had unexpected error: %v\n", e)
+		finished <- false
 	})
 
 	ibbctx.recv = ctx.createReceiver()
 
 	addInflightRecv(ctx)
 
-	_, _ = ibbctx.recv.Write([]byte("hello world"))
+	_, ee := ibbctx.recv.Write([]byte("hello world"))
+	c.Assert(ee, IsNil)
 
 	ret, iqtype, ignore := IbbClose(wl, stanza)
 

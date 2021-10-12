@@ -192,6 +192,7 @@ func (r *receiver) readAndRun() {
 	}
 
 	r.Lock()
+	closeAndIgnore(ff)
 	r.toSendAtFinish = toSend
 	r.fileNameAtFinish = ff.Name()
 	r.done = true

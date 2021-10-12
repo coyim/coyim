@@ -98,6 +98,7 @@ func (ctx *recvContext) finalizeFileTransfer(tempName string) error {
 		}
 	} else {
 		if err := os.Rename(tempName, ctx.destination); err != nil {
+			fmt.Printf("hmm. error: %#v\n", err)
 			ctx.s.Log().WithField("destination", ctx.destination).WithError(err).Warn("couldn't rename file")
 			ctx.control.ReportError(errors.New("Couldn't save final file"))
 			return err

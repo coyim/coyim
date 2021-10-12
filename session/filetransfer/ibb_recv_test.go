@@ -24,6 +24,7 @@ func (m *mockHasLog) Log() coylog.Logger {
 }
 
 func (s *IBBReceiverSuite) Test_IbbOpen_works(c *C) {
+	destDir := c.MkDir()
 	l, hook := test.NewNullLogger()
 
 	wl := &mockHasLog{l}
@@ -33,7 +34,8 @@ func (s *IBBReceiverSuite) Test_IbbOpen_works(c *C) {
 	}
 
 	ctx := &recvContext{
-		sid: "testSID",
+		sid:         "testSID",
+		destination: filepath.Join(destDir, "simple_receipt_test_file"),
 	}
 
 	addInflightRecv(ctx)
@@ -130,9 +132,7 @@ func (s *IBBReceiverSuite) Test_IbbClose_works(c *C) {
 
 	addInflightRecv(ctx)
 
-	go func() {
-		_, _ = ibbctx.recv.Write([]byte("hello world"))
-	}()
+	_, _ = ibbctx.recv.Write([]byte("hello world"))
 
 	ret, iqtype, ignore := IbbClose(wl, stanza)
 

@@ -1,7 +1,6 @@
 package filetransfer
 
 import (
-	"fmt"
 	"io/ioutil"
 	"path/filepath"
 
@@ -127,8 +126,9 @@ func (s *IBBReceiverSuite) Test_IbbClose_works(c *C) {
 		finished <- ok
 	})
 
+	var unexpectedError error
 	go ctx.control.WaitForError(func(e error) {
-		fmt.Printf("Had unexpected error: %v\n", e)
+		unexpectedError = e
 		finished <- false
 	})
 
@@ -141,9 +141,9 @@ func (s *IBBReceiverSuite) Test_IbbClose_works(c *C) {
 
 	ret, iqtype, ignore := IbbClose(wl, stanza)
 
-	fmt.Printf("log entries: %#v\n", hook.Entries)
 	c.Assert(<-finished, Equals, true)
 
+	c.Assert(unexpectedError, IsNil)
 	c.Assert(ret, DeepEquals, data.EmptyReply{})
 	c.Assert(iqtype, Equals, "")
 	c.Assert(ignore, Equals, false)

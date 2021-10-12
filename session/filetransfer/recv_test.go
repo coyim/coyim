@@ -6,6 +6,7 @@ import (
 
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/xmpp/data"
+	"github.com/sirupsen/logrus/hooks/test"
 	. "gopkg.in/check.v1"
 )
 
@@ -102,7 +103,12 @@ func (s *RecvSuite) Test_recvContext_finalizeFileTransfer_forFile_failsOnRename(
 		})
 	}()
 
+	l, _ := test.NewNullLogger()
+	sess := &sessionMockWithCustomLog{
+		log: l,
+	}
 	ctx := &recvContext{
+		s:           sess,
 		directory:   false,
 		destination: "hmm",
 		control:     ctrl,

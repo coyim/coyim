@@ -78,7 +78,7 @@ func (s *ReceiverSuite) Test_receiver_anErrorHappensEarlyInTheProcess(c *C) {
 	c.Assert(toSend, IsNil)
 	c.Assert(fileName, Equals, "")
 
-	c.Assert(len(hook.Entries), Equals, 1)
+	c.Assert(len(hook.Entries), Equals, 2)
 	c.Assert(hook.LastEntry().Level, Equals, log.WarnLevel)
 	c.Assert(hook.LastEntry().Message, Equals, "Failed to open temporary file")
 }

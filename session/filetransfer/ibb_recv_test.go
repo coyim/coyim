@@ -141,6 +141,7 @@ func (s *IBBReceiverSuite) Test_IbbClose_works(c *C) {
 
 	ret, iqtype, ignore := IbbClose(wl, stanza)
 
+	fmt.Printf("log entries: %#v\n", hook.Entries)
 	c.Assert(<-finished, Equals, true)
 
 	c.Assert(ret, DeepEquals, data.EmptyReply{})

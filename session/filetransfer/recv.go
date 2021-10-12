@@ -92,11 +92,13 @@ func (ctx *recvContext) finalizeFileTransfer(tempName string) error {
 		}()
 
 		if err := unpack(tempName, ctx.destination); err != nil {
+			ctx.s.Log().WithField("destination", ctx.destination).WithError(err).Warn("problem unpacking data")
 			ctx.control.ReportError(errors.New("Couldn't unpack final file"))
 			return err
 		}
 	} else {
 		if err := os.Rename(tempName, ctx.destination); err != nil {
+			ctx.s.Log().WithField("destination", ctx.destination).WithError(err).Warn("couldn't rename file")
 			ctx.control.ReportError(errors.New("Couldn't save final file"))
 			return err
 		}
@@ -116,6 +118,7 @@ func (ctx *recvContext) openDestinationTempFile() (f *os.File, err error) {
 	f, err = ioutil.TempFile(filepath.Dir(ctx.destination), filepath.Base(ctx.destination))
 	if err != nil {
 		ctx.opaque = nil
+		ctx.s.Log().WithError(err).Warn("problem creating temporary file")
 		ctx.control.ReportError(errors.New("Couldn't open local temporary file"))
 		removeInflightRecv(ctx.sid)
 	}

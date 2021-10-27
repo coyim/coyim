@@ -17,11 +17,11 @@ func init() {
 
 func (s *MucSuite) Test_ByOccupantNick(c *C) {
 	vals := []*Occupant{
-		&Occupant{Nickname: "Rafael"},
-		&Occupant{Nickname: "Ola"},
-		&Occupant{Nickname: "Cristian"},
-		&Occupant{Nickname: "Ola2"},
-		&Occupant{Nickname: "Reinaldo"},
+		{Nickname: "Rafael"},
+		{Nickname: "Ola"},
+		{Nickname: "Cristian"},
+		{Nickname: "Ola2"},
+		{Nickname: "Reinaldo"},
 	}
 
 	sort.Sort(ByOccupantNick(vals))
@@ -34,11 +34,11 @@ func (s *MucSuite) Test_ByOccupantNick(c *C) {
 
 func (s *MucSuite) Test_ByOccupantJid(c *C) {
 	vals := []*Occupant{
-		&Occupant{Nickname: "Rafael"},
-		&Occupant{Nickname: "Ola"},
-		&Occupant{Nickname: "Cristian"},
-		&Occupant{Nickname: "Ola2"},
-		&Occupant{Nickname: "Reinaldo"},
+		{Nickname: "Rafael"},
+		{Nickname: "Ola"},
+		{Nickname: "Cristian"},
+		{Nickname: "Ola2"},
+		{Nickname: "Reinaldo"},
 	}
 
 	sort.Sort(ByOccupantJid(vals))
@@ -49,10 +49,10 @@ func (s *MucSuite) Test_ByOccupantJid(c *C) {
 	c.Assert(vals[4].Nickname, Equals, "Reinaldo")
 
 	vals2 := []*Occupant{
-		&Occupant{Nickname: "Rafael", RealJid: jid.ParseFull("foo@jabber.org/abc")},
-		&Occupant{Nickname: "Rafael2", RealJid: jid.ParseFull("foo@jabber.im/abc")},
-		&Occupant{Nickname: "Ola", RealJid: nil},
-		&Occupant{Nickname: "Cristian", RealJid: nil},
+		{Nickname: "Rafael", RealJid: jid.ParseFull("foo@jabber.org/abc")},
+		{Nickname: "Rafael2", RealJid: jid.ParseFull("foo@jabber.im/abc")},
+		{Nickname: "Ola", RealJid: nil},
+		{Nickname: "Cristian", RealJid: nil},
 	}
 
 	sort.Sort(ByOccupantJid(vals2))

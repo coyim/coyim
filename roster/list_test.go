@@ -94,9 +94,9 @@ func (s *ListSuite) Test_ToSlice_createsASliceOfTheContentSortedAlphabetically(c
 	l.AddOrMerge(&Peer{Jid: tj("bar@somewhere.com")})
 
 	c.Assert(l.ToSlice(), g.DeepEquals, []*Peer{
-		&Peer{Jid: tj("bar@somewhere.com")},
-		&Peer{Jid: tj("foo@somewhen.com")},
-		&Peer{Jid: tj("foo@somewhere.com")},
+		{Jid: tj("bar@somewhere.com")},
+		{Jid: tj("foo@somewhen.com")},
+		{Jid: tj("foo@somewhere.com")},
 	})
 }
 
@@ -225,7 +225,7 @@ func (s *ListSuite) Test_SubscribeRequest_addsTheSubscribeID(c *g.C) {
 
 func (s *ListSuite) Test_PeerBecameUnavailable_setsTheOfflineState(c *g.C) {
 	l := New()
-	l.AddOrMerge(&Peer{Jid: tj("foo@bar.com"), resources: map[string]Status{"foo2": Status{"a", "b"}}})
+	l.AddOrMerge(&Peer{Jid: tj("foo@bar.com"), resources: map[string]Status{"foo2": {"a", "b"}}})
 
 	res := l.PeerBecameUnavailable(jid.Parse("hmm@bar.com/foo"))
 	c.Assert(res, g.Equals, false)
@@ -237,7 +237,7 @@ func (s *ListSuite) Test_PeerBecameUnavailable_setsTheOfflineState(c *g.C) {
 
 func (s *ListSuite) Test_PeerBecameUnavailable_clearsResources(c *g.C) {
 	l := New()
-	l.AddOrMerge(&Peer{Jid: tj("foo@bar.com"), resources: map[string]Status{"foo2": Status{"a", "b"}}})
+	l.AddOrMerge(&Peer{Jid: tj("foo@bar.com"), resources: map[string]Status{"foo2": {"a", "b"}}})
 
 	res := l.PeerBecameUnavailable(jid.Parse("foo@bar.com"))
 	c.Assert(res, g.Equals, true)
@@ -269,7 +269,7 @@ func (s *ListSuite) Test_PeerPresenceUpdate_sometimesUpdatesNonExistantPeers(c *
 func (s *ListSuite) Test_PeerPresenceUpdate_updatesPreviouslyKnownPeer(c *g.C) {
 	l := New()
 	l.AddOrMerge(&Peer{Jid: tj("foo@bar.com"), resources: make(map[string]Status)})
-	l.AddOrMerge(&Peer{Jid: tj("foo2@bar.com"), resources: map[string]Status{"hmm": Status{"dnd", "working"}}})
+	l.AddOrMerge(&Peer{Jid: tj("foo2@bar.com"), resources: map[string]Status{"hmm": {"dnd", "working"}}})
 
 	res := l.PeerPresenceUpdate(tjr("foo@bar.com/hmm"), "hello", "goodbye", "")
 	c.Assert(res, g.Equals, true)
@@ -295,16 +295,16 @@ func (s *ListSuite) Test_Clear_clearsTheList(c *g.C) {
 
 func (s *ListSuite) Test_Peers_sortsByNameForPresentation(c *g.C) {
 	expectedPeers := []*Peer{
-		&Peer{
+		{
 			Jid: tj("ba"), Name: "ab",
 		},
-		&Peer{
+		{
 			Jid: tj("ac"), Name: "",
 		},
-		&Peer{
+		{
 			Jid: tj("aa"), Name: "bb",
 		},
-		&Peer{
+		{
 			Jid: tj("aa"), Name: "cb",
 		},
 	}

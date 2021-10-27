@@ -22,8 +22,8 @@ func (s *AccountXMPPSuite) Test_Account_Is_recognizesJids(c *C) {
 func (s *AccountXMPPSuite) Test_Account_ShouldEncryptTo(c *C) {
 	a := &Account{Account: "hello@bar.com", AlwaysEncrypt: false, AlwaysEncryptWith: []string{"one@foo.com", "two@foo.com"}}
 	a2 := &Account{Account: "hello@bar.com", AlwaysEncrypt: true, AlwaysEncryptWith: []string{"one@foo.com", "two@foo.com"}, Peers: []*Peer{
-		&Peer{UserID: "some@one.com", Nickname: "Hellois", EncryptionSettings: NeverEncrypt},
-		&Peer{UserID: "some2@one.com", Nickname: "Hellois", EncryptionSettings: AlwaysEncrypt},
+		{UserID: "some@one.com", Nickname: "Hellois", EncryptionSettings: NeverEncrypt},
+		{UserID: "some2@one.com", Nickname: "Hellois", EncryptionSettings: AlwaysEncrypt},
 	}}
 	c.Check(a.ShouldEncryptTo("foo"), Equals, false)
 	c.Check(a.ShouldEncryptTo("hello@bar.com"), Equals, false)

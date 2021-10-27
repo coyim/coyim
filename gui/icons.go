@@ -243,7 +243,7 @@ var coyimIcon = &icon{
 }
 
 var statusIcons = map[string]*icon{
-	"unknown2": &icon{
+	"unknown2": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -358,7 +358,7 @@ var statusIcons = map[string]*icon{
 			"4D6DB0586F9D5DDFB4CAFF8B3F0300641EAD5DDBD40B2F0000000049454E" +
 			"44AE426082",
 	},
-	"busy": &icon{
+	"busy": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -447,7 +447,7 @@ var statusIcons = map[string]*icon{
 			"3fcbb3e848bbf45d0000000049454e44ae426082",
 	},
 
-	"chat": &icon{
+	"chat": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -537,7 +537,7 @@ var statusIcons = map[string]*icon{
 			"4e44ae426082",
 	},
 
-	"extended-away": &icon{
+	"extended-away": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -626,7 +626,7 @@ var statusIcons = map[string]*icon{
 			"6b24c6eeecb86994ff177f0600b533a79d8fd40a510000000049454e44ae426082",
 	},
 
-	"invisible": &icon{
+	"invisible": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -715,7 +715,7 @@ var statusIcons = map[string]*icon{
 			"b95fd29880cb2c140000000049454e44ae426082",
 	},
 
-	"offline": &icon{
+	"offline": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -804,7 +804,7 @@ var statusIcons = map[string]*icon{
 			"b95fd29880cb2c140000000049454e44ae426082",
 	},
 
-	"unknown": &icon{
+	"unknown": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -819,7 +819,7 @@ var statusIcons = map[string]*icon{
 			"426082",
 	},
 
-	"available": &icon{
+	"available": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -909,7 +909,7 @@ var statusIcons = map[string]*icon{
 			"44ae426082",
 	},
 
-	"away": &icon{
+	"away": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -998,7 +998,7 @@ var statusIcons = map[string]*icon{
 			"0c349fddfca80e948022f067bd22b55535ad591d1683a6ec60dd2affeffc1d005f1eb80123361f35" +
 			"0000000049454e44ae426082",
 	},
-	"connecting": &icon{ //animation
+	"connecting": { //animation
 		size:   "16x16",
 		width:  16,
 		height: 16,

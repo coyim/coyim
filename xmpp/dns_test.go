@@ -67,14 +67,14 @@ func (s *DNSXMPPSuite) Test_intoConnectEntry_returnsNilOnFailure(c *C) {
 
 func (s *DNSXMPPSuite) Test_byPriorityWeight_sortsConnectEntries(c *C) {
 	res := []*connectEntry{
-		&connectEntry{host: "a", priority: 1, weight: 1},
-		&connectEntry{host: "b", priority: 1, weight: 42},
-		&connectEntry{host: "c", priority: 10, weight: 1},
-		&connectEntry{host: "d", priority: 1, weight: 1},
-		&connectEntry{host: "e", priority: 1, weight: 3},
-		&connectEntry{host: "f", priority: 1, weight: 1},
-		&connectEntry{host: "g", priority: 6, weight: 1},
-		&connectEntry{host: "h", priority: 1, weight: 1},
+		{host: "a", priority: 1, weight: 1},
+		{host: "b", priority: 1, weight: 42},
+		{host: "c", priority: 10, weight: 1},
+		{host: "d", priority: 1, weight: 1},
+		{host: "e", priority: 1, weight: 3},
+		{host: "f", priority: 1, weight: 1},
+		{host: "g", priority: 6, weight: 1},
+		{host: "h", priority: 1, weight: 1},
 	}
 
 	sort.Sort(byPriorityWeight(res))
@@ -95,7 +95,7 @@ func (s *DNSXMPPSuite) Test_resolveWithCustom(c *C) {
 		}
 
 		return "", []*net.SRV{
-			&net.SRV{Target: "."},
+			{Target: "."},
 		}, nil
 	}
 

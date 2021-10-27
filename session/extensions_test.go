@@ -73,8 +73,8 @@ func (s *ExtensionsSuite) Test_processExtensions_works(c *C) {
 
 	msg := &data.ClientMessage{}
 	msg.Extensions = []*data.Extension{
-		&data.Extension{Body: `<query xmlns="foobar"/>`},
-		&data.Extension{Body: `<query`},
+		{Body: `<query xmlns="foobar"/>`},
+		{Body: `<query`},
 	}
 
 	sess.processExtensions(msg)

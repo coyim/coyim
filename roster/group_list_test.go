@@ -95,11 +95,11 @@ func (s *GroupListSuite) Test_Groups_UnsortedPeers_returnsThePeersUnsorted(c *g.
 
 func (s *GroupListSuite) Test_Groups_byGroupNameAlphabetic(c *g.C) {
 	gs := []*Group{
-		&Group{GroupName: "foo"},
-		&Group{GroupName: "bar"},
-		&Group{GroupName: "baz"},
-		&Group{GroupName: "quux"},
-		&Group{GroupName: "alf"},
+		{GroupName: "foo"},
+		{GroupName: "bar"},
+		{GroupName: "baz"},
+		{GroupName: "quux"},
+		{GroupName: "alf"},
 	}
 
 	sort.Sort(byGroupNameAlphabetic(gs))

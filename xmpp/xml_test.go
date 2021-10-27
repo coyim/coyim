@@ -33,7 +33,7 @@ func (s *XMLXMPPSuite) Test_next_usesCustomStorageIfAvailable(c *C) {
 		log: testLogger(),
 		in:  xml.NewDecoder(mockIn),
 		customStorage: map[xml.Name]reflect.Type{
-			xml.Name{Space: NsStream, Local: "foo"}: reflect.TypeOf(testFoo{}),
+			{Space: NsStream, Local: "foo"}: reflect.TypeOf(testFoo{}),
 		},
 	}
 
@@ -50,7 +50,7 @@ func (s *XMLXMPPSuite) Test_next_causesErrorWhenTryingToDecodeWrong(c *C) {
 		log: testLogger(),
 		in:  xml.NewDecoder(mockIn),
 		customStorage: map[xml.Name]reflect.Type{
-			xml.Name{Space: NsStream, Local: "foo"}: reflect.TypeOf(testFoo{}),
+			{Space: NsStream, Local: "foo"}: reflect.TypeOf(testFoo{}),
 		},
 	}
 

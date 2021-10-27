@@ -7,9 +7,9 @@ import (
 )
 
 var proxyTypes = [][]string{
-	[]string{"tor-auto", "Automatic Tor"},
-	[]string{"socks5", "SOCKS5"},
-	[]string{"socks5+unix", "SOCKS5 Unix Domain"},
+	{"tor-auto", "Automatic Tor"},
+	{"socks5", "SOCKS5"},
+	{"socks5+unix", "SOCKS5 Unix Domain"},
 }
 
 func init() {

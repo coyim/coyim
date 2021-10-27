@@ -83,20 +83,20 @@ func (s *AccountsSuite) Test_ApplicationConfig_serialize(c *C) {
 func (s *AccountsSuite) Test_ApplicationConfig_UpdateToLatestVersion_updatesAllAccounts(c *C) {
 	a := &ApplicationConfig{
 		Accounts: []*Account{
-			&Account{},
-			&Account{
+			{},
+			{
 				LegacyKnownFingerprints: []KnownFingerprint{
-					KnownFingerprint{
+					{
 						UserID:      "one@some.org",
 						Fingerprint: []byte{0x01, 0x02, 0x03},
 						Untrusted:   true,
 					},
-					KnownFingerprint{
+					{
 						UserID:      "ignored@fingerprint.com",
 						Fingerprint: []byte{},
 						Untrusted:   true,
 					},
-					KnownFingerprint{
+					{
 						UserID:      "one@some.org",
 						Fingerprint: []byte{0x02, 0x02, 0x05},
 						Untrusted:   false,
@@ -112,7 +112,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_UpdateToLatestVersion_updatesAllA
 func (s *AccountsSuite) Test_ApplicationConfig_GetAccount_ReturnsNotOKForWrongAccount(c *C) {
 	a := &ApplicationConfig{
 		Accounts: []*Account{
-			&Account{Account: "some@one.com"},
+			{Account: "some@one.com"},
 		},
 	}
 

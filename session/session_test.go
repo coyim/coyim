@@ -1214,7 +1214,7 @@ func (s *SessionSuite) Test_parseFromConfig_works(c *C) {
 	acc := &config.Account{
 		PrivateKeys: [][]byte{
 			data,
-			[]byte{0x99, 0x99, 0x99},
+			{0x99, 0x99, 0x99},
 		},
 	}
 
@@ -2369,7 +2369,7 @@ func (s *SessionSuite) Test_peerFrom_works(c *C) {
 
 	ac := &config.Account{
 		Peers: []*config.Peer{
-			&config.Peer{
+			{
 				UserID:   "romeo@example.net",
 				Nickname: "blaha",
 				Groups: []string{

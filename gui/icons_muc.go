@@ -7,7 +7,7 @@ import (
 )
 
 var mucIcon = map[string]*icon{
-	"room": &icon{
+	"room": {
 		size:   "40x32",
 		width:  40,
 		height: 32,
@@ -64,7 +64,7 @@ var mucIcon = map[string]*icon{
 			"4f7c1ed576c4d696fe1681cf0ad09103e70e7d2e5eb8744f018c4d5e490dd2bdf8e5d8ea83b1ebf5" +
 			"3e04af6cf8cfd806dd090000000049454e44ae426082",
 	},
-	"room-offline": &icon{
+	"room-offline": {
 		size:   "40x32",
 		width:  40,
 		height: 32,
@@ -120,7 +120,7 @@ var mucIcon = map[string]*icon{
 			"f2ca4fb59ef633b74794d871e6e57ffcf9b76736fa7d058385c74d17f48a2c0000000049454e44ae" +
 			"426082",
 	},
-	"send": &icon{
+	"send": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -134,7 +134,7 @@ var mucIcon = map[string]*icon{
 			"d2808788666105581a8c3a013a50c7b15908c0090b3d7b6a5287091dca75409a84dcf3f534d2beaf" +
 			"5fc7d5883234dccc3e237f0192c9f5729ec51b1380ccc6f0c1c82dfac6ea27320b014532ff3b9efe",
 	},
-	"occupant-online": &icon{
+	"occupant-online": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -170,7 +170,7 @@ var mucIcon = map[string]*icon{
 			"9689ab3609fd3b99c3521a7078894cf2e98dc552e168e10a77e9baced9fcf75cca927bcdd8a3e94e" +
 			"8b0d5bd86b9d76e7e6eac252a6bfe7cf00dcf88246932695200000000049454e44ae426082",
 	},
-	"occupant-busy": &icon{
+	"occupant-busy": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -206,7 +206,7 @@ var mucIcon = map[string]*icon{
 			"748536fc4caf3f70a0d27319fd28e7886ed1b535a5948b540fe7ebcd66a6dff30fa8cbcfab4cf4ed" +
 			"170000000049454e44ae426082",
 	},
-	"occupant-extended-away": &icon{
+	"occupant-extended-away": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -243,7 +243,7 @@ var mucIcon = map[string]*icon{
 			"97c17c4360d1dc80511302ef69e2cf73b1e241e741f5e672aecff37f00fc6fafd075d25caa000000" +
 			"0049454e44ae426082",
 	},
-	"occupant-away": &icon{
+	"occupant-away": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -281,7 +281,7 @@ var mucIcon = map[string]*icon{
 			"2d5f1347e0caf6c8e919c4a5b2ae24297a5982ec8aaee35292c5adf80fb2668ade0ed28369000000" +
 			"0049454e44ae426082",
 	},
-	"occupant-offline": &icon{
+	"occupant-offline": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -320,7 +320,7 @@ var mucIcon = map[string]*icon{
 			"260d832626aa687d280065203f4414ec0db38c0f79d95bec5671be17b327714251746e6e53ec7153" +
 			"269a6e4c8c7f5cd7e7f93f281e19d0c19963920000000049454e44ae426082",
 	},
-	"occupant-chat": &icon{
+	"occupant-chat": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -358,7 +358,7 @@ var mucIcon = map[string]*icon{
 			"6646ef3431a111fb580679a72e54e8b68392129810f26c87b9a469b82b0387fa3cff0f2c3ab727a6" +
 			"94c7a00000000049454e44ae426082",
 	},
-	"occupant-online-large": &icon{
+	"occupant-online-large": {
 		size:   "100x100",
 		width:  100,
 		height: 100,
@@ -540,7 +540,7 @@ var mucIcon = map[string]*icon{
 			"7be79204f15084510d22b159990d498efec47c0466190984f9748efaad8b18a6a4e4ebc92add2c8e" +
 			"77bab043f813672dc7f6fdc732030000000049454e44ae426082",
 	},
-	"occupant-busy-large": &icon{
+	"occupant-busy-large": {
 		size:   "100x100",
 		width:  100,
 		height: 100,
@@ -699,7 +699,7 @@ var mucIcon = map[string]*icon{
 			"d84d6aa3dd511df49bd1cad16cb66bc7269e5ea123966b4e20c1c79dd81afe0d22f2b8c65d53e273" +
 			"0000000049454e44ae426082",
 	},
-	"occupant-extended-away-large": &icon{
+	"occupant-extended-away-large": {
 		size:   "100x100",
 		width:  100,
 		height: 100,
@@ -870,7 +870,7 @@ var mucIcon = map[string]*icon{
 			"620c3d038470edc269ce10add124658676c4e030a7a2183646b97a1e65ca9e10202b887c42665606" +
 			"21ce8a6d573d886ef1d0ecbc3733ecc40ee1f79afef9615374fdb80000000049454e44ae426082",
 	},
-	"occupant-away-large": &icon{
+	"occupant-away-large": {
 		size:   "100x100",
 		width:  100,
 		height: 100,
@@ -1052,7 +1052,7 @@ var mucIcon = map[string]*icon{
 			"dbe5ad4e49e24d499e50ccd1f00aa5e23e9f05a554cb43e08248cff3b59694ee11277608bf01d7d6" +
 			"ed8c700b8e9d0000000049454e44ae426082",
 	},
-	"occupant-offline-large": &icon{
+	"occupant-offline-large": {
 		size:   "100x100",
 		width:  100,
 		height: 100,
@@ -1237,7 +1237,7 @@ var mucIcon = map[string]*icon{
 			"9158b5fa3ba6926e8a92543374fa51fa62b4db851dc2ff0385cb5fdf3d7b55df0000000049454e44" +
 			"ae426082",
 	},
-	"occupant-chat-large": &icon{
+	"occupant-chat-large": {
 		size:   "100x100",
 		width:  100,
 		height: 100,
@@ -1419,7 +1419,7 @@ var mucIcon = map[string]*icon{
 			"58728a3026d38d49629f53e74aca676661b4dd891dc2ff031cdfd3d1a504b82d0000000049454e44" +
 			"ae426082",
 	},
-	"message_error": &icon{
+	"message_error": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -1452,7 +1452,7 @@ var mucIcon = map[string]*icon{
 			"2e343830343320382e373037313120332e323932383943382e353139353720332e31303533362038" +
 			"2e32363532322033203820335a222066696c6c3d2223464544434443222f3e0a3c2f7376673e0a",
 	},
-	"message_info": &icon{
+	"message_info": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -1476,7 +1476,7 @@ var mucIcon = map[string]*icon{
 			"38373720334331342e3235323920332031342e3530373220332e31303533322031342e3639343720" +
 			"332e32393237395a222066696c6c3d2223413545334243222f3e0a3c2f7376673e0a",
 	},
-	"message_other": &icon{
+	"message_other": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -1513,7 +1513,7 @@ var mucIcon = map[string]*icon{
 			"3932383943382e353139353720372e313035333620382e323635323220372038203748375a222066" +
 			"696c6c3d2223443145384634222f3e0a3c2f7376673e0a",
 	},
-	"message_question": &icon{
+	"message_question": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -1566,7 +1566,7 @@ var mucIcon = map[string]*icon{
 			"3238392031322e3730373143372e34383034332031322e3839343620372e37333437382031332038" +
 			"2031335631335a222066696c6c3d2223463944314236222f3e0a3c2f7376673e0a",
 	},
-	"message_warning": &icon{
+	"message_warning": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -1601,7 +1601,7 @@ var mucIcon = map[string]*icon{
 			"3643382e353438313520342e303433373520382e3237393820332e393337373920372e3939393939" +
 			"20332e39333737395a222066696c6c3d2223464646354331222f3e0a3c2f7376673e0a",
 	},
-	"field_error": &icon{
+	"field_error": {
 		size:   "16x16",
 		width:  16,
 		height: 16,
@@ -1634,7 +1634,7 @@ var mucIcon = map[string]*icon{
 			"2e343830343320382e373037313120332e323932383943382e353139353720332e31303533362038" +
 			"2e32363532322033203820335a222066696c6c3d2223424331443144222f3e0a3c2f7376673e0a",
 	},
-	"warning_default": &icon{
+	"warning_default": {
 		size:   "64x64",
 		width:  64,
 		height: 64,
@@ -1660,7 +1660,7 @@ var mucIcon = map[string]*icon{
 			"22207374726f6b652d6c696e656361703d22726f756e6422207374726f6b652d6c696e656a6f696e" +
 			"3d22726f756e64222f3e0a3c2f7376673e0a",
 	},
-	"not_encrypted": &icon{
+	"not_encrypted": {
 		size:   "64x64",
 		width:  64,
 		height: 64,
@@ -1686,7 +1686,7 @@ var mucIcon = map[string]*icon{
 			"22207374726f6b652d6c696e656361703d22726f756e6422207374726f6b652d6c696e656a6f696e" +
 			"3d22726f756e64222f3e0a3c2f7376673e0a",
 	},
-	"partially_anonymous": &icon{
+	"partially_anonymous": {
 		size:   "64x64",
 		width:  64,
 		height: 64,
@@ -1737,7 +1737,7 @@ var mucIcon = map[string]*icon{
 			"22726f756e6422207374726f6b652d6c696e656a6f696e3d22726f756e64222f3e0a3c2f7376673e" +
 			"0a",
 	},
-	"not_anonymous": &icon{
+	"not_anonymous": {
 		size:   "64x46",
 		width:  64,
 		height: 46,
@@ -1759,7 +1759,7 @@ var mucIcon = map[string]*icon{
 			"726f6b652d77696474683d223222207374726f6b652d6c696e656361703d22726f756e6422207374" +
 			"726f6b652d6c696e656a6f696e3d22726f756e64222f3e0a3c2f7376673e0a",
 	},
-	"publicly_logged": &icon{
+	"publicly_logged": {
 		size:   "51x63",
 		width:  51,
 		height: 63,
@@ -1788,7 +1788,7 @@ var mucIcon = map[string]*icon{
 			"303622207374726f6b652d77696474683d223222207374726f6b652d6c696e656361703d22726f75" +
 			"6e6422207374726f6b652d6c696e656a6f696e3d22726f756e64222f3e0a3c2f7376673e0a",
 	},
-	"dialog_ok": &icon{
+	"dialog_ok": {
 		size:   "96x96",
 		width:  64,
 		height: 64,
@@ -1888,7 +1888,7 @@ var mucIcon = map[string]*icon{
 			"8a806215384aaa5a628c8a2ea95a545c1da9efe28bff0315778735ec8187fb0000000049454e44ae4" +
 			"26082",
 	},
-	"dialog_question": &icon{
+	"dialog_question": {
 		size:   "84x84",
 		width:  42,
 		height: 42,

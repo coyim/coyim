@@ -65,17 +65,17 @@ func (s *ConfigXMPPSuite) TestSerializeAccountsConfig(c *C) {
 
 	conf := ApplicationConfig{
 		Accounts: []*Account{
-			&Account{
+			{
 				Account: "bob@riseup.net",
 				Peers: []*Peer{
-					&Peer{
+					{
 						UserID:   "bob@riseup.net",
 						Nickname: "boby",
 					},
 				},
 				AlwaysEncrypt: true,
 			},
-			&Account{
+			{
 				Account: "bob@riseup.net",
 			},
 		},

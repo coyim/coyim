@@ -439,23 +439,23 @@ func (sent *sentMessage) Tagged() ([]*taggableText, bool) {
 
 	if sent.isDelayed {
 		return []*taggableText{
-			&taggableText{userTag, sent.from},
-			&taggableText{text: ":  "},
-			&taggableText{textTag, msgTxt},
+			{userTag, sent.from},
+			{text: ":  "},
+			{textTag, msgTxt},
 		}, attention
 	}
 
 	if msgHasMePrefix {
 		msgTxt = strings.TrimPrefix(strings.TrimSpace(msgTxt), mePrefix)
 		return []*taggableText{
-			&taggableText{userTag, sent.from + " " + msgTxt},
+			{userTag, sent.from + " " + msgTxt},
 		}, attention
 	}
 
 	return []*taggableText{
-		&taggableText{userTag, sent.from},
-		&taggableText{text: ":  "},
-		&taggableText{textTag, msgTxt},
+		{userTag, sent.from},
+		{text: ":  "},
+		{textTag, msgTxt},
 	}, attention
 }
 

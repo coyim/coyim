@@ -20,9 +20,9 @@ func (s *VerifierSuite) Test_verifyHostName(c *C) {
 
 func (s *VerifierSuite) Test_BasicVerifier_verifyCert(c *C) {
 	certs := []*x509.Certificate{
-		&x509.Certificate{},
-		&x509.Certificate{},
-		&x509.Certificate{},
+		{},
+		{},
+		{},
 	}
 
 	v := &BasicVerifier{}
@@ -75,9 +75,9 @@ func (s *VerifierSuite) Test_BasicVerifier_canConnectInPresenceOfPins_withPinnin
 
 func (s *VerifierSuite) Test_BasicVerifier_canConnectInPresenceOfPins_withPinningPolicy_add(c *C) {
 	certs := []*x509.Certificate{
-		&x509.Certificate{},
-		&x509.Certificate{},
-		&x509.Certificate{},
+		{},
+		{},
+		{},
 	}
 	called := false
 	v := &BasicVerifier{
@@ -93,9 +93,9 @@ func (s *VerifierSuite) Test_BasicVerifier_canConnectInPresenceOfPins_withPinnin
 
 func (s *VerifierSuite) Test_BasicVerifier_canConnectInPresenceOfPins_withPinningPolicy_default_withoutCerts(c *C) {
 	certs := []*x509.Certificate{
-		&x509.Certificate{},
-		&x509.Certificate{},
-		&x509.Certificate{},
+		{},
+		{},
+		{},
 	}
 	called := false
 	v := &BasicVerifier{
@@ -114,9 +114,9 @@ func (s *VerifierSuite) Test_BasicVerifier_canConnectInPresenceOfPins_withPinnin
 
 func (s *VerifierSuite) Test_BasicVerifier_canConnectInPresenceOfPins_withPinningPolicy_default_withCerts(c *C) {
 	certs := []*x509.Certificate{
-		&x509.Certificate{},
-		&x509.Certificate{},
-		&x509.Certificate{},
+		{},
+		{},
+		{},
 	}
 	v := &BasicVerifier{
 		PinningPolicy: "add-first-ask-rest",
@@ -133,9 +133,9 @@ func (s *VerifierSuite) Test_BasicVerifier_canConnectInPresenceOfPins_withPinnin
 
 func (s *VerifierSuite) Test_BasicVerifier_canConnectInPresenceOfPins_withPinningPolicy_addFirstDenyRest_withoutCertificates(c *C) {
 	certs := []*x509.Certificate{
-		&x509.Certificate{},
-		&x509.Certificate{},
-		&x509.Certificate{},
+		{},
+		{},
+		{},
 	}
 	called := false
 	v := &BasicVerifier{
@@ -154,9 +154,9 @@ func (s *VerifierSuite) Test_BasicVerifier_canConnectInPresenceOfPins_withPinnin
 
 func (s *VerifierSuite) Test_BasicVerifier_canConnectInPresenceOfPins_withPinningPolicy_addFirstDenyRest_withCertificates(c *C) {
 	certs := []*x509.Certificate{
-		&x509.Certificate{},
-		&x509.Certificate{},
-		&x509.Certificate{},
+		{},
+		{},
+		{},
 	}
 	called := false
 	v := &BasicVerifier{
@@ -175,9 +175,9 @@ func (s *VerifierSuite) Test_BasicVerifier_canConnectInPresenceOfPins_withPinnin
 
 func (s *VerifierSuite) Test_BasicVerifier_canConnectInPresenceOfPins_withPinningPolicy_ask(c *C) {
 	certs := []*x509.Certificate{
-		&x509.Certificate{},
-		&x509.Certificate{},
-		&x509.Certificate{},
+		{},
+		{},
+		{},
 	}
 	v := &BasicVerifier{
 		PinningPolicy: "ask",
@@ -191,9 +191,9 @@ func (s *VerifierSuite) Test_BasicVerifier_canConnectInPresenceOfPins_withPinnin
 
 func (s *VerifierSuite) Test_BasicVerifier_canConnectInPresenceOfPins_withPinningPolicy_other(c *C) {
 	certs := []*x509.Certificate{
-		&x509.Certificate{},
-		&x509.Certificate{},
-		&x509.Certificate{},
+		{},
+		{},
+		{},
 	}
 	called := false
 	v := &BasicVerifier{
@@ -227,7 +227,7 @@ func (s *VerifierSuite) Test_BasicVerifier_Verify_withAlreadyPinnedCerts(c *C) {
 			return true
 		},
 	}
-	e := v.Verify(tls.ConnectionState{PeerCertificates: []*x509.Certificate{&x509.Certificate{}}}, nil, "")
+	e := v.Verify(tls.ConnectionState{PeerCertificates: []*x509.Certificate{{}}}, nil, "")
 	c.Assert(e, IsNil)
 	c.Assert(called, Equals, true)
 }

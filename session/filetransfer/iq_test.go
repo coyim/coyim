@@ -47,13 +47,13 @@ func (s *IQSuite) Test_InitIQ(c *C) {
 			Form: data.Form{
 				Type: "form",
 				Fields: []data.FormFieldX{
-					data.FormFieldX{
+					{
 						Var:  "stream-method",
 						Type: "list-single",
 						Options: []data.FormFieldOptionX{
-							data.FormFieldOptionX{Value: "one"},
-							data.FormFieldOptionX{Value: "three"},
-							data.FormFieldOptionX{Value: "four"},
+							{Value: "one"},
+							{Value: "three"},
+							{Value: "four"},
 						},
 					},
 				},
@@ -89,13 +89,13 @@ func (s *IQSuite) Test_InitIQ_withEncryptedProfile(c *C) {
 			Form: data.Form{
 				Type: "form",
 				Fields: []data.FormFieldX{
-					data.FormFieldX{
+					{
 						Var:  "stream-method",
 						Type: "list-single",
 						Options: []data.FormFieldOptionX{
-							data.FormFieldOptionX{Value: "one"},
-							data.FormFieldOptionX{Value: "three"},
-							data.FormFieldOptionX{Value: "four"},
+							{Value: "one"},
+							{Value: "three"},
+							{Value: "four"},
 						},
 					},
 				},
@@ -129,13 +129,13 @@ func (s *IQSuite) Test_InitIQ_failsIfStartedWithoutResource(c *C) {
 			Form: data.Form{
 				Type: "form",
 				Fields: []data.FormFieldX{
-					data.FormFieldX{
+					{
 						Var:  "stream-method",
 						Type: "list-single",
 						Options: []data.FormFieldOptionX{
-							data.FormFieldOptionX{Value: "one"},
-							data.FormFieldOptionX{Value: "three"},
-							data.FormFieldOptionX{Value: "four"},
+							{Value: "one"},
+							{Value: "three"},
+							{Value: "four"},
 						},
 					},
 				},

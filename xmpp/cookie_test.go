@@ -29,7 +29,7 @@ func (s *CookieXMPPSuite) Test_conn_cancelInFlights_works(c *C) {
 	}
 
 	conn.inflights = map[data.Cookie]inflight{
-		data.Cookie(42): inflight{replyChan: make(chan data.Stanza)},
+		data.Cookie(42): {replyChan: make(chan data.Stanza)},
 	}
 
 	conn.cancelInflights()

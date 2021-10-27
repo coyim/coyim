@@ -191,10 +191,10 @@ func (u unpacker) from(srcI interface{}) error {
 				AllowMissingFields:    u.AllowMissingFields}.From(vi, nil)
 		}
 
-	case io.Reader:		
+	case io.Reader:
 		var readerType = reflect.TypeOf((*io.Reader)(nil)).Elem()
 		// Check for exact match
-		if vIndirect.Kind() == reflect.Interface && vIndirect.Type().Implements(readerType) { 
+		if vIndirect.Kind() == reflect.Interface && vIndirect.Type().Implements(readerType) {
 			vIndirect.Set(reflect.ValueOf(s))
 			return nil
 		}
@@ -210,8 +210,8 @@ func (u unpacker) from(srcI interface{}) error {
 
 			vIndirect.Set(reflect.ValueOf(*buf))
 			return nil
-		}		
-		
+		}
+
 	case []interface{}:
 		//Check that the destination is a slice
 		if vIndirect.Kind() != reflect.Slice {

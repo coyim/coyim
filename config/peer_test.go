@@ -15,7 +15,7 @@ func (s *AccountPeerSuite) Test_Peer_ChangesNicknameAndGroups(c *C) {
 	a := &Account{
 		Account: "account@coy.im",
 		Peers: []*Peer{
-			&Peer{
+			{
 				UserID: pid,
 			},
 		},
@@ -107,9 +107,9 @@ func (s *AccountPeerSuite) Test_Account_SavePeerDetails(c *C) {
 func (s *AccountPeerSuite) Test_Account_RemovePeer(c *C) {
 	a := &Account{
 		Peers: []*Peer{
-			&Peer{UserID: "one"},
-			&Peer{UserID: "two"},
-			&Peer{UserID: "three"},
+			{UserID: "one"},
+			{UserID: "two"},
+			{UserID: "three"},
 		},
 	}
 
@@ -133,9 +133,9 @@ func (s *AccountPeerSuite) Test_Account_RemoveFingerprint_forUnknownPeer(c *C) {
 func (s *AccountPeerSuite) Test_Account_RemoveFingerprint_thatPeerDoesntHave(c *C) {
 	a := &Account{
 		Peers: []*Peer{
-			&Peer{UserID: "one"},
-			&Peer{UserID: "four", Fingerprints: []*Fingerprint{}},
-			&Peer{UserID: "three"},
+			{UserID: "one"},
+			{UserID: "four", Fingerprints: []*Fingerprint{}},
+			{UserID: "three"},
 		},
 	}
 	res := a.RemoveFingerprint("four", []byte{0x01, 0x02})
@@ -145,13 +145,13 @@ func (s *AccountPeerSuite) Test_Account_RemoveFingerprint_thatPeerDoesntHave(c *
 func (s *AccountPeerSuite) Test_Account_RemoveFingerprint_thatPeerDoesHave(c *C) {
 	a := &Account{
 		Peers: []*Peer{
-			&Peer{UserID: "one"},
-			&Peer{UserID: "four", Fingerprints: []*Fingerprint{
-				&Fingerprint{Fingerprint: []byte{0xFF, 0xFE}},
-				&Fingerprint{Fingerprint: []byte{0x01, 0x02}},
-				&Fingerprint{Fingerprint: []byte{0x99, 0xAA}},
+			{UserID: "one"},
+			{UserID: "four", Fingerprints: []*Fingerprint{
+				{Fingerprint: []byte{0xFF, 0xFE}},
+				{Fingerprint: []byte{0x01, 0x02}},
+				{Fingerprint: []byte{0x99, 0xAA}},
 			}},
-			&Peer{UserID: "three"},
+			{UserID: "three"},
 		},
 	}
 	res := a.RemoveFingerprint("four", []byte{0x01, 0x02})
@@ -162,13 +162,13 @@ func (s *AccountPeerSuite) Test_Account_RemoveFingerprint_thatPeerDoesHave(c *C)
 func (s *AccountPeerSuite) Test_Account_AuthorizeFingerprint_returnsErrorOnAlreadyAuthorizedFingerprint(c *C) {
 	a := &Account{
 		Peers: []*Peer{
-			&Peer{UserID: "one"},
-			&Peer{UserID: "four", Fingerprints: []*Fingerprint{
-				&Fingerprint{Fingerprint: []byte{0xFF, 0xFE}},
-				&Fingerprint{Fingerprint: []byte{0x01, 0x02}, Trusted: true},
-				&Fingerprint{Fingerprint: []byte{0x99, 0xAA}},
+			{UserID: "one"},
+			{UserID: "four", Fingerprints: []*Fingerprint{
+				{Fingerprint: []byte{0xFF, 0xFE}},
+				{Fingerprint: []byte{0x01, 0x02}, Trusted: true},
+				{Fingerprint: []byte{0x99, 0xAA}},
 			}},
-			&Peer{UserID: "three"},
+			{UserID: "three"},
 		},
 	}
 	res := a.AuthorizeFingerprint("one", []byte{0x01, 0x02}, "somewhere")
@@ -179,13 +179,13 @@ func (s *AccountPeerSuite) Test_Account_AuthorizeFingerprint_updatesTrustOnExist
 	fpr := &Fingerprint{Fingerprint: []byte{0xFF, 0xFE}}
 	a := &Account{
 		Peers: []*Peer{
-			&Peer{UserID: "one"},
-			&Peer{UserID: "four", Fingerprints: []*Fingerprint{
+			{UserID: "one"},
+			{UserID: "four", Fingerprints: []*Fingerprint{
 				fpr,
-				&Fingerprint{Fingerprint: []byte{0x01, 0x02}, Trusted: true},
-				&Fingerprint{Fingerprint: []byte{0x99, 0xAA}},
+				{Fingerprint: []byte{0x01, 0x02}, Trusted: true},
+				{Fingerprint: []byte{0x99, 0xAA}},
 			}},
-			&Peer{UserID: "three"},
+			{UserID: "three"},
 		},
 	}
 	res := a.AuthorizeFingerprint("four", []byte{0xFF, 0xFE}, "somewhere")
@@ -197,12 +197,12 @@ func (s *AccountPeerSuite) Test_Account_AuthorizeFingerprint_updatesTrustOnExist
 func (s *AccountPeerSuite) Test_Account_AuthorizeFingerprint_addsNewFingerprint(c *C) {
 	a := &Account{
 		Peers: []*Peer{
-			&Peer{UserID: "one"},
-			&Peer{UserID: "four", Fingerprints: []*Fingerprint{
-				&Fingerprint{Fingerprint: []byte{0x01, 0x02}, Trusted: true},
-				&Fingerprint{Fingerprint: []byte{0x99, 0xAA}},
+			{UserID: "one"},
+			{UserID: "four", Fingerprints: []*Fingerprint{
+				{Fingerprint: []byte{0x01, 0x02}, Trusted: true},
+				{Fingerprint: []byte{0x99, 0xAA}},
 			}},
-			&Peer{UserID: "three"},
+			{UserID: "three"},
 		},
 	}
 	res := a.AuthorizeFingerprint("four", []byte{0xFF, 0xFE}, "somewhere2")
@@ -216,12 +216,12 @@ func (s *AccountPeerSuite) Test_Account_AuthorizeFingerprint_addsNewFingerprint(
 func (s *AccountPeerSuite) Test_Account_HasFingerprint(c *C) {
 	a := &Account{
 		Peers: []*Peer{
-			&Peer{UserID: "one"},
-			&Peer{UserID: "four", Fingerprints: []*Fingerprint{
-				&Fingerprint{Fingerprint: []byte{0x01, 0x02}, Trusted: true},
-				&Fingerprint{Fingerprint: []byte{0x99, 0xAA}},
+			{UserID: "one"},
+			{UserID: "four", Fingerprints: []*Fingerprint{
+				{Fingerprint: []byte{0x01, 0x02}, Trusted: true},
+				{Fingerprint: []byte{0x99, 0xAA}},
 			}},
-			&Peer{UserID: "three"},
+			{UserID: "three"},
 		},
 	}
 	c.Assert(a.HasFingerprint("unknown"), Equals, false)
@@ -232,7 +232,7 @@ func (s *AccountPeerSuite) Test_Account_HasFingerprint(c *C) {
 func (s *AccountPeerSuite) Test_Peer_GetFingerprint(c *C) {
 	fpr := &Fingerprint{Fingerprint: []byte{0x01, 0x02}, Trusted: true}
 	peer := &Peer{UserID: "four", Fingerprints: []*Fingerprint{
-		&Fingerprint{Fingerprint: []byte{0x99, 0xAA}},
+		{Fingerprint: []byte{0x99, 0xAA}},
 		fpr,
 	}}
 
@@ -247,15 +247,15 @@ func (s *AccountPeerSuite) Test_Peer_GetFingerprint(c *C) {
 func (s *AccountPeerSuite) Test_Account_removeEmptyFingerprints(c *C) {
 	a := &Account{
 		Peers: []*Peer{
-			&Peer{UserID: "one", Fingerprints: []*Fingerprint{
-				&Fingerprint{Fingerprint: []byte{0x99, 0xAA}},
-				&Fingerprint{Fingerprint: []byte{}},
+			{UserID: "one", Fingerprints: []*Fingerprint{
+				{Fingerprint: []byte{0x99, 0xAA}},
+				{Fingerprint: []byte{}},
 			}},
-			&Peer{UserID: "four", Fingerprints: []*Fingerprint{
-				&Fingerprint{Fingerprint: []byte{0x01, 0x02}, Trusted: true},
-				&Fingerprint{Fingerprint: []byte{0x99, 0xAA}},
+			{UserID: "four", Fingerprints: []*Fingerprint{
+				{Fingerprint: []byte{0x01, 0x02}, Trusted: true},
+				{Fingerprint: []byte{0x99, 0xAA}},
 			}},
-			&Peer{UserID: "three"},
+			{UserID: "three"},
 		},
 	}
 
@@ -274,17 +274,17 @@ func (s *AccountPeerSuite) Test_Account_updateFingerprintsToLatestVersion_return
 func (s *AccountPeerSuite) Test_Account_updateFingerprintsToLatestVersion_addsLegacyFingerprints(c *C) {
 	a := &Account{
 		LegacyKnownFingerprints: []KnownFingerprint{
-			KnownFingerprint{
+			{
 				UserID:      "one@some.org",
 				Fingerprint: []byte{0x01, 0x02, 0x03},
 				Untrusted:   true,
 			},
-			KnownFingerprint{
+			{
 				UserID:      "ignored@fingerprint.com",
 				Fingerprint: []byte{},
 				Untrusted:   true,
 			},
-			KnownFingerprint{
+			{
 				UserID:      "one@some.org",
 				Fingerprint: []byte{0x02, 0x02, 0x05},
 				Untrusted:   false,

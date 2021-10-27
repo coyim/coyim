@@ -58,7 +58,7 @@ func (s *DiscoveryXMPPSuite) Test_ReceiveDiscoveryResult(c *C) {
 		log: testLogger(),
 		in:  xml.NewDecoder(mockIn),
 		inflights: map[data.Cookie]inflight{
-			0x100000: inflight{
+			0x100000: {
 				to:        "plays.shakespeare.lit",
 				replyChan: reply,
 			},
@@ -77,23 +77,23 @@ func (s *DiscoveryXMPPSuite) Test_ReceiveDiscoveryResult(c *C) {
 	c.Assert(discoveryReply, DeepEquals, &data.DiscoveryInfoQuery{
 		XMLName: xml.Name{Space: "http://jabber.org/protocol/disco#info", Local: "query"},
 		Identities: []data.DiscoveryIdentity{
-			data.DiscoveryIdentity{
+			{
 				XMLName:  xml.Name{Space: "http://jabber.org/protocol/disco#info", Local: "identity"},
 				Category: "conference",
 				Type:     "text",
 				Name:     "Play-Specific Chatrooms"},
-			data.DiscoveryIdentity{
+			{
 				XMLName:  xml.Name{Space: "http://jabber.org/protocol/disco#info", Local: "identity"},
 				Category: "directory",
 				Type:     "chatroom",
 				Name:     "Play-Specific Chatrooms"},
 		},
 		Features: []data.DiscoveryFeature{
-			data.DiscoveryFeature{
+			{
 				XMLName: xml.Name{Space: "http://jabber.org/protocol/disco#info", Local: "feature"},
 				Var:     "http://jabber.org/protocol/disco#info",
 			},
-			data.DiscoveryFeature{
+			{
 				XMLName: xml.Name{Space: "http://jabber.org/protocol/disco#info", Local: "feature"},
 				Var:     "http://jabber.org/protocol/disco#items",
 			},
@@ -263,13 +263,13 @@ func (s *DiscoveryXMPPSuite) Test_conn_HasSupportTo_doesntSupport(c *C) {
 func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreDuplicateIdentities(c *C) {
 	reply := &data.DiscoveryInfoQuery{
 		Identities: []data.DiscoveryIdentity{
-			data.DiscoveryIdentity{
+			{
 				Lang:     "en",
 				Category: "stuff",
 				Type:     "thing",
 				Name:     "something",
 			},
-			data.DiscoveryIdentity{
+			{
 				Lang:     "en",
 				Category: "stuff",
 				Type:     "thing",
@@ -285,10 +285,10 @@ func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreDuplicateIde
 func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreDuplicateFeatures(c *C) {
 	reply := &data.DiscoveryInfoQuery{
 		Features: []data.DiscoveryFeature{
-			data.DiscoveryFeature{
+			{
 				Var: "foo",
 			},
-			data.DiscoveryFeature{
+			{
 				Var: "foo",
 			},
 		},
@@ -301,20 +301,20 @@ func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreDuplicateFea
 func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreDuplicateFormTypes(c *C) {
 	reply := &data.DiscoveryInfoQuery{
 		Forms: []data.Form{
-			data.Form{
+			{
 				Type: "foo",
 				Fields: []data.FormFieldX{
-					data.FormFieldX{
+					{
 						Var:    "FORM_TYPE",
 						Type:   "Foo",
 						Values: []string{"foo"},
 					},
 				},
 			},
-			data.Form{
+			{
 				Type: "foo",
 				Fields: []data.FormFieldX{
-					data.FormFieldX{
+					{
 						Var:    "FORM_TYPE",
 						Type:   "Foo",
 						Values: []string{"foo"},
@@ -331,31 +331,31 @@ func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreDuplicateFor
 func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreNoValues(c *C) {
 	reply := &data.DiscoveryInfoQuery{
 		Forms: []data.Form{
-			data.Form{
+			{
 				Type: "foo",
 			},
-			data.Form{
+			{
 				Type: "foo",
 				Fields: []data.FormFieldX{
-					data.FormFieldX{
+					{
 						Var:  "FORM_TYPE2",
 						Type: "Foo",
 					},
 				},
 			},
-			data.Form{
+			{
 				Type: "foo",
 				Fields: []data.FormFieldX{
-					data.FormFieldX{
+					{
 						Var:  "FORM_TYPE",
 						Type: "Foo",
 					},
 				},
 			},
-			data.Form{
+			{
 				Type: "foo",
 				Fields: []data.FormFieldX{
-					data.FormFieldX{
+					{
 						Var:  "FORM_TYPE",
 						Type: "Foo",
 					},
@@ -375,7 +375,7 @@ func (s *DiscoveryXMPPSuite) Test_DiscoveryReply_returnsSupportedValues(c *C) {
 			XMLName: xml.Name{Space: "", Local: ""},
 			Node:    "",
 			Identities: []data.DiscoveryIdentity{
-				data.DiscoveryIdentity{
+				{
 					XMLName:  xml.Name{Space: "", Local: ""},
 					Lang:     "",
 					Category: "client",

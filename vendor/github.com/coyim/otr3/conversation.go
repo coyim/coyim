@@ -116,7 +116,7 @@ func (c *Conversation) End() (toSend []ValidMessage, err error) {
 	if c.msgState == encrypted {
 		c.smp.wipe()
 		// Error can only happen when Rand reader is broken
-		toSend, _, err = c.createSerializedDataMessage(nil, messageFlagIgnoreUnreadable, []tlv{tlv{tlvType: tlvTypeDisconnected}})
+		toSend, _, err = c.createSerializedDataMessage(nil, messageFlagIgnoreUnreadable, []tlv{{tlvType: tlvTypeDisconnected}})
 	}
 	c.lastMessageStateChange = time.Time{}
 	c.ake = nil

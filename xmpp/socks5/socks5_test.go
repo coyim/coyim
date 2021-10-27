@@ -141,11 +141,11 @@ func (s *Socks5Suite) Test_socks5_Dial_failsIfConnectFails(c *C) {
 func (s *Socks5Suite) Test_socks5_Dial_succeedsAndReturnsConnection(c *C) {
 	conn := &fullMockedConn{
 		readRetBuf: [][]byte{
-			[]byte{5, 0},
-			[]byte{0, 0, 0, socks5Domain},
-			[]byte{5},
-			[]byte{0, 0, 0, 0, 0},
-			[]byte{2, 0},
+			{5, 0},
+			{0, 0, 0, socks5Domain},
+			{5},
+			{0, 0, 0, 0, 0},
+			{2, 0},
 		},
 		readRetErr: []error{
 			nil,
@@ -195,7 +195,7 @@ func (s *Socks5Suite) Test_socks5_connect_failsOnReadingGreeting(c *C) {
 		writeRetErr: []error{nil},
 
 		readRetBuf: [][]byte{
-			[]byte{0},
+			{0},
 		},
 		readRetErr: []error{
 			errors.New("reading is bad"),
@@ -213,7 +213,7 @@ func (s *Socks5Suite) Test_socks5_connect_failsOnUnexpectedVersion(c *C) {
 		writeRetErr: []error{nil},
 
 		readRetBuf: [][]byte{
-			[]byte{6, 0},
+			{6, 0},
 		},
 		readRetErr: []error{
 			nil,
@@ -231,7 +231,7 @@ func (s *Socks5Suite) Test_socks5_connect_failsOnAuthenticationRequirement(c *C)
 		writeRetErr: []error{nil},
 
 		readRetBuf: [][]byte{
-			[]byte{5, 0xFF},
+			{5, 0xFF},
 		},
 		readRetErr: []error{
 			nil,
@@ -249,7 +249,7 @@ func (s *Socks5Suite) Test_socks5_connect_failsOnTooLongHostname(c *C) {
 		writeRetErr: []error{nil},
 
 		readRetBuf: [][]byte{
-			[]byte{5, 0},
+			{5, 0},
 		},
 		readRetErr: []error{
 			nil,
@@ -267,7 +267,7 @@ func (s *Socks5Suite) Test_socks5_connect_failsOnWritingConnectionRequest(c *C) 
 		writeRetErr: []error{nil, errors.New("don't want to")},
 
 		readRetBuf: [][]byte{
-			[]byte{5, 0},
+			{5, 0},
 		},
 		readRetErr: []error{
 			nil,
@@ -286,8 +286,8 @@ func (s *Socks5Suite) Test_socks5_connect_failsOnReadingConnectionRequest(c *C) 
 		writeRetErr: []error{nil, nil},
 
 		readRetBuf: [][]byte{
-			[]byte{5, 0},
-			[]byte{0},
+			{5, 0},
+			{0},
 		},
 		readRetErr: []error{
 			nil,
@@ -306,8 +306,8 @@ func (s *Socks5Suite) Test_socks5_connect_reportsConnectionRequestFailure(c *C) 
 		writeRetErr: []error{nil, nil},
 
 		readRetBuf: [][]byte{
-			[]byte{5, 0},
-			[]byte{0, 3, 0, socks5Domain},
+			{5, 0},
+			{0, 3, 0, socks5Domain},
 		},
 		readRetErr: []error{
 			nil,
@@ -326,8 +326,8 @@ func (s *Socks5Suite) Test_socks5_connect_reportsUnknownFailure(c *C) {
 		writeRetErr: []error{nil, nil},
 
 		readRetBuf: [][]byte{
-			[]byte{5, 0},
-			[]byte{0, 30, 0, socks5Domain},
+			{5, 0},
+			{0, 30, 0, socks5Domain},
 		},
 		readRetErr: []error{
 			nil,
@@ -346,8 +346,8 @@ func (s *Socks5Suite) Test_socks5_connect_failsOnUnknownDomainType(c *C) {
 		writeRetErr: []error{nil, nil},
 
 		readRetBuf: [][]byte{
-			[]byte{5, 0},
-			[]byte{0, 0, 0, 0xFF},
+			{5, 0},
+			{0, 0, 0, 0xFF},
 		},
 		readRetErr: []error{
 			nil,
@@ -366,9 +366,9 @@ func (s *Socks5Suite) Test_socks5_connect_failsIfCantReadDomainLength(c *C) {
 		writeRetErr: []error{nil, nil},
 
 		readRetBuf: [][]byte{
-			[]byte{5, 0},
-			[]byte{0, 0, 0, socks5Domain},
-			[]byte{},
+			{5, 0},
+			{0, 0, 0, socks5Domain},
+			{},
 		},
 		readRetErr: []error{
 			nil,
@@ -388,10 +388,10 @@ func (s *Socks5Suite) Test_socks5_connect_failsIfCantReadTheDomainToDiscard(c *C
 		writeRetErr: []error{nil, nil},
 
 		readRetBuf: [][]byte{
-			[]byte{5, 0},
-			[]byte{0, 0, 0, socks5Domain},
-			[]byte{0xFF},
-			[]byte{0},
+			{5, 0},
+			{0, 0, 0, socks5Domain},
+			{0xFF},
+			{0},
 		},
 		readRetErr: []error{
 			nil,
@@ -412,11 +412,11 @@ func (s *Socks5Suite) Test_socks5_connect_failsIfCantReadThePortToDiscard(c *C) 
 		writeRetErr: []error{nil, nil},
 
 		readRetBuf: [][]byte{
-			[]byte{5, 0},
-			[]byte{0, 0, 0, socks5Domain},
-			[]byte{0x5},
-			[]byte{0, 0, 0, 0, 0},
-			[]byte{},
+			{5, 0},
+			{0, 0, 0, socks5Domain},
+			{0x5},
+			{0, 0, 0, 0, 0},
+			{},
 		},
 		readRetErr: []error{
 			nil,
@@ -438,12 +438,12 @@ func (s *Socks5Suite) Test_socks5_connect_succeedsWithUsernameAndPassword(c *C) 
 		writeRetErr: []error{nil, nil, nil},
 
 		readRetBuf: [][]byte{
-			[]byte{5, socks5AuthPassword},
-			[]byte{0, 0},
-			[]byte{0, 0, 0, socks5Domain},
-			[]byte{5},
-			[]byte{0, 0, 0, 0, 0},
-			[]byte{2, 0},
+			{5, socks5AuthPassword},
+			{0, 0},
+			{0, 0, 0, socks5Domain},
+			{5},
+			{0, 0, 0, 0, 0},
+			{2, 0},
 		},
 		readRetErr: []error{
 			nil,
@@ -470,12 +470,12 @@ func (s *Socks5Suite) Test_socks5_connect_failsOnWritingAuthenticationRequest(c 
 		writeRetErr: []error{nil, errors.New("auth fail"), nil},
 
 		readRetBuf: [][]byte{
-			[]byte{5, socks5AuthPassword},
-			[]byte{0, 0},
-			[]byte{0, 0, 0, socks5Domain},
-			[]byte{5},
-			[]byte{0, 0, 0, 0, 0},
-			[]byte{2, 0},
+			{5, socks5AuthPassword},
+			{0, 0},
+			{0, 0, 0, socks5Domain},
+			{5},
+			{0, 0, 0, 0, 0},
+			{2, 0},
 		},
 		readRetErr: []error{
 			nil,
@@ -501,12 +501,12 @@ func (s *Socks5Suite) Test_socks5_connect_failsOnReadingAuthenticationResponse(c
 		writeRetErr: []error{nil, nil, nil},
 
 		readRetBuf: [][]byte{
-			[]byte{5, socks5AuthPassword},
-			[]byte{0},
-			[]byte{0, 0, 0, socks5Domain},
-			[]byte{5},
-			[]byte{0, 0, 0, 0, 0},
-			[]byte{2, 0},
+			{5, socks5AuthPassword},
+			{0},
+			{0, 0, 0, socks5Domain},
+			{5},
+			{0, 0, 0, 0, 0},
+			{2, 0},
 		},
 		readRetErr: []error{
 			nil,
@@ -531,12 +531,12 @@ func (s *Socks5Suite) Test_socks5_connect_handlesAuthFailureCorrectly(c *C) {
 		writeRetErr: []error{nil, nil, nil},
 
 		readRetBuf: [][]byte{
-			[]byte{5, socks5AuthPassword},
-			[]byte{0, 1},
-			[]byte{0, 0, 0, socks5Domain},
-			[]byte{5},
-			[]byte{0, 0, 0, 0, 0},
-			[]byte{2, 0},
+			{5, socks5AuthPassword},
+			{0, 1},
+			{0, 0, 0, socks5Domain},
+			{5},
+			{0, 0, 0, 0, 0},
+			{2, 0},
 		},
 		readRetErr: []error{
 			nil,

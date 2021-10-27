@@ -62,27 +62,27 @@ func (*MucRoomListingSuite) Test_RoomListing_SetFeatures(c *C) {
 	rl.SetFeatures([]xmppData.DiscoveryFeature{})
 
 	rl.SetFeatures([]xmppData.DiscoveryFeature{
-		xmppData.DiscoveryFeature{Var: "http://jabber.org/protocol/muc"},
-		xmppData.DiscoveryFeature{Var: "http://jabber.org/protocol/muc"},
-		xmppData.DiscoveryFeature{Var: "http://jabber.org/protocol/muc#stable_id"},
-		xmppData.DiscoveryFeature{Var: "http://jabber.org/protocol/muc#self-ping-optimization"},
-		xmppData.DiscoveryFeature{Var: "http://jabber.org/protocol/disco#info"},
-		xmppData.DiscoveryFeature{Var: "http://jabber.org/protocol/disco#items"},
-		xmppData.DiscoveryFeature{Var: "urn:xmpp:mam:0"},
-		xmppData.DiscoveryFeature{Var: "urn:xmpp:mam:1"},
-		xmppData.DiscoveryFeature{Var: "urn:xmpp:mam:2"},
-		xmppData.DiscoveryFeature{Var: "urn:xmpp:mam:tmp"},
-		xmppData.DiscoveryFeature{Var: "urn:xmpp:mucsub:0"},
-		xmppData.DiscoveryFeature{Var: "urn:xmpp:sid:0"},
-		xmppData.DiscoveryFeature{Var: "vcard-temp"},
-		xmppData.DiscoveryFeature{Var: "http://jabber.org/protocol/muc#request"},
-		xmppData.DiscoveryFeature{Var: "jabber:iq:register"},
-		xmppData.DiscoveryFeature{Var: "muc_semianonymous"},
-		xmppData.DiscoveryFeature{Var: "muc_persistent"},
-		xmppData.DiscoveryFeature{Var: "muc_unmoderated"},
-		xmppData.DiscoveryFeature{Var: "muc_open"},
-		xmppData.DiscoveryFeature{Var: "muc_passwordprotected"},
-		xmppData.DiscoveryFeature{Var: "muc_public"},
+		{Var: "http://jabber.org/protocol/muc"},
+		{Var: "http://jabber.org/protocol/muc"},
+		{Var: "http://jabber.org/protocol/muc#stable_id"},
+		{Var: "http://jabber.org/protocol/muc#self-ping-optimization"},
+		{Var: "http://jabber.org/protocol/disco#info"},
+		{Var: "http://jabber.org/protocol/disco#items"},
+		{Var: "urn:xmpp:mam:0"},
+		{Var: "urn:xmpp:mam:1"},
+		{Var: "urn:xmpp:mam:2"},
+		{Var: "urn:xmpp:mam:tmp"},
+		{Var: "urn:xmpp:mucsub:0"},
+		{Var: "urn:xmpp:sid:0"},
+		{Var: "vcard-temp"},
+		{Var: "http://jabber.org/protocol/muc#request"},
+		{Var: "jabber:iq:register"},
+		{Var: "muc_semianonymous"},
+		{Var: "muc_persistent"},
+		{Var: "muc_unmoderated"},
+		{Var: "muc_open"},
+		{Var: "muc_passwordprotected"},
+		{Var: "muc_public"},
 	})
 
 	c.Assert(rl.SupportsVoiceRequests, Equals, true)
@@ -95,12 +95,12 @@ func (*MucRoomListingSuite) Test_RoomListing_SetFeatures(c *C) {
 	c.Assert(rl.Public, Equals, true)
 
 	rl.SetFeatures([]xmppData.DiscoveryFeature{
-		xmppData.DiscoveryFeature{Var: "muc_nonanonymous"},
-		xmppData.DiscoveryFeature{Var: "muc_temporary"},
-		xmppData.DiscoveryFeature{Var: "muc_moderated"},
-		xmppData.DiscoveryFeature{Var: "muc_membersonly"},
-		xmppData.DiscoveryFeature{Var: "muc_unsecured"},
-		xmppData.DiscoveryFeature{Var: "muc_hidden"},
+		{Var: "muc_nonanonymous"},
+		{Var: "muc_temporary"},
+		{Var: "muc_moderated"},
+		{Var: "muc_membersonly"},
+		{Var: "muc_unsecured"},
+		{Var: "muc_hidden"},
 	})
 
 	c.Assert(rl.AnonymityLevel, Equals, "no")
@@ -131,11 +131,11 @@ func (*MucRoomListingSuite) Test_RoomListing_SetFormsData(c *C) {
 	rl.SetFormsData(nil)
 
 	rl.SetFormsData([]xmppData.Form{
-		xmppData.Form{
+		{
 			Type: "result",
 			Fields: []xmppData.FormFieldX{
-				xmppData.FormFieldX{Var: "FORM_TYPE", Values: []string{discoInfoFieldFormType}},
-				xmppData.FormFieldX{Var: discoInfoFieldLang, Values: []string{"eng"}},
+				{Var: "FORM_TYPE", Values: []string{discoInfoFieldFormType}},
+				{Var: discoInfoFieldLang, Values: []string{"eng"}},
 			},
 		},
 	})

@@ -156,7 +156,7 @@ func (s *SendSuite) Test_calculateAvailableSendOptions(c *C) {
 	res := calculateAvailableSendOptions(nil)
 
 	c.Assert(res, DeepEquals, []data.FormFieldOptionX{
-		data.FormFieldOptionX{Value: "foo"},
+		{Value: "foo"},
 	})
 }
 

@@ -39,14 +39,14 @@ func (s *FormsXMPPSuite) Test_processForm_returnsEmptySubmitFormForEmptyForm(c *
 func (s *FormsXMPPSuite) Test_processForm_processButDoesNotReturnFixedFields(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
-		data.FormFieldX{
+		{
 			Var:    "hello_field1",
 			Label:  "hello",
 			Type:   "fixed",
 			Values: []string{"Something"},
 		},
 		//Malformed
-		data.FormFieldX{
+		{
 			Var:   "hello_field2",
 			Label: "hello2",
 			Type:  "fixed",
@@ -74,7 +74,7 @@ func (s *FormsXMPPSuite) Test_processForm_processButDoesNotReturnFixedFields(c *
 func (s *FormsXMPPSuite) Test_processForm_returnsBooleanFields(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
-		data.FormFieldX{
+		{
 			Var:   "hello_field3",
 			Label: "hello3",
 			Type:  "boolean",
@@ -98,7 +98,7 @@ func (s *FormsXMPPSuite) Test_processForm_returnsBooleanFields(c *C) {
 	c.Assert(*f2, DeepEquals, data.Form{
 		Type: "submit",
 		Fields: []data.FormFieldX{
-			data.FormFieldX{
+			{
 				Var:    "hello_field3",
 				Values: []string{"false"},
 			}}},
@@ -108,12 +108,12 @@ func (s *FormsXMPPSuite) Test_processForm_returnsBooleanFields(c *C) {
 func (s *FormsXMPPSuite) Test_processForm_returnsMultiFields(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
-		data.FormFieldX{
+		{
 			Var:   "hello_field4",
 			Label: "hello4",
 			Type:  "jid-multi",
 		},
-		data.FormFieldX{
+		{
 			Var:   "hello_field5",
 			Label: "hello5",
 			Type:  "text-multi",
@@ -145,10 +145,10 @@ func (s *FormsXMPPSuite) Test_processForm_returnsMultiFields(c *C) {
 	c.Assert(*f2, DeepEquals, data.Form{
 		Type: "submit",
 		Fields: []data.FormFieldX{
-			data.FormFieldX{
+			{
 				Var: "hello_field4",
 			},
-			data.FormFieldX{
+			{
 				Var: "hello_field5",
 			},
 		}})
@@ -157,13 +157,13 @@ func (s *FormsXMPPSuite) Test_processForm_returnsMultiFields(c *C) {
 func (s *FormsXMPPSuite) Test_processForm_returnsListSingle(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
-		data.FormFieldX{
+		{
 			Var:   "hello_field7",
 			Label: "hello7",
 			Type:  "list-single",
 			Options: []data.FormFieldOptionX{
-				data.FormFieldOptionX{Var: "One", Value: "Two"},
-				data.FormFieldOptionX{Var: "Three", Value: "Four"},
+				{Var: "One", Value: "Two"},
+				{Var: "Three", Value: "Four"},
 			},
 
 			Values: []string{"Four"},
@@ -190,7 +190,7 @@ func (s *FormsXMPPSuite) Test_processForm_returnsListSingle(c *C) {
 	c.Assert(f2, DeepEquals, &data.Form{
 		Type: "submit",
 		Fields: []data.FormFieldX{
-			data.FormFieldX{
+			{
 				Var:    "hello_field7",
 				Values: []string{"Four"},
 			},
@@ -200,15 +200,15 @@ func (s *FormsXMPPSuite) Test_processForm_returnsListSingle(c *C) {
 func (s *FormsXMPPSuite) Test_processForm_returnsListMulti(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
-		data.FormFieldX{
+		{
 			Var:   "hello_field1o7",
 			Label: "hello1o7",
 			Type:  "list-multi",
 			Options: []data.FormFieldOptionX{
-				data.FormFieldOptionX{Var: "One", Value: "Two"},
-				data.FormFieldOptionX{Var: "Three", Value: "Four"},
-				data.FormFieldOptionX{Var: "Five", Value: "Six"},
-				data.FormFieldOptionX{Var: "Seven", Value: "Eight"},
+				{Var: "One", Value: "Two"},
+				{Var: "Three", Value: "Four"},
+				{Var: "Five", Value: "Six"},
+				{Var: "Seven", Value: "Eight"},
 			},
 
 			Values: []string{"Six", "Two"},
@@ -235,7 +235,7 @@ func (s *FormsXMPPSuite) Test_processForm_returnsListMulti(c *C) {
 	c.Assert(f2, DeepEquals, &data.Form{
 		Type: "submit",
 		Fields: []data.FormFieldX{
-			data.FormFieldX{
+			{
 				Var:    "hello_field1o7",
 				Values: []string{"Two", "Six"},
 			}}})
@@ -244,7 +244,7 @@ func (s *FormsXMPPSuite) Test_processForm_returnsListMulti(c *C) {
 func (s *FormsXMPPSuite) Test_processForm_returnsHidden(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
-		data.FormFieldX{
+		{
 			Var:    "hello_field1o71",
 			Label:  "hello1o71",
 			Type:   "hidden",
@@ -260,7 +260,7 @@ func (s *FormsXMPPSuite) Test_processForm_returnsHidden(c *C) {
 	c.Assert(*f2, DeepEquals, data.Form{
 		Type: "submit",
 		Fields: []data.FormFieldX{
-			data.FormFieldX{
+			{
 				Var:    "hello_field1o71",
 				Values: []string{"secret"},
 			}}})
@@ -269,12 +269,12 @@ func (s *FormsXMPPSuite) Test_processForm_returnsHidden(c *C) {
 func (s *FormsXMPPSuite) Test_processForm_returnsUnknown(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
-		data.FormFieldX{
+		{
 			Var:   "hello_field1o71",
 			Label: "hello1o71",
 			Type:  "another-fancy-type",
 		},
-		data.FormFieldX{
+		{
 			Var:    "hello_field1o73",
 			Label:  "hello1o73",
 			Type:   "another-fancy-type",
@@ -311,11 +311,11 @@ func (s *FormsXMPPSuite) Test_processForm_returnsUnknown(c *C) {
 	c.Assert(*f2, DeepEquals, data.Form{
 		Type: "submit",
 		Fields: []data.FormFieldX{
-			data.FormFieldX{
+			{
 				Var:    "hello_field1o71",
 				Values: []string{"Value from UI"},
 			},
-			data.FormFieldX{
+			{
 				Var:    "hello_field1o73",
 				Values: []string{""}, // Value is lost because the UI does not set anything. Expected.
 			}}})
@@ -326,7 +326,7 @@ type testOtherFormType struct{}
 func (s *FormsXMPPSuite) Test_processForm_panicsWhenGivenAWeirdFormType(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
-		data.FormFieldX{
+		{
 			Label: "hello1o71",
 			Type:  "another-fancy-type",
 		},
@@ -342,7 +342,7 @@ func (s *FormsXMPPSuite) Test_processForm_panicsWhenGivenAWeirdFormType(c *C) {
 func (s *FormsXMPPSuite) Test_processForm_setsAValidBooleanReturnValue(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
-		data.FormFieldX{
+		{
 			Var:   "hello_field1o71",
 			Label: "hello1o71",
 			Type:  "boolean",
@@ -356,7 +356,7 @@ func (s *FormsXMPPSuite) Test_processForm_setsAValidBooleanReturnValue(c *C) {
 	c.Assert(*f2, DeepEquals, data.Form{
 		Type: "submit",
 		Fields: []data.FormFieldX{
-			data.FormFieldX{
+			{
 				XMLName: xml.Name{Space: "", Local: ""},
 				Var:     "hello_field1o71",
 				Values:  []string{"true"},
@@ -366,13 +366,13 @@ func (s *FormsXMPPSuite) Test_processForm_setsAValidBooleanReturnValue(c *C) {
 func (s *FormsXMPPSuite) Test_processForm_returnsListMultiWithResults(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
-		data.FormFieldX{
+		{
 			Var:   "hello_field1o7",
 			Label: "hello1o7",
 			Type:  "list-multi",
 			Options: []data.FormFieldOptionX{
-				data.FormFieldOptionX{Var: "One", Value: "Two"},
-				data.FormFieldOptionX{Var: "Three", Value: "Four"},
+				{Var: "One", Value: "Two"},
+				{Var: "Three", Value: "Four"},
 			},
 		},
 	}
@@ -386,7 +386,7 @@ func (s *FormsXMPPSuite) Test_processForm_returnsListMultiWithResults(c *C) {
 	c.Assert(*f2, DeepEquals, data.Form{
 		Type: "submit",
 		Fields: []data.FormFieldX{
-			data.FormFieldX{
+			{
 				Var:    "hello_field1o7",
 				Values: []string{"Four"},
 			}}})
@@ -396,37 +396,37 @@ func (s *FormsXMPPSuite) Test_processForm_dealsWithMediaCorrectly(c *C) {
 	fooBarDecoded := []byte("hello world")
 	f := &data.Form{}
 	datas := []data.BobData{
-		data.BobData{
+		{
 			CID:    "foobax",
 			Base64: ".....",
 		},
-		data.BobData{
+		{
 			CID:    "foobar",
 			Base64: base64.StdEncoding.EncodeToString(fooBarDecoded),
 		},
 	}
 	f.Fields = []data.FormFieldX{
-		data.FormFieldX{
+		{
 			Var:    "hello1",
 			Label:  "hello",
 			Type:   "fixed",
 			Values: []string{"Something"},
 			Media: []data.FormFieldMediaX{
-				data.FormFieldMediaX{
+				{
 					URIs: []data.MediaURIX{
-						data.MediaURIX{
+						{
 							MIMEType: "application/not-a-uri",
 							URI:      "",
 						},
-						data.MediaURIX{
+						{
 							MIMEType: "application/not-a-cid-uri",
 							URI:      "hello:world",
 						},
-						data.MediaURIX{
+						{
 							MIMEType: "application/valid-encoding",
 							URI:      "cid:foobar",
 						},
-						data.MediaURIX{
+						{
 							MIMEType: "application/invalid-encoding",
 							URI:      "cid:foobax",
 						},
@@ -434,18 +434,18 @@ func (s *FormsXMPPSuite) Test_processForm_dealsWithMediaCorrectly(c *C) {
 				},
 			},
 		},
-		data.FormFieldX{
+		{
 			Var:   "hello2",
 			Label: "hello1o7",
 			Type:  "hidden",
 			Media: []data.FormFieldMediaX{
-				data.FormFieldMediaX{
+				{
 					URIs: []data.MediaURIX{
-						data.MediaURIX{
+						{
 							MIMEType: "application/does-not-matter-because-it-is-ignored",
 							URI:      "hello:world",
 						},
-						data.MediaURIX{
+						{
 							MIMEType: "application/does-not-matter-because-it-is-also-ignored",
 							URI:      "cid:foobax",
 						},
@@ -465,12 +465,12 @@ func (s *FormsXMPPSuite) Test_processForm_dealsWithMediaCorrectly(c *C) {
 				Label: "hello",
 				Type:  "fixed",
 				Media: [][]data.Media{
-					[]data.Media{
-						data.Media{
+					{
+						{
 							MIMEType: "application/not-a-cid-uri",
 							URI:      "hello:world",
 						},
-						data.Media{
+						{
 							MIMEType: "application/valid-encoding",
 							Data:     fooBarDecoded,
 						},
@@ -485,7 +485,7 @@ func (s *FormsXMPPSuite) Test_processForm_dealsWithMediaCorrectly(c *C) {
 	c.Assert(*f2, DeepEquals, data.Form{
 		Type: "submit",
 		Fields: []data.FormFieldX{
-			data.FormFieldX{
+			{
 				Var: "hello2",
 			}}})
 }
@@ -543,8 +543,8 @@ func (s *FormsXMPPSuite) Test_toFormField_ocr_var(c *C) {
 	}
 
 	res := toFormField(f, [][]data.Media{
-		[]data.Media{
-			data.Media{
+		{
+			{
 				MIMEType: "foo",
 				Data:     []byte("bar"),
 			},

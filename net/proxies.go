@@ -19,9 +19,9 @@ type Proxy struct {
 }
 
 var proxyTypes = [][]string{
-	[]string{"tor-auto", "Automatic Tor"},
-	[]string{"socks5", "SOCKS5"},
-	[]string{"socks5+unix", "SOCKS5 over Unix Domain Socket"},
+	{"tor-auto", "Automatic Tor"},
+	{"socks5", "SOCKS5"},
+	{"socks5+unix", "SOCKS5 over Unix Domain Socket"},
 }
 
 // FindProxyTypeFor returns the index of the proxy type given

@@ -260,14 +260,13 @@ func (csi *conversationStackItem) show(userInitiated bool) {
 
 	if userInitiated {
 		csi.bringToFront()
+		scrollToBottom(csi.scrollHistory)
 		return
 	}
 	if !csi.isCurrent() {
 		csi.needsAttention = true
 		csi.applyTextWeight()
 	}
-
-	scrollToBottom(csi.scrollHistory)
 }
 
 func (csi *conversationStackItem) potentialTarget() string {

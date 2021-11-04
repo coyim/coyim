@@ -87,6 +87,31 @@ type securityWarningNotification struct {
 	labelButton gtki.Label `gtk-widget:"button-label-security-warning"`
 }
 
+type adjustmentHandler struct {
+	currentAdjustment float64
+	maxAdjustment     float64
+	scrollWindow      gtki.ScrolledWindow
+}
+
+func (ah *adjustmentHandler) onEdgeReached(_ gtki.ScrolledWindow, pos int) {
+	if pos == bottomPositionValue {
+		ah.maxAdjustment = ah.scrollWindow.GetVAdjustment().GetValue()
+	}
+}
+
+// onAdjustmentChanged MUST be called from the UI thread
+func (ah *adjustmentHandler) onAdjustmentChanged() {
+	if int64(ah.currentAdjustment) == int64(ah.maxAdjustment) {
+		doALittleBitLater(func() {
+			scrollToBottom(ah.scrollWindow)
+		})
+	}
+}
+
+func (ah *adjustmentHandler) updateCurrentAdjustmentValue() {
+	ah.currentAdjustment = ah.scrollWindow.GetVAdjustment().GetValue()
+}
+
 type conversationPane struct {
 	// This will be nil when not locked to anything
 	// It will be set once the AKE has finished

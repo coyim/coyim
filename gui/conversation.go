@@ -93,6 +93,10 @@ type adjustmentHandler struct {
 	scrollWindow      gtki.ScrolledWindow
 }
 
+func newAdjustmentHandler(sw gtki.ScrolledWindow) *adjustmentHandler {
+	return &adjustmentHandler{scrollWindow: sw}
+}
+
 func (ah *adjustmentHandler) onEdgeReached(_ gtki.ScrolledWindow, pos int) {
 	if pos == bottomPositionValue {
 		ah.maxAdjustment = ah.scrollWindow.GetVAdjustment().GetValue()
@@ -122,9 +126,8 @@ type conversationPane struct {
 	// opened - then it will be the full JID
 	target jid.Any
 
-	isTargeted        bool
-	maxAdjustment     float64
-	currentAdjustment float64
+	isTargeted    bool
+	scrollHandler *adjustmentHandler
 
 	account              *account
 	widget               gtki.Box            `gtk-widget:"box"`
@@ -309,25 +312,6 @@ func countVisibleLines(v gtki.TextView) uint {
 	}
 
 	return lines
-}
-
-func (conv *conversationPane) onEdgeReached(_ gtki.ScrolledWindow, pos int) {
-	if pos == bottomPositionValue {
-		conv.maxAdjustment = conv.scrollHistory.GetVAdjustment().GetValue()
-	}
-}
-
-// onAdjustmentChanged MUST be called from the UI thread
-func (conv *conversationPane) onAdjustmentChanged() {
-	if int64(conv.currentAdjustment) == int64(conv.maxAdjustment) {
-		doALittleBitLater(func() {
-			scrollToBottom(conv.scrollHistory)
-		})
-	}
-}
-
-func (conv *conversationPane) updateCurrentAdjustmentValue() {
-	conv.currentAdjustment = conv.scrollHistory.GetVAdjustment().GetValue()
 }
 
 func (conv *conversationPane) calculateHeight(lines uint) uint {

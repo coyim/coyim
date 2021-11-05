@@ -23,9 +23,7 @@ func (v *roomView) newRoomViewWindow() *roomViewWindow {
 	}
 
 	vw.loadUIDefinition()
-
-	vw.window.SetTitle(i18n.Localf("%[1]s [%[2]s]", v.roomID(), v.account.Account()))
-	mucStyles.setRoomWindowStyle(vw.window)
+	vw.initDefault()
 
 	return vw
 }
@@ -39,6 +37,13 @@ func (vw *roomViewWindow) connectUISignals(b *builder) {
 		"on_destroy_window": vw.roomView.onDestroyWindow,
 		"on_before_delete":  vw.onBeforeWindowClose,
 	})
+}
+
+func (vw *roomViewWindow) initDefault() {
+	vw.window.SetTitle(i18n.Localf("%[1]s [%[2]s]", vw.roomView.roomID(), vw.roomView.account.Account()))
+	mucStyles.setRoomWindowStyle(vw.window)
+
+	vw.connectShortcutsMucRoomWindow()
 }
 
 // closeMucWindow MUST be called from the UI thread

@@ -18,9 +18,18 @@ type ReceiverSuite struct{}
 
 var _ = Suite(&ReceiverSuite{})
 
+func createTemporarySessionWithLog() canSendIQAndHasLogAndConnection {
+	l, _ := test.NewNullLogger()
+	sess := &sessionMockWithCustomLog{
+		log: l,
+	}
+	return sess
+}
+
 func (s *ReceiverSuite) Test_receiver_simpleReceiptWorks(c *C) {
 	destDir := c.MkDir()
 	ctx := &recvContext{
+		s:           createTemporarySessionWithLog(),
 		size:        5,
 		control:     sdata.CreateFileTransferControl(nil, nil),
 		destination: filepath.Join(destDir, "simple_receipt_test_file"),
@@ -117,6 +126,7 @@ func (s *ReceiverSuite) Test_receiver_cancelingWorks(c *C) {
 func (s *ReceiverSuite) Test_receiver_receiptOfEncryptedDataWorks(c *C) {
 	destDir := c.MkDir()
 	ctx := &recvContext{
+		s:           createTemporarySessionWithLog(),
 		size:        7,
 		control:     sdata.CreateFileTransferControl(nil, nil),
 		destination: filepath.Join(destDir, "simple_receipt_test_file"),

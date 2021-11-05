@@ -87,37 +87,37 @@ type securityWarningNotification struct {
 	labelButton gtki.Label `gtk-widget:"button-label-security-warning"`
 }
 
-type adjustmentHandler struct {
+type conversationAdjustment struct {
 	currentAdjustment float64
 	maxAdjustment     float64
-	scrollWindow      gtki.ScrolledWindow
+	scrolledWindow    gtki.ScrolledWindow
 }
 
-func newAdjustmentHandler(sw gtki.ScrolledWindow) *adjustmentHandler {
-	return &adjustmentHandler{scrollWindow: sw}
+func newConversationAdjustment(sw gtki.ScrolledWindow) *conversationAdjustment {
+	return &conversationAdjustment{scrolledWindow: sw}
 }
 
-func (ah *adjustmentHandler) updateScrollWindow(sw gtki.ScrolledWindow) {
-	ah.scrollWindow = sw
+func (ah *conversationAdjustment) updateScrolledWindow(sw gtki.ScrolledWindow) {
+	ah.scrolledWindow = sw
 }
 
-func (ah *adjustmentHandler) onEdgeReached(_ gtki.ScrolledWindow, pos int) {
+func (ah *conversationAdjustment) onEdgeReached(_ gtki.ScrolledWindow, pos int) {
 	if pos == bottomPositionValue {
-		ah.maxAdjustment = ah.scrollWindow.GetVAdjustment().GetValue()
+		ah.maxAdjustment = ah.scrolledWindow.GetVAdjustment().GetValue()
 	}
 }
 
 // onAdjustmentChanged MUST be called from the UI thread
-func (ah *adjustmentHandler) onAdjustmentChanged() {
+func (ah *conversationAdjustment) onAdjustmentChanged() {
 	if int64(ah.currentAdjustment) == int64(ah.maxAdjustment) {
 		doALittleBitLater(func() {
-			scrollToBottom(ah.scrollWindow)
+			scrollToBottom(ah.scrolledWindow)
 		})
 	}
 }
 
-func (ah *adjustmentHandler) updateCurrentAdjustmentValue() {
-	ah.currentAdjustment = ah.scrollWindow.GetVAdjustment().GetValue()
+func (ah *conversationAdjustment) updateCurrentAdjustmentValue() {
+	ah.currentAdjustment = ah.scrolledWindow.GetVAdjustment().GetValue()
 }
 
 type conversationPane struct {
@@ -130,8 +130,8 @@ type conversationPane struct {
 	// opened - then it will be the full JID
 	target jid.Any
 
-	isTargeted    bool
-	scrollHandler *adjustmentHandler
+	isTargeted             bool
+	conversationAdjustment *conversationAdjustment
 
 	account              *account
 	widget               gtki.Box            `gtk-widget:"box"`

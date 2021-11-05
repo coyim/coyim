@@ -26,7 +26,7 @@ type roomViewConversation struct {
 	selfOccupantJoined       chan bool
 	historyPrinted           chan bool
 	disconnectMessagePrinted bool
-	scrollHandler            *adjustmentHandler
+	conversationAdjustment   *conversationAdjustment
 
 	view                  gtki.Box            `gtk-widget:"room-conversation"`
 	chatScrolledWindow    gtki.ScrolledWindow `gtk-widget:"chat-scrolled-window"`
@@ -49,7 +49,7 @@ func (v *roomView) newRoomViewConversation() *roomViewConversation {
 		roomID:                  v.room.ID,
 		account:                 v.account,
 		roomView:                v,
-		scrollHandler:           &adjustmentHandler{},
+		conversationAdjustment:  &conversationAdjustment{},
 		selfOccupantNickname:    v.room.SelfOccupantNickname,
 		saveNotificationMessage: v.room.AddMessage,
 		selfOccupantJoined:      make(chan bool),
@@ -76,12 +76,12 @@ func (c *roomViewConversation) initBuilder() {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_send_message": c.onSendMessage,
 		"on_key_press":    c.onKeyPress,
-		"on_edge_reached": c.scrollHandler.onEdgeReached,
+		"on_edge_reached": c.conversationAdjustment.onEdgeReached,
 	})
 
 	adj := c.chatScrolledWindow.GetVAdjustment()
-	adj.Connect("changed", c.scrollHandler.onAdjustmentChanged)
-	adj.Connect("value-changed", c.scrollHandler.updateCurrentAdjustmentValue)
+	adj.Connect("changed", c.conversationAdjustment.onAdjustmentChanged)
+	adj.Connect("value-changed", c.conversationAdjustment.updateCurrentAdjustmentValue)
 
 	mucStyles.setScrolledWindowStyle(c.chatScrolledWindow)
 	mucStyles.setScrolledWindowStyle(c.messageScrolledWindow)
@@ -96,7 +96,7 @@ func (c *roomViewConversation) initDefaults(v *roomView) {
 
 	c.enableSendCapabilitiesIfHasVoice(v.room.SelfOccupant().HasVoice())
 
-	c.scrollHandler.updateScrollWindow(c.chatScrolledWindow)
+	c.conversationAdjustment.updateScrolledWindow(c.chatScrolledWindow)
 }
 
 func (c *roomViewConversation) initSubscribers(v *roomView) {

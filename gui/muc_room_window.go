@@ -41,6 +41,11 @@ func (vw *roomViewWindow) connectUISignals(b *builder) {
 	})
 }
 
+// closeMucWindow MUST be called from the UI thread
+func (vw *roomViewWindow) closeMucWindow(_ gtki.Window) {
+	_ = vw.onBeforeWindowClose()
+}
+
 const (
 	roomWindowCloseStopEvent     = true // This will stop calling all the signals attached to `delete-event`
 	roomWindowCloseContinueEvent = false

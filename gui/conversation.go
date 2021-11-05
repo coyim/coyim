@@ -97,6 +97,10 @@ func newAdjustmentHandler(sw gtki.ScrolledWindow) *adjustmentHandler {
 	return &adjustmentHandler{scrollWindow: sw}
 }
 
+func (ah *adjustmentHandler) updateScrollWindow(sw gtki.ScrolledWindow) {
+	ah.scrollWindow = sw
+}
+
 func (ah *adjustmentHandler) onEdgeReached(_ gtki.ScrolledWindow, pos int) {
 	if pos == bottomPositionValue {
 		ah.maxAdjustment = ah.scrollWindow.GetVAdjustment().GetValue()

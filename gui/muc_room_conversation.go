@@ -26,8 +26,6 @@ type roomViewConversation struct {
 	selfOccupantJoined       chan bool
 	historyPrinted           chan bool
 	disconnectMessagePrinted bool
-	currentAdjustment        float64
-	maxAdjustment            float64
 	scrollHandler            *adjustmentHandler
 
 	view                  gtki.Box            `gtk-widget:"room-conversation"`
@@ -584,25 +582,6 @@ func (c *roomViewConversation) sendMessage() {
 	doALittleBitLater(func() {
 		scrollToBottom(c.chatScrolledWindow)
 	})
-}
-
-// onEdgeReached MUST be called from the UI thread
-func (c *roomViewConversation) onEdgeReached(_ gtki.ScrolledWindow, pos int) {
-	if pos == bottomPositionValue {
-		c.maxAdjustment = c.chatScrolledWindow.GetVAdjustment().GetValue()
-	}
-}
-
-func (c *roomViewConversation) onAdjustmentChanged() {
-	if int64(c.currentAdjustment) == int64(c.maxAdjustment) {
-		doALittleBitLater(func() {
-			scrollToBottom(c.chatScrolledWindow)
-		})
-	}
-}
-
-func (c *roomViewConversation) updateCurrentAdjustmentValue() {
-	c.currentAdjustment = c.chatScrolledWindow.GetVAdjustment().GetValue()
 }
 
 func (c *roomViewConversation) updateNotificationMessage(m string) {

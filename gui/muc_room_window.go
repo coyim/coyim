@@ -6,6 +6,7 @@ import (
 )
 
 type roomViewWindow struct {
+	u        *gtkUI
 	roomView *roomView
 
 	window            gtki.Window   `gtk-widget:"room-window"`
@@ -18,6 +19,7 @@ type roomViewWindow struct {
 func (v *roomView) newRoomViewWindow() *roomViewWindow {
 	vw := &roomViewWindow{
 		roomView: v,
+		u:        v.u,
 	}
 
 	vw.loadUIDefinition()

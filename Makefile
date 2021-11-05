@@ -56,7 +56,7 @@ LDFLAGS_REGULAR = -ldflags "$(LDFLAGS_VARS)"
 LDFLAGS_WINDOWS = -ldflags "$(LDFLAGS_VARS) -H windowsgui"
 
 # CoyIM uses vendoring, so it's better to minimize Golang confusion by turning off modules
-export GO111MODULES=off
+export GO111MODULE=off
 
 .PHONY: default check autogen build build-gui build-gui-memory-analyzer build-gui-address-san build-gui-win build-debug debug win-ci-deps reproducible-linux-create-image reproducible-linux-build sign-reproducible send-reproducible-signature check-reproducible-signatures clean clean-cache update-vendor gosec ineffassign i18n lint test test-named dep-supported-only deps run-cover clean-cover cover all authors
 

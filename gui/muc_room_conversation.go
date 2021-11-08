@@ -26,7 +26,7 @@ type roomViewConversation struct {
 	selfOccupantJoined       chan bool
 	historyPrinted           chan bool
 	disconnectMessagePrinted bool
-	conversationAdjustment   *conversationAdjustment
+	conversationAdjustment   *scrollVerticalAdjustment
 
 	view                  gtki.Box            `gtk-widget:"room-conversation"`
 	chatScrolledWindow    gtki.ScrolledWindow `gtk-widget:"chat-scrolled-window"`
@@ -49,7 +49,7 @@ func (v *roomView) newRoomViewConversation() *roomViewConversation {
 		roomID:                  v.room.ID,
 		account:                 v.account,
 		roomView:                v,
-		conversationAdjustment:  &conversationAdjustment{},
+		conversationAdjustment:  &scrollVerticalAdjustment{},
 		selfOccupantNickname:    v.room.SelfOccupantNickname,
 		saveNotificationMessage: v.room.AddMessage,
 		selfOccupantJoined:      make(chan bool),

@@ -87,37 +87,37 @@ type securityWarningNotification struct {
 	labelButton gtki.Label `gtk-widget:"button-label-security-warning"`
 }
 
-type conversationAdjustment struct {
+type scrollVerticalAdjustment struct {
 	currentAdjustment float64
 	maxAdjustment     float64
 	scrolledWindow    gtki.ScrolledWindow
 }
 
-func newConversationAdjustment(sw gtki.ScrolledWindow) *conversationAdjustment {
-	return &conversationAdjustment{scrolledWindow: sw}
+func newScrollVerticalAdjustment(sw gtki.ScrolledWindow) *scrollVerticalAdjustment {
+	return &scrollVerticalAdjustment{scrolledWindow: sw}
 }
 
-func (ah *conversationAdjustment) updateScrolledWindow(sw gtki.ScrolledWindow) {
-	ah.scrolledWindow = sw
+func (sa *scrollVerticalAdjustment) updateScrolledWindow(sw gtki.ScrolledWindow) {
+	sa.scrolledWindow = sw
 }
 
-func (ah *conversationAdjustment) onEdgeReached(_ gtki.ScrolledWindow, pos int) {
+func (sa *scrollVerticalAdjustment) onEdgeReached(_ gtki.ScrolledWindow, pos int) {
 	if pos == bottomPositionValue {
-		ah.maxAdjustment = ah.scrolledWindow.GetVAdjustment().GetValue()
+		sa.maxAdjustment = sa.scrolledWindow.GetVAdjustment().GetValue()
 	}
 }
 
 // onAdjustmentChanged MUST be called from the UI thread
-func (ah *conversationAdjustment) onAdjustmentChanged() {
-	if int64(ah.currentAdjustment) == int64(ah.maxAdjustment) {
+func (sa *scrollVerticalAdjustment) onAdjustmentChanged() {
+	if int64(sa.currentAdjustment) == int64(sa.maxAdjustment) {
 		doALittleBitLater(func() {
-			scrollToBottom(ah.scrolledWindow)
+			scrollToBottom(sa.scrolledWindow)
 		})
 	}
 }
 
-func (ah *conversationAdjustment) updateCurrentAdjustmentValue() {
-	ah.currentAdjustment = ah.scrolledWindow.GetVAdjustment().GetValue()
+func (sa *scrollVerticalAdjustment) updateCurrentAdjustmentValue() {
+	sa.currentAdjustment = sa.scrolledWindow.GetVAdjustment().GetValue()
 }
 
 type conversationPane struct {
@@ -130,8 +130,8 @@ type conversationPane struct {
 	// opened - then it will be the full JID
 	target jid.Any
 
-	isTargeted             bool
-	conversationAdjustment *conversationAdjustment
+	isTargeted       bool
+	scrollAdjustment *scrollVerticalAdjustment
 
 	account              *account
 	widget               gtki.Box            `gtk-widget:"box"`

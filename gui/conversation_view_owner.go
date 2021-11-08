@@ -256,7 +256,7 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 
 	panicOnDevError(builder.bindObjects(cp))
 
-	cp.conversationAdjustment = newConversationAdjustment(cp.scrollHistory)
+	cp.scrollAdjustment = newScrollVerticalAdjustment(cp.scrollHistory)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_start_otr":             cp.onStartOtrSignal,
@@ -265,7 +265,7 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 		"on_connect":               cp.onConnect,
 		"on_disconnect":            cp.onDisconnect,
 		"on_destroy_file_transfer": cp.onDestroyFileTransferNotif,
-		"on_edge_reached":          cp.conversationAdjustment.onEdgeReached,
+		"on_edge_reached":          cp.scrollAdjustment.onEdgeReached,
 		"on_send_file_to_contact": func() {
 			cvf.account.sendFileTo(cp.currentPeerForSending(), cvf.ui, cp)
 		},
@@ -285,8 +285,8 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 	cp.history.SetBuffer(cvf.ui.getTags().createTextBuffer())
 
 	adj := cp.scrollHistory.GetVAdjustment()
-	adj.Connect("changed", cp.conversationAdjustment.onAdjustmentChanged)
-	adj.Connect("value-changed", cp.conversationAdjustment.updateCurrentAdjustmentValue)
+	adj.Connect("changed", cp.scrollAdjustment.onAdjustmentChanged)
+	adj.Connect("value-changed", cp.scrollAdjustment.updateCurrentAdjustmentValue)
 
 	cp.pending.SetBuffer(cvf.ui.getTags().createTextBuffer())
 

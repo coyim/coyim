@@ -108,10 +108,6 @@ func (sa *scrollVerticalAdjustment) initSignals() {
 	adj.Connect("value-changed", sa.updateCurrentAdjustmentValue)
 }
 
-func (sa *scrollVerticalAdjustment) updateScrolledWindow(sw gtki.ScrolledWindow) {
-	sa.scrolledWindow = sw
-}
-
 func (sa *scrollVerticalAdjustment) onEdgeReached(_ gtki.ScrolledWindow, pos int) {
 	if pos == bottomPositionValue {
 		sa.maxAdjustment = sa.scrolledWindow.GetVAdjustment().GetValue()

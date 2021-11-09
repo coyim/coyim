@@ -16,7 +16,6 @@
             <property name="window_placement_set">False</property>
             <property name="kinetic_scrolling">False</property>
             <property name="overlay_scrolling">True</property>
-            <signal name="edge-reached" handler="on_edge_reached" swapped="no"/>
             <child>
               <object class="GtkTextView" id="chat-text-view">
                 <property name="visible">True</property>
@@ -88,7 +87,7 @@
                         <property name="top_margin">6</property>
                         <property name="bottom_margin">6</property>
                         <property name="accepts_tab">False</property>
-                        <signal name="key-press-event" handler="on_key_press" swapped="no"/>
+                        <signal name="key-press-event" handler="on_key_press" swapped="no" />
                       </object>
                     </child>
                   </object>
@@ -108,7 +107,7 @@
                         <property name="visible">True</property>
                         <property name="receives_default">True</property>
                         <property name="use_underline">True</property>
-                        <signal name="clicked" handler="on_send_message" swapped="no"/>
+                        <signal name="clicked" handler="on_send_message" swapped="no" />
                         <child>
                           <object class="GtkBox">
                             <property name="visible">True</property>
@@ -156,7 +155,7 @@
                   </packing>
                 </child>
                 <style>
-                  <class name="message-view"/>
+                  <class name="message-view" />
                 </style>
               </object>
               <packing>

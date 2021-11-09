@@ -265,7 +265,6 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 		"on_connect":               cp.onConnect,
 		"on_disconnect":            cp.onDisconnect,
 		"on_destroy_file_transfer": cp.onDestroyFileTransferNotif,
-		"on_edge_reached":          cp.scrollAdjustment.onEdgeReached,
 		"on_send_file_to_contact": func() {
 			cvf.account.sendFileTo(cp.currentPeerForSending(), cvf.ui, cp)
 		},
@@ -283,10 +282,6 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 	updateWithStyle(cp.entryScroll, prov)
 
 	cp.history.SetBuffer(cvf.ui.getTags().createTextBuffer())
-
-	adj := cp.scrollHistory.GetVAdjustment()
-	adj.Connect("changed", cp.scrollAdjustment.onAdjustmentChanged)
-	adj.Connect("value-changed", cp.scrollAdjustment.updateCurrentAdjustmentValue)
 
 	cp.pending.SetBuffer(cvf.ui.getTags().createTextBuffer())
 

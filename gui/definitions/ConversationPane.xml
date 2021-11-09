@@ -9,7 +9,7 @@
         <child>
           <object class="GtkMenuItem" id="conversationMenu">
             <property name="visible">true</property>
-	        <child>
+            <child>
               <object class="GtkLabel" id="menuTag">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Secure Chat</property>
@@ -47,7 +47,7 @@
         <child>
           <object class="GtkMenuItem" id="transferMenu">
             <property name="visible">true</property>
-	        <child>
+            <child>
               <object class="GtkLabel" id="transferLabelTag">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Transfer</property>
@@ -86,9 +86,9 @@
     <child>
       <object class="GtkBox" id="notification-area">
         <property name="can_focus">False</property>
-	    <property name="visible">true</property>
+        <property name="visible">true</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
-	    <child>
+        <child>
           <object class="GtkBox" id="security-warning">
             <property name="visible">False</property>
             <property name="can_focus">False</property>
@@ -109,8 +109,8 @@
               <object class="GtkLabel" id="label-security-warning">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-		        <attributes>
-                  <attribute name="weight" value="bold"/>
+                <attributes>
+                  <attribute name="weight" value="bold" />
                 </attributes>
               </object>
               <packing>
@@ -152,7 +152,7 @@
             <property name="position">0</property>
           </packing>
         </child>
-	    <child>
+        <child>
           <object class="GtkBox" id="file-transfer">
             <property name="visible">False</property>
             <property name="can_focus">False</property>
@@ -181,7 +181,7 @@
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <attributes>
-                      <attribute name="weight" value="bold"/>
+                      <attribute name="weight" value="bold" />
                     </attributes>
                   </object>
                   <packing>
@@ -253,7 +253,7 @@
           </packing>
         </child>
         <style>
-          <class name="notifications"/>
+          <class name="notifications" />
         </style>
       </object>
       <packing>
@@ -268,7 +268,6 @@
         <property name="visible">true</property>
         <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
         <property name="hscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
-        <signal name="edge-reached" handler="on_edge_reached" swapped="no"/>
         <child>
           <object class="GtkTextView" id="history">
             <property name="visible">true</property>
@@ -292,7 +291,7 @@
       <object class="GtkScrolledWindow" id="pendingScroll">
         <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
         <property name="hscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
-	    <property name="min-content-height">60</property>
+        <property name="min-content-height">60</property>
         <property name="shadow-type">in</property>
         <child>
           <object class="GtkTextView" id="pending">

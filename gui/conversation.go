@@ -94,7 +94,18 @@ type scrollVerticalAdjustment struct {
 }
 
 func newScrollVerticalAdjustment(sw gtki.ScrolledWindow) *scrollVerticalAdjustment {
-	return &scrollVerticalAdjustment{scrolledWindow: sw}
+	sa := &scrollVerticalAdjustment{scrolledWindow: sw}
+	sa.initSignals()
+
+	return sa
+}
+
+func (sa *scrollVerticalAdjustment) initSignals() {
+	sa.scrolledWindow.Connect("edge-reached", sa.onEdgeReached)
+
+	adj := sa.scrolledWindow.GetVAdjustment()
+	adj.Connect("changed", sa.onAdjustmentChanged)
+	adj.Connect("value-changed", sa.updateCurrentAdjustmentValue)
 }
 
 func (sa *scrollVerticalAdjustment) updateScrolledWindow(sw gtki.ScrolledWindow) {

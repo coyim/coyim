@@ -111,7 +111,7 @@ func (conv *conversationPane) newFileTransfer(fileName string, dir, send, receiv
 	countSending := 0
 	countReceiving := 0
 
-	label := "Transfer started"
+	label := i18n.Local("Transfer started")
 
 	for _, f := range conv.fileTransferNotif.files {
 		if f.sending {
@@ -242,29 +242,63 @@ func (conv *conversationPane) updateFileTransfer(file *fileNotification) {
 	})
 }
 
+func fileTransferSuccessLabel(fileTransfer, dirTransfer bool) string {
+	if fileTransfer && dirTransfer {
+		return i18n.Local("File and directory transfer(s) successful")
+	}
+	if dirTransfer {
+		return i18n.Local("Directory transfer(s) successful")
+	}
+	return i18n.Local("File transfer(s) successful")
+}
+
+func fileTransferFailedLabel(fileTransfer, dirTransfer bool) string {
+	if fileTransfer && dirTransfer {
+		return i18n.Local("File and directory transfer(s) failed")
+	}
+	if dirTransfer {
+		return i18n.Local("Directory transfer(s) failed")
+	}
+	return i18n.Local("File transfer(s) failed")
+}
+
+func fileTransferCanceledLabel(fileTransfer, dirTransfer bool) string {
+	if fileTransfer && dirTransfer {
+		return i18n.Local("File and directory transfer(s) canceled")
+	}
+	if dirTransfer {
+		return i18n.Local("Directory transfer(s) canceled")
+	}
+	return i18n.Local("File transfer(s) canceled")
+}
+
+func fileTransferDeclinedLabel(fileTransfer, dirTransfer bool) string {
+	if fileTransfer && dirTransfer {
+		return i18n.Local("File and directory transfer(s) declined")
+	}
+	if dirTransfer {
+		return i18n.Local("Directory transfer(s) declined")
+	}
+	return i18n.Local("File transfer(s) declined")
+}
+
 func fileTransferCalculateStates(countCompleted, countCanceled, countFailed, countDeclined, countDirs, countDirsCompleted, countTotal int, canceledBefore bool) (label, image string, canceled bool) {
-	verb := "successful"
+	generateLabel := fileTransferSuccessLabel
 	image = "success.svg"
 	canceled = canceledBefore
 	if countCanceled+countFailed+countDeclined == countTotal {
 		image = "failure.svg"
 		canceled = true
-		verb = "failed"
+		generateLabel = fileTransferFailedLabel
 		if countCanceled > (countFailed + countDeclined) {
-			verb = "canceled"
+			generateLabel = fileTransferCanceledLabel
 		} else if countDeclined > (countCanceled + countFailed) {
-			verb = "declined"
+			generateLabel = fileTransferDeclinedLabel
 		}
 	}
 
-	switch {
-	case countDirsCompleted > 0 && countCompleted != countDirsCompleted:
-		label = i18n.Local("File and directory transfer(s) " + verb)
-	case countDirsCompleted > 0:
-		label = i18n.Local("Directory transfer(s) " + verb)
-	default:
-		label = i18n.Local("File transfer(s) " + verb)
-	}
+	label = generateLabel(countCompleted != countDirsCompleted, countDirsCompleted > 0)
+
 	return
 }
 

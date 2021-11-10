@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-28 19:11+0000\n"
+"POT-Creation-Date: 2021-11-10 16:02+0000\n"
 "PO-Revision-Date: 2021-09-24 22:07+0000\n"
 "Last-Translator: sara-la-loca-de-los-gatos <sara@autonomia.digital>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/coyim/main/es/>\n"
@@ -44,7 +44,7 @@ msgstr "Detalles de la cuenta"
 #: ../gui/definitions/RegistrationForm.xml:35
 #: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:545
 #: ../gui/file_transfer_notification.go:125
-#: ../gui/file_transfer_notification.go:401
+#: ../gui/file_transfer_notification.go:435
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -589,7 +589,7 @@ msgstr "Fijar certificado"
 #: ../gui/definitions/MUCRoomWarningsOverlay.xml:47
 #: ../gui/definitions/TorInstallHelper.xml:91
 #: ../gui/file_transfer_notification.go:198
-#: ../gui/file_transfer_notification.go:308
+#: ../gui/file_transfer_notification.go:342
 msgid "Close"
 msgstr "Cerrar"
 
@@ -1269,7 +1269,7 @@ msgstr "Sí"
 msgid "Are you sure you want to cancel the room creation? "
 msgstr "Estás seguro de que quieres cancelar la creación de la sala? "
 
-#: ../gui/definitions/MUCRoomConversation.xml:121 ../gui/file_transfer.go:268
+#: ../gui/definitions/MUCRoomConversation.xml:120 ../gui/file_transfer.go:268
 msgid "Send"
 msgstr "Enviar"
 
@@ -5221,7 +5221,7 @@ msgstr "Escoge el archivo para enviar"
 msgid "Choose directory to send"
 msgstr "Escoge el directorio a enviar"
 
-#: ../gui/muc_room_window.go:25
+#: ../gui/muc_room_window.go:43
 msgid "%[1]s [%[2]s]"
 msgstr "%[1]s [%[2]s]"
 
@@ -5242,20 +5242,20 @@ msgstr ""
 "Los administradores y propietarios serán automáticamente moderadores de una "
 "sala. Por lo tanto, el rol de %s no se puede cambiar."
 
-#: ../gui/conversation.go:241
+#: ../gui/conversation.go:281
 msgid "Attempting to start a private conversation..."
 msgstr "Intentando iniciar una conversación privada..."
 
-#: ../gui/conversation.go:254 ../gui/account_events.go:143
+#: ../gui/conversation.go:294 ../gui/account_events.go:143
 msgid "Private conversation has ended."
 msgstr "La conversación privada ha terminado."
 
-#: ../gui/conversation.go:264
+#: ../gui/conversation.go:304
 #, python-format
 msgid "You have verified the identity of %s."
 msgstr "Has verificado la identidad de %s."
 
-#: ../gui/conversation.go:397
+#: ../gui/conversation.go:438
 msgid ""
 "You are talking over an \n"
 "unprotected chat"
@@ -5263,52 +5263,52 @@ msgstr ""
 "Estás hablando en un \n"
 "canal inseguro"
 
-#: ../gui/conversation.go:593
+#: ../gui/conversation.go:634
 msgid "Available"
 msgstr "Disponible"
 
-#: ../gui/conversation.go:595
+#: ../gui/conversation.go:636
 msgid "Not Available"
 msgstr "No disponible"
 
-#: ../gui/conversation.go:597
+#: ../gui/conversation.go:638
 msgid "Away"
 msgstr "Fuera"
 
-#: ../gui/conversation.go:599
+#: ../gui/conversation.go:640
 msgid "Busy"
 msgstr "Ocupado"
 
-#: ../gui/conversation.go:601
+#: ../gui/conversation.go:642
 msgid "Free for Chat"
 msgstr "Libre para conversar"
 
-#: ../gui/conversation.go:603
+#: ../gui/conversation.go:644
 msgid "Invisible"
 msgstr "Invisible"
 
-#: ../gui/conversation.go:611
+#: ../gui/conversation.go:652
 msgid "%[1]s%[2]s"
 msgstr "%[1]s%[2]s"
 
-#: ../gui/conversation.go:618 ../gui/conversation.go:632
+#: ../gui/conversation.go:659 ../gui/conversation.go:673
 #, python-format
 msgid " (%s)"
 msgstr " (%s)"
 
-#: ../gui/conversation.go:630
+#: ../gui/conversation.go:671
 msgid " (%[1]s: %[2]s)"
 msgstr " (%[1]s: %[2]s)"
 
-#: ../gui/conversation.go:638
+#: ../gui/conversation.go:679
 msgid "Offline"
 msgstr "Desconectado"
 
-#: ../gui/conversation.go:644
+#: ../gui/conversation.go:685
 msgid "%[1]s is now %[2]s"
 msgstr "%[1]s está %[2]s ahora"
 
-#: ../gui/conversation.go:760
+#: ../gui/conversation.go:801
 msgid "The peer is using a key we haven't seen before!"
 msgstr "¡Tu compañero está usando una clave que no habíamos visto antes!"
 
@@ -5458,25 +5458,29 @@ msgstr ""
 "Los fingerprints para %[1]s:\n"
 "%[2]s"
 
-#: ../gui/muc_room_conversation.go:238
+#: ../gui/muc_room_conversation.go:234
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an owner}."
 msgstr "$nickname{%s} ha sido agregado como $affiliation{propietario}."
 
-#: ../gui/muc_room_conversation.go:240
+#: ../gui/muc_room_conversation.go:236
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an administrator}."
 msgstr "$nickname{%s} ha sido agregado como $affiliation{administrador}."
 
-#: ../gui/muc_room_conversation.go:242
+#: ../gui/muc_room_conversation.go:238
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{a member}."
 msgstr "$nickname{%s} ha sido agregado como $affiliation{miembro}."
 
-#: ../gui/muc_room_conversation.go:244
+#: ../gui/muc_room_conversation.go:240
 #, python-format
 msgid "$nickname{%s} has been added to the ban list."
 msgstr "$nickname{%s} ha sido agregado a la lista de bloqueados."
+
+#: ../gui/file_transfer_notification.go:114
+msgid "Transfer started"
+msgstr ""
 
 #: ../gui/file_transfer_notification.go:148
 #, python-format
@@ -5518,59 +5522,95 @@ msgstr "Recibiendo cifrado: %s"
 msgid "Receiving insecurely: %s"
 msgstr "Recibiendo de forma no segura: %s"
 
+#: ../gui/file_transfer_notification.go:247
+msgid "File and directory transfer(s) successful"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:250
+msgid "Directory transfer(s) successful"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:252
+msgid "File transfer(s) successful"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:257
+msgid "File and directory transfer(s) failed"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:260
+msgid "Directory transfer(s) failed"
+msgstr ""
+
 #: ../gui/file_transfer_notification.go:262
-msgid "File and directory transfer(s) "
-msgstr "Transferencia(s) de archivos y directorios "
+msgid "File transfer(s) failed"
+msgstr ""
 
-#: ../gui/file_transfer_notification.go:264
-msgid "Directory transfer(s) "
-msgstr "Transferencia(s) de directorio "
+#: ../gui/file_transfer_notification.go:267
+msgid "File and directory transfer(s) canceled"
+msgstr ""
 
-#: ../gui/file_transfer_notification.go:266
-msgid "File transfer(s) "
-msgstr "Transferencia(s) de archivo "
+#: ../gui/file_transfer_notification.go:270
+msgid "Directory transfer(s) canceled"
+msgstr ""
 
-#: ../gui/file_transfer_notification.go:331
+#: ../gui/file_transfer_notification.go:272
+msgid "File transfer(s) canceled"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:277
+msgid "File and directory transfer(s) declined"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:280
+msgid "Directory transfer(s) declined"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:282
+msgid "File transfer(s) declined"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:365
 #, python-format
 msgid "Declined: %s"
 msgstr "Rechazado: %s"
 
-#: ../gui/file_transfer_notification.go:345
+#: ../gui/file_transfer_notification.go:379
 #, python-format
 msgid "Canceled: %s"
 msgstr "Cancelado: %s"
 
-#: ../gui/file_transfer_notification.go:359
+#: ../gui/file_transfer_notification.go:393
 #, python-format
 msgid "Failed: %s"
 msgstr "Falló: %s"
 
-#: ../gui/file_transfer_notification.go:377
+#: ../gui/file_transfer_notification.go:411
 #, python-format
 msgid "Sent securely: %s"
 msgstr "Enviado de forma segura: %s"
 
-#: ../gui/file_transfer_notification.go:379
+#: ../gui/file_transfer_notification.go:413
 #, python-format
 msgid "Sent encrypted: %s"
 msgstr "Enviado cifrado: %s"
 
-#: ../gui/file_transfer_notification.go:381
+#: ../gui/file_transfer_notification.go:415
 #, python-format
 msgid "Sent insecurely: %s"
 msgstr "Enviado de forma insegura: %s"
 
-#: ../gui/file_transfer_notification.go:383
+#: ../gui/file_transfer_notification.go:417
 #, python-format
 msgid "Received securely: %s"
 msgstr "Recibido de forma segura: %s"
 
-#: ../gui/file_transfer_notification.go:385
+#: ../gui/file_transfer_notification.go:419
 #, python-format
 msgid "Received encrypted: %s"
 msgstr "Recibido cifrado: %s"
 
-#: ../gui/file_transfer_notification.go:387
+#: ../gui/file_transfer_notification.go:421
 #, python-format
 msgid "Received insecurely: %s"
 msgstr "Recibido de forma insegura: %s"
@@ -6032,6 +6072,15 @@ msgstr "Verificando contraseña..."
 #: ../gui/muc_room_close_confirm.go:57
 msgid "Close & Leave Room"
 msgstr "Cerrar & salir de la sala"
+
+#~ msgid "File and directory transfer(s) "
+#~ msgstr "Transferencia(s) de archivos y directorios "
+
+#~ msgid "Directory transfer(s) "
+#~ msgstr "Transferencia(s) de directorio "
+
+#~ msgid "File transfer(s) "
+#~ msgstr "Transferencia(s) de archivo "
 
 #~ msgid " is now "
 #~ msgstr " es ahora "

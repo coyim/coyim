@@ -5458,7 +5458,7 @@ msgstr "$nickname{%s} har blivit tillagd till listan över bannlysta personer."
 
 #: ../gui/file_transfer_notification.go:114
 msgid "Transfer started"
-msgstr ""
+msgstr "Överföring started"
 
 #: ../gui/file_transfer_notification.go:148
 #, python-format
@@ -5502,51 +5502,51 @@ msgstr "Tar emot osäkert: %s"
 
 #: ../gui/file_transfer_notification.go:247
 msgid "File and directory transfer(s) successful"
-msgstr ""
+msgstr "Fil och folderöverföring(ar) lyckades"
 
 #: ../gui/file_transfer_notification.go:250
 msgid "Directory transfer(s) successful"
-msgstr ""
+msgstr "Folderöverföring(ar) lyckades"
 
 #: ../gui/file_transfer_notification.go:252
 msgid "File transfer(s) successful"
-msgstr ""
+msgstr "Filöverföring(ar) lyckades"
 
 #: ../gui/file_transfer_notification.go:257
 msgid "File and directory transfer(s) failed"
-msgstr ""
+msgstr "Fil och folderöverföring(ar) misslyckades"
 
 #: ../gui/file_transfer_notification.go:260
 msgid "Directory transfer(s) failed"
-msgstr ""
+msgstr "Folderöverföring(ar) misslyckades"
 
 #: ../gui/file_transfer_notification.go:262
 msgid "File transfer(s) failed"
-msgstr ""
+msgstr "Filöverföring(ar) misslyckades"
 
 #: ../gui/file_transfer_notification.go:267
 msgid "File and directory transfer(s) canceled"
-msgstr ""
+msgstr "Fil och folderöverföring(ar) avbröts"
 
 #: ../gui/file_transfer_notification.go:270
 msgid "Directory transfer(s) canceled"
-msgstr ""
+msgstr "Folderöverföring(ar) avbröts"
 
 #: ../gui/file_transfer_notification.go:272
 msgid "File transfer(s) canceled"
-msgstr ""
+msgstr "Filöverföring(ar) avbröts"
 
 #: ../gui/file_transfer_notification.go:277
 msgid "File and directory transfer(s) declined"
-msgstr ""
+msgstr "Fil och folderöverföring(ar) nekades"
 
 #: ../gui/file_transfer_notification.go:280
 msgid "Directory transfer(s) declined"
-msgstr ""
+msgstr "Folderöverföring(ar) nekades"
 
 #: ../gui/file_transfer_notification.go:282
 msgid "File transfer(s) declined"
-msgstr ""
+msgstr "Filöverföring(ar) nekades"
 
 #: ../gui/file_transfer_notification.go:365
 #, python-format
@@ -5556,7 +5556,7 @@ msgstr "Nekad: %s"
 #: ../gui/file_transfer_notification.go:379
 #, python-format
 msgid "Canceled: %s"
-msgstr "Avbryten: %s"
+msgstr "Avbruten: %s"
 
 #: ../gui/file_transfer_notification.go:393
 #, python-format

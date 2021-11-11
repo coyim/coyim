@@ -35,6 +35,10 @@ func (v *roomView) newRoomViewCloseWindowConfirm() *roomViewCloseWindowConfirm {
 	confirm.cancelButton.GrabFocus()
 	confirm.window.SetTransientFor(v.mainWindow())
 
+	v.u.connectShortcutsMucRoomWindow(confirm.window, func(_ gtki.Window) {
+		confirm.closeWindow()
+	})
+
 	return confirm
 }
 

@@ -52,7 +52,7 @@ func (r *roomViewRosterInfo) newOccupantAffiliationUpdateView(a *account, roomID
 	}
 
 	av.initBuilder()
-	av.initDefaults()
+	av.initDefaults(r.u)
 	av.initRadioButtonsValues()
 
 	return av
@@ -70,13 +70,17 @@ func (av *occupantAffiliationUpdateView) initBuilder() {
 	})
 }
 
-func (av *occupantAffiliationUpdateView) initDefaults() {
+func (av *occupantAffiliationUpdateView) initDefaults(u *gtkUI) {
 	av.dialog.SetTransientFor(av.rosterInfoView.parentWindow())
 
 	av.titleLabel.SetText(av.affiliationChangingLabelText())
 
 	mucStyles.setFormSectionLabelStyle(av.titleLabel)
 	mucStyles.setHelpTextStyle(av.contentBox)
+
+	u.connectShortcutsMucRoomWindow(av.dialog, func(_ gtki.Window) {
+		av.closeDialog()
+	})
 }
 
 // initRadioButtonsValues MUST be called from UI thread

@@ -6,7 +6,6 @@ import (
 )
 
 type roomViewWindow struct {
-	u        *gtkUI
 	roomView *roomView
 
 	window            gtki.Window   `gtk-widget:"room-window"`
@@ -19,11 +18,10 @@ type roomViewWindow struct {
 func (v *roomView) newRoomViewWindow() *roomViewWindow {
 	vw := &roomViewWindow{
 		roomView: v,
-		u:        v.u,
 	}
 
 	vw.loadUIDefinition()
-	vw.initDefaults()
+	vw.initDefaults(v.u)
 
 	return vw
 }
@@ -39,11 +37,11 @@ func (vw *roomViewWindow) connectUISignals(b *builder) {
 	})
 }
 
-func (vw *roomViewWindow) initDefaults() {
+func (vw *roomViewWindow) initDefaults(u *gtkUI) {
 	vw.window.SetTitle(i18n.Localf("%[1]s [%[2]s]", vw.roomView.roomID(), vw.roomView.account.Account()))
 	mucStyles.setRoomWindowStyle(vw.window)
 
-	vw.connectShortcutsMucRoomWindow()
+	u.connectShortcutsMucRoomWindow(vw)
 }
 
 // closeMucWindow MUST be called from the UI thread

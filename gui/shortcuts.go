@@ -144,10 +144,10 @@ func (u *gtkUI) connectShortcutsConversationWindow(c *conversationWindow) {
 	connectShortcut("<Primary>minus", c.win, u.decreaseFontSize)
 }
 
-func (u *gtkUI) connectShortcutsMucRoomWindow(vw *roomViewWindow) {
+func (u *gtkUI) connectShortcutsMucRoomWindow(window gtki.Window, closeWindow func(_ gtki.Window)) {
 	// <Primary> maps to Command on OS X, but Control on other platforms
-	connectShortcut("<Primary>q", vw.window, u.closeApplication)
-	connectShortcut("<Primary>w", vw.window, vw.closeMucWindow)
-	connectShortcut("<Primary>F4", vw.window, vw.closeMucWindow)
-	connectShortcut("Escape", vw.window, vw.closeMucWindow)
+	connectShortcut("<Primary>q", window, u.closeApplication)
+	connectShortcut("<Primary>w", window, closeWindow)
+	connectShortcut("<Primary>F4", window, closeWindow)
+	connectShortcut("Escape", window, closeWindow)
 }

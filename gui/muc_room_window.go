@@ -41,12 +41,9 @@ func (vw *roomViewWindow) initDefaults(u *gtkUI) {
 	vw.window.SetTitle(i18n.Localf("%[1]s [%[2]s]", vw.roomView.roomID(), vw.roomView.account.Account()))
 	mucStyles.setRoomWindowStyle(vw.window)
 
-	u.connectShortcutsMucRoomWindow(vw)
-}
-
-// closeMucWindow MUST be called from the UI thread
-func (vw *roomViewWindow) closeMucWindow(_ gtki.Window) {
-	_ = vw.onBeforeWindowClose()
+	u.connectShortcutsMucRoomWindow(vw.window, func(_ gtki.Window) {
+		_ = vw.onBeforeWindowClose()
+	})
 }
 
 const (

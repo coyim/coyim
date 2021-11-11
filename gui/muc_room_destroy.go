@@ -73,6 +73,10 @@ func (d *roomDestroyView) initDefaults(v *roomView) {
 
 	d.notifications = v.u.newNotificationsComponent()
 	d.notificationBox.Add(d.notifications.contentBox())
+
+	v.u.connectShortcutsMucRoomWindow(d.dialog, func(_ gtki.Window) {
+		d.close()
+	})
 }
 
 // onDestroyRoom MUST be called from the UI thread

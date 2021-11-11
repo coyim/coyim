@@ -32,7 +32,6 @@ type roomDestroyView struct {
 	alternativeRoomBox   gtki.Box         `gtk-widget:"destroy-room-alternative-box"`
 	alternativeRoomEntry gtki.Entry       `gtk-widget:"destroy-room-name-entry"`
 	passwordEntry        gtki.Entry       `gtk-widget:"destroy-room-password-entry"`
-	destroyRoomButton    gtki.Button      `gtk-widget:"destroy-room-button"`
 	notificationBox      gtki.Box         `gtk-widget:"notification-area"`
 
 	notifications *notificationsComponent
@@ -210,23 +209,6 @@ func (d *roomDestroyView) validateServiceName() (s jid.Domain, err error) {
 	}
 
 	return
-}
-
-// disableFields MUST be called from the UI thread
-func (d *roomDestroyView) disableFields() {
-	d.setSensitivityForAllFields(false)
-}
-
-// enableFields MUST be called from the UI thread
-func (d *roomDestroyView) enableFields() {
-	d.setSensitivityForAllFields(true)
-}
-
-// setSensitivityForAllFields MUST be called from the UI thread
-func (d *roomDestroyView) setSensitivityForAllFields(v bool) {
-	d.reasonTextView.SetSensitive(v)
-	d.alternativeRoomEntry.SetSensitive(v)
-	d.destroyRoomButton.SetSensitive(v)
 }
 
 // show MUST be called from the UI thread

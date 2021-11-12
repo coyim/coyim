@@ -54,6 +54,10 @@ func (oa *occupantActionView) initBuilder() {
 func (oa *occupantActionView) initDefaults(d *occupantActionViewData) {
 	oa.dialog.SetTransientFor(d.parentWindow)
 	mucStyles.setRoomDialogErrorComponentHeaderStyle(oa.header)
+
+	d.u.connectShortcutsMucRoomWindow(oa.dialog, func(_ gtki.Window) {
+		oa.close()
+	})
 }
 
 func (oa *occupantActionView) initDialogTitleAndTexts(d *occupantActionViewData) {

@@ -8,7 +8,6 @@ import (
 )
 
 type occupantActionViewData struct {
-	u            *gtkUI
 	parentWindow gtki.Window
 
 	dialogTitle string
@@ -29,13 +28,13 @@ type occupantActionView struct {
 	confirmationAction func(reason string) // confirmationAction will not be called from the UI thread
 }
 
-func newOccupantActionView(d *occupantActionViewData) *occupantActionView {
+func newOccupantActionView(d *occupantActionViewData, u *gtkUI) *occupantActionView {
 	oa := &occupantActionView{
 		confirmationAction: d.confirmationAction,
 	}
 
 	oa.initBuilder()
-	oa.initDefaults(d)
+	oa.initDefaults(d, u)
 	oa.initDialogTitleAndTexts(d)
 
 	return oa
@@ -51,11 +50,11 @@ func (oa *occupantActionView) initBuilder() {
 	})
 }
 
-func (oa *occupantActionView) initDefaults(d *occupantActionViewData) {
+func (oa *occupantActionView) initDefaults(d *occupantActionViewData, u *gtkUI) {
 	oa.dialog.SetTransientFor(d.parentWindow)
 	mucStyles.setRoomDialogErrorComponentHeaderStyle(oa.header)
 
-	d.u.connectShortcutsMucRoomWindow(oa.dialog, func(_ gtki.Window) {
+	u.connectShortcutsMucRoomWindow(oa.dialog, func(_ gtki.Window) {
 		oa.close()
 	})
 }
@@ -91,7 +90,6 @@ func (oa *occupantActionView) close() {
 
 func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant) *occupantActionView {
 	k := newOccupantActionView(&occupantActionViewData{
-		u:            r.u,
 		parentWindow: r.parentWindow(),
 
 		dialogTitle: i18n.Local("Expel person"),
@@ -103,14 +101,13 @@ func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant) *occupantActionVie
 			r.updateOccupantRole(o, &data.NoneRole{}, reason)
 			doInUIThread(r.hideRosterInfoPanel)
 		},
-	})
+	}, r.u)
 
 	return k
 }
 
 func (r *roomViewRoster) newBanOccupantView(o *muc.Occupant) *occupantActionView {
 	k := newOccupantActionView(&occupantActionViewData{
-		u:            r.u,
 		parentWindow: r.parentWindow(),
 
 		dialogTitle: i18n.Local("Ban person"),
@@ -122,7 +119,7 @@ func (r *roomViewRoster) newBanOccupantView(o *muc.Occupant) *occupantActionView
 			r.updateOccupantAffiliation(o, &data.OutcastAffiliation{}, reason)
 			doInUIThread(r.hideRosterInfoPanel)
 		},
-	})
+	}, r.u)
 
 	return k
 }

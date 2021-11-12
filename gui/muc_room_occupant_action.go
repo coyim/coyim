@@ -8,6 +8,7 @@ import (
 )
 
 type occupantActionViewData struct {
+	u            *gtkUI
 	parentWindow gtki.Window
 
 	dialogTitle string
@@ -86,6 +87,7 @@ func (oa *occupantActionView) close() {
 
 func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant) *occupantActionView {
 	k := newOccupantActionView(&occupantActionViewData{
+		u:            r.u,
 		parentWindow: r.parentWindow(),
 
 		dialogTitle: i18n.Local("Expel person"),
@@ -104,6 +106,7 @@ func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant) *occupantActionVie
 
 func (r *roomViewRoster) newBanOccupantView(o *muc.Occupant) *occupantActionView {
 	k := newOccupantActionView(&occupantActionViewData{
+		u:            r.u,
 		parentWindow: r.parentWindow(),
 
 		dialogTitle: i18n.Local("Ban person"),

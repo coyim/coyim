@@ -40,7 +40,7 @@ func (r *roomViewRosterInfo) newOccupantRoleUpdateView(a *account, roomID jid.Ba
 	}
 
 	rv.initBuilder()
-	rv.initDefaults()
+	rv.initDefaults(r.u)
 	rv.initRadioButtonsValues()
 
 	return rv
@@ -58,13 +58,17 @@ func (rv *occupantRoleUpdateView) initBuilder() {
 	})
 }
 
-func (rv *occupantRoleUpdateView) initDefaults() {
+func (rv *occupantRoleUpdateView) initDefaults(u *gtkUI) {
 	rv.dialog.SetTransientFor(rv.rosterInfoView.parentWindow())
 
 	rv.roleLabel.SetText(rv.roleChangingLabelText())
 
 	mucStyles.setFormSectionLabelStyle(rv.roleLabel)
 	mucStyles.setHelpTextStyle(rv.contentBox)
+
+	u.connectShortcutsMucRoomWindow(rv.dialog, func(_ gtki.Window) {
+		rv.closeDialog()
+	})
 }
 
 // initRadioButtonsValues MUST be called from de UI thread

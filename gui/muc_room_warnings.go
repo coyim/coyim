@@ -129,7 +129,7 @@ func (v *roomView) newRoomViewWarnings() *roomViewWarnings {
 
 	vw.initBuilder()
 	vw.initShortcuts()
-	vw.initDefaults()
+	vw.initDefaults(vw.roomView.u)
 
 	return vw
 }
@@ -157,9 +157,13 @@ func (vw *roomViewWarnings) initShortcuts() {
 	}
 }
 
-func (vw *roomViewWarnings) initDefaults() {
+func (vw *roomViewWarnings) initDefaults(u *gtkUI) {
 	vw.dialog.SetTransientFor(vw.roomView.mainWindow())
 	mucStyles.setRoomWarningsStyles(vw.dialog)
+
+	u.connectShortcutsMucRoomWindow(vw.dialog, func(_ gtki.Window) {
+		vw.close()
+	})
 }
 
 // move MUST be called from the UI thread

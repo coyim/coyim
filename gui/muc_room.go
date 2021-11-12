@@ -137,6 +137,10 @@ func (v *roomView) initRoomViewComponents() {
 	v.window.notificationsArea.Add(v.notifications.notificationsBox())
 	v.window.privacyWarningBox.Add(v.warningsInfoBar.view())
 	v.window.overlay.AddOverlay(v.loadingViewOverlay.view())
+
+	v.u.connectShortcutsMucRoomWindow(v.window.window, func(_ gtki.Window) {
+		v.window.window.Hide()
+	})
 }
 
 // onEventReceived MUST be called from the UI thread

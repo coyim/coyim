@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-10 16:02+0000\n"
+"POT-Creation-Date: 2021-11-14 16:10+0000\n"
 "PO-Revision-Date: 2021-09-24 22:07+0000\n"
 "Last-Translator: ivanjijon <ivanjijon@hotmail.com>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/coyim/main/pt/"
@@ -43,7 +43,7 @@ msgstr "Dados da Conta"
 #: ../gui/definitions/MUCRoomToolbar.xml:364
 #: ../gui/definitions/PeerDetails.xml:191
 #: ../gui/definitions/RegistrationForm.xml:35
-#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:545
+#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:549
 #: ../gui/file_transfer_notification.go:125
 #: ../gui/file_transfer_notification.go:435
 msgid "Cancel"
@@ -102,8 +102,8 @@ msgstr "Política de fixação"
 #: ../gui/definitions/AccountDetails.xml:271
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:355
 #: ../gui/muc_room_config_summary_field.go:172 ../gui/muc_room_roster.go:402
-#: ../gui/muc_room_roster.go:419 ../gui/muc_room_occupant_affiliation.go:175
-#: ../gui/muc_room_occupant_affiliation.go:189
+#: ../gui/muc_room_roster.go:419 ../gui/muc_room_occupant_affiliation.go:179
+#: ../gui/muc_room_occupant_affiliation.go:193
 msgid "None"
 msgstr "Nenhuma"
 
@@ -1127,7 +1127,7 @@ msgstr ""
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:159
 #: ../gui/definitions/MUCRoomRosterInfo.xml:596 ../gui/muc_room_roster.go:391
-#: ../gui/muc_room_occupant_affiliation.go:167
+#: ../gui/muc_room_occupant_affiliation.go:171
 msgid "Owner"
 msgstr "Proprietário"
 
@@ -1153,7 +1153,7 @@ msgstr ""
 "se torna moderador ao entrar."
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:290
-#: ../gui/muc_room_occupant_affiliation.go:171
+#: ../gui/muc_room_occupant_affiliation.go:175
 msgid "Member"
 msgstr "Membro"
 
@@ -1193,7 +1193,7 @@ msgid "Yes, leave the room"
 msgstr "Sim, sair da sala"
 
 #: ../gui/definitions/MUCRoomCloseWindowConfirm.xml:122
-#: ../gui/muc_room_close_confirm.go:55
+#: ../gui/muc_room_close_confirm.go:59
 msgid "Close Room"
 msgstr "Fechar sala"
 
@@ -1320,14 +1320,14 @@ msgid "You are about to temporarily remove the person from the room."
 msgstr "Você está prestes a remover temporariamente a pessoa da sala."
 
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:138
-#: ../gui/muc_room_occupant_action.go:93
+#: ../gui/muc_room_occupant_action.go:97
 msgid ""
 "They will be able to join the room again. Are you sure you want to continue?"
 msgstr ""
 "Eles poderão entrar na sala novamente. Você tem certeza que quer continuar?"
 
 #: ../gui/definitions/MUCRoomOccupantActionDialog.xml:171
-#: ../gui/muc_room_occupant_action.go:94
+#: ../gui/muc_room_occupant_action.go:98
 msgid ""
 "Here you can provide an optional reason for removing the person. Everyone in "
 "the room will see this reason."
@@ -1351,7 +1351,7 @@ msgstr "Mudar de função"
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:128
 #: ../gui/muc_room_config_component.go:159 ../gui/muc_room_roster.go:425
-#: ../gui/muc_room_occupant_affiliation.go:183
+#: ../gui/muc_room_occupant_affiliation.go:187
 msgid "Moderator"
 msgstr "Moderador"
 
@@ -1368,7 +1368,7 @@ msgstr ""
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:194
 #: ../gui/muc_room_config_component.go:155 ../gui/muc_room_roster.go:421
-#: ../gui/muc_room_occupant_affiliation.go:185
+#: ../gui/muc_room_occupant_affiliation.go:189
 msgid "Participant"
 msgstr "Participante"
 
@@ -1384,7 +1384,7 @@ msgstr ""
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:261
 #: ../gui/muc_room_config_component.go:161 ../gui/muc_room_roster.go:423
-#: ../gui/muc_room_occupant_affiliation.go:187
+#: ../gui/muc_room_occupant_affiliation.go:191
 msgid "Visitor"
 msgstr "Visitante"
 
@@ -3893,12 +3893,12 @@ msgstr ""
 "Não conseguimos acessar o serviço, verifique sua conexão à Internet ou "
 "certifique-se de que o serviço existe."
 
-#: ../gui/muc_join_room.go:184 ../gui/muc_room_destroy.go:132
+#: ../gui/muc_join_room.go:184 ../gui/muc_room_destroy.go:135
 #: ../gui/muc_room_form_component.go:141
 msgid "You must provide a valid room name."
 msgstr "Você deve fornecer um nome de sala válido."
 
-#: ../gui/muc_join_room.go:190 ../gui/muc_room_destroy.go:134
+#: ../gui/muc_join_room.go:190 ../gui/muc_room_destroy.go:137
 #: ../gui/muc_room_form_component.go:147
 msgid "You must provide a valid service name."
 msgstr "Você deve fornecer um nome de serviço válido."
@@ -3947,7 +3947,7 @@ msgstr "%d contas"
 msgid "No accounts"
 msgstr "Sem contas"
 
-#: ../gui/muc_room.go:208
+#: ../gui/muc_room.go:212
 msgid ""
 "Loading the room information took longer than usual, perhaps the connection "
 "to the server was lost. Do you want to try again?"
@@ -3955,17 +3955,17 @@ msgstr ""
 "O carregamento das informações da sala demorou mais do que o normal, talvez "
 "a conexão com o servidor tenha sido perdida. Você quer tentar novamente?"
 
-#: ../gui/muc_room.go:211 ../gui/muc_room.go:753
+#: ../gui/muc_room.go:215 ../gui/muc_room.go:757
 msgid "Yes, try again"
 msgstr "Sim, tentar de novo"
 
-#: ../gui/muc_room.go:271
+#: ../gui/muc_room.go:275
 msgid ""
 "You have been removed from this room because it's now a members-only room."
 msgstr ""
 "Você foi removido desta sala porque agora ela é exclusiva para membros."
 
-#: ../gui/muc_room.go:282
+#: ../gui/muc_room.go:286
 msgid ""
 "You have been removed from this members-only room since you are not "
 "$affiliation{a member} anymore."
@@ -3973,27 +3973,27 @@ msgstr ""
 "Você foi removido desta sala exclusiva para membros porque não é mais "
 "$affiliation{um membro}."
 
-#: ../gui/muc_room.go:392
+#: ../gui/muc_room.go:396
 msgid "The room has been destroyed"
 msgstr "A sala foi destruída"
 
-#: ../gui/muc_room.go:527
+#: ../gui/muc_room.go:531
 msgid "The room subject couldn't be updated."
 msgstr "Não foi possível atualizar o assunto da sala."
 
-#: ../gui/muc_room.go:534
+#: ../gui/muc_room.go:538
 msgid "The room subject has been updated."
 msgstr "O assunto da sala foi atualizado."
 
-#: ../gui/muc_room.go:547
+#: ../gui/muc_room.go:551
 msgid "Return"
 msgstr "Voltar"
 
-#: ../gui/muc_room.go:730
+#: ../gui/muc_room.go:734
 msgid "Your connection has been restored; you can join this room again."
 msgstr "Sua conexão foi restaurada; você pode entrar nesta sala novamente."
 
-#: ../gui/muc_room.go:746
+#: ../gui/muc_room.go:750
 msgid ""
 "Your connection was recovered but loading the room information took longer "
 "than usual, perhaps the connection to the server was lost. Do you want to "
@@ -4003,16 +4003,16 @@ msgstr ""
 "demorou mais do que o normal. Talvez a conexão com o servidor tenha sido "
 "perdida. Você quer tentar novamente?"
 
-#: ../gui/muc_room.go:759
+#: ../gui/muc_room.go:763
 msgid "Trying to connect to the room..."
 msgstr "Tentando se conectar à sala..."
 
-#: ../gui/muc_room.go:801
+#: ../gui/muc_room.go:805
 msgid ""
 "The connection to the server has been lost, please verify your connection."
 msgstr "A conexão com o servidor foi perdida, verifique sua conexão."
 
-#: ../gui/muc_room.go:813
+#: ../gui/muc_room.go:817
 msgid "Connecting to the room..."
 msgstr "Conectando-se à sala ..."
 
@@ -4125,11 +4125,11 @@ msgstr "%s (%v)"
 msgid "%s (You)"
 msgstr "%s (Você)"
 
-#: ../gui/muc_room_roster.go:389 ../gui/muc_room_occupant_affiliation.go:169
+#: ../gui/muc_room_roster.go:389 ../gui/muc_room_occupant_affiliation.go:173
 msgid "Admin"
 msgstr "Admin"
 
-#: ../gui/muc_room_roster.go:393 ../gui/muc_room_occupant_affiliation.go:173
+#: ../gui/muc_room_roster.go:393 ../gui/muc_room_occupant_affiliation.go:177
 msgid "Outcast"
 msgstr "Banido"
 
@@ -4296,15 +4296,15 @@ msgstr "Falha ao exportar fingerprints"
 msgid "Couldn't export fingerprints to %s."
 msgstr "Não foi possível exportar fingerprints para %s."
 
-#: ../gui/muc_room_destroy.go:128
+#: ../gui/muc_room_destroy.go:131
 msgid "You must provide a service name."
 msgstr "Você deve fornecer um nome de serviço."
 
-#: ../gui/muc_room_destroy.go:130
+#: ../gui/muc_room_destroy.go:133
 msgid "You must provide a room name."
 msgstr "Você deve fornecer um nome para a sala."
 
-#: ../gui/muc_room_destroy.go:136
+#: ../gui/muc_room_destroy.go:139
 msgid "You must provide a valid service and room name."
 msgstr "Você deve fornecer um serviço válido e nome da sala."
 
@@ -4526,22 +4526,22 @@ msgstr "Remover todos"
 msgid "January 2, 2006 at 15:04:05"
 msgstr "2 de January de 2006 às 15:04:05"
 
-#: ../gui/muc_room_occupant_role.go:133
+#: ../gui/muc_room_occupant_role.go:137
 #, python-format
 msgid "You are changing the role of %s from moderator to:"
 msgstr "Você está mudando a função de %s de moderador para:"
 
-#: ../gui/muc_room_occupant_role.go:135
+#: ../gui/muc_room_occupant_role.go:139
 #, python-format
 msgid "You are changing the role of %s from participant to:"
 msgstr "Você está mudando a função de %s de participante para:"
 
-#: ../gui/muc_room_occupant_role.go:137
+#: ../gui/muc_room_occupant_role.go:141
 #, python-format
 msgid "You are changing the role of %s from visitor to:"
 msgstr "Você está mudando a função de %s de visitante para:"
 
-#: ../gui/muc_room_occupant_role.go:140
+#: ../gui/muc_room_occupant_role.go:144
 #, python-format
 msgid "You are changing the role of %s to:"
 msgstr "Você está alterando a função de %s para:"
@@ -4793,7 +4793,7 @@ msgstr "Verifique as propriedades de segurança desta sala!"
 msgid "Details"
 msgstr "Detalhes"
 
-#: ../gui/muc_room_warnings.go:217
+#: ../gui/muc_room_warnings.go:221
 msgid "Warning %[1]d of %[2]d"
 msgstr "Aviso %[1]d of %[2]d"
 
@@ -5226,7 +5226,7 @@ msgstr "Escolha o arquivo para enviar"
 msgid "Choose directory to send"
 msgstr "Escolha o diretório para enviar"
 
-#: ../gui/muc_room_window.go:43
+#: ../gui/muc_room_window.go:41
 msgid "%[1]s [%[2]s]"
 msgstr "%[1]s [%[2]s]"
 
@@ -5317,32 +5317,32 @@ msgstr ""
 msgid "The peer is using a key we haven't seen before!"
 msgstr "Seu colega está usando uma chave que não temos visto antes!"
 
-#: ../gui/muc_room_occupant_action.go:91
+#: ../gui/muc_room_occupant_action.go:95
 msgid "Expel person"
 msgstr "Expulsar pessoa"
 
-#: ../gui/muc_room_occupant_action.go:92
+#: ../gui/muc_room_occupant_action.go:96
 #, python-format
 msgid "You are about to expel %s from the room."
 msgstr "Você está prestes a expulsar %s da sala."
 
-#: ../gui/muc_room_occupant_action.go:109
+#: ../gui/muc_room_occupant_action.go:113
 msgid "Ban person"
 msgstr "Banir pessoa"
 
-#: ../gui/muc_room_occupant_action.go:110
+#: ../gui/muc_room_occupant_action.go:114
 #, python-format
 msgid "You are about to ban %s from the room"
 msgstr "Você está prestes a banir %s da sala"
 
-#: ../gui/muc_room_occupant_action.go:111
+#: ../gui/muc_room_occupant_action.go:115
 msgid ""
 "They won't be able to join the room again. Are you sure you want to continue?"
 msgstr ""
 "A pessoa não poderá entrar na sala novamente. Você tem certeza que quer "
 "continuar?"
 
-#: ../gui/muc_room_occupant_action.go:112
+#: ../gui/muc_room_occupant_action.go:116
 msgid ""
 "Here you can provide an optional reason for banning the person. Everyone in "
 "the room will see this reason."
@@ -5861,27 +5861,27 @@ msgstr "%v segundos atrás"
 msgid "Now"
 msgstr "Agora"
 
-#: ../gui/muc_room_occupant_affiliation.go:154
+#: ../gui/muc_room_occupant_affiliation.go:158
 #, python-format
 msgid "You are changing the position of %s from owner to:"
 msgstr "Você está mudando a posição de %s de proprietário para:"
 
-#: ../gui/muc_room_occupant_affiliation.go:156
+#: ../gui/muc_room_occupant_affiliation.go:160
 #, python-format
 msgid "You are changing the position of %s from administrator to:"
 msgstr "Você está mudando a posição de %s de administrador para:"
 
-#: ../gui/muc_room_occupant_affiliation.go:158
+#: ../gui/muc_room_occupant_affiliation.go:162
 #, python-format
 msgid "You are changing the position of %s from member to:"
 msgstr "Você está mudando a posição de %s de membro para:"
 
-#: ../gui/muc_room_occupant_affiliation.go:161
+#: ../gui/muc_room_occupant_affiliation.go:165
 #, python-format
 msgid "You are changing the position of %s to:"
 msgstr "Você está mudando a posição de %s para:"
 
-#: ../gui/muc_room_occupant_affiliation.go:196
+#: ../gui/muc_room_occupant_affiliation.go:200
 msgid ""
 "We couldn't update the position for the person because either you don't have "
 "permission to do it or the server is busy. Please try again."
@@ -5889,7 +5889,7 @@ msgstr ""
 "Não foi possível atualizar a posição da pessoa porque você não tem permissão "
 "para fazer isso ou o servidor está ocupado. Por favor, tente novamente."
 
-#: ../gui/muc_room_occupant_affiliation.go:198
+#: ../gui/muc_room_occupant_affiliation.go:202
 msgid ""
 "An error occurred when updating the position for the person. Please try "
 "again."
@@ -6073,7 +6073,7 @@ msgstr "Senha incorreta inserida, tente novamente."
 msgid "Checking password..."
 msgstr "Verificando senha..."
 
-#: ../gui/muc_room_close_confirm.go:57
+#: ../gui/muc_room_close_confirm.go:61
 msgid "Close & Leave Room"
 msgstr "Fechar & sair da Sala"
 

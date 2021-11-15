@@ -55,7 +55,7 @@ func (u *gtkUI) newRoomConfigAssistant(data *roomConfigData) *roomConfigAssistan
 	rc.initBuilder()
 	rc.initRoomConfigComponent(data)
 	rc.initRoomConfigPages()
-	rc.initDefaults()
+	rc.initDefaults(u)
 	rc.initSidebarNavigation()
 
 	return rc
@@ -108,7 +108,7 @@ func (rc *roomConfigAssistant) initRoomConfigPages() {
 	}
 }
 
-func (rc *roomConfigAssistant) initDefaults() {
+func (rc *roomConfigAssistant) initDefaults(u *gtkUI) {
 	header, _ := rc.assistant.GetHeaderBar()
 	header.SetProperty("subtitle", rc.roomID.String())
 
@@ -128,6 +128,10 @@ func (rc *roomConfigAssistant) initDefaults() {
 	}
 
 	mucStyles.setRoomConfigSummaryStyle(rc.assistant)
+
+	u.connectShortcutsMucConfigRoomWindow(rc.assistant, func(_ gtki.Window) {
+		rc.onCancelClicked()
+	})
 }
 
 func (rc *roomConfigAssistant) initSidebarNavigation() {

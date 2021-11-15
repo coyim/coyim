@@ -58,6 +58,7 @@ func (vw *roomViewWindow) onBeforeWindowClose() bool {
 		return roomWindowCloseStopEvent
 	}
 
+	vw.roomView.close()
 	return roomWindowCloseContinueEvent
 }
 

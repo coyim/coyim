@@ -151,3 +151,10 @@ func (u *gtkUI) connectShortcutsMucRoomWindow(window gtki.Window, closeWindow fu
 	connectShortcut("<Primary>F4", window, closeWindow)
 	connectShortcut("Escape", window, closeWindow)
 }
+
+func (u *gtkUI) connectShortcutsMucConfigRoomWindow(window gtki.Window, closeWindow func(_ gtki.Window)) {
+	// <Primary> maps to Command on OS X, but Control on other platforms
+	connectShortcut("<Primary>q", window, u.closeApplication)
+	connectShortcut("<Primary>w", window, closeWindow)
+	connectShortcut("<Primary>F4", window, closeWindow)
+}

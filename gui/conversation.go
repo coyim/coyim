@@ -181,46 +181,31 @@ func (u *gtkUI) getTags() *tags {
 	return u.tags
 }
 
-func (u *gtkUI) newTags() *tags {
-	cs := u.currentColorSet()
-	t := new(tags)
+func (t *tags) addTextTag(gt gtki.Gtk, name, foreground string) {
+	tt, _ := gt.TextTagNew(name)
+	_ = tt.SetProperty("foreground", foreground)
+	t.table.Add(tt)
+}
 
-	t.table, _ = g.gtk.TextTagTableNew()
+func createTags(cs colorSet, gt gtki.Gtk) *tags {
+	t := &tags{}
 
-	outgoingUser, _ := g.gtk.TextTagNew("outgoingUser")
-	_ = outgoingUser.SetProperty("foreground", cs.conversationOutgoingUserForeground)
+	t.table, _ = gt.TextTagTableNew()
 
-	incomingUser, _ := g.gtk.TextTagNew("incomingUser")
-	_ = incomingUser.SetProperty("foreground", cs.conversationIncomingUserForeground)
-
-	outgoingText, _ := g.gtk.TextTagNew("outgoingText")
-	_ = outgoingText.SetProperty("foreground", cs.conversationOutgoingTextForeground)
-
-	incomingText, _ := g.gtk.TextTagNew("incomingText")
-	_ = incomingText.SetProperty("foreground", cs.conversationIncomingTextForeground)
-
-	statusText, _ := g.gtk.TextTagNew("statusText")
-	_ = statusText.SetProperty("foreground", cs.conversationStatusTextForeground)
-
-	timestampText, _ := g.gtk.TextTagNew("timestamp")
-	_ = timestampText.SetProperty("foreground", cs.timestampForeground)
-
-	outgoingDelayedUser, _ := g.gtk.TextTagNew("outgoingDelayedUser")
-	_ = outgoingDelayedUser.SetProperty("foreground", cs.conversationOutgoingDelayedUserForeground)
-
-	outgoingDelayedText, _ := g.gtk.TextTagNew("outgoingDelayedText")
-	_ = outgoingDelayedText.SetProperty("foreground", cs.conversationOutgoingDelayedTextForeground)
-
-	t.table.Add(outgoingUser)
-	t.table.Add(incomingUser)
-	t.table.Add(outgoingText)
-	t.table.Add(incomingText)
-	t.table.Add(statusText)
-	t.table.Add(outgoingDelayedUser)
-	t.table.Add(outgoingDelayedText)
-	t.table.Add(timestampText)
+	t.addTextTag(gt, "outgoingUser", cs.conversationOutgoingUserForeground)
+	t.addTextTag(gt, "incomingUser", cs.conversationIncomingUserForeground)
+	t.addTextTag(gt, "outgoingText", cs.conversationOutgoingTextForeground)
+	t.addTextTag(gt, "incomingText", cs.conversationIncomingTextForeground)
+	t.addTextTag(gt, "statusText", cs.conversationStatusTextForeground)
+	t.addTextTag(gt, "timestamp", cs.timestampForeground)
+	t.addTextTag(gt, "outgoingDelayedUser", cs.conversationOutgoingDelayedUserForeground)
+	t.addTextTag(gt, "outgoingDelayedText", cs.conversationOutgoingDelayedTextForeground)
 
 	return t
+}
+
+func (u *gtkUI) newTags() *tags {
+	return createTags(u.currentColorSet(), g.gtk)
 }
 
 func (t *tags) createTextBuffer() gtki.TextBuffer {

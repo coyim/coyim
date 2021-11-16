@@ -469,35 +469,75 @@ type sentMessage struct {
 	coordinates     bufferSlice
 }
 
-func (sent *sentMessage) Tagged() ([]*taggableText, bool) {
-	msgTxt := sent.message
-	msgHasMePrefix := strings.HasPrefix(strings.TrimSpace(msgTxt), mePrefix)
-	attention := !sent.isDelayed && !msgHasMePrefix
-	userTag := is(sent.isOutgoing, "outgoingUser", "incomingUser")
-	userTag = is(sent.isDelayed, "outgoingDelayedUser", userTag)
-	textTag := is(sent.isOutgoing, "outgoingText", "incomingText")
-	textTag = is(sent.isDelayed, "outgoingDelayedText", textTag)
+func (sent *sentMessage) hasMePrefix() bool {
+	return strings.HasPrefix(strings.TrimSpace(sent.message), mePrefix)
+}
 
-	if sent.isDelayed {
-		return []*taggableText{
-			{userTag, sent.from},
-			{text: ":  "},
-			{textTag, msgTxt},
-		}, attention
+func (sent *sentMessage) tagFor(delayed, outgoing, incoming string) string {
+	switch {
+	case sent.isDelayed:
+		return delayed
+	case sent.isOutgoing:
+		return outgoing
+	default:
+		return incoming
 	}
+}
 
-	if msgHasMePrefix {
-		msgTxt = strings.TrimPrefix(strings.TrimSpace(msgTxt), mePrefix)
-		return []*taggableText{
-			{userTag, sent.from + " " + msgTxt},
-		}, attention
-	}
+func (sent *sentMessage) userTag() string {
+	return sent.tagFor("outgoingDelayedUser", "outgoingUser", "incomingUser")
+}
 
+func (sent *sentMessage) textTag() string {
+	return sent.tagFor("outgoingDelayedText", "outgoingText", "incomingText")
+}
+
+func (sent *sentMessage) shouldRequestAttention() bool {
+	return !sent.isDelayed && !sent.hasMePrefix()
+}
+
+func (sent *sentMessage) fromTaggedMessage() *taggableText {
+	return &taggableText{sent.userTag(), sent.from}
+}
+
+func (sent *sentMessage) textTaggedMessage() *taggableText {
+	return &taggableText{sent.textTag(), sent.message}
+}
+
+func (sent *sentMessage) messageWithoutActionPrefix() string {
+	return strings.TrimPrefix(strings.TrimSpace(sent.message), mePrefix)
+}
+
+func (sent *sentMessage) actionFormattedMessage() string {
+	return fmt.Sprintf("%s %s", sent.from, sent.messageWithoutActionPrefix())
+}
+
+func (sent *sentMessage) actionTaggedMessage() *taggableText {
+	return &taggableText{
+		sent.userTag(),
+		sent.actionFormattedMessage()}
+}
+
+func (sent *sentMessage) hasMeTaggedMessage() ([]*taggableText, bool) {
 	return []*taggableText{
-		{userTag, sent.from},
+		sent.actionTaggedMessage(),
+	}, sent.shouldRequestAttention()
+}
+
+func (sent *sentMessage) regularTaggedMessage() ([]*taggableText, bool) {
+	return []*taggableText{
+		sent.fromTaggedMessage(),
 		{text: ":  "},
-		{textTag, msgTxt},
-	}, attention
+		sent.textTaggedMessage(),
+	}, sent.shouldRequestAttention()
+}
+
+func (sent *sentMessage) tagged() ([]*taggableText, bool) {
+	if sent.hasMePrefix() {
+		return sent.hasMeTaggedMessage()
+	}
+
+	return sent.regularTaggedMessage()
 }
 
 func (conv *conversationPane) storeDelayedMessage(trace int, message sentMessage) {
@@ -772,7 +812,7 @@ func (conv *conversationPane) appendStatus(from string, timestamp time.Time, sho
 }
 
 func (conv *conversationPane) appendMessage(sent sentMessage) {
-	entries, attention := sent.Tagged()
+	entries, attention := sent.tagged()
 	conv.appendSentMessage(sent, attention, entries...)
 }
 

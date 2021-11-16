@@ -457,7 +457,6 @@ const mePrefix = "/me "
 
 type sentMessage struct {
 	message         string
-	strippedMessage []byte
 	from            string
 	to              jid.Any
 	timestamp       time.Time
@@ -471,7 +470,7 @@ type sentMessage struct {
 }
 
 func (sent *sentMessage) Tagged() ([]*taggableText, bool) {
-	msgTxt := string(sent.strippedMessage)
+	msgTxt := sent.message
 	msgHasMePrefix := strings.HasPrefix(strings.TrimSpace(msgTxt), mePrefix)
 	attention := !sent.isDelayed && !msgHasMePrefix
 	userTag := is(sent.isOutgoing, "outgoingUser", "incomingUser")
@@ -580,15 +579,14 @@ func (conv *conversationPane) sendMessage(message string) error {
 		conversation, _ := session.ConversationManager().EnsureConversationWith(conv.currentPeerForSending(), nil)
 
 		sent := sentMessage{
-			message:         message,
-			strippedMessage: []byte(message),
-			from:            conv.account.session.DisplayName(),
-			to:              conv.currentPeerForSending().NoResource(),
-			timestamp:       time.Now(),
-			isEncrypted:     conversation.IsEncrypted(),
-			isDelayed:       delayed,
-			isOutgoing:      true,
-			trace:           trace,
+			message:     message,
+			from:        conv.account.session.DisplayName(),
+			to:          conv.currentPeerForSending().NoResource(),
+			timestamp:   time.Now(),
+			isEncrypted: conversation.IsEncrypted(),
+			isDelayed:   delayed,
+			isOutgoing:  true,
+			trace:       trace,
 		}
 
 		if delayed {

@@ -73,11 +73,11 @@ func (u *gtkUI) handleMessageEvent(ev events.Message, a *account) {
 		conv := u.openConversationView(a, ev.From, false)
 
 		sent := sentMessage{
-			from:            u.displayNameFor(a, ev.From.NoResource()),
-			timestamp:       timestamp,
-			isEncrypted:     encrypted,
-			isOutgoing:      false,
-			strippedMessage: message,
+			from:        u.displayNameFor(a, ev.From.NoResource()),
+			timestamp:   timestamp,
+			isEncrypted: encrypted,
+			isOutgoing:  false,
+			message:     string(message),
 		}
 		conv.appendMessage(sent)
 

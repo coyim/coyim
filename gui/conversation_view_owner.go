@@ -163,6 +163,8 @@ func (cvf *ourConversationViewFactory) createWindowedConversationView(existing *
 	if existing != nil {
 		b, _ := existing.history.GetBuffer()
 		cp.history.SetBuffer(b)
+
+		cp.encryptionStatus = existing.encryptionStatus
 	}
 
 	cp.menubar.Show()
@@ -191,6 +193,8 @@ func (cvf *ourConversationViewFactory) createUnifiedConversationView(existing *c
 	if existing != nil {
 		b, _ := existing.history.GetBuffer()
 		cp.history.SetBuffer(b)
+
+		cp.encryptionStatus = existing.encryptionStatus
 	}
 
 	cp.connectEnterHandler(nil)

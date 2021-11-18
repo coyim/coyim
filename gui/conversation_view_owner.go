@@ -165,6 +165,7 @@ func (cvf *ourConversationViewFactory) createWindowedConversationView(existing *
 		cp.history.SetBuffer(b)
 
 		cp.encryptionStatus = existing.encryptionStatus
+		cp.otrLock = existing.otrLock
 	}
 
 	cp.menubar.Show()
@@ -195,6 +196,7 @@ func (cvf *ourConversationViewFactory) createUnifiedConversationView(existing *c
 		cp.history.SetBuffer(b)
 
 		cp.encryptionStatus = existing.encryptionStatus
+		cp.otrLock = existing.otrLock
 	}
 
 	cp.connectEnterHandler(nil)

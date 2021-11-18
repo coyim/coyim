@@ -66,3 +66,7 @@ func (rcpb *roomConfigPositionsWithApplyButton) onOccupantJidEdited(crt gtki.Cel
 func (rcpb *roomConfigPositionsWithApplyButton) enableOrDisableApplyButton() {
 	rcpb.applyButton.SetSensitive(rcpb.hasListChanged())
 }
+
+func (rcpb *roomConfigPositionsWithApplyButton) focusWidget() gtki.Widget {
+	return rcpb.applyButton
+}

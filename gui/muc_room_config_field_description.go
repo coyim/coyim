@@ -30,3 +30,8 @@ func newRoomConfigFieldDescription(ft muc.RoomConfigFieldType, fieldInfo roomCon
 func (f *roomConfigFieldDescription) updateFieldValue() {
 	f.value.SetText(getTextViewText(f.textView))
 }
+
+// focusWidget implements the hasRoomConfigFormField interface
+func (f *roomConfigFieldDescription) focusWidget() gtki.Widget {
+	return f.textView
+}

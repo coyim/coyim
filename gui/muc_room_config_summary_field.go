@@ -201,3 +201,7 @@ func summaryListHideOrShow(list gtki.TreeView, toggleButtonImage gtki.Image, con
 		container.SetVisible(true)
 	}
 }
+
+func (f *roomConfigSummaryField) focusWidget() gtki.Widget {
+	return f.widget
+}

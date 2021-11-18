@@ -66,3 +66,7 @@ func (fc *roomConfigFormFieldAdvancedOptionsContainer) showValidationErrors() {}
 func (fc *roomConfigFormFieldAdvancedOptionsContainer) fieldKey() muc.RoomConfigFieldType {
 	return muc.RoomConfigFieldUnexpected
 }
+
+func (fc *roomConfigFormFieldAdvancedOptionsContainer) focusWidget() gtki.Widget {
+	return fc.widget
+}

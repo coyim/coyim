@@ -59,3 +59,8 @@ func (f *roomConfigFormFieldText) refreshContent() {
 		f.description.SetVisible(f.description.GetLabel() != "")
 	})
 }
+
+// focusWidget implements the hasRoomConfigFormField interface
+func (f *roomConfigFormFieldText) focusWidget() gtki.Widget {
+	return f.entry
+}

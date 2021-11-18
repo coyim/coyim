@@ -67,3 +67,7 @@ func createSeparator(orientation gtki.Orientation) gtki.Separator {
 	sep, _ := g.gtk.SeparatorNew(orientation)
 	return sep
 }
+
+func (fc *roomConfigFormFieldBooleanContainer) focusWidget() gtki.Widget {
+	return fc.widget
+}

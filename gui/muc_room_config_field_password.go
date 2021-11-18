@@ -124,3 +124,8 @@ func (f *roomConfigFormFieldPassword) updateShowPasswordLabel(v bool) {
 	}
 	f.showPasswordButton.SetLabel(i18n.Local("Show"))
 }
+
+// focusWidget implements the hasRoomConfigFormField interface
+func (f *roomConfigFormFieldPassword) focusWidget() gtki.Widget {
+	return f.confirmEntry
+}

@@ -203,3 +203,7 @@ func (p *roomConfigPositions) hasListChanged() bool {
 func (p *roomConfigPositions) fieldKey() muc.RoomConfigFieldType {
 	return muc.RoomConfigFieldUnexpected
 }
+
+func (p *roomConfigPositions) focusWidget() gtki.Widget {
+	return p.content
+}

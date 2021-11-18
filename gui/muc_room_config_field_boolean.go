@@ -36,3 +36,8 @@ func (f *roomConfigFormFieldBoolean) refreshContent() {
 func (f *roomConfigFormFieldBoolean) updateFieldValue() {
 	f.value.SetBoolean(f.toggle.GetActive())
 }
+
+// focusWidget implements the hasRoomConfigFormField interface
+func (f *roomConfigFormFieldBoolean) focusWidget() gtki.Widget {
+	return f.toggle
+}

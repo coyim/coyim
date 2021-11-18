@@ -15,6 +15,7 @@ type hasRoomConfigFormField interface {
 	updateFieldValue()
 	isValid() bool
 	showValidationErrors()
+	focusWidget() gtki.Widget
 }
 
 const fieldErrorIconName = "field_error"
@@ -84,6 +85,10 @@ func (f *roomConfigFormField) showValidationErrors() {
 // fieldKey implements the hasRoomConfigFormField interface
 func (f *roomConfigFormField) fieldKey() muc.RoomConfigFieldType {
 	return f.field
+}
+
+func (f *roomConfigFormField) focusWidget() gtki.Widget {
+	return f.widget
 }
 
 // hideValidationErrors MUST be called from the UI thread

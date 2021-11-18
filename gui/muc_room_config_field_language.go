@@ -30,3 +30,8 @@ func newRoomConfigFormFieldLanguage(ft muc.RoomConfigFieldType, fieldInfo roomCo
 func (f *roomConfigFormFieldLanguage) updateFieldValue() {
 	f.value.SetText(f.languageComponent.currentLanguage())
 }
+
+// focusWidget implements the hasRoomConfigFormField interface
+func (f *roomConfigFormFieldLanguage) focusWidget() gtki.Widget {
+	return f.languageEntry
+}

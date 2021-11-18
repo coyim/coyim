@@ -66,6 +66,7 @@ func ibbReadAndWrite(ctx *sendContext) io.ReadCloser {
 
 		beforeFinish()
 
+		_ = f.Close()
 		_ = w2.Close()
 		_ = w.Close()
 	}()

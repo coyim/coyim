@@ -951,3 +951,13 @@ func (conv *conversationPane) isOtrLockedTo(peer jid.Any) bool {
 func (conv *conversationPane) isOtrLocked() bool {
 	return conv.otrLock != nil
 }
+
+func (conv *conversationPane) updateBasedOnPreviousInformation(pcp *conversationPane) {
+	if pcp != nil {
+		b, _ := pcp.history.GetBuffer()
+		conv.history.SetBuffer(b)
+
+		conv.encryptionStatus = pcp.encryptionStatus
+		conv.otrLock = pcp.otrLock
+	}
+}

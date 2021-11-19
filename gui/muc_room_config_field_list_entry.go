@@ -97,3 +97,8 @@ func (f *roomConfigFormFieldListEntry) currentValue() string {
 	}
 	return getEntryText(f.entry)
 }
+
+// focusWidget implements the hasRoomConfigFormField interface
+func (f *roomConfigFormFieldListEntry) focusWidget() gtki.Widget {
+	return f.entry
+}

@@ -71,6 +71,15 @@ func (f *roomConfigFormFieldList) updateFieldValue() {
 	f.value.SetSelected(getStringValueFromModel(f.optionsModel, iter, roomConfigFieldListOptionValueIndex))
 }
 
+// focusWidget implements the hasRoomConfigFormField interface
+func (f *roomConfigFormFieldList) focusWidget() gtki.Widget {
+	if b, err := f.list.GetToggleButton(); err == nil {
+		return b
+	}
+
+	return f.list
+}
+
 func getStringValueFromModel(model gtki.ListStore, iter gtki.TreeIter, columnID int) string {
 	ov, _ := model.GetValue(iter, columnID)
 	s, _ := ov.GetString()

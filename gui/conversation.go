@@ -137,7 +137,6 @@ type conversationPane struct {
 	// opened - then it will be the full JID
 	target jid.Any
 
-	isTargeted       bool
 	scrollAdjustment *scrollVerticalAdjustment
 
 	account              *account

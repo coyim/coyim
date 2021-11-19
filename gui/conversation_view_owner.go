@@ -227,9 +227,8 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 	}
 
 	cp := &conversationPane{
-		isTargeted: cvf.targeted,
-		target:     target,
-		otrLock:    nil,
+		target:  target,
+		otrLock: nil,
 
 		account:              cvf.account,
 		fileTransferNotif:    builder.fileTransferNotifInit(),

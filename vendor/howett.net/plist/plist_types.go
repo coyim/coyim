@@ -3,8 +3,8 @@ package plist
 import (
 	"hash/crc32"
 	"sort"
-	"strconv"
 	"time"
+	"strconv"
 )
 
 // magic value used in the non-binary encoding of UIDs

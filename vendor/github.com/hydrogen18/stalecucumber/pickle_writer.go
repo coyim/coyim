@@ -299,9 +299,9 @@ func (p *Pickler) dumpBool(v bool) {
 	}
 }
 
-func (p *Pickler) dumpStruct(v reflect.Value, nested bool) error {
+func (p *Pickler) dumpStruct(v reflect.Value,  nested bool) error {
 	vType := v.Type()
-	if !nested {
+        if !nested {
 		p.pushOpcode(OPCODE_EMPTY_DICT)
 		p.pushOpcode(OPCODE_MARK)
 	}
@@ -311,14 +311,14 @@ func (p *Pickler) dumpStruct(v reflect.Value, nested bool) error {
 		//Never attempt to write
 		//unexported names
 		if len(field.PkgPath) != 0 {
-			//Check for embedded field, which can possibly be dumped
-			if field.Anonymous {
-				err := p.dumpStruct(v.Field(i), true)
-				if err != nil {
-					return err
-				}
-			}
-			continue
+                        //Check for embedded field, which can possibly be dumped 
+                        if field.Anonymous {
+                          err := p.dumpStruct(v.Field(i), true)
+                          if err != nil { 
+                            return err
+                          }
+                        } 
+                        continue
 		}
 
 		//Prefer the tagged name of the
@@ -388,7 +388,7 @@ func (proxy bigIntProxy) WriteTo(w io.Writer) (int, error) {
 
 	var pad []byte
 	var padL int
-	var highBitSet = (len(raw) > 0 && (raw[0]&0x80) == 0x80)
+	var highBitSet = (len(raw) > 0 && (raw[0] & 0x80) == 0x80)
 
 	if negative && !highBitSet {
 		pad = maxPad

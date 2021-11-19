@@ -570,16 +570,16 @@ func (pm *PickleMachine) opcode_GLOBAL() error {
 		return err
 	}
 
-	// Push a sentinel object representing the type
+	// Push a sentinel object representing the type	
 	pm.push(globalSentinel{Package: str1, Name: str2})
 	return nil
 }
 
-type UnreducibleValueError struct {
+type UnreducibleValueError struct{
 	Value interface{}
 }
 
-func (this UnreducibleValueError) Error() string {
+func (this UnreducibleValueError) Error() string{
 	return fmt.Sprintf("Cannot reduce (%T) %v", this.Value, this.Value)
 }
 
@@ -622,7 +622,7 @@ func (pm *PickleMachine) opcode_REDUCE() error {
 
 	// Sentinel should have been placed on the stack by the opcode_GLOBAL function
 	sentinel, ok := funcName.(globalSentinel)
-	if !ok {
+	if !ok {	
 		return UnreducibleValueError{Value: funcName}
 	}
 
@@ -635,8 +635,8 @@ func (pm *PickleMachine) opcode_REDUCE() error {
 	result, err := pm.resolver.Resolve(sentinel.Package, sentinel.Name, args)
 	if err != nil {
 		return err
-	}
-
+	} 
+	
 	pm.push(result)
 	return nil
 }
@@ -683,7 +683,7 @@ func (pm *PickleMachine) opcode_BUILD() error {
 
 	// Sentinel should have been placed on the stack by the opcode_INST function
 	sentinel, ok := funcName.(instanceSentinel)
-	if !ok {
+	if !ok {	
 		return UnbuildableValueError{Value: funcName}
 	}
 
@@ -695,19 +695,20 @@ func (pm *PickleMachine) opcode_BUILD() error {
 	result, err := pm.resolver.Resolve(sentinel.Package, sentinel.Name, args)
 	if err != nil {
 		return err
-	}
-
+	} 
+	
 	pm.push(result)
 	return nil
 }
 
-type UnbuildableValueError struct {
+type UnbuildableValueError struct{
 	Value interface{}
 }
 
-func (this UnbuildableValueError) Error() string {
+func (this UnbuildableValueError) Error() string{
 	return fmt.Sprintf("Cannot build (%T) %v", this.Value, this.Value)
 }
+
 
 /**
 Opcode: INST
@@ -772,12 +773,12 @@ func (pm *PickleMachine) opcode_INST() error {
 	str2, err := pm.readString()
 	if err != nil {
 		return err
-	}
+	} 
 
 	sentinel := instanceSentinel{Package: str1, Name: str2}
 
 	markIndex, err := pm.findMark()
-
+	
 	if err != nil {
 		return err
 	}
@@ -792,7 +793,7 @@ func (pm *PickleMachine) opcode_INST() error {
 
 	sentinel.Args = args
 
-	// Push a sentinel object representing the type
+	// Push a sentinel object representing the type	
 	pm.push(sentinel)
 	return nil
 }

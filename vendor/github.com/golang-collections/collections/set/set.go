@@ -23,7 +23,7 @@ func New(initial ...interface{}) *Set {
 func (this *Set) Difference(set *Set) *Set {
 	n := make(map[interface{}]nothing)
 
-	for k := range this.hash {
+	for k, _ := range this.hash {
 		if _, exists := set.hash[k]; !exists {
 			n[k] = nothing{}
 		}
@@ -34,7 +34,7 @@ func (this *Set) Difference(set *Set) *Set {
 
 // Call f for each item in the set
 func (this *Set) Do(f func(interface{})) {
-	for k := range this.hash {
+	for k, _ := range this.hash {
 		f(k)
 	}
 }
@@ -54,7 +54,7 @@ func (this *Set) Insert(element interface{}) {
 func (this *Set) Intersection(set *Set) *Set {
 	n := make(map[interface{}]nothing)
 
-	for k := range this.hash {
+	for k, _ := range this.hash {
 		if _, exists := set.hash[k]; exists {
 			n[k] = nothing{}
 		}
@@ -83,7 +83,7 @@ func (this *Set) SubsetOf(set *Set) bool {
 	if this.Len() > set.Len() {
 		return false
 	}
-	for k := range this.hash {
+	for k, _ := range this.hash {
 		if _, exists := set.hash[k]; !exists {
 			return false
 		}
@@ -95,10 +95,10 @@ func (this *Set) SubsetOf(set *Set) bool {
 func (this *Set) Union(set *Set) *Set {
 	n := make(map[interface{}]nothing)
 
-	for k := range this.hash {
+	for k, _ := range this.hash {
 		n[k] = nothing{}
 	}
-	for k := range set.hash {
+	for k, _ := range set.hash {
 		n[k] = nothing{}
 	}
 

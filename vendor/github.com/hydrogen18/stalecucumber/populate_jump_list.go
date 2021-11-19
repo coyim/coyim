@@ -55,3 +55,4 @@ func populateJumpList(jl *opcodeJumpList) {
 	jl[OPCODE_NEWOBJ] = (*PickleMachine).opcode_NEWOBJ
 	jl[OPCODE_PROTO] = (*PickleMachine).opcode_PROTO
 }
+

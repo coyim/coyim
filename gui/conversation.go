@@ -959,5 +959,6 @@ func (conv *conversationPane) updateBasedOnPreviousInformation(pcp *conversation
 
 		conv.encryptionStatus = pcp.encryptionStatus
 		conv.otrLock = pcp.otrLock
+		conv.target = pcp.target
 	}
 }

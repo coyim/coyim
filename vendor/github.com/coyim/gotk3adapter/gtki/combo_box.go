@@ -11,6 +11,7 @@ type ComboBox interface {
 	SetModel(TreeModel)
 	SetIDColumn(int)
 	SetEntryTextColumn(int)
+	GetToggleButton() (Button, error)
 }
 
 func AssertComboBox(_ ComboBox) {}

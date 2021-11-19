@@ -1,9 +1,13 @@
 package gtka
 
 import (
+	"github.com/coyim/gotk3adapter/gliba"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/coyim/gotk3extra"
 	"github.com/gotk3/gotk3/gtk"
 )
+
+const comboBoxToggleButtonName = "button"
 
 type comboBox struct {
 	*bin
@@ -62,4 +66,15 @@ func (v *comboBox) SetIDColumn(v1 int) {
 
 func (v *comboBox) SetEntryTextColumn(v1 int) {
 	v.internal.SetEntryTextColumn(v1)
+}
+
+func (v *comboBox) GetToggleButton() (gtki.Button, error) {
+	obj, err := v.TemplateChild(comboBoxToggleButtonName)
+	if err == nil {
+		b := WrapButtonSimple(gotk3extra.WrapButton(gliba.UnwrapObject(obj)))
+
+		return b, nil
+	}
+
+	return nil, err
 }

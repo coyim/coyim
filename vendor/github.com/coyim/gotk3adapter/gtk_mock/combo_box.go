@@ -35,3 +35,7 @@ func (*MockComboBox) SetIDColumn(v1 int) {
 
 func (*MockComboBox) SetEntryTextColumn(v1 int) {
 }
+
+func (*MockComboBox) GetToggleButton() (gtki.Button, error) {
+	return nil, nil
+}

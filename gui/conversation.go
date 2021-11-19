@@ -137,8 +137,6 @@ type conversationPane struct {
 	// opened - then it will be the full JID
 	target jid.Any
 
-	scrollAdjustment *scrollVerticalAdjustment
-
 	account              *account
 	widget               gtki.Box            `gtk-widget:"box"`
 	menubar              gtki.MenuBar        `gtk-widget:"menubar"`
@@ -152,6 +150,7 @@ type conversationPane struct {
 	notificationArea     gtki.Box            `gtk-widget:"notification-area"`
 	fileTransferNotif    *fileTransferNotification
 	securityWarningNotif *securityWarningNotification
+	scrollAdjustment     *scrollVerticalAdjustment
 	// The window to set dialogs transient for
 	transientParent gtki.Window
 	sync.Mutex

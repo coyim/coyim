@@ -62,3 +62,11 @@ func isSend(evk gdki.EventKey, shiftEnterSends bool) bool {
 	}
 	return isShiftEnter(evk)
 }
+
+func isTab(ev gdki.Event) bool {
+	return g.gdk.EventKeyFrom(ev).KeyVal() == gdki.KEY_Tab
+}
+
+func isLefTab(ev gdki.Event) bool {
+	return g.gdk.EventKeyFrom(ev).KeyVal() == gdki.KEY_ISO_Left_Tab
+}

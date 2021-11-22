@@ -191,6 +191,7 @@ func (p *roomConfigPage) initKnownFields() {
 		for _, kf := range knownFields {
 			if knownField, ok := p.form.GetKnownField(kf); ok {
 				field, err := roomConfigFormFieldFactory(kf, roomConfigFieldsTexts[kf], knownField.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
+				p.addFocusWidgets(field.focusWidget())
 				if err != nil {
 					p.log.WithError(err).Error("Room configuration form field not supported")
 					continue
@@ -213,6 +214,7 @@ func (p *roomConfigPage) initUnknownFields() {
 	booleanFields := []hasRoomConfigFormField{}
 	for _, ff := range p.form.GetUnknownFields() {
 		field, err := roomConfigFormUnknownFieldFactory(newRoomConfigFieldTextInfo(ff.Label, ff.Description), ff.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
+		p.addFocusWidgets(field.focusWidget())
 		if err != nil {
 			p.log.WithError(err).Error("Room configuration form field not supported")
 			continue
@@ -239,6 +241,7 @@ func (p *roomConfigPage) initAdvancedOptionsFields() {
 	for _, aff := range roomConfigAdvancedFields {
 		if knownField, ok := p.form.GetKnownField(aff); ok {
 			field, err := roomConfigFormFieldFactory(aff, roomConfigFieldsTexts[aff], knownField.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
+			p.addFocusWidgets(field.focusWidget())
 			if err != nil {
 				p.log.WithError(err).Error("Room configuration form field not supported")
 				continue
@@ -268,6 +271,7 @@ func (p *roomConfigPage) initSummary() {
 	p.initSummaryFields(roomConfigOthersPageIndex)
 	if p.roomConfigComponent.data.roomConfigScenario == roomConfigScenarioCreate {
 		p.autojoinCheckButton.SetActive(p.roomConfigComponent.data.autoJoinRoomAfterSaved)
+		p.addFocusWidgets(p.autojoinCheckButton)
 		p.autojoinContent.Show()
 	}
 }
@@ -290,7 +294,9 @@ func (p *roomConfigPage) initSummaryFields(pageID mucRoomConfigPageID) {
 		fields = append(fields, p.otherPageSummaryFields()...)
 	}
 
-	p.addField(newRoomConfigSummaryFieldContainer(fields))
+	fc := newRoomConfigSummaryFieldContainer(fields)
+	p.addFocusWidgets(fc.focusWidget().(gtki.ListBox).GetChildren()...)
+	p.addField(fc)
 }
 
 func (p *roomConfigPage) otherPageSummaryFields() []hasRoomConfigFormField {
@@ -320,7 +326,10 @@ func (p *roomConfigPage) initOccupantsSummaryFields() {
 		newRoomConfigSummaryOccupantField(i18n.Local("Administrators"), p.form.AdminsList),
 		newRoomConfigSummaryOccupantField(i18n.Local("Banned"), p.form.BanList),
 	}
-	p.addField(newRoomConfigSummaryFieldContainer(fields))
+
+	fc := newRoomConfigSummaryFieldContainer(fields)
+	p.addFocusWidgets(fc.focusWidget().(gtki.ListBox).GetChildren()...)
+	p.addField(fc)
 }
 
 func (p *roomConfigPage) initOccupants(parent gtki.Window) {

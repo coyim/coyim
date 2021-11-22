@@ -94,6 +94,6 @@ func (fc *roomConfigSummaryFieldContainer) fieldKey() muc.RoomConfigFieldType {
 }
 
 // focusWidget implements the hasRoomConfigFormField interface
-func (fc *roomConfigSummaryFieldContainer) focusWidget() gtki.Widget {
+func (fc *roomConfigSummaryFieldContainer) focusWidget() focusable {
 	return fc.content
 }

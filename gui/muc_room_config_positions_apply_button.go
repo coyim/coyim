@@ -67,6 +67,7 @@ func (rcpb *roomConfigPositionsWithApplyButton) enableOrDisableApplyButton() {
 	rcpb.applyButton.SetSensitive(rcpb.hasListChanged())
 }
 
-func (rcpb *roomConfigPositionsWithApplyButton) focusWidget() gtki.Widget {
+// focusWidget implements the hasRoomConfigFormField interface
+func (rcpb *roomConfigPositionsWithApplyButton) focusWidget() focusable {
 	return rcpb.applyButton
 }

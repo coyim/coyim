@@ -202,6 +202,7 @@ func summaryListHideOrShow(list gtki.TreeView, toggleButtonImage gtki.Image, con
 	}
 }
 
-func (f *roomConfigSummaryField) focusWidget() gtki.Widget {
+// focusWidget implements the hasRoomConfigFormField interface
+func (f *roomConfigSummaryField) focusWidget() focusable {
 	return f.widget
 }

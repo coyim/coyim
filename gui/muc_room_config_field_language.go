@@ -32,6 +32,6 @@ func (f *roomConfigFormFieldLanguage) updateFieldValue() {
 }
 
 // focusWidget implements the hasRoomConfigFormField interface
-func (f *roomConfigFormFieldLanguage) focusWidget() gtki.Widget {
+func (f *roomConfigFormFieldLanguage) focusWidget() focusable {
 	return f.languageEntry
 }

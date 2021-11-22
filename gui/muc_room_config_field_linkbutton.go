@@ -42,3 +42,8 @@ func (f *roomConfigFormFieldLinkButton) fieldWidget() gtki.Widget {
 func (f *roomConfigFormFieldLinkButton) goToPage() {
 	f.setCurrentPage(f.pageID)
 }
+
+// focusWidget implements the hasRoomConfigFormField interface
+func (f *roomConfigFormFieldLinkButton) focusWidget() focusable {
+	return f.linkButton
+}

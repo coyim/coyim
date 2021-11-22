@@ -204,6 +204,7 @@ func (p *roomConfigPositions) fieldKey() muc.RoomConfigFieldType {
 	return muc.RoomConfigFieldUnexpected
 }
 
-func (p *roomConfigPositions) focusWidget() gtki.Widget {
+// focusWidget implements the hasRoomConfigFormField interface
+func (p *roomConfigPositions) focusWidget() focusable {
 	return p.content
 }

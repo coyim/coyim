@@ -32,6 +32,6 @@ func (f *roomConfigFieldDescription) updateFieldValue() {
 }
 
 // focusWidget implements the hasRoomConfigFormField interface
-func (f *roomConfigFieldDescription) focusWidget() gtki.Widget {
+func (f *roomConfigFieldDescription) focusWidget() focusable {
 	return f.textView
 }

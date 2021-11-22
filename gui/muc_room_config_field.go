@@ -20,7 +20,7 @@ type hasRoomConfigFormField interface {
 	updateFieldValue()
 	isValid() bool
 	showValidationErrors()
-	focusWidget() gtki.Widget
+	focusWidget() focusable
 }
 
 const fieldErrorIconName = "field_error"
@@ -92,7 +92,8 @@ func (f *roomConfigFormField) fieldKey() muc.RoomConfigFieldType {
 	return f.field
 }
 
-func (f *roomConfigFormField) focusWidget() gtki.Widget {
+// focusWidget implements the hasRoomConfigFormField interface
+func (f *roomConfigFormField) focusWidget() focusable {
 	return f.widget
 }
 

@@ -72,7 +72,7 @@ func (f *roomConfigFormFieldList) updateFieldValue() {
 }
 
 // focusWidget implements the hasRoomConfigFormField interface
-func (f *roomConfigFormFieldList) focusWidget() gtki.Widget {
+func (f *roomConfigFormFieldList) focusWidget() focusable {
 	if b, err := f.list.GetToggleButton(); err == nil {
 		return b
 	}

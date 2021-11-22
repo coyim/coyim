@@ -67,6 +67,7 @@ func (fc *roomConfigFormFieldAdvancedOptionsContainer) fieldKey() muc.RoomConfig
 	return muc.RoomConfigFieldUnexpected
 }
 
-func (fc *roomConfigFormFieldAdvancedOptionsContainer) focusWidget() gtki.Widget {
+// focusWidget implements the hasRoomConfigFormField interface
+func (fc *roomConfigFormFieldAdvancedOptionsContainer) focusWidget() focusable {
 	return fc.widget
 }

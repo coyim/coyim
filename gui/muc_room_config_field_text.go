@@ -61,6 +61,6 @@ func (f *roomConfigFormFieldText) refreshContent() {
 }
 
 // focusWidget implements the hasRoomConfigFormField interface
-func (f *roomConfigFormFieldText) focusWidget() gtki.Widget {
+func (f *roomConfigFormFieldText) focusWidget() focusable {
 	return f.entry
 }

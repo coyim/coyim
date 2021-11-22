@@ -163,14 +163,14 @@ func (p *roomConfigPage) initBuilder() {
 
 func (p *roomConfigPage) onKeyPress(_ gtki.Widget, ev gdki.Event) bool {
 	if isTab(ev) {
-		if w, ok := p.focusWidgets.nextWidget(); ok {
+		if w, ok := p.nextFocusableWidget(); ok {
 			w.GrabFocus()
 			return true
 		}
 	}
 
 	if isLeftTab(ev) {
-		if w, ok := p.focusWidgets.previousWidget(); ok {
+		if w, ok := p.previousFocusableWidget(); ok {
 			w.GrabFocus()
 			return true
 		}
@@ -181,6 +181,26 @@ func (p *roomConfigPage) onKeyPress(_ gtki.Widget, ev gdki.Event) bool {
 
 func (p *roomConfigPage) appendFocusableWidgets(w ...focusable) {
 	p.focusableWidgets = append(p.focusableWidgets, w...)
+}
+
+func (p *roomConfigPage) nextFocusableWidget() (focusable, bool) {
+	for i, f := range p.focusableWidgets {
+		if f.HasFocus() && i < len(p.focusableWidgets)-1 {
+			return p.focusableWidgets[i+1], true
+		}
+	}
+
+	return nil, false
+}
+
+func (p *roomConfigPage) previousFocusableWidget() (focusable, bool) {
+	for i, f := range p.focusableWidgets {
+		if f.HasFocus() && i > 0 {
+			return p.focusableWidgets[i-1], true
+		}
+	}
+
+	return nil, false
 }
 
 func (p *roomConfigPage) initDefaults(parent gtki.Window) {

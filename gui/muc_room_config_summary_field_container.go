@@ -33,6 +33,17 @@ func (fc *roomConfigSummaryFieldContainer) initDefaults() {
 	for _, f := range fields {
 		fc.content.Add(f)
 	}
+
+	fc.disableFocusOnSummaryFields()
+}
+
+// disableFocusOnSummaryFields MUST be called from the UI thread
+func (fc *roomConfigSummaryFieldContainer) disableFocusOnSummaryFields() {
+	for _, f := range fc.content.GetChildren() {
+		f.SetCanFocus(false)
+		f.SetProperty("activatable", false)
+		f.SetProperty("selectable", false)
+	}
 }
 
 func (fc *roomConfigSummaryFieldContainer) fieldWidgets() (widgets []gtki.Widget) {

@@ -101,6 +101,7 @@ type roomConfigPage struct {
 	title               string
 	pageID              mucRoomConfigPageID
 	focusWidgets        focusableWidget
+	focusableWidgets    []focusable
 	roomConfigComponent *mucRoomConfigComponent
 
 	page                gtki.Overlay     `gtk-widget:"room-config-page-overlay"`
@@ -178,6 +179,10 @@ func (p *roomConfigPage) onKeyPress(_ gtki.Widget, ev gdki.Event) bool {
 	return false
 }
 
+func (p *roomConfigPage) appendFocusableWidgets(w ...focusable) {
+	p.focusableWidgets = append(p.focusableWidgets, w...)
+}
+
 func (p *roomConfigPage) initDefaults(parent gtki.Window) {
 	p.initIntroPage()
 	switch p.pageID {
@@ -211,7 +216,7 @@ func (p *roomConfigPage) initKnownFields() {
 		for _, kf := range knownFields {
 			if knownField, ok := p.form.GetKnownField(kf); ok {
 				field, err := roomConfigFormFieldFactory(kf, roomConfigFieldsTexts[kf], knownField.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
-				p.addFocusWidgets(field.focusWidget())
+				p.appendFocusableWidgets(field.focusWidget())
 				if err != nil {
 					p.log.WithError(err).Error("Room configuration form field not supported")
 					continue
@@ -234,7 +239,7 @@ func (p *roomConfigPage) initUnknownFields() {
 	booleanFields := []hasRoomConfigFormField{}
 	for _, ff := range p.form.GetUnknownFields() {
 		field, err := roomConfigFormUnknownFieldFactory(newRoomConfigFieldTextInfo(ff.Label, ff.Description), ff.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
-		p.addFocusWidgets(field.focusWidget())
+		p.appendFocusableWidgets(field.focusWidget())
 		if err != nil {
 			p.log.WithError(err).Error("Room configuration form field not supported")
 			continue
@@ -261,7 +266,7 @@ func (p *roomConfigPage) initAdvancedOptionsFields() {
 	for _, aff := range roomConfigAdvancedFields {
 		if knownField, ok := p.form.GetKnownField(aff); ok {
 			field, err := roomConfigFormFieldFactory(aff, roomConfigFieldsTexts[aff], knownField.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
-			p.addFocusWidgets(field.focusWidget())
+			p.appendFocusableWidgets(field.focusWidget())
 			if err != nil {
 				p.log.WithError(err).Error("Room configuration form field not supported")
 				continue
@@ -291,7 +296,7 @@ func (p *roomConfigPage) initSummary() {
 	p.initSummaryFields(roomConfigOthersPageIndex)
 	if p.roomConfigComponent.data.roomConfigScenario == roomConfigScenarioCreate {
 		p.autojoinCheckButton.SetActive(p.roomConfigComponent.data.autoJoinRoomAfterSaved)
-		p.addFocusWidgets(p.autojoinCheckButton)
+		p.appendFocusableWidgets(p.autojoinCheckButton)
 		p.autojoinContent.Show()
 	}
 }

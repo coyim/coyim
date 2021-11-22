@@ -23,6 +23,10 @@ func newFocusWidgets() focusableWidget {
 	return &focusWidgets{}
 }
 
+func (fw *focusWidgets) appendWidgets(w ...gtki.Widget) {
+	fw.widgets = append(fw.widgets, w...)
+}
+
 var roomConfigPagesFields = map[mucRoomConfigPageID][]muc.RoomConfigFieldType{
 	roomConfigInformationPageIndex: {
 		muc.RoomConfigFieldName,

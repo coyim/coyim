@@ -15,6 +15,14 @@ type focusableWidget interface {
 	previousWidget() (gtki.Widget, bool)
 }
 
+type focusWidgets struct {
+	widgets []gtki.Widget
+}
+
+func newFocusWidgets() focusableWidget {
+	return &focusWidgets{}
+}
+
 var roomConfigPagesFields = map[mucRoomConfigPageID][]muc.RoomConfigFieldType{
 	roomConfigInformationPageIndex: {
 		muc.RoomConfigFieldName,

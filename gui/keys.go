@@ -67,6 +67,6 @@ func isTab(ev gdki.Event) bool {
 	return g.gdk.EventKeyFrom(ev).KeyVal() == gdki.KEY_Tab
 }
 
-func isLefTab(ev gdki.Event) bool {
+func isLeftTab(ev gdki.Event) bool {
 	return g.gdk.EventKeyFrom(ev).KeyVal() == gdki.KEY_ISO_Left_Tab
 }

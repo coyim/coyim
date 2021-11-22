@@ -9,6 +9,12 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+type focusableWidget interface {
+	appendWidgets(...gtki.Widget)
+	nextWidget() (gtki.Widget, bool)
+	previousWidget() (gtki.Widget, bool)
+}
+
 var roomConfigPagesFields = map[mucRoomConfigPageID][]muc.RoomConfigFieldType{
 	roomConfigInformationPageIndex: {
 		muc.RoomConfigFieldName,

@@ -322,7 +322,10 @@ func (p *roomConfigPage) initSummary() {
 }
 
 func (p *roomConfigPage) initSummaryFields(pageID mucRoomConfigPageID) {
-	p.addField(newRoomConfigFormFieldLinkButton(pageID, p.roomConfigComponent.setCurrentPage))
+	lb := newRoomConfigFormFieldLinkButton(pageID, p.roomConfigComponent.setCurrentPage)
+	p.appendFocusableWidgets(lb.focusWidget())
+	p.addField(lb)
+
 	if pageID == roomConfigPositionsPageIndex {
 		p.initOccupantsSummaryFields()
 		return
@@ -339,9 +342,7 @@ func (p *roomConfigPage) initSummaryFields(pageID mucRoomConfigPageID) {
 		fields = append(fields, p.otherPageSummaryFields()...)
 	}
 
-	fc := newRoomConfigSummaryFieldContainer(fields)
-	p.addFocusWidgets(fc.focusWidget().(gtki.ListBox).GetChildren()...)
-	p.addField(fc)
+	p.addField(newRoomConfigSummaryFieldContainer(fields))
 }
 
 func (p *roomConfigPage) otherPageSummaryFields() []hasRoomConfigFormField {
@@ -372,9 +373,7 @@ func (p *roomConfigPage) initOccupantsSummaryFields() {
 		newRoomConfigSummaryOccupantField(i18n.Local("Banned"), p.form.BanList),
 	}
 
-	fc := newRoomConfigSummaryFieldContainer(fields)
-	p.addFocusWidgets(fc.focusWidget().(gtki.ListBox).GetChildren()...)
-	p.addField(fc)
+	p.addField(newRoomConfigSummaryFieldContainer(fields))
 }
 
 func (p *roomConfigPage) initOccupants(parent gtki.Window) {

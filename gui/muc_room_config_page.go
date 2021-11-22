@@ -37,6 +37,16 @@ func (fw *focusWidgets) nextWidget() (gtki.Widget, bool) {
 	return nil, false
 }
 
+func (fw *focusWidgets) previousWidget() (gtki.Widget, bool) {
+	for i, f := range fw.widgets {
+		if f.HasFocus() && i > 0 {
+			return fw.widgets[i-1], true
+		}
+	}
+
+	return nil, false
+}
+
 var roomConfigPagesFields = map[mucRoomConfigPageID][]muc.RoomConfigFieldType{
 	roomConfigInformationPageIndex: {
 		muc.RoomConfigFieldName,

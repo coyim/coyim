@@ -99,6 +99,7 @@ type roomConfigPage struct {
 
 	title               string
 	pageID              mucRoomConfigPageID
+	focusWidgets        focusableWidget
 	roomConfigComponent *mucRoomConfigComponent
 
 	page                gtki.Overlay     `gtk-widget:"room-config-page-overlay"`
@@ -125,6 +126,7 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID mucRoomConfigPageID, paren
 		title:                  configPageDisplayTitle(pageID),
 		pageID:                 pageID,
 		doAfterRefresh:         newCallbacksSet(),
+		focusWidgets:           newFocusWidgets(),
 		onShowValidationErrors: c.onValidationErrors.invokeAll,
 		onHideValidationErrors: c.onNoValidationErrors.invokeAll,
 		form:                   c.data.configForm,

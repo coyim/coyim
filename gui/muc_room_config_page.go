@@ -358,6 +358,10 @@ func (p *roomConfigPage) addField(field hasRoomConfigFormField) {
 	p.doAfterRefresh.add(field.refreshContent)
 }
 
+func (p *roomConfigPage) addFocusWidgets(fws ...gtki.Widget) {
+	p.focusWidgets.appendWidgets(fws...)
+}
+
 // isValid MUST be called from the UI thread
 func (p *roomConfigPage) isValid() bool {
 	isValid := true

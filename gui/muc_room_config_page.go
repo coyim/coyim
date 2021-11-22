@@ -10,44 +10,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type focusableWidget interface {
-	appendWidgets(...gtki.Widget)
-	nextWidget() (gtki.Widget, bool)
-	previousWidget() (gtki.Widget, bool)
-}
-
-type focusWidgets struct {
-	widgets []gtki.Widget
-}
-
-func newFocusWidgets() focusableWidget {
-	return &focusWidgets{}
-}
-
-func (fw *focusWidgets) appendWidgets(w ...gtki.Widget) {
-	fw.widgets = append(fw.widgets, w...)
-}
-
-func (fw *focusWidgets) nextWidget() (gtki.Widget, bool) {
-	for i, f := range fw.widgets {
-		if f.HasFocus() && i < len(fw.widgets)-1 {
-			return fw.widgets[i+1], true
-		}
-	}
-
-	return nil, false
-}
-
-func (fw *focusWidgets) previousWidget() (gtki.Widget, bool) {
-	for i, f := range fw.widgets {
-		if f.HasFocus() && i > 0 {
-			return fw.widgets[i-1], true
-		}
-	}
-
-	return nil, false
-}
-
 var roomConfigPagesFields = map[mucRoomConfigPageID][]muc.RoomConfigFieldType{
 	roomConfigInformationPageIndex: {
 		muc.RoomConfigFieldName,
@@ -100,7 +62,6 @@ type roomConfigPage struct {
 
 	title               string
 	pageID              mucRoomConfigPageID
-	focusWidgets        focusableWidget
 	focusableWidgets    []focusable
 	roomConfigComponent *mucRoomConfigComponent
 
@@ -128,7 +89,6 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID mucRoomConfigPageID, paren
 		title:                  configPageDisplayTitle(pageID),
 		pageID:                 pageID,
 		doAfterRefresh:         newCallbacksSet(),
-		focusWidgets:           newFocusWidgets(),
 		onShowValidationErrors: c.onValidationErrors.invokeAll,
 		onHideValidationErrors: c.onNoValidationErrors.invokeAll,
 		form:                   c.data.configForm,
@@ -409,10 +369,6 @@ func (p *roomConfigPage) addField(field hasRoomConfigFormField) {
 	p.appendFields(field)
 	p.content.Add(field.fieldWidget())
 	p.doAfterRefresh.add(field.refreshContent)
-}
-
-func (p *roomConfigPage) addFocusWidgets(fws ...gtki.Widget) {
-	p.focusWidgets.appendWidgets(fws...)
 }
 
 // isValid MUST be called from the UI thread

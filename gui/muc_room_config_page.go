@@ -27,6 +27,16 @@ func (fw *focusWidgets) appendWidgets(w ...gtki.Widget) {
 	fw.widgets = append(fw.widgets, w...)
 }
 
+func (fw *focusWidgets) nextWidget() (gtki.Widget, bool) {
+	for i, f := range fw.widgets {
+		if f.HasFocus() && i < len(fw.widgets)-1 {
+			return fw.widgets[i+1], true
+		}
+	}
+
+	return nil, false
+}
+
 var roomConfigPagesFields = map[mucRoomConfigPageID][]muc.RoomConfigFieldType{
 	roomConfigInformationPageIndex: {
 		muc.RoomConfigFieldName,

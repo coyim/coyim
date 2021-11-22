@@ -2,6 +2,7 @@ package filetransfer
 
 import (
 	"errors"
+	"io"
 	"net"
 
 	"github.com/coyim/coyim/config"
@@ -78,7 +79,7 @@ func (s *BytestreamsSuite) Test_tryStreamhost_succeeds(c *C) {
 	sh := data.BytestreamStreamhost{}
 
 	called := false
-	f := func(net.Conn) {
+	f := func(io.ReadWriteCloser) {
 		called = true
 	}
 
@@ -107,7 +108,7 @@ func (s *BytestreamsSuite) Test_tryStreamhost_failsIfGettingProxyFails(c *C) {
 
 	sh := data.BytestreamStreamhost{}
 
-	f := func(net.Conn) {}
+	f := func(io.ReadWriteCloser) {}
 
 	res := tryStreamhost(mockSess, sh, "hello.com", f)
 	c.Assert(res, Equals, false)
@@ -147,7 +148,7 @@ func (s *BytestreamsSuite) Test_tryStreamhost_failsCreatingSocks(c *C) {
 
 	sh := data.BytestreamStreamhost{}
 
-	f := func(net.Conn) {}
+	f := func(io.ReadWriteCloser) {}
 
 	res := tryStreamhost(mockSess, sh, "hello.com", f)
 	c.Assert(res, Equals, false)
@@ -192,8 +193,7 @@ func (s *BytestreamsSuite) Test_tryStreamhost_failsDialing(c *C) {
 
 	sh := data.BytestreamStreamhost{}
 
-	f := func(net.Conn) {
-	}
+	f := func(io.ReadWriteCloser) {}
 
 	res := tryStreamhost(mockSess, sh, "hello.com", f)
 	c.Assert(res, Equals, false)

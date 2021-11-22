@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net"
 	"os"
 	"sync"
 	"time"
@@ -98,7 +97,7 @@ func closeAndIgnore(c io.Closer) {
 	_ = c.Close()
 }
 
-func bytestreamsSendData(ctx *sendContext, c net.Conn) {
+func bytestreamsSendData(ctx *sendContext, c io.ReadWriteCloser) {
 	defer closeAndIgnore(c)
 
 	r, err := os.Open(ctx.file)
@@ -153,7 +152,7 @@ func bytestreamsSendDo(ctx *sendContext) {
 				return
 			}
 			dstAddr := hex.EncodeToString(digests.Sha1([]byte(ctx.sid + ciq.To + ciq.From)))
-			if !tryStreamhost(ctx.s, sh, dstAddr, func(c net.Conn) {
+			if !tryStreamhost(ctx.s, sh, dstAddr, func(c io.ReadWriteCloser) {
 				e := basicIQ(ctx.s, bq.StreamhostUsed.Jid, "set", &data.BytestreamQuery{
 					Sid:      ctx.sid,
 					Activate: ciq.From,

@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/xml"
 	"errors"
-	"net"
+	"io"
 	"os"
 
 	"github.com/coyim/coyim/digests"
@@ -61,7 +61,7 @@ func bytestreamCalculateDestinationAddress(tag data.BytestreamQuery, stanza *dat
 	return hex.EncodeToString(digests.Sha1([]byte(tag.Sid + stanza.From + stanza.To)))
 }
 
-func (ctx *recvContext) bytestreamDoReceive(conn net.Conn) {
+func (ctx *recvContext) bytestreamDoReceive(conn io.ReadWriteCloser) {
 	recv := ctx.createReceiver()
 	cancel := ctx.opaque.(chan bool)
 	go func() {
@@ -72,7 +72,6 @@ func (ctx *recvContext) bytestreamDoReceive(conn net.Conn) {
 	}()
 
 	_, err := ioCopy(recv, conn)
-
 	if err != nil && err != errLocalCancel {
 		closeAndIgnore(conn)
 		return
@@ -106,7 +105,7 @@ func BytestreamQuery(s canSendIQErrorHasConfigAndHasLog, stanza *data.ClientIQ) 
 
 	dstAddr := bytestreamCalculateDestinationAddress(tag, stanza)
 
-	k := func(c net.Conn) {
+	k := func(c io.ReadWriteCloser) {
 		go ctx.bytestreamDoReceive(c)
 	}
 

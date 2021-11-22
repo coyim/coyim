@@ -1,6 +1,7 @@
 package filetransfer
 
 import (
+	"io"
 	"net"
 	"strconv"
 
@@ -16,7 +17,7 @@ var createTorProxy = func(a *config.Account) (proxy.Dialer, error) {
 
 var socks5XMPP = socks5.XMPP
 
-func tryStreamhost(s hasConfigAndLog, sh data.BytestreamStreamhost, dstAddr string, k func(net.Conn)) bool {
+func tryStreamhost(s hasConfigAndLog, sh data.BytestreamStreamhost, dstAddr string, k func(io.ReadWriteCloser)) bool {
 	port := sh.Port
 	if port == 0 {
 		port = 1080

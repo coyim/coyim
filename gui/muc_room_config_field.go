@@ -8,6 +8,11 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+type focusable interface {
+	HasFocus() bool
+	GrabFocus()
+}
+
 type hasRoomConfigFormField interface {
 	fieldKey() muc.RoomConfigFieldType
 	fieldWidget() gtki.Widget

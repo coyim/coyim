@@ -88,7 +88,6 @@ func bytestreamsCalculateValidProxies(s hasConnectionAndConfig) func(key string)
 func bytestreamsGetCurrentValidProxies(s hasConnectionAndConfig) []*data.BytestreamStreamhost {
 	proxies, _ := s.Conn().Cache().GetOrComputeTimed("http://jabber.org/protocol/bytestreams . proxies", defaultBytestreamProxyTimeout, bytestreamsCalculateValidProxies(s))
 	return proxies.([]*data.BytestreamStreamhost)
-
 }
 
 var errLocalCancel = errors.New("local cancel")

@@ -5,6 +5,7 @@ import (
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
 	log "github.com/sirupsen/logrus"
 )
@@ -149,6 +150,7 @@ func (p *roomConfigPage) initBuilder() {
 		"on_autojoin_toggled": func() {
 			p.roomConfigComponent.updateAutoJoin(p.autojoinCheckButton.GetActive())
 		},
+		"on_key_press": p.onKeyPress,
 	})
 
 	p.notifications = p.u.newNotificationsComponent()
@@ -156,6 +158,24 @@ func (p *roomConfigPage) initBuilder() {
 
 	p.loadingOverlay = p.u.newLoadingOverlayComponent()
 	p.page.AddOverlay(p.loadingOverlay.overlay)
+}
+
+func (p *roomConfigPage) onKeyPress(_ gtki.Widget, ev gdki.Event) bool {
+	if isTab(ev) {
+		if w, ok := p.focusWidgets.nextWidget(); ok {
+			w.GrabFocus()
+			return true
+		}
+	}
+
+	if isLeftTab(ev) {
+		if w, ok := p.focusWidgets.previousWidget(); ok {
+			w.GrabFocus()
+			return true
+		}
+	}
+
+	return false
 }
 
 func (p *roomConfigPage) initDefaults(parent gtki.Window) {

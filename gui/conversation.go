@@ -951,16 +951,14 @@ func (conv *conversationPane) isOtrLocked() bool {
 }
 
 func (conv *conversationPane) updateConversationDataFrom(pcp *conversationPane) {
-	if pcp != nil {
-		b, _ := pcp.history.GetBuffer()
-		conv.history.SetBuffer(b)
+	b, _ := pcp.history.GetBuffer()
+	conv.history.SetBuffer(b)
 
-		conv.encryptionStatus = pcp.encryptionStatus
-		conv.otrLock = pcp.otrLock
-		conv.target = pcp.target
-		conv.verifier = pcp.verifier
-		conv.pendingDelayed = pcp.pendingDelayed
-		conv.delayed = pcp.delayed
-		conv.currentPeer = pcp.currentPeer
-	}
+	conv.encryptionStatus = pcp.encryptionStatus
+	conv.otrLock = pcp.otrLock
+	conv.target = pcp.target
+	conv.verifier = pcp.verifier
+	conv.pendingDelayed = pcp.pendingDelayed
+	conv.delayed = pcp.delayed
+	conv.currentPeer = pcp.currentPeer
 }

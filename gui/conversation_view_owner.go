@@ -159,10 +159,7 @@ func (cvf *ourConversationViewFactory) createWindowedConversationView(existing *
 	win.SetTitle(windowConversationTitle(cvf.ui, cvf.peer, cvf.account, cvf.potentialTarget()))
 	winBox := builder.getObj("box").(gtki.Box)
 
-	cp := cvf.createConversationPane(win)
-	if existing != nil {
-		cp.updateConversationDataFrom(existing)
-	}
+	cp := cvf.createConversationPane(win, existing)
 
 	cp.menubar.Show()
 	winBox.PackStart(cp.widget, true, true, 0)
@@ -185,10 +182,7 @@ func (cvf *ourConversationViewFactory) createWindowedConversationView(existing *
 
 func (cvf *ourConversationViewFactory) createUnifiedConversationView(existing *conversationPane) conversationView {
 	// fmt.Printf("createUnifiedConversationView(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
-	cp := cvf.createConversationPane(cvf.ui.window)
-	if existing != nil {
-		cp.updateConversationDataFrom(existing)
-	}
+	cp := cvf.createConversationPane(cvf.ui.window, existing)
 
 	cp.connectEnterHandler(nil)
 
@@ -221,7 +215,7 @@ func (cvf *ourConversationViewFactory) createUnifiedConversationView(existing *c
 	return csi
 }
 
-func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *conversationPane {
+func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window, pcp *conversationPane) *conversationPane {
 	// fmt.Printf("createConversationPane(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
 	builder := newBuilder("ConversationPane")
 
@@ -248,6 +242,10 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 			}
 			return p, ok
 		},
+	}
+
+	if pcp != nil {
+		cp.updateConversationDataFrom(pcp)
 	}
 
 	panicOnDevError(builder.bindObjects(cp))

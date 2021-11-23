@@ -950,7 +950,7 @@ func (conv *conversationPane) isOtrLocked() bool {
 	return conv.otrLock != nil
 }
 
-func (conv *conversationPane) updateBasedOnPreviousInformation(pcp *conversationPane) {
+func (conv *conversationPane) updateConversationDataFrom(pcp *conversationPane) {
 	if pcp != nil {
 		b, _ := pcp.history.GetBuffer()
 		conv.history.SetBuffer(b)

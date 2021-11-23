@@ -160,7 +160,7 @@ func (cvf *ourConversationViewFactory) createWindowedConversationView(existing *
 	winBox := builder.getObj("box").(gtki.Box)
 
 	cp := cvf.createConversationPane(win)
-	cp.updateBasedOnPreviousInformation(existing)
+	cp.updateConversationDataFrom(existing)
 
 	cp.menubar.Show()
 	winBox.PackStart(cp.widget, true, true, 0)
@@ -184,7 +184,7 @@ func (cvf *ourConversationViewFactory) createWindowedConversationView(existing *
 func (cvf *ourConversationViewFactory) createUnifiedConversationView(existing *conversationPane) conversationView {
 	// fmt.Printf("createUnifiedConversationView(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
 	cp := cvf.createConversationPane(cvf.ui.window)
-	cp.updateBasedOnPreviousInformation(existing)
+	cp.updateConversationDataFrom(existing)
 
 	cp.connectEnterHandler(nil)
 

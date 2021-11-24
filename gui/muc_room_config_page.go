@@ -62,7 +62,7 @@ type roomConfigPage struct {
 
 	title               string
 	pageID              mucRoomConfigPageID
-	focusableWidgets    []focusable
+	navigationItems     []focusable
 	roomConfigComponent *mucRoomConfigComponent
 
 	page                gtki.Overlay     `gtk-widget:"room-config-page-overlay"`
@@ -123,14 +123,14 @@ func (p *roomConfigPage) initBuilder() {
 
 func (p *roomConfigPage) onKeyPress(_ gtki.Widget, ev gdki.Event) bool {
 	if isTab(ev) {
-		if w, ok := p.nextFocusableWidget(); ok {
+		if w, ok := p.nextNavigationItem(); ok {
 			w.GrabFocus()
 			return true
 		}
 	}
 
 	if isLeftTab(ev) {
-		if w, ok := p.previousFocusableWidget(); ok {
+		if w, ok := p.previousNavigationItem(); ok {
 			w.GrabFocus()
 			return true
 		}
@@ -139,24 +139,24 @@ func (p *roomConfigPage) onKeyPress(_ gtki.Widget, ev gdki.Event) bool {
 	return false
 }
 
-func (p *roomConfigPage) appendFocusableWidgets(w ...focusable) {
-	p.focusableWidgets = append(p.focusableWidgets, w...)
+func (p *roomConfigPage) appendNavigationItem(w ...focusable) {
+	p.navigationItems = append(p.navigationItems, w...)
 }
 
-func (p *roomConfigPage) nextFocusableWidget() (focusable, bool) {
-	for i, f := range p.focusableWidgets {
-		if f.HasFocus() && i < len(p.focusableWidgets)-1 {
-			return p.focusableWidgets[i+1], true
+func (p *roomConfigPage) nextNavigationItem() (focusable, bool) {
+	for i, f := range p.navigationItems {
+		if f.HasFocus() && i < len(p.navigationItems)-1 {
+			return p.navigationItems[i+1], true
 		}
 	}
 
 	return nil, false
 }
 
-func (p *roomConfigPage) previousFocusableWidget() (focusable, bool) {
-	for i, f := range p.focusableWidgets {
+func (p *roomConfigPage) previousNavigationItem() (focusable, bool) {
+	for i, f := range p.navigationItems {
 		if f.HasFocus() && i > 0 {
-			return p.focusableWidgets[i-1], true
+			return p.navigationItems[i-1], true
 		}
 	}
 
@@ -196,7 +196,7 @@ func (p *roomConfigPage) initKnownFields() {
 		for _, kf := range knownFields {
 			if knownField, ok := p.form.GetKnownField(kf); ok {
 				field, err := roomConfigFormFieldFactory(kf, roomConfigFieldsTexts[kf], knownField.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
-				p.appendFocusableWidgets(field.focusWidget())
+				p.appendNavigationItem(field.focusWidget())
 				if err != nil {
 					p.log.WithError(err).Error("Room configuration form field not supported")
 					continue
@@ -219,7 +219,7 @@ func (p *roomConfigPage) initUnknownFields() {
 	booleanFields := []hasRoomConfigFormField{}
 	for _, ff := range p.form.GetUnknownFields() {
 		field, err := roomConfigFormUnknownFieldFactory(newRoomConfigFieldTextInfo(ff.Label, ff.Description), ff.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
-		p.appendFocusableWidgets(field.focusWidget())
+		p.appendNavigationItem(field.focusWidget())
 		if err != nil {
 			p.log.WithError(err).Error("Room configuration form field not supported")
 			continue
@@ -246,7 +246,7 @@ func (p *roomConfigPage) initAdvancedOptionsFields() {
 	for _, aff := range roomConfigAdvancedFields {
 		if knownField, ok := p.form.GetKnownField(aff); ok {
 			field, err := roomConfigFormFieldFactory(aff, roomConfigFieldsTexts[aff], knownField.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
-			p.appendFocusableWidgets(field.focusWidget())
+			p.appendNavigationItem(field.focusWidget())
 			if err != nil {
 				p.log.WithError(err).Error("Room configuration form field not supported")
 				continue
@@ -276,14 +276,14 @@ func (p *roomConfigPage) initSummary() {
 	p.initSummaryFields(roomConfigOthersPageIndex)
 	if p.roomConfigComponent.data.roomConfigScenario == roomConfigScenarioCreate {
 		p.autojoinCheckButton.SetActive(p.roomConfigComponent.data.autoJoinRoomAfterSaved)
-		p.appendFocusableWidgets(p.autojoinCheckButton)
+		p.appendNavigationItem(p.autojoinCheckButton)
 		p.autojoinContent.Show()
 	}
 }
 
 func (p *roomConfigPage) initSummaryFields(pageID mucRoomConfigPageID) {
 	lb := newRoomConfigFormFieldLinkButton(pageID, p.roomConfigComponent.setCurrentPage)
-	p.appendFocusableWidgets(lb.focusWidget())
+	p.appendNavigationItem(lb.focusWidget())
 	p.addField(lb)
 
 	if pageID == roomConfigPositionsPageIndex {

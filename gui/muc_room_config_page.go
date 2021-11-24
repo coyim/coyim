@@ -123,15 +123,15 @@ func (p *roomConfigPage) initBuilder() {
 
 func (p *roomConfigPage) onKeyPress(_ gtki.Widget, ev gdki.Event) bool {
 	if isTab(ev) {
-		if w, ok := p.nextNavigationItem(); ok {
-			w.GrabFocus()
+		if w, ok := p.focusableCandidate(); ok && w.hasNext() {
+			w.nextFocusable.GrabFocus()
 			return true
 		}
 	}
 
 	if isLeftTab(ev) {
-		if w, ok := p.previousNavigationItem(); ok {
-			w.GrabFocus()
+		if w, ok := p.focusableCandidate(); ok && w.hasPrevious() {
+			w.previousFocusable.GrabFocus()
 			return true
 		}
 	}
@@ -143,20 +143,40 @@ func (p *roomConfigPage) appendNavigationItem(w ...focusable) {
 	p.navigationItems = append(p.navigationItems, w...)
 }
 
-func (p *roomConfigPage) nextNavigationItem() (focusable, bool) {
-	for i, f := range p.navigationItems {
-		if f.HasFocus() && i < len(p.navigationItems)-1 {
-			return p.navigationItems[i+1], true
-		}
-	}
-
-	return nil, false
+type candidateFocusable struct {
+	previousFocusable, nextFocusable focusable
 }
 
-func (p *roomConfigPage) previousNavigationItem() (focusable, bool) {
+func (cf *candidateFocusable) hasPrevious() bool {
+	return cf.previousFocusable != nil
+}
+
+func (cf *candidateFocusable) hasNext() bool {
+	return cf.nextFocusable != nil
+}
+
+func (p *roomConfigPage) focusableCandidate() (*candidateFocusable, bool) {
+	cf := &candidateFocusable{}
+
+	if len(p.navigationItems) <= 1 {
+		return nil, false
+	}
+
+	if p.navigationItems[0].HasFocus() {
+		cf.nextFocusable = p.navigationItems[1]
+		return cf, true
+	}
+
+	if p.navigationItems[len(p.navigationItems)-1].HasFocus() {
+		cf.previousFocusable = p.navigationItems[len(p.navigationItems)-2]
+		return cf, true
+	}
+
 	for i, f := range p.navigationItems {
-		if f.HasFocus() && i > 0 {
-			return p.navigationItems[i-1], true
+		if f.HasFocus() {
+			cf.previousFocusable = p.navigationItems[i-1]
+			cf.nextFocusable = p.navigationItems[i+1]
+			return cf, true
 		}
 	}
 

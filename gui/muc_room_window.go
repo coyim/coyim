@@ -21,7 +21,7 @@ func (v *roomView) newRoomViewWindow() *roomViewWindow {
 	}
 
 	vw.loadUIDefinition()
-	vw.initDefaults(v.u)
+	vw.setInitialValues(v.u)
 
 	return vw
 }
@@ -37,7 +37,7 @@ func (vw *roomViewWindow) connectUISignals(b *builder) {
 	})
 }
 
-func (vw *roomViewWindow) initDefaults(u *gtkUI) {
+func (vw *roomViewWindow) setInitialValues(u *gtkUI) {
 	vw.window.SetTitle(i18n.Localf("%[1]s [%[2]s]", vw.roomView.roomID(), vw.roomView.account.Account()))
 	mucStyles.setRoomWindowStyle(vw.window)
 

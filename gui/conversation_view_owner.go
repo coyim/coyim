@@ -244,10 +244,6 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window, p
 		},
 	}
 
-	if pcp != nil {
-		cp.updateConversationDataFrom(pcp)
-	}
-
 	panicOnDevError(builder.bindObjects(cp))
 
 	cp.scrollAdjustment = newScrollVerticalAdjustment(cp.scrollHistory)
@@ -289,6 +285,10 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window, p
 
 	cp.verifier = newVerifier(cvf.ui, cp)
 	cp.encryptionStatus = &encryptionStatus{}
+
+	if pcp != nil {
+		cp.updateConversationDataFrom(pcp)
+	}
 
 	return cp
 }

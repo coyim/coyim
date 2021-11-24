@@ -1,10 +1,13 @@
 package filetransfer
 
 import (
+	"io/ioutil"
 	"net"
+	"os"
 	"time"
 
 	mck "github.com/stretchr/testify/mock"
+	. "gopkg.in/check.v1"
 )
 
 type mockedConn struct {
@@ -57,4 +60,29 @@ func (m *mockedDialer) Dial(network, addr string) (net.Conn, error) {
 		ret = ci.(net.Conn)
 	}
 	return ret, args.Error(1)
+}
+
+type WithTempFileSuite struct {
+	file    string
+	content []byte
+}
+
+func (s *WithTempFileSuite) SetUpTest(c *C) {
+	tf, ex := ioutil.TempFile("", "coyim-filetransfer-42-")
+	c.Assert(ex, IsNil)
+
+	s.content = []byte(`something new`)
+
+	_, ex = tf.Write(s.content)
+	c.Assert(ex, IsNil)
+
+	ex = tf.Close()
+	c.Assert(ex, IsNil)
+
+	s.file = tf.Name()
+}
+
+func (s *WithTempFileSuite) TearDownTest(c *C) {
+	e := os.Remove(s.file)
+	c.Assert(e, IsNil)
 }

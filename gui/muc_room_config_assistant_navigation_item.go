@@ -1,6 +1,10 @@
 package gui
 
-import "github.com/coyim/gotk3adapter/gtki"
+import (
+	"fmt"
+
+	"github.com/coyim/gotk3adapter/gtki"
+)
 
 type navigationItemIconName string
 
@@ -27,8 +31,9 @@ var assistantNavigationIconByPage = map[mucRoomConfigPageID]navigationItemIconNa
 type roomConfigAssistantNavigationItem struct {
 	page *roomConfigPage
 
-	label gtki.Label      `gtk-widget:"room-config-assistant-navigation-item-label"`
 	row   gtki.ListBoxRow `gtk-widget:"room-config-assistant-navigation-item-row"`
+	icon  gtki.Image      `gtk-widget:"room-config-assistant-navigation-item-icon"`
+	label gtki.Label      `gtk-widget:"room-config-assistant-navigation-item-label"`
 }
 
 func (rcn *roomConfigAssistantNavigation) newRoomConfigAssistantNavigationItem(page *roomConfigPage) *roomConfigAssistantNavigationItem {
@@ -40,6 +45,7 @@ func (rcn *roomConfigAssistantNavigation) newRoomConfigAssistantNavigationItem(p
 	panicOnDevError(b.bindObjects(itm))
 
 	itm.label.SetText(page.title)
+	itm.icon.SetFromIconName(fmt.Sprint(assistantNavigationIconByPage[page.pageID]), gtki.ICON_SIZE_MENU)
 
 	return itm
 }

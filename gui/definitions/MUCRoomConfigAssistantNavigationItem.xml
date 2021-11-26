@@ -5,28 +5,27 @@
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
+        <property name="border_width">8</property>
         <child>
-          <object class="GtkBox">
+          <object class="GtkImage" id="room-config-assistant-navigation-item-icon">
+            <property name="margin_left">4</property>
             <property name="visible">True</property>
-            <property name="border_width">8</property>
-            <property name="orientation">vertical</property>
-            <child>
-              <object class="GtkLabel" id="room-config-assistant-navigation-item-label">
-                <property name="visible">True</property>
-                <property name="halign">start</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="room-config-assistant-navigation-item-label">
+            <property name="visible">True</property>
+            <property name="halign">start</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>

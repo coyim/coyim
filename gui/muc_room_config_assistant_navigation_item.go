@@ -2,6 +2,28 @@ package gui
 
 import "github.com/coyim/gotk3adapter/gtki"
 
+type navigationItemIconName string
+
+// TODO: All these icon names SHOULD be reviewed.
+// The current icon names are being used in order to test how it looks on differents SO.
+const (
+	basicInformationIconName navigationItemIconName = "goa-account-msn-symbolic"
+	accessIconName           navigationItemIconName = "dialog-password-symbolic"
+	permissionsIconName      navigationItemIconName = "system-switch-user-symbolic"
+	positionsIconName        navigationItemIconName = "contact-new-symbolic"
+	otherIconName            navigationItemIconName = "system-run-symbolic"
+	sumaryIconName           navigationItemIconName = "view-list-bullet-symbolic"
+)
+
+var assistantNavigationIconByPage = map[mucRoomConfigPageID]navigationItemIconName{
+	roomConfigInformationPageIndex: basicInformationIconName,
+	roomConfigAccessPageIndex:      accessIconName,
+	roomConfigPermissionsPageIndex: permissionsIconName,
+	roomConfigPositionsPageIndex:   positionsIconName,
+	roomConfigOthersPageIndex:      otherIconName,
+	roomConfigSummaryPageIndex:     sumaryIconName,
+}
+
 type roomConfigAssistantNavigationItem struct {
 	page *roomConfigPage
 

@@ -32,8 +32,4 @@
       </object>
     </child>
   </object>
-  <object class="GtkSeparator" id="room-config-assistant-navigation-item-separator">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-  </object>
 </interface>

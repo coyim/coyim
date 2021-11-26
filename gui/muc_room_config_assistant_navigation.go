@@ -40,7 +40,6 @@ func (rcn *roomConfigAssistantNavigation) initNavigationItems() {
 		itm := rcn.newRoomConfigAssistantNavigationItem(p)
 		rcn.items = append(rcn.items, itm)
 		rcn.navigation.Add(itm.row)
-		rcn.navigation.Add(itm.divider)
 	}
 }
 

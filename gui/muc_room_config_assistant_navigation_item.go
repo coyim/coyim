@@ -5,9 +5,8 @@ import "github.com/coyim/gotk3adapter/gtki"
 type roomConfigAssistantNavigationItem struct {
 	page *roomConfigPage
 
-	label   gtki.Label      `gtk-widget:"room-config-assistant-navigation-item-label"`
-	row     gtki.ListBoxRow `gtk-widget:"room-config-assistant-navigation-item-row"`
-	divider gtki.Separator  `gtk-widget:"room-config-assistant-navigation-item-separator"`
+	label gtki.Label      `gtk-widget:"room-config-assistant-navigation-item-label"`
+	row   gtki.ListBoxRow `gtk-widget:"room-config-assistant-navigation-item-row"`
 }
 
 func (rcn *roomConfigAssistantNavigation) newRoomConfigAssistantNavigationItem(page *roomConfigPage) *roomConfigAssistantNavigationItem {
@@ -19,7 +18,6 @@ func (rcn *roomConfigAssistantNavigation) newRoomConfigAssistantNavigationItem(p
 	panicOnDevError(b.bindObjects(itm))
 
 	itm.label.SetText(page.title)
-	itm.divider.SetSensitive(false)
 
 	return itm
 }

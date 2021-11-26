@@ -1,12 +1,14 @@
 package filetransfer
 
 import (
+	"encoding/xml"
 	"io/ioutil"
 	"path/filepath"
 
 	"github.com/coyim/coyim/coylog"
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/xmpp/data"
+	log "github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
 	. "gopkg.in/check.v1"
 )
@@ -152,4 +154,99 @@ func (s *IBBReceiverSuite) Test_IbbClose_works(c *C) {
 
 	content, _ := ioutil.ReadFile(ctx.destination)
 	c.Assert(string(content), DeepEquals, "hello world")
+}
+
+func (s *IBBReceiverSuite) Test_ibbParseXMLData_failsOnParsingData(c *C) {
+	l, hook := test.NewNullLogger()
+	wl := &mockHasLog{l}
+
+	tag, ctx, ictx, ret, iqtype, ignore := ibbParseXMLData(wl, []byte{0x42})
+	c.Assert(tag, DeepEquals, data.IBBData{})
+	c.Assert(ctx, IsNil)
+	c.Assert(ictx, IsNil)
+	c.Assert(ret, Equals, iqErrorNotAcceptable)
+	c.Assert(iqtype, Equals, "error")
+	c.Assert(ignore, Equals, false)
+
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.WarnLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "Failed to parse IBB data")
+	c.Assert(hook.Entries[0].Data, HasLen, 1)
+	c.Assert(hook.Entries[0].Data["error"], ErrorMatches, "EOF")
+}
+
+func (s *IBBReceiverSuite) Test_ibbParseXMLData_noFileTransferAssociatedWithTag(c *C) {
+	l, hook := test.NewNullLogger()
+	wl := &mockHasLog{l}
+
+	tag, ctx, ictx, ret, iqtype, ignore := ibbParseXMLData(wl, []byte(`
+<data xmlns="http://jabber.org/protocol/ibb" sid="123"/>
+`))
+	c.Assert(tag, DeepEquals, data.IBBData{
+		XMLName: xml.Name{Space: "http://jabber.org/protocol/ibb", Local: "data"},
+		Sid:     "123"})
+	c.Assert(ctx, IsNil)
+	c.Assert(ictx, IsNil)
+	c.Assert(ret, Equals, iqErrorItemNotFound)
+	c.Assert(iqtype, Equals, "error")
+	c.Assert(ignore, Equals, false)
+
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.WarnLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "No file transfer associated with SID")
+	c.Assert(hook.Entries[0].Data, HasLen, 1)
+	c.Assert(hook.Entries[0].Data["SID"], Equals, "123")
+}
+
+func (s *IBBReceiverSuite) Test_ibbParseXMLData_waitingForMAC(c *C) {
+	addInflightMAC(&sendContext{sid: "123"})
+
+	l, hook := test.NewNullLogger()
+	wl := &mockHasLog{l}
+
+	tag, ctx, ictx, ret, iqtype, ignore := ibbParseXMLData(wl, []byte(`
+<data xmlns="http://jabber.org/protocol/ibb" sid="123"/>
+`))
+	c.Assert(tag, DeepEquals, data.IBBData{
+		XMLName: xml.Name{Space: "http://jabber.org/protocol/ibb", Local: "data"},
+		Sid:     "123"})
+	c.Assert(ctx, IsNil)
+	c.Assert(ictx, IsNil)
+	c.Assert(ret, Equals, data.EmptyReply{})
+	c.Assert(iqtype, Equals, "")
+	c.Assert(ignore, Equals, false)
+
+	c.Assert(hook.Entries, HasLen, 0)
+
+	c.Assert(inflightMACs.transfers["123"], Equals, false)
+}
+
+func (s *IBBReceiverSuite) Test_ibbParseXMLData_incorrectIBBContext(c *C) {
+	l, hook := test.NewNullLogger()
+	wl := &mockHasLog{l}
+
+	rctx := &recvContext{sid: "123"}
+	rctx.opaque = "hello"
+	addInflightRecv(rctx)
+	defer func() {
+		removeInflightRecv("123")
+	}()
+
+	tag, ctx, ictx, ret, iqtype, ignore := ibbParseXMLData(wl, []byte(`
+<data xmlns="http://jabber.org/protocol/ibb" sid="123"/>
+`))
+	c.Assert(tag, DeepEquals, data.IBBData{
+		XMLName: xml.Name{Space: "http://jabber.org/protocol/ibb", Local: "data"},
+		Sid:     "123"})
+	c.Assert(ctx, IsNil)
+	c.Assert(ictx, IsNil)
+	c.Assert(ret, Equals, iqErrorItemNotFound)
+	c.Assert(iqtype, Equals, "error")
+	c.Assert(ignore, Equals, false)
+
+	c.Assert(hook.Entries, HasLen, 1)
+	c.Assert(hook.Entries[0].Level, Equals, log.WarnLevel)
+	c.Assert(hook.Entries[0].Message, Equals, "No file transfer associated with SID")
+	c.Assert(hook.Entries[0].Data, HasLen, 1)
+	c.Assert(hook.Entries[0].Data["SID"], Equals, "123")
 }

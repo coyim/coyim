@@ -216,7 +216,7 @@ func (p *roomConfigPage) initKnownFields() {
 		booleanFields := []hasRoomConfigFormField{}
 		for _, kf := range knownFields {
 			if knownField, ok := p.form.GetKnownField(kf); ok {
-				field, err := roomConfigFormFieldFactory(kf, roomConfigFieldsTexts[kf], knownField.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
+				field, err := getRoomConfigFormFieldByType(kf, roomConfigFieldsTexts[kf], knownField.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
 				p.appendFocusable(field.focusWidget())
 				if err != nil {
 					p.log.WithError(err).Error("Room configuration form field not supported")
@@ -239,7 +239,7 @@ func (p *roomConfigPage) initKnownFields() {
 func (p *roomConfigPage) initUnknownFields() {
 	booleanFields := []hasRoomConfigFormField{}
 	for _, ff := range p.form.GetUnknownFields() {
-		field, err := roomConfigFormUnknownFieldFactory(newRoomConfigFieldTextInfo(ff.Label, ff.Description), ff.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
+		field, err := getRoomConfigFormUnknownFieldByType(newRoomConfigFieldTextInfo(ff.Label, ff.Description), ff.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
 		p.appendFocusable(field.focusWidget())
 		if err != nil {
 			p.log.WithError(err).Error("Room configuration form field not supported")
@@ -266,7 +266,7 @@ func (p *roomConfigPage) initAdvancedOptionsFields() {
 	advancedFields := []hasRoomConfigFormField{}
 	for _, aff := range roomConfigAdvancedFields {
 		if knownField, ok := p.form.GetKnownField(aff); ok {
-			field, err := roomConfigFormFieldFactory(aff, roomConfigFieldsTexts[aff], knownField.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
+			field, err := getRoomConfigFormFieldByType(aff, roomConfigFieldsTexts[aff], knownField.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
 			p.appendFocusable(field.focusWidget())
 			if err != nil {
 				p.log.WithError(err).Error("Room configuration form field not supported")

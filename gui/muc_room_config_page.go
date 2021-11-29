@@ -122,65 +122,66 @@ func (p *roomConfigPage) initBuilder() {
 }
 
 func (p *roomConfigPage) onKeyPress(_ gtki.Widget, ev gdki.Event) bool {
+	if keepFocus(ev) {
+		return false
+	}
+
+	return p.tryChangeFocus(ev)
+}
+
+func keepFocus(ev gdki.Event) bool {
+	return !isTab(ev) && !isLeftTab(ev)
+}
+
+func (p *roomConfigPage) tryChangeFocus(ev gdki.Event) bool {
+	i, ok := p.currentFocusableIndex()
+	if !ok {
+		return false
+	}
+
+	f, ok := p.focusableToJumpTo(determineDirection(ev), i)
+	if !ok {
+		return false
+	}
+
+	f.GrabFocus()
+	return true
+}
+
+func (p *roomConfigPage) currentFocusableIndex() (int, bool) {
+	for i, f := range p.focusables {
+		if f.HasFocus() {
+			return i, true
+		}
+	}
+
+	return 0, false
+}
+
+func (p *roomConfigPage) focusableToJumpTo(d int, currentFocusableIndex int) (focusable, bool) {
+	targetFocusableIndex := currentFocusableIndex + d
+
+	if p.isValidFocusableIndex(targetFocusableIndex) {
+		return p.focusables[targetFocusableIndex], true
+	}
+
+	return nil, false
+}
+
+func determineDirection(ev gdki.Event) int {
 	if isTab(ev) {
-		if w, ok := p.focusableCandidate(); ok && w.hasNext() {
-			w.nextFocusable.GrabFocus()
-			return true
-		}
+		return 1
 	}
 
-	if isLeftTab(ev) {
-		if w, ok := p.focusableCandidate(); ok && w.hasPrevious() {
-			w.previousFocusable.GrabFocus()
-			return true
-		}
-	}
+	return -1
+}
 
-	return false
+func (p *roomConfigPage) isValidFocusableIndex(ix int) bool {
+	return ix >= 0 && ix < len(p.focusables)
 }
 
 func (p *roomConfigPage) appendFocusable(w ...focusable) {
 	p.focusables = append(p.focusables, w...)
-}
-
-type candidateFocusable struct {
-	previousFocusable, nextFocusable focusable
-}
-
-func (cf *candidateFocusable) hasPrevious() bool {
-	return cf.previousFocusable != nil
-}
-
-func (cf *candidateFocusable) hasNext() bool {
-	return cf.nextFocusable != nil
-}
-
-func (p *roomConfigPage) focusableCandidate() (*candidateFocusable, bool) {
-	cf := &candidateFocusable{}
-
-	if len(p.focusables) <= 1 {
-		return nil, false
-	}
-
-	if p.focusables[0].HasFocus() {
-		cf.nextFocusable = p.focusables[1]
-		return cf, true
-	}
-
-	if p.focusables[len(p.focusables)-1].HasFocus() {
-		cf.previousFocusable = p.focusables[len(p.focusables)-2]
-		return cf, true
-	}
-
-	for i, f := range p.focusables {
-		if f.HasFocus() {
-			cf.previousFocusable = p.focusables[i-1]
-			cf.nextFocusable = p.focusables[i+1]
-			return cf, true
-		}
-	}
-
-	return nil, false
 }
 
 func (p *roomConfigPage) initDefaults(parent gtki.Window) {

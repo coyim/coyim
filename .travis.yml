@@ -28,19 +28,10 @@ before_cache:
   - brew cleanup
   - find /usr/local/Homebrew \! -regex ".+\.git.+" -delete
 
-addons:
-  homebrew:
-    update: true
-    packages:
-      - gtk+3
-      - adwaita-icon-theme
-      - hicolor-icon-theme
-      - gnome-icon-theme
-      - shared-mime-info
-      - fileicon
-      - gtk-mac-integration
-
 before_install:
+  - brew uninstall --cask --force java
+  - brew update
+  - brew install gtk+3 adwaita-icon-theme hicolor-icon-theme gnome-icon-theme shared-mime-info fileicon gtk-mac-integration
   - "export DISPLAY=:99.0"
   - npm install --global appdmg
 

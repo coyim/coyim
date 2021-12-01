@@ -149,6 +149,10 @@ func (v *widget) GetWindow() (gdki.Window, error) {
 	return gdka.WrapWindow(v.internal.GetWindow())
 }
 
+func (v *widget) GetAllocation() gtki.Allocation {
+	return WrapAllocationSimple(v.internal.GetAllocation())
+}
+
 func (v *widget) GetStyleContext() (gtki.StyleContext, error) {
 	return WrapStyleContext(v.internal.GetStyleContext())
 }

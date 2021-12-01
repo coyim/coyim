@@ -64,6 +64,10 @@ func (*MockWidget) GetAllocatedWidth() int {
 	return 0
 }
 
+func (*MockWidget) GetAllocation() gtki.Allocation {
+	return nil
+}
+
 func (*MockWidget) GetParent() (gtki.Widget, error) {
 	return nil, nil
 }

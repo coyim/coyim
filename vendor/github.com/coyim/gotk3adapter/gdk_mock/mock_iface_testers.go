@@ -9,6 +9,7 @@ func init() {
 	gdki.AssertEventKey(&MockEventKey{})
 	gdki.AssertPixbuf(&MockPixbuf{})
 	gdki.AssertPixbufLoader(&MockPixbufLoader{})
+	gdki.AssertRectangle(&MockRectangle{})
 	gdki.AssertScreen(&MockScreen{})
 	gdki.AssertWindow(&MockWindow{})
 }

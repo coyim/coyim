@@ -7,6 +7,7 @@ func init() {
 	gtki.AssertAboutDialog(&MockAboutDialog{})
 	gtki.AssertAccelGroup(&MockAccelGroup{})
 	gtki.AssertAdjustment(&MockAdjustment{})
+	gtki.AssertAllocation(&MockAllocation{})
 	gtki.AssertApplication(&MockApplication{})
 	gtki.AssertApplicationWindow(&MockApplicationWindow{})
 	gtki.AssertAssistant(&MockAssistant{})

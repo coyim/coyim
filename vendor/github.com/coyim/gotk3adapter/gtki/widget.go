@@ -13,6 +13,7 @@ type Widget interface {
 	GrabFocus()
 	GetAllocatedHeight() int
 	GetAllocatedWidth() int
+	GetAllocation() Allocation
 	GetName() (string, error)
 	GetParent() (Widget, error)
 	GetParentX() (Widget, error)

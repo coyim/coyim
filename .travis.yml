@@ -29,7 +29,7 @@ before_cache:
   - find /usr/local/Homebrew \! -regex ".+\.git.+" -delete
 
 before_install:
-  - brew uninstall --force java
+  - brew uninstall --ignore-dependencies --force java
   - brew update
   - brew install gtk+3 adwaita-icon-theme hicolor-icon-theme gnome-icon-theme shared-mime-info fileicon gtk-mac-integration
   - "export DISPLAY=:99.0"

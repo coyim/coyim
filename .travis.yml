@@ -31,14 +31,26 @@ before_cache:
 before_install:
   - brew uninstall --ignore-dependencies --force java
   - brew uninstall --ignore-dependencies --force openjdk
-  - travis_wait 40 brew update
-  - travis_wait 40 brew install gtk+3
-#  - travis_wait 40 brew install adwaita-icon-theme
-#  - travis_wait 40 brew install hicolor-icon-theme
-#  - travis_wait 40 brew install gnome-icon-theme
-#  - travis_wait 40 brew install shared-mime-info
-#  - travis_wait 40 brew install fileicon
-#  - travis_wait 40 brew install gtk-mac-integration
+  - travis_wait 60 brew update
+  - travis_wait 60 brew install docbook
+  - travis_wait 60 brew install docbook-xsl
+  - travis_wait 60 brew install gobject-introspection
+  - travis_wait 60 brew install meson
+  - travis_wait 60 brew install ninja
+  - travis_wait 60 brew install pkg-config
+  - travis_wait 60 brew install atk
+  - travis_wait 60 brew install gdk-pixbuf
+  - travis_wait 60 brew install glib
+  - travis_wait 60 brew install gsettings-desktop-schemas
+  - travis_wait 60 brew install hicolor-icon-theme
+  - travis_wait 60 brew install libepoxy
+  - travis_wait 60 brew install pango
+  - travis_wait 60 brew install gtk+3
+#  - travis_wait 60 brew install adwaita-icon-theme
+#  - travis_wait 60 brew install gnome-icon-theme
+#  - travis_wait 60 brew install shared-mime-info
+#  - travis_wait 60 brew install fileicon
+#  - travis_wait 60 brew install gtk-mac-integration
 #  - "export DISPLAY=:99.0"
 #  - npm install --global appdmg
 

@@ -96,3 +96,7 @@ func (f *roomConfigFieldListMulti) isIterSelected(iter gtki.TreeIter) bool {
 	}
 	return false
 }
+
+func (f *roomConfigFieldListMulti) focusWidget() focusable {
+	return f.list
+}

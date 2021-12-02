@@ -131,6 +131,12 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 			return nil, true
 		}
 		return val, true
+	case *gtk.Expander:
+		val := WrapExpanderSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
 	case *gtk.ModelButton:
 		val := WrapModelButtonSimple(oo)
 		if val == nil {
@@ -545,6 +551,12 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *button:
 		val := UnwrapButton(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *expander:
+		val := UnwrapExpander(oo)
 		if val == nil {
 			return nil, true
 		}

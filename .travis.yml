@@ -33,28 +33,32 @@ before_install:
   - brew uninstall --ignore-dependencies --force openjdk
   - travis_wait 40 brew update
   - travis_wait 40 brew install gtk+3
-  - travis_wait 40 brew install adwaita-icon-theme
-  - travis_wait 40 brew install hicolor-icon-theme
-  - travis_wait 40 brew install gnome-icon-theme
-  - travis_wait 40 brew install shared-mime-info
-  - travis_wait 40 brew install fileicon
-  - travis_wait 40 brew install gtk-mac-integration
-  - "export DISPLAY=:99.0"
-  - npm install --global appdmg
+#  - travis_wait 40 brew install adwaita-icon-theme
+#  - travis_wait 40 brew install hicolor-icon-theme
+#  - travis_wait 40 brew install gnome-icon-theme
+#  - travis_wait 40 brew install shared-mime-info
+#  - travis_wait 40 brew install fileicon
+#  - travis_wait 40 brew install gtk-mac-integration
+#  - "export DISPLAY=:99.0"
+#  - npm install --global appdmg
 
-install: make -C ci/ deps
+install:
+  - echo hello from install
+#  - make -C ci/ deps
+
 script:
-  - make -C ci/ clean-mac-bundle
-  - make build-gui
-  - make -C ci/ make-mac-bundle
-  - make -C ci/ make-dmg
-  - make -C ci/ make-gui-for-release
+  - echo hello from script
+#  - make -C ci/ clean-mac-bundle
+#  - make build-gui
+#  - make -C ci/ make-mac-bundle
+#  - make -C ci/ make-dmg
+#  - make -C ci/ make-gui-for-release
 
-deploy:
-  provider: releases
-  api_key: $GH_DEPLOY_TOKEN
-  file_glob: true
-  file: release/*
-  skip_cleanup: true
-  on:
-    tags: true
+# deploy:
+#   provider: releases
+#   api_key: $GH_DEPLOY_TOKEN
+#   file_glob: true
+#   file: release/*
+#   skip_cleanup: true
+#   on:
+#     tags: true

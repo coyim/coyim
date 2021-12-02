@@ -12,7 +12,7 @@
           <object class="GtkAlignment">
             <property name="visible">True</property>
             <child>
-              <object class="GtkExpander">
+              <object class="GtkExpander" id="room-config-field-advanced-expander">
                 <property name="visible">True</property>
                 <child>
                   <object class="GtkBox" id="room-config-field-advanced-options-content-box">

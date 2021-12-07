@@ -223,7 +223,6 @@ func (p *roomConfigPage) initKnownFields() {
 		for _, kf := range knownFields {
 			if knownField, ok := p.form.GetKnownField(kf); ok {
 				field, err := getRoomConfigFormFieldByType(kf, roomConfigFieldsTexts[kf], knownField.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
-				p.appendFocusableFields(field.focusWidget())
 				if err != nil {
 					p.log.WithError(err).Error("Room configuration form field not supported")
 					continue
@@ -232,11 +231,13 @@ func (p *roomConfigPage) initKnownFields() {
 					booleanFields = append(booleanFields, f)
 					continue
 				}
+				p.appendFocusableFields(field.focusWidget())
 				p.addField(field)
 			}
 		}
 		if len(booleanFields) > 0 {
 			p.appendFields(booleanFields...)
+			p.appendFocusableFieldsFrom(booleanFields)
 			p.addField(newRoomConfigFormFieldBooleanContainer(booleanFields))
 		}
 	}
@@ -273,7 +274,6 @@ func (p *roomConfigPage) initAdvancedOptionsFields() {
 	for _, aff := range roomConfigAdvancedFields {
 		if knownField, ok := p.form.GetKnownField(aff); ok {
 			field, err := getRoomConfigFormFieldByType(aff, roomConfigFieldsTexts[aff], knownField.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
-			p.appendFocusableFields(field.focusWidget())
 			if err != nil {
 				p.log.WithError(err).Error("Room configuration form field not supported")
 				continue
@@ -285,13 +285,18 @@ func (p *roomConfigPage) initAdvancedOptionsFields() {
 			advancedFields = append(advancedFields, field)
 		}
 	}
+	advancedFocusables := append(advancedFields, booleanFields...)
+
 	if len(booleanFields) > 0 {
 		advancedFields = append(advancedFields, newRoomConfigFormFieldBooleanContainer(booleanFields))
 	}
 
 	if len(advancedFields) > 0 {
 		p.appendFields(advancedFields...)
-		p.addField(newRoomConfigFormFieldAdvancedOptionsContainer(advancedFields))
+		afc := newRoomConfigFormFieldAdvancedOptionsContainer(advancedFields)
+		p.addField(afc)
+		p.appendFocusableFields(afc.focusWidget())
+		p.appendFocusableFieldsFrom(advancedFocusables)
 	}
 }
 

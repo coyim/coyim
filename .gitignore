@@ -46,5 +46,3 @@ bin/
 
 .build-tools
 __debug_bin
-
-# this will be deleted after trying to push

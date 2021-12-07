@@ -180,7 +180,7 @@ func (p *roomConfigPage) isValidFocusableIndex(ix int) bool {
 	return ix >= 0 && ix < len(p.focusableFields)
 }
 
-func (p *roomConfigPage) appendFocusable(w ...focusable) {
+func (p *roomConfigPage) appendFocusableFields(w ...focusable) {
 	p.focusableFields = append(p.focusableFields, w...)
 }
 
@@ -217,7 +217,7 @@ func (p *roomConfigPage) initKnownFields() {
 		for _, kf := range knownFields {
 			if knownField, ok := p.form.GetKnownField(kf); ok {
 				field, err := getRoomConfigFormFieldByType(kf, roomConfigFieldsTexts[kf], knownField.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
-				p.appendFocusable(field.focusWidget())
+				p.appendFocusableFields(field.focusWidget())
 				if err != nil {
 					p.log.WithError(err).Error("Room configuration form field not supported")
 					continue
@@ -240,7 +240,7 @@ func (p *roomConfigPage) initUnknownFields() {
 	booleanFields := []hasRoomConfigFormField{}
 	for _, ff := range p.form.GetUnknownFields() {
 		field, err := getRoomConfigFormUnknownFieldByType(newRoomConfigFieldTextInfo(ff.Label, ff.Description), ff.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
-		p.appendFocusable(field.focusWidget())
+		p.appendFocusableFields(field.focusWidget())
 		if err != nil {
 			p.log.WithError(err).Error("Room configuration form field not supported")
 			continue
@@ -267,7 +267,7 @@ func (p *roomConfigPage) initAdvancedOptionsFields() {
 	for _, aff := range roomConfigAdvancedFields {
 		if knownField, ok := p.form.GetKnownField(aff); ok {
 			field, err := getRoomConfigFormFieldByType(aff, roomConfigFieldsTexts[aff], knownField.ValueType(), p.onShowValidationErrors, p.onHideValidationErrors)
-			p.appendFocusable(field.focusWidget())
+			p.appendFocusableFields(field.focusWidget())
 			if err != nil {
 				p.log.WithError(err).Error("Room configuration form field not supported")
 				continue
@@ -297,14 +297,14 @@ func (p *roomConfigPage) initSummary() {
 	p.initSummaryFields(roomConfigOthersPageIndex)
 	if p.roomConfigComponent.data.roomConfigScenario == roomConfigScenarioCreate {
 		p.autojoinCheckButton.SetActive(p.roomConfigComponent.data.autoJoinRoomAfterSaved)
-		p.appendFocusable(p.autojoinCheckButton)
+		p.appendFocusableFields(p.autojoinCheckButton)
 		p.autojoinContent.Show()
 	}
 }
 
 func (p *roomConfigPage) initSummaryFields(pageID mucRoomConfigPageID) {
 	lb := newRoomConfigFormFieldLinkButton(pageID, p.roomConfigComponent.setCurrentPage)
-	p.appendFocusable(lb.focusWidget())
+	p.appendFocusableFields(lb.focusWidget())
 	p.addField(lb)
 
 	if pageID == roomConfigPositionsPageIndex {

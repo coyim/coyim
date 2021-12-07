@@ -62,7 +62,7 @@ type roomConfigPage struct {
 
 	title               string
 	pageID              mucRoomConfigPageID
-	focusableElements   []focusable
+	focusableFields     []focusable
 	roomConfigComponent *mucRoomConfigComponent
 
 	page                gtki.Overlay     `gtk-widget:"room-config-page-overlay"`
@@ -149,7 +149,7 @@ func (p *roomConfigPage) tryChangeFocus(ev gdki.Event) bool {
 }
 
 func (p *roomConfigPage) currentFocusableIndex() (int, bool) {
-	for i, f := range p.focusableElements {
+	for i, f := range p.focusableFields {
 		if f.HasFocus() {
 			return i, true
 		}
@@ -162,7 +162,7 @@ func (p *roomConfigPage) focusableToJumpTo(d int, currentFocusableIndex int) (fo
 	targetFocusableIndex := currentFocusableIndex + d
 
 	if p.isValidFocusableIndex(targetFocusableIndex) {
-		return p.focusableElements[targetFocusableIndex], true
+		return p.focusableFields[targetFocusableIndex], true
 	}
 
 	return nil, false
@@ -177,11 +177,11 @@ func determineDirection(ev gdki.Event) int {
 }
 
 func (p *roomConfigPage) isValidFocusableIndex(ix int) bool {
-	return ix >= 0 && ix < len(p.focusableElements)
+	return ix >= 0 && ix < len(p.focusableFields)
 }
 
 func (p *roomConfigPage) appendFocusable(w ...focusable) {
-	p.focusableElements = append(p.focusableElements, w...)
+	p.focusableFields = append(p.focusableFields, w...)
 }
 
 func (p *roomConfigPage) initDefaults(parent gtki.Window) {

@@ -184,6 +184,12 @@ func (p *roomConfigPage) appendFocusableFields(w ...focusable) {
 	p.focusableFields = append(p.focusableFields, w...)
 }
 
+func (p *roomConfigPage) appendFocusableFieldsFrom(fields []hasRoomConfigFormField) {
+	for _, f := range fields {
+		p.appendFocusableFields(f.focusWidget())
+	}
+}
+
 func (p *roomConfigPage) initDefaults(parent gtki.Window) {
 	p.initIntroPage()
 	switch p.pageID {

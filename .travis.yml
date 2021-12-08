@@ -2,12 +2,9 @@ os: osx
 osx_image: xcode11.3
 language: go
 
-env:
-  CACHE_NAME: all_caches
-
-branches:
- except:
-   - main
+#branches:
+# except:
+#   - main
 
 git:
   depth: false
@@ -31,6 +28,7 @@ before_cache:
 before_install:
   - brew uninstall --ignore-dependencies --force java
   - brew uninstall --ignore-dependencies --force openjdk
+  - brew cask uninstall java
   - travis_wait 60 brew update
   - travis_wait 60 brew install docbook
   - travis_wait 60 brew install docbook-xsl
@@ -58,8 +56,7 @@ before_install:
   - npm install --global appdmg
 
 install:
-  - echo hello from install
-#  - make -C ci/ deps
+  - make -C ci/ deps
 
 script:
   - echo hello from script

@@ -21,7 +21,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkScrolledWindow">
+              <object class="GtkScrolledWindow" id ="room-config-page-scrolled-window">
                 <property name="visible">True</property>
                 <child>
                   <object class="GtkViewport">

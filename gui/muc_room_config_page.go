@@ -65,12 +65,13 @@ type roomConfigPage struct {
 	focusableFields     []focusable
 	roomConfigComponent *mucRoomConfigComponent
 
-	page                gtki.Overlay     `gtk-widget:"room-config-page-overlay"`
-	header              gtki.Label       `gtk-widget:"room-config-page-header-label"`
-	content             gtki.Box         `gtk-widget:"room-config-page-content"`
-	notificationsArea   gtki.Box         `gtk-widget:"notifications-box"`
-	autojoinContent     gtki.Box         `gtk-widget:"room-config-autojoin-content"`
-	autojoinCheckButton gtki.CheckButton `gtk-widget:"room-config-autojoin"`
+	sw                  gtki.ScrolledWindow `gtk-widget:"room-config-page-scrolled-window"`
+	page                gtki.Overlay        `gtk-widget:"room-config-page-overlay"`
+	header              gtki.Label          `gtk-widget:"room-config-page-header-label"`
+	content             gtki.Box            `gtk-widget:"room-config-page-content"`
+	notificationsArea   gtki.Box            `gtk-widget:"notifications-box"`
+	autojoinContent     gtki.Box            `gtk-widget:"room-config-autojoin-content"`
+	autojoinCheckButton gtki.CheckButton    `gtk-widget:"room-config-autojoin"`
 
 	notifications  *notificationsComponent
 	loadingOverlay *loadingOverlayComponent

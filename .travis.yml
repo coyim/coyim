@@ -41,12 +41,12 @@ before_install:
   - travis_wait 60 brew install libffi
   - travis_wait 60 brew install pkg-config
   - travis_wait 60 brew install atk
-#  - travis_wait 60 brew install gdk-pixbuf
-#  - travis_wait 60 brew install glib
-#  - travis_wait 60 brew install gobject-introspection
-#  - travis_wait 60 brew install gsettings-desktop-schemas
-#  - travis_wait 60 brew install hicolor-icon-theme
-#  - travis_wait 60 brew install libepoxy
+  - travis_wait 60 brew install gdk-pixbuf
+  - travis_wait 60 brew install glib
+  - travis_wait 60 brew install gobject-introspection
+  - travis_wait 60 brew install gsettings-desktop-schemas
+  - travis_wait 60 brew install hicolor-icon-theme
+  - travis_wait 60 brew install libepoxy
 #  - travis_wait 60 brew install pango
 #  - travis_wait 60 brew install gtk+3
 #  - travis_wait 60 brew install adwaita-icon-theme

@@ -47,15 +47,15 @@ before_install:
   - travis_wait 60 brew install gsettings-desktop-schemas
   - travis_wait 60 brew install hicolor-icon-theme
   - travis_wait 60 brew install libepoxy
-#  - travis_wait 60 brew install pango
-#  - travis_wait 60 brew install gtk+3
-#  - travis_wait 60 brew install adwaita-icon-theme
-#  - travis_wait 60 brew install gnome-icon-theme
-#  - travis_wait 60 brew install shared-mime-info
-#  - travis_wait 60 brew install fileicon
-#  - travis_wait 60 brew install gtk-mac-integration
-#  - "export DISPLAY=:99.0"
-#  - npm install --global appdmg
+  - travis_wait 60 brew install adwaita-icon-theme
+  - travis_wait 60 brew install gnome-icon-theme
+  - travis_wait 60 brew install shared-mime-info
+  - travis_wait 60 brew install fileicon
+  - travis_wait 60 brew install pango
+  - travis_wait 60 brew install gtk+3
+  - travis_wait 60 brew install gtk-mac-integration
+  - "export DISPLAY=:99.0"
+  - npm install --global appdmg
 
 install:
   - echo hello from install

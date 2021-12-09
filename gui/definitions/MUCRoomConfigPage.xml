@@ -79,6 +79,7 @@
               <object class="GtkBox" id="room-config-autojoin-content">
                 <property name="no_show_all">True</property>
                 <property name="orientation">vertical</property>
+                <signal name="key-press-event" handler="on_key_press" swapped="no" />
                 <child>
                   <object class="GtkSeparator">
                     <property name="visible">True</property>

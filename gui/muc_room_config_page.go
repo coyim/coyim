@@ -102,6 +102,7 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID mucRoomConfigPageID, paren
 	p.initDefaults(parent)
 	mucStyles.setRoomConfigPageStyle(p.content)
 
+	p.content.SetFocusVAdjustment(p.sw.GetVAdjustment())
 	return p
 }
 

@@ -317,7 +317,9 @@ func (p *roomConfigPage) initSummary() {
 
 func (p *roomConfigPage) initSummaryFields(pageID mucRoomConfigPageID) {
 	lb := newRoomConfigFormFieldLinkButton(pageID, p.roomConfigComponent.setCurrentPage)
-	p.appendFocusableFields(lb.focusWidget())
+	if pageID == roomConfigInformationPageIndex {
+		p.appendFocusableFields(lb.focusWidget())
+	}
 	p.addField(lb)
 
 	if pageID == roomConfigPositionsPageIndex {

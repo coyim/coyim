@@ -51,3 +51,7 @@ func (v *box) GetOrientation() gtki.Orientation {
 func (v *box) SetOrientation(o gtki.Orientation) {
 	v.internal.SetOrientation(UnwrapOrientation(o))
 }
+
+func (v *box) SetFocusVAdjustment(a gtki.Adjustment) {
+	v.internal.SetFocusVAdjustment(UnwrapAdjustment(a))
+}

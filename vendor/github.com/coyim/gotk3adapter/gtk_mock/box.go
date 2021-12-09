@@ -29,3 +29,6 @@ func (*MockBox) SetCenterWidget(gtki.Widget) {
 func (*MockBox) GetCenterWidget() gtki.Widget {
 	return nil
 }
+
+func (*MockBox) SetFocusVAdjustment(a gtki.Adjustment) {
+}

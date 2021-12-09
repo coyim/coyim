@@ -9,6 +9,7 @@ type Box interface {
 	SetChildPacking(Widget, bool, bool, uint, PackType)
 	SetCenterWidget(Widget)
 	GetCenterWidget() Widget
+	SetFocusVAdjustment(Adjustment)
 }
 
 func AssertBox(_ Box) {}

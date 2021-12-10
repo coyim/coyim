@@ -71,7 +71,7 @@ func (f *roomConfigFormFieldListEntry) updateFieldValue() {
 	f.value.SetSelected(f.currentValue())
 }
 
-// isValid is the implementation for hasRoomConfigFormField interface
+// isValid is part of the implementation for the hasRoomConfigFormField interface
 func (f *roomConfigFormFieldListEntry) isValid() bool {
 	v := f.currentValue()
 
@@ -85,7 +85,7 @@ func (f *roomConfigFormFieldListEntry) isValid() bool {
 
 const entryDefaultCursorPosition = -1
 
-// refreshContent is the implementation for hasRoomConfigFormField interface
+// refreshContent is part of the implementation for the hasRoomConfigFormField interface
 func (f *roomConfigFormFieldListEntry) refreshContent() {
 	f.entry.SetPosition(entryDefaultCursorPosition)
 }
@@ -98,7 +98,7 @@ func (f *roomConfigFormFieldListEntry) currentValue() string {
 	return getEntryText(f.entry)
 }
 
-// focusWidget is the implementation for hasRoomConfigFormField interface
+// focusWidget is part of the implementation for the hasRoomConfigFormField interface
 func (f *roomConfigFormFieldListEntry) focusWidget() focusable {
 	return f.entry
 }

@@ -6,6 +6,10 @@ import (
 
 type navigationItemIconName string
 
+func (n navigationItemIconName) String() string {
+	return string(n)
+}
+
 // TODO: All these icon names SHOULD be reviewed.
 // The current icon names are being used in order to test how it looks on differents SO.
 const (

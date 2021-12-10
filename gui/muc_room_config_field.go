@@ -111,7 +111,7 @@ var (
 	errRoomConfigFieldNotSupported = errors.New("room configuration form field not supported")
 )
 
-func getRoomConfigFormUnknownFieldByType(fieldInfo roomConfigFieldTextInfo, fieldTypeValue interface{}, onShowValidationErrors func(), onHideValidationErrors func()) (hasRoomConfigFormField, error) {
+func roomConfigFormUnknownFieldByType(fieldInfo roomConfigFieldTextInfo, fieldTypeValue interface{}, onShowValidationErrors func(), onHideValidationErrors func()) (hasRoomConfigFormField, error) {
 	switch valueHandler := fieldTypeValue.(type) {
 	case *muc.RoomConfigFieldTextValue:
 		return newRoomConfigFormTextField(muc.RoomConfigFieldUnexpected, fieldInfo, valueHandler, onShowValidationErrors, onHideValidationErrors), nil
@@ -128,16 +128,16 @@ func getRoomConfigFormUnknownFieldByType(fieldInfo roomConfigFieldTextInfo, fiel
 	return nil, errRoomConfigFieldNotSupported
 }
 
-func getRoomConfigFormFieldByType(fieldType muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, fieldTypeValue interface{}, onShowValidationErrors func(), onHideValidationErrors func()) (hasRoomConfigFormField, error) {
+func roomConfigFormFieldByType(fieldType muc.RoomConfigFieldType, fieldInfo roomConfigFieldTextInfo, fieldTypeValue interface{}, onShowValidationErrors func(), onHideValidationErrors func()) (hasRoomConfigFormField, error) {
 	switch valueHandler := fieldTypeValue.(type) {
 	case *muc.RoomConfigFieldTextValue:
-		return getRoomConfigFormTextFieldByType(fieldType, valueHandler, onShowValidationErrors, onHideValidationErrors)
+		return roomConfigFormTextFieldByType(fieldType, valueHandler, onShowValidationErrors, onHideValidationErrors)
 	case *muc.RoomConfigFieldTextMultiValue:
 		return newRoomConfigFormTextMulti(fieldType, fieldInfo, valueHandler, onShowValidationErrors, onHideValidationErrors), nil
 	case *muc.RoomConfigFieldBooleanValue:
 		return newRoomConfigFormFieldBoolean(fieldType, fieldInfo, valueHandler, onShowValidationErrors, onHideValidationErrors), nil
 	case *muc.RoomConfigFieldListValue:
-		return getRoomConfigFormListFieldByType(fieldType, valueHandler, onShowValidationErrors, onHideValidationErrors)
+		return roomConfigFormListFieldByType(fieldType, valueHandler, onShowValidationErrors, onHideValidationErrors)
 	case *muc.RoomConfigFieldListMultiValue:
 		return newRoomConfigFieldListMulti(fieldType, fieldInfo, valueHandler, onShowValidationErrors, onHideValidationErrors), nil
 	}
@@ -145,7 +145,7 @@ func getRoomConfigFormFieldByType(fieldType muc.RoomConfigFieldType, fieldInfo r
 	return nil, errRoomConfigFieldNotSupported
 }
 
-func getRoomConfigFormTextFieldByType(ft muc.RoomConfigFieldType, value *muc.RoomConfigFieldTextValue, onShowValidationErrors func(), onHideValidationErrors func()) (hasRoomConfigFormField, error) {
+func roomConfigFormTextFieldByType(ft muc.RoomConfigFieldType, value *muc.RoomConfigFieldTextValue, onShowValidationErrors func(), onHideValidationErrors func()) (hasRoomConfigFormField, error) {
 	switch ft {
 	case muc.RoomConfigFieldDescription:
 		return newRoomConfigFieldDescription(ft, roomConfigFieldsTexts[ft], value, onShowValidationErrors, onHideValidationErrors), nil
@@ -157,7 +157,7 @@ func getRoomConfigFormTextFieldByType(ft muc.RoomConfigFieldType, value *muc.Roo
 	return newRoomConfigFormTextField(ft, roomConfigFieldsTexts[ft], value, onShowValidationErrors, onHideValidationErrors), nil
 }
 
-func getRoomConfigFormListFieldByType(ft muc.RoomConfigFieldType, value *muc.RoomConfigFieldListValue, onShowValidationErrors func(), onHideValidationErrors func()) (hasRoomConfigFormField, error) {
+func roomConfigFormListFieldByType(ft muc.RoomConfigFieldType, value *muc.RoomConfigFieldListValue, onShowValidationErrors func(), onHideValidationErrors func()) (hasRoomConfigFormField, error) {
 	if ft == muc.RoomConfigFieldMaxOccupantsNumber || ft == muc.RoomConfigFieldMaxHistoryFetch {
 		return newRoomConfigFormFieldListEntry(ft, roomConfigFieldsTexts[ft], value, onShowValidationErrors, onHideValidationErrors), nil
 	}

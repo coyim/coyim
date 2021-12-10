@@ -47,7 +47,7 @@ func (rcn *roomConfigAssistantNavigation) newRoomConfigAssistantNavigationItem(p
 	panicOnDevError(b.bindObjects(itm))
 
 	itm.label.SetText(page.title)
-	itm.icon.SetFromIconName(string(assistantNavigationIconByPage[page.pageID]), gtki.ICON_SIZE_MENU)
+	itm.icon.SetFromIconName(assistantNavigationIconByPage[page.pageID].String(), gtki.ICON_SIZE_MENU)
 
 	return itm
 }

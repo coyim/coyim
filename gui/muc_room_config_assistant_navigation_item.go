@@ -10,15 +10,13 @@ func (n navigationItemIconName) String() string {
 	return string(n)
 }
 
-// TODO: All these icon names SHOULD be reviewed.
-// The current icon names are being used in order to test how it looks on differents SO.
 const (
-	basicInformationIconName navigationItemIconName = "goa-account-msn-symbolic"
-	accessIconName           navigationItemIconName = "dialog-password-symbolic"
-	permissionsIconName      navigationItemIconName = "system-switch-user-symbolic"
-	positionsIconName        navigationItemIconName = "contact-new-symbolic"
-	otherIconName            navigationItemIconName = "system-run-symbolic"
-	sumaryIconName           navigationItemIconName = "view-list-bullet-symbolic"
+	basicInformationIconName navigationItemIconName = "room_config_basic_information"
+	accessIconName           navigationItemIconName = "room_config_access"
+	permissionsIconName      navigationItemIconName = "room_config_permissions"
+	positionsIconName        navigationItemIconName = "room_config_positions"
+	otherIconName            navigationItemIconName = "room_config_others"
+	sumaryIconName           navigationItemIconName = "room_config_summary"
 )
 
 var assistantNavigationIconByPage = map[mucRoomConfigPageID]navigationItemIconName{
@@ -47,7 +45,7 @@ func (rcn *roomConfigAssistantNavigation) newRoomConfigAssistantNavigationItem(p
 	panicOnDevError(b.bindObjects(itm))
 
 	itm.label.SetText(page.title)
-	itm.icon.SetFromIconName(assistantNavigationIconByPage[page.pageID].String(), gtki.ICON_SIZE_MENU)
+	itm.icon.SetFromPixbuf(getMUCIconPixbuf(assistantNavigationIconByPage[page.pageID].String()))
 
 	return itm
 }

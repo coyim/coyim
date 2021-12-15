@@ -51,6 +51,13 @@ func (u *gtkUI) isDarkThemeVariant() bool {
 		themeVariant = "dark"
 		return true
 	}
+
+	// TODO: we should do two things here
+	// - check the current theme name, and see if it ends with -dark or _dark - not just splitting on the ":" as above
+	// - create an invisible frame and check the background and see if it is dark by default
+	// - Once we have that, we should also make an icon-set, not just a color-set to keep track of all the
+	// variates.
+
 	return false
 }
 

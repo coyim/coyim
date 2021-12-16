@@ -8,6 +8,7 @@ import (
 	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
+	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
 	log "github.com/sirupsen/logrus"
 )
@@ -132,6 +133,19 @@ func (rc *roomConfigAssistant) initDefaults(u *gtkUI) {
 	u.connectShortcutsMucConfigRoomWindow(rc.assistant, func(_ gtki.Window) {
 		rc.onCancelClicked()
 	})
+
+	rc.defineIconSet()
+}
+
+func (rc *roomConfigAssistant) defineIconSet() {
+	styleContext, _ := rc.assistant.GetStyleContext()
+	bc, _ := styleContext.GetProperty2("background-color", gtki.STATE_FLAG_NORMAL)
+	rgb := rgbFrom(bc.(gdki.Rgba).String())
+
+	assistantIconSet = assistantNavigationIconByPage
+	if rgb.isDark() {
+		assistantIconSet = assistantNavigationDarkIconByPage
+	}
 }
 
 func (rc *roomConfigAssistant) initSidebarNavigation() {

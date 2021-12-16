@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"strings"
 )
 
 const (
@@ -292,4 +293,10 @@ func colorFormat(c rgb, alpha float64) string {
 		return fmt.Sprintf("rgb(%d, %d, %d)", c.red, c.green, c.blue)
 	}
 	return fmt.Sprintf("rgba(%d, %d, %d, %f)", c.red, c.green, c.blue, alpha)
+}
+
+func rgbFrom(rgbaInput string) rgb {
+	var r, g, b uint8
+	fmt.Sscanf(strings.ReplaceAll(rgbaInput, " ", ""), "rgb(%d,%d,%d, %f)", &r, &g, &b)
+	return rgb{r, g, b}
 }

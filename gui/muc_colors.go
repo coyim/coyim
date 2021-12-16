@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"math"
 	"strings"
 )
 
@@ -282,6 +283,8 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 	}
 }
 
+const lightnessThreshold float64 = 80
+
 type rgb struct {
 	red   uint8
 	green uint8
@@ -299,4 +302,17 @@ func rgbFrom(rgbaInput string) rgb {
 	var r, g, b uint8
 	fmt.Sscanf(strings.ReplaceAll(rgbaInput, " ", ""), "rgb(%d,%d,%d, %f)", &r, &g, &b)
 	return rgb{r, g, b}
+}
+
+func (r *rgb) isDark() bool {
+	return r.lightness() < lightnessThreshold
+}
+
+func (r *rgb) lightness() float64 {
+	max := math.Max(math.Max(float64(r.red), float64(r.green)), float64(r.blue))
+	min := math.Min(math.Min(float64(r.red), float64(r.green)), float64(r.blue))
+
+	l := (max + min) / 2
+
+	return (l * 100) / 255
 }

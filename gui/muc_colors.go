@@ -314,5 +314,5 @@ func (r *rgb) lightness() float64 {
 
 	l := (max + min) / 2
 
-	return (l * 100) / 255
+	return (l * 100) / 256
 }

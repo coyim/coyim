@@ -284,7 +284,7 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 	}
 }
 
-const lightnessThreshold float64 = 80
+const lightnessThreshold float64 = 0.8
 
 type rgb struct {
 	red   float64
@@ -313,10 +313,9 @@ func (r *rgb) isDark() bool {
 }
 
 func (r *rgb) lightness() float64 {
-	max := math.Max(math.Max(float64(r.red), float64(r.green)), float64(r.blue))
-	min := math.Min(math.Min(float64(r.red), float64(r.green)), float64(r.blue))
+	// We are using the formula found in https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB
+	max := math.Max(math.Max(r.red, r.green), r.blue)
+	min := math.Min(math.Min(r.red, r.green), r.blue)
 
-	l := (max + min) / 2
-
-	return (l * 100) / 256
+	return (max + min) / 2
 }

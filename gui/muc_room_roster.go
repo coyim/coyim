@@ -301,8 +301,8 @@ func (r *roomViewRoster) drawOccupantsByRole(role string, occupants []*muc.Occup
 	modelSetValues(r.model, iter, map[int]interface{}{
 		roomViewRosterTextDisplayIndex:                   roleHeader,
 		roomViewRosterFontWeightIndex:                    roomViewRosterFontWeightBold,
-		roomViewRosterBackgroundIndex:                    cs.rosterGroupBackground,
-		roomViewRosterForegroundIndex:                    cs.rosterGroupForeground,
+		roomViewRosterBackgroundIndex:                    cs.rosterGroupBackground.toCSS(),
+		roomViewRosterForegroundIndex:                    cs.rosterGroupForeground.toCSS(),
 		roomViewRosterExpanderIconIndex:                  roomViewRosterGroupCollapseIconName,
 		roomViewRosterExpanderVisibilityIndex:            true,
 		roomViewRosterOccupantImageVisibilityIndex:       false,

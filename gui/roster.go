@@ -401,7 +401,7 @@ func decideStatusFor(p *rosters.Peer) string {
 	return "available"
 }
 
-func decideColorFor(cs colorSet, p *rosters.Peer) string {
+func decideColorFor(cs colorSet, p *rosters.Peer) hexColor {
 	if !p.IsOnline() {
 		return cs.rosterPeerOfflineForeground
 	}
@@ -437,8 +437,8 @@ func (r *roster) addItem(item *rosters.Peer, parentIter gtki.TreeIter, indent st
 		item.Jid.String(),
 		fmt.Sprintf("%s %s%s", indent, item.NameForPresentation(), potentialExtra),
 		item.BelongsTo,
-		decideColorFor(cs, item),
-		cs.rosterPeerBackground,
+		decideColorFor(cs, item).toHex(),
+		cs.rosterPeerBackground.toHex(),
 		nil,
 		createTooltipFor(item),
 	)
@@ -544,7 +544,7 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accoun
 		_ = r.model.SetValue(pi, indexParentJid, groupID)
 		_ = r.model.SetValue(pi, indexRowType, "group")
 		_ = r.model.SetValue(pi, indexWeight, 500)
-		_ = r.model.SetValue(pi, indexBackgroundColor, r.ui.currentColorSet().rosterGroupBackground)
+		_ = r.model.SetValue(pi, indexBackgroundColor, r.ui.currentColorSet().rosterGroupBackground.toHex())
 	}
 
 	for _, item := range r.sortedPeers(g.UnsortedPeers()) {
@@ -594,7 +594,7 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 	if account.session.IsDisconnected() {
 		bgcolor = cs.rosterAccountOfflineBackground
 	}
-	_ = r.model.SetValue(parentIter, indexBackgroundColor, bgcolor)
+	_ = r.model.SetValue(parentIter, indexBackgroundColor, bgcolor.toHex())
 
 	parentPath, _ := r.model.GetPath(parentIter)
 	shouldCollapse, ok := r.isCollapsed[collapseTransform(parentName)]

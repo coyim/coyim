@@ -179,9 +179,9 @@ func (u *gtkUI) getTags() *tags {
 	return u.tags
 }
 
-func (t *tags) addTextTag(gt gtki.Gtk, name, foreground string) {
+func (t *tags) addTextTag(gt gtki.Gtk, name string, foreground hexColor) {
 	tt, _ := gt.TextTagNew(name)
-	_ = tt.SetProperty("foreground", foreground)
+	_ = tt.SetProperty("foreground", foreground.toHex())
 	t.table.Add(tt)
 }
 

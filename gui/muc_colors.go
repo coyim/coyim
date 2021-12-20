@@ -3,6 +3,8 @@ package gui
 import (
 	"fmt"
 	"math"
+	"strconv"
+	"strings"
 )
 
 var (
@@ -313,6 +315,35 @@ func (v colorValue) toScaledValue() uint8 {
 	return uint8(v * 255)
 }
 
+func colorValueFromHex(s string) colorValue {
+	value, err := strconv.ParseUint(s, 16, 8)
+	if err != nil {
+		return colorValue(0)
+	}
+	return createColorValueFrom(uint8(value))
+}
+
+// rgbFromHex will return an rgb object from either #xxxxxx or #xxx representation
+// it returns nil if parsing fails
+func rgbFromHex(spec string) *rgb {
+	s := strings.TrimPrefix(spec, "#")
+	switch len(s) {
+	case 3:
+		return &rgb{
+			red:   colorValueFromHex(s[0:1]),
+			green: colorValueFromHex(s[1:2]),
+			blue:  colorValueFromHex(s[2:3]),
+		}
+	case 6:
+		return &rgb{
+			red:   colorValueFromHex(s[0:2]),
+			green: colorValueFromHex(s[2:4]),
+			blue:  colorValueFromHex(s[4:6]),
+		}
+	}
+	return nil
+}
+
 func rgbFrom(r, g, b uint8) *rgb {
 	return &rgb{
 		red:   createColorValueFrom(r),
@@ -354,6 +385,15 @@ type cssColor interface {
 	toCSS() string
 }
 
+type hexColor interface {
+	toHex() string
+}
+
+type color interface {
+	cssColor
+	hexColor
+}
+
 func (r *rgba) String() string {
 	return r.String()
 }
@@ -365,6 +405,10 @@ func (r *rgba) toCSS() string {
 		r.blue.toScaledValue(),
 		float64(r.alpha),
 	)
+}
+
+func (r *rgb) toHex() string {
+	return fmt.Sprintf("#%02x%02x%02x", r.red.toScaledValue(), r.green.toScaledValue(), r.blue.toScaledValue())
 }
 
 func (r *rgb) String() string {

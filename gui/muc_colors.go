@@ -286,16 +286,21 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 const lightnessThreshold float64 = 80
 
 type rgb struct {
-	red   uint8
-	green uint8
-	blue  uint8
+	red   float64
+	green float64
+	blue  float64
+}
+
+func (r *rgb) colorsAsRgb24() (uint8, uint8, uint8) {
+	return uint8(r.red * 255), uint8(r.green * 255), uint8(r.blue * 255)
 }
 
 func colorFormat(c rgb, alpha float64) string {
+	r, g, b := c.colorsAsRgb24()
 	if alpha == 1 {
-		return fmt.Sprintf("rgb(%d, %d, %d)", c.red, c.green, c.blue)
+		return fmt.Sprintf("rgb(%d, %d, %d)", r, g, b)
 	}
-	return fmt.Sprintf("rgba(%d, %d, %d, %f)", c.red, c.green, c.blue, alpha)
+	return fmt.Sprintf("rgba(%d, %d, %d, %f)", r, g, b, alpha)
 }
 
 func rgbFrom(rgbaInput string) rgb {

@@ -30,3 +30,15 @@ func UnwrapRgba(v gdki.Rgba) *gdk.RGBA {
 func (v *rgba) String() string {
 	return UnwrapRgba(v).String()
 }
+
+func (v *rgba) GetRed() float64 {
+	return UnwrapRgba(v).GetRed()
+}
+
+func (v *rgba) GetGreen() float64 {
+	return UnwrapRgba(v).GetGreen()
+}
+
+func (v *rgba) GetBlue() float64 {
+	return UnwrapRgba(v).GetBlue()
+}

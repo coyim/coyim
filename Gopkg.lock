@@ -35,7 +35,7 @@
 
 [[projects]]
   branch = "main"
-  digest = "1:b4cc56a1cb89f01cc5b0460d8446181456f401f3a413588c476064c6d2dc6690"
+  digest = "1:0f11096329056f8ce72204362e86ed5319c0c311508432e631e67208e3b6abba"
   name = "github.com/coyim/gotk3adapter"
   packages = [
     "gdk_mock",
@@ -52,7 +52,7 @@
     "pangoi",
   ]
   pruneopts = "UT"
-  revision = "bade470eb801c58bc11e42a564ac178c73eca1d2"
+  revision = "b901e437150fe79ca95b3d356554806f3e66ce8f"
 
 [[projects]]
   branch = "main"

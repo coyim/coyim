@@ -5,100 +5,100 @@ import (
 	"math"
 )
 
-const (
-	colorNone                       = "none"
-	colorTransparent                = "transparent"
-	colorThemeBase                  = "@theme_base_color"
-	colorThemeBackground            = "@theme_bg_color"
-	colorThemeForeground            = "@theme_fg_color"
-	colorThemeInsensitiveBackground = "@insensitive_bg_color"
+var (
+	colorNone                       = cssColorReferenceFrom("none")
+	colorTransparent                = cssColorReferenceFrom("transparent")
+	colorThemeBase                  = cssColorReferenceFrom("@theme_base_color")
+	colorThemeBackground            = cssColorReferenceFrom("@theme_bg_color")
+	colorThemeForeground            = cssColorReferenceFrom("@theme_fg_color")
+	colorThemeInsensitiveBackground = cssColorReferenceFrom("@insensitive_bg_color")
 )
 
-var colorThemeInsensitiveForeground = colorFormat(rgb{131, 119, 119}, 1)
+var colorThemeInsensitiveForeground = rgbFrom(131, 119, 119)
 
 type mucColorSet struct {
-	warningForeground                      string
-	warningBackground                      string
-	someoneJoinedForeground                string
-	someoneLeftForeground                  string
-	timestampForeground                    string
-	nicknameForeground                     string
-	subjectForeground                      string
-	infoMessageForeground                  string
-	messageForeground                      string
-	errorForeground                        string
-	configurationForeground                string
-	roomMessagesBackground                 string
-	roomMessagesBoxShadow                  string
-	roomNameDisabledForeground             string
-	roomSubjectForeground                  string
-	roomOverlaySolidBackground             string
-	roomOverlayContentSolidBackground      string
-	roomOverlayContentBackground           string
-	roomOverlayBackground                  string
-	roomOverlayContentForeground           string
-	roomOverlayContentBoxShadow            string
-	roomWarningsDialogBackground           string
-	roomWarningsDialogDecorationBackground string
-	roomWarningsDialogDecorationShadow     string
-	roomWarningsDialogHeaderBackground     string
-	roomWarningsDialogContentBackground    string
-	roomWarningsCurrentInfoForeground      string
-	roomNotificationsBackground            string
-	rosterGroupBackground                  string
-	rosterGroupForeground                  string
-	rosterOccupantRoleForeground           string
-	occupantStatusAvailableForeground      string
-	occupantStatusAvailableBackground      string
-	occupantStatusAvailableBorder          string
-	occupantStatusNotAvailableForeground   string
-	occupantStatusNotAvailableBackground   string
-	occupantStatusNotAvailableBorder       string
-	occupantStatusAwayForeground           string
-	occupantStatusAwayBackground           string
-	occupantStatusAwayBorder               string
-	occupantStatusBusyForeground           string
-	occupantStatusBusyBackground           string
-	occupantStatusBusyBorder               string
-	occupantStatusFreeForChatForeground    string
-	occupantStatusFreeForChatBackground    string
-	occupantStatusFreeForChatBorder        string
-	occupantStatusExtendedAwayForeground   string
-	occupantStatusExtendedAwayBackground   string
-	occupantStatusExtendedAwayBorder       string
-	infoBarDefaultBorderColor              string
-	infoBarTypeInfoBackgroundStart         string
-	infoBarTypeInfoBackgroundStop          string
-	infoBarTypeInfoTitle                   string
-	infoBarTypeInfoTime                    string
-	infoBarTypeWarningBackgroundStart      string
-	infoBarTypeWarningBackgroundStop       string
-	infoBarTypeWarningTitle                string
-	infoBarTypeWarningTime                 string
-	infoBarTypeQuestionBackgroundStart     string
-	infoBarTypeQuestionBackgroundStop      string
-	infoBarTypeQuestionTitle               string
-	infoBarTypeQuestionTime                string
-	infoBarTypeErrorBackgroundStart        string
-	infoBarTypeErrorBackgroundStop         string
-	infoBarTypeErrorTitle                  string
-	infoBarTypeErrorTime                   string
-	infoBarTypeOtherBackgroundStart        string
-	infoBarTypeOtherBackgroundStop         string
-	infoBarTypeOtherTitle                  string
-	infoBarTypeOtherTime                   string
-	infoBarButtonBackground                string
-	infoBarButtonForeground                string
-	infoBarButtonHoverBackground           string
-	infoBarButtonHoverForeground           string
-	infoBarButtonActiveBackground          string
-	infoBarButtonActiveForeground          string
-	entryErrorBackground                   string
-	entryErrorBorderShadow                 string
-	entryErrorBorder                       string
-	entryErrorLabel                        string
-	occupantLostConnection                 string
-	occupantRestablishConnection           string
+	warningForeground                      cssColor
+	warningBackground                      cssColor
+	someoneJoinedForeground                cssColor
+	someoneLeftForeground                  cssColor
+	timestampForeground                    cssColor
+	nicknameForeground                     cssColor
+	subjectForeground                      cssColor
+	infoMessageForeground                  cssColor
+	messageForeground                      cssColor
+	errorForeground                        cssColor
+	configurationForeground                cssColor
+	roomMessagesBackground                 cssColor
+	roomMessagesBoxShadow                  cssColor
+	roomNameDisabledForeground             cssColor
+	roomSubjectForeground                  cssColor
+	roomOverlaySolidBackground             cssColor
+	roomOverlayContentSolidBackground      cssColor
+	roomOverlayContentBackground           cssColor
+	roomOverlayBackground                  cssColor
+	roomOverlayContentForeground           cssColor
+	roomOverlayContentBoxShadow            cssColor
+	roomWarningsDialogBackground           cssColor
+	roomWarningsDialogDecorationBackground cssColor
+	roomWarningsDialogDecorationShadow     cssColor
+	roomWarningsDialogHeaderBackground     cssColor
+	roomWarningsDialogContentBackground    cssColor
+	roomWarningsCurrentInfoForeground      cssColor
+	roomNotificationsBackground            cssColor
+	rosterGroupBackground                  cssColor
+	rosterGroupForeground                  cssColor
+	rosterOccupantRoleForeground           cssColor
+	occupantStatusAvailableForeground      cssColor
+	occupantStatusAvailableBackground      cssColor
+	occupantStatusAvailableBorder          cssColor
+	occupantStatusNotAvailableForeground   cssColor
+	occupantStatusNotAvailableBackground   cssColor
+	occupantStatusNotAvailableBorder       cssColor
+	occupantStatusAwayForeground           cssColor
+	occupantStatusAwayBackground           cssColor
+	occupantStatusAwayBorder               cssColor
+	occupantStatusBusyForeground           cssColor
+	occupantStatusBusyBackground           cssColor
+	occupantStatusBusyBorder               cssColor
+	occupantStatusFreeForChatForeground    cssColor
+	occupantStatusFreeForChatBackground    cssColor
+	occupantStatusFreeForChatBorder        cssColor
+	occupantStatusExtendedAwayForeground   cssColor
+	occupantStatusExtendedAwayBackground   cssColor
+	occupantStatusExtendedAwayBorder       cssColor
+	infoBarDefaultBorderColor              cssColor
+	infoBarTypeInfoBackgroundStart         cssColor
+	infoBarTypeInfoBackgroundStop          cssColor
+	infoBarTypeInfoTitle                   cssColor
+	infoBarTypeInfoTime                    cssColor
+	infoBarTypeWarningBackgroundStart      cssColor
+	infoBarTypeWarningBackgroundStop       cssColor
+	infoBarTypeWarningTitle                cssColor
+	infoBarTypeWarningTime                 cssColor
+	infoBarTypeQuestionBackgroundStart     cssColor
+	infoBarTypeQuestionBackgroundStop      cssColor
+	infoBarTypeQuestionTitle               cssColor
+	infoBarTypeQuestionTime                cssColor
+	infoBarTypeErrorBackgroundStart        cssColor
+	infoBarTypeErrorBackgroundStop         cssColor
+	infoBarTypeErrorTitle                  cssColor
+	infoBarTypeErrorTime                   cssColor
+	infoBarTypeOtherBackgroundStart        cssColor
+	infoBarTypeOtherBackgroundStop         cssColor
+	infoBarTypeOtherTitle                  cssColor
+	infoBarTypeOtherTime                   cssColor
+	infoBarButtonBackground                cssColor
+	infoBarButtonForeground                cssColor
+	infoBarButtonHoverBackground           cssColor
+	infoBarButtonHoverForeground           cssColor
+	infoBarButtonActiveBackground          cssColor
+	infoBarButtonActiveForeground          cssColor
+	entryErrorBackground                   cssColor
+	entryErrorBorderShadow                 cssColor
+	entryErrorBorder                       cssColor
+	entryErrorLabel                        cssColor
+	occupantLostConnection                 cssColor
+	occupantRestablishConnection           cssColor
 }
 
 func (u *gtkUI) currentMUCColorSet() mucColorSet {
@@ -110,175 +110,175 @@ func (u *gtkUI) currentMUCColorSet() mucColorSet {
 
 func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 	return mucColorSet{
-		warningForeground:                      colorFormat(rgbFrom(194, 23, 29), 1),
-		warningBackground:                      colorFormat(rgbFrom(254, 202, 202), 1),
-		errorForeground:                        colorFormat(rgbFrom(163, 7, 7), 1),
-		someoneJoinedForeground:                colorFormat(rgbFrom(41, 115, 22), 1),
-		someoneLeftForeground:                  colorFormat(rgbFrom(115, 22, 41), 1),
+		warningForeground:                      rgbFrom(194, 23, 29),
+		warningBackground:                      rgbFrom(254, 202, 202),
+		errorForeground:                        rgbFrom(163, 7, 7),
+		someoneJoinedForeground:                rgbFrom(41, 115, 22),
+		someoneLeftForeground:                  rgbFrom(115, 22, 41),
 		timestampForeground:                    colorThemeInsensitiveForeground,
-		nicknameForeground:                     colorFormat(rgbFrom(57, 91, 163), 1),
-		subjectForeground:                      colorFormat(rgbFrom(0, 0, 128), 1),
-		infoMessageForeground:                  colorFormat(rgbFrom(57, 91, 163), 1),
-		messageForeground:                      colorFormat(rgbFrom(0, 0, 0), 1),
-		configurationForeground:                colorFormat(rgbFrom(154, 4, 191), 1),
+		nicknameForeground:                     rgbFrom(57, 91, 163),
+		subjectForeground:                      rgbFrom(0, 0, 128),
+		infoMessageForeground:                  rgbFrom(57, 91, 163),
+		messageForeground:                      rgbFrom(0, 0, 0),
+		configurationForeground:                rgbFrom(154, 4, 191),
 		roomMessagesBackground:                 colorThemeBase,
-		roomMessagesBoxShadow:                  colorFormat(rgbFrom(0, 0, 0), 0.35),
+		roomMessagesBoxShadow:                  rgbaFrom(0, 0, 0, 0.35),
 		roomNameDisabledForeground:             colorThemeInsensitiveForeground,
 		roomSubjectForeground:                  colorThemeInsensitiveForeground,
 		roomOverlaySolidBackground:             colorThemeBackground,
 		roomOverlayContentSolidBackground:      colorTransparent,
 		roomOverlayContentBackground:           colorThemeBackground,
-		roomOverlayBackground:                  colorFormat(rgbFrom(0, 0, 0), 0.5),
+		roomOverlayBackground:                  rgbaFrom(0, 0, 0, 0.5),
 		roomOverlayContentForeground:           colorThemeForeground,
-		roomOverlayContentBoxShadow:            colorFormat(rgbFrom(0, 0, 0), 0.5),
+		roomOverlayContentBoxShadow:            rgbaFrom(0, 0, 0, 0.5),
 		roomWarningsDialogBackground:           colorNone,
 		roomWarningsDialogDecorationBackground: colorThemeBackground,
-		roomWarningsDialogDecorationShadow:     colorFormat(rgbFrom(0, 0, 0), 0.15),
+		roomWarningsDialogDecorationShadow:     rgbaFrom(0, 0, 0, 0.15),
 		roomWarningsDialogHeaderBackground:     colorNone,
 		roomWarningsDialogContentBackground:    colorNone,
 		roomWarningsCurrentInfoForeground:      colorThemeInsensitiveForeground,
 		roomNotificationsBackground:            colorThemeBackground,
-		rosterGroupBackground:                  colorFormat(rgbFrom(245, 245, 244), 1),
-		rosterGroupForeground:                  colorFormat(rgbFrom(28, 25, 23), 1),
-		rosterOccupantRoleForeground:           colorFormat(rgbFrom(168, 162, 158), 1),
-		occupantStatusAvailableForeground:      colorFormat(rgbFrom(22, 101, 52), 1),
-		occupantStatusAvailableBackground:      colorFormat(rgbFrom(240, 253, 244), 1),
-		occupantStatusAvailableBorder:          colorFormat(rgbFrom(22, 163, 74), 1),
-		occupantStatusNotAvailableForeground:   colorFormat(rgbFrom(30, 41, 59), 1),
-		occupantStatusNotAvailableBackground:   colorFormat(rgbFrom(248, 250, 252), 1),
-		occupantStatusNotAvailableBorder:       colorFormat(rgbFrom(71, 85, 105), 1),
-		occupantStatusAwayForeground:           colorFormat(rgbFrom(154, 52, 18), 1),
-		occupantStatusAwayBackground:           colorFormat(rgbFrom(255, 247, 237), 1),
-		occupantStatusAwayBorder:               colorFormat(rgbFrom(234, 88, 12), 1),
-		occupantStatusBusyForeground:           colorFormat(rgbFrom(159, 18, 57), 1),
-		occupantStatusBusyBackground:           colorFormat(rgbFrom(255, 241, 242), 1),
-		occupantStatusBusyBorder:               colorFormat(rgbFrom(190, 18, 60), 1),
-		occupantStatusFreeForChatForeground:    colorFormat(rgbFrom(30, 64, 175), 1),
-		occupantStatusFreeForChatBackground:    colorFormat(rgbFrom(239, 246, 255), 1),
-		occupantStatusFreeForChatBorder:        colorFormat(rgbFrom(29, 78, 216), 1),
-		occupantStatusExtendedAwayForeground:   colorFormat(rgbFrom(146, 64, 14), 1),
-		occupantStatusExtendedAwayBackground:   colorFormat(rgbFrom(255, 251, 235), 1),
-		occupantStatusExtendedAwayBorder:       colorFormat(rgbFrom(217, 119, 6), 1),
+		rosterGroupBackground:                  rgbFrom(245, 245, 244),
+		rosterGroupForeground:                  rgbFrom(28, 25, 23),
+		rosterOccupantRoleForeground:           rgbFrom(168, 162, 158),
+		occupantStatusAvailableForeground:      rgbFrom(22, 101, 52),
+		occupantStatusAvailableBackground:      rgbFrom(240, 253, 244),
+		occupantStatusAvailableBorder:          rgbFrom(22, 163, 74),
+		occupantStatusNotAvailableForeground:   rgbFrom(30, 41, 59),
+		occupantStatusNotAvailableBackground:   rgbFrom(248, 250, 252),
+		occupantStatusNotAvailableBorder:       rgbFrom(71, 85, 105),
+		occupantStatusAwayForeground:           rgbFrom(154, 52, 18),
+		occupantStatusAwayBackground:           rgbFrom(255, 247, 237),
+		occupantStatusAwayBorder:               rgbFrom(234, 88, 12),
+		occupantStatusBusyForeground:           rgbFrom(159, 18, 57),
+		occupantStatusBusyBackground:           rgbFrom(255, 241, 242),
+		occupantStatusBusyBorder:               rgbFrom(190, 18, 60),
+		occupantStatusFreeForChatForeground:    rgbFrom(30, 64, 175),
+		occupantStatusFreeForChatBackground:    rgbFrom(239, 246, 255),
+		occupantStatusFreeForChatBorder:        rgbFrom(29, 78, 216),
+		occupantStatusExtendedAwayForeground:   rgbFrom(146, 64, 14),
+		occupantStatusExtendedAwayBackground:   rgbFrom(255, 251, 235),
+		occupantStatusExtendedAwayBorder:       rgbFrom(217, 119, 6),
 		infoBarDefaultBorderColor:              colorThemeBackground,
-		infoBarTypeInfoBackgroundStart:         colorFormat(rgbFrom(63, 98, 18), 1),
-		infoBarTypeInfoBackgroundStop:          colorFormat(rgbFrom(77, 124, 15), 1),
-		infoBarTypeInfoTitle:                   colorFormat(rgbFrom(236, 254, 255), 1),
-		infoBarTypeInfoTime:                    colorFormat(rgbFrom(236, 254, 255), 0.5),
-		infoBarTypeWarningBackgroundStart:      colorFormat(rgbFrom(195, 149, 7), 1),
-		infoBarTypeWarningBackgroundStop:       colorFormat(rgbFrom(222, 173, 20), 1),
-		infoBarTypeWarningTitle:                colorFormat(rgbFrom(255, 247, 237), 1),
-		infoBarTypeWarningTime:                 colorFormat(rgbFrom(255, 247, 237), 0.5),
-		infoBarTypeQuestionBackgroundStart:     colorFormat(rgbFrom(234, 88, 12), 1),
-		infoBarTypeQuestionBackgroundStop:      colorFormat(rgbFrom(249, 115, 22), 1),
-		infoBarTypeQuestionTitle:               colorFormat(rgbFrom(254, 252, 232), 1),
-		infoBarTypeQuestionTime:                colorFormat(rgbFrom(254, 252, 232), 0.5),
-		infoBarTypeErrorBackgroundStart:        colorFormat(rgbFrom(185, 28, 28), 1),
-		infoBarTypeErrorBackgroundStop:         colorFormat(rgbFrom(203, 35, 35), 1),
-		infoBarTypeErrorTitle:                  colorFormat(rgbFrom(255, 241, 242), 1),
-		infoBarTypeErrorTime:                   colorFormat(rgbFrom(255, 241, 242), 0.5),
-		infoBarTypeOtherBackgroundStart:        colorFormat(rgbFrom(7, 89, 133), 1),
-		infoBarTypeOtherBackgroundStop:         colorFormat(rgbFrom(3, 105, 161), 1),
-		infoBarTypeOtherTitle:                  colorFormat(rgbFrom(240, 253, 250), 1),
-		infoBarTypeOtherTime:                   colorFormat(rgbFrom(240, 253, 250), 0.5),
-		infoBarButtonBackground:                colorFormat(rgbFrom(0, 0, 0), 0.25),
-		infoBarButtonForeground:                colorFormat(rgbFrom(255, 255, 255), 1),
-		infoBarButtonHoverBackground:           colorFormat(rgbFrom(0, 0, 0), 0.35),
-		infoBarButtonHoverForeground:           colorFormat(rgbFrom(255, 255, 255), 1),
-		infoBarButtonActiveBackground:          colorFormat(rgbFrom(0, 0, 0), 0.45),
-		infoBarButtonActiveForeground:          colorFormat(rgbFrom(255, 255, 255), 1),
-		entryErrorBackground:                   colorFormat(rgbFrom(255, 245, 246), 1),
-		entryErrorBorderShadow:                 colorFormat(rgbFrom(255, 127, 80), 1),
-		entryErrorBorder:                       colorFormat(rgbFrom(228, 70, 53), 1),
-		entryErrorLabel:                        colorFormat(rgbFrom(228, 70, 53), 1),
-		occupantLostConnection:                 colorFormat(rgbFrom(115, 22, 41), 1),
-		occupantRestablishConnection:           colorFormat(rgbFrom(41, 115, 22), 1),
+		infoBarTypeInfoBackgroundStart:         rgbFrom(63, 98, 18),
+		infoBarTypeInfoBackgroundStop:          rgbFrom(77, 124, 15),
+		infoBarTypeInfoTitle:                   rgbFrom(236, 254, 255),
+		infoBarTypeInfoTime:                    rgbaFrom(236, 254, 255, 0.5),
+		infoBarTypeWarningBackgroundStart:      rgbFrom(195, 149, 7),
+		infoBarTypeWarningBackgroundStop:       rgbFrom(222, 173, 20),
+		infoBarTypeWarningTitle:                rgbFrom(255, 247, 237),
+		infoBarTypeWarningTime:                 rgbaFrom(255, 247, 237, 0.5),
+		infoBarTypeQuestionBackgroundStart:     rgbFrom(234, 88, 12),
+		infoBarTypeQuestionBackgroundStop:      rgbFrom(249, 115, 22),
+		infoBarTypeQuestionTitle:               rgbFrom(254, 252, 232),
+		infoBarTypeQuestionTime:                rgbaFrom(254, 252, 232, 0.5),
+		infoBarTypeErrorBackgroundStart:        rgbFrom(185, 28, 28),
+		infoBarTypeErrorBackgroundStop:         rgbFrom(203, 35, 35),
+		infoBarTypeErrorTitle:                  rgbFrom(255, 241, 242),
+		infoBarTypeErrorTime:                   rgbaFrom(255, 241, 242, 0.5),
+		infoBarTypeOtherBackgroundStart:        rgbFrom(7, 89, 133),
+		infoBarTypeOtherBackgroundStop:         rgbFrom(3, 105, 161),
+		infoBarTypeOtherTitle:                  rgbFrom(240, 253, 250),
+		infoBarTypeOtherTime:                   rgbaFrom(240, 253, 250, 0.5),
+		infoBarButtonBackground:                rgbaFrom(0, 0, 0, 0.25),
+		infoBarButtonForeground:                rgbFrom(255, 255, 255),
+		infoBarButtonHoverBackground:           rgbaFrom(0, 0, 0, 0.35),
+		infoBarButtonHoverForeground:           rgbFrom(255, 255, 255),
+		infoBarButtonActiveBackground:          rgbaFrom(0, 0, 0, 0.45),
+		infoBarButtonActiveForeground:          rgbFrom(255, 255, 255),
+		entryErrorBackground:                   rgbFrom(255, 245, 246),
+		entryErrorBorderShadow:                 rgbFrom(255, 127, 80),
+		entryErrorBorder:                       rgbFrom(228, 70, 53),
+		entryErrorLabel:                        rgbFrom(228, 70, 53),
+		occupantLostConnection:                 rgbFrom(115, 22, 41),
+		occupantRestablishConnection:           rgbFrom(41, 115, 22),
 	}
 }
 
 func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 	return mucColorSet{
-		warningForeground:                      colorFormat(rgbFrom(194, 23, 29), 1),
-		warningBackground:                      colorFormat(rgbFrom(254, 202, 202), 1),
-		errorForeground:                        colorFormat(rgbFrom(209, 104, 96), 1),
-		someoneJoinedForeground:                colorFormat(rgbFrom(41, 115, 22), 1),
-		someoneLeftForeground:                  colorFormat(rgbFrom(115, 22, 41), 1),
+		warningForeground:                      rgbFrom(194, 23, 29),
+		warningBackground:                      rgbFrom(254, 202, 202),
+		errorForeground:                        rgbFrom(209, 104, 96),
+		someoneJoinedForeground:                rgbFrom(41, 115, 22),
+		someoneLeftForeground:                  rgbFrom(115, 22, 41),
 		timestampForeground:                    colorThemeInsensitiveForeground,
-		nicknameForeground:                     colorFormat(rgbFrom(57, 91, 163), 1),
-		subjectForeground:                      colorFormat(rgbFrom(0, 0, 128), 1),
-		infoMessageForeground:                  colorFormat(rgbFrom(227, 66, 103), 1),
-		messageForeground:                      colorFormat(rgbFrom(0, 0, 0), 1),
-		configurationForeground:                colorFormat(rgbFrom(154, 4, 191), 1),
+		nicknameForeground:                     rgbFrom(57, 91, 163),
+		subjectForeground:                      rgbFrom(0, 0, 128),
+		infoMessageForeground:                  rgbFrom(227, 66, 103),
+		messageForeground:                      rgbFrom(0, 0, 0),
+		configurationForeground:                rgbFrom(154, 4, 191),
 		roomMessagesBackground:                 colorThemeBase,
-		roomMessagesBoxShadow:                  colorFormat(rgbFrom(0, 0, 0), 0.35),
+		roomMessagesBoxShadow:                  rgbaFrom(0, 0, 0, 0.35),
 		roomNameDisabledForeground:             colorThemeInsensitiveForeground,
 		roomSubjectForeground:                  colorThemeInsensitiveForeground,
 		roomOverlaySolidBackground:             colorThemeBase,
 		roomOverlayContentSolidBackground:      colorTransparent,
 		roomOverlayContentBackground:           colorThemeBase,
-		roomOverlayBackground:                  colorFormat(rgbFrom(0, 0, 0), 0.5),
-		roomOverlayContentForeground:           colorFormat(rgbFrom(51, 51, 51), 1),
-		roomOverlayContentBoxShadow:            colorFormat(rgbFrom(0, 0, 0), 0.5),
+		roomOverlayBackground:                  rgbaFrom(0, 0, 0, 0.5),
+		roomOverlayContentForeground:           rgbFrom(51, 51, 51),
+		roomOverlayContentBoxShadow:            rgbaFrom(0, 0, 0, 0.5),
 		roomWarningsDialogBackground:           colorNone,
 		roomWarningsDialogDecorationBackground: colorThemeBackground,
-		roomWarningsDialogDecorationShadow:     colorFormat(rgbFrom(0, 0, 0), 0.15),
+		roomWarningsDialogDecorationShadow:     rgbaFrom(0, 0, 0, 0.15),
 		roomWarningsDialogHeaderBackground:     colorNone,
 		roomWarningsDialogContentBackground:    colorNone,
 		roomWarningsCurrentInfoForeground:      colorThemeInsensitiveForeground,
 		roomNotificationsBackground:            colorThemeBackground,
-		rosterGroupBackground:                  colorFormat(rgbFrom(28, 25, 23), 1),
-		rosterGroupForeground:                  colorFormat(rgbFrom(250, 250, 249), 1),
-		rosterOccupantRoleForeground:           colorFormat(rgbFrom(231, 229, 228), 1),
-		occupantStatusAvailableForeground:      colorFormat(rgbFrom(22, 101, 52), 1),
-		occupantStatusAvailableBackground:      colorFormat(rgbFrom(240, 253, 244), 1),
-		occupantStatusAvailableBorder:          colorFormat(rgbFrom(22, 163, 74), 1),
-		occupantStatusNotAvailableForeground:   colorFormat(rgbFrom(30, 41, 59), 1),
-		occupantStatusNotAvailableBackground:   colorFormat(rgbFrom(248, 250, 252), 1),
-		occupantStatusNotAvailableBorder:       colorFormat(rgbFrom(71, 85, 105), 1),
-		occupantStatusAwayForeground:           colorFormat(rgbFrom(154, 52, 18), 1),
-		occupantStatusAwayBackground:           colorFormat(rgbFrom(255, 247, 237), 1),
-		occupantStatusAwayBorder:               colorFormat(rgbFrom(234, 88, 12), 1),
-		occupantStatusBusyForeground:           colorFormat(rgbFrom(159, 18, 57), 1),
-		occupantStatusBusyBackground:           colorFormat(rgbFrom(255, 241, 242), 1),
-		occupantStatusBusyBorder:               colorFormat(rgbFrom(190, 18, 60), 1),
-		occupantStatusFreeForChatForeground:    colorFormat(rgbFrom(30, 64, 175), 1),
-		occupantStatusFreeForChatBackground:    colorFormat(rgbFrom(239, 246, 255), 1),
-		occupantStatusFreeForChatBorder:        colorFormat(rgbFrom(29, 78, 216), 1),
-		occupantStatusExtendedAwayForeground:   colorFormat(rgbFrom(146, 64, 14), 1),
-		occupantStatusExtendedAwayBackground:   colorFormat(rgbFrom(255, 251, 235), 1),
-		occupantStatusExtendedAwayBorder:       colorFormat(rgbFrom(217, 119, 6), 1),
+		rosterGroupBackground:                  rgbFrom(28, 25, 23),
+		rosterGroupForeground:                  rgbFrom(250, 250, 249),
+		rosterOccupantRoleForeground:           rgbFrom(231, 229, 228),
+		occupantStatusAvailableForeground:      rgbFrom(22, 101, 52),
+		occupantStatusAvailableBackground:      rgbFrom(240, 253, 244),
+		occupantStatusAvailableBorder:          rgbFrom(22, 163, 74),
+		occupantStatusNotAvailableForeground:   rgbFrom(30, 41, 59),
+		occupantStatusNotAvailableBackground:   rgbFrom(248, 250, 252),
+		occupantStatusNotAvailableBorder:       rgbFrom(71, 85, 105),
+		occupantStatusAwayForeground:           rgbFrom(154, 52, 18),
+		occupantStatusAwayBackground:           rgbFrom(255, 247, 237),
+		occupantStatusAwayBorder:               rgbFrom(234, 88, 12),
+		occupantStatusBusyForeground:           rgbFrom(159, 18, 57),
+		occupantStatusBusyBackground:           rgbFrom(255, 241, 242),
+		occupantStatusBusyBorder:               rgbFrom(190, 18, 60),
+		occupantStatusFreeForChatForeground:    rgbFrom(30, 64, 175),
+		occupantStatusFreeForChatBackground:    rgbFrom(239, 246, 255),
+		occupantStatusFreeForChatBorder:        rgbFrom(29, 78, 216),
+		occupantStatusExtendedAwayForeground:   rgbFrom(146, 64, 14),
+		occupantStatusExtendedAwayBackground:   rgbFrom(255, 251, 235),
+		occupantStatusExtendedAwayBorder:       rgbFrom(217, 119, 6),
 		infoBarDefaultBorderColor:              colorThemeBackground,
-		infoBarTypeInfoBackgroundStart:         colorFormat(rgbFrom(63, 98, 18), 1),
-		infoBarTypeInfoBackgroundStop:          colorFormat(rgbFrom(77, 124, 15), 1),
-		infoBarTypeInfoTitle:                   colorFormat(rgbFrom(236, 254, 255), 1),
-		infoBarTypeInfoTime:                    colorFormat(rgbFrom(236, 254, 255), 0.5),
-		infoBarTypeWarningBackgroundStart:      colorFormat(rgbFrom(195, 149, 7), 1),
-		infoBarTypeWarningBackgroundStop:       colorFormat(rgbFrom(222, 173, 20), 1),
-		infoBarTypeWarningTitle:                colorFormat(rgbFrom(255, 247, 237), 1),
-		infoBarTypeWarningTime:                 colorFormat(rgbFrom(255, 247, 237), 0.5),
-		infoBarTypeQuestionBackgroundStart:     colorFormat(rgbFrom(234, 88, 12), 1),
-		infoBarTypeQuestionBackgroundStop:      colorFormat(rgbFrom(249, 115, 22), 1),
-		infoBarTypeQuestionTitle:               colorFormat(rgbFrom(254, 252, 232), 1),
-		infoBarTypeQuestionTime:                colorFormat(rgbFrom(254, 252, 232), 0.5),
-		infoBarTypeErrorBackgroundStart:        colorFormat(rgbFrom(185, 28, 28), 1),
-		infoBarTypeErrorBackgroundStop:         colorFormat(rgbFrom(203, 35, 35), 1),
-		infoBarTypeErrorTitle:                  colorFormat(rgbFrom(255, 241, 242), 1),
-		infoBarTypeErrorTime:                   colorFormat(rgbFrom(255, 241, 242), 0.5),
-		infoBarTypeOtherBackgroundStart:        colorFormat(rgbFrom(7, 89, 133), 1),
-		infoBarTypeOtherBackgroundStop:         colorFormat(rgbFrom(3, 105, 161), 1),
-		infoBarTypeOtherTitle:                  colorFormat(rgbFrom(240, 253, 250), 1),
-		infoBarTypeOtherTime:                   colorFormat(rgbFrom(240, 253, 250), 0.5),
-		infoBarButtonBackground:                colorFormat(rgbFrom(0, 0, 0), 0.25),
-		infoBarButtonForeground:                colorFormat(rgbFrom(255, 255, 255), 1),
-		infoBarButtonHoverBackground:           colorFormat(rgbFrom(0, 0, 0), 0.35),
-		infoBarButtonHoverForeground:           colorFormat(rgbFrom(255, 255, 255), 1),
-		infoBarButtonActiveBackground:          colorFormat(rgbFrom(0, 0, 0), 0.45),
-		infoBarButtonActiveForeground:          colorFormat(rgbFrom(255, 255, 255), 1),
-		entryErrorBackground:                   colorFormat(rgbFrom(255, 245, 246), 1),
-		entryErrorBorderShadow:                 colorFormat(rgbFrom(255, 127, 80), 1),
-		entryErrorBorder:                       colorFormat(rgbFrom(228, 70, 53), 1),
-		entryErrorLabel:                        colorFormat(rgbFrom(228, 70, 53), 1),
-		occupantLostConnection:                 colorFormat(rgbFrom(115, 22, 41), 1),
-		occupantRestablishConnection:           colorFormat(rgbFrom(41, 115, 22), 1),
+		infoBarTypeInfoBackgroundStart:         rgbFrom(63, 98, 18),
+		infoBarTypeInfoBackgroundStop:          rgbFrom(77, 124, 15),
+		infoBarTypeInfoTitle:                   rgbFrom(236, 254, 255),
+		infoBarTypeInfoTime:                    rgbaFrom(236, 254, 255, 0.5),
+		infoBarTypeWarningBackgroundStart:      rgbFrom(195, 149, 7),
+		infoBarTypeWarningBackgroundStop:       rgbFrom(222, 173, 20),
+		infoBarTypeWarningTitle:                rgbFrom(255, 247, 237),
+		infoBarTypeWarningTime:                 rgbaFrom(255, 247, 237, 0.5),
+		infoBarTypeQuestionBackgroundStart:     rgbFrom(234, 88, 12),
+		infoBarTypeQuestionBackgroundStop:      rgbFrom(249, 115, 22),
+		infoBarTypeQuestionTitle:               rgbFrom(254, 252, 232),
+		infoBarTypeQuestionTime:                rgbaFrom(254, 252, 232, 0.5),
+		infoBarTypeErrorBackgroundStart:        rgbFrom(185, 28, 28),
+		infoBarTypeErrorBackgroundStop:         rgbFrom(203, 35, 35),
+		infoBarTypeErrorTitle:                  rgbFrom(255, 241, 242),
+		infoBarTypeErrorTime:                   rgbaFrom(255, 241, 242, 0.5),
+		infoBarTypeOtherBackgroundStart:        rgbFrom(7, 89, 133),
+		infoBarTypeOtherBackgroundStop:         rgbFrom(3, 105, 161),
+		infoBarTypeOtherTitle:                  rgbFrom(240, 253, 250),
+		infoBarTypeOtherTime:                   rgbaFrom(240, 253, 250, 0.5),
+		infoBarButtonBackground:                rgbaFrom(0, 0, 0, 0.25),
+		infoBarButtonForeground:                rgbFrom(255, 255, 255),
+		infoBarButtonHoverBackground:           rgbaFrom(0, 0, 0, 0.35),
+		infoBarButtonHoverForeground:           rgbFrom(255, 255, 255),
+		infoBarButtonActiveBackground:          rgbaFrom(0, 0, 0, 0.45),
+		infoBarButtonActiveForeground:          rgbFrom(255, 255, 255),
+		entryErrorBackground:                   rgbFrom(255, 245, 246),
+		entryErrorBorderShadow:                 rgbFrom(255, 127, 80),
+		entryErrorBorder:                       rgbFrom(228, 70, 53),
+		entryErrorLabel:                        rgbFrom(228, 70, 53),
+		occupantLostConnection:                 rgbFrom(115, 22, 41),
+		occupantRestablishConnection:           rgbFrom(41, 115, 22),
 	}
 }
 
@@ -291,8 +291,18 @@ type rgb struct {
 }
 
 type rgba struct {
-	rgb
+	*rgb
 	alpha colorValue
+}
+
+type cssColorReference struct {
+	ref string
+}
+
+func cssColorReferenceFrom(ref string) *cssColorReference {
+	return &cssColorReference{
+		ref: ref,
+	}
 }
 
 func createColorValueFrom(v uint8) colorValue {
@@ -303,23 +313,23 @@ func (v colorValue) toScaledValue() uint8 {
 	return uint8(v * 255)
 }
 
-func rgbFrom(r, g, b uint8) rgb {
-	return rgb{
+func rgbFrom(r, g, b uint8) *rgb {
+	return &rgb{
 		red:   createColorValueFrom(r),
 		green: createColorValueFrom(g),
 		blue:  createColorValueFrom(b),
 	}
 }
 
-func rgbaFrom(r, g, b uint8, a float64) rgba {
-	return rgba{
+func rgbaFrom(r, g, b uint8, a float64) *rgba {
+	return &rgba{
 		rgb:   rgbFrom(r, g, b),
 		alpha: colorValue(a),
 	}
 }
 
-func rgbFromPercent(r, g, b float64) rgb {
-	return rgb{
+func rgbFromPercent(r, g, b float64) *rgb {
+	return &rgb{
 		red:   colorValue(r),
 		green: colorValue(g),
 		blue:  colorValue(b),
@@ -332,12 +342,20 @@ type rgbaGetters interface {
 	GetBlue() float64
 }
 
-func rgbFromGetters(v rgbaGetters) rgb {
+func rgbFromGetters(v rgbaGetters) *rgb {
 	return rgbFromPercent(v.GetRed(), v.GetGreen(), v.GetBlue())
 }
 
 func (r *rgb) toScaledColorValues() (uint8, uint8, uint8) {
 	return r.red.toScaledValue(), r.green.toScaledValue(), r.blue.toScaledValue()
+}
+
+type cssColor interface {
+	toCSS() string
+}
+
+func (r *rgba) String() string {
+	return r.String()
 }
 
 func (r *rgba) toCSS() string {
@@ -349,19 +367,20 @@ func (r *rgba) toCSS() string {
 	)
 }
 
+func (r *rgb) String() string {
+	return r.toCSS()
+}
+
 func (r *rgb) toCSS() string {
 	return fmt.Sprintf("rgb(%d, %d, %d)", r.red.toScaledValue(), r.green.toScaledValue(), r.blue.toScaledValue())
 }
 
-func colorFormat(c rgb, alpha float64) string {
-	if alpha == 1 {
-		return c.toCSS()
-	}
-	c2 := rgba{
-		rgb:   c,
-		alpha: colorValue(alpha),
-	}
-	return c2.toCSS()
+func (r *cssColorReference) String() string {
+	return r.toCSS()
+}
+
+func (r *cssColorReference) toCSS() string {
+	return r.ref
 }
 
 const lightnessThreshold = 0.8

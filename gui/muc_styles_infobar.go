@@ -35,16 +35,16 @@ var infoBarClassNames = map[infoBarType]string{
 }
 
 type infoBarColorInfo struct {
-	background             string
-	titleColor             string
-	timeColor              string
-	borderColor            string
-	buttonBackground       string
-	buttonColor            string
-	buttonHoverBackground  string
-	buttonHoverColor       string
-	buttonActiveBackground string
-	buttonActiveColor      string
+	background             cssColor
+	titleColor             cssColor
+	timeColor              cssColor
+	borderColor            cssColor
+	buttonBackground       cssColor
+	buttonColor            cssColor
+	buttonHoverBackground  cssColor
+	buttonHoverColor       cssColor
+	buttonActiveBackground cssColor
+	buttonActiveColor      cssColor
 }
 
 type infoBarColorStyles map[infoBarType]infoBarColorInfo
@@ -234,7 +234,7 @@ func (ibst *infoBarStyle) childStyles() styles {
 func (ibst *infoBarStyle) styles() styles {
 	infoBarStyle := mergeStyles(infoBarCommonStyle, style{
 		"background": ibst.colors.background,
-		"border":     fmt.Sprintf("1px solid %s", ibst.colors.borderColor),
+		"border":     fmt.Sprintf("1px solid %s", ibst.colors.borderColor.toCSS()),
 	})
 
 	nested := &nestedStyles{
@@ -294,7 +294,7 @@ func infoBarTypeColorsFromSet(tp infoBarType, c mucColorSet) infoBarColorInfo {
 	}
 
 	return infoBarColorInfo{
-		background:             fmt.Sprintf("linear-gradient(0deg, %s 0%%, %s 100%%)", bgStart, bgStop),
+		background:             cssColorReferenceFrom(fmt.Sprintf("linear-gradient(0deg, %s 0%%, %s 100%%)", bgStart.toCSS(), bgStop.toCSS())),
 		titleColor:             titleColor,
 		timeColor:              timeColor,
 		borderColor:            colorTransparent,

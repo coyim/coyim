@@ -296,8 +296,8 @@ func (s *mucStylesProvider) setErrorLabelClass(l gtki.Label) {
 	})
 }
 
-func (s *mucStylesProvider) boxShadow(shadowStyle, color string) string {
-	return fmt.Sprintf("%s %s", shadowStyle, color)
+func (s *mucStylesProvider) boxShadow(shadowStyle string, color cssColor) string {
+	return fmt.Sprintf("%s %s", shadowStyle, color.toCSS())
 }
 
 func nestedCSSRules(rules ...string) string {

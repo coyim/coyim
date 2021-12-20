@@ -136,14 +136,14 @@ var conversationTagsPropertiesRegistry = map[conversationTag]pangoAttributes{
 }
 
 type conversationTagColor struct {
-	foreground string
-	background string
+	foreground cssColor
+	background cssColor
 }
 
 // applyToTag MUST be called from the UI thread
 func (tc *conversationTagColor) applyToTag(tag gtki.TextTag) {
-	tc.applyTagColor("foreground", tc.foreground, tag)
-	tc.applyTagColor("background", tc.background, tag)
+	tc.applyTagColor("foreground", tc.foreground.toCSS(), tag)
+	tc.applyTagColor("background", tc.background.toCSS(), tag)
 }
 
 // applyTagColor MUST be called from the UI thread

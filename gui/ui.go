@@ -44,6 +44,7 @@ type gtkUI struct {
 	hasLog
 	hasHooks
 	hasUnifiedView
+	hasColorManagement
 }
 
 // Graphics represent the graphic configuration

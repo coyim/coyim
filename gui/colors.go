@@ -3,6 +3,7 @@ package gui
 import (
 	"os"
 	"strings"
+	"sync"
 )
 
 type colorSet struct {
@@ -24,51 +25,60 @@ type colorSet struct {
 	timestampForeground                       string
 }
 
-var themeVariant string
+type hasColorManagement struct {
+	themeVariant          string
+	calculateThemeVariant sync.Once
+}
 
-func (u *gtkUI) isDarkThemeVariant() bool {
-	if themeVariant != "" {
-		return themeVariant == "dark"
-	}
-	themeVariant = "light"
-	gtkTheme := os.Getenv("GTK_THEME")
-	if gtkTheme != "" {
-		toks := strings.Split(gtkTheme, ":")
-		variant := toks[len(toks)-1:][0]
-		if variant == "dark" {
-			themeVariant = variant
-			return true
+const darkThemeVariantName = "dark"
+const lightThemeVariantName = "light"
+
+func (cm *hasColorManagement) getThemeVariant() string {
+	cm.calculateThemeVariant.Do(func() {
+		cm.themeVariant = lightThemeVariantName
+		gtkTheme := os.Getenv("GTK_THEME")
+		if gtkTheme != "" {
+			toks := strings.Split(gtkTheme, ":")
+			variant := toks[len(toks)-1:][0]
+			if variant == darkThemeVariantName {
+				cm.themeVariant = variant
+				return
+			}
 		}
-	}
 
-	settings, err := g.gtk.SettingsGetDefault()
-	if err != nil {
-		panic(err)
-	}
+		settings, err := g.gtk.SettingsGetDefault()
+		if err != nil {
+			panic(err)
+		}
 
-	prefDark, _ := settings.GetProperty("gtk-application-prefer-dark-theme")
-	if val, ok := prefDark.(bool); val && ok {
-		themeVariant = "dark"
-		return true
-	}
+		prefDark, _ := settings.GetProperty("gtk-application-prefer-dark-theme")
+		if val, ok := prefDark.(bool); val && ok {
+			cm.themeVariant = darkThemeVariantName
+			return
+		}
 
-	// TODO: we should do two things here
-	// - check the current theme name, and see if it ends with -dark or _dark - not just splitting on the ":" as above
-	// - create an invisible frame and check the background and see if it is dark by default
-	// - Once we have that, we should also make an icon-set, not just a color-set to keep track of all the
-	// variates.
+		// TODO: we should do two things here
+		// - check the current theme name, and see if it ends with -dark or _dark - not just splitting on the ":" as above
+		// - create an invisible frame and check the background and see if it is dark by default
+		// - Once we have that, we should also make an icon-set, not just a color-set to keep track of all the
+		// variates.
+	})
 
-	return false
+	return cm.themeVariant
 }
 
-func (u *gtkUI) currentColorSet() colorSet {
-	if u.isDarkThemeVariant() {
-		return u.defaultDarkColorSet()
-	}
-	return u.defaultLightColorSet()
+func (cm *hasColorManagement) isDarkThemeVariant() bool {
+	return cm.getThemeVariant() == darkThemeVariantName
 }
 
-func (u *gtkUI) defaultLightColorSet() colorSet {
+func (cm *hasColorManagement) currentColorSet() colorSet {
+	if cm.isDarkThemeVariant() {
+		return defaultDarkColorSet()
+	}
+	return defaultLightColorSet()
+}
+
+func defaultLightColorSet() colorSet {
 	return colorSet{
 		rosterPeerBackground:                      "#ffffff",
 		rosterPeerOfflineForeground:               "#aaaaaa",
@@ -89,7 +99,7 @@ func (u *gtkUI) defaultLightColorSet() colorSet {
 	}
 }
 
-func (u *gtkUI) defaultDarkColorSet() colorSet {
+func defaultDarkColorSet() colorSet {
 	return colorSet{
 		rosterPeerBackground:                      "#7f7f7f",
 		rosterPeerOfflineForeground:               "#aaaaaa",

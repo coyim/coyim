@@ -282,27 +282,35 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 	}
 }
 
-const lightnessThreshold = 0.8
+type colorValue float64
 
 type rgb struct {
-	red   float64
-	green float64
-	blue  float64
+	red   colorValue
+	green colorValue
+	blue  colorValue
+}
+
+func createColorValueFrom(v uint8) colorValue {
+	return colorValue(float64(v) / 255)
+}
+
+func (v colorValue) toScaledValue() uint8 {
+	return uint8(v * 255)
 }
 
 func rgbFrom(r, g, b uint8) rgb {
 	return rgb{
-		red:   float64(r),
-		green: float64(g),
-		blue:  float64(b),
+		red:   createColorValueFrom(r),
+		green: createColorValueFrom(g),
+		blue:  createColorValueFrom(b),
 	}
 }
 
 func rgbFromPercent(r, g, b float64) rgb {
 	return rgb{
-		red:   r,
-		green: g,
-		blue:  b,
+		red:   colorValue(r),
+		green: colorValue(g),
+		blue:  colorValue(b),
 	}
 }
 
@@ -316,17 +324,19 @@ func rgbFromGetters(v rgbaGetters) rgb {
 	return rgbFromPercent(v.GetRed(), v.GetGreen(), v.GetBlue())
 }
 
-func (r *rgb) colorsAsRgb24() (uint8, uint8, uint8) {
-	return uint8(r.red * 255), uint8(r.green * 255), uint8(r.blue * 255)
+func (r *rgb) toScaledColorValues() (uint8, uint8, uint8) {
+	return r.red.toScaledValue(), r.green.toScaledValue(), r.blue.toScaledValue()
 }
 
 func colorFormat(c rgb, alpha float64) string {
-	r, g, b := c.colorsAsRgb24()
+	r, g, b := c.toScaledColorValues()
 	if alpha == 1 {
 		return fmt.Sprintf("rgb(%d, %d, %d)", r, g, b)
 	}
 	return fmt.Sprintf("rgba(%d, %d, %d, %f)", r, g, b, alpha)
 }
+
+const lightnessThreshold = 0.8
 
 func (r *rgb) isDark() bool {
 	return r.lightness() < lightnessThreshold
@@ -334,8 +344,8 @@ func (r *rgb) isDark() bool {
 
 func (r *rgb) lightness() float64 {
 	// We are using the formula found in https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB
-	max := math.Max(math.Max(r.red, r.green), r.blue)
-	min := math.Min(math.Min(r.red, r.green), r.blue)
+	max := math.Max(math.Max(float64(r.red), float64(r.green)), float64(r.blue))
+	min := math.Min(math.Min(float64(r.red), float64(r.green)), float64(r.blue))
 
 	return (max + min) / 2
 }

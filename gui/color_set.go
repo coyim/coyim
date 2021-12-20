@@ -1,25 +1,25 @@
 package gui
 
 type colorSet struct {
-	rosterPeerBackground                      hexColor
-	rosterPeerOfflineForeground               hexColor
-	rosterPeerOnlineForeground                hexColor
-	rosterGroupBackground                     hexColor
-	rosterAccountOnlineBackground             hexColor
-	rosterAccountOfflineBackground            hexColor
-	conversationOutgoingUserForeground        hexColor
-	conversationIncomingUserForeground        hexColor
-	conversationOutgoingTextForeground        hexColor
-	conversationIncomingTextForeground        hexColor
-	conversationStatusTextForeground          hexColor
-	conversationOutgoingDelayedUserForeground hexColor
-	conversationOutgoingDelayedTextForeground hexColor
+	rosterPeerBackground                      color
+	rosterPeerOfflineForeground               color
+	rosterPeerOnlineForeground                color
+	rosterGroupBackground                     color
+	rosterAccountOnlineBackground             color
+	rosterAccountOfflineBackground            color
+	conversationOutgoingUserForeground        color
+	conversationIncomingUserForeground        color
+	conversationOutgoingTextForeground        color
+	conversationIncomingTextForeground        color
+	conversationStatusTextForeground          color
+	conversationOutgoingDelayedUserForeground color
+	conversationOutgoingDelayedTextForeground color
 
 	// these two don't seem to be used anymore
-	conversationLockTypingBackground   hexColor
-	conversationUnlockTypingBackground hexColor
+	conversationLockTypingBackground   color
+	conversationUnlockTypingBackground color
 
-	timestampForeground hexColor
+	timestampForeground color
 }
 
 func (cm *hasColorManagement) currentColorSet() colorSet {

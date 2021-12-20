@@ -142,14 +142,14 @@ type conversationTagColor struct {
 
 // applyToTag MUST be called from the UI thread
 func (tc *conversationTagColor) applyToTag(tag gtki.TextTag) {
-	tc.applyTagColor("foreground", tc.foreground.toCSS(), tag)
-	tc.applyTagColor("background", tc.background.toCSS(), tag)
+	tc.applyTagColor("foreground", tc.foreground, tag)
+	tc.applyTagColor("background", tc.background, tag)
 }
 
 // applyTagColor MUST be called from the UI thread
-func (tc *conversationTagColor) applyTagColor(property, color string, tag gtki.TextTag) {
-	if color != "" {
-		tag.SetProperty(property, color)
+func (tc *conversationTagColor) applyTagColor(property string, color cssColor, tag gtki.TextTag) {
+	if color != nil {
+		tag.SetProperty(property, color.toCSS())
 	}
 }
 

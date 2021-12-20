@@ -23,3 +23,7 @@ func (*Mock) ScreenGetDefault() (gdki.Screen, error) {
 func (*Mock) WorkspaceControlSupported() bool {
 	return false
 }
+
+func (*Mock) NewRGBA(values ...float64) gdki.Rgba {
+	return nil
+}

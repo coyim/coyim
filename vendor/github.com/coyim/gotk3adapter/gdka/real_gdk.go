@@ -28,3 +28,7 @@ func (*RealGdk) ScreenGetDefault() (gdki.Screen, error) {
 func (*RealGdk) WorkspaceControlSupported() bool {
 	return gdk.WorkspaceControlSupported()
 }
+
+func (*RealGdk) NewRGBA(values ...float64) gdki.Rgba {
+	return WrapRgbaSimple(gdk.NewRGBA(values...))
+}

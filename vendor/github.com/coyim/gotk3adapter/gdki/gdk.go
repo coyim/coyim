@@ -6,6 +6,7 @@ type Gdk interface {
 	PixbufLoaderNew() (PixbufLoader, error)
 	ScreenGetDefault() (Screen, error)
 	WorkspaceControlSupported() bool
+	NewRGBA(...float64) Rgba
 }
 
 func AssertGdk(_ Gdk) {}

@@ -140,7 +140,7 @@ func (rc *roomConfigAssistant) initDefaults(u *gtkUI) {
 func (rc *roomConfigAssistant) defineIconSet() {
 	styleContext, _ := rc.assistant.GetStyleContext()
 	bc, _ := styleContext.GetProperty2("background-color", gtki.STATE_FLAG_NORMAL)
-	rgb := rgbFrom(bc.(gdki.Rgba).String())
+	rgb := rgbFrom(bc.(gdki.Rgba))
 
 	assistantIconSet = assistantNavigationIconByPage
 	if rgb.isDark() {

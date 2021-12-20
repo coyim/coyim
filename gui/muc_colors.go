@@ -3,7 +3,8 @@ package gui
 import (
 	"fmt"
 	"math"
-	"strings"
+
+	"github.com/coyim/gotk3adapter/gdki"
 )
 
 const (
@@ -303,10 +304,8 @@ func colorFormat(c rgb, alpha float64) string {
 	return fmt.Sprintf("rgba(%d, %d, %d, %f)", r, g, b, alpha)
 }
 
-func rgbFrom(rgbaInput string) rgb {
-	var r, g, b uint8
-	fmt.Sscanf(strings.ReplaceAll(rgbaInput, " ", ""), "rgb(%d,%d,%d, %f)", &r, &g, &b)
-	return rgb{r, g, b}
+func rgbFrom(rgbaInput gdki.Rgba) rgb {
+	return rgb{rgbaInput.GetRed(), rgbaInput.GetGreen(), rgbaInput.GetBlue()}
 }
 
 func (r *rgb) isDark() bool {

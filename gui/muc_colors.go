@@ -290,6 +290,11 @@ type rgb struct {
 	blue  colorValue
 }
 
+type rgba struct {
+	rgb
+	alpha colorValue
+}
+
 func createColorValueFrom(v uint8) colorValue {
 	return colorValue(float64(v) / 255)
 }
@@ -303,6 +308,13 @@ func rgbFrom(r, g, b uint8) rgb {
 		red:   createColorValueFrom(r),
 		green: createColorValueFrom(g),
 		blue:  createColorValueFrom(b),
+	}
+}
+
+func rgbaFrom(r, g, b uint8, a float64) rgba {
+	return rgba{
+		rgb:   rgbFrom(r, g, b),
+		alpha: colorValue(a),
 	}
 }
 
@@ -328,12 +340,28 @@ func (r *rgb) toScaledColorValues() (uint8, uint8, uint8) {
 	return r.red.toScaledValue(), r.green.toScaledValue(), r.blue.toScaledValue()
 }
 
+func (r *rgba) toCSS() string {
+	return fmt.Sprintf("rgba(%d, %d, %d, %f)",
+		r.red.toScaledValue(),
+		r.green.toScaledValue(),
+		r.blue.toScaledValue(),
+		float64(r.alpha),
+	)
+}
+
+func (r *rgb) toCSS() string {
+	return fmt.Sprintf("rgb(%d, %d, %d)", r.red.toScaledValue(), r.green.toScaledValue(), r.blue.toScaledValue())
+}
+
 func colorFormat(c rgb, alpha float64) string {
-	r, g, b := c.toScaledColorValues()
 	if alpha == 1 {
-		return fmt.Sprintf("rgb(%d, %d, %d)", r, g, b)
+		return c.toCSS()
 	}
-	return fmt.Sprintf("rgba(%d, %d, %d, %f)", r, g, b, alpha)
+	c2 := rgba{
+		rgb:   c,
+		alpha: colorValue(alpha),
+	}
+	return c2.toCSS()
 }
 
 const lightnessThreshold = 0.8

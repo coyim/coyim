@@ -1,124 +1,128 @@
 package gui
 
 import (
-	"os"
+	"fmt"
+	"math"
+	"strconv"
 	"strings"
-	"sync"
 )
 
-type colorSet struct {
-	rosterPeerBackground                      hexColor
-	rosterPeerOfflineForeground               hexColor
-	rosterPeerOnlineForeground                hexColor
-	rosterGroupBackground                     hexColor
-	rosterAccountOnlineBackground             hexColor
-	rosterAccountOfflineBackground            hexColor
-	conversationOutgoingUserForeground        hexColor
-	conversationIncomingUserForeground        hexColor
-	conversationOutgoingTextForeground        hexColor
-	conversationIncomingTextForeground        hexColor
-	conversationStatusTextForeground          hexColor
-	conversationOutgoingDelayedUserForeground hexColor
-	conversationOutgoingDelayedTextForeground hexColor
+type colorValue float64
 
-	// these two don't seem to be used anymore
-	conversationLockTypingBackground   hexColor
-	conversationUnlockTypingBackground hexColor
-
-	timestampForeground hexColor
+type rgb struct {
+	red   colorValue
+	green colorValue
+	blue  colorValue
 }
 
-type hasColorManagement struct {
-	themeVariant          string
-	calculateThemeVariant sync.Once
+type rgba struct {
+	*rgb
+	alpha colorValue
 }
 
-const darkThemeVariantName = "dark"
-const lightThemeVariantName = "light"
-
-func (cm *hasColorManagement) getThemeVariant() string {
-	cm.calculateThemeVariant.Do(func() {
-		cm.themeVariant = lightThemeVariantName
-		gtkTheme := os.Getenv("GTK_THEME")
-		if gtkTheme != "" {
-			toks := strings.Split(gtkTheme, ":")
-			variant := toks[len(toks)-1:][0]
-			if variant == darkThemeVariantName {
-				cm.themeVariant = variant
-				return
-			}
-		}
-
-		settings, err := g.gtk.SettingsGetDefault()
-		if err != nil {
-			panic(err)
-		}
-
-		prefDark, _ := settings.GetProperty("gtk-application-prefer-dark-theme")
-		if val, ok := prefDark.(bool); val && ok {
-			cm.themeVariant = darkThemeVariantName
-			return
-		}
-
-		// TODO: we should do two things here
-		// - check the current theme name, and see if it ends with -dark or _dark - not just splitting on the ":" as above
-		// - create an invisible frame and check the background and see if it is dark by default
-		// - Once we have that, we should also make an icon-set, not just a color-set to keep track of all the
-		// variants.
-	})
-
-	return cm.themeVariant
+type rgbaGetters interface {
+	GetRed() float64
+	GetGreen() float64
+	GetBlue() float64
 }
 
-func (cm *hasColorManagement) isDarkThemeVariant() bool {
-	return cm.getThemeVariant() == darkThemeVariantName
+var colorThemeInsensitiveForeground = rgbFrom(131, 119, 119)
+
+func createColorValueFrom(v uint8) colorValue {
+	return colorValue(float64(v) / 255)
 }
 
-func (cm *hasColorManagement) currentColorSet() colorSet {
-	if cm.isDarkThemeVariant() {
-		return defaultDarkColorSet()
+func (v colorValue) toScaledValue() uint8 {
+	return uint8(v * 255)
+}
+
+func colorValueFromHex(s string) colorValue {
+	value, err := strconv.ParseUint(s, 16, 8)
+	if err != nil {
+		return colorValue(0)
 	}
-	return defaultLightColorSet()
+	return createColorValueFrom(uint8(value))
 }
 
-func defaultLightColorSet() colorSet {
-	return colorSet{
-		rosterPeerBackground:                      rgbFromHex("#ffffff"),
-		rosterPeerOfflineForeground:               rgbFromHex("#aaaaaa"),
-		rosterPeerOnlineForeground:                rgbFromHex("#000000"),
-		rosterGroupBackground:                     rgbFromHex("#e9e7f3"),
-		rosterAccountOnlineBackground:             rgbFromHex("#918caa"),
-		rosterAccountOfflineBackground:            rgbFromHex("#d5d3de"),
-		conversationOutgoingUserForeground:        rgbFromHex("#3465a4"),
-		conversationIncomingUserForeground:        rgbFromHex("#a40000"),
-		conversationOutgoingTextForeground:        rgbFromHex("#000000"),
-		conversationIncomingTextForeground:        rgbFromHex("#000000"),
-		conversationStatusTextForeground:          rgbFromHex("#aaaaaa"),
-		conversationOutgoingDelayedUserForeground: rgbFromHex("#aaaaaa"),
-		conversationOutgoingDelayedTextForeground: rgbFromHex("#aaaaaa"),
-		conversationLockTypingBackground:          rgbFromHex("#e0e0e0"),
-		conversationUnlockTypingBackground:        rgbFromHex("#f9f9f9"),
-		timestampForeground:                       rgbFromHex("#aaaaaa"),
+// rgbFromHex will return an rgb object from either #xxxxxx or #xxx representation
+// it returns nil if parsing fails
+func rgbFromHex(spec string) *rgb {
+	s := strings.TrimPrefix(spec, "#")
+	switch len(s) {
+	case 3:
+		return &rgb{
+			red:   colorValueFromHex(s[0:1]),
+			green: colorValueFromHex(s[1:2]),
+			blue:  colorValueFromHex(s[2:3]),
+		}
+	case 6:
+		return &rgb{
+			red:   colorValueFromHex(s[0:2]),
+			green: colorValueFromHex(s[2:4]),
+			blue:  colorValueFromHex(s[4:6]),
+		}
+	}
+	return nil
+}
+
+func rgbFrom(r, g, b uint8) *rgb {
+	return &rgb{
+		red:   createColorValueFrom(r),
+		green: createColorValueFrom(g),
+		blue:  createColorValueFrom(b),
 	}
 }
 
-func defaultDarkColorSet() colorSet {
-	return colorSet{
-		rosterPeerBackground:                      rgbFromHex("#7f7f7f"),
-		rosterPeerOfflineForeground:               rgbFromHex("#aaaaaa"),
-		rosterPeerOnlineForeground:                rgbFromHex("#e5e5e5"),
-		rosterGroupBackground:                     rgbFromHex("#b8b6bf"),
-		rosterAccountOnlineBackground:             rgbFromHex("#d5d3de"),
-		rosterAccountOfflineBackground:            rgbFromHex("#918caa"),
-		conversationOutgoingUserForeground:        rgbFromHex("#3465a4"),
-		conversationIncomingUserForeground:        rgbFromHex("#a40000"),
-		conversationOutgoingTextForeground:        rgbFromHex("#7f7f7f"),
-		conversationIncomingTextForeground:        rgbFromHex("#7f7f7f"),
-		conversationStatusTextForeground:          rgbFromHex("#4e9a06"),
-		conversationOutgoingDelayedUserForeground: rgbFromHex("#444444"),
-		conversationOutgoingDelayedTextForeground: rgbFromHex("#444444"),
-		conversationLockTypingBackground:          rgbFromHex("#e0e0e0"),
-		conversationUnlockTypingBackground:        rgbFromHex("#252a2c"),
-		timestampForeground:                       rgbFromHex("#444444"),
+func rgbaFrom(r, g, b uint8, a float64) *rgba {
+	return &rgba{
+		rgb:   rgbFrom(r, g, b),
+		alpha: colorValue(a),
 	}
+}
+
+func rgbFromPercent(r, g, b float64) *rgb {
+	return &rgb{
+		red:   colorValue(r),
+		green: colorValue(g),
+		blue:  colorValue(b),
+	}
+}
+
+func rgbFromGetters(v rgbaGetters) *rgb {
+	return rgbFromPercent(v.GetRed(), v.GetGreen(), v.GetBlue())
+}
+
+const lightnessThreshold = 0.8
+
+func (r *rgb) isDark() bool {
+	return r.lightness() < lightnessThreshold
+}
+
+func (r *rgb) lightness() float64 {
+	// We are using the formula found in https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB
+	max := math.Max(math.Max(float64(r.red), float64(r.green)), float64(r.blue))
+	min := math.Min(math.Min(float64(r.red), float64(r.green)), float64(r.blue))
+
+	return (max + min) / 2
+}
+
+type hexColor interface {
+	toHex() string
+}
+
+type color interface {
+	cssColor
+	hexColor
+}
+
+func (r *rgba) String() string {
+	return r.toCSS()
+}
+
+func (r *rgb) toHex() string {
+	return fmt.Sprintf("#%02x%02x%02x", r.red.toScaledValue(), r.green.toScaledValue(), r.blue.toScaledValue())
+}
+
+func (r *rgb) String() string {
+	return r.toCSS()
 }

@@ -26,7 +26,7 @@ func cssColorReferenceFrom(ref string) *cssColorReference {
 }
 
 func (r *rgba) toCSS() string {
-	return fmt.Sprintf("rgba(%d, %d, %d, %f)",
+	return fmt.Sprintf("rgba(%d, %d, %d, %g)",
 		r.red.toScaledValue(),
 		r.green.toScaledValue(),
 		r.blue.toScaledValue(),

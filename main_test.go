@@ -136,16 +136,44 @@ func (s *MainSuite) Test_main_parsesFlagsAndRunsClient(c *C) {
 	c.Assert(ml.called, Equals, true)
 }
 
-type gtkMockWithSettings struct {
+type gtkMockWithSettingsAndBuilder struct {
 	*gtk_mock.Mock
 }
 
-func (*gtkMockWithSettings) ApplicationNew(appID string, flags glibi.ApplicationFlags) (gtki.Application, error) {
+func (*gtkMockWithSettingsAndBuilder) ApplicationNew(appID string, flags glibi.ApplicationFlags) (gtki.Application, error) {
 	return &gtk_mock.MockApplication{}, nil
 }
 
-func (*gtkMockWithSettings) SettingsGetDefault() (gtki.Settings, error) {
+func (*gtkMockWithSettingsAndBuilder) SettingsGetDefault() (gtki.Settings, error) {
 	return &gtk_mock.MockSettings{}, nil
+}
+
+func (*gtkMockWithSettingsAndBuilder) BuilderNew() (gtki.Builder, error) {
+	return &mockBuilderWithGetObject{}, nil
+}
+
+type mockBuilderWithGetObject struct {
+	*gtk_mock.MockBuilder
+}
+
+func (*mockBuilderWithGetObject) GetObject(s string) (glibi.Object, error) {
+	return &mockListBoxWithStyleContext{}, nil
+}
+
+type mockListBoxWithStyleContext struct {
+	gtk_mock.MockListBox
+}
+
+func (*mockListBoxWithStyleContext) GetStyleContext() (gtki.StyleContext, error) {
+	return &mockStyleContextWithGetProperty2{}, nil
+}
+
+type mockStyleContextWithGetProperty2 struct {
+	gtk_mock.MockStyleContext
+}
+
+func (*mockStyleContextWithGetProperty2) GetProperty2(string, gtki.StateFlags) (interface{}, error) {
+	return &gdk_mock.MockRgba{}, nil
 }
 
 type mockGlib struct {
@@ -223,7 +251,7 @@ func (s *MainSuite) Test_createGTK_works(c *C) {
 	settings.InitSettings(mg)
 
 	res := createGTK(gui.CreateGraphics(
-		&gtkMockWithSettings{},
+		&gtkMockWithSettingsAndBuilder{},
 		mg,
 		&gdk_mock.Mock{},
 		&pango_mock.Mock{},

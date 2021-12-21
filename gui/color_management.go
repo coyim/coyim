@@ -4,6 +4,8 @@ import (
 	"os"
 	"strings"
 	"sync"
+
+	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type hasColorManagement struct {
@@ -40,9 +42,15 @@ func (cm *hasColorManagement) getThemeVariant() string {
 
 		// TODO: we should do two things here
 		// - check the current theme name, and see if it ends with -dark or _dark - not just splitting on the ":" as above
-		// - create an invisible frame and check the background and see if it is dark by default
-		// - Once we have that, we should also make an icon-set, not just a color-set to keep track of all the
-		// variants.
+
+		bgcd := newBackgroundColorDetectionInvisibleListBox()
+		styleContext, _ := bgcd.lb.GetStyleContext()
+		bc, _ := styleContext.GetProperty2("background-color", gtki.STATE_FLAG_NORMAL)
+		bgcd.lb.Destroy()
+		if rgbFromGetters(bc.(rgbaGetters)).isDark() {
+			cm.themeVariant = darkThemeVariantName
+		}
+
 	})
 
 	return cm.themeVariant

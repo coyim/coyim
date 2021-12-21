@@ -25,25 +25,23 @@ const (
 	sumaryIconNameDark           navigationItemIconName = "room_config_summary_dark"
 )
 
-var assistantIconSet = assistantNavigationIconByPage
-
-var assistantNavigationIconByPage = map[mucRoomConfigPageID]navigationItemIconName{
+var defaultLightIconSet = iconSet{navigationItemIconSetByPageID{
 	roomConfigInformationPageIndex: basicInformationIconName,
 	roomConfigAccessPageIndex:      accessIconName,
 	roomConfigPermissionsPageIndex: permissionsIconName,
 	roomConfigPositionsPageIndex:   positionsIconName,
 	roomConfigOthersPageIndex:      otherIconName,
 	roomConfigSummaryPageIndex:     sumaryIconName,
-}
+}}
 
-var assistantNavigationDarkIconByPage = map[mucRoomConfigPageID]navigationItemIconName{
+var defaultDarkIconSet = iconSet{navigationItemIconSetByPageID{
 	roomConfigInformationPageIndex: basicInformationIconNameDark,
 	roomConfigAccessPageIndex:      accessIconNameDark,
 	roomConfigPermissionsPageIndex: permissionsIconNameDark,
 	roomConfigPositionsPageIndex:   positionsIconNameDark,
 	roomConfigOthersPageIndex:      otherIconNameDark,
 	roomConfigSummaryPageIndex:     sumaryIconNameDark,
-}
+}}
 
 type roomConfigAssistantNavigationItem struct {
 	page *roomConfigPage
@@ -62,7 +60,7 @@ func (rcn *roomConfigAssistantNavigation) newRoomConfigAssistantNavigationItem(p
 	panicOnDevError(b.bindObjects(itm))
 
 	itm.label.SetText(page.title)
-	itm.icon.SetFromPixbuf(getMUCIconPixbuf(assistantIconSet[page.pageID].String()))
+	itm.icon.SetFromPixbuf(getMUCIconPixbuf(rcn.iconSet.navigationIconByPageID(page.pageID).String()))
 
 	return itm
 }

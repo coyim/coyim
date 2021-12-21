@@ -44,6 +44,10 @@ func colorValueFromHex(s string) colorValue {
 	return createColorValueFrom(uint8(value))
 }
 
+func doubleString(s string) string {
+	return s + s
+}
+
 // rgbFromHex will return an rgb object from either #xxxxxx or #xxx representation
 // it returns nil if parsing fails
 func rgbFromHex(spec string) *rgb {
@@ -51,9 +55,9 @@ func rgbFromHex(spec string) *rgb {
 	switch len(s) {
 	case 3:
 		return &rgb{
-			red:   colorValueFromHex(s[0:1]),
-			green: colorValueFromHex(s[1:2]),
-			blue:  colorValueFromHex(s[2:3]),
+			red:   colorValueFromHex(doubleString(s[0:1])),
+			green: colorValueFromHex(doubleString(s[1:2])),
+			blue:  colorValueFromHex(doubleString(s[2:3])),
 		}
 	case 6:
 		return &rgb{

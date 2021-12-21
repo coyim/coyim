@@ -12,7 +12,8 @@ type roomConfigAssistantNavigation struct {
 	content    gtki.Box     `gtk-widget:"room-config-assistant-navigation-content"`
 	navigation gtki.ListBox `gtk-widget:"room-config-assistant-navigation-list"`
 
-	items []*roomConfigAssistantNavigationItem
+	items   []*roomConfigAssistantNavigationItem
+	iconSet navigationIconMapper
 }
 
 func (rc *roomConfigAssistant) newRoomConfigAssistantNavigation() *roomConfigAssistantNavigation {
@@ -36,6 +37,7 @@ func (rcn *roomConfigAssistantNavigation) initBuilder() {
 }
 
 func (rcn *roomConfigAssistantNavigation) initNavigationItems() {
+	rcn.iconSet = rcn.assistant.u.currentIconSet()
 	for _, p := range rcn.assistant.allPages() {
 		itm := rcn.newRoomConfigAssistantNavigationItem(p)
 		rcn.items = append(rcn.items, itm)

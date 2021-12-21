@@ -132,19 +132,6 @@ func (rc *roomConfigAssistant) initDefaults(u *gtkUI) {
 	u.connectShortcutsMucConfigRoomWindow(rc.assistant, func(_ gtki.Window) {
 		rc.onCancelClicked()
 	})
-
-	rc.defineIconSet()
-}
-
-func (rc *roomConfigAssistant) defineIconSet() {
-	styleContext, _ := rc.assistant.GetStyleContext()
-	bc, _ := styleContext.GetProperty2("background-color", gtki.STATE_FLAG_NORMAL)
-	rgb := rgbFromGetters(bc.(rgbaGetters))
-
-	assistantIconSet = assistantNavigationIconByPage
-	if rgb.isDark() {
-		assistantIconSet = assistantNavigationDarkIconByPage
-	}
 }
 
 func (rc *roomConfigAssistant) initSidebarNavigation() {

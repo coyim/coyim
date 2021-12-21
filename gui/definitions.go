@@ -1306,6 +1306,19 @@ R1RLX0JVVFRPTlNfWUVTX05PPC9wcm9wZXJ0eT4KICA8L29iamVjdD4KPC9pbnRlcmZhY2U+Cg==
 `,
 	},
 
+	"/definitions/BackgroundColorDetectionInvisibleListBox.xml": {
+		local:   "definitions/BackgroundColorDetectionInvisibleListBox.xml",
+		size:    255,
+		modtime: 1489449600,
+		compressed: `
+PGludGVyZmFjZT4KICAgIDxyZXF1aXJlcyBsaWI9Imd0aysiIHZlcnNpb249IjMuMjAiLz4KICAgIDxv
+YmplY3QgY2xhc3M9Ikd0a0xpc3RCb3giIGlkPSJiZy1jb2xvci1kZXRlY3Rpb24taW52aXNpYmxlLWxp
+c3Rib3giPgogICAgICAgIDxwcm9wZXJ0eSBuYW1lPSJ2aXNpYmxlIj5UcnVlPC9wcm9wZXJ0eT4KICAg
+ICAgICA8cHJvcGVydHkgbmFtZT0iY2FuX2ZvY3VzIj5GYWxzZTwvcHJvcGVydHk+CiAgICA8L29iamVj
+dD4KPC9pbnRlcmZhY2U+
+`,
+	},
+
 	"/definitions/CannotVerifyWithSMP.xml": {
 		local:   "definitions/CannotVerifyWithSMP.xml",
 		size:    2134,

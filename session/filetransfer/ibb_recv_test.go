@@ -363,6 +363,7 @@ func (s *IBBReceiverSuite) Test_ibbOnData_failsOnBadBodyData(c *C) {
 }
 
 func (s *IBBReceiverSuite) Test_ibbOnData_failsOnIncorrectSequenceNumber(c *C) {
+	destDir := c.MkDir()
 	l, hook := test.NewNullLogger()
 	sess := &sessionMockWithCustomLog{
 		log: l,
@@ -375,11 +376,12 @@ func (s *IBBReceiverSuite) Test_ibbOnData_failsOnIncorrectSequenceNumber(c *C) {
 	}
 
 	ctx := &recvContext{
-		s:       sess,
-		sid:     "testSID",
-		opaque:  ibbctx,
-		size:    92,
-		control: sdata.CreateFileTransferControl(nil, nil),
+		s:           sess,
+		sid:         "testSID",
+		opaque:      ibbctx,
+		size:        92,
+		control:     sdata.CreateFileTransferControl(nil, nil),
+		destination: filepath.Join(destDir, "simple_receipt_test_file"),
 	}
 
 	ee := make(chan error)

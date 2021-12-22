@@ -16,13 +16,19 @@ type hasColorManagement struct {
 const darkThemeVariantName = "dark"
 const lightThemeVariantName = "light"
 
-func doesThemeNameIndicateDarkness(name string) bool {
-	parts := strings.Split(name, ":")
+func isDarkVariantNameBasedOnSeparator(name, sep string) bool {
+	parts := strings.Split(name, sep)
 	if len(parts) < 2 {
 		return false
 	}
 	variant := parts[len(parts)-1]
 	return variant == darkThemeVariantName
+}
+
+func doesThemeNameIndicateDarkness(name string) bool {
+	return isDarkVariantNameBasedOnSeparator(name, ":") ||
+		isDarkVariantNameBasedOnSeparator(name, "-") ||
+		isDarkVariantNameBasedOnSeparator(name, "_")
 }
 
 func (cm *hasColorManagement) detectDarkThemeFromEnvironmentVariable() bool {

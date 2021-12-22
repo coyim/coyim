@@ -97,3 +97,37 @@ func (s *ColorManagementSuite) Test_hasColorManagement_setsTheThemeVariantToLigh
 	c.Assert(hcm.isDarkThemeVariant(), Equals, false)
 	c.Assert(hcm.themeVariant, Equals, "light")
 }
+
+func (s *ColorManagementSuite) Test_doesThemeNameIndicateDarkness_checksForVariantBasedOnColon(c *C) {
+	c.Assert(doesThemeNameIndicateDarkness("foo:dark"), Equals, true)
+	c.Assert(doesThemeNameIndicateDarkness(":dark"), Equals, true)
+	c.Assert(doesThemeNameIndicateDarkness("dark"), Equals, false)
+	c.Assert(doesThemeNameIndicateDarkness("blaa"), Equals, false)
+	c.Assert(doesThemeNameIndicateDarkness("blaa:light"), Equals, false)
+	c.Assert(doesThemeNameIndicateDarkness(""), Equals, false)
+	c.Assert(doesThemeNameIndicateDarkness("something:dark:light"), Equals, false)
+}
+
+func (s *ColorManagementSuite) Test_doesThemeNameIndicateDarkness_checksForVariantBasedOnUnderscore(c *C) {
+	c.Assert(doesThemeNameIndicateDarkness("dark"), Equals, false)
+	c.Assert(doesThemeNameIndicateDarkness("blaa"), Equals, false)
+	c.Assert(doesThemeNameIndicateDarkness("blaa_light"), Equals, false)
+	c.Assert(doesThemeNameIndicateDarkness("something_dark_light"), Equals, false)
+	c.Assert(doesThemeNameIndicateDarkness("something_dark:light"), Equals, false)
+	c.Assert(doesThemeNameIndicateDarkness("something:dark_light"), Equals, false)
+	c.Assert(doesThemeNameIndicateDarkness("foo_dark"), Equals, true)
+	c.Assert(doesThemeNameIndicateDarkness("_dark"), Equals, true)
+	c.Assert(doesThemeNameIndicateDarkness("something:light_dark"), Equals, true)
+}
+
+func (s *ColorManagementSuite) Test_doesThemeNameIndicateDarkness_checksForVariantBasedOnDash(c *C) {
+	c.Assert(doesThemeNameIndicateDarkness("dark"), Equals, false)
+	c.Assert(doesThemeNameIndicateDarkness("blaa"), Equals, false)
+	c.Assert(doesThemeNameIndicateDarkness("blaa-light"), Equals, false)
+	c.Assert(doesThemeNameIndicateDarkness("something-dark-light"), Equals, false)
+	c.Assert(doesThemeNameIndicateDarkness("something-dark:light"), Equals, false)
+	c.Assert(doesThemeNameIndicateDarkness("something:dark-light"), Equals, false)
+	c.Assert(doesThemeNameIndicateDarkness("foo-dark"), Equals, true)
+	c.Assert(doesThemeNameIndicateDarkness("-dark"), Equals, true)
+	c.Assert(doesThemeNameIndicateDarkness("something:light-dark"), Equals, true)
+}

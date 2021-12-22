@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/coyim/gotk3adapter/gdk_mock"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtk_mock"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -91,3 +92,13 @@ func (m *mockedStyleContext) GetProperty2(v string, v2 gtki.StateFlags) (interfa
 
 	return args.Get(0), args.Error(1)
 }
+
+type mockRGBAWithValues struct {
+	r, g, b, a float64
+	gdk_mock.MockRgba
+}
+
+func (m *mockRGBAWithValues) GetRed() float64   { return m.r }
+func (m *mockRGBAWithValues) GetGreen() float64 { return m.g }
+func (m *mockRGBAWithValues) GetBlue() float64  { return m.b }
+func (m *mockRGBAWithValues) GetAlpha() float64 { return m.a }

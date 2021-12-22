@@ -72,3 +72,28 @@ func (s *ColorManagementSuite) Test_hasColorManagement_setsTheThemeVariantToDark
 	c.Assert(hcm.isDarkThemeVariant(), Equals, true)
 	c.Assert(hcm.themeVariant, Equals, "dark")
 }
+
+func (s *ColorManagementSuite) Test_hasColorManagement_setsTheThemeVariantToLightIfNoStrategiesLeadToIndicationOfDarkTheme(c *C) {
+	defer gostub.New().SetEnv("GTK_THEME", "").Reset()
+	mg := &mockedGTK{}
+	defer gostub.Stub(&g, CreateGraphics(mg, nil, nil, nil, nil)).Reset()
+
+	ms := &mockedSettings{}
+	mg.mm.On("SettingsGetDefault").Return(ms, nil).Once()
+	ms.mm.On("GetProperty", "gtk-application-prefer-dark-theme").Return(nil, nil).Once()
+
+	mb := &mockedBuilder{}
+	mg.mm.On("BuilderNew").Return(mb, nil).Once()
+
+	mlb := &mockedListBox{}
+	mb.mm.On("GetObject", "bg-color-detection-invisible-listbox").Return(mlb, nil).Once()
+
+	msc := &mockedStyleContext{}
+	mlb.mm.On("GetStyleContext").Return(msc, nil).Once()
+
+	msc.mm.On("GetProperty2", "background-color", gtki.STATE_FLAG_NORMAL).Return(&mockRGBAWithValues{r: 1, g: 1, b: 1}, nil).Once()
+
+	hcm := &hasColorManagement{}
+	c.Assert(hcm.isDarkThemeVariant(), Equals, false)
+	c.Assert(hcm.themeVariant, Equals, "light")
+}

@@ -16,39 +16,55 @@ type hasColorManagement struct {
 const darkThemeVariantName = "dark"
 const lightThemeVariantName = "light"
 
-func (cm *hasColorManagement) actuallyCalculateThemeVariant() {
-	cm.themeVariant = lightThemeVariantName
-	gtkTheme := os.Getenv("GTK_THEME")
-	if gtkTheme != "" {
-		toks := strings.Split(gtkTheme, ":")
-		variant := toks[len(toks)-1:][0]
-		if variant == darkThemeVariantName {
-			cm.themeVariant = variant
-			return
-		}
+func doesThemeNameIndicateDarkness(name string) bool {
+	parts := strings.Split(name, ":")
+	if len(parts) < 2 {
+		return false
 	}
+	variant := parts[len(parts)-1]
+	return variant == darkThemeVariantName
+}
 
+func (cm *hasColorManagement) detectDarkThemeFromEnvironmentVariable() bool {
+	gtkTheme := os.Getenv("GTK_THEME")
+	return doesThemeNameIndicateDarkness(gtkTheme)
+}
+
+func (cm *hasColorManagement) detectDarkThemeFromGTKSettings() bool {
+	// TODO: this might not be safe to do outside the UI thread
 	settings, err := g.gtk.SettingsGetDefault()
 	if err != nil {
 		panic(err)
 	}
 
 	prefDark, _ := settings.GetProperty("gtk-application-prefer-dark-theme")
-	if val, ok := prefDark.(bool); val && ok {
-		cm.themeVariant = darkThemeVariantName
-		return
-	}
+	val, ok := prefDark.(bool)
+	return val && ok
+}
 
-	// TODO: we should do two things here
-	// - check the current theme name, and see if it ends with -dark or _dark - not just splitting on the ":" as above
-
+func (cm *hasColorManagement) detectDarkThemeFromGTKListBoxBackground() bool {
+	// TODO: this is not safe to do outside the UI thread
 	bgcd := newBackgroundColorDetectionInvisibleListBox()
 	styleContext, _ := bgcd.lb.GetStyleContext()
 	bc, _ := styleContext.GetProperty2("background-color", gtki.STATE_FLAG_NORMAL)
 	bgcd.lb.Destroy()
-	if rgbFromGetters(bc.(rgbaGetters)).isDark() {
+	return rgbFromGetters(bc.(rgbaGetters)).isDark()
+}
+
+func (cm *hasColorManagement) isDarkTheme() bool {
+	return cm.detectDarkThemeFromEnvironmentVariable() ||
+		cm.detectDarkThemeFromGTKSettings() ||
+		cm.detectDarkThemeFromGTKListBoxBackground()
+}
+
+func (cm *hasColorManagement) actuallyCalculateThemeVariant() {
+	if cm.isDarkTheme() {
 		cm.themeVariant = darkThemeVariantName
+	} else {
+		cm.themeVariant = lightThemeVariantName
 	}
+
+	// - check the current theme name, and see if it ends with -dark or _dark - not just splitting on the ":" as above
 }
 
 func (cm *hasColorManagement) getThemeVariant() string {

@@ -54,8 +54,9 @@ func (s *ColorManagementSuite) Test_hasColorManagement_setsTheThemeVariantToDark
 	defer gostub.Stub(&g, CreateGraphics(mg, nil, nil, nil, nil)).Reset()
 
 	ms := &mockedSettings{}
-	mg.mm.On("SettingsGetDefault").Return(ms, nil).Once()
+	mg.mm.On("SettingsGetDefault").Return(ms, nil)
 	ms.mm.On("GetProperty", "gtk-application-prefer-dark-theme").Return(false, nil).Once()
+	ms.mm.On("GetProperty", "gtk-theme-name").Return("", nil).Once()
 
 	mb := &mockedBuilder{}
 	mg.mm.On("BuilderNew").Return(mb, nil).Once()
@@ -79,8 +80,9 @@ func (s *ColorManagementSuite) Test_hasColorManagement_setsTheThemeVariantToLigh
 	defer gostub.Stub(&g, CreateGraphics(mg, nil, nil, nil, nil)).Reset()
 
 	ms := &mockedSettings{}
-	mg.mm.On("SettingsGetDefault").Return(ms, nil).Once()
+	mg.mm.On("SettingsGetDefault").Return(ms, nil)
 	ms.mm.On("GetProperty", "gtk-application-prefer-dark-theme").Return(nil, nil).Once()
+	ms.mm.On("GetProperty", "gtk-theme-name").Return("fluffy", nil).Once()
 
 	mb := &mockedBuilder{}
 	mg.mm.On("BuilderNew").Return(mb, nil).Once()
@@ -130,4 +132,33 @@ func (s *ColorManagementSuite) Test_doesThemeNameIndicateDarkness_checksForVaria
 	c.Assert(doesThemeNameIndicateDarkness("foo-dark"), Equals, true)
 	c.Assert(doesThemeNameIndicateDarkness("-dark"), Equals, true)
 	c.Assert(doesThemeNameIndicateDarkness("something:light-dark"), Equals, true)
+}
+
+func (s *ColorManagementSuite) Test_hasColorManagement_getThemeNameFromGTKSettings_returnsThemeName(c *C) {
+	mg := &mockedGTK{}
+	defer gostub.Stub(&g, CreateGraphics(mg, nil, nil, nil, nil)).Reset()
+
+	ms := &mockedSettings{}
+	mg.mm.On("SettingsGetDefault").Return(ms, nil).Once()
+
+	ms.mm.On("GetProperty", "gtk-theme-name").Return("something nice", nil).Once()
+
+	hcm := &hasColorManagement{}
+	c.Assert(hcm.getThemeNameFromGTKSettings(), Equals, "something nice")
+}
+
+func (s *ColorManagementSuite) Test_hasColorManagement_setsTheThemeVariantToDarkBasedOnThemeNameInGTKSettings(c *C) {
+	defer gostub.New().SetEnv("GTK_THEME", "foo-bla-theme2").Reset()
+	mg := &mockedGTK{}
+	defer gostub.Stub(&g, CreateGraphics(mg, nil, nil, nil, nil)).Reset()
+
+	ms := &mockedSettings{}
+	mg.mm.On("SettingsGetDefault").Return(ms, nil)
+
+	ms.mm.On("GetProperty", "gtk-application-prefer-dark-theme").Return(false, nil).Once()
+	ms.mm.On("GetProperty", "gtk-theme-name").Return("adwaita_dark", nil).Once()
+
+	hcm := &hasColorManagement{}
+	c.Assert(hcm.isDarkThemeVariant(), Equals, true)
+	c.Assert(hcm.themeVariant, Equals, "dark")
 }

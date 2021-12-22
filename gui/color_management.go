@@ -36,16 +36,30 @@ func (cm *hasColorManagement) detectDarkThemeFromEnvironmentVariable() bool {
 	return doesThemeNameIndicateDarkness(gtkTheme)
 }
 
-func (cm *hasColorManagement) detectDarkThemeFromGTKSettings() bool {
-	// TODO: this might not be safe to do outside the UI thread
+func (cm *hasColorManagement) getGTKSettings() gtki.Settings {
 	settings, err := g.gtk.SettingsGetDefault()
 	if err != nil {
 		panic(err)
 	}
+	return settings
+}
 
-	prefDark, _ := settings.GetProperty("gtk-application-prefer-dark-theme")
+func (cm *hasColorManagement) getThemeNameFromGTKSettings() string {
+	// TODO: this might not be safe to do outside the UI thread
+	themeName, _ := cm.getGTKSettings().GetProperty("gtk-theme-name")
+	val, _ := themeName.(string)
+	return val
+}
+
+func (cm *hasColorManagement) detectDarkThemeFromGTKSettings() bool {
+	// TODO: this might not be safe to do outside the UI thread
+	prefDark, _ := cm.getGTKSettings().GetProperty("gtk-application-prefer-dark-theme")
 	val, ok := prefDark.(bool)
 	return val && ok
+}
+
+func (cm *hasColorManagement) detectDarkThemeFromGTKSettingsThemeName() bool {
+	return doesThemeNameIndicateDarkness(cm.getThemeNameFromGTKSettings())
 }
 
 func (cm *hasColorManagement) detectDarkThemeFromGTKListBoxBackground() bool {
@@ -60,6 +74,7 @@ func (cm *hasColorManagement) detectDarkThemeFromGTKListBoxBackground() bool {
 func (cm *hasColorManagement) isDarkTheme() bool {
 	return cm.detectDarkThemeFromEnvironmentVariable() ||
 		cm.detectDarkThemeFromGTKSettings() ||
+		cm.detectDarkThemeFromGTKSettingsThemeName() ||
 		cm.detectDarkThemeFromGTKListBoxBackground()
 }
 
@@ -69,8 +84,6 @@ func (cm *hasColorManagement) actuallyCalculateThemeVariant() {
 	} else {
 		cm.themeVariant = lightThemeVariantName
 	}
-
-	// - check the current theme name, and see if it ends with -dark or _dark - not just splitting on the ":" as above
 }
 
 func (cm *hasColorManagement) getThemeVariant() string {

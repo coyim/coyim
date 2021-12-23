@@ -51,7 +51,13 @@ func (s *ColorManagementSuite) Test_hasColorManagement_setsTheThemeVariantToDark
 func (s *ColorManagementSuite) Test_hasColorManagement_setsTheThemeVariantToDarkDetectingOnInvisibleBox(c *C) {
 	defer gostub.New().SetEnv("GTK_THEME", "").Reset()
 	mg := &mockedGTK{}
-	defer gostub.Stub(&g, CreateGraphics(mg, nil, nil, nil, nil)).Reset()
+
+	mgl := &mockedGlib{}
+	mgls := &mockedGlibSettings{}
+	mgl.mm.On("SettingsNew", "org.gnome.desktop.interface").Return(mgls).Once()
+	mgls.mm.On("GetString", "gtk-theme").Return("").Once()
+
+	defer gostub.Stub(&g, CreateGraphics(mg, mgl, nil, nil, nil)).Reset()
 
 	ms := &mockedSettings{}
 	mg.mm.On("SettingsGetDefault").Return(ms, nil)
@@ -77,7 +83,13 @@ func (s *ColorManagementSuite) Test_hasColorManagement_setsTheThemeVariantToDark
 func (s *ColorManagementSuite) Test_hasColorManagement_setsTheThemeVariantToLightIfNoStrategiesLeadToIndicationOfDarkTheme(c *C) {
 	defer gostub.New().SetEnv("GTK_THEME", "").Reset()
 	mg := &mockedGTK{}
-	defer gostub.Stub(&g, CreateGraphics(mg, nil, nil, nil, nil)).Reset()
+
+	mgl := &mockedGlib{}
+	mgls := &mockedGlibSettings{}
+	mgl.mm.On("SettingsNew", "org.gnome.desktop.interface").Return(mgls).Once()
+	mgls.mm.On("GetString", "gtk-theme").Return("").Once()
+
+	defer gostub.Stub(&g, CreateGraphics(mg, mgl, nil, nil, nil)).Reset()
 
 	ms := &mockedSettings{}
 	mg.mm.On("SettingsGetDefault").Return(ms, nil)
@@ -163,18 +175,23 @@ func (s *ColorManagementSuite) Test_hasColorManagement_setsTheThemeVariantToDark
 	c.Assert(hcm.themeVariant, Equals, "dark")
 }
 
-// func (s *ColorManagementSuite) Test_hasColorManagement_setsTheThemeVariantToDarkBasedOnThemeNameInGTKSettings(c *C) {
-// 	defer gostub.New().SetEnv("GTK_THEME", "foo-bla-theme2").Reset()
-// 	mg := &mockedGTK{}
-// 	defer gostub.Stub(&g, CreateGraphics(mg, nil, nil, nil, nil)).Reset()
+func (s *ColorManagementSuite) Test_hasColorManagement_setsTheThemeVariantToDarkBasedOnThemeNameInGSettings(c *C) {
+	defer gostub.New().SetEnv("GTK_THEME", "foo-bla-theme2").Reset()
+	mg := &mockedGTK{}
+	mgl := &mockedGlib{}
+	defer gostub.Stub(&g, CreateGraphics(mg, mgl, nil, nil, nil)).Reset()
 
-// 	ms := &mockedSettings{}
-// 	mg.mm.On("SettingsGetDefault").Return(ms, nil)
+	ms := &mockedSettings{}
+	mg.mm.On("SettingsGetDefault").Return(ms, nil)
 
-// 	ms.mm.On("GetProperty", "gtk-application-prefer-dark-theme").Return(false, nil).Once()
-// 	ms.mm.On("GetProperty", "gtk-theme-name").Return("adwaita", nil).Once()
+	ms.mm.On("GetProperty", "gtk-application-prefer-dark-theme").Return(false, nil).Once()
+	ms.mm.On("GetProperty", "gtk-theme-name").Return("adwaita", nil).Once()
 
-// 	hcm := &hasColorManagement{}
-// 	c.Assert(hcm.isDarkThemeVariant(), Equals, true)
-// 	c.Assert(hcm.themeVariant, Equals, "dark")
-// }
+	mgls := &mockedGlibSettings{}
+	mgl.mm.On("SettingsNew", "org.gnome.desktop.interface").Return(mgls).Once()
+	mgls.mm.On("GetString", "gtk-theme").Return("Adwaita-dark").Once()
+
+	hcm := &hasColorManagement{}
+	c.Assert(hcm.isDarkThemeVariant(), Equals, true)
+	c.Assert(hcm.themeVariant, Equals, "dark")
+}

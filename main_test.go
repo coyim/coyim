@@ -181,6 +181,7 @@ type mockGlib struct {
 
 	schemaSourceToReturn  glibi.SettingsSchemaSource
 	settingsNewFullReturn glibi.Settings
+	settingsNewReturn     glibi.Settings
 }
 
 type mockSimpleAction struct {
@@ -208,6 +209,10 @@ func (m *mockGlib) SettingsSchemaSourceNewFromDirectory(v1 string, v2 glibi.Sett
 
 func (m *mockGlib) SettingsNewFull(v1 glibi.SettingsSchema, v2 glibi.SettingsBackend, v3 string) glibi.Settings {
 	return m.settingsNewFullReturn
+}
+
+func (m *mockGlib) SettingsNew(string) glibi.Settings {
+	return m.settingsNewReturn
 }
 
 type mockSettingsSchema struct {
@@ -246,6 +251,7 @@ func (s *MainSuite) Test_createGTK_works(c *C) {
 
 	mg := &mockGlib{
 		schemaSourceToReturn: ss,
+		settingsNewReturn:    &glib_mock.MockSettings{},
 	}
 
 	settings.InitSettings(mg)

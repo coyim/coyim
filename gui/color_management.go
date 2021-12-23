@@ -5,6 +5,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -44,11 +45,20 @@ func (cm *hasColorManagement) getGTKSettings() gtki.Settings {
 	return settings
 }
 
+func (cm *hasColorManagement) getGSettings() glibi.Settings {
+	return g.glib.SettingsNew("org.gnome.desktop.interface")
+}
+
 func (cm *hasColorManagement) getThemeNameFromGTKSettings() string {
 	// TODO: this might not be safe to do outside the UI thread
 	themeName, _ := cm.getGTKSettings().GetProperty("gtk-theme-name")
 	val, _ := themeName.(string)
 	return val
+}
+
+func (cm *hasColorManagement) getThemeNameFromGSettings() string {
+	// TODO: this might not be safe to do outside the UI thread
+	return cm.getGSettings().GetString("gtk-theme")
 }
 
 func (cm *hasColorManagement) detectDarkThemeFromGTKSettings() bool {
@@ -60,6 +70,10 @@ func (cm *hasColorManagement) detectDarkThemeFromGTKSettings() bool {
 
 func (cm *hasColorManagement) detectDarkThemeFromGTKSettingsThemeName() bool {
 	return doesThemeNameIndicateDarkness(cm.getThemeNameFromGTKSettings())
+}
+
+func (cm *hasColorManagement) detectDarkThemeFromGSettingsThemeName() bool {
+	return doesThemeNameIndicateDarkness(cm.getThemeNameFromGSettings())
 }
 
 func (cm *hasColorManagement) detectDarkThemeFromGTKListBoxBackground() bool {
@@ -75,6 +89,7 @@ func (cm *hasColorManagement) isDarkTheme() bool {
 	return cm.detectDarkThemeFromEnvironmentVariable() ||
 		cm.detectDarkThemeFromGTKSettings() ||
 		cm.detectDarkThemeFromGTKSettingsThemeName() ||
+		cm.detectDarkThemeFromGSettingsThemeName() ||
 		cm.detectDarkThemeFromGTKListBoxBackground()
 }
 

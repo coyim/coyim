@@ -221,7 +221,7 @@ func (v *roomView) roomConfigRequestTimeoutEvent() {
 // selfOccupantAffiliationUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantAffiliationUpdatedEvent(selfAffiliationUpdate data.SelfAffiliationUpdate) {
 	notificationInfo := roomNotificationOptions{
-		message:   getMUCNotificationMessageFrom(selfAffiliationUpdate),
+		message:   getSelfAffiliationUpdateMessage(selfAffiliationUpdate),
 		showTime:  true,
 		closeable: true,
 	}
@@ -237,7 +237,7 @@ func (v *roomView) selfOccupantAffiliationUpdatedEvent(selfAffiliationUpdate dat
 // selfOccupantAffiliationRoleUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUpdate data.SelfAffiliationRoleUpdate) {
 	notificationInfo := roomNotificationOptions{
-		message:   getMUCNotificationMessageFrom(selfAffiliationRoleUpdate),
+		message:   getSelfAffiliationRoleUpdateMessage(selfAffiliationRoleUpdate),
 		showTime:  true,
 		closeable: true,
 	}
@@ -253,7 +253,7 @@ func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(selfAffiliationRoleUp
 // selfOccupantRoleUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantRoleUpdatedEvent(selfRoleUpdate data.SelfRoleUpdate) {
 	notificationInfo := roomNotificationOptions{
-		message:   getMUCNotificationMessageFrom(selfRoleUpdate),
+		message:   getSelfRoleUpdateMessage(selfRoleUpdate),
 		showTime:  true,
 		closeable: true,
 	}

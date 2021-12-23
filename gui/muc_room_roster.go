@@ -337,7 +337,7 @@ func (r *roomViewRoster) addOccupantToRoster(o *muc.Occupant, parentIter gtki.Tr
 		roomViewRosterAffiliationIndex:                   displayAffiliation,
 		roomViewRosterInfoIndex:                          occupantDisplayTooltip(o),
 		roomViewRosterFontWeightIndex:                    nicknameFontWeight,
-		roomViewRosterOccupantRoleForegroundIndex:        cs.rosterOccupantRoleForeground,
+		roomViewRosterOccupantRoleForegroundIndex:        cs.rosterOccupantRoleForeground.toCSS(),
 		roomViewRosterOccupantImageVisibilityIndex:       true,
 		roomViewRosterOccupantAffiliationVisibilityIndex: displayAffiliation != "",
 		roomViewRosterExpanderVisibilityIndex:            false,

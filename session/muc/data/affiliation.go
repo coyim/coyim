@@ -47,6 +47,15 @@ type SelfAffiliationUpdate struct {
 	AffiliationUpdate
 }
 
+// AffiliationVisitor implements the Visitor pattern for affiliations
+type AffiliationVisitor interface {
+	OnNone(*NoneAffiliation)
+	OnOutcast(*OutcastAffiliation)
+	OnMember(*MemberAffiliation)
+	OnAdmin(*AdminAffiliation)
+	OnOwner(*OwnerAffiliation)
+}
+
 // Affiliation represents an affiliation as specificed by section 5.2 in XEP-0045
 type Affiliation interface {
 	// IsAdmin will return true if this specific affiliation can modify persistent information
@@ -65,6 +74,8 @@ type Affiliation interface {
 	IsDifferentFrom(Affiliation) bool
 	// affiliationTypeAsNumber returns an int value indicating the affiliation number through a AffiliationNumberType
 	affiliationTypeAsNumber() affiliationNumberType
+	// Visit implements double dispatch an affiliations
+	Visit(AffiliationVisitor)
 }
 
 // NoneAffiliation is a representation of MUC's "none" affiliation
@@ -250,6 +261,31 @@ func (*AdminAffiliation) affiliationTypeAsNumber() affiliationNumberType {
 // affiliationTypeAsNumber implements Affiliation interface
 func (*OwnerAffiliation) affiliationTypeAsNumber() affiliationNumberType {
 	return affiliationTypeOwner
+}
+
+// Visit implements the Affiliation interface
+func (a *NoneAffiliation) Visit(v AffiliationVisitor) {
+	v.OnNone(a)
+}
+
+// Visit implements the Affiliation interface
+func (a *OutcastAffiliation) Visit(v AffiliationVisitor) {
+	v.OnOutcast(a)
+}
+
+// Visit implements the Affiliation interface
+func (a *MemberAffiliation) Visit(v AffiliationVisitor) {
+	v.OnMember(a)
+}
+
+// Visit implements the Affiliation interface
+func (a *AdminAffiliation) Visit(v AffiliationVisitor) {
+	v.OnAdmin(a)
+}
+
+// Visit implements the Affiliation interface
+func (a *OwnerAffiliation) Visit(v AffiliationVisitor) {
+	v.OnOwner(a)
 }
 
 // AffiliationFromString returns an Affiliation from the given string, or an error if the string doesn't match a known affiliation type

@@ -120,18 +120,65 @@ func getAffiliationFailureErrorMessage(nickname string, newAffiliation data.Affi
 	return getUpdateAffiliationFailureErrorMessage(nickname, newAffiliation)
 }
 
-func getUpdateAffiliationFailureErrorMessage(nickname string, newAffiliation data.Affiliation) string {
-	switch {
-	case newAffiliation.IsOwner():
-		return i18n.Localf("An error occurred trying to change the position of %s to owner.", nickname)
-	case newAffiliation.IsAdmin():
-		return i18n.Localf("An error occurred trying to change the position of %s to administrator.", nickname)
-	case newAffiliation.IsMember():
-		return i18n.Localf("An error occurred trying to change the position of %s to member.", nickname)
-	case newAffiliation.IsBanned():
-		return i18n.Localf("An error occurred trying to ban %s.", nickname)
+type functionalAffiliationVisitor struct {
+	onNone    func(*data.NoneAffiliation)
+	onOutcast func(*data.OutcastAffiliation)
+	onMember  func(*data.MemberAffiliation)
+	onAdmin   func(*data.AdminAffiliation)
+	onOwner   func(*data.OwnerAffiliation)
+}
+
+func (v *functionalAffiliationVisitor) OnNone(a *data.NoneAffiliation) {
+	if v.onNone != nil {
+		v.onNone(a)
 	}
-	return i18n.Localf("An error occurred trying to change the position of %s.", nickname)
+}
+
+func (v *functionalAffiliationVisitor) OnOutcast(a *data.OutcastAffiliation) {
+	if v.onOutcast != nil {
+		v.onOutcast(a)
+	}
+}
+
+func (v *functionalAffiliationVisitor) OnMember(a *data.MemberAffiliation) {
+	if v.onMember != nil {
+		v.onMember(a)
+	}
+}
+
+func (v *functionalAffiliationVisitor) OnAdmin(a *data.AdminAffiliation) {
+	if v.onAdmin != nil {
+		v.onAdmin(a)
+	}
+}
+
+func (v *functionalAffiliationVisitor) OnOwner(a *data.OwnerAffiliation) {
+	if v.onOwner != nil {
+		v.onOwner(a)
+	}
+}
+
+func getUpdateAffiliationFailureErrorMessage(nickname string, newAffiliation data.Affiliation) string {
+	result := ""
+	vis := &functionalAffiliationVisitor{
+		onNone: func(*data.NoneAffiliation) {
+			result = i18n.Localf("An error occurred trying to change the position of %s.", nickname)
+		},
+		onOutcast: func(*data.OutcastAffiliation) {
+			result = i18n.Localf("An error occurred trying to ban %s.", nickname)
+		},
+		onMember: func(*data.MemberAffiliation) {
+			result = i18n.Localf("An error occurred trying to change the position of %s to member.", nickname)
+		},
+		onAdmin: func(*data.AdminAffiliation) {
+			result = i18n.Localf("An error occurred trying to change the position of %s to administrator.", nickname)
+		},
+		onOwner: func(*data.OwnerAffiliation) {
+			result = i18n.Localf("An error occurred trying to change the position of %s to owner.", nickname)
+		},
+	}
+	newAffiliation.Visit(vis)
+	return result
 }
 
 func getRoleUpdateFailureMessage(nickname string, newRole data.Role) *updateFailureMessages {

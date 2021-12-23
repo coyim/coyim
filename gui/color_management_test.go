@@ -162,3 +162,19 @@ func (s *ColorManagementSuite) Test_hasColorManagement_setsTheThemeVariantToDark
 	c.Assert(hcm.isDarkThemeVariant(), Equals, true)
 	c.Assert(hcm.themeVariant, Equals, "dark")
 }
+
+// func (s *ColorManagementSuite) Test_hasColorManagement_setsTheThemeVariantToDarkBasedOnThemeNameInGTKSettings(c *C) {
+// 	defer gostub.New().SetEnv("GTK_THEME", "foo-bla-theme2").Reset()
+// 	mg := &mockedGTK{}
+// 	defer gostub.Stub(&g, CreateGraphics(mg, nil, nil, nil, nil)).Reset()
+
+// 	ms := &mockedSettings{}
+// 	mg.mm.On("SettingsGetDefault").Return(ms, nil)
+
+// 	ms.mm.On("GetProperty", "gtk-application-prefer-dark-theme").Return(false, nil).Once()
+// 	ms.mm.On("GetProperty", "gtk-theme-name").Return("adwaita", nil).Once()
+
+// 	hcm := &hasColorManagement{}
+// 	c.Assert(hcm.isDarkThemeVariant(), Equals, true)
+// 	c.Assert(hcm.themeVariant, Equals, "dark")
+// }

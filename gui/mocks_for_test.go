@@ -2,6 +2,7 @@ package gui
 
 import (
 	"github.com/coyim/gotk3adapter/gdk_mock"
+	"github.com/coyim/gotk3adapter/glib_mock"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtk_mock"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -102,3 +103,30 @@ func (m *mockRGBAWithValues) GetRed() float64   { return m.r }
 func (m *mockRGBAWithValues) GetGreen() float64 { return m.g }
 func (m *mockRGBAWithValues) GetBlue() float64  { return m.b }
 func (m *mockRGBAWithValues) GetAlpha() float64 { return m.a }
+
+type mockedGlib struct {
+	mm mck.Mock
+	glib_mock.Mock
+}
+
+func (m *mockedGlib) SettingsNew(v string) glibi.Settings {
+	args := m.mm.Called(v)
+
+	var ret glibi.Settings
+	retv := args.Get(0)
+	if retv != nil {
+		ret = retv.(glibi.Settings)
+	}
+
+	return ret
+}
+
+type mockedGlibSettings struct {
+	mm mck.Mock
+	glib_mock.MockSettings
+}
+
+func (m *mockedGlibSettings) GetString(v string) string {
+	args := m.mm.Called(v)
+	return args.String(0)
+}

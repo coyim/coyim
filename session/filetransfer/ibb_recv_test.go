@@ -40,7 +40,7 @@ func (s *IBBReceiverSuite) Test_IbbOpen_works(c *C) {
 
 	ctx := &recvContext{
 		sid:         "testSID",
-		destination: filepath.Join(destDir, "simple_receipt_test_file"),
+		destination: filepath.Join(destDir, "simple_receipt_test_file_tmp1"),
 	}
 
 	addInflightRecv(ctx)
@@ -86,7 +86,7 @@ dHVmZiwgc28gdGhlIGNvbnRlbnQgZG9lc24ndCBtYXR0ZXIgc28gbXVjaC4=
 		opaque:      ibbctx,
 		size:        92,
 		control:     sdata.CreateFileTransferControl(nil, nil),
-		destination: filepath.Join(destDir, "simple_receipt_test_file"),
+		destination: filepath.Join(destDir, "simple_receipt_test_file_tmp2"),
 	}
 
 	ibbctx.recv = ctx.createReceiver()
@@ -123,7 +123,7 @@ func (s *IBBReceiverSuite) Test_IbbClose_works(c *C) {
 		opaque:      ibbctx,
 		size:        11,
 		control:     sdata.CreateFileTransferControl(nil, nil),
-		destination: filepath.Join(destDir, "simple_receipt_test_file"),
+		destination: filepath.Join(destDir, "simple_receipt_test_file_tmp3"),
 	}
 
 	finished := make(chan bool)
@@ -381,7 +381,7 @@ func (s *IBBReceiverSuite) Test_ibbOnData_failsOnIncorrectSequenceNumber(c *C) {
 		opaque:      ibbctx,
 		size:        92,
 		control:     sdata.CreateFileTransferControl(nil, nil),
-		destination: filepath.Join(destDir, "simple_receipt_test_file"),
+		destination: filepath.Join(destDir, "simple_receipt_test_file_tmp4"),
 	}
 
 	ee := make(chan error)
@@ -431,7 +431,7 @@ func (s *IBBReceiverSuite) Test_ibbOnData_failsOnDecodingBase64(c *C) {
 		opaque:      ibbctx,
 		size:        92,
 		control:     sdata.CreateFileTransferControl(nil, nil),
-		destination: filepath.Join(destDir, "simple_receipt_test_file"),
+		destination: filepath.Join(destDir, "simple_receipt_test_file5"),
 	}
 
 	ee := make(chan error)

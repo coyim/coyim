@@ -32,7 +32,7 @@ func (s *ReceiverSuite) Test_receiver_simpleReceiptWorks(c *C) {
 		s:           createTemporarySessionWithLog(),
 		size:        5,
 		control:     sdata.CreateFileTransferControl(nil, nil),
-		destination: filepath.Join(destDir, "simple_receipt_test_file"),
+		destination: filepath.Join(destDir, "simple_receipt_test_file_tmp8"),
 	}
 	recv := ctx.createReceiver()
 
@@ -46,7 +46,7 @@ func (s *ReceiverSuite) Test_receiver_simpleReceiptWorks(c *C) {
 	c.Assert(ok, Equals, true)
 	c.Assert(err, IsNil)
 	c.Assert(toSend, IsNil)
-	c.Assert(strings.HasPrefix(fileName, filepath.Join(destDir, "simple_receipt_test_file")), Equals, true)
+	c.Assert(strings.HasPrefix(fileName, filepath.Join(destDir, "simple_receipt_test_file_tmp8")), Equals, true)
 
 	content, _ := ioutil.ReadFile(fileName)
 	c.Assert(content, DeepEquals, []byte{0x01, 0x02, 0x03, 0x04, 0x05})
@@ -72,7 +72,7 @@ func (s *ReceiverSuite) Test_receiver_anErrorHappensEarlyInTheProcess(c *C) {
 		s:           sess,
 		size:        5,
 		control:     sdata.CreateFileTransferControl(nil, nil),
-		destination: filepath.Join(destDir, "a directory that doesnt exist", "simple_receipt_test_file"),
+		destination: filepath.Join(destDir, "a directory that doesnt exist", "simple_receipt_test_file_tmp9"),
 	}
 
 	go ctx.control.WaitForError(func(error) {})
@@ -102,7 +102,7 @@ func (s *ReceiverSuite) Test_receiver_cancelingWorks(c *C) {
 		s:           sess,
 		size:        5,
 		control:     sdata.CreateFileTransferControl(nil, nil),
-		destination: filepath.Join(destDir, "simple_receipt_test_file"),
+		destination: filepath.Join(destDir, "simple_receipt_test_file_tmp10"),
 	}
 
 	go ctx.control.WaitForError(func(error) {})
@@ -129,7 +129,7 @@ func (s *ReceiverSuite) Test_receiver_receiptOfEncryptedDataWorks(c *C) {
 		s:           createTemporarySessionWithLog(),
 		size:        7,
 		control:     sdata.CreateFileTransferControl(nil, nil),
-		destination: filepath.Join(destDir, "simple_receipt_test_file"),
+		destination: filepath.Join(destDir, "simple_receipt_test_file_tmp11"),
 		enc: &encryptionParameters{
 			macKey:        testDataMacKey,
 			encryptionKey: testDataEncryptionKey,
@@ -148,7 +148,7 @@ func (s *ReceiverSuite) Test_receiver_receiptOfEncryptedDataWorks(c *C) {
 	c.Assert(ok, Equals, true)
 	c.Assert(err, IsNil)
 	c.Assert(toSend, DeepEquals, testDataMacKey)
-	c.Assert(strings.HasPrefix(fileName, filepath.Join(destDir, "simple_receipt_test_file")), Equals, true)
+	c.Assert(strings.HasPrefix(fileName, filepath.Join(destDir, "simple_receipt_test_file_tmp11")), Equals, true)
 
 	content, _ := ioutil.ReadFile(fileName)
 	c.Assert(content, DeepEquals, testDataContent)
@@ -164,7 +164,7 @@ func (s *ReceiverSuite) Test_receiver_receiptWithTooLittleDataForIV(c *C) {
 		s:           sess,
 		size:        7,
 		control:     sdata.CreateFileTransferControl(nil, nil),
-		destination: filepath.Join(destDir, "simple_receipt_test_file"),
+		destination: filepath.Join(destDir, "simple_receipt_test_file_tmp15"),
 		enc: &encryptionParameters{
 			macKey:        testDataMacKey,
 			encryptionKey: testDataEncryptionKey,
@@ -207,7 +207,7 @@ func (s *ReceiverSuite) Test_receiver_receiptOfEncryptedDataWithIncorrectMac(c *
 		s:           sess,
 		size:        7,
 		control:     sdata.CreateFileTransferControl(nil, nil),
-		destination: filepath.Join(destDir, "simple_receipt_test_file"),
+		destination: filepath.Join(destDir, "simple_receipt_test_file_tmp16"),
 		enc: &encryptionParameters{
 			macKey:        testDataMacKey,
 			encryptionKey: testDataEncryptionKey,

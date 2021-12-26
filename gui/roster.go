@@ -27,6 +27,7 @@ type roster struct {
 	accountID       *stringStoreField
 	statusColor     *stringStoreField
 	backgroundColor *stringStoreField
+	weight          *intStoreField
 	tooltip         *stringStoreField
 	rowType         *stringStoreField
 
@@ -100,6 +101,7 @@ func (r *roster) init(u *gtkUI) {
 	r.accountID = newStringStoreField(r.model, indexAccountID)
 	r.statusColor = newStringStoreField(r.model, indexStatusColor)
 	r.backgroundColor = newStringStoreField(r.model, indexBackgroundColor)
+	r.weight = newIntStoreField(r.model, indexWeight)
 	r.tooltip = newStringStoreField(r.model, indexTooltip)
 	r.rowType = newStringStoreField(r.model, indexRowType)
 }
@@ -555,7 +557,7 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accoun
 		pi = r.model.Append(parentIter)
 		r.jid.set(pi, groupID)
 		r.rowType.set(pi, "group")
-		_ = r.model.SetValue(pi, indexWeight, 500)
+		r.weight.set(pi, 500)
 		r.backgroundColor.set(pi, r.ui.currentColorSet().rosterGroupBackground.toHex())
 	}
 
@@ -600,7 +602,7 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 	r.jid.set(parentIter, parentName)
 	r.accountID.set(parentIter, account.ID())
 	r.rowType.set(parentIter, "account")
-	_ = r.model.SetValue(parentIter, indexWeight, 700)
+	r.weight.set(parentIter, 700)
 
 	bgcolor := cs.rosterAccountOnlineBackground
 	if account.session.IsDisconnected() {

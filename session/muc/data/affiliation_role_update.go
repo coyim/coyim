@@ -18,7 +18,17 @@ type AffiliationRoleUpdate struct {
 	Actor               *Actor
 }
 
+// Visit is part of the implementation for the Update interface
+func (u AffiliationRoleUpdate) Visit(vis UpdateVisitor) {
+	vis.OnAffiliationRoleUpdate(u)
+}
+
 // SelfAffiliationRoleUpdate contains information related to a new and previous affiliation and role of the self occupant
 type SelfAffiliationRoleUpdate struct {
 	AffiliationRoleUpdate
+}
+
+// Visit is part of the implementation for the Update interface
+func (u SelfAffiliationRoleUpdate) Visit(vis UpdateVisitor) {
+	vis.OnSelfAffiliationRoleUpdate(u)
 }

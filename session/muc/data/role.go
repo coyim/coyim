@@ -22,9 +22,19 @@ type RoleUpdate struct {
 	Actor    *Actor
 }
 
+// Visit is part of the implementation for the Update interface
+func (u RoleUpdate) Visit(vis UpdateVisitor) {
+	vis.OnRoleUpdate(u)
+}
+
 // SelfRoleUpdate contains information related to a new and previous affiliation of the self occupant
 type SelfRoleUpdate struct {
 	RoleUpdate
+}
+
+// Visit is part of the implementation for the Update interface
+func (u SelfRoleUpdate) Visit(vis UpdateVisitor) {
+	vis.OnSelfRoleUpdate(u)
 }
 
 // Role represents the specific role that a user has inside a specific room

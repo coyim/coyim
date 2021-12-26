@@ -154,7 +154,7 @@ func (c *roomViewConversation) displayNotificationWhenRoomDestroyed(reason strin
 }
 
 // displayOccupantUpdateMessageFor MUST be called from the UI thread
-func (c *roomViewConversation) displayOccupantUpdateMessageFor(update interface{}) {
+func (c *roomViewConversation) displayOccupantUpdateMessageFor(update data.Update) {
 	c.saveAndDisplayMessage("", getMUCNotificationMessageFrom(update), time.Now(), data.OccupantInformationChanged)
 }
 

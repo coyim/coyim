@@ -1,8 +1,6 @@
 package gui
 
 import (
-	"fmt"
-
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/session/muc/data"
@@ -238,22 +236,38 @@ func getRoleRemoveFailureMessageWithActor(nickname string, actorAffiliation data
 	return i18n.Localf("You don't have permission to expel %s.", nickname)
 }
 
-func getMUCNotificationMessageFrom(d interface{}) string {
-	switch t := d.(type) {
-	case data.AffiliationUpdate:
-		return getAffiliationUpdateMessage(t)
-	case data.RoleUpdate:
-		return getRoleUpdateMessage(t)
-	case data.AffiliationRoleUpdate:
-		return getAffiliationRoleUpdateMessage(t)
-	case data.SelfAffiliationUpdate:
-		return getSelfAffiliationUpdateMessage(t)
-	case data.SelfRoleUpdate:
-		return getSelfRoleUpdateMessage(t)
-	case data.SelfAffiliationRoleUpdate:
-		return getSelfAffiliationRoleUpdateMessage(t)
-	}
-	panic(fmt.Sprintf("unkown update type: %v", d))
+type mucNotificationUpdateMessage struct {
+	result string
+}
+
+func (v *mucNotificationUpdateMessage) OnAffiliationUpdate(u data.AffiliationUpdate) {
+	v.result = getAffiliationUpdateMessage(u)
+}
+
+func (v *mucNotificationUpdateMessage) OnRoleUpdate(u data.RoleUpdate) {
+	v.result = getRoleUpdateMessage(u)
+}
+
+func (v *mucNotificationUpdateMessage) OnAffiliationRoleUpdate(u data.AffiliationRoleUpdate) {
+	v.result = getAffiliationRoleUpdateMessage(u)
+}
+
+func (v *mucNotificationUpdateMessage) OnSelfAffiliationUpdate(u data.SelfAffiliationUpdate) {
+	v.result = getSelfAffiliationUpdateMessage(u)
+}
+
+func (v *mucNotificationUpdateMessage) OnSelfRoleUpdate(u data.SelfRoleUpdate) {
+	v.result = getSelfRoleUpdateMessage(u)
+}
+
+func (v *mucNotificationUpdateMessage) OnSelfAffiliationRoleUpdate(u data.SelfAffiliationRoleUpdate) {
+	v.result = getSelfAffiliationRoleUpdateMessage(u)
+}
+
+func getMUCNotificationMessageFrom(d data.Update) string {
+	v := &mucNotificationUpdateMessage{}
+	d.Visit(v)
+	return v.result
 }
 
 func getAffiliationUpdateMessage(affiliationUpdate data.AffiliationUpdate) string {

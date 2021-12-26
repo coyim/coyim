@@ -35,10 +35,30 @@ func (u *gtkUI) updatedRoomListing(rl *muc.RoomListing, data interface{}) {
 	// If we get an old update, we don't want to do anything at all
 	if d.view.generation == d.generation {
 		doInUIThread(func() {
-			_ = d.view.roomsModel.SetValue(d.iter, mucListRoomsIndexDescription, g.glib.MarkupEscapeText(rl.Description))
-			_ = d.view.roomsModel.SetValue(d.iter, mucListRoomsIndexOccupants, rl.Occupants)
+			d.view.fields.description.set(d.iter, g.glib.MarkupEscapeText(rl.Description))
+			d.view.fields.occupants.set(d.iter, rl.Occupants)
 		})
 	}
+}
+
+type mucPublicRoomsFields struct {
+	jid         *stringStoreField
+	name        *stringStoreField
+	service     *stringStoreField
+	description *stringStoreField
+	occupants   *intStoreField
+	roomInfo    *intStoreField
+}
+
+func createMucPublicRoomsFields(model gtki.TreeStore) *mucPublicRoomsFields {
+	fields := &mucPublicRoomsFields{}
+	fields.jid = newStringStoreField(model, mucListRoomsIndexJid)
+	fields.name = newStringStoreField(model, mucListRoomsIndexName)
+	fields.service = newStringStoreField(model, mucListRoomsIndexService)
+	fields.description = newStringStoreField(model, mucListRoomsIndexDescription)
+	fields.occupants = newIntStoreField(model, mucListRoomsIndexOccupants)
+	fields.roomInfo = newIntStoreField(model, mucListRoomsIndexRoomInfo)
+	return fields
 }
 
 type mucPublicRoomsView struct {
@@ -54,6 +74,7 @@ type mucPublicRoomsView struct {
 	cancel        chan bool
 
 	roomsModel gtki.TreeStore
+	fields     *mucPublicRoomsFields
 
 	dialog              gtki.Dialog         `gtk-widget:"public-rooms-dialog"`
 	roomsTree           gtki.TreeView       `gtk-widget:"public-rooms-tree"`
@@ -116,6 +137,7 @@ func (prv *mucPublicRoomsView) initModel() {
 
 	prv.roomsModel = roomsModel
 	prv.roomsTree.SetModel(prv.roomsModel)
+	prv.fields = createMucPublicRoomsFields(roomsModel)
 }
 
 func (prv *mucPublicRoomsView) initNotificationsAndSpinner(u *gtkUI) {
@@ -216,27 +238,23 @@ func (prv *mucPublicRoomsView) getRoomListingFromIter(iter gtki.TreeIter) (*muc.
 }
 
 func (prv *mucPublicRoomsView) getRoomInfoFromIter(iter gtki.TreeIter) (int, error) {
-	roomInfoValue, e1 := prv.roomsModel.GetValue(iter, mucListRoomsIndexRoomInfo)
-	roomInfoRef, e2 := roomInfoValue.GoValue()
-	if e1 != nil || e2 != nil {
+	roomInfoRealVal, e := prv.fields.roomInfo.getWithError(iter)
+	if e != nil {
 		return 0, errNoRoomSelected
 	}
 
-	roomInfoRealVal := roomInfoRef.(int)
 	return roomInfoRealVal, nil
 }
 
 func (prv *mucPublicRoomsView) getRoomIDFromIter(iter gtki.TreeIter) (jid.Bare, error) {
-	roomJidValue, _ := prv.roomsModel.GetValue(iter, mucListRoomsIndexJid)
-	roomName, _ := roomJidValue.GetString()
+	roomName := prv.fields.jid.get(iter)
 
 	_, ok := prv.serviceGroups[roomName]
 	if ok {
 		return nil, errNoRoomSelected
 	}
 
-	serviceValue, _ := prv.roomsModel.GetValue(iter, mucListRoomsIndexService)
-	service, _ := serviceValue.GetString()
+	service := prv.fields.service.get(iter)
 	_, ok = prv.serviceGroups[service]
 	if !ok {
 		return nil, errNoService
@@ -377,8 +395,8 @@ func (prv *mucPublicRoomsView) addNewServiceToModel(roomName, serviceName string
 	serv := prv.roomsModel.Append(nil)
 
 	prv.serviceGroups[roomName] = serv
-	_ = prv.roomsModel.SetValue(serv, mucListRoomsIndexJid, g.glib.MarkupEscapeText(roomName))
-	_ = prv.roomsModel.SetValue(serv, mucListRoomsIndexName, g.glib.MarkupEscapeText(serviceName))
+	prv.fields.jid.set(serv, g.glib.MarkupEscapeText(roomName))
+	prv.fields.name.set(serv, g.glib.MarkupEscapeText(serviceName))
 
 	return serv
 }
@@ -392,14 +410,14 @@ func (prv *mucPublicRoomsView) addNewRoomToModel(parentIter gtki.TreeIter, rl *m
 		name = id
 	}
 
-	_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexJid, id)
-	_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexName, g.glib.MarkupEscapeText(name))
-	_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexService, rl.Service.String())
+	prv.fields.jid.set(iter, id)
+	prv.fields.name.set(iter, g.glib.MarkupEscapeText(name))
+	prv.fields.service.set(iter, rl.Service.String())
 
 	// This will block while finding an unused identifier. However, since
 	// we don't expect to get millions of room listings, it's not likely this will ever be a problem.
 	roomInfoRef := prv.getFreshRoomInfoIdentifierAndSet(rl)
-	_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexRoomInfo, roomInfoRef)
+	prv.fields.roomInfo.set(iter, roomInfoRef)
 
 	rl.OnUpdate(prv.u.updatedRoomListing, &roomListingUpdateData{iter, prv, gen})
 

@@ -29,6 +29,7 @@ type roster struct {
 	backgroundColor *stringStoreField
 	weight          *intStoreField
 	tooltip         *stringStoreField
+	statusIcon      *pixbufStoreField
 	rowType         *stringStoreField
 
 	isCollapsed map[string]bool
@@ -103,6 +104,7 @@ func (r *roster) init(u *gtkUI) {
 	r.backgroundColor = newStringStoreField(r.model, indexBackgroundColor)
 	r.weight = newIntStoreField(r.model, indexWeight)
 	r.tooltip = newStringStoreField(r.model, indexTooltip)
+	r.statusIcon = newPixbufStoreField(r.model, indexStatusIcon)
 	r.rowType = newStringStoreField(r.model, indexRowType)
 }
 
@@ -456,9 +458,8 @@ func (r *roster) addItem(item *rosters.Peer, parentIter gtki.TreeIter, indent st
 	r.statusColor.set(iter, decideColorFor(cs, item).toHex())
 	r.backgroundColor.set(iter, cs.rosterPeerBackground.toHex())
 	r.tooltip.set(iter, createTooltipFor(item))
+	r.statusIcon.set(iter, statusIcons[decideStatusFor(item)].GetPixbuf())
 	r.rowType.set(iter, "peer")
-
-	_ = r.model.SetValue(iter, indexStatusIcon, statusIcons[decideStatusFor(item)].GetPixbuf())
 }
 
 func (r *roster) redrawMerged() {
@@ -626,7 +627,7 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 		stat = "connecting"
 	}
 
-	_ = r.model.SetValue(parentIter, indexStatusIcon, statusIcons[stat].GetPixbuf())
+	r.statusIcon.set(parentIter, statusIcons[stat].GetPixbuf())
 	r.displayName.set(parentIter, createGroupDisplayName(parentName, accountCounter, isExpanded))
 }
 

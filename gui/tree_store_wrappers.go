@@ -1,28 +1,47 @@
 package gui
 
-import "github.com/coyim/gotk3adapter/gtki"
+import (
+	"github.com/coyim/gotk3adapter/gdki"
+	"github.com/coyim/gotk3adapter/gtki"
+)
 
-type stringStoreField struct {
+type baseStoreField struct {
 	store     gtki.TreeStore
 	index     int
 	doOnError func(error)
 }
 
-func newStringStoreField(store gtki.TreeStore, index int) *stringStoreField {
-	return &stringStoreField{
+func (s *baseStoreField) onError(f func(error)) {
+	s.doOnError = f
+}
+
+func (s *baseStoreField) handlePotentialError(e error) {
+	if e != nil && s.doOnError != nil {
+		s.doOnError(e)
+	}
+}
+
+func (s *baseStoreField) baseGet(iter gtki.TreeIter) interface{} {
+	untypedResult, e := s.store.GetValue(iter, s.index)
+	s.handlePotentialError(e)
+	result, e2 := untypedResult.GoValue()
+	s.handlePotentialError(e2)
+	return result
+}
+
+type stringStoreField struct {
+	*baseStoreField
+}
+
+func newBaseStoreField(store gtki.TreeStore, index int) *baseStoreField {
+	return &baseStoreField{
 		store: store,
 		index: index,
 	}
 }
 
-func (s *stringStoreField) onError(f func(error)) {
-	s.doOnError = f
-}
-
-func (s *stringStoreField) handlePotentialError(e error) {
-	if e != nil && s.doOnError != nil {
-		s.doOnError(e)
-	}
+func newStringStoreField(store gtki.TreeStore, index int) *stringStoreField {
+	return &stringStoreField{newBaseStoreField(store, index)}
 }
 
 func (s *stringStoreField) set(iter gtki.TreeIter, value string) {
@@ -30,34 +49,15 @@ func (s *stringStoreField) set(iter gtki.TreeIter, value string) {
 }
 
 func (s *stringStoreField) get(iter gtki.TreeIter) string {
-	untypedResult, e := s.store.GetValue(iter, s.index)
-	s.handlePotentialError(e)
-	result, e2 := untypedResult.GetString()
-	s.handlePotentialError(e2)
-	return result
+	return s.baseGet(iter).(string)
 }
 
 type intStoreField struct {
-	store     gtki.TreeStore
-	index     int
-	doOnError func(error)
+	*baseStoreField
 }
 
 func newIntStoreField(store gtki.TreeStore, index int) *intStoreField {
-	return &intStoreField{
-		store: store,
-		index: index,
-	}
-}
-
-func (s *intStoreField) onError(f func(error)) {
-	s.doOnError = f
-}
-
-func (s *intStoreField) handlePotentialError(e error) {
-	if e != nil && s.doOnError != nil {
-		s.doOnError(e)
-	}
+	return &intStoreField{newBaseStoreField(store, index)}
 }
 
 func (s *intStoreField) set(iter gtki.TreeIter, value int) {
@@ -65,9 +65,21 @@ func (s *intStoreField) set(iter gtki.TreeIter, value int) {
 }
 
 func (s *intStoreField) get(iter gtki.TreeIter) int {
-	untypedResult, e := s.store.GetValue(iter, s.index)
-	s.handlePotentialError(e)
-	result, e2 := untypedResult.GoValue()
-	s.handlePotentialError(e2)
-	return result.(int)
+	return s.baseGet(iter).(int)
+}
+
+type pixbufStoreField struct {
+	*baseStoreField
+}
+
+func newPixbufStoreField(store gtki.TreeStore, index int) *pixbufStoreField {
+	return &pixbufStoreField{newBaseStoreField(store, index)}
+}
+
+func (s *pixbufStoreField) set(iter gtki.TreeIter, value gdki.Pixbuf) {
+	s.handlePotentialError(s.store.SetValue(iter, s.index, value))
+}
+
+func (s *pixbufStoreField) get(iter gtki.TreeIter) gdki.Pixbuf {
+	return s.baseGet(iter).(gdki.Pixbuf)
 }

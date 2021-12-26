@@ -2,11 +2,17 @@ package gui
 
 import (
 	"github.com/coyim/gotk3adapter/gdki"
+	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+type store interface {
+	GetValue(gtki.TreeIter, int) (glibi.Value, error)
+	SetValue(gtki.TreeIter, int, interface{}) error
+}
+
 type baseStoreField struct {
-	store     gtki.TreeStore
+	store     store
 	index     int
 	doOnError func(error)
 }
@@ -45,14 +51,14 @@ type stringStoreField struct {
 	*baseStoreField
 }
 
-func newBaseStoreField(store gtki.TreeStore, index int) *baseStoreField {
+func newBaseStoreField(store store, index int) *baseStoreField {
 	return &baseStoreField{
 		store: store,
 		index: index,
 	}
 }
 
-func newStringStoreField(store gtki.TreeStore, index int) *stringStoreField {
+func newStringStoreField(store store, index int) *stringStoreField {
 	return &stringStoreField{newBaseStoreField(store, index)}
 }
 
@@ -76,7 +82,7 @@ type intStoreField struct {
 	*baseStoreField
 }
 
-func newIntStoreField(store gtki.TreeStore, index int) *intStoreField {
+func newIntStoreField(store store, index int) *intStoreField {
 	return &intStoreField{newBaseStoreField(store, index)}
 }
 
@@ -100,7 +106,7 @@ type pixbufStoreField struct {
 	*baseStoreField
 }
 
-func newPixbufStoreField(store gtki.TreeStore, index int) *pixbufStoreField {
+func newPixbufStoreField(store store, index int) *pixbufStoreField {
 	return &pixbufStoreField{newBaseStoreField(store, index)}
 }
 

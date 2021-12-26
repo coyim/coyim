@@ -54,6 +54,7 @@ func (s *IBBReceiverSuite) Test_IbbOpen_works(c *C) {
 	c.Assert(ctx.opaque, Not(IsNil))
 	ibbctx := ctx.opaque.(*ibbContext)
 	c.Assert(ibbctx.recv, Not(IsNil))
+	ibbctx.recv.cleanupAfterRun()
 
 	c.Assert(len(hook.Entries), Equals, 0)
 }

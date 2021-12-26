@@ -22,6 +22,9 @@ type roster struct {
 	view   gtki.TreeView       `gtk-widget:"roster-tree"`
 	model  gtki.TreeStore
 
+	rowType *stringStoreField
+	jid     *stringStoreField
+
 	isCollapsed map[string]bool
 	toCollapse  []gtki.TreePath
 
@@ -55,6 +58,8 @@ func (r *roster) init(u *gtkUI) {
 	r.view.SetEnableSearch(true)
 	r.view.SetSearchEqualSubstringMatch()
 
+	// TODO: refactor this to be its own wrapper type that
+	// automatically manages the setters for each column
 	model, err := g.gtk.TreeStoreNew(
 		// jid
 		glibi.TYPE_STRING,
@@ -81,6 +86,9 @@ func (r *roster) init(u *gtkUI) {
 
 	r.model = model
 	r.view.SetModel(r.model)
+
+	r.jid = newStringStoreField(r.model, indexJid)
+	r.rowType = newStringStoreField(r.model, indexRowType)
 }
 
 func getFromModelIter(m gtki.TreeStore, iter gtki.TreeIter, index int) string {
@@ -100,9 +108,9 @@ func (r *roster) getAccountAndJidFromEvent(bt gdki.EventButton) (j jid.WithoutRe
 	if err != nil {
 		return nil, nil, "", false
 	}
-	j = jid.NR(getFromModelIter(r.model, iter, indexJid))
+	j = jid.NR(r.jid.get(iter))
 	accountID := getFromModelIter(r.model, iter, indexAccountID)
-	rowType = getFromModelIter(r.model, iter, indexRowType)
+	rowType = r.rowType.get(iter)
 	account, ok = r.ui.accountManager.getAccountByID(accountID)
 	return j, account, rowType, ok
 }
@@ -322,8 +330,8 @@ func (r *roster) onActivateRosterRow(v gtki.TreeView, path gtki.TreePath) {
 		return
 	}
 
-	peer := getFromModelIter(r.model, iter, indexJid)
-	rowType := getFromModelIter(r.model, iter, indexRowType)
+	peer := r.jid.get(iter)
+	rowType := r.rowType.get(iter)
 
 	switch rowType {
 	case "peer":
@@ -434,7 +442,7 @@ func (r *roster) addItem(item *rosters.Peer, parentIter gtki.TreeIter, indent st
 	}
 
 	setAll(r.model, iter,
-		item.Jid.String(),
+		item.Jid.String(), //TODO: remove once we remove the "setAll" function
 		fmt.Sprintf("%s %s%s", indent, item.NameForPresentation(), potentialExtra),
 		item.BelongsTo,
 		decideColorFor(cs, item).toHex(),
@@ -443,7 +451,9 @@ func (r *roster) addItem(item *rosters.Peer, parentIter gtki.TreeIter, indent st
 		createTooltipFor(item),
 	)
 
-	_ = r.model.SetValue(iter, indexRowType, "peer")
+	r.jid.set(iter, item.Jid.String())
+	r.rowType.set(iter, "peer")
+
 	_ = r.model.SetValue(iter, indexStatusIcon, statusIcons[decideStatusFor(item)].GetPixbuf())
 }
 
@@ -542,7 +552,7 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accoun
 	if g.GroupName != "" && (!isEmpty || r.showEmptyGroups()) {
 		pi = r.model.Append(parentIter)
 		_ = r.model.SetValue(pi, indexParentJid, groupID)
-		_ = r.model.SetValue(pi, indexRowType, "group")
+		r.rowType.set(pi, "group")
 		_ = r.model.SetValue(pi, indexWeight, 500)
 		_ = r.model.SetValue(pi, indexBackgroundColor, r.ui.currentColorSet().rosterGroupBackground.toHex())
 	}
@@ -587,7 +597,7 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 
 	_ = r.model.SetValue(parentIter, indexParentJid, parentName)
 	_ = r.model.SetValue(parentIter, indexAccountID, account.ID())
-	_ = r.model.SetValue(parentIter, indexRowType, "account")
+	r.rowType.set(parentIter, "account")
 	_ = r.model.SetValue(parentIter, indexWeight, 700)
 
 	bgcolor := cs.rosterAccountOnlineBackground

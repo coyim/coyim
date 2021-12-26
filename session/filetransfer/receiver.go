@@ -49,6 +49,8 @@ type receiver struct {
 
 	toSendAtFinish   []byte
 	fileNameAtFinish string
+
+	temporaryFile *os.File
 }
 
 func (ctx *recvContext) createReceiver() *receiver {
@@ -61,10 +63,23 @@ func (ctx *recvContext) createReceiver() *receiver {
 
 	r.newData = sync.NewCond(r)
 
+	r.openTemporaryFile()
+
 	go r.processReceive()
 	go r.readAndRun()
 
 	return r
+}
+
+func (r *receiver) openTemporaryFile() {
+	ff, err := r.ctx.openDestinationTempFile()
+	if err != nil {
+		r.ctx.s.Log().WithError(err).Warn("Failed to open temporary file")
+		removeInflightRecv(r.ctx.sid)
+		r.saveError(err)
+		return
+	}
+	r.temporaryFile = ff
 }
 
 func (r *receiver) Close() {
@@ -116,12 +131,21 @@ var ioPipe = io.Pipe
 var ioReadFull = io.ReadFull
 var ioTeeReader = io.TeeReader
 
+func (r *receiver) cleanupAfterRun() {
+	ff := r.temporaryFile
+	if ff != nil {
+		closeAndIgnore(ff)
+		_ = os.Remove(ff.Name())
+		r.temporaryFile = nil
+	}
+	removeInflightRecv(r.ctx.sid)
+}
+
 func (r *receiver) readAndRun() {
-	ff, err := r.ctx.openDestinationTempFile()
-	if err != nil {
-		r.ctx.s.Log().WithError(err).Warn("Failed to open temporary file")
-		removeInflightRecv(r.ctx.sid)
-		r.saveError(err)
+	control := r.ctx.control
+	ff := r.temporaryFile
+
+	if control == nil || ff == nil {
 		return
 	}
 
@@ -131,28 +155,24 @@ func (r *receiver) readAndRun() {
 	reporting := func(v int) error {
 		totalWritten += int64(v)
 		writes++
-		r.ctx.control.SendUpdate(totalWritten, r.ctx.size)
+		control.SendUpdate(totalWritten, r.ctx.size)
 		return nil
 	}
 
 	rr, afterFinish, err := r.ctx.enc.wrapForReceiving(r)
 	if err != nil {
 		r.ctx.s.Log().WithError(err).Warn("Couldn't read encryption parameters")
-		r.ctx.control.ReportError(errors.New("Error while reading encryption parameters"))
-		closeAndIgnore(ff)
-		_ = os.Remove(ff.Name())
-		removeInflightRecv(r.ctx.sid)
+		control.ReportError(errors.New("Error while reading encryption parameters"))
+		r.cleanupAfterRun()
 		r.saveError(err)
 		return
 	}
 
-	_, err = ioCopyN(ioMultiWriter(ff, &reportingWriter{report: reporting}), rr, r.ctx.size)
+	_, err = ioCopyN(ioMultiWriter(r.temporaryFile, &reportingWriter{report: reporting}), rr, r.ctx.size)
 	if err != nil {
 		r.ctx.s.Log().WithError(err).Warn("Had error when trying to write to file")
-		r.ctx.control.ReportError(errors.New("Error writing to file"))
-		closeAndIgnore(ff)
-		_ = os.Remove(ff.Name())
-		removeInflightRecv(r.ctx.sid)
+		control.ReportError(errors.New("Error writing to file"))
+		r.cleanupAfterRun()
 		r.saveError(err)
 		return
 	}
@@ -172,10 +192,8 @@ func (r *receiver) readAndRun() {
 			"actual":   fstat.Size(),
 		}).Warn("Unexpected file size - this probably means the transfer was cancelled")
 		err = errors.New("Incorrect final size of file - this implies the transfer was cancelled")
-		r.ctx.control.ReportError(err)
-		closeAndIgnore(ff)
-		_ = os.Remove(ff.Name())
-		removeInflightRecv(r.ctx.sid)
+		control.ReportError(err)
+		r.cleanupAfterRun()
 		r.saveError(err)
 		return
 	}
@@ -183,10 +201,8 @@ func (r *receiver) readAndRun() {
 	toSend, err := afterFinish()
 	if err != nil {
 		r.ctx.s.Log().WithError(err).Warn("Couldn't verify integrity of sent file")
-		r.ctx.control.ReportError(errors.New("Couldn't verify integrity of sent file"))
-		closeAndIgnore(ff)
-		_ = os.Remove(ff.Name())
-		removeInflightRecv(r.ctx.sid)
+		control.ReportError(errors.New("Couldn't verify integrity of sent file"))
+		r.cleanupAfterRun()
 		r.saveError(err)
 		return
 	}

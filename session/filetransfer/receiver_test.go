@@ -79,7 +79,6 @@ func (s *ReceiverSuite) Test_receiver_anErrorHappensEarlyInTheProcess(c *C) {
 
 	recv := ctx.createReceiver()
 
-	_, _ = recv.Write([]byte{0x01, 0x02, 0x03})
 	toSend, fileName, ok, err := recv.wait()
 
 	c.Assert(ok, Equals, false)

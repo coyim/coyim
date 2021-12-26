@@ -27,12 +27,16 @@ func (ctx *recvContext) ibbCleanup() {
 	removeInflightRecv(ctx.sid)
 }
 
+func ibbTryCancelReceiver(ctx *recvContext) {
+	ictx, ok := ctx.opaque.(*ibbContext)
+	if ok && ictx != nil && ictx.recv != nil {
+		ictx.recv.cancel()
+	}
+}
+
 func ibbWaitForCancel(ctx *recvContext) {
 	ctx.control.WaitForCancel(func() {
-		ictx, ok := ctx.opaque.(*ibbContext)
-		if ok && ictx != nil && ictx.recv != nil {
-			ictx.recv.cancel()
-		}
+		ibbTryCancelReceiver(ctx)
 		ctx.ibbCleanup()
 		_, _, _ = ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBClose{Sid: ctx.sid})
 	})

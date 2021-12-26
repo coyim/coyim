@@ -431,7 +431,7 @@ func (s *IBBReceiverSuite) Test_ibbOnData_failsOnDecodingBase64(c *C) {
 		opaque:      ibbctx,
 		size:        92,
 		control:     sdata.CreateFileTransferControl(nil, nil),
-		destination: filepath.Join(destDir, "simple_receipt_test_file5"),
+		destination: filepath.Join(destDir, "simple_receipt_test_file_tmp5_"),
 	}
 
 	ee := make(chan error)
@@ -440,7 +440,6 @@ func (s *IBBReceiverSuite) Test_ibbOnData_failsOnDecodingBase64(c *C) {
 	})
 
 	ibbctx.recv = ctx.createReceiver()
-
 	addInflightRecv(ctx)
 
 	ret, iqtype, ignore := ibbOnData(wl, []byte(
@@ -453,6 +452,8 @@ dHVmZiwgc28gdGhlIGNvbnRlbnQgZG9lc24ndCBtYXR0ZXIgc28gbXVjaC4=
 `))
 
 	c.Assert(<-ee, ErrorMatches, "Couldn't decode incoming data")
+
+	ibbctx.recv.cleanupAfterRun()
 
 	c.Assert(ret, DeepEquals, iqErrorNotAcceptable)
 	c.Assert(iqtype, Equals, "error")

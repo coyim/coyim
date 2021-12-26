@@ -22,6 +22,15 @@ type roster struct {
 	view   gtki.TreeView       `gtk-widget:"roster-tree"`
 	model  gtki.TreeStore
 
+	fields *rosterFields
+
+	isCollapsed map[string]bool
+	toCollapse  []gtki.TreePath
+
+	ui *gtkUI
+}
+
+type rosterFields struct {
 	jid             *stringStoreField
 	displayName     *stringStoreField
 	accountID       *stringStoreField
@@ -31,11 +40,6 @@ type roster struct {
 	tooltip         *stringStoreField
 	statusIcon      *pixbufStoreField
 	rowType         *stringStoreField
-
-	isCollapsed map[string]bool
-	toCollapse  []gtki.TreePath
-
-	ui *gtkUI
 }
 
 const (
@@ -52,24 +56,7 @@ const (
 	indexParentDisplayName = 1
 )
 
-func (r *roster) init(u *gtkUI) {
-	builder := newBuilder("Roster")
-
-	r.isCollapsed = make(map[string]bool)
-	r.ui = u
-
-	builder.ConnectSignals(map[string]interface{}{
-		"on_activate_buddy": r.onActivateRosterRow,
-		"on_button_press":   r.onButtonPress,
-	})
-
-	panicOnDevError(builder.bindObjects(r))
-
-	r.view.SetEnableSearch(true)
-	r.view.SetSearchEqualSubstringMatch()
-
-	// TODO: refactor this to be its own wrapper type that
-	// automatically manages the setters for each column
+func createTreeModelAndAccessors() (gtki.TreeStore, *rosterFields) {
 	model, err := g.gtk.TreeStoreNew(
 		// jid
 		glibi.TYPE_STRING,
@@ -94,18 +81,40 @@ func (r *roster) init(u *gtkUI) {
 		panic(err)
 	}
 
-	r.model = model
-	r.view.SetModel(r.model)
+	fields := &rosterFields{}
 
-	r.jid = newStringStoreField(r.model, indexJid)
-	r.displayName = newStringStoreField(r.model, indexDisplayName)
-	r.accountID = newStringStoreField(r.model, indexAccountID)
-	r.statusColor = newStringStoreField(r.model, indexStatusColor)
-	r.backgroundColor = newStringStoreField(r.model, indexBackgroundColor)
-	r.weight = newIntStoreField(r.model, indexWeight)
-	r.tooltip = newStringStoreField(r.model, indexTooltip)
-	r.statusIcon = newPixbufStoreField(r.model, indexStatusIcon)
-	r.rowType = newStringStoreField(r.model, indexRowType)
+	fields.jid = newStringStoreField(model, indexJid)
+	fields.displayName = newStringStoreField(model, indexDisplayName)
+	fields.accountID = newStringStoreField(model, indexAccountID)
+	fields.statusColor = newStringStoreField(model, indexStatusColor)
+	fields.backgroundColor = newStringStoreField(model, indexBackgroundColor)
+	fields.weight = newIntStoreField(model, indexWeight)
+	fields.tooltip = newStringStoreField(model, indexTooltip)
+	fields.statusIcon = newPixbufStoreField(model, indexStatusIcon)
+	fields.rowType = newStringStoreField(model, indexRowType)
+
+	return model, fields
+}
+
+func (r *roster) init(u *gtkUI) {
+	builder := newBuilder("Roster")
+
+	r.isCollapsed = make(map[string]bool)
+	r.ui = u
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_activate_buddy": r.onActivateRosterRow,
+		"on_button_press":   r.onButtonPress,
+	})
+
+	panicOnDevError(builder.bindObjects(r))
+
+	r.view.SetEnableSearch(true)
+	r.view.SetSearchEqualSubstringMatch()
+
+	r.model, r.fields = createTreeModelAndAccessors()
+
+	r.view.SetModel(r.model)
 }
 
 func (r *roster) getAccountAndJidFromEvent(bt gdki.EventButton) (j jid.WithoutResource, account *account, rowType string, ok bool) {
@@ -119,9 +128,9 @@ func (r *roster) getAccountAndJidFromEvent(bt gdki.EventButton) (j jid.WithoutRe
 	if err != nil {
 		return nil, nil, "", false
 	}
-	j = jid.NR(r.jid.get(iter))
-	accountID := r.accountID.get(iter)
-	rowType = r.rowType.get(iter)
+	j = jid.NR(r.fields.jid.get(iter))
+	accountID := r.fields.accountID.get(iter)
+	rowType = r.fields.rowType.get(iter)
 	account, ok = r.ui.accountManager.getAccountByID(accountID)
 	return j, account, rowType, ok
 }
@@ -341,8 +350,8 @@ func (r *roster) onActivateRosterRow(v gtki.TreeView, path gtki.TreePath) {
 		return
 	}
 
-	peer := r.jid.get(iter)
-	rowType := r.rowType.get(iter)
+	peer := r.fields.jid.get(iter)
+	rowType := r.fields.rowType.get(iter)
 
 	switch rowType {
 	case "peer":
@@ -352,7 +361,7 @@ func (r *roster) onActivateRosterRow(v gtki.TreeView, path gtki.TreePath) {
 		}
 
 		defer selection.UnselectPath(path)
-		accountID := r.accountID.get(iter)
+		accountID := r.fields.accountID.get(iter)
 		account, ok := r.ui.accountManager.getAccountByID(accountID)
 		if !ok {
 			return
@@ -452,14 +461,14 @@ func (r *roster) addItem(item *rosters.Peer, parentIter gtki.TreeIter, indent st
 		potentialExtra = i18n.Local(" (waiting for approval)")
 	}
 
-	r.jid.set(iter, item.Jid.String())
-	r.displayName.set(iter, fmt.Sprintf("%s %s%s", indent, item.NameForPresentation(), potentialExtra))
-	r.accountID.set(iter, item.BelongsTo)
-	r.statusColor.set(iter, decideColorFor(cs, item).toHex())
-	r.backgroundColor.set(iter, cs.rosterPeerBackground.toHex())
-	r.tooltip.set(iter, createTooltipFor(item))
-	r.statusIcon.set(iter, statusIcons[decideStatusFor(item)].GetPixbuf())
-	r.rowType.set(iter, "peer")
+	r.fields.jid.set(iter, item.Jid.String())
+	r.fields.displayName.set(iter, fmt.Sprintf("%s %s%s", indent, item.NameForPresentation(), potentialExtra))
+	r.fields.accountID.set(iter, item.BelongsTo)
+	r.fields.statusColor.set(iter, decideColorFor(cs, item).toHex())
+	r.fields.backgroundColor.set(iter, cs.rosterPeerBackground.toHex())
+	r.fields.tooltip.set(iter, createTooltipFor(item))
+	r.fields.statusIcon.set(iter, statusIcons[decideStatusFor(item)].GetPixbuf())
+	r.fields.rowType.set(iter, "peer")
 }
 
 func (r *roster) redrawMerged() {
@@ -556,10 +565,10 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accoun
 
 	if g.GroupName != "" && (!isEmpty || r.showEmptyGroups()) {
 		pi = r.model.Append(parentIter)
-		r.jid.set(pi, groupID)
-		r.rowType.set(pi, "group")
-		r.weight.set(pi, 500)
-		r.backgroundColor.set(pi, r.ui.currentColorSet().rosterGroupBackground.toHex())
+		r.fields.jid.set(pi, groupID)
+		r.fields.rowType.set(pi, "group")
+		r.fields.weight.set(pi, 500)
+		r.fields.backgroundColor.set(pi, r.ui.currentColorSet().rosterGroupBackground.toHex())
 	}
 
 	for _, item := range r.sortedPeers(g.UnsortedPeers()) {
@@ -586,7 +595,7 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accoun
 			r.toCollapse = append(r.toCollapse, parentPath)
 		}
 
-		r.displayName.set(pi, createGroupDisplayName(g.FullGroupName(), groupCounter, isExpanded))
+		r.fields.displayName.set(pi, createGroupDisplayName(g.FullGroupName(), groupCounter, isExpanded))
 	}
 }
 
@@ -600,16 +609,16 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 	parentName := account.Account()
 	r.displayGroup(grp, parentIter, accountCounter, showOffline, showWaiting, parentName)
 
-	r.jid.set(parentIter, parentName)
-	r.accountID.set(parentIter, account.ID())
-	r.rowType.set(parentIter, "account")
-	r.weight.set(parentIter, 700)
+	r.fields.jid.set(parentIter, parentName)
+	r.fields.accountID.set(parentIter, account.ID())
+	r.fields.rowType.set(parentIter, "account")
+	r.fields.weight.set(parentIter, 700)
 
 	bgcolor := cs.rosterAccountOnlineBackground
 	if account.session.IsDisconnected() {
 		bgcolor = cs.rosterAccountOfflineBackground
 	}
-	r.backgroundColor.set(parentIter, bgcolor.toHex())
+	r.fields.backgroundColor.set(parentIter, bgcolor.toHex())
 
 	parentPath, _ := r.model.GetPath(parentIter)
 	shouldCollapse, ok := r.isCollapsed[collapseTransform(parentName)]
@@ -627,8 +636,8 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 		stat = "connecting"
 	}
 
-	r.statusIcon.set(parentIter, statusIcons[stat].GetPixbuf())
-	r.displayName.set(parentIter, createGroupDisplayName(parentName, accountCounter, isExpanded))
+	r.fields.statusIcon.set(parentIter, statusIcons[stat].GetPixbuf())
+	r.fields.displayName.set(parentIter, createGroupDisplayName(parentName, accountCounter, isExpanded))
 }
 
 func (r *roster) sortedAccounts() []*account {

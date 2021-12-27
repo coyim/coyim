@@ -256,7 +256,11 @@ func (c *conn) closeTCP() error {
 
 	c.log.Info("xmpp: TCP closed")
 	c.setClosed(true)
-	return c.rawOut.Close()
+	rawOut := c.rawOut
+	if rawOut == nil {
+		return nil
+	}
+	return rawOut.Close()
 }
 
 func (c *conn) createInflight(cookie data.Cookie, to string) (<-chan data.Stanza, data.Cookie, error) {

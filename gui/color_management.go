@@ -12,6 +12,18 @@ import (
 type hasColorManagement struct {
 	themeVariant          string
 	calculateThemeVariant sync.Once
+	onThemeChange         *callbacksSet
+}
+
+func (cm *hasColorManagement) init() {
+	cm.onThemeChange = newCallbacksSet()
+
+	set := cm.getGSettings()
+	_ = set.Connect("changed::gtk-theme", cm.onThemeChange.invokeAll)
+
+	cm.onThemeChange.add(func() {
+		cm.calculateThemeVariant = sync.Once{}
+	})
 }
 
 const darkThemeVariantName = "dark"

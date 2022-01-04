@@ -124,6 +124,8 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 
 	ret.haveConfigEntries = newCallbacksSet()
 
+	ret.hasColorManagement.init()
+
 	ret.initMUC()
 
 	hooks.AfterInit()

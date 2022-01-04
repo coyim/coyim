@@ -429,7 +429,7 @@ func decideStatusFor(p *rosters.Peer) string {
 	return "available"
 }
 
-func decideColorFor(cs colorSet, p *rosters.Peer) hexColor {
+func decideColorFor(cs colorSet, p *rosters.Peer) cssColor {
 	if !p.IsOnline() {
 		return cs.rosterPeerOfflineForeground
 	}
@@ -464,8 +464,8 @@ func (r *roster) addItem(item *rosters.Peer, parentIter gtki.TreeIter, indent st
 	r.fields.jid.set(iter, item.Jid.String())
 	r.fields.displayName.set(iter, fmt.Sprintf("%s %s%s", indent, item.NameForPresentation(), potentialExtra))
 	r.fields.accountID.set(iter, item.BelongsTo)
-	r.fields.statusColor.set(iter, decideColorFor(cs, item).toHex())
-	r.fields.backgroundColor.set(iter, cs.rosterPeerBackground.toHex())
+	r.fields.statusColor.set(iter, decideColorFor(cs, item).toCSS())
+	r.fields.backgroundColor.set(iter, cs.rosterPeerBackground.toCSS())
 	r.fields.tooltip.set(iter, createTooltipFor(item))
 	r.fields.statusIcon.set(iter, statusIcons[decideStatusFor(item)].GetPixbuf())
 	r.fields.rowType.set(iter, "peer")
@@ -568,7 +568,7 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accoun
 		r.fields.jid.set(pi, groupID)
 		r.fields.rowType.set(pi, "group")
 		r.fields.weight.set(pi, 500)
-		r.fields.backgroundColor.set(pi, r.ui.currentColorSet().rosterGroupBackground.toHex())
+		r.fields.backgroundColor.set(pi, r.ui.currentColorSet().rosterGroupBackground.toCSS())
 	}
 
 	for _, item := range r.sortedPeers(g.UnsortedPeers()) {
@@ -618,7 +618,7 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 	if account.session.IsDisconnected() {
 		bgcolor = cs.rosterAccountOfflineBackground
 	}
-	r.fields.backgroundColor.set(parentIter, bgcolor.toHex())
+	r.fields.backgroundColor.set(parentIter, bgcolor.toCSS())
 
 	parentPath, _ := r.model.GetPath(parentIter)
 	shouldCollapse, ok := r.isCollapsed[collapseTransform(parentName)]

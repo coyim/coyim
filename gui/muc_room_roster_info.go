@@ -330,7 +330,6 @@ func (r *roomViewRosterInfo) isTheSameOccupant(nickname string) bool {
 	return ok && r.occupant == o
 }
 
-// selfOccupantUpdateEvent MUST be called from the UI thread
 func (r *roomViewRosterInfo) selfOccupantUpdateEvent() {
 	r.selfOccupant = r.rosterView.roomSelfOccupant()
 
@@ -339,29 +338,24 @@ func (r *roomViewRosterInfo) selfOccupantUpdateEvent() {
 	}
 }
 
-// occupantUpdatedEvent MUST be called from the UI thread
 func (r *roomViewRosterInfo) occupantUpdatedEvent(nickname string) {
 	r.onOccupantUpdate(nickname)
 }
 
-// occupantRemovedEvent MUST be called from the UI thread
 func (r *roomViewRosterInfo) occupantRemovedEvent(nickname string) {
 	r.onOccupantUpdate(nickname)
 }
 
-// occupantLeftEvent MUST be called from the UI thread
 func (r *roomViewRosterInfo) occupantLeftEvent(nickname string) {
 	r.onOccupantUpdate(nickname)
 }
 
-// onOccupantUpdate MUST be called from the UI thread
 func (r *roomViewRosterInfo) onOccupantUpdate(nickname string) {
 	if r.isOpen() && r.isTheSameOccupant(nickname) {
 		r.validateOccupantPrivileges()
 	}
 }
 
-// roomDisableEvent MUST be called from the UI thread
 func (r *roomViewRosterInfo) roomDisableEvent() {
 	r.affiliationListBoxRow.SetSensitive(false)
 	r.roleListBoxRow.SetSensitive(false)
@@ -371,7 +365,6 @@ func (r *roomViewRosterInfo) roomDisableEvent() {
 	}
 }
 
-// roomEnableEvent MUST be called from the UI thread
 func (r *roomViewRosterInfo) roomEnableEvent() {
 	r.affiliationListBoxRow.SetSensitive(true)
 	r.roleListBoxRow.SetSensitive(true)

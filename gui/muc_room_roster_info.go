@@ -196,11 +196,12 @@ func (r *roomViewRosterInfo) removeOccupantEvents() {
 	r.rosterView.roomView.unsubscribe("roster-occupant-info")
 }
 
-// validateOccupantPrivileges MUST be called from the UI thread
 func (r *roomViewRosterInfo) validateOccupantPrivileges() {
-	r.refreshAffiliationSection()
-	r.refreshRoleSection()
-	r.refreshAdminToolsSection()
+	doInUIThread(func() {
+		r.refreshAffiliationSection()
+		r.refreshRoleSection()
+		r.refreshAdminToolsSection()
+	})
 }
 
 // refreshAffiliationSection MUST be called from the UI thread
@@ -357,8 +358,7 @@ func (r *roomViewRosterInfo) onOccupantUpdate(nickname string) {
 }
 
 func (r *roomViewRosterInfo) roomDisableEvent() {
-	r.affiliationListBoxRow.SetSensitive(false)
-	r.roleListBoxRow.SetSensitive(false)
+	r.allowPositionAndRoleUpdate(false)
 
 	if r.isOpen() {
 		r.validateOccupantPrivileges()
@@ -366,12 +366,18 @@ func (r *roomViewRosterInfo) roomDisableEvent() {
 }
 
 func (r *roomViewRosterInfo) roomEnableEvent() {
-	r.affiliationListBoxRow.SetSensitive(true)
-	r.roleListBoxRow.SetSensitive(true)
+	r.allowPositionAndRoleUpdate(true)
 
 	if r.isOpen() {
 		r.validateOccupantPrivileges()
 	}
+}
+
+func (r *roomViewRosterInfo) allowPositionAndRoleUpdate(isSensitive bool) {
+	doInUIThread(func() {
+		r.affiliationListBoxRow.SetSensitive(isSensitive)
+		r.roleListBoxRow.SetSensitive(isSensitive)
+	})
 }
 
 // parentWindow MUST be called from the UI threads

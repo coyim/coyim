@@ -434,7 +434,7 @@ func (u *gtkUI) mainWindow() {
 
 	u.window.SetApplication(u.app)
 
-	u.displaySettings = detectCurrentDisplaySettingsFrom(u.window)
+	u.displaySettings = detectCurrentDisplaySettingsFrom(u, u.window)
 	u.keyboardSettings = newKeyboardSettings()
 
 	// This must happen after u.displaySettings is initialized

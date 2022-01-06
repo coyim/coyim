@@ -56,7 +56,7 @@ func newVerifier(u *gtkUI, conv *conversationPane) *verifier {
 		},
 	}
 
-	v.buildPinWindow()
+	v.buildPinWindow(u)
 	v.buildAnswerSMPDialog()
 	// A function is used below because we cannot check whether a contact is verified
 	// when newVerifier is called.
@@ -81,7 +81,7 @@ type pinWindow struct {
 	alertImage    gtki.Image  `gtk-widget:"alert_image"`
 }
 
-func (v *verifier) buildPinWindow() {
+func (v *verifier) buildPinWindow(hl withLog) {
 	v.pinWindow = &pinWindow{
 		b: newBuilder("GeneratePIN"),
 	}
@@ -90,7 +90,7 @@ func (v *verifier) buildPinWindow() {
 
 	v.pinWindow.dialog.HideOnDelete()
 	v.pinWindow.dialog.SetTransientFor(v.parentWindow)
-	addBoldHeaderStyle(v.pinWindow.pin)
+	addBoldHeaderStyle(hl, v.pinWindow.pin)
 
 	v.pinWindow.b.ConnectSignals(map[string]interface{}{
 		"close_share_pin": func() {

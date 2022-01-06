@@ -13,20 +13,20 @@ type displaySettings struct {
 	fontSize        uint
 	defaultFontSize uint
 
-	provider gtki.CssProvider
+	provider *cssProvider
 }
 
 func (ds *displaySettings) defaultSettingsOn(w gtki.Widget) {
 	doInUIThread(func() {
 		styleContext, _ := w.GetStyleContext()
-		styleContext.AddProvider(ds.provider, 9999)
+		styleContext.AddProvider(ds.provider.provider, 9999)
 	})
 }
 
 func (ds *displaySettings) control(w gtki.Widget) {
 	doInUIThread(func() {
 		styleContext, _ := w.GetStyleContext()
-		styleContext.AddProvider(ds.provider, 9999)
+		styleContext.AddProvider(ds.provider.provider, 9999)
 		styleContext.AddClass("currentFontSetting")
 	})
 }
@@ -34,7 +34,7 @@ func (ds *displaySettings) control(w gtki.Widget) {
 func (ds *displaySettings) shadeBackground(w gtki.Widget) {
 	doInUIThread(func() {
 		styleContext, _ := w.GetStyleContext()
-		styleContext.AddProvider(ds.provider, 9999)
+		styleContext.AddProvider(ds.provider.provider, 9999)
 		styleContext.AddClass("shadedBackgroundColor")
 	})
 }
@@ -69,15 +69,36 @@ func (ds *displaySettings) update() {
         }
         `, ds.fontSize)
 	doInUIThread(func() {
-		_ = ds.provider.LoadFromData(css)
+		ds.provider.load("current font", css)
 	})
 }
 
-func newDisplaySettings() *displaySettings {
-	ds := &displaySettings{}
+type cssProvider struct {
+	provider gtki.CssProvider
+	l        withLog
+}
+
+func (c *cssProvider) load(name, s string) {
+	e := c.provider.LoadFromData(s)
+	if e != nil {
+		c.l.Log().WithError(e).WithField("name", name).Error("couldn't load CSS data")
+	}
+}
+
+func newCSSProvider(hl withLog) *cssProvider {
 	prov, _ := g.gtk.CssProviderNew()
-	ds.provider = prov
+	return &cssProvider{
+		provider: prov,
+		l:        hl,
+	}
+}
+
+func newDisplaySettings(hl withLog) *displaySettings {
+	ds := &displaySettings{}
+
+	ds.provider = newCSSProvider(hl)
 	ds.defaultFontSize = 12
+
 	return ds
 }
 
@@ -90,29 +111,28 @@ func getFontSizeFrom(w gtki.Widget) uint {
 	return uint(fontDescription.GetSize() / pangoi.PANGO_SCALE)
 }
 
-func detectCurrentDisplaySettingsFrom(w gtki.Widget) *displaySettings {
-	ds := newDisplaySettings()
+func detectCurrentDisplaySettingsFrom(hl withLog, w gtki.Widget) *displaySettings {
+	ds := newDisplaySettings(hl)
 	ds.fontSize = getFontSizeFrom(w)
 	return ds
 }
 
-func addBoldHeaderStyle(l gtki.Label) {
+func addBoldHeaderStyle(hl withLog, l gtki.Label) {
 	doInUIThread(func() {
 		styleContext, _ := l.GetStyleContext()
-		ds := newDisplaySettings()
+		ds := newDisplaySettings(hl)
 
 		styleContext.AddClass("bold-header-style")
-		styleContext.AddProvider(ds.provider, 9999)
+		styleContext.AddProvider(ds.provider.provider, 9999)
 
-		_ = ds.provider.LoadFromData(`.bold-header-style {
+		ds.provider.load("bold header", `.bold-header-style {
 			font-size: 200%;
 			font-weight: 800;
 		}`)
 	})
 }
 
-// StyleContextable is an interface to assing css style
-type StyleContextable interface {
+type styleContextable interface {
 	GetStyleContext() (gtki.StyleContext, error)
 }
 
@@ -124,13 +144,13 @@ func providerWithCSS(s string) gtki.CssProvider {
 
 const styleProviderHighPriority = gtk.STYLE_PROVIDER_PRIORITY_USER * 10
 
-func updateWithStyle(l StyleContextable, p gtki.CssProvider) {
+func updateWithStyle(l styleContextable, p gtki.CssProvider) {
 	if sc, err := l.GetStyleContext(); err == nil {
 		sc.AddProvider(p, styleProviderHighPriority)
 	}
 }
 
-func updateWithStyles(l StyleContextable, p gtki.CssProvider) {
+func updateWithStyles(l styleContextable, p gtki.CssProvider) {
 	sc, _ := l.GetStyleContext()
 	screen, _ := sc.GetScreen()
 	g.gtk.AddProviderForScreen(screen, p, styleProviderHighPriority)

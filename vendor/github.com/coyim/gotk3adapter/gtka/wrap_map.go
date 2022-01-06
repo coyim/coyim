@@ -197,6 +197,12 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 			return nil, true
 		}
 		return val, true
+	case *gotk3extra.CSSClassCellRenderer:
+		val := WrapCSSClassCellRendererSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
 	case *gtk.Dialog:
 		val := WrapDialogSimple(oo)
 		if val == nil {
@@ -587,6 +593,12 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *cellRendererToggle:
 		val := UnwrapCellRendererToggle(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *cssClassCellRenderer:
+		val := UnwrapCSSClassCellRenderer(oo)
 		if val == nil {
 			return nil, true
 		}

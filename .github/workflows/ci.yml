@@ -296,6 +296,7 @@ jobs:
           mingw-w64-x86_64-nsis
           mingw-w64-x86_64-pango
           mingw-w64-x86_64-pkg-config
+          mingw-w64-x86_64-gsettings-desktop-schemas
       - name: Create release dependencies
         run: |
           mkdir -p release/share

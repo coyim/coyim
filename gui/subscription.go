@@ -83,15 +83,15 @@ func (acd *addContactDialog) getAutoAuthorize() bool {
 	return acd.autoAuth.GetActive()
 }
 
-func (acd *addContactDialog) init() {
+func (acd *addContactDialog) init(wl withLog) {
 	acd.builder = newBuilder("AddContact")
 	panicOnDevError(acd.builder.bindObjects(acd))
-	acd.errorNotif = newErrorNotification(acd.notificationArea)
+	acd.errorNotif = newErrorNotification(wl, acd.notificationArea)
 }
 
 func (u *gtkUI) presenceSubscriptionDialog(sendSubscription func(accountID string, peer jid.WithoutResource, msg, nick string, autoauth bool) error) gtki.Window {
 	acd := &addContactDialog{}
-	acd.init()
+	acd.init(u)
 
 	accountsInput := acd.builder.get("accounts").(gtki.ComboBox)
 	ac := u.createConnectedAccountsComponent(accountsInput, acd,

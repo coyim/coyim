@@ -289,7 +289,7 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 			}, onCancel)
 	}
 
-	errorNotif := newErrorNotification(data.notificationArea)
+	errorNotif := newErrorNotification(u, data.notificationArea)
 
 	data.builder.ConnectSignals(map[string]interface{}{
 		"on_toggle_other_settings": func() {

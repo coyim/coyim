@@ -175,12 +175,13 @@ type torRunningNotification struct {
 	area  gtki.Box   `gtk-widget:"infobar"`
 	image gtki.Image `gtk-widget:"image"`
 	label gtki.Label `gtk-widget:"message"`
+	wl    withLog
 }
 
 // TODO: add a spinner
-func torRunningNotificationInit(info gtki.Box) *torRunningNotification {
+func torRunningNotificationInit(wl withLog, info gtki.Box) *torRunningNotification {
 	b := newBuilder("TorRunningNotification")
-	torRunningNotif := &torRunningNotification{}
+	torRunningNotif := &torRunningNotification{wl: wl}
 	panicOnDevError(b.bindObjects(torRunningNotif))
 
 	info.Add(torRunningNotif.area)
@@ -191,7 +192,7 @@ func torRunningNotificationInit(info gtki.Box) *torRunningNotification {
 
 func (n *torRunningNotification) renderTorNotification(label, imgName string) {
 	doInUIThread(func() {
-		prov := providerWithCSS("box { background-color: #f1f1f1; color: #000000; border: 1px solid #d3d3d3; border-radius: 2px;}")
+		prov := providerWithCSS(n.wl, "tor notification", "box { background-color: #f1f1f1; color: #000000; border: 1px solid #d3d3d3; border-radius: 2px;}")
 		updateWithStyle(n.area, prov)
 	})
 
@@ -205,7 +206,7 @@ func (u *gtkUI) installTor() {
 	obj := builder.getObj("dialog")
 	dialog := obj.(gtki.MessageDialog)
 	info := builder.getObj("tor-running-notification").(gtki.Box)
-	torNotif := torRunningNotificationInit(info)
+	torNotif := torRunningNotificationInit(u, info)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_close": func() {
@@ -396,7 +397,7 @@ func (u *gtkUI) onActivate() {
 		return
 	}
 
-	applyHacks()
+	applyHacks(u)
 	u.mainWindow()
 
 	go u.watchCommands()
@@ -435,7 +436,7 @@ func (u *gtkUI) mainWindow() {
 	u.window.SetApplication(u.app)
 
 	u.displaySettings = detectCurrentDisplaySettingsFrom(u, u.window)
-	u.keyboardSettings = newKeyboardSettings()
+	u.keyboardSettings = newKeyboardSettings(u)
 
 	// This must happen after u.displaySettings is initialized
 	// So now, roster depends on displaySettings which depends on mainWindow
@@ -797,14 +798,14 @@ func (u *gtkUI) initSearchBar() {
 	u.search.ConnectEntry(u.searchEntry)
 	u.roster.view.SetSearchEntry(u.searchEntry)
 
-	prov := providerWithCSS("entry { min-width: 300px; }")
+	prov := providerWithCSS(u, "search entry", "entry { min-width: 300px; }")
 	updateWithStyle(u.searchEntry, prov)
 
-	prov = providerWithCSS("box { border: none; }")
+	prov = providerWithCSS(u, "search box", "box { border: none; }")
 	updateWithStyle(u.searchBox, prov)
 
 	// TODO: unify with dark themes
-	prov = providerWithCSS("searchbar {background-color: #e8e8e7; }")
+	prov = providerWithCSS(u, "search bar", "searchbar {background-color: #e8e8e7; }")
 	updateWithStyle(u.search, prov)
 }
 

@@ -2,17 +2,14 @@ package gui
 
 import "github.com/coyim/gotk3adapter/gtki"
 
-func applyHacks() {
-	fixPopupMenusWithoutFocus()
+func applyHacks(wl withLog) {
+	fixPopupMenusWithoutFocus(wl)
 }
 
 // See #189
-func fixPopupMenusWithoutFocus() {
-	prov, err := g.gtk.CssProviderNew()
-	if err != nil {
-		return
-	}
-	prov.LoadFromData("GtkMenu { margin: 0; }")
+func fixPopupMenusWithoutFocus(wl withLog) {
+	prov := newCSSProvider(wl)
+	prov.load("popup menu without margin", "GtkMenu { margin: 0; }")
 
 	// It must be added to the screen.
 	// Adding to the main window has the same effect as putting the CSS in
@@ -21,5 +18,5 @@ func fixPopupMenusWithoutFocus() {
 	if err != nil {
 		return
 	}
-	g.gtk.AddProviderForScreen(screen, prov, uint(gtki.STYLE_PROVIDER_PRIORITY_USER))
+	g.gtk.AddProviderForScreen(screen, prov.provider, uint(gtki.STYLE_PROVIDER_PRIORITY_USER))
 }

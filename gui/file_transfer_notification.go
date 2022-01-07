@@ -27,6 +27,8 @@ type fileNotification struct {
 	afterFailHook             func()
 	afterSucceedHook          func()
 	afterDeclinedHook         func()
+	canceledProvider          gtki.CssProvider
+	successProvider           gtki.CssProvider
 }
 
 type fileTransferNotification struct {
@@ -96,7 +98,7 @@ func (file *fileNotification) setEncryptionInformation(encrypted, verifiedPeer b
 
 func (conv *conversationPane) newFileTransfer(fileName string, dir, send, receive bool) *fileNotification {
 	if !conv.fileTransferNotif.area.IsVisible() {
-		prov := providerWithCSS("box { background-color: #fff9f3;  color: #000000; border: 3px; }")
+		prov := providerWithCSS(conv.account, "file transfer notification", "box { background-color: #fff9f3;  color: #000000; border: 3px; }")
 		updateWithStyle(conv.fileTransferNotif.area, prov)
 
 		conv.fileTransferNotif.progressBar.SetFraction(0.0)
@@ -191,12 +193,15 @@ func (conv *conversationPane) createFileTransferNotification(fileName string, di
 
 	conv.fileTransferNotif.files = append(conv.fileTransferNotif.files, file)
 
+	file.canceledProvider = providerWithCSS(conv.account, "canceled file transfer", "label { color: #cc3636; }")
+	file.successProvider = providerWithCSS(conv.account, "succeeded file transfer", "label { color: #89AF8F; }")
+
 	return file
 }
 
 func (conv *conversationPane) updateFileTransferNotification(label, buttonLabel, image string) {
 	if buttonLabel == i18n.Local("Close") {
-		prov := providerWithCSS("label { margin-right: 3px;  margin-left: 3px; }")
+		prov := providerWithCSS(conv.account, "file transfer close", "label { margin-right: 3px;  margin-left: 3px; }")
 		updateWithStyle(conv.fileTransferNotif.labelButton, prov)
 	}
 	conv.account.log.WithField("label", label).Info("Updating notification")
@@ -348,21 +353,13 @@ func (conv *conversationPane) isFileTransferNotifCanceled() bool {
 	return conv.fileTransferNotif.canceled
 }
 
-func canceledProvider() gtki.CssProvider {
-	return providerWithCSS("label { color: #cc3636; }")
-}
-
-func successProvider() gtki.CssProvider {
-	return providerWithCSS("label { color: #89AF8F; }")
-}
-
 func (file *fileNotification) decline() {
 	if file.state != stateInProgress {
 		return
 	}
 	file.state = stateDeclined
 	file.progress = 0
-	file.update(i18n.Localf("Declined: %s", file.name), canceledProvider())
+	file.update(i18n.Localf("Declined: %s", file.name), file.canceledProvider)
 	hook := file.afterDeclinedHook
 	file.afterDeclinedHook = nil
 	if hook != nil {
@@ -376,7 +373,7 @@ func (file *fileNotification) cancel() {
 	}
 	file.state = stateCanceled
 	file.progress = 0
-	file.update(i18n.Localf("Canceled: %s", file.name), canceledProvider())
+	file.update(i18n.Localf("Canceled: %s", file.name), file.canceledProvider)
 	hook := file.afterCancelHook
 	file.afterCancelHook = nil
 	if hook != nil {
@@ -390,7 +387,7 @@ func (file *fileNotification) fail() {
 	}
 	file.state = stateFailed
 	file.progress = 0
-	file.update(i18n.Localf("Failed: %s", file.name), canceledProvider())
+	file.update(i18n.Localf("Failed: %s", file.name), file.canceledProvider)
 	hook := file.afterFailHook
 	file.afterFailHook = nil
 	if hook != nil {
@@ -421,7 +418,7 @@ func (file *fileNotification) succeed() {
 		label = i18n.Localf("Received insecurely: %s", file.name)
 	}
 
-	file.update(label, successProvider())
+	file.update(label, file.successProvider)
 
 	hook := file.afterSucceedHook
 	file.afterSucceedHook = nil

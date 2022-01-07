@@ -12,19 +12,22 @@ import (
 type mucStylesProvider struct {
 	colors        mucColorSet
 	infoBarStyles *infoBarStyles
+	wl            withLog
 }
 
+// TODO: this needs to be refactored and fixed...
 var mucStyles *mucStylesProvider
 
-func initMUCStyles(c mucColorSet) {
+func initMUCStyles(wl withLog, c mucColorSet) {
 	mucStyles = &mucStylesProvider{
 		colors:        c,
 		infoBarStyles: newInfoBarStyles(c),
+		wl:            wl,
 	}
 }
 
 func (s *mucStylesProvider) setScrolledWindowStyle(msw gtki.ScrolledWindow) {
-	updateWithStyle(msw, providerWithStyle("scrolledwindow", style{
+	updateWithStyle(msw, providerWithStyle(s.wl, "MUC scrolled window style", "scrolledwindow", style{
 		"border":           "none",
 		"background-color": colorThemeBase,
 	}))
@@ -257,11 +260,11 @@ func (s *mucStylesProvider) setRoomDialogErrorComponentHeaderStyle(l gtki.Label)
 }
 
 func (s *mucStylesProvider) setWidgetStyles(w gtki.Widget, st styles) {
-	updateWithStyles(w, providerWithStyles(st))
+	updateWithStyles(w, providerWithStyles(s.wl, "MUC widget styles", st))
 }
 
 func (s *mucStylesProvider) setWidgetStyle(w gtki.Widget, se string, st style) {
-	updateWithStyle(w, providerWithStyle(se, st))
+	updateWithStyle(w, providerWithStyle(s.wl, "MUC widget style", se, st))
 }
 
 func (s *mucStylesProvider) setLabelStyle(l gtki.Label, st style) {

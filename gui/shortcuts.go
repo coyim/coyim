@@ -33,30 +33,29 @@ func init() {
 
 type keyboardSettings struct {
 	emacs    bool
-	provider gtki.CssProvider
+	provider *cssProvider
 }
 
 func (ks *keyboardSettings) control(w gtki.Widget) {
 	doInUIThread(func() {
 		styleContext, _ := w.GetStyleContext()
-		styleContext.AddProvider(ks.provider, 9999)
+		styleContext.AddProvider(ks.provider.provider, 9999)
 	})
 }
 
 func (ks *keyboardSettings) update() {
 	doInUIThread(func() {
 		if ks.emacs {
-			_ = ks.provider.LoadFromData(emacsKeyConf)
+			ks.provider.load("emacs key config", emacsKeyConf)
 		} else {
-			_ = ks.provider.LoadFromData("")
+			ks.provider.load("empty key config", "")
 		}
 	})
 }
 
-func newKeyboardSettings() *keyboardSettings {
+func newKeyboardSettings(wl withLog) *keyboardSettings {
 	ks := &keyboardSettings{}
-	prov, _ := g.gtk.CssProviderNew()
-	ks.provider = prov
+	ks.provider = newCSSProvider(wl)
 	return ks
 }
 

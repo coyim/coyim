@@ -136,10 +136,10 @@ type styleContextable interface {
 	GetStyleContext() (gtki.StyleContext, error)
 }
 
-func providerWithCSS(s string) gtki.CssProvider {
-	p, _ := g.gtk.CssProviderNew()
-	_ = p.LoadFromData(s)
-	return p
+func providerWithCSS(wl withLog, msg, s string) gtki.CssProvider {
+	p := newCSSProvider(wl)
+	p.load(msg, s)
+	return p.provider
 }
 
 const styleProviderHighPriority = gtk.STYLE_PROVIDER_PRIORITY_USER * 10
@@ -183,16 +183,16 @@ func styleSelectorRules(el string, s style) string {
 	return fmt.Sprintf("%s {%s}", el, inlineStyleProperties(s))
 }
 
-func providerWithStyle(el string, s style) gtki.CssProvider {
-	return providerWithStyles(styles{el: s})
+func providerWithStyle(wl withLog, name string, el string, s style) gtki.CssProvider {
+	return providerWithStyles(wl, name, styles{el: s})
 }
 
-func providerWithStyles(st styles) gtki.CssProvider {
+func providerWithStyles(wl withLog, name string, st styles) gtki.CssProvider {
 	selectors := []string{}
 	for el, s := range st {
 		selectors = append(selectors, styleSelectorRules(el, s))
 	}
-	return providerWithCSS(strings.Join(selectors, ""))
+	return providerWithCSS(wl, name, strings.Join(selectors, ""))
 }
 
 func inlineStyleProperties(s style) string {

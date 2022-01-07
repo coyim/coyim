@@ -9,26 +9,27 @@ type errorNotification struct {
 	label gtki.Label `gtk-widget:"message"`
 }
 
-func newErrorNotification(info gtki.Box) *errorNotification {
+func newErrorNotification(wl withLog, info gtki.Box) *errorNotification {
 	view := &errorNotification{}
 
 	b := newBuilder("ErrorNotification")
 	panicOnDevError(b.bindObjects(view))
 
 	info.Add(view.area)
-	return view
-}
 
-// ShowMessage will display the already internationalized label
-func (n *errorNotification) ShowMessage(label string) {
-	prov := providerWithStyle("box", style{
+	prov := providerWithStyle(wl, "error notification", "box", style{
 		"background-color": "#e53e3e",
 		"border-radius":    "2px",
 		"color":            "#ffffff",
 	})
 
-	updateWithStyle(n.area, prov)
+	updateWithStyle(view.area, prov)
 
+	return view
+}
+
+// ShowMessage will display the already internationalized label
+func (n *errorNotification) ShowMessage(label string) {
 	n.label.SetMarginTop(10)
 	n.label.SetMarginBottom(10)
 	n.label.SetText(label)

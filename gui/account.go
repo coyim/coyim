@@ -408,7 +408,7 @@ func (account *account) buildNotification(template, msg string, moreInfo func())
 	infoBar := builder.getObj("infobar").(gtki.InfoBar)
 	box := builder.getObj("box").(gtki.Box)
 
-	prov := providerWithCSS("box { border: none; }")
+	prov := providerWithCSS(account, "notification box", "box { border: none; }")
 	updateWithStyle(box, prov)
 
 	builder.ConnectSignals(map[string]interface{}{

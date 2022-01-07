@@ -151,10 +151,10 @@ func (v *verifier) buildUnverifiedWarning(shouldShowVerificationBar func() bool)
 		"on_press_image": v.hideUnverifiedWarning,
 	})
 
-	prov := providerWithCSS("box { background-color: #fff3f3; color: #000000; border: 2px; }")
+	prov := providerWithCSS(v.l, "unverified infobar", "box { background-color: #fff3f3; color: #000000; border: 2px; }")
 	updateWithStyle(v.unverifiedWarning.infobar, prov)
 
-	prov = providerWithCSS("box { background-color: #e5d7d6; }")
+	prov = providerWithCSS(v.l, "close unverified infobar", "box { background-color: #e5d7d6; }")
 	updateWithStyle(v.unverifiedWarning.closeInfobar, prov)
 
 	setImageFromFile(v.unverifiedWarning.image, "warning.svg")
@@ -213,7 +213,7 @@ func (v *verifier) buildWaitingForPeerNotification() {
 
 	panicOnDevError(v.waitingForPeer.b.bindObjects(v.waitingForPeer))
 
-	prov := providerWithCSS("box { background-color: #fff3f3; color: #000000; border: 2px; }")
+	prov := providerWithCSS(v.l, "waiting for peer verification infobar", "box { background-color: #fff3f3; color: #000000; border: 2px; }")
 	updateWithStyle(v.waitingForPeer.infobar, prov)
 
 	v.waitingForPeer.label.SetText(i18n.Localf("Waiting for peer to finish \nsecuring the channel..."))
@@ -240,7 +240,7 @@ func (v *verifier) showCannotGeneratePINDialog(err error) {
 	image := b.getObj("smp-error-image").(gtki.Image)
 	button := b.getObj("smp-error-button").(gtki.Button)
 
-	prov := providerWithCSS("box { background-color: #fff3f3; color: #000000; border: 2px; }")
+	prov := providerWithCSS(v.l, "unable to verify infobar", "box { background-color: #fff3f3; color: #000000; border: 2px; }")
 	updateWithStyle(infobar, prov)
 
 	label.SetText(i18n.Local("Unable to verify at this time."))
@@ -332,10 +332,10 @@ func (v *verifier) buildPeerRequestsSMPNotification() {
 
 	panicOnDevError(v.peerRequestsSMP.b.bindObjects(v.peerRequestsSMP))
 
-	prov := providerWithCSS("box { background-color: #fff3f3; color: #000000; border: 2px; }")
+	prov := providerWithCSS(v.l, "peer requests SMP", "box { background-color: #fff3f3; color: #000000; border: 2px; }")
 	updateWithStyle(v.peerRequestsSMP.infobar, prov)
 
-	prov = providerWithCSS("box { background-color: #e5d7d6; }")
+	prov = providerWithCSS(v.l, "peer requests SMP close infobar", "box { background-color: #e5d7d6; }")
 	updateWithStyle(v.peerRequestsSMP.closeInfobar, prov)
 
 	v.peerRequestsSMP.b.ConnectSignals(map[string]interface{}{

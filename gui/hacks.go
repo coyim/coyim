@@ -2,6 +2,6 @@
 
 package gui
 
-func applyHacks() {
+func applyHacks(wl withLog) {
 	//noop
 }

@@ -40,6 +40,7 @@ type rosterFields struct {
 	tooltip         *stringStoreField
 	statusIcon      *pixbufStoreField
 	rowType         *stringStoreField
+	cssClass        *stringStoreField
 }
 
 const (
@@ -52,6 +53,7 @@ const (
 	indexTooltip           = 6
 	indexStatusIcon        = 7
 	indexRowType           = 8
+	indexCSSClass          = 9
 	indexParentJid         = 0
 	indexParentDisplayName = 1
 )
@@ -76,6 +78,8 @@ func createTreeModelAndAccessors() (gtki.TreeStore, *rosterFields) {
 		pixbufType(),
 		// row type
 		glibi.TYPE_STRING,
+		// css class
+		glibi.TYPE_STRING,
 	)
 	if err != nil {
 		panic(err)
@@ -92,6 +96,7 @@ func createTreeModelAndAccessors() (gtki.TreeStore, *rosterFields) {
 	fields.tooltip = newStringStoreField(model, indexTooltip)
 	fields.statusIcon = newPixbufStoreField(model, indexStatusIcon)
 	fields.rowType = newStringStoreField(model, indexRowType)
+	fields.cssClass = newStringStoreField(model, indexCSSClass)
 
 	return model, fields
 }

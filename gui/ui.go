@@ -192,7 +192,7 @@ func torRunningNotificationInit(wl withLog, info gtki.Box) *torRunningNotificati
 
 func (n *torRunningNotification) renderTorNotification(label, imgName string) {
 	doInUIThread(func() {
-		prov := providerWithCSS(n.wl, "tor notification", "box { background-color: #f1f1f1; color: #000000; border: 1px solid #d3d3d3; border-radius: 2px;}")
+		prov := providerFromCSSFile(n.wl, "tor notification", "tor_notification_box.css")
 		updateWithStyle(n.area, prov)
 	})
 
@@ -798,14 +798,14 @@ func (u *gtkUI) initSearchBar() {
 	u.search.ConnectEntry(u.searchEntry)
 	u.roster.view.SetSearchEntry(u.searchEntry)
 
-	prov := providerWithCSS(u, "search entry", "entry { min-width: 300px; }")
+	prov := providerFromCSSFile(u, "search entry", "search_bar_entry.css")
 	updateWithStyle(u.searchEntry, prov)
 
-	prov = providerWithCSS(u, "search box", "box { border: none; }")
+	prov = providerFromCSSFile(u, "search box", "search_bar_box.css")
 	updateWithStyle(u.searchBox, prov)
 
 	// TODO: unify with dark themes
-	prov = providerWithCSS(u, "search bar", "searchbar {background-color: #e8e8e7; }")
+	prov = providerFromCSSFile(u, "search bar", "search_bar.css")
 	updateWithStyle(u.search, prov)
 }
 

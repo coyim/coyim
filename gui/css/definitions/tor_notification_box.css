@@ -1,0 +1,7 @@
+
+box {
+    background-color: @coyim-tor-notification-background;
+    color: @coyim-tor-notification-foreground;
+    border: 1px solid @coyim-tor-notification-border;
+    border-radius: 2px;
+}

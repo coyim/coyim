@@ -1,2 +1,8 @@
 
 @define-color coyim-conversation-pane-scrolled-window-border #d3d3d3;
+
+@define-color coyim-tor-notification-background #f1f1f1;
+@define-color coyim-tor-notification-foreground #000000;
+@define-color coyim-tor-notification-border #d3d3d3;
+
+@define-color coyim-search-bar-background #e8e8e7;

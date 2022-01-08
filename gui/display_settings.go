@@ -136,15 +136,16 @@ func addBoldHeaderStyle(hl withLog, l gtki.Label) {
 		styleContext.AddClass("bold-header-style")
 		styleContext.AddProvider(ds.provider.provider, 9999)
 
-		ds.provider.load("bold header", `.bold-header-style {
-			font-size: 200%;
-			font-weight: 800;
-		}`)
+		ds.provider.load("bold header", css.Get("bold_header_style.css"))
 	})
 }
 
 type styleContextable interface {
 	GetStyleContext() (gtki.StyleContext, error)
+}
+
+func providerFromCSSFile(wl withLog, msg, file string) gtki.CssProvider {
+	return providerWithCSS(wl, msg, css.Get(file))
 }
 
 func providerWithCSS(wl withLog, msg, s string) gtki.CssProvider {

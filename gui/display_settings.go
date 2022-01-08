@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/coyim/coyim/gui/css"
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/coyim/gotk3adapter/pangoi"
 	"github.com/gotk3/gotk3/gtk"
@@ -13,7 +14,8 @@ type displaySettings struct {
 	fontSize        uint
 	defaultFontSize uint
 
-	provider *cssProvider
+	provider             *cssProvider
+	globalColorsProvider *cssProvider
 }
 
 func (ds *displaySettings) defaultSettingsOn(w gtki.Widget) {
@@ -99,6 +101,15 @@ func newDisplaySettings(hl withLog) *displaySettings {
 	ds.provider = newCSSProvider(hl)
 	ds.defaultFontSize = 12
 
+	ds.globalColorsProvider = newCSSProvider(hl)
+
+	doInUIThread(func() {
+		// TODO: we need to update loading of color definitions
+		// based on dark or light theme
+		ds.globalColorsProvider.load("color definitions", css.Get("light/colors.css"))
+		addGlobalProvider(ds.globalColorsProvider.provider)
+	})
+
 	return ds
 }
 
@@ -143,6 +154,12 @@ func providerWithCSS(wl withLog, msg, s string) gtki.CssProvider {
 }
 
 const styleProviderHighPriority = gtk.STYLE_PROVIDER_PRIORITY_USER * 10
+
+func addGlobalProvider(p gtki.CssProvider) {
+	screen, e := g.gdk.ScreenGetDefault()
+	panicOnDevError(e)
+	g.gtk.AddProviderForScreen(screen, p, styleProviderHighPriority)
+}
 
 func updateWithStyle(l styleContextable, p gtki.CssProvider) {
 	if sc, err := l.GetStyleContext(); err == nil {

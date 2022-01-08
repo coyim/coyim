@@ -3,6 +3,7 @@ package gui
 import (
 	"fmt"
 
+	"github.com/coyim/coyim/gui/css"
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -268,7 +269,7 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window, p
 
 	_ = cp.entryScroll.SetProperty("height-request", cp.calculateHeight(1))
 
-	prov := providerWithCSS(cp.account, "conversation pane scroll window", "scrolledwindow { border-top: 2px solid #d3d3d3; } ")
+	prov := providerWithCSS(cp.account, "conversation pane scroll window", css.Get("conversation_pane_scroll_window.css"))
 	updateWithStyle(cp.entryScroll, prov)
 
 	cp.history.SetBuffer(cvf.ui.getTags().createTextBuffer())

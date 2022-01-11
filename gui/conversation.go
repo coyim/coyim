@@ -67,11 +67,18 @@ func (conv *conversationPane) showSMPRequestForSecret(question string) {
 func (conv *conversationPane) showSMPSuccess() {
 	conv.verifier.removeInProgressDialogs()
 	conv.verifier.displayVerificationSuccess()
+	conv.displayNotification(i18n.Local("The conversation is now private."))
 }
 
 func (conv *conversationPane) showSMPFailure() {
 	conv.verifier.removeInProgressDialogs()
 	conv.verifier.displayVerificationFailure()
+
+	if conv.hasVerifiedKey() {
+		conv.displayNotification(i18n.Local("The verification failed - but the conversation is still private because of an earlier verification."))
+	} else {
+		conv.displayNotification(i18n.Local("The verification failed - the conversation is still unverified."))
+	}
 }
 
 type conversationWindow struct {

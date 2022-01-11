@@ -1,0 +1,6 @@
+
+@define-color coyim-smp-infobar-close #e5d7d6;
+
+box {
+    background-color: @coyim-smp-infobar-close;
+}

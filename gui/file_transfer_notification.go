@@ -98,7 +98,7 @@ func (file *fileNotification) setEncryptionInformation(encrypted, verifiedPeer b
 
 func (conv *conversationPane) newFileTransfer(fileName string, dir, send, receive bool) *fileNotification {
 	if !conv.fileTransferNotif.area.IsVisible() {
-		prov := providerWithCSS(conv.account, "file transfer notification", "box { background-color: #fff9f3;  color: #000000; border: 3px; }")
+		prov := providerFromCSSFile(conv.account, "file transfer notification", "file_transfer_notification_new.css")
 		updateWithStyle(conv.fileTransferNotif.area, prov)
 
 		conv.fileTransferNotif.progressBar.SetFraction(0.0)
@@ -193,15 +193,15 @@ func (conv *conversationPane) createFileTransferNotification(fileName string, di
 
 	conv.fileTransferNotif.files = append(conv.fileTransferNotif.files, file)
 
-	file.canceledProvider = providerWithCSS(conv.account, "canceled file transfer", "label { color: #cc3636; }")
-	file.successProvider = providerWithCSS(conv.account, "succeeded file transfer", "label { color: #89AF8F; }")
+	file.canceledProvider = providerFromCSSFile(conv.account, "canceled file transfer", "file_transfer_notification_canceled.css")
+	file.successProvider = providerFromCSSFile(conv.account, "succeeded file transfer", "file_transfer_notification_success.css")
 
 	return file
 }
 
 func (conv *conversationPane) updateFileTransferNotification(label, buttonLabel, image string) {
 	if buttonLabel == i18n.Local("Close") {
-		prov := providerWithCSS(conv.account, "file transfer close", "label { margin-right: 3px;  margin-left: 3px; }")
+		prov := providerFromCSSFile(conv.account, "file transfer close", "file_transfer_notification_close_button.css")
 		updateWithStyle(conv.fileTransferNotif.labelButton, prov)
 	}
 	conv.account.log.WithField("label", label).Info("Updating notification")

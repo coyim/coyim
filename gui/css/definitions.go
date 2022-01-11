@@ -182,6 +182,15 @@ func _escFSMustString(useLocal bool, name string) string {
 
 var _escData = map[string]*_escFile{
 
+	"/definitions/account_notification_box.css": {
+		local:   "definitions/account_notification_box.css",
+		size:    27,
+		modtime: 1489449600,
+		compressed: `
+CmJveCB7CiAgICBib3JkZXI6IG5vbmU7Cn0K
+`,
+	},
+
 	"/definitions/bold_header_style.css": {
 		local:   "definitions/bold_header_style.css",
 		size:    60,
@@ -201,6 +210,19 @@ dGlvbi1wYW5lLXNjcm9sbGVkLXdpbmRvdy1ib3JkZXI7Cn0K
 `,
 	},
 
+	"/definitions/conversation_security_warning_unprotected.css": {
+		local:   "definitions/conversation_security_warning_unprotected.css",
+		size:    297,
+		modtime: 1489449600,
+		compressed: `
+QGRlZmluZS1jb2xvciBjb3lpbS1jb252ZXJzYXRpb24tc2VjdXJpdHktd2FybmluZy1iYWNrZ3JvdW5k
+ICNmZmYzZjM7CkBkZWZpbmUtY29sb3IgY295aW0tY29udmVyc2F0aW9uLXNlY3VyaXR5LXdhcm5pbmct
+Zm9yZWdyb3VuZCAjMDAwMDAwOwoKYm94IHsKICAgIGJhY2tncm91bmQtY29sb3I6IEBjb3lpbS1jb252
+ZXJzYXRpb24tc2VjdXJpdHktd2FybmluZy1iYWNrZ3JvdW5kOwogICAgY29sb3I6IEBjb3lpbS1jb252
+ZXJzYXRpb24tc2VjdXJpdHktd2FybmluZy1mb3JlZ3JvdW5kOwogICAgYm9yZGVyOiAzcHg7Cn0K
+`,
+	},
+
 	"/definitions/dark/colors.css": {
 		local:   "definitions/dark/colors.css",
 		size:    291,
@@ -211,6 +233,43 @@ ciAjZDNkM2QzOwoKQGRlZmluZS1jb2xvciBjb3lpbS10b3Itbm90aWZpY2F0aW9uLWJhY2tncm91bmQg
 I2YxZjFmMTsKQGRlZmluZS1jb2xvciBjb3lpbS10b3Itbm90aWZpY2F0aW9uLWZvcmVncm91bmQgIzAw
 MDAwMDsKQGRlZmluZS1jb2xvciBjb3lpbS10b3Itbm90aWZpY2F0aW9uLWJvcmRlciAjZDNkM2QzOwoK
 QGRlZmluZS1jb2xvciBjb3lpbS1zZWFyY2gtYmFyLWJhY2tncm91bmQgI2U4ZThlNzsK
+`,
+	},
+
+	"/definitions/file_transfer_notification_canceled.css": {
+		local:   "definitions/file_transfer_notification_canceled.css",
+		size:    31,
+		modtime: 1489449600,
+		compressed: `
+CmxhYmVsIHsKICAgIGNvbG9yOiAjY2MzNjM2Owp9Cg==
+`,
+	},
+
+	"/definitions/file_transfer_notification_close_button.css": {
+		local:   "definitions/file_transfer_notification_close_button.css",
+		size:    55,
+		modtime: 1489449600,
+		compressed: `
+bGFiZWwgewogICAgbWFyZ2luLXJpZ2h0OiAzcHg7CiAgICBtYXJnaW4tbGVmdDogM3B4Owp9Cg==
+`,
+	},
+
+	"/definitions/file_transfer_notification_new.css": {
+		local:   "definitions/file_transfer_notification_new.css",
+		size:    76,
+		modtime: 1489449600,
+		compressed: `
+Ym94IHsKICAgIGJhY2tncm91bmQtY29sb3I6ICNmZmY5ZjM7CiAgICBjb2xvcjogIzAwMDAwMDsKICAg
+IGJvcmRlcjogM3B4Owp9Cg==
+`,
+	},
+
+	"/definitions/file_transfer_notification_success.css": {
+		local:   "definitions/file_transfer_notification_success.css",
+		size:    31,
+		modtime: 1489449600,
+		compressed: `
+CmxhYmVsIHsKICAgIGNvbG9yOiAjODlBRjhGOwp9Cg==
 `,
 	},
 
@@ -252,6 +311,28 @@ Ym94IHsKICAgIGJvcmRlcjogbm9uZTsKfQo=
 		modtime: 1489449600,
 		compressed: `
 ZW50cnkgewogICAgbWluLXdpZHRoOiAzMDBweDsKfQo=
+`,
+	},
+
+	"/definitions/smp_infobar_box.css": {
+		local:   "definitions/smp_infobar_box.css",
+		size:    226,
+		modtime: 1489449600,
+		compressed: `
+CkBkZWZpbmUtY29sb3IgY295aW0tc21wLWluZm9iYXItYmFja2dyb3VuZCAjZmZmM2YzOwpAZGVmaW5l
+LWNvbG9yIGNveWltLXNtcC1pbmZvYmFyLWZvcmVncm91bmQgIzAwMDAwMDsKCmJveCB7CiAgICBiYWNr
+Z3JvdW5kLWNvbG9yOiBAY295aW0tc21wLWluZm9iYXItYmFja2dyb3VuZDsKICAgIGNvbG9yOiBAY295
+aW0tc21wLWluZm9iYXItZm9yZWdyb3VuZDsKICAgIGJvcmRlcjogMnB4Owp9Cg==
+`,
+	},
+
+	"/definitions/smp_infobar_close.css": {
+		local:   "definitions/smp_infobar_close.css",
+		size:    105,
+		modtime: 1489449600,
+		compressed: `
+CkBkZWZpbmUtY29sb3IgY295aW0tc21wLWluZm9iYXItY2xvc2UgI2U1ZDdkNjsKCmJveCB7CiAgICBi
+YWNrZ3JvdW5kLWNvbG9yOiBAY295aW0tc21wLWluZm9iYXItY2xvc2U7Cn0K
 `,
 	},
 

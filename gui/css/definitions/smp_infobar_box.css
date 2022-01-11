@@ -1,0 +1,9 @@
+
+@define-color coyim-smp-infobar-background #fff3f3;
+@define-color coyim-smp-infobar-foreground #000000;
+
+box {
+    background-color: @coyim-smp-infobar-background;
+    color: @coyim-smp-infobar-foreground;
+    border: 2px;
+}

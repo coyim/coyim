@@ -332,10 +332,10 @@ func (v *verifier) buildPeerRequestsSMPNotification() {
 
 	panicOnDevError(v.peerRequestsSMP.b.bindObjects(v.peerRequestsSMP))
 
-	prov := providerWithCSS(v.l, "peer requests SMP", "box { background-color: #fff3f3; color: #000000; border: 2px; }")
+	prov := providerFromCSSFile(v.l, "peer requests SMP", "smp_infobar_box.css")
 	updateWithStyle(v.peerRequestsSMP.infobar, prov)
 
-	prov = providerWithCSS(v.l, "peer requests SMP close infobar", "box { background-color: #e5d7d6; }")
+	prov = providerFromCSSFile(v.l, "peer requests SMP close infobar", "smp_infobar_close.css")
 	updateWithStyle(v.peerRequestsSMP.closeInfobar, prov)
 
 	v.peerRequestsSMP.b.ConnectSignals(map[string]interface{}{

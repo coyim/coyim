@@ -1,0 +1,8 @@
+@define-color coyim-conversation-security-warning-background #fff3f3;
+@define-color coyim-conversation-security-warning-foreground #000000;
+
+box {
+    background-color: @coyim-conversation-security-warning-background;
+    color: @coyim-conversation-security-warning-foreground;
+    border: 3px;
+}

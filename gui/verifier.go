@@ -70,6 +70,18 @@ func newVerifier(u *gtkUI, conv *conversationPane) *verifier {
 	return v
 }
 
+func (v *verifier) copyStatusFrom(other *verifier) {
+	v.unverifiedWarning.copyShouldDisplayFrom(other.unverifiedWarning)
+	v.waitingForPeer.copyShouldDisplayFrom(other.waitingForPeer)
+	v.peerRequestsSMP.copyShouldDisplayFrom(other.peerRequestsSMP)
+}
+
+func (v *verifier) updateDisplay() {
+	v.unverifiedWarning.updateDisplay()
+	v.waitingForPeer.updateDisplay()
+	v.peerRequestsSMP.updateDisplay()
+}
+
 type pinWindow struct {
 	b             *builder
 	dialog        gtki.Dialog `gtk-widget:"dialog"`
@@ -110,10 +122,9 @@ func (v *verifier) updateUnverifiedWarning() {
 }
 
 func (v *verifier) hideUnverifiedWarning() {
-	v.unverifiedWarning.infobar.Hide()
+	v.unverifiedWarning.hide()
 }
 
-// TODO: check on linux
 type unverifiedWarning struct {
 	b                         *builder
 	infobar                   gtki.Box    `gtk-widget:"verify-infobar"`
@@ -123,20 +134,40 @@ type unverifiedWarning struct {
 	image                     gtki.Image  `gtk-widget:"verify-image"`
 	button                    gtki.Button `gtk-widget:"verify-button"`
 	shouldShowVerificationBar func() bool
+	shouldDisplay             bool
 }
 
 // TODO: how will this work with i18n?
 var question = "Please enter the PIN that I shared with you."
 var coyIMQuestion = regexp.MustCompile("Please enter the PIN that I shared with you.")
 
-func (u *unverifiedWarning) update() {
-	if u.shouldShowVerificationBar() {
+func (u *unverifiedWarning) copyShouldDisplayFrom(other *unverifiedWarning) {
+	u.shouldDisplay = other.shouldDisplay
+}
+
+func (u *unverifiedWarning) updateDisplay() {
+	if u.shouldDisplay {
 		u.infobar.Show()
 		u.label.Show()
 		u.image.ShowAll()
 	} else {
 		u.infobar.Hide()
 	}
+}
+
+func (u *unverifiedWarning) show() {
+	u.shouldDisplay = true
+	u.updateDisplay()
+}
+
+func (u *unverifiedWarning) hide() {
+	u.shouldDisplay = false
+	u.updateDisplay()
+}
+
+func (u *unverifiedWarning) update() {
+	u.shouldDisplay = u.shouldShowVerificationBar()
+	u.updateDisplay()
 }
 
 func (v *verifier) buildUnverifiedWarning(shouldShowVerificationBar func() bool) {
@@ -170,7 +201,7 @@ func (v *verifier) smpError(err error) {
 }
 
 func (v *verifier) showPINDialog() {
-	v.unverifiedWarning.infobar.Hide()
+	v.unverifiedWarning.hide()
 
 	pin, err := v.createPIN()
 	if err != nil {
@@ -185,7 +216,8 @@ func (v *verifier) showPINDialog() {
 	v.pinWindow.dialog.ShowAll()
 
 	v.waitingForPeer.label.SetLabel(i18n.Localf("Waiting for peer to finish \nsecuring the channel..."))
-	v.waitingForPeer.infobar.ShowAll()
+
+	v.waitingForPeer.show()
 }
 
 func (v *verifier) createPIN() (string, error) {
@@ -199,11 +231,34 @@ func (v *verifier) createPIN() (string, error) {
 }
 
 type waitingForPeerNotification struct {
-	b       *builder
-	infobar gtki.Box    `gtk-widget:"smp-waiting-infobar"`
-	label   gtki.Label  `gtk-widget:"smp-waiting-label"`
-	image   gtki.Image  `gtk-widget:"smp-waiting-image"`
-	button  gtki.Button `gtk-widget:"smp-waiting-button"`
+	b             *builder
+	infobar       gtki.Box    `gtk-widget:"smp-waiting-infobar"`
+	label         gtki.Label  `gtk-widget:"smp-waiting-label"`
+	image         gtki.Image  `gtk-widget:"smp-waiting-image"`
+	button        gtki.Button `gtk-widget:"smp-waiting-button"`
+	shouldDisplay bool
+}
+
+func (u *waitingForPeerNotification) copyShouldDisplayFrom(other *waitingForPeerNotification) {
+	u.shouldDisplay = other.shouldDisplay
+}
+
+func (u *waitingForPeerNotification) show() {
+	u.shouldDisplay = true
+	u.updateDisplay()
+}
+
+func (u *waitingForPeerNotification) hide() {
+	u.shouldDisplay = false
+	u.updateDisplay()
+}
+
+func (u *waitingForPeerNotification) updateDisplay() {
+	if u.shouldDisplay {
+		u.infobar.ShowAll()
+	} else {
+		u.infobar.Hide()
+	}
 }
 
 func (v *verifier) buildWaitingForPeerNotification() {
@@ -229,7 +284,7 @@ func (v *verifier) buildWaitingForPeerNotification() {
 func (v *verifier) showWaitingForPeerToCompleteSMPDialog() {
 	v.waitingForPeer.label.SetLabel(i18n.Localf("Waiting for peer to finish \nsecuring the channel..."))
 	v.hideUnverifiedWarning()
-	v.waitingForPeer.infobar.ShowAll()
+	v.waitingForPeer.show()
 }
 
 func (v *verifier) showCannotGeneratePINDialog(err error) {
@@ -310,19 +365,38 @@ func (v *verifier) showAnswerSMPDialog(question string) {
 }
 
 type peerRequestsSMPNotification struct {
-	b            *builder
-	infobar      gtki.Box    `gtk-widget:"smp-requested-infobar"`
-	closeInfobar gtki.Box    `gtk-widget:"smp-requested-close-infobar"`
-	notification gtki.Box    `gtk-widget:"smp-requested-notification"`
-	label        gtki.Label  `gtk-widget:"smp-requested-message"`
-	image        gtki.Image  `gtk-widget:"smp-requested-image"`
-	button       gtki.Button `gtk-widget:"smp-requested-button"`
+	b             *builder
+	infobar       gtki.Box    `gtk-widget:"smp-requested-infobar"`
+	closeInfobar  gtki.Box    `gtk-widget:"smp-requested-close-infobar"`
+	notification  gtki.Box    `gtk-widget:"smp-requested-notification"`
+	label         gtki.Label  `gtk-widget:"smp-requested-message"`
+	image         gtki.Image  `gtk-widget:"smp-requested-image"`
+	button        gtki.Button `gtk-widget:"smp-requested-button"`
+	shouldDisplay bool
+}
+
+func (p *peerRequestsSMPNotification) copyShouldDisplayFrom(other *peerRequestsSMPNotification) {
+	p.shouldDisplay = other.shouldDisplay
 }
 
 func (p *peerRequestsSMPNotification) show() {
-	p.infobar.Show()
-	p.closeInfobar.Show()
-	p.label.Show()
+	p.shouldDisplay = true
+	p.updateDisplay()
+}
+
+func (p *peerRequestsSMPNotification) hide() {
+	p.shouldDisplay = false
+	p.updateDisplay()
+}
+
+func (p *peerRequestsSMPNotification) updateDisplay() {
+	if p.shouldDisplay {
+		p.infobar.Show()
+		p.closeInfobar.Show()
+		p.label.Show()
+	} else {
+		p.infobar.Hide()
+	}
 }
 
 func (v *verifier) buildPeerRequestsSMPNotification() {
@@ -420,8 +494,8 @@ func (v *verifier) updateInProgressDialogs(encrypted bool) {
 }
 
 func (v *verifier) removeInProgressDialogs() {
-	v.peerRequestsSMP.infobar.Hide()
-	v.waitingForPeer.infobar.Hide()
+	v.peerRequestsSMP.hide()
+	v.waitingForPeer.hide()
 	v.pinWindow.dialog.Hide()
 	v.answerSMPWindow.dialog.Hide()
 }

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-14 16:10+0000\n"
+"POT-Creation-Date: 2022-01-12 16:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -40,7 +40,7 @@ msgstr ""
 #: ../gui/definitions/MUCRoomToolbar.xml:364
 #: ../gui/definitions/PeerDetails.xml:191
 #: ../gui/definitions/RegistrationForm.xml:35
-#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:549
+#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:546
 #: ../gui/file_transfer_notification.go:125
 #: ../gui/file_transfer_notification.go:435
 msgid "Cancel"
@@ -856,7 +856,7 @@ msgstr ""
 msgid "Chat _Rooms"
 msgstr ""
 
-#: ../gui/definitions/Main.xml:63 ../gui/muc_room_config_assistant.go:140
+#: ../gui/definitions/Main.xml:63 ../gui/muc_room_config_assistant.go:144
 #: ../gui/muc_create_room_form.go:283
 msgid "Create Room"
 msgstr ""
@@ -1126,7 +1126,7 @@ msgstr ""
 msgid "Clear"
 msgstr ""
 
-#: ../gui/definitions/MUCRoomConfigPage.xml:100
+#: ../gui/definitions/MUCRoomConfigPage.xml:102
 msgid "Automatically join the room"
 msgstr ""
 
@@ -1510,48 +1510,48 @@ msgid "_Close"
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:21
-#: ../gui/muc_notification_messages.go:238
-#: ../gui/muc_notification_messages.go:850
+#: ../gui/muc_notification_messages.go:285
+#: ../gui/muc_notification_messages.go:897
 #, python-format
 msgid "$nickname{%s} is not $affiliation{an owner} anymore."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:23
-#: ../gui/muc_notification_messages.go:240
-#: ../gui/muc_notification_messages.go:853
+#: ../gui/muc_notification_messages.go:287
+#: ../gui/muc_notification_messages.go:900
 #, python-format
 msgid "$nickname{%s} is not $affiliation{an administrator} anymore."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:25
-#: ../gui/muc_notification_messages.go:242
-#: ../gui/muc_notification_messages.go:856
+#: ../gui/muc_notification_messages.go:289
+#: ../gui/muc_notification_messages.go:903
 #, python-format
 msgid "$nickname{%s} is not $affiliation{a member} anymore."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:27
-#: ../gui/muc_notification_messages.go:244
-#: ../gui/muc_notification_messages.go:859
+#: ../gui/muc_notification_messages.go:291
+#: ../gui/muc_notification_messages.go:906
 #, python-format
 msgid "$nickname{%s} is not banned anymore."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:33
-#: ../gui/muc_notification_messages.go:943
+#: ../gui/muc_notification_messages.go:990
 #, python-format
 msgid "The position of $nickname{%s} was changed to $affiliation{owner}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:35
-#: ../gui/muc_notification_messages.go:946
+#: ../gui/muc_notification_messages.go:993
 #, python-format
 msgid ""
 "The position of $nickname{%s} was changed to $affiliation{administrator}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:37
-#: ../gui/muc_notification_messages.go:949
+#: ../gui/muc_notification_messages.go:996
 #, python-format
 msgid "The position of $nickname{%s} was changed to $affiliation{member}."
 msgstr ""
@@ -1562,15 +1562,15 @@ msgid "$nickname{%s} has been banned from the room."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:41
-#: ../gui/muc_notification_messages.go:413
-#: ../gui/muc_notification_messages.go:952
-#: ../gui/muc_notification_messages.go:1054
+#: ../gui/muc_notification_messages.go:460
+#: ../gui/muc_notification_messages.go:999
+#: ../gui/muc_notification_messages.go:1101
 #, python-format
 msgid "The position of $nickname{%s} was changed."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:52
-#: ../gui/muc_notification_messages.go:500
+#: ../gui/muc_notification_messages.go:547
 #, python-format
 msgid "$nickname{%s} was expelled from the room."
 msgstr ""
@@ -1671,1356 +1671,1356 @@ msgid ""
 "room. Every room must have at least one owner."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:126
-#, python-format
-msgid "An error occurred trying to change the position of %s to owner."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:128
-#, python-format
-msgid "An error occurred trying to change the position of %s to administrator."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:130
-#, python-format
-msgid "An error occurred trying to change the position of %s to member."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:132
-#, python-format
-msgid "An error occurred trying to ban %s."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:134
+#: ../gui/muc_notification_messages.go:165
 #, python-format
 msgid "An error occurred trying to change the position of %s."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:143
+#: ../gui/muc_notification_messages.go:168
+#, python-format
+msgid "An error occurred trying to ban %s."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:171
+#, python-format
+msgid "An error occurred trying to change the position of %s to member."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:174
+#, python-format
+msgid "An error occurred trying to change the position of %s to administrator."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:177
+#, python-format
+msgid "An error occurred trying to change the position of %s to owner."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:190
 #, python-format
 msgid "The role of $nickname{%s} couldn't be changed."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:144
+#: ../gui/muc_notification_messages.go:191
 msgid "Changing the role failed"
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:145
+#: ../gui/muc_notification_messages.go:192
 #, python-format
 msgid "The role of %s couldn't be changed"
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:153
+#: ../gui/muc_notification_messages.go:200
 #, python-format
 msgid "An error occurred trying to change the role of %s to moderator."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:155
+#: ../gui/muc_notification_messages.go:202
 #, python-format
 msgid "An error occurred trying to change the role of %s to participant."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:157
+#: ../gui/muc_notification_messages.go:204
 #, python-format
 msgid "An error occurred trying to change the role of %s to visitor."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:159
+#: ../gui/muc_notification_messages.go:206
 #, python-format
 msgid "An error occurred trying to change the role of %s."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:164
+#: ../gui/muc_notification_messages.go:211
 #, python-format
 msgid "$nickname{%s} couldn't be expelled."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:165
+#: ../gui/muc_notification_messages.go:212
 msgid "Expelling failed"
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:166
+#: ../gui/muc_notification_messages.go:213
 #, python-format
 msgid "%s couldn't be expelled"
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:176
+#: ../gui/muc_notification_messages.go:223
 #, python-format
 msgid "An error occurred expelling %s."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:183
+#: ../gui/muc_notification_messages.go:230
 #, python-format
 msgid "As an owner you don't have permission to expel %s."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:185
+#: ../gui/muc_notification_messages.go:232
 #, python-format
 msgid "As an administrator you don't have permission to expel %s."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:187
+#: ../gui/muc_notification_messages.go:234
 #, python-format
 msgid "As a member you don't have permission to expel %s."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:191
+#: ../gui/muc_notification_messages.go:238
 #, python-format
 msgid "You don't have permission to expel %s."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:257
-#: ../gui/muc_notification_messages.go:876
+#: ../gui/muc_notification_messages.go:304
+#: ../gui/muc_notification_messages.go:923
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not $affiliation{an owner} anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:261
-#: ../gui/muc_notification_messages.go:880
+#: ../gui/muc_notification_messages.go:308
+#: ../gui/muc_notification_messages.go:927
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not $affiliation{an administrator} anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:265
-#: ../gui/muc_notification_messages.go:884
+#: ../gui/muc_notification_messages.go:312
+#: ../gui/muc_notification_messages.go:931
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not $affiliation{a member} anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:269
-#: ../gui/muc_notification_messages.go:450
-#: ../gui/muc_notification_messages.go:981
-#: ../gui/muc_notification_messages.go:1095
+#: ../gui/muc_notification_messages.go:316
+#: ../gui/muc_notification_messages.go:497
+#: ../gui/muc_notification_messages.go:1028
+#: ../gui/muc_notification_messages.go:1142
 msgid "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:277
-#: ../gui/muc_notification_messages.go:896
+#: ../gui/muc_notification_messages.go:324
+#: ../gui/muc_notification_messages.go:943
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not $affiliation{an owner} anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:281
-#: ../gui/muc_notification_messages.go:900
+#: ../gui/muc_notification_messages.go:328
+#: ../gui/muc_notification_messages.go:947
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not $affiliation{an administrator} anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:285
-#: ../gui/muc_notification_messages.go:904
+#: ../gui/muc_notification_messages.go:332
+#: ../gui/muc_notification_messages.go:951
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not $affiliation{a member} anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:289
-#: ../gui/muc_notification_messages.go:482
-#: ../gui/muc_notification_messages.go:1001
-#: ../gui/muc_notification_messages.go:1126
+#: ../gui/muc_notification_messages.go:336
+#: ../gui/muc_notification_messages.go:529
+#: ../gui/muc_notification_messages.go:1048
+#: ../gui/muc_notification_messages.go:1173
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:302
+#: ../gui/muc_notification_messages.go:349
 #, python-format
 msgid "$nickname{%s} was banned from the room."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:308
+#: ../gui/muc_notification_messages.go:355
 msgid "The owner $nickname{%[1]s} banned $nickname{%[2]s} from the room."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:312
+#: ../gui/muc_notification_messages.go:359
 msgid ""
 "The administrator $nickname{%[1]s} banned $nickname{%[2]s} from the room."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:316
+#: ../gui/muc_notification_messages.go:363
 msgid "$nickname{%[1]s} banned $nickname{%[2]s} from the room."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:329
+#: ../gui/muc_notification_messages.go:376
 #, python-format
 msgid "$nickname{%s} is now $affiliation{an owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:331
+#: ../gui/muc_notification_messages.go:378
 #, python-format
 msgid "$nickname{%s} is now $affiliation{an administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:333
+#: ../gui/muc_notification_messages.go:380
 #, python-format
 msgid "$nickname{%s} is now $affiliation{a member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:335
+#: ../gui/muc_notification_messages.go:382
 #, python-format
 msgid "$nickname{%s} is now banned."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:348
-msgid ""
-"The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
-"$nickname{%[2]s} is now $affiliation{an owner}."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:352
-msgid ""
-"The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
-"$nickname{%[2]s} is now $affiliation{an administrator}."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:356
-msgid ""
-"The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
-"$nickname{%[2]s} is now $affiliation{a member}."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:360
-msgid ""
-"The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
-"$nickname{%[2]s} is now banned."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:368
-msgid ""
-"The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
-"$nickname{%[2]s} is now $affiliation{an owner}."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:372
-msgid ""
-"The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
-"$nickname{%[2]s} is now $affiliation{an administrator}."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:376
-msgid ""
-"The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
-"$nickname{%[2]s} is now $affiliation{a member}."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:380
-msgid ""
-"The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
-"$nickname{%[2]s} is now banned."
-msgstr ""
-
 #: ../gui/muc_notification_messages.go:395
-#: ../gui/muc_notification_messages.go:1042
+msgid ""
+"The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
+"$nickname{%[2]s} is now $affiliation{an owner}."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:399
+msgid ""
+"The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
+"$nickname{%[2]s} is now $affiliation{an administrator}."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:403
+msgid ""
+"The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
+"$nickname{%[2]s} is now $affiliation{a member}."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:407
+msgid ""
+"The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
+"$nickname{%[2]s} is now banned."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:415
+msgid ""
+"The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
+"$nickname{%[2]s} is now $affiliation{an owner}."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:419
+msgid ""
+"The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
+"$nickname{%[2]s} is now $affiliation{an administrator}."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:423
+msgid ""
+"The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
+"$nickname{%[2]s} is now $affiliation{a member}."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:427
+msgid ""
+"The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
+"$nickname{%[2]s} is now banned."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:442
+#: ../gui/muc_notification_messages.go:1089
 #, python-format
 msgid ""
 "The position of $nickname{%s} was changed from $affiliation{owner} to "
 "$affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:398
-#: ../gui/muc_notification_messages.go:1036
+#: ../gui/muc_notification_messages.go:445
+#: ../gui/muc_notification_messages.go:1083
 #, python-format
 msgid ""
 "The position of $nickname{%s} was changed from $affiliation{owner} to "
 "$affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:401
-#: ../gui/muc_notification_messages.go:1039
+#: ../gui/muc_notification_messages.go:448
+#: ../gui/muc_notification_messages.go:1086
 #, python-format
 msgid ""
 "The position of $nickname{%s} was changed from $affiliation{administrator} "
 "to $affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:404
-#: ../gui/muc_notification_messages.go:1048
+#: ../gui/muc_notification_messages.go:451
+#: ../gui/muc_notification_messages.go:1095
 #, python-format
 msgid ""
 "The position of $nickname{%s} was changed from $affiliation{administrator} "
 "to $affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:407
-#: ../gui/muc_notification_messages.go:1045
+#: ../gui/muc_notification_messages.go:454
+#: ../gui/muc_notification_messages.go:1092
 #, python-format
 msgid ""
 "The position of $nickname{%s} was changed from $affiliation{member} to "
 "$affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:410
-#: ../gui/muc_notification_messages.go:1051
+#: ../gui/muc_notification_messages.go:457
+#: ../gui/muc_notification_messages.go:1098
 #, python-format
 msgid ""
 "The position of $nickname{%s} was changed from $affiliation{member} to "
 "$affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:426
-#: ../gui/muc_notification_messages.go:1091
+#: ../gui/muc_notification_messages.go:473
+#: ../gui/muc_notification_messages.go:1138
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{owner} to $affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:430
-#: ../gui/muc_notification_messages.go:1087
+#: ../gui/muc_notification_messages.go:477
+#: ../gui/muc_notification_messages.go:1134
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{owner} to $affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:434
-#: ../gui/muc_notification_messages.go:1083
+#: ../gui/muc_notification_messages.go:481
+#: ../gui/muc_notification_messages.go:1130
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{administrator} to $affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:438
-#: ../gui/muc_notification_messages.go:1079
+#: ../gui/muc_notification_messages.go:485
+#: ../gui/muc_notification_messages.go:1126
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{administrator} to $affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:442
-#: ../gui/muc_notification_messages.go:1075
+#: ../gui/muc_notification_messages.go:489
+#: ../gui/muc_notification_messages.go:1122
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{member} to $affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:446
-#: ../gui/muc_notification_messages.go:1071
+#: ../gui/muc_notification_messages.go:493
+#: ../gui/muc_notification_messages.go:1118
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{member} to $affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:458
-#: ../gui/muc_notification_messages.go:1122
+#: ../gui/muc_notification_messages.go:505
+#: ../gui/muc_notification_messages.go:1169
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} "
 "from $affiliation{owner} to $affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:462
-#: ../gui/muc_notification_messages.go:1118
+#: ../gui/muc_notification_messages.go:509
+#: ../gui/muc_notification_messages.go:1165
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} "
 "from $affiliation{owner} to $affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:466
-#: ../gui/muc_notification_messages.go:1114
+#: ../gui/muc_notification_messages.go:513
+#: ../gui/muc_notification_messages.go:1161
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} "
 "from $affiliation{administrator} to $affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:470
-#: ../gui/muc_notification_messages.go:1110
+#: ../gui/muc_notification_messages.go:517
+#: ../gui/muc_notification_messages.go:1157
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} "
 "from $affiliation{administrator} to $affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:474
-#: ../gui/muc_notification_messages.go:1106
+#: ../gui/muc_notification_messages.go:521
+#: ../gui/muc_notification_messages.go:1153
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} "
 "from $affiliation{member} to $affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:478
-#: ../gui/muc_notification_messages.go:1102
+#: ../gui/muc_notification_messages.go:525
+#: ../gui/muc_notification_messages.go:1149
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} "
 "from $affiliation{member} to $affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:508
+#: ../gui/muc_notification_messages.go:555
 msgid "The owner $nickname{%[1]s} expelled $nickname{%[2]s} from the room."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:512
+#: ../gui/muc_notification_messages.go:559
 msgid ""
 "The administrator $nickname{%[1]s} expelled $nickname{%[2]s} from the room."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:516
+#: ../gui/muc_notification_messages.go:563
 msgid "$nickname{%[1]s} expelled $nickname{%[2]s} from the room."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:531
+#: ../gui/muc_notification_messages.go:578
 #, python-format
 msgid "The role of %s was changed from moderator to participant."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:534
+#: ../gui/muc_notification_messages.go:581
 #, python-format
 msgid "The role of %s was changed from moderator to visitor."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:537
+#: ../gui/muc_notification_messages.go:584
 #, python-format
 msgid "The role of %s was changed from participant to moderator."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:540
+#: ../gui/muc_notification_messages.go:587
 #, python-format
 msgid "The role of %s was changed from participant to visitor."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:543
+#: ../gui/muc_notification_messages.go:590
 #, python-format
 msgid "The role of %s was changed from visitor to moderator."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:546
+#: ../gui/muc_notification_messages.go:593
 #, python-format
 msgid "The role of %s was changed from visitor to participant."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:549
+#: ../gui/muc_notification_messages.go:596
 #, python-format
 msgid "The role of %s was changed."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:566
+#: ../gui/muc_notification_messages.go:613
 msgid ""
 "The owner $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{moderator} to $role{participant}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:570
+#: ../gui/muc_notification_messages.go:617
 msgid ""
 "The owner $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{moderator} to $role{visitor}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:574
+#: ../gui/muc_notification_messages.go:621
 msgid ""
 "The owner $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{participant} to $role{moderator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:578
+#: ../gui/muc_notification_messages.go:625
 msgid ""
 "The owner $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{participant} to $role{visitor}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:582
+#: ../gui/muc_notification_messages.go:629
 msgid ""
 "The owner $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{visitor} to $role{moderator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:586
+#: ../gui/muc_notification_messages.go:633
 msgid ""
 "The owner $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{visitor} to $role{participant}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:590
+#: ../gui/muc_notification_messages.go:637
 msgid "The owner $nickname{%[1]s} changed the role of $nickname{%[2]s}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:598
+#: ../gui/muc_notification_messages.go:645
 msgid ""
 "The administrator $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{moderator} to $role{participant}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:602
+#: ../gui/muc_notification_messages.go:649
 msgid ""
 "The administrator $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{moderator} to $role{visitor}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:606
+#: ../gui/muc_notification_messages.go:653
 msgid ""
 "The administrator $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{participant} to $role{moderator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:610
+#: ../gui/muc_notification_messages.go:657
 msgid ""
 "The administrator $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{participant} to $role{visitor}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:614
+#: ../gui/muc_notification_messages.go:661
 msgid ""
 "The administrator $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{visitor} to $role{moderator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:618
+#: ../gui/muc_notification_messages.go:665
 msgid ""
 "The administrator $nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{visitor} to $role{participant}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:622
+#: ../gui/muc_notification_messages.go:669
 msgid ""
 "The administrator $nickname{%[1]s} changed the role of $nickname{%[2]s}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:630
+#: ../gui/muc_notification_messages.go:677
 msgid ""
 "$nickname{%[1]s} changed the role of $nickname{%[2]s} from $role{moderator} "
 "to $role{participant}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:634
+#: ../gui/muc_notification_messages.go:681
 msgid ""
 "$nickname{%[1]s} changed the role of $nickname{%[2]s} from $role{moderator} "
 "to $role{visitor}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:638
+#: ../gui/muc_notification_messages.go:685
 msgid ""
 "$nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{participant} to $role{moderator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:642
+#: ../gui/muc_notification_messages.go:689
 msgid ""
 "$nickname{%[1]s} changed the role of $nickname{%[2]s} from "
 "$role{participant} to $role{visitor}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:646
+#: ../gui/muc_notification_messages.go:693
 msgid ""
 "$nickname{%[1]s} changed the role of $nickname{%[2]s} from $role{visitor} to "
 "$role{moderator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:650
+#: ../gui/muc_notification_messages.go:697
 msgid ""
 "$nickname{%[1]s} changed the role of $nickname{%[2]s} from $role{visitor} to "
 "$role{participant}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:654
+#: ../gui/muc_notification_messages.go:701
 msgid "$nickname{%[1]s} changed the role of $nickname{%[2]s}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:673
+#: ../gui/muc_notification_messages.go:720
 msgid "Your role was changed from $role{participant} to $role{visitor}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:675
+#: ../gui/muc_notification_messages.go:722
 msgid "Your role was changed from $role{participant} to $role{moderator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:677
+#: ../gui/muc_notification_messages.go:724
 msgid "Your role was changed from $role{visitor} to $role{participant}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:679
+#: ../gui/muc_notification_messages.go:726
 msgid "Your role was changed from $role{visitor} to $role{moderator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:681
+#: ../gui/muc_notification_messages.go:728
 msgid "Your role was changed from $role{moderator} to $role{visitor}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:683
+#: ../gui/muc_notification_messages.go:730
 msgid "Your role was changed from $role{moderator} to $role{participant}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:685
+#: ../gui/muc_notification_messages.go:732
 msgid "You have been expelled."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:687
+#: ../gui/muc_notification_messages.go:734
 msgid "Your role was changed."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:703
+#: ../gui/muc_notification_messages.go:750
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your role from $role{participant} to "
 "$role{visitor}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:706
+#: ../gui/muc_notification_messages.go:753
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your role from $role{participant} to "
 "$role{moderator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:709
+#: ../gui/muc_notification_messages.go:756
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your role from $role{visitor} to "
 "$role{participant}."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:712
-#, python-format
-msgid ""
-"The owner $nickname{%s} changed your role from $role{visitor} to "
-"$role{moderator}."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:715
-#, python-format
-msgid ""
-"The owner $nickname{%s} changed your role from $role{moderator} to "
-"$role{visitor}."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:718
-#, python-format
-msgid ""
-"The owner $nickname{%s} changed your role from $role{moderator} to "
-"$role{participant}."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:721
-#, python-format
-msgid "The owner $nickname{%s} has expelled you from the room."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:724
-#, python-format
-msgid "The owner $nickname{%s} changed your role."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:731
-#, python-format
-msgid ""
-"The administrator $nickname{%s} changed your role from $role{participant} to "
-"$role{visitor}."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:734
-#, python-format
-msgid ""
-"The administrator $nickname{%s} changed your role from $role{participant} to "
-"$role{moderator}."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:737
-#, python-format
-msgid ""
-"The administrator $nickname{%s} changed your role from $role{visitor} to "
-"$role{participant}."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:740
-#, python-format
-msgid ""
-"The administrator $nickname{%s} changed your role from $role{visitor} to "
-"$role{moderator}."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:743
-#, python-format
-msgid ""
-"The administrator $nickname{%s} changed your role from $role{moderator} to "
-"$role{visitor}."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:746
-#, python-format
-msgid ""
-"The administrator $nickname{%s} changed your role from $role{moderator} to "
-"$role{participant}."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:749
-#, python-format
-msgid "The administrator $nickname{%s} has expelled you from the room."
-msgstr ""
-
-#: ../gui/muc_notification_messages.go:752
-#, python-format
-msgid "The administrator $nickname{%s} changed your role."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:759
 #, python-format
 msgid ""
-"$nickname{%s} changed your role from $role{participant} to $role{visitor}."
+"The owner $nickname{%s} changed your role from $role{visitor} to "
+"$role{moderator}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:762
 #, python-format
 msgid ""
-"$nickname{%s} changed your role from $role{participant} to $role{moderator}."
+"The owner $nickname{%s} changed your role from $role{moderator} to "
+"$role{visitor}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:765
 #, python-format
 msgid ""
-"$nickname{%s} changed your role from $role{visitor} to $role{participant}."
+"The owner $nickname{%s} changed your role from $role{moderator} to "
+"$role{participant}."
 msgstr ""
 
 #: ../gui/muc_notification_messages.go:768
+#, python-format
+msgid "The owner $nickname{%s} has expelled you from the room."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:771
+#, python-format
+msgid "The owner $nickname{%s} changed your role."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:778
+#, python-format
+msgid ""
+"The administrator $nickname{%s} changed your role from $role{participant} to "
+"$role{visitor}."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:781
+#, python-format
+msgid ""
+"The administrator $nickname{%s} changed your role from $role{participant} to "
+"$role{moderator}."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:784
+#, python-format
+msgid ""
+"The administrator $nickname{%s} changed your role from $role{visitor} to "
+"$role{participant}."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:787
+#, python-format
+msgid ""
+"The administrator $nickname{%s} changed your role from $role{visitor} to "
+"$role{moderator}."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:790
+#, python-format
+msgid ""
+"The administrator $nickname{%s} changed your role from $role{moderator} to "
+"$role{visitor}."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:793
+#, python-format
+msgid ""
+"The administrator $nickname{%s} changed your role from $role{moderator} to "
+"$role{participant}."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:796
+#, python-format
+msgid "The administrator $nickname{%s} has expelled you from the room."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:799
+#, python-format
+msgid "The administrator $nickname{%s} changed your role."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:806
+#, python-format
+msgid ""
+"$nickname{%s} changed your role from $role{participant} to $role{visitor}."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:809
+#, python-format
+msgid ""
+"$nickname{%s} changed your role from $role{participant} to $role{moderator}."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:812
+#, python-format
+msgid ""
+"$nickname{%s} changed your role from $role{visitor} to $role{participant}."
+msgstr ""
+
+#: ../gui/muc_notification_messages.go:815
 #, python-format
 msgid ""
 "$nickname{%s} changed your role from $role{visitor} to $role{moderator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:771
+#: ../gui/muc_notification_messages.go:818
 #, python-format
 msgid ""
 "$nickname{%s} changed your role from $role{moderator} to $role{visitor}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:774
+#: ../gui/muc_notification_messages.go:821
 #, python-format
 msgid ""
 "$nickname{%s} changed your role from $role{moderator} to $role{participant}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:777
+#: ../gui/muc_notification_messages.go:824
 #, python-format
 msgid "$nickname{%s} has expelled you from the room."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:780
+#: ../gui/muc_notification_messages.go:827
 #, python-format
 msgid "$nickname{%s} changed your role."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:789
-#: ../gui/muc_notification_messages.go:1168
+#: ../gui/muc_notification_messages.go:836
+#: ../gui/muc_notification_messages.go:1215
 msgid "%[1]s %[2]s"
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:807
+#: ../gui/muc_notification_messages.go:854
 msgid ""
 "As a result, their role was changed from $role{visitor} to "
 "$role{participant}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:809
+#: ../gui/muc_notification_messages.go:856
 msgid ""
 "As a result, their role was changed from $role{visitor} to $role{moderator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:811
+#: ../gui/muc_notification_messages.go:858
 msgid ""
 "As a result, their role was changed from $role{participant} to "
 "$role{visitor}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:813
+#: ../gui/muc_notification_messages.go:860
 msgid ""
 "As a result, their role was changed from $role{participant} to "
 "$role{moderator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:815
+#: ../gui/muc_notification_messages.go:862
 msgid ""
 "As a result, their role was changed from $role{moderator} to $role{visitor}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:817
+#: ../gui/muc_notification_messages.go:864
 msgid ""
 "As a result, their role was changed from $role{moderator} to "
 "$role{participant}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:819
+#: ../gui/muc_notification_messages.go:866
 msgid "As a result, their role was also changed."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:825
+#: ../gui/muc_notification_messages.go:872
 msgid ""
 "As a result, your role was changed from $role{visitor} to $role{participant}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:827
+#: ../gui/muc_notification_messages.go:874
 msgid ""
 "As a result, your role was changed from $role{visitor} to $role{moderator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:829
+#: ../gui/muc_notification_messages.go:876
 msgid ""
 "As a result, your role was changed from $role{participant} to $role{visitor}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:831
+#: ../gui/muc_notification_messages.go:878
 msgid ""
 "As a result, your role was changed from $role{participant} to "
 "$role{moderator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:833
+#: ../gui/muc_notification_messages.go:880
 msgid ""
 "As a result, your role was changed from $role{moderator} to $role{visitor}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:835
+#: ../gui/muc_notification_messages.go:882
 msgid ""
 "As a result, your role was changed from $role{moderator} to "
 "$role{participant}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:837
+#: ../gui/muc_notification_messages.go:884
 msgid "As a result, your role was also changed."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:888
+#: ../gui/muc_notification_messages.go:935
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not banned anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:908
+#: ../gui/muc_notification_messages.go:955
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s}; "
 "$nickname{%[2]s} is not banned anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:916
+#: ../gui/muc_notification_messages.go:963
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} "
 "is not $affiliation{an owner} anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:920
+#: ../gui/muc_notification_messages.go:967
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} "
 "is not $affiliation{an administrator} anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:924
+#: ../gui/muc_notification_messages.go:971
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} "
 "is not $affiliation{a member} anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:928
+#: ../gui/muc_notification_messages.go:975
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s}; $nickname{%[2]s} "
 "is not banned anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:969
+#: ../gui/muc_notification_messages.go:1016
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} to "
 "$affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:973
+#: ../gui/muc_notification_messages.go:1020
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} to "
 "$affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:977
+#: ../gui/muc_notification_messages.go:1024
 msgid ""
 "The owner $nickname{%[1]s} changed the position of $nickname{%[2]s} to "
 "$affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:989
+#: ../gui/muc_notification_messages.go:1036
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} "
 "to $affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:993
+#: ../gui/muc_notification_messages.go:1040
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} "
 "to $affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:997
+#: ../gui/muc_notification_messages.go:1044
 msgid ""
 "The administrator $nickname{%[1]s} changed the position of $nickname{%[2]s} "
 "to $affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1009
+#: ../gui/muc_notification_messages.go:1056
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s} to "
 "$affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1013
+#: ../gui/muc_notification_messages.go:1060
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s} to "
 "$affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1017
+#: ../gui/muc_notification_messages.go:1064
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s} to "
 "$affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1021
+#: ../gui/muc_notification_messages.go:1068
 msgid "$nickname{%[1]s} changed the position of $nickname{%[2]s}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1134
+#: ../gui/muc_notification_messages.go:1181
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{member} to $affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1138
+#: ../gui/muc_notification_messages.go:1185
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{member} to $affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1142
+#: ../gui/muc_notification_messages.go:1189
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{administrator} to $affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1146
+#: ../gui/muc_notification_messages.go:1193
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{administrator} to $affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1150
+#: ../gui/muc_notification_messages.go:1197
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{owner} to $affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1154
+#: ../gui/muc_notification_messages.go:1201
 msgid ""
 "$nickname{%[1]s} changed the position of $nickname{%[2]s} from "
 "$affiliation{owner} to $affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1158
+#: ../gui/muc_notification_messages.go:1205
 msgid "%[1]s changed the position of %[2]s."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1194
-#: ../gui/muc_notification_messages.go:1402
+#: ../gui/muc_notification_messages.go:1241
+#: ../gui/muc_notification_messages.go:1449
 msgid "You are not $affiliation{an owner} anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1196
-#: ../gui/muc_notification_messages.go:1404
+#: ../gui/muc_notification_messages.go:1243
+#: ../gui/muc_notification_messages.go:1451
 msgid "You are not $affiliation{an administrator} anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1198
-#: ../gui/muc_notification_messages.go:1406
+#: ../gui/muc_notification_messages.go:1245
+#: ../gui/muc_notification_messages.go:1453
 msgid "You are not $affiliation{a member} anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1204
-#: ../gui/muc_notification_messages.go:1421
+#: ../gui/muc_notification_messages.go:1251
+#: ../gui/muc_notification_messages.go:1468
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your position; you are not $affiliation{an "
 "owner} anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1207
-#: ../gui/muc_notification_messages.go:1424
+#: ../gui/muc_notification_messages.go:1254
+#: ../gui/muc_notification_messages.go:1471
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your position; you are not $affiliation{an "
 "administrator} anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1210
-#: ../gui/muc_notification_messages.go:1427
+#: ../gui/muc_notification_messages.go:1257
+#: ../gui/muc_notification_messages.go:1474
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your position; you are not $affiliation{a "
 "member} anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1213
-#: ../gui/muc_notification_messages.go:1437
+#: ../gui/muc_notification_messages.go:1260
+#: ../gui/muc_notification_messages.go:1484
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position; you are not "
 "$affiliation{an owner} anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1216
-#: ../gui/muc_notification_messages.go:1440
+#: ../gui/muc_notification_messages.go:1263
+#: ../gui/muc_notification_messages.go:1487
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position; you are not "
 "$affiliation{an administrator} anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1219
-#: ../gui/muc_notification_messages.go:1443
+#: ../gui/muc_notification_messages.go:1266
+#: ../gui/muc_notification_messages.go:1490
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position; you are not "
 "$affiliation{a member} anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1222
-#: ../gui/muc_notification_messages.go:1347
-#: ../gui/muc_notification_messages.go:1586
+#: ../gui/muc_notification_messages.go:1269
+#: ../gui/muc_notification_messages.go:1394
+#: ../gui/muc_notification_messages.go:1633
 #, python-format
 msgid "The administrator $nickname{%s} changed your position."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1236
+#: ../gui/muc_notification_messages.go:1283
 msgid "Your position was changed to $affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1238
+#: ../gui/muc_notification_messages.go:1285
 msgid "Your position was changed to $affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1240
+#: ../gui/muc_notification_messages.go:1287
 msgid "Your position was changed to $affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1246
+#: ../gui/muc_notification_messages.go:1293
 #, python-format
 msgid "The owner $nickname{%s} changed your position to $affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1249
+#: ../gui/muc_notification_messages.go:1296
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your position to $affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1252
+#: ../gui/muc_notification_messages.go:1299
 #, python-format
 msgid "The owner $nickname{%s} changed your position to $affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1255
+#: ../gui/muc_notification_messages.go:1302
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position to $affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1258
+#: ../gui/muc_notification_messages.go:1305
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position to "
 "$affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1261
+#: ../gui/muc_notification_messages.go:1308
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position to "
 "$affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1276
-#: ../gui/muc_notification_messages.go:1518
+#: ../gui/muc_notification_messages.go:1323
+#: ../gui/muc_notification_messages.go:1565
 msgid ""
 "Your position was changed from $affiliation{owner} to "
 "$affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1278
-#: ../gui/muc_notification_messages.go:1520
+#: ../gui/muc_notification_messages.go:1325
+#: ../gui/muc_notification_messages.go:1567
 msgid ""
 "Your position was changed from $affiliation{owner} to $affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1280
-#: ../gui/muc_notification_messages.go:1522
+#: ../gui/muc_notification_messages.go:1327
+#: ../gui/muc_notification_messages.go:1569
 msgid ""
 "Your position was changed from $affiliation{administrator} to "
 "$affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1282
-#: ../gui/muc_notification_messages.go:1524
+#: ../gui/muc_notification_messages.go:1329
+#: ../gui/muc_notification_messages.go:1571
 msgid ""
 "Your position was changed from $affiliation{administrator} to "
 "$affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1284
-#: ../gui/muc_notification_messages.go:1528
+#: ../gui/muc_notification_messages.go:1331
+#: ../gui/muc_notification_messages.go:1575
 msgid ""
 "Your position was changed from $affiliation{member} to $affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1286
-#: ../gui/muc_notification_messages.go:1526
+#: ../gui/muc_notification_messages.go:1333
+#: ../gui/muc_notification_messages.go:1573
 msgid ""
 "Your position was changed from $affiliation{member} to "
 "$affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1288
-#: ../gui/muc_notification_messages.go:1530
+#: ../gui/muc_notification_messages.go:1335
+#: ../gui/muc_notification_messages.go:1577
 msgid "Your position was changed."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1304
-#: ../gui/muc_notification_messages.go:1543
+#: ../gui/muc_notification_messages.go:1351
+#: ../gui/muc_notification_messages.go:1590
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your position from $affiliation{owner} to "
 "$affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1307
-#: ../gui/muc_notification_messages.go:1546
+#: ../gui/muc_notification_messages.go:1354
+#: ../gui/muc_notification_messages.go:1593
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your position from $affiliation{owner} to "
 "$affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1310
-#: ../gui/muc_notification_messages.go:1549
+#: ../gui/muc_notification_messages.go:1357
+#: ../gui/muc_notification_messages.go:1596
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your position from "
 "$affiliation{administrator} to $affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1313
-#: ../gui/muc_notification_messages.go:1552
+#: ../gui/muc_notification_messages.go:1360
+#: ../gui/muc_notification_messages.go:1599
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your position from "
 "$affiliation{administrator} to $affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1316
-#: ../gui/muc_notification_messages.go:1558
+#: ../gui/muc_notification_messages.go:1363
+#: ../gui/muc_notification_messages.go:1605
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your position from $affiliation{member} to "
 "$affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1319
-#: ../gui/muc_notification_messages.go:1555
+#: ../gui/muc_notification_messages.go:1366
+#: ../gui/muc_notification_messages.go:1602
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your position from $affiliation{member} to "
 "$affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1322
-#: ../gui/muc_notification_messages.go:1561
+#: ../gui/muc_notification_messages.go:1369
+#: ../gui/muc_notification_messages.go:1608
 #, python-format
 msgid "The owner $nickname{%s} changed your position."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1329
-#: ../gui/muc_notification_messages.go:1568
+#: ../gui/muc_notification_messages.go:1376
+#: ../gui/muc_notification_messages.go:1615
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position from "
 "$affiliation{owner} to $affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1332
-#: ../gui/muc_notification_messages.go:1571
+#: ../gui/muc_notification_messages.go:1379
+#: ../gui/muc_notification_messages.go:1618
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position from "
 "$affiliation{owner} to $affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1335
-#: ../gui/muc_notification_messages.go:1574
+#: ../gui/muc_notification_messages.go:1382
+#: ../gui/muc_notification_messages.go:1621
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position from "
 "$affiliation{administrator} to $affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1338
-#: ../gui/muc_notification_messages.go:1577
+#: ../gui/muc_notification_messages.go:1385
+#: ../gui/muc_notification_messages.go:1624
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position from "
 "$affiliation{administrator} to $affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1341
-#: ../gui/muc_notification_messages.go:1583
+#: ../gui/muc_notification_messages.go:1388
+#: ../gui/muc_notification_messages.go:1630
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position from "
 "$affiliation{member} to $affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1344
-#: ../gui/muc_notification_messages.go:1580
+#: ../gui/muc_notification_messages.go:1391
+#: ../gui/muc_notification_messages.go:1627
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position from "
 "$affiliation{member} to $affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1354
+#: ../gui/muc_notification_messages.go:1401
 #, python-format
 msgid ""
 "$nickname{%s} changed your position from $affiliation{owner} to "
 "$affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1357
+#: ../gui/muc_notification_messages.go:1404
 #, python-format
 msgid ""
 "$nickname{%s} changed your position from $affiliation{owner} to "
 "$affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1360
+#: ../gui/muc_notification_messages.go:1407
 #, python-format
 msgid ""
 "$nickname{%s} changed your position from $affiliation{administrator} to "
 "$affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1363
+#: ../gui/muc_notification_messages.go:1410
 #, python-format
 msgid ""
 "$nickname{%s} changed your position from $affiliation{administrator} to "
 "$affiliation{member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1366
+#: ../gui/muc_notification_messages.go:1413
 #, python-format
 msgid ""
 "$nickname{%s} changed your position from $affiliation{member} to "
 "$affiliation{owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1369
+#: ../gui/muc_notification_messages.go:1416
 #, python-format
 msgid ""
 "$nickname{%s} changed your position from $affiliation{member} to "
 "$affiliation{administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1372
+#: ../gui/muc_notification_messages.go:1419
 #, python-format
 msgid "$nickname{%s} changed your position."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1408
+#: ../gui/muc_notification_messages.go:1455
 msgid "You are not banned anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1430
+#: ../gui/muc_notification_messages.go:1477
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your position; you are not banned anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1446
+#: ../gui/muc_notification_messages.go:1493
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position; you are not banned "
 "anymore."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1460
+#: ../gui/muc_notification_messages.go:1507
 msgid "You are now $affiliation{an owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1462
+#: ../gui/muc_notification_messages.go:1509
 msgid "You are now $affiliation{an administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1464
+#: ../gui/muc_notification_messages.go:1511
 msgid "You are now $affiliation{a member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1466
+#: ../gui/muc_notification_messages.go:1513
 msgid "You are now banned."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1479
+#: ../gui/muc_notification_messages.go:1526
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your position; you are now $affiliation{an "
 "owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1482
+#: ../gui/muc_notification_messages.go:1529
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your position; you are now $affiliation{an "
 "administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1485
+#: ../gui/muc_notification_messages.go:1532
 #, python-format
 msgid ""
 "The owner $nickname{%s} changed your position; you are now $affiliation{a "
 "member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1488
+#: ../gui/muc_notification_messages.go:1535
 #, python-format
 msgid "The owner $nickname{%s} changed your position; you are now banned."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1495
+#: ../gui/muc_notification_messages.go:1542
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position; you are now "
 "$affiliation{an owner}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1498
+#: ../gui/muc_notification_messages.go:1545
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position; you are now "
 "$affiliation{an administrator}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1501
+#: ../gui/muc_notification_messages.go:1548
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position; you are now "
 "$affiliation{a member}."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1504
+#: ../gui/muc_notification_messages.go:1551
 #, python-format
 msgid ""
 "The administrator $nickname{%s} changed your position; you are now banned."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1592
+#: ../gui/muc_notification_messages.go:1639
 msgid "You have been banned from the room."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1599
+#: ../gui/muc_notification_messages.go:1646
 #, python-format
 msgid "The owner $nickname{%s} banned you from the room."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1602
+#: ../gui/muc_notification_messages.go:1649
 #, python-format
 msgid "The administrator $nickname{%s} banned you from the room."
 msgstr ""
 
-#: ../gui/muc_notification_messages.go:1608
+#: ../gui/muc_notification_messages.go:1655
 msgid "%[1]s The reason given was: %[2]s."
 msgstr ""
 
@@ -3216,7 +3216,7 @@ msgid "Members"
 msgstr ""
 
 #: ../gui/muc_room_config_texts.go:181 ../gui/muc_room_config_texts.go:260
-#: ../gui/muc_room_config_texts.go:262 ../gui/muc_room_config_page.go:279
+#: ../gui/muc_room_config_texts.go:262 ../gui/muc_room_config_page.go:367
 msgid "Owners"
 msgstr ""
 
@@ -3233,7 +3233,7 @@ msgid "Maximum previous messages sent to people when joining the room"
 msgstr ""
 
 #: ../gui/muc_room_config_texts.go:192 ../gui/muc_room_config_texts.go:266
-#: ../gui/muc_room_config_texts.go:268 ../gui/muc_room_config_page.go:280
+#: ../gui/muc_room_config_texts.go:268 ../gui/muc_room_config_page.go:368
 msgid "Administrators"
 msgstr ""
 
@@ -3431,64 +3431,64 @@ msgstr ""
 msgid "No accounts"
 msgstr ""
 
-#: ../gui/muc_room.go:212
+#: ../gui/muc_room.go:209
 msgid ""
 "Loading the room information took longer than usual, perhaps the connection "
 "to the server was lost. Do you want to try again?"
 msgstr ""
 
-#: ../gui/muc_room.go:215 ../gui/muc_room.go:757
+#: ../gui/muc_room.go:212 ../gui/muc_room.go:754
 msgid "Yes, try again"
 msgstr ""
 
-#: ../gui/muc_room.go:275
+#: ../gui/muc_room.go:272
 msgid ""
 "You have been removed from this room because it's now a members-only room."
 msgstr ""
 
-#: ../gui/muc_room.go:286
+#: ../gui/muc_room.go:283
 msgid ""
 "You have been removed from this members-only room since you are not "
 "$affiliation{a member} anymore."
 msgstr ""
 
-#: ../gui/muc_room.go:396
+#: ../gui/muc_room.go:393
 msgid "The room has been destroyed"
 msgstr ""
 
-#: ../gui/muc_room.go:531
+#: ../gui/muc_room.go:528
 msgid "The room subject couldn't be updated."
 msgstr ""
 
-#: ../gui/muc_room.go:538
+#: ../gui/muc_room.go:535
 msgid "The room subject has been updated."
 msgstr ""
 
-#: ../gui/muc_room.go:551
+#: ../gui/muc_room.go:548
 msgid "Return"
 msgstr ""
 
-#: ../gui/muc_room.go:734
+#: ../gui/muc_room.go:731
 msgid "Your connection has been restored; you can join this room again."
 msgstr ""
 
-#: ../gui/muc_room.go:750
+#: ../gui/muc_room.go:747
 msgid ""
 "Your connection was recovered but loading the room information took longer "
 "than usual, perhaps the connection to the server was lost. Do you want to "
 "try again?"
 msgstr ""
 
-#: ../gui/muc_room.go:763
+#: ../gui/muc_room.go:760
 msgid "Trying to connect to the room..."
 msgstr ""
 
-#: ../gui/muc_room.go:805
+#: ../gui/muc_room.go:802
 msgid ""
 "The connection to the server has been lost, please verify your connection."
 msgstr ""
 
-#: ../gui/muc_room.go:817
+#: ../gui/muc_room.go:814
 msgid "Connecting to the room..."
 msgstr ""
 
@@ -3816,15 +3816,15 @@ msgstr ""
 msgid "No account was selected, please select one account from the list."
 msgstr ""
 
-#: ../gui/muc_room_config_page.go:281
+#: ../gui/muc_room_config_page.go:369
 msgid "Banned"
 msgstr ""
 
-#: ../gui/muc_room_config_page.go:292
+#: ../gui/muc_room_config_page.go:381
 msgid "The room must have at least one owner"
 msgstr ""
 
-#: ../gui/muc_room_config_page.go:359
+#: ../gui/muc_room_config_page.go:448
 msgid "Saving room configuration"
 msgstr ""
 
@@ -3840,15 +3840,15 @@ msgstr ""
 msgid "You must provide a valid account address."
 msgstr ""
 
-#: ../gui/ui.go:214
+#: ../gui/ui.go:215
 msgid "Tor is still not running"
 msgstr ""
 
-#: ../gui/ui.go:218
+#: ../gui/ui.go:219
 msgid "Tor is now running"
 msgstr ""
 
-#: ../gui/ui.go:566
+#: ../gui/ui.go:567
 msgid ""
 "You are trying to connect to a Google account - sometimes Google will not "
 "allow connections even if you have entered the correct password. Try turning "
@@ -3856,15 +3856,15 @@ msgid ""
 "access the account (don't worry, CoyIM is plenty secure)."
 msgstr ""
 
-#: ../gui/ui.go:624
+#: ../gui/ui.go:625
 msgid "CoyIM!"
 msgstr ""
 
-#: ../gui/ui.go:704
+#: ../gui/ui.go:705
 msgid "There is no account with the id %q"
 msgstr ""
 
-#: ../gui/ui.go:708
+#: ../gui/ui.go:709
 msgid "Can't send a contact request from an offline account"
 msgstr ""
 
@@ -4447,19 +4447,19 @@ msgstr ""
 msgid "Configuration for room [%s]"
 msgstr ""
 
-#: ../gui/muc_room_config_assistant.go:142
+#: ../gui/muc_room_config_assistant.go:146
 msgid "Update Configuration"
 msgstr ""
 
-#: ../gui/muc_room_config_assistant.go:234
+#: ../gui/muc_room_config_assistant.go:238
 msgid "Cancel room settings"
 msgstr ""
 
-#: ../gui/muc_room_config_assistant.go:235
+#: ../gui/muc_room_config_assistant.go:239
 msgid "We were unable to cancel the room configuration"
 msgstr ""
 
-#: ../gui/muc_room_config_assistant.go:236
+#: ../gui/muc_room_config_assistant.go:240
 msgid "An error occurred while trying to cancel the configuration of the room."
 msgstr ""
 
@@ -4588,78 +4588,92 @@ msgid ""
 "in the room will not be updated anymore."
 msgstr ""
 
-#: ../gui/muc_room_roster_info.go:222
+#: ../gui/muc_room_roster_info.go:223
 #, python-format
 msgid ""
 "Administrators and owners will automatically be moderators for a room. "
 "Therefore, the role of %s can't be changed."
 msgstr ""
 
-#: ../gui/conversation.go:281
+#: ../gui/conversation.go:70
+msgid "The conversation is now private."
+msgstr ""
+
+#: ../gui/conversation.go:78
+msgid ""
+"The verification failed - but the conversation is still private because of "
+"an earlier verification."
+msgstr ""
+
+#: ../gui/conversation.go:80
+msgid "The verification failed - the conversation is still unverified."
+msgstr ""
+
+#: ../gui/conversation.go:271
 msgid "Attempting to start a private conversation..."
 msgstr ""
 
-#: ../gui/conversation.go:294 ../gui/account_events.go:143
+#: ../gui/conversation.go:284 ../gui/account_events.go:143
 msgid "Private conversation has ended."
 msgstr ""
 
-#: ../gui/conversation.go:304
+#: ../gui/conversation.go:294
 #, python-format
 msgid "You have verified the identity of %s."
 msgstr ""
 
-#: ../gui/conversation.go:438
+#: ../gui/conversation.go:428
 msgid ""
 "You are talking over an \n"
 "unprotected chat"
 msgstr ""
 
-#: ../gui/conversation.go:634
+#: ../gui/conversation.go:662
 msgid "Available"
 msgstr ""
 
-#: ../gui/conversation.go:636
+#: ../gui/conversation.go:664
 msgid "Not Available"
 msgstr ""
 
-#: ../gui/conversation.go:638
+#: ../gui/conversation.go:666
 msgid "Away"
 msgstr ""
 
-#: ../gui/conversation.go:640
+#: ../gui/conversation.go:668
 msgid "Busy"
 msgstr ""
 
-#: ../gui/conversation.go:642
+#: ../gui/conversation.go:670
 msgid "Free for Chat"
 msgstr ""
 
-#: ../gui/conversation.go:644
+#: ../gui/conversation.go:672
 msgid "Invisible"
 msgstr ""
 
-#: ../gui/conversation.go:652
+#: ../gui/conversation.go:680
 msgid "%[1]s%[2]s"
 msgstr ""
 
-#: ../gui/conversation.go:659 ../gui/conversation.go:673
+#: ../gui/conversation.go:687 ../gui/conversation.go:701
 #, python-format
 msgid " (%s)"
 msgstr ""
 
-#: ../gui/conversation.go:671
+#: ../gui/conversation.go:699
 msgid " (%[1]s: %[2]s)"
 msgstr ""
 
-#: ../gui/conversation.go:679
+#: ../gui/conversation.go:707
 msgid "Offline"
 msgstr ""
 
-#: ../gui/conversation.go:685
+#: ../gui/conversation.go:713
 msgid "%[1]s is now %[2]s"
 msgstr ""
 
-#: ../gui/conversation.go:801
+#: ../gui/conversation.go:829
 msgid "The peer is using a key we haven't seen before!"
 msgstr ""
 

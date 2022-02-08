@@ -47,11 +47,16 @@ before_install:
   - travis_wait 60 brew install libepoxy
   - travis_wait 60 brew install intltool
   - travis_wait 60 brew install gettext
-  - travis_wait 60 brew install librsvg
   - travis_wait 60 brew install fontconfig
   - travis_wait 60 brew install freetype
   - travis_wait 60 brew install fribidi
   - travis_wait 60 brew install harfbuzz
+  - travis_wait 60 brew install cmake
+  - travis_wait 60 brew install python@3.9
+  - travis_wait 60 brew install libssh2
+  - travis_wait 60 brew install openssl@1.1
+  - travis_wait 100 brew install rust
+  - travis_wait 60 brew install librsvg
   - travis_wait 60 brew install pango
   - travis_wait 100 brew install gtk+3
   - travis_wait 60 brew install adwaita-icon-theme

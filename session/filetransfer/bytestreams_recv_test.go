@@ -32,7 +32,7 @@ func (s *BytestreamsRecvSuite) Test_BytestreamQuery_works(c *C) {
 	ctl := sdata.CreateFileTransferControl(nil, nil)
 	ctx := &recvContext{
 		sid:         "testSID42",
-		destination: filepath.Join(destDir, "simple_receipt_test_file"),
+		destination: filepath.Join(destDir, "simple_receipt_test_file_tmp12_"),
 		control:     ctl,
 		size:        5,
 	}
@@ -76,6 +76,6 @@ func (s *BytestreamsRecvSuite) Test_BytestreamQuery_works(c *C) {
 
 	c.Assert(<-done, Equals, true)
 
-	content, _ := ioutil.ReadFile(filepath.Join(destDir, "simple_receipt_test_file"))
+	content, _ := ioutil.ReadFile(filepath.Join(destDir, "simple_receipt_test_file_tmp12_"))
 	c.Assert(content, DeepEquals, []byte{0x42, 0x44, 0x46, 0x43, 0x45})
 }

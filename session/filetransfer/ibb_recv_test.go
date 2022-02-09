@@ -40,7 +40,7 @@ func (s *IBBReceiverSuite) Test_IbbOpen_works(c *C) {
 
 	ctx := &recvContext{
 		sid:         "testSID",
-		destination: filepath.Join(destDir, "simple_receipt_test_file"),
+		destination: filepath.Join(destDir, "simple_receipt_test_file_tmp1_"),
 	}
 
 	addInflightRecv(ctx)
@@ -54,6 +54,7 @@ func (s *IBBReceiverSuite) Test_IbbOpen_works(c *C) {
 	c.Assert(ctx.opaque, Not(IsNil))
 	ibbctx := ctx.opaque.(*ibbContext)
 	c.Assert(ibbctx.recv, Not(IsNil))
+	ibbctx.recv.cleanupAfterRun()
 
 	c.Assert(len(hook.Entries), Equals, 0)
 }
@@ -86,7 +87,7 @@ dHVmZiwgc28gdGhlIGNvbnRlbnQgZG9lc24ndCBtYXR0ZXIgc28gbXVjaC4=
 		opaque:      ibbctx,
 		size:        92,
 		control:     sdata.CreateFileTransferControl(nil, nil),
-		destination: filepath.Join(destDir, "simple_receipt_test_file"),
+		destination: filepath.Join(destDir, "simple_receipt_test_file_tmp2_"),
 	}
 
 	ibbctx.recv = ctx.createReceiver()
@@ -123,7 +124,7 @@ func (s *IBBReceiverSuite) Test_IbbClose_works(c *C) {
 		opaque:      ibbctx,
 		size:        11,
 		control:     sdata.CreateFileTransferControl(nil, nil),
-		destination: filepath.Join(destDir, "simple_receipt_test_file"),
+		destination: filepath.Join(destDir, "simple_receipt_test_file_tmp3_"),
 	}
 
 	finished := make(chan bool)
@@ -381,7 +382,7 @@ func (s *IBBReceiverSuite) Test_ibbOnData_failsOnIncorrectSequenceNumber(c *C) {
 		opaque:      ibbctx,
 		size:        92,
 		control:     sdata.CreateFileTransferControl(nil, nil),
-		destination: filepath.Join(destDir, "simple_receipt_test_file"),
+		destination: filepath.Join(destDir, "simple_receipt_test_file_tmp4_"),
 	}
 
 	ee := make(chan error)
@@ -401,6 +402,8 @@ dHVmZiwgc28gdGhlIGNvbnRlbnQgZG9lc24ndCBtYXR0ZXIgc28gbXVjaC4=
 `))
 
 	c.Assert(<-ee, ErrorMatches, "Unexpected data sent from the peer")
+
+	ibbctx.recv.cleanupAfterRun()
 
 	c.Assert(ret, DeepEquals, iqErrorUnexpectedRequest)
 	c.Assert(iqtype, Equals, "error")
@@ -431,7 +434,7 @@ func (s *IBBReceiverSuite) Test_ibbOnData_failsOnDecodingBase64(c *C) {
 		opaque:      ibbctx,
 		size:        92,
 		control:     sdata.CreateFileTransferControl(nil, nil),
-		destination: filepath.Join(destDir, "simple_receipt_test_file"),
+		destination: filepath.Join(destDir, "simple_receipt_test_file_tmp5_"),
 	}
 
 	ee := make(chan error)
@@ -453,6 +456,8 @@ dHVmZiwgc28gdGhlIGNvbnRlbnQgZG9lc24ndCBtYXR0ZXIgc28gbXVjaC4=
 `))
 
 	c.Assert(<-ee, ErrorMatches, "Couldn't decode incoming data")
+
+	ibbctx.recv.cleanupAfterRun()
 
 	c.Assert(ret, DeepEquals, iqErrorNotAcceptable)
 	c.Assert(iqtype, Equals, "error")

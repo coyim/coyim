@@ -11,22 +11,6 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:6bc399e5ecc7f78a32fcf302ce1079d461feb85347f6e60f8e53ad12ede7cdf0"
-  name = "github.com/apenwarr/fixconsole"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "5a9f6489cc2959fbd7474e4429d33b32f096c9bd"
-
-[[projects]]
-  branch = "master"
-  digest = "1:76a689795b85c87456c8ce667d22809d1e050e26d243229533cf3d23583b2f1c"
-  name = "github.com/apenwarr/w32"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "aa00fece76abaad5af20eafa70f6e5ecb16da01c"
-
-[[projects]]
-  branch = "master"
   digest = "1:3db5ccda56ed97cfd893bff5addd686305f8655e5d2cc02a4669193beb2db184"
   name = "github.com/awnumar/memcall"
   packages = ["."]

@@ -46,7 +46,7 @@ before_install:
   - travis_wait 60 brew install harfbuzz
   - travis_wait 60 brew install cmake
   - travis_wait 60 brew install libssh2
-  # - travis_wait 100 brew install rust
+  - travis_wait 100 brew install rust
   # - travis_wait 100 brew install librsvg
   # - travis_wait 60 brew install pango
   # - travis_wait 100 brew install gtk+3

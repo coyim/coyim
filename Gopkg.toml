@@ -72,7 +72,3 @@
 [[constraint]]
   name = "github.com/stretchr/testify"
   version = "1.7.0"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/apenwarr/fixconsole"

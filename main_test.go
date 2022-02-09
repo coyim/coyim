@@ -101,8 +101,6 @@ func captureStdoutAndStderr(f func()) (stdout, stderr string) {
 }
 
 func (s *MainSuite) Test_main_parsesFlagsAndRunsClient(c *C) {
-	defer gostub.StubFunc(&fixConsoleOnWindows).Reset()
-
 	fs := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
 	defer gostub.Stub(&flag.CommandLine, fs).Reset()
 
@@ -267,7 +265,6 @@ func (s *MainSuite) Test_createGTK_works(c *C) {
 }
 
 func (s *MainSuite) Test_main_printsVersionAndQuits(c *C) {
-	defer gostub.StubFunc(&fixConsoleOnWindows).Reset()
 	defer gostub.Stub(config.VersionFlag, true).Reset()
 
 	fs := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)

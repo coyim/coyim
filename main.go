@@ -21,8 +21,6 @@ import (
 	"github.com/coyim/gotk3adapter/gliba"
 	"github.com/coyim/gotk3adapter/gtka"
 	"github.com/coyim/gotk3adapter/pangoa"
-
-	"github.com/apenwarr/fixconsole"
 )
 
 var coyimVersion = "&lt;UNSET&gt;"
@@ -115,16 +113,7 @@ func printFinalNewline() {
 	_, _ = os.Stdout.Write([]byte("\n"))
 }
 
-var fixConsoleOnWindows = func() {
-	err := fixconsole.FixConsoleIfNeeded()
-	if err != nil {
-		log.Fatalf("Fixing console failed: %v\n", err)
-	}
-}
-
 func main() {
-	fixConsoleOnWindows()
-
 	flag.Parse()
 
 	if *config.VersionFlag {

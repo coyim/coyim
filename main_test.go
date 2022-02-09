@@ -226,11 +226,13 @@ func (m *mockSettingsSchemaSource) Lookup(v1 string, v2 bool) glibi.SettingsSche
 }
 
 func (s *MainSuite) Test_createGTK_works(c *C) {
-	oldEnv := os.Getenv("XDG_DATA_HOME")
+	oldSysDataDir := config.SystemDataDir
 	defer func() {
-		os.Setenv("XDG_DATA_HOME", oldEnv)
+		config.SystemDataDir = oldSysDataDir
 	}()
-	os.Setenv("XDG_DATA_HOME", "somewhere-hopefully-not-existing")
+	config.SystemDataDir = func() string {
+		return "somewhere-hopefully-not-existing"
+	}
 
 	orgHooks := hooks
 	defer func() {

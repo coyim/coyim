@@ -17,6 +17,7 @@ import (
 	"github.com/coyim/gotk3adapter/gtk_mock"
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/coyim/gotk3adapter/pango_mock"
+	"github.com/prashantv/gostub"
 	log "github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
 	. "gopkg.in/check.v1"
@@ -100,6 +101,11 @@ func captureStdoutAndStderr(f func()) (stdout, stderr string) {
 }
 
 func (s *MainSuite) Test_main_parsesFlagsAndRunsClient(c *C) {
+	defer gostub.StubFunc(&fixConsoleOnWindows).Reset()
+
+	fs := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
+	defer gostub.Stub(&flag.CommandLine, fs).Reset()
+
 	ll := log.StandardLogger()
 	orgLevel := ll.Level
 	defer func() {
@@ -107,14 +113,6 @@ func (s *MainSuite) Test_main_parsesFlagsAndRunsClient(c *C) {
 	}()
 
 	ll.SetLevel(log.PanicLevel)
-
-	orgCommandLine := flag.CommandLine
-	defer func() {
-		flag.CommandLine = orgCommandLine
-	}()
-
-	fs := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
-	flag.CommandLine = fs
 
 	orgCreateGTK := createGTK
 	defer func() {
@@ -267,20 +265,11 @@ func (s *MainSuite) Test_createGTK_works(c *C) {
 }
 
 func (s *MainSuite) Test_main_printsVersionAndQuits(c *C) {
-	orgCommandLine := flag.CommandLine
-	defer func() {
-		flag.CommandLine = orgCommandLine
-	}()
+	defer gostub.StubFunc(&fixConsoleOnWindows).Reset()
+	defer gostub.Stub(config.VersionFlag, true).Reset()
 
 	fs := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
-	flag.CommandLine = fs
-
-	orgVersionFlag := *config.VersionFlag
-	defer func() {
-		*config.VersionFlag = orgVersionFlag
-	}()
-
-	*config.VersionFlag = true
+	defer gostub.Stub(&flag.CommandLine, fs).Reset()
 
 	stdout, _ := captureStdoutAndStderr(main)
 

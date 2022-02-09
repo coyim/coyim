@@ -10,6 +10,6 @@ import (
 
 func gajimGetConfigAndDataDirs() (configRoot, dataRoot string) {
 	configRoot = filepath.Join(config.SystemConfigDir(), "gajim")
-	dataRoot = filepath.Join(config.XdgDataHome(), "gajim")
+	dataRoot = filepath.Join(config.SystemDataDir(), "gajim")
 	return
 }

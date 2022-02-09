@@ -14,7 +14,7 @@ func init() {
 	path := "Emacs/gtk-3.0/gtk-keys.css"
 
 	toLook := []string{
-		filepath.Join(config.XdgDataHome(), "themes", path),
+		filepath.Join(config.SystemDataDir(), "themes", path),
 		filepath.Join(config.WithHome(".themes"), path),
 	}
 

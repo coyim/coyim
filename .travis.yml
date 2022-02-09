@@ -34,21 +34,14 @@ before_install:
   # - travis_wait 60 brew install docbook-xsl
   # - travis_wait 60 brew install bison
   # - travis_wait 60 brew install meson
-  # - travis_wait 60 brew install ninja
   # - travis_wait 60 brew install cairo
-  # - travis_wait 60 brew install libffi
-  # - travis_wait 60 brew install pkg-config
   # - travis_wait 60 brew install atk
   # - travis_wait 60 brew install gdk-pixbuf
-  # - travis_wait 60 brew install glib
   # - travis_wait 60 brew install gobject-introspection
   # - travis_wait 60 brew install gsettings-desktop-schemas
   # - travis_wait 60 brew install hicolor-icon-theme
   # - travis_wait 60 brew install libepoxy
   # - travis_wait 60 brew install intltool
-  # - travis_wait 60 brew install gettext
-  # - travis_wait 60 brew install fontconfig
-  # - travis_wait 60 brew install freetype
   # - travis_wait 60 brew install fribidi
   # - travis_wait 60 brew install harfbuzz
   # - travis_wait 60 brew install cmake

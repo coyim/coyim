@@ -115,11 +115,15 @@ func printFinalNewline() {
 	_, _ = os.Stdout.Write([]byte("\n"))
 }
 
-func main() {
+var fixConsoleOnWindows = func() {
 	err := fixconsole.FixConsoleIfNeeded()
 	if err != nil {
 		log.Fatalf("Fixing console failed: %v\n", err)
 	}
+}
+
+func main() {
+	fixConsoleOnWindows()
 
 	flag.Parse()
 

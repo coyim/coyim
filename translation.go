@@ -21,7 +21,7 @@ func shouldUseEmbeddedTranslations() bool {
 
 func translationsDirectory() string {
 	if shouldUseEmbeddedTranslations() {
-		return filepath.Join(config.XdgDataHome(), "coyim", "translations")
+		return filepath.Join(config.SystemDataDir(), "coyim", "translations")
 	}
 	return localDirectoryForTranslations
 }

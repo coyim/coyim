@@ -24,7 +24,7 @@ func fileExists(filename string) bool {
 }
 
 func ensureIconsInstalled() {
-	dataHome := config.XdgDataHome()
+	dataHome := config.SystemDataDir()
 	if dataHome != "" && fileExists(dataHome) {
 		icon16, _ := coyimIcon.createPixBufWithSize(16, 16)
 		icon32, _ := coyimIcon.createPixBufWithSize(32, 32)
@@ -48,7 +48,7 @@ func ensureIconsInstalled() {
 }
 
 func ensureDesktopFileInstalled() {
-	dataHome := config.XdgDataHome()
+	dataHome := config.SystemDataDir()
 	if dataHome != "" && fileExists(dataHome) {
 		_ = os.MkdirAll(filepath.Join(dataHome, "applications"), 0700)
 		_ = ioutil.WriteFile(filepath.Join(dataHome, "applications", "coyim.desktop"), []byte(generateDesktopFile(false)), 0600)

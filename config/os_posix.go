@@ -12,6 +12,9 @@ func IsWindows() bool {
 // SystemConfigDir points to the function that gets the configuration directory for this system
 var SystemConfigDir = XdgConfigHome
 
+// SystemDataDir points to the function that gets the data directory for this system
+var SystemDataDir = XdgDataHome
+
 // // SystemConfigDir returns the application data directory, valid on both windows and posix systems
 // func SystemConfigDir() string {
 // 	//TODO: Why not use g_get_user_config_dir()?

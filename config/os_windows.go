@@ -33,6 +33,9 @@ func IsWindows() bool {
 // SystemConfigDir points to the function that gets the configuration directory for this system
 var SystemConfigDir = appdataFolderPath
 
+// SystemDataDir points to the function that gets the data directory for this system
+var SystemDataDir = appdataFolderPath
+
 // // SystemConfigDir returns the application data directory, valid on both windows and posix systems
 // func SystemConfigDir() string {
 // 	return appdataFolderPath()

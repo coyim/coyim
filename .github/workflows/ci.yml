@@ -227,7 +227,7 @@ jobs:
       - name: install project dependencies
         run: make -C ci/ deps
       - name: build release
-        run: >
+        run: |
           make -C ci/ clean-mac-bundle
           make build-gui
           make -C ci/ make-mac-bundle

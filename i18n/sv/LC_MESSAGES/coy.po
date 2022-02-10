@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-10 18:24+0000\n"
+"POT-Creation-Date: 2022-02-10 19:20+0000\n"
 "PO-Revision-Date: 2021-09-24 22:07+0000\n"
 "Last-Translator: Ola Bini <ola@autonomia.digital>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/coyim/main/sv/>\n"
@@ -5617,6 +5617,10 @@ msgstr "Du är redan i rummet."
 #: ../gui/muc_room_manager.go:52
 msgid "You were already connected to this room."
 msgstr "Du var redan ansluten till rummet."
+
+#: ../gui/registration.go:83
+msgid "* The field is required."
+msgstr "* Fältet är nödvändigt."
 
 #: ../gui/registration.go:130
 msgid ""

@@ -690,7 +690,7 @@ msgstr "Ruta:"
 
 #: ../gui/definitions/FeedbackInfo.xml:12
 msgid "Are you liking it?"
-msgstr "Estás disfrutando CoyIM?"
+msgstr "¿Estás disfrutando CoyIM?"
 
 #: ../gui/definitions/FeedbackInfo.xml:22 ../gui/definitions/Main.xml:164
 msgid "Feedback"
@@ -5952,7 +5952,7 @@ msgstr "La conversación privada no verificada se actualizó con éxito ."
 #: ../gui/subscription.go:15
 #, python-format
 msgid "%s wants to talk to you. Is that ok?"
-msgstr "%s quiere hablar contigo. ¿Está eso bien?"
+msgstr "%s quiere hablar contigo. ¿Estás de acuerdo?"
 
 #: ../gui/subscription.go:102
 msgid "There are no currently connected accounts."

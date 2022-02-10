@@ -5620,7 +5620,7 @@ msgstr "Du var redan ansluten till rummet."
 
 #: ../gui/registration.go:83
 msgid "* The field is required."
-msgstr "* Fältet är nödvändigt."
+msgstr "* Fältet är obligatoriskt."
 
 #: ../gui/registration.go:130
 msgid ""

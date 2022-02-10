@@ -5646,7 +5646,7 @@ msgstr "Você já estava conectado a esta sala."
 
 #: ../gui/registration.go:83
 msgid "* The field is required."
-msgstr ""
+msgstr "* Este campo é obrigatório."
 
 #: ../gui/registration.go:130
 msgid ""
@@ -5939,6 +5939,15 @@ msgid ""
 "  %[2]s\n"
 "\t"
 msgstr ""
+"\n"
+"Esta é a impressão digital correta para %[1]s?\n"
+"\n"
+"Impressão digital para você (%[3]s):\n"
+"  %[4]s\n"
+"\n"
+"Impressão digital pretendida para %[1]s:\n"
+"  %[2]s\n"
+"\t"
 
 #: ../gui/fingerprint_verification.go:59
 #, python-format

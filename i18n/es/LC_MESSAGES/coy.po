@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-12 16:45+0000\n"
+"POT-Creation-Date: 2022-02-10 18:08+0000\n"
 "PO-Revision-Date: 2021-09-24 22:07+0000\n"
 "Last-Translator: sara-la-loca-de-los-gatos <sara@autonomia.digital>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/coyim/main/es/>\n"
@@ -5250,7 +5250,9 @@ msgstr "Ahora la conversación es privada."
 msgid ""
 "The verification failed - but the conversation is still private because of "
 "an earlier verification."
-msgstr "La verificación falló - pero la conversación sigue siendo privada gracias a una verificación anterior."
+msgstr ""
+"La verificación falló - pero la conversación sigue siendo privada gracias a "
+"una verificación anterior."
 
 #: ../gui/conversation.go:80
 msgid "The verification failed - the conversation is still unverified."
@@ -5918,6 +5920,28 @@ msgstr ""
 "\n"
 "Primero debes iniciar una conversación cifrada con la persona."
 
+#: ../gui/fingerprint_verification.go:23
+msgid ""
+"\n"
+"Is this the correct fingerprint for %[1]s?\n"
+"\n"
+"Fingerprint for you (%[3]s):\n"
+"  %[4]s\n"
+"\n"
+"Purported fingerprint for %[1]s:\n"
+"  %[2]s\n"
+"\t"
+msgstr ""
+"\n"
+"¿Es este el fingerprint correcto para %[1]s?\n"
+"\n"
+"Tu fingerprint (%[3]s):\n"
+"  %[4]s\n"
+"\n"
+"Fingerprint a verificar para %[1]s:\n"
+"  %[2]s\n"
+"\t"
+
 #: ../gui/fingerprint_verification.go:59
 #, python-format
 msgid "Verify fingerprint for %s"
@@ -5966,7 +5990,7 @@ msgstr "No hay una cuenta conectada seleccionada."
 msgid "We couldn't send a subscription."
 msgstr "No pudimos enviar una subscripción."
 
-#: ../gui/verifier.go:161
+#: ../gui/verifier.go:192
 msgid ""
 "Make sure no one else\n"
 "is reading your messages"
@@ -5974,12 +5998,12 @@ msgstr ""
 "Asegúrate de que nadie\n"
 "más está leyendo tus mensajes"
 
-#: ../gui/verifier.go:182
+#: ../gui/verifier.go:213
 #, python-format
 msgid "Share this one-time PIN with <b>%s</b>"
 msgstr "Comparte este PIN de un solo uso con <b>%s</b>"
 
-#: ../gui/verifier.go:187 ../gui/verifier.go:219 ../gui/verifier.go:230
+#: ../gui/verifier.go:218 ../gui/verifier.go:274 ../gui/verifier.go:285
 msgid ""
 "Waiting for peer to finish \n"
 "securing the channel..."
@@ -5987,22 +6011,22 @@ msgstr ""
 "Esperando a que tu compañero termine \n"
 "asegurando el canal..."
 
-#: ../gui/verifier.go:246
+#: ../gui/verifier.go:301
 msgid "Unable to verify at this time."
 msgstr "No es posible verificar en este momento."
 
-#: ../gui/verifier.go:301
+#: ../gui/verifier.go:356
 #, python-format
 msgid "Enter the secret that <b>%s</b> shared with you"
 msgstr "Ingresa el secreto que <b>%s</b> compartió contigo"
 
-#: ../gui/verifier.go:303
+#: ../gui/verifier.go:358
 #, python-format
 msgid "Type the PIN that <b>%s</b> sent you. It can be used only once."
 msgstr ""
 "Digita el PIN que <b>%s</b> te envió. Este puede ser usado una sola vez."
 
-#: ../gui/verifier.go:305
+#: ../gui/verifier.go:360
 #, python-format
 msgid ""
 "Enter the answer to\n"
@@ -6011,7 +6035,7 @@ msgstr ""
 "Ingresa la respuesta para\n"
 "<b>%s</b>"
 
-#: ../gui/verifier.go:353
+#: ../gui/verifier.go:427
 msgid ""
 "Finish verifying the \n"
 "security of this channel..."
@@ -6019,12 +6043,12 @@ msgstr ""
 "Termina la verificación\n"
 "de la seguridad de este canal…"
 
-#: ../gui/verifier.go:378
+#: ../gui/verifier.go:452
 #, python-format
 msgid "Hooray! No one is listening to your conversations with <b>%s</b>"
 msgstr "Hurra! Nadie está escuchando tus conversaciones con <b>%s</b>"
 
-#: ../gui/verifier.go:412
+#: ../gui/verifier.go:486
 #, python-format
 msgid "We could not verify this channel with <b>%s</b>."
 msgstr "No pudimos verificar este canal con <b>%s</b>."

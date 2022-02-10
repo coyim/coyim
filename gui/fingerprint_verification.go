@@ -20,15 +20,15 @@ func buildVerifyFingerprintDialog(accountName string, ourFp []byte, peer jid.Wit
 				"You first have to start an encrypted conversation with them.", peer)
 
 	} else {
-		message = i18n.Localf(`
-Is this the correct fingerprint for %[1]s?
-
-Fingerprint for you (%[3]s):
-  %[4]s
-
-Purported fingerprint for %[1]s:
-  %[2]s
-	`,
+		message = i18n.Localf("\n"+
+			"Is this the correct fingerprint for %[1]s?\n"+
+			"\n"+
+			"Fingerprint for you (%[3]s):\n"+
+			"  %[4]s\n"+
+			"\n"+
+			"Purported fingerprint for %[1]s:\n"+
+			"  %[2]s\n"+
+			"	",
 			peer,
 			config.FormatFingerprint(theirFp),
 			accountName,

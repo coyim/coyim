@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-12 16:45+0000\n"
+"POT-Creation-Date: 2022-02-10 18:08+0000\n"
 "PO-Revision-Date: 2021-09-24 22:07+0000\n"
 "Last-Translator: Ola Bini <ola@autonomia.digital>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/coyim/main/sv/>\n"
@@ -5230,11 +5230,14 @@ msgstr "Konversationen är nu privat."
 msgid ""
 "The verification failed - but the conversation is still private because of "
 "an earlier verification."
-msgstr "Kontrollen misslyckades - men konversationen är fortfarande privat eftersom du gjort en tidigare kontroll."
+msgstr ""
+"Kontrollen misslyckades - men konversationen är fortfarande privat eftersom "
+"du gjort en tidigare kontroll."
 
 #: ../gui/conversation.go:80
 msgid "The verification failed - the conversation is still unverified."
-msgstr "Kontrollen misslyckades - konversationen är fortfarande inte kontrollerad."
+msgstr ""
+"Kontrollen misslyckades - konversationen är fortfarande inte kontrollerad."
 
 #: ../gui/conversation.go:271
 msgid "Attempting to start a private conversation..."
@@ -5894,6 +5897,28 @@ msgstr ""
 "\n"
 "Du måste först starta en krypterad konversation med dem."
 
+#: ../gui/fingerprint_verification.go:23
+msgid ""
+"\n"
+"Is this the correct fingerprint for %[1]s?\n"
+"\n"
+"Fingerprint for you (%[3]s):\n"
+"  %[4]s\n"
+"\n"
+"Purported fingerprint for %[1]s:\n"
+"  %[2]s\n"
+"\t"
+msgstr ""
+"\n"
+"Är det här rätt fingeravtryck för %[1]s?\n"
+"\n"
+"Ditt fingeravtryck (%[3]s):\n"
+"  %[4]s\n"
+"\n"
+"Möjligt fingeravtryck för %[1]s:\n"
+"  %[2]s\n"
+"\t"
+
 #: ../gui/fingerprint_verification.go:59
 #, python-format
 msgid "Verify fingerprint for %s"
@@ -5942,7 +5967,7 @@ msgstr "Du har inte valt något anslutet konto."
 msgid "We couldn't send a subscription."
 msgstr "Vi kunde inte skicka en prenumeration."
 
-#: ../gui/verifier.go:161
+#: ../gui/verifier.go:192
 msgid ""
 "Make sure no one else\n"
 "is reading your messages"
@@ -5950,12 +5975,12 @@ msgstr ""
 "Var säker på att ingen annan\n"
 "läser dina meddelanden"
 
-#: ../gui/verifier.go:182
+#: ../gui/verifier.go:213
 #, python-format
 msgid "Share this one-time PIN with <b>%s</b>"
 msgstr "Dela detta engångsnummer med <b>%s</b>"
 
-#: ../gui/verifier.go:187 ../gui/verifier.go:219 ../gui/verifier.go:230
+#: ../gui/verifier.go:218 ../gui/verifier.go:274 ../gui/verifier.go:285
 msgid ""
 "Waiting for peer to finish \n"
 "securing the channel..."
@@ -5963,23 +5988,23 @@ msgstr ""
 "Väntar på att kontakten avslutar \n"
 "säkerställningen av kanalen..."
 
-#: ../gui/verifier.go:246
+#: ../gui/verifier.go:301
 msgid "Unable to verify at this time."
 msgstr "Kunde inte avsluta kontrollen för tillfället."
 
-#: ../gui/verifier.go:301
+#: ../gui/verifier.go:356
 #, python-format
 msgid "Enter the secret that <b>%s</b> shared with you"
 msgstr "Skriv in hemligheten som <b>%s</b> delade med dig"
 
-#: ../gui/verifier.go:303
+#: ../gui/verifier.go:358
 #, python-format
 msgid "Type the PIN that <b>%s</b> sent you. It can be used only once."
 msgstr ""
 "Skriv in engångsnumret som <b>%s</b> skickade till dig. Det kan enbart "
 "användas en gång."
 
-#: ../gui/verifier.go:305
+#: ../gui/verifier.go:360
 #, python-format
 msgid ""
 "Enter the answer to\n"
@@ -5988,7 +6013,7 @@ msgstr ""
 "Skriv in svaret till\n"
 "<b>%s</b>"
 
-#: ../gui/verifier.go:353
+#: ../gui/verifier.go:427
 msgid ""
 "Finish verifying the \n"
 "security of this channel..."
@@ -5996,12 +6021,12 @@ msgstr ""
 "Avsluta kontrollen av \n"
 "säkerheten för den här kanalen..."
 
-#: ../gui/verifier.go:378
+#: ../gui/verifier.go:452
 #, python-format
 msgid "Hooray! No one is listening to your conversations with <b>%s</b>"
 msgstr "Hurra! Ingen lyssnar på din konversation med <b>%s</b>"
 
-#: ../gui/verifier.go:412
+#: ../gui/verifier.go:486
 #, python-format
 msgid "We could not verify this channel with <b>%s</b>."
 msgstr "Vi kunde inte kontrollera den här kanalen med <b>%s</b>."

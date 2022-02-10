@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-12 16:45+0000\n"
+"POT-Creation-Date: 2022-02-10 18:08+0000\n"
 "PO-Revision-Date: 2021-09-28 18:20+0000\n"
 "Last-Translator: Ola Bini <ola@autonomia.digital>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/coyim/"
@@ -5906,6 +5906,19 @@ msgstr ""
 "\n"
 "Du må starte en kryptert samtale med vedkommende først."
 
+#: ../gui/fingerprint_verification.go:23
+msgid ""
+"\n"
+"Is this the correct fingerprint for %[1]s?\n"
+"\n"
+"Fingerprint for you (%[3]s):\n"
+"  %[4]s\n"
+"\n"
+"Purported fingerprint for %[1]s:\n"
+"  %[2]s\n"
+"\t"
+msgstr ""
+
 #: ../gui/fingerprint_verification.go:59
 #, python-format
 msgid "Verify fingerprint for %s"
@@ -5954,7 +5967,7 @@ msgstr "Ingen tilkoblet konto valgt."
 msgid "We couldn't send a subscription."
 msgstr "Kunne ikke sende abonnement."
 
-#: ../gui/verifier.go:161
+#: ../gui/verifier.go:192
 msgid ""
 "Make sure no one else\n"
 "is reading your messages"
@@ -5962,12 +5975,12 @@ msgstr ""
 "Forsikre deg om at ingen andre\n"
 "leser meldingene dine"
 
-#: ../gui/verifier.go:182
+#: ../gui/verifier.go:213
 #, python-format
 msgid "Share this one-time PIN with <b>%s</b>"
 msgstr "Del dette engangsnummeret med <b>%s</b>"
 
-#: ../gui/verifier.go:187 ../gui/verifier.go:219 ../gui/verifier.go:230
+#: ../gui/verifier.go:218 ../gui/verifier.go:274 ../gui/verifier.go:285
 #, fuzzy
 msgid ""
 "Waiting for peer to finish \n"
@@ -5976,22 +5989,22 @@ msgstr ""
 "Venter på at likemannen fullfører\n"
 "sikring av kanalen …"
 
-#: ../gui/verifier.go:246
+#: ../gui/verifier.go:301
 msgid "Unable to verify at this time."
 msgstr "Kunne ikke bekrefte per nå."
 
-#: ../gui/verifier.go:301
+#: ../gui/verifier.go:356
 #, python-format
 msgid "Enter the secret that <b>%s</b> shared with you"
 msgstr "Skriv inn hemmeligheten som <b>%s</b> delte med deg"
 
-#: ../gui/verifier.go:303
+#: ../gui/verifier.go:358
 #, python-format
 msgid "Type the PIN that <b>%s</b> sent you. It can be used only once."
 msgstr ""
 "Skriv inn engangsnummeret <b>%s</b> sendte deg. Det kan kun brukes én gang."
 
-#: ../gui/verifier.go:305
+#: ../gui/verifier.go:360
 #, python-format
 msgid ""
 "Enter the answer to\n"
@@ -6000,7 +6013,7 @@ msgstr ""
 "Skriv inn svaret på\n"
 "<b>%s</b>"
 
-#: ../gui/verifier.go:353
+#: ../gui/verifier.go:427
 #, fuzzy
 msgid ""
 "Finish verifying the \n"
@@ -6009,12 +6022,12 @@ msgstr ""
 "Fullfør bekreftelsen\n"
 "av sikkerheten for denne kanalen …"
 
-#: ../gui/verifier.go:378
+#: ../gui/verifier.go:452
 #, python-format
 msgid "Hooray! No one is listening to your conversations with <b>%s</b>"
 msgstr "Hurra. Ingen lytter til din samtale med <b>%s</b>"
 
-#: ../gui/verifier.go:412
+#: ../gui/verifier.go:486
 #, python-format
 msgid "We could not verify this channel with <b>%s</b>."
 msgstr "Kunne ikke bekrefte denne kanalen med <b>%s</b>."

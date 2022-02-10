@@ -351,6 +351,23 @@ jobs:
           cp -r /mingw64/lib/gdk-pixbuf-2.0 release/lib
           cp -r /mingw64/share/icons release/share
           cp -r /mingw64/share/glib-2.0 release/share
+
+          mkdir -p release/share/locale/es/LC_MESSAGES
+          mkdir -p release/share/locale/sv/LC_MESSAGES
+          mkdir -p release/share/locale/fr/LC_MESSAGES
+          mkdir -p release/share/locale/pt/LC_MESSAGES
+
+          cp -r /mingw64/share/locale/es/LC_MESSAGES/glib*.mo release/share/locale/es/LC_MESSAGES
+          cp -r /mingw64/share/locale/es/LC_MESSAGES/gtk*.mo release/share/locale/es/LC_MESSAGES
+          
+          cp -r /mingw64/share/locale/sv/LC_MESSAGES/glib*.mo release/share/locale/sv/LC_MESSAGES
+          cp -r /mingw64/share/locale/sv/LC_MESSAGES/gtk*.mo release/share/locale/sv/LC_MESSAGES
+
+          cp -r /mingw64/share/locale/fr/LC_MESSAGES/glib*.mo release/share/locale/fr/LC_MESSAGES
+          cp -r /mingw64/share/locale/fr/LC_MESSAGES/gtk*.mo release/share/locale/fr/LC_MESSAGES
+
+          cp -r /mingw64/share/locale/pt/LC_MESSAGES/glib*.mo release/share/locale/pt/LC_MESSAGES
+          cp -r /mingw64/share/locale/pt/LC_MESSAGES/gtk*.mo release/share/locale/pt/LC_MESSAGES
       - name: Install Windows deps
         run: make win-ci-deps
       - name: Build release

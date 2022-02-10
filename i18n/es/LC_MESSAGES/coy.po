@@ -1158,7 +1158,7 @@ msgstr ""
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:290
 #: ../gui/muc_room_occupant_affiliation.go:175
 msgid "Member"
-msgstr "MIembro"
+msgstr "Miembro"
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:308
 msgid ""

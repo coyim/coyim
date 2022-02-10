@@ -45,10 +45,10 @@ install:
 
 script:
   - make -C ci/ clean-mac-bundle
-  - make build-gui
-  - make -C ci/ make-mac-bundle
-  - make -C ci/ make-dmg
-  - make -C ci/ make-gui-for-release
+  - travis_wait 45 make build-gui
+  - travis_wait 45 make -C ci/ make-mac-bundle
+  - travis_wait 45 make -C ci/ make-dmg
+  - travis_wait 45 make -C ci/ make-gui-for-release
 
 deploy:
   provider: releases

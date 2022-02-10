@@ -1,5 +1,5 @@
 os: osx
-osx_image: xcode11.3
+osx_image: xcode12.2
 language: go
 
 branches:
@@ -25,56 +25,36 @@ before_cache:
   - brew cleanup
   - find /usr/local/Homebrew \! -regex ".+\.git.+" -delete
 
+addons:
+  homebrew:
+    packages:
+    - gsettings-desktop-schemas
+    - hicolor-icon-theme
+    - shared-mime-info
+    - gtk+3
+    - gtk-mac-integration
+    - adwaita-icon-theme
+    update: true
+    
 before_install:
-  - brew uninstall --ignore-dependencies --force java
-  - brew uninstall --ignore-dependencies --force openjdk
-  - brew cask uninstall java
-  - travis_wait 60 brew update
-  # - travis_wait 60 brew install docbook
-  # - travis_wait 60 brew install docbook-xsl
-  # - travis_wait 60 brew install bison
-  # - travis_wait 60 brew install meson
-  # - travis_wait 60 brew install cairo
-  # - travis_wait 60 brew install atk
-  # - travis_wait 60 brew install gdk-pixbuf
-  # - travis_wait 60 brew install gobject-introspection
-  # - travis_wait 60 brew install gsettings-desktop-schemas
-  # - travis_wait 60 brew install hicolor-icon-theme
-  # - travis_wait 60 brew install libepoxy
-  # - travis_wait 60 brew install intltool
-  # - travis_wait 60 brew install fribidi
-  # - travis_wait 60 brew install harfbuzz
-  # - travis_wait 60 brew install cmake
-  # - travis_wait 60 brew install libssh2
-  # - travis_wait 100 brew install rust
-  - travis_wait 60 brew install librsvg
-  # - travis_wait 60 brew install pango
-  # - travis_wait 100 brew install gtk+3
-  # - travis_wait 60 brew install adwaita-icon-theme
-  # - travis_wait 60 brew install gnome-icon-theme
-  # - travis_wait 60 brew install shared-mime-info
-  # - travis_wait 60 brew install fileicon
-  # - travis_wait 60 brew install gtk-mac-integration
-  # - "export DISPLAY=:99.0"
-  # - npm install --global appdmg
+  - "export DISPLAY=:99.0"
+  - npm install --global appdmg
 
 install:
-  - echo install
-  # - make -C ci/ deps
+  - make -C ci/ deps
 
 script:
-  - echo script
-  # - make -C ci/ clean-mac-bundle
-  # - make build-gui
-  # - make -C ci/ make-mac-bundle
-  # - make -C ci/ make-dmg
-  # - make -C ci/ make-gui-for-release
+  - make -C ci/ clean-mac-bundle
+  - make build-gui
+  - make -C ci/ make-mac-bundle
+  - make -C ci/ make-dmg
+  - make -C ci/ make-gui-for-release
 
-# deploy:
-#   provider: releases
-#   api_key: $GH_DEPLOY_TOKEN
-#   file_glob: true
-#   file: release/*
-#   skip_cleanup: true
-#   on:
-#     tags: true
+deploy:
+  provider: releases
+  api_key: $GH_DEPLOY_TOKEN
+  file_glob: true
+  file: release/*
+  skip_cleanup: true
+  on:
+    tags: true

@@ -13,6 +13,11 @@ aliases = {
   "cnaranjo" => "Cristian Naranjo",
   "ivanjijon" => "Ivan Jijon",
   "mvelasco" => "Mauro Velasco",
+  "piratax007" => "Fausto",
+}
+
+incorrect = {
+  ["cnaranjo", "mauro.velasco@gmail.com"] => true,
 }
 
 all = `git log --format='%aN  -  %aE' | sort -u`
@@ -24,9 +29,14 @@ sorted["Adam Langley"] = ""
 all.each_line do |ll|
   if ll.strip != ""
     name, mail = ll.strip.split("  -  ")
-    sorted[aliases[name] || name] = mail
+    unless incorrect[[name, mail]]
+      sorted[aliases[name] || name] = mail
+    end
   end
 end
+
+sorted["Fausto"] = "fausto@autonomia.digital"
+sorted["Cristian Naranjo"] = "cnaranjo@autonomia.digital"
 
 res = sorted.to_a.sort.map{ |l, r|
   if r != ""

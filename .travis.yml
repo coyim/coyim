@@ -1,5 +1,5 @@
 os: osx
-osx_image: xcode11.3
+osx_image: xcode12.2
 language: go
 
 # branches:
@@ -26,9 +26,6 @@ before_cache:
   - find /usr/local/Homebrew \! -regex ".+\.git.+" -delete
 
 before_install:
-  - brew uninstall --ignore-dependencies --force java
-  - brew uninstall --ignore-dependencies --force openjdk
-  - brew cask uninstall java
   - travis_wait 60 brew update
   - travis_wait 60 brew install docbook
   - travis_wait 60 brew install docbook-xsl
@@ -50,10 +47,10 @@ before_install:
   - travis_wait 60 brew install shared-mime-info
   - travis_wait 60 brew install pango
   - travis_wait 100 brew install gtk+3
-  # - travis_wait 60 brew install gtk-mac-integration
-  # - travis_wait 100 brew install rust
-  # - travis_wait 100 brew install librsvg
-  # - travis_wait 60 brew install adwaita-icon-theme
+  - travis_wait 60 brew install gtk-mac-integration
+  - travis_wait 100 brew install rust
+  - travis_wait 100 brew install librsvg
+  - travis_wait 60 brew install adwaita-icon-theme
   # - "export DISPLAY=:99.0"
   # - npm install --global appdmg
 

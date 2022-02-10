@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-10 18:08+0000\n"
+"POT-Creation-Date: 2022-02-10 19:36+0000\n"
 "PO-Revision-Date: 2021-09-24 22:07+0000\n"
 "Last-Translator: ivanjijon <ivanjijon@hotmail.com>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/coyim/main/pt/"
@@ -5644,6 +5644,10 @@ msgstr "Você já está na sala."
 msgid "You were already connected to this room."
 msgstr "Você já estava conectado a esta sala."
 
+#: ../gui/registration.go:83
+msgid "* The field is required."
+msgstr "* Este campo é obrigatório."
+
 #: ../gui/registration.go:130
 msgid ""
 "We had an error:\n"
@@ -5935,6 +5939,15 @@ msgid ""
 "  %[2]s\n"
 "\t"
 msgstr ""
+"\n"
+"Esta é a impressão digital correta para %[1]s?\n"
+"\n"
+"Impressão digital para você (%[3]s):\n"
+"  %[4]s\n"
+"\n"
+"Impressão digital pretendida para %[1]s:\n"
+"  %[2]s\n"
+"\t"
 
 #: ../gui/fingerprint_verification.go:59
 #, python-format

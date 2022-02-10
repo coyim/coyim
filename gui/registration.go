@@ -80,7 +80,7 @@ func (f *registrationForm) renderForm(title string, fields []interface{}) error 
 			i++
 		}
 
-		li, _ := g.gtk.LabelNew("* The field is required.")
+		li, _ := g.gtk.LabelNew(i18n.Local("* The field is required."))
 		f.grid.Attach(li, 0, i+1, 1, i+1)
 
 		f.grid.ShowAll()

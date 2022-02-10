@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-10 18:08+0000\n"
+"POT-Creation-Date: 2022-02-10 19:36+0000\n"
 "PO-Revision-Date: 2021-09-28 18:20+0000\n"
 "Last-Translator: Ola Bini <ola@autonomia.digital>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/coyim/"
@@ -5622,6 +5622,10 @@ msgstr "Du er allerede i rommet."
 #: ../gui/muc_room_manager.go:52
 msgid "You were already connected to this room."
 msgstr "Du var allerede tilkoblet til dette rommet."
+
+#: ../gui/registration.go:83
+msgid "* The field is required."
+msgstr ""
 
 #: ../gui/registration.go:130
 #, fuzzy

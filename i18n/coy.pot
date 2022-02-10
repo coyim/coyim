@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-10 18:08+0000\n"
+"POT-Creation-Date: 2022-02-10 19:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4960,6 +4960,10 @@ msgstr ""
 
 #: ../gui/muc_room_manager.go:52
 msgid "You were already connected to this room."
+msgstr ""
+
+#: ../gui/registration.go:83
+msgid "* The field is required."
 msgstr ""
 
 #: ../gui/registration.go:130

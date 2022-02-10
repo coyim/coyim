@@ -2,6 +2,8 @@
 
 package config
 
+import "os/user"
+
 // IsWindows returns true if this is running under windows
 func IsWindows() bool {
 	return false
@@ -16,3 +18,11 @@ var SystemConfigDir = XdgConfigHome
 // 	// https://developer.gnome.org/glib/unstable/glib-Miscellaneous-Utility-Functions.html#g-get-user-config-dir
 // 	return XdgConfigHome()
 // }
+
+func localHome() string {
+	u, e := user.Current()
+	if e == nil {
+		return u.HomeDir
+	}
+	return ""
+}

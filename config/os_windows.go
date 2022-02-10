@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"os"
 	"syscall"
 	"unsafe"
 )
@@ -36,3 +37,17 @@ var SystemConfigDir = appdataFolderPath
 // func SystemConfigDir() string {
 // 	return appdataFolderPath()
 // }
+
+func firstEnvironmentVariable(vs ...string) string {
+	for _, v := range vs {
+		val := os.Getenv(v)
+		if val != "" {
+			return val
+		}
+	}
+	return ""
+}
+
+func localHome() string {
+	return firstEnvironmentVariable("HOMEPATH", "USERPROFILE")
+}

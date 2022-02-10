@@ -61,11 +61,6 @@ jobs:
           path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
       - name: install OS dependencies
         run: brew install gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info gtk-mac-integration fileicon
-      # - name: download mojave version of gtk-mac-integration bottle
-      #   run: |
-      #     curl -L -H 'Authorization: Bearer QQ==' ${{ env.GTK_MAC_INTEGRATION_URL }} -o gtk-mac-integration--3.0.1.mojave.bottle.tar.gz
-      # - name: install mojave version of gtk-mac-integration from file
-      #   run: brew install ./gtk-mac-integration--3.0.1.mojave.bottle.tar.gz
       - uses: actions/setup-go@v2
         with:
           go-version: 1.14

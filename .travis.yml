@@ -46,15 +46,14 @@ before_install:
   - travis_wait 60 brew install harfbuzz
   - travis_wait 60 brew install cmake
   - travis_wait 60 brew install libssh2
-  - travis_wait 100 brew install rust
-  # - travis_wait 100 brew install librsvg
-  # - travis_wait 60 brew install pango
-  # - travis_wait 100 brew install gtk+3
-  # - travis_wait 60 brew install adwaita-icon-theme
-  # - travis_wait 60 brew install gnome-icon-theme
-  # - travis_wait 60 brew install shared-mime-info
-  # - travis_wait 60 brew install fileicon
+  - travis_wait 60 brew install fileicon
+  - travis_wait 60 brew install shared-mime-info
+  - travis_wait 60 brew install pango
+  - travis_wait 100 brew install gtk+3
   # - travis_wait 60 brew install gtk-mac-integration
+  # - travis_wait 100 brew install rust
+  # - travis_wait 100 brew install librsvg
+  # - travis_wait 60 brew install adwaita-icon-theme
   # - "export DISPLAY=:99.0"
   # - npm install --global appdmg
 

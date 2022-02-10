@@ -2,9 +2,9 @@ os: osx
 osx_image: xcode12.2
 language: go
 
-# branches:
-#   except:
-#     - main
+branches:
+  except:
+    - main
 
 git:
   depth: false
@@ -37,27 +37,24 @@ addons:
     update: true
     
 before_install:
-  - echo before install
-  # - "export DISPLAY=:99.0"
-  # - npm install --global appdmg
+  - "export DISPLAY=:99.0"
+  - npm install --global appdmg
 
 install:
-  - echo install
-  # - make -C ci/ deps
+  - make -C ci/ deps
 
 script:
-  - echo script
-  # - make -C ci/ clean-mac-bundle
-  # - make build-gui
-  # - make -C ci/ make-mac-bundle
-  # - make -C ci/ make-dmg
-  # - make -C ci/ make-gui-for-release
+  - make -C ci/ clean-mac-bundle
+  - make build-gui
+  - make -C ci/ make-mac-bundle
+  - make -C ci/ make-dmg
+  - make -C ci/ make-gui-for-release
 
-# deploy:
-#   provider: releases
-#   api_key: $GH_DEPLOY_TOKEN
-#   file_glob: true
-#   file: release/*
-#   skip_cleanup: true
-#   on:
-#     tags: true
+deploy:
+  provider: releases
+  api_key: $GH_DEPLOY_TOKEN
+  file_glob: true
+  file: release/*
+  skip_cleanup: true
+  on:
+    tags: true

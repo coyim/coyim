@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-10 19:20+0000\n"
+"POT-Creation-Date: 2022-02-11 21:37+0000\n"
 "PO-Revision-Date: 2021-09-24 22:07+0000\n"
 "Last-Translator: Ola Bini <ola@autonomia.digital>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/coyim/main/sv/>\n"
@@ -67,7 +67,7 @@ msgstr ""
 #: ../gui/definitions/AskForPassword.xml:50
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:282
 #: ../gui/definitions/MUCRoomLobby.xml:82 ../gui/definitions/Password.xml:11
-#: ../gui/muc_room_config_texts.go:178
+#: ../gui/muc_room_config_texts.go:178 ../gui/forms.go:16
 msgid "Password"
 msgstr "Lösenord"
 
@@ -3855,6 +3855,10 @@ msgstr ""
 #: ../gui/roster.go:433
 msgid " (waiting for approval)"
 msgstr " (väntar på godkännande)"
+
+#: ../gui/forms.go:14
+msgid "Username"
+msgstr "Användare"
 
 #: ../gui/muc_join_room.go:142
 msgid "We couldn't find a room with that name."

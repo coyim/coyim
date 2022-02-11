@@ -3,9 +3,21 @@ package gui
 import (
 	log "github.com/sirupsen/logrus"
 
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/gotk3adapter/gtki"
 )
+
+func translateFormFieldLabelFrom(originalLabel string) string {
+	switch originalLabel {
+	case "Username":
+		return i18n.Local("Username")
+	case "Password":
+		return i18n.Local("Password")
+	}
+
+	return originalLabel
+}
 
 type formField struct {
 	field    interface{}
@@ -20,7 +32,7 @@ func buildWidgetsForFields(fields []interface{}) []formField {
 	for _, f := range fields {
 		switch field := f.(type) {
 		case *data.TextFormField:
-			l, _ := g.gtk.LabelNew(field.Label)
+			l, _ := g.gtk.LabelNew(translateFormFieldLabelFrom(field.Label))
 			l.SetHAlign(gtki.ALIGN_START)
 			l.SetSelectable(true)
 

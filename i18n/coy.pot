@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-10 20:02+0000\n"
+"POT-Creation-Date: 2022-02-11 21:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -63,7 +63,7 @@ msgstr ""
 #: ../gui/definitions/AskForPassword.xml:50
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:282
 #: ../gui/definitions/MUCRoomLobby.xml:82 ../gui/definitions/Password.xml:11
-#: ../gui/muc_room_config_texts.go:178
+#: ../gui/muc_room_config_texts.go:178 ../gui/forms.go:16
 msgid "Password"
 msgstr ""
 
@@ -3359,6 +3359,10 @@ msgstr ""
 
 #: ../gui/roster.go:433
 msgid " (waiting for approval)"
+msgstr ""
+
+#: ../gui/forms.go:14
+msgid "Username"
 msgstr ""
 
 #: ../gui/muc_join_room.go:142

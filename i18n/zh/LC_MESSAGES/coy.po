@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-10 19:20+0000\n"
+"POT-Creation-Date: 2022-02-11 21:37+0000\n"
 "PO-Revision-Date: 2016-02-23 03:48-0500\n"
 "Last-Translator: Fan Jiang <fan.torchz@gmail.com>\n"
 "Language-Team: Chinese (Simplified, China)\n"
@@ -60,7 +60,7 @@ msgstr ""
 #: ../gui/definitions/AskForPassword.xml:50
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:282
 #: ../gui/definitions/MUCRoomLobby.xml:82 ../gui/definitions/Password.xml:11
-#: ../gui/muc_room_config_texts.go:178
+#: ../gui/muc_room_config_texts.go:178 ../gui/forms.go:16
 msgid "Password"
 msgstr "密码"
 
@@ -3356,6 +3356,10 @@ msgstr ""
 
 #: ../gui/roster.go:433
 msgid " (waiting for approval)"
+msgstr ""
+
+#: ../gui/forms.go:14
+msgid "Username"
 msgstr ""
 
 #: ../gui/muc_join_room.go:142

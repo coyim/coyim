@@ -119,7 +119,14 @@ func (d *dialer) startRawTLS(c interfaces.Conn, conn net.Conn) error {
 		return err
 	}
 
-	c.SetChannelBinding(tlsState.TLSUnique)
+	if tlsState.Version >= tls.VersionTLS13 {
+		ekm, err := tlsState.ExportKeyingMaterial("EXPORTER-Channel-Binding", nil, 32)
+		if err == nil {
+			c.SetChannelBinding(ekm)
+		}
+	} else {
+		c.SetChannelBinding(tlsState.TLSUnique)
+	}
 	d.bindTransport(c, tlsConn)
 
 	return nil

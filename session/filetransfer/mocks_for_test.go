@@ -53,13 +53,13 @@ type mockedDialer struct {
 }
 
 func (m *mockedDialer) Dial(network, addr string) (net.Conn, error) {
-	args := m.Called(network, addr)
+	returns := m.Called(network, addr)
 	var ret net.Conn
-	ci := args.Get(0)
+	ci := returns.Get(0)
 	if ci != nil {
 		ret = ci.(net.Conn)
 	}
-	return ret, args.Error(1)
+	return ret, returns.Error(1)
 }
 
 type WithTempFileSuite struct {

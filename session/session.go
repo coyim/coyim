@@ -726,23 +726,23 @@ func (s *session) getVCard() {
 		return
 	}
 
-	s.log.Info("Fetching VCard")
+	s.log.Info("Fetching vCard")
 
 	vcardReply, _, err := conn.RequestVCard()
 	if err != nil {
-		s.log.WithError(err).Error("Failed to request vcard")
+		s.log.WithError(err).Error("Failed to request vCard")
 		return
 	}
 
 	vcardStanza, ok := <-vcardReply
 	if !ok {
-		s.log.Debug("session: vcard request cancelled or timed out")
+		s.log.Debug("session: vCard request cancelled or timed out")
 		return
 	}
 
 	vc, err := data.ParseVCard(vcardStanza)
 	if err != nil {
-		s.log.WithError(err).Error("Failed to parse vcard")
+		s.log.WithError(err).Error("Failed to parse vCard")
 		return
 	}
 

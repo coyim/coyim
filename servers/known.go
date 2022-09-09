@@ -24,19 +24,34 @@ func init() {
 	// These are the servers for which we know the v3 onion address:
 
 	Server{"anrc.mooo.com", "6w5iasklrbr2kw53zqrsjktgjapvjebxodoki3gjnmvb4dvcbmz7n3qd.onion", false, false, false}.register()
-	Server{"dismail.de", "4colmnerbjz3xtsjmqogehtpbt5upjzef57huilibbq3wfgpsylub7yd.onion", true, false, false}.register()
-	Server{"jabber.cat", "7drfpncjeom3svqkyjitif26ezb3xvmtgyhgplcvqa7wwbb4qdbsjead.onion", true, false, false}.register()
-	Server{"jabber.de", "uoj2xiqxk25p36wbpufiyuhluvxakhpqum7frembhoiuq7a5735ay3qd.onion", true, false, false}.register()
+
+	// This used to support in-band registration, but doesn't anymore.
+	Server{"dismail.de", "4colmnerbjz3xtsjmqogehtpbt5upjzef57huilibbq3wfgpsylub7yd.onion", false, false, false}.register()
+
+	// Doesn't support registration anymore.
+	Server{"jabber.cat", "7drfpncjeom3svqkyjitif26ezb3xvmtgyhgplcvqa7wwbb4qdbsjead.onion", false, false, false}.register()
+
+	// The onion for this used to be uoj2xiqxk25p36wbpufiyuhluvxakhpqum7frembhoiuq7a5735ay3qd.onion, but doesn't work anymore
+	Server{"jabber.de", "", true, false, false}.register()
 	Server{"jabber.nr18.space", "szd7r26dbcrrrn4jthercrdypxfdmzzrysusyjohn4mpv2zbwcgmeqqd.onion", false, false, false}.register()
 	Server{"jabber.otr.im", "ynnuxkbbiy5gicdydekpihmpbqd4frruax2mqhpc35xqjxp5ayvrjuqd.onion", true, true, true}.register()
 	Server{"jabber.so36.net", "yxkc2uu3rlwzzhxf2thtnzd7obsdd76vtv7n34zwald76g5ogbvjbbqd.onion", false, false, false}.register()
-	Server{"jabber.systemausfall.org", "jaswtrycaot3jzkr7znje4ebazzvbxtzkyyox67frgvgemwfbzzi6uqd.onion", true, false, false}.register()
+
+	// This one gives a registration form that Coy can't handle (#851)
+	Server{"jabber.systemausfall.org", "jaswtrycaot3jzkr7znje4ebazzvbxtzkyyox67frgvgemwfbzzi6uqd.onion", false, false, false}.register()
+
 	Server{"jabber.systemli.org", "razpihro3mgydaiykvxwa44l57opvktqeqfrsg3vvwtmvr2srbkcihyd.onion", false, false, false}.register()
-	Server{"krautspace.de", "jeirlvruhz22jqduzixi6li4xyoweytqglwjons4mbuif76fgslg5uad.onion", true, false, false}.register()
+
+	// Doesn't seem to support registration anymore
+	Server{"krautspace.de", "jeirlvruhz22jqduzixi6li4xyoweytqglwjons4mbuif76fgslg5uad.onion", false, false, false}.register()
+
 	Server{"talk36.net", "yxkc2uu3rlwzzhxf2thtnzd7obsdd76vtv7n34zwald76g5ogbvjbbqd.onion", false, false, false}.register()
 	Server{"trashserver.net", "xiynxwxxpw7olq76uhrbvx2ts3i7jagqnqix7arfbknmleuoiwsmt5yd.onion", false, false, false}.register()
 	Server{"wiuwiu.de", "qawb5xl3mxiixobjsw2d45dffngyyacp4yd3wjpmhdrazwvt4ytxvayd.onion", false, false, false}.register()
-	Server{"xmpp.is", "6voaf7iamjpufgwoulypzwwecsm2nu7j5jpgadav2rfqixmpl4d65kid.onion", true, true, false}.register()
+
+	// Does't seem to support registration anymore
+	Server{"xmpp.is", "6voaf7iamjpufgwoulypzwwecsm2nu7j5jpgadav2rfqixmpl4d65kid.onion", false, false, false}.register()
+
 	Server{"xmpp.riseup.net", "jukrlvyhgguiedqswc5lehrag2fjunfktouuhi4wozxhb6heyzvshuyd.onion", false, false, false}.register()
 
 	// These are all the hosts controlled by jabjab
@@ -67,16 +82,30 @@ func init() {
 	Server{"5222.de", "", false, false, false}.register()
 	Server{"adamas.ai", "", false, false, false}.register()
 	Server{"bommboo.de", "", false, false, false}.register()
-	Server{"chatme.im", "", true, false, false}.register()
+
+	// Server seems down
+	// Server{"chatme.im", "", true, false, false}.register()
+
 	Server{"cloak.dk", "", false, false, false}.register()
-	Server{"creep.im", "", true, false, false}.register()
+
+	// Server isn't even listening on XMPP protocol anymore - returns HTML
+	// Server{"creep.im", "", true, false, false}.register()
+
 	Server{"darkness.su", "", false, false, false}.register()
 	Server{"deshalbfrei.org", "", false, false, false}.register()
 	Server{"draugr.de", "", true, false, false}.register()
-	Server{"evil.im", "", true, false, false}.register()
+
+	// Server seems gone
+	//	Server{"evil.im", "", true, false, false}.register()
+
 	Server{"im.koderoot.net", "", false, false, false}.register()
-	Server{"jabber-germany.de", "", true, false, false}.register()
-	Server{"jabber.calyxinstitute.org", "", true, true, false}.register()
+
+	// No more inband registration
+	// Server{"jabber-germany.de", "", true, false, false}.register()
+
+	// Returns a V2 Tor onion from DNS and doesn't respond properly
+	// Server{"jabber.calyxinstitute.org", "", true, true, false}.register()
+
 	Server{"jabber.ccc.de", "", true, true, false}.register()
 	Server{"jabber.cryptoparty.is", "", false, false, false}.register()
 	Server{"jabber.frozenstar.info", "", false, false, false}.register()
@@ -87,12 +116,19 @@ func init() {
 	Server{"jabberwiki.de", "", false, false, false}.register()
 	Server{"kjabber.de", "", false, false, false}.register()
 	Server{"kode.im", "", false, false, false}.register()
-	Server{"patchcord.be", "", true, false, false}.register()
+
+	// Server seems gone
+	// Server{"patchcord.be", "", true, false, false}.register()
 	Server{"pimux.de", "", false, false, false}.register()
 	Server{"securejabber.me", "", false, false, false}.register()
 	Server{"securetalks.biz", "", false, false, false}.register()
-	Server{"suchat.org", "", true, false, false}.register()
-	Server{"tchncs.de", "", true, false, false}.register()
+
+	// Returns incorrect XML in registration  (#851)
+	// Server{"suchat.org", "", true, false, false}.register()
+
+	// No more inband registration
+	// Server{"tchncs.de", "", true, false, false}.register()
+
 	Server{"ubuntu-jabber.de", "", false, false, false}.register()
 	Server{"ubuntu-jabber.net", "", false, false, false}.register()
 	Server{"verdammung.org", "", false, false, false}.register()
@@ -107,40 +143,98 @@ func init() {
 	// These are the servers with public registration with A, A ranking from
 	// https://xmpp.net/directory.php
 
-	Server{"blah.im", "", true, false, false}.register()
-	Server{"ch3kr.net", "", true, false, false}.register()
-	Server{"chinwag.im", "", true, false, false}.register()
-	Server{"core.mx", "", true, false, false}.register()
-	Server{"datenknoten.me", "", true, false, false}.register()
+	// No more inband registration
+	// Server{"blah.im", "", true, false, false}.register()
+
+	// No more inband registration
+	// Server{"ch3kr.net", "", true, false, false}.register()
+
+	// Incorrect XML (#851)
+	// Server{"chinwag.im", "", true, false, false}.register()
+
+	// Server gone
+	// Server{"core.mx", "", true, false, false}.register()
+
+	// Server gone
+	// Server{"datenknoten.me", "", true, false, false}.register()
+
 	Server{"im.apinc.org", "", true, false, false}.register()
-	Server{"is-a-furry.org", "", true, false, false}.register()
-	Server{"jabber.at", "", true, false, false}.register()
-	Server{"jabber.chaos-darmstadt.de", "", true, false, false}.register()
-	Server{"jabber.meta.net.nz", "", true, false, false}.register()
-	Server{"jabber.no", "", true, false, false}.register()
-	Server{"jabber.no-sense.net", "", true, false, false}.register()
-	Server{"jabber.schnied.net", "", true, false, false}.register()
-	Server{"jabber.zone", "", true, false, false}.register()
-	Server{"jabberzac.org", "", true, false, false}.register()
+
+	// Server gone
+	// Server{"is-a-furry.org", "", true, false, false}.register()
+
+	// No more inband registration  (#851)
+	// Server{"jabber.at", "", true, false, false}.register()
+
+	// No more inband registration  (#851)
+	//	Server{"jabber.chaos-darmstadt.de", "", true, false, false}.register()
+
+	// Server gone
+	// Server{"jabber.meta.net.nz", "", true, false, false}.register()
+
+	// Failing for unknown reason - investigate
+	// Server{"jabber.no", "", true, false, false}.register()
+
+	// Invalid TLS
+	// Server{"jabber.no-sense.net", "", true, false, false}.register()
+
+	// No more inband registration
+	// Server{"jabber.schnied.net", "", true, false, false}.register()
+
+	// No more inband registration
+	// Server{"jabber.zone", "", true, false, false}.register()
+
+	// Invalid form XML (#851)
+	// Server{"jabberzac.org", "", true, false, false}.register()
+
 	Server{"jabbim.cz", "", true, false, false}.register()
-	Server{"jabbim.hu", "", true, false, false}.register()
+
+	// No more inband registration
+	// Server{"jabbim.hu", "", true, false, false}.register()
+
 	Server{"jabbim.pl", "", true, false, false}.register()
 	Server{"jabbim.sk", "", true, false, false}.register()
 	Server{"jabster.pl", "", true, false, false}.register()
-	Server{"jappix.com", "", true, false, false}.register()
-	Server{"kwoh.de", "", true, false, false}.register()
+
+	// Invalid form XML (#851)
+	// Server{"jappix.com", "", true, false, false}.register()
+
+	// No more inband registration
+	// Server{"kwoh.de", "", true, false, false}.register()
+
 	Server{"lightwitch.org", "", true, false, false}.register()
-	Server{"miqote.com", "", true, false, false}.register()
-	Server{"neko.im", "", true, false, false}.register()
+
+	// No more inband registration
+	//Server{"miqote.com", "", true, false, false}.register()
+
+	// No more inband registration
+	// Server{"neko.im", "", true, false, false}.register()
+
 	Server{"njs.netlab.cz", "", true, false, false}.register()
-	Server{"psjb.me", "", true, false, false}.register()
-	Server{"richim.org", "", true, false, false}.register()
+
+	// No more inband registration
+	// Server{"psjb.me", "", true, false, false}.register()
+
+	// Server seems gone
+	// Server{"richim.org", "", true, false, false}.register()
+
 	Server{"tigase.im", "", true, false, false}.register()
-	Server{"twattle.net", "", true, false, false}.register()
-	Server{"univers-libre.net", "", true, false, false}.register()
-	Server{"wusz.org", "", true, false, false}.register()
-	Server{"xmpp.jp", "", true, false, false}.register()
-	Server{"xmpp.zone", "", true, false, false}.register()
+
+	// Invalid form XML (#851)
+	// Server{"twattle.net", "", true, false, false}.register()
+
+	// No more inband registration
+	// Server{"univers-libre.net", "", true, false, false}.register()
+
+	// Doesn't seem to be an XMPP server anymore - serves HTML
+	// Server{"wusz.org", "", true, false, false}.register()
+
+	// Invalid form XML (#851)
+	//	Server{"xmpp.jp", "", true, false, false}.register()
+
+	// No more inband registration
+	//	Server{"xmpp.zone", "", true, false, false}.register()
+
 	Server{"yax.im", "", true, false, false}.register()
 }
 

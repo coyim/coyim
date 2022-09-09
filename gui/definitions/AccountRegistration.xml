@@ -16,6 +16,7 @@
               <object class="GtkLabel" id="server-label">
                 <property name="label" translatable="yes">Recommended servers: </property>
                 <property name="justify">GTK_JUSTIFY_RIGHT</property>
+                <property name="selectable">True</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -50,6 +51,7 @@
 	    <child>
 	      <object class="GtkLabel" id="formMessage">
             <property name="margin-top">20</property>
+            <property name="selectable">True</property>
 	      </object>
         </child>
         <child>
@@ -81,7 +83,9 @@
           </object>
 	    </child>
 	    <child>
-          <object class="GtkLabel" id="doneMessage" />
+          <object class="GtkLabel" id="doneMessage">
+            <property name="selectable">True</property>
+          </object>
         </child>
       </object>
       <packing>

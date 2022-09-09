@@ -3147,7 +3147,7 @@ func (s *SessionSuite) Test_session_getVCard_works(c *C) {
 	c.Assert(sess.nicknames, DeepEquals, []string{"Again", "Hello"})
 	c.Assert(hook.Entries, HasLen, 1)
 	c.Assert(hook.Entries[0].Level, Equals, log.InfoLevel)
-	c.Assert(hook.Entries[0].Message, Equals, "Fetching VCard")
+	c.Assert(hook.Entries[0].Message, Equals, "Fetching vCard")
 }
 
 func (s *SessionSuite) Test_session_getVCard_reportsErrorWhenParsingTheXML(c *C) {
@@ -3182,7 +3182,7 @@ func (s *SessionSuite) Test_session_getVCard_reportsErrorWhenParsingTheXML(c *C)
 	c.Assert(sess.nicknames, IsNil)
 	c.Assert(hook.Entries, HasLen, 2)
 	c.Assert(hook.Entries[1].Level, Equals, log.ErrorLevel)
-	c.Assert(hook.Entries[1].Message, Equals, "Failed to parse vcard")
+	c.Assert(hook.Entries[1].Message, Equals, "Failed to parse vCard")
 	c.Assert(hook.Entries[1].Data["error"], ErrorMatches, "XML syntax error.*")
 }
 
@@ -3211,7 +3211,7 @@ func (s *SessionSuite) Test_session_getVCard_failsWhenChannelIsClosed(c *C) {
 	c.Assert(sess.nicknames, IsNil)
 	c.Assert(hook.Entries, HasLen, 2)
 	c.Assert(hook.Entries[1].Level, Equals, log.DebugLevel)
-	c.Assert(hook.Entries[1].Message, Equals, "session: vcard request cancelled or timed out")
+	c.Assert(hook.Entries[1].Message, Equals, "session: vCard request cancelled or timed out")
 }
 
 func (s *SessionSuite) Test_session_getVCard_failsWhenRequestFails(c *C) {
@@ -3235,7 +3235,7 @@ func (s *SessionSuite) Test_session_getVCard_failsWhenRequestFails(c *C) {
 	c.Assert(sess.nicknames, IsNil)
 	c.Assert(hook.Entries, HasLen, 2)
 	c.Assert(hook.Entries[1].Level, Equals, log.ErrorLevel)
-	c.Assert(hook.Entries[1].Message, Equals, "Failed to request vcard")
+	c.Assert(hook.Entries[1].Message, Equals, "Failed to request vCard")
 	c.Assert(hook.Entries[1].Data["error"], ErrorMatches, "another marker error")
 }
 

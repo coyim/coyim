@@ -78,7 +78,8 @@ func (s *RegisterSuite) Test_setupStream_registerWithoutAuthenticating(c *C) {
 				return nil
 			},
 		},
-		log: testLogger(),
+		log:                testLogger(),
+		negotationStrategy: accountRegistrationStrategy,
 	}
 	_, err := d.setupStream(conn)
 

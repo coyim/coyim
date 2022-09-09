@@ -27,6 +27,8 @@ var (
 	ErrWrongCaptcha = errors.New("xmpp: the captcha entered is wrong")
 	// ErrResourceConstraint is an error signaled during account registration, when the configured number of allowable resources is reached
 	ErrResourceConstraint = errors.New("xmpp: already reached the configured number of allowable resources")
+	// ErrInbandRegistrationNotSupported is an error signaled when inband registration is not supported
+	ErrInbandRegistrationNotSupported = errors.New("xmpp: in band registration not supported by server")
 )
 
 var (
@@ -45,13 +47,14 @@ var (
 )
 
 // XEP-0077
-func (d *dialer) negotiateInBandRegistration(c interfaces.Conn) (bool, error) {
+func (d *dialer) negotiateInBandRegistration(c interfaces.Conn) error {
 	if c.Features().InBandRegistration == nil {
-		return false, nil
+		return ErrInbandRegistrationNotSupported
 	}
 
 	user := d.getJIDLocalpart()
-	return c.RegisterAccount(user, d.password)
+	_, e := c.RegisterAccount(user, d.password)
+	return e
 }
 
 func (c *conn) RegisterAccount(user, password string) (bool, error) {

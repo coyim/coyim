@@ -85,7 +85,8 @@ func (s *DialerSuite) Test_dialer_Dial(c *C) {
 			SkipSRVLookup: true,
 			SkipTLS:       true,
 		},
-		log: testLogger(),
+		log:                testLogger(),
+		negotationStrategy: saslAuthenticateStrategy,
 	}
 
 	expectedConn := &fullMockedConn{
@@ -183,12 +184,9 @@ func (s *DialerSuite) Test_dialer_RegisterAccount(c *C) {
 		called = true
 		return nil
 	}
-
 	cn, e := d.RegisterAccount(ff)
-	c.Assert(e, IsNil)
-	c.Assert(cn, Not(IsNil))
-	cc := cn.(*conn)
-	c.Assert(cc.rawOut, Equals, expectedConn)
+	c.Assert(e, Equals, ErrInbandRegistrationNotSupported)
+	c.Assert(cn, IsNil)
 	_ = d.config.CreateCallback("", "", nil)
 	c.Assert(called, Equals, true)
 }

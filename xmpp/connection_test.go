@@ -395,10 +395,11 @@ func (s *ConnectionXMPPSuite) Test_Dial_returnsErrorFromAuthenticateIfSkipTLS(c 
 	conn := &fullMockedConn{rw: rw}
 
 	d := &dialer{
-		JID:      "user@domain",
-		password: "pass",
-		config:   data.Config{SkipTLS: true},
-		log:      testLogger(),
+		JID:                "user@domain",
+		password:           "pass",
+		config:             data.Config{SkipTLS: true},
+		log:                testLogger(),
+		negotationStrategy: saslAuthenticateStrategy,
 	}
 	_, err := d.setupStream(conn)
 
@@ -418,10 +419,11 @@ func (s *ConnectionXMPPSuite) Test_Dial_returnsErrorFromSecondFeatureCheck(c *C)
 	conn := &fullMockedConn{rw: rw}
 
 	d := &dialer{
-		JID:      "user@domain",
-		password: "pass",
-		config:   data.Config{SkipTLS: true},
-		log:      testLogger(),
+		JID:                "user@domain",
+		password:           "pass",
+		config:             data.Config{SkipTLS: true},
+		log:                testLogger(),
+		negotationStrategy: saslAuthenticateStrategy,
 	}
 	_, err := d.setupStream(conn)
 
@@ -453,10 +455,11 @@ func (s *ConnectionXMPPSuite) Test_Dial_returnsErrorFromIQReturn(c *C) {
 	conn := &fullMockedConn{rw: rw}
 
 	d := &dialer{
-		JID:      "user@domain",
-		password: "pass",
-		config:   data.Config{SkipTLS: true},
-		log:      testLogger(),
+		JID:                "user@domain",
+		password:           "pass",
+		config:             data.Config{SkipTLS: true},
+		log:                testLogger(),
+		negotationStrategy: saslAuthenticateStrategy,
 	}
 	_, err := d.setupStream(conn)
 
@@ -490,10 +493,11 @@ func (s *ConnectionXMPPSuite) Test_Dial_returnsWorkingConnIfEverythingPasses(c *
 	conn := &fullMockedConn{rw: rw}
 
 	d := &dialer{
-		JID:      "user@domain",
-		password: "pass",
-		config:   data.Config{SkipTLS: true},
-		log:      testLogger(),
+		JID:                "user@domain",
+		password:           "pass",
+		config:             data.Config{SkipTLS: true},
+		log:                testLogger(),
+		negotationStrategy: saslAuthenticateStrategy,
 	}
 	_, err := d.setupStream(conn)
 
@@ -524,6 +528,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsIfTheServerDoesntSupportTLS(c *C) {
 	d := &dialer{
 		JID:      "user@domain",
 		password: "pass",
+		log:      testLogger(),
 	}
 	_, err := d.setupStream(conn)
 
@@ -547,6 +552,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsIfReceivingEOFAfterStartingTLS(c *C
 	d := &dialer{
 		JID:      "user@domain",
 		password: "pass",
+		log:      testLogger(),
 	}
 	_, err := d.setupStream(conn)
 
@@ -571,6 +577,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsIfReceivingTheWrongNamespaceAfterSt
 	d := &dialer{
 		JID:      "user@domain",
 		password: "pass",
+		log:      testLogger(),
 	}
 	_, err := d.setupStream(conn)
 
@@ -595,6 +602,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsIfReceivingTheWrongTagName(c *C) {
 	d := &dialer{
 		JID:      "user@domain",
 		password: "pass",
+		log:      testLogger(),
 	}
 	_, err := d.setupStream(conn)
 
@@ -623,7 +631,8 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsIfDecodingFallbackFails(c *C) {
 				return nil
 			},
 		},
-		log: testLogger(),
+		log:                testLogger(),
+		negotationStrategy: accountRegistrationStrategy,
 	}
 	_, err := d.setupStream(conn)
 
@@ -658,7 +667,8 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsIfAccountCreationFails(c *C) {
 				return nil
 			},
 		},
-		log: testLogger(),
+		log:                testLogger(),
+		negotationStrategy: accountRegistrationStrategy,
 	}
 	_, err := d.setupStream(conn)
 
@@ -693,7 +703,8 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsIfTheIQQueryHasNoContent(c *C) {
 				return nil
 			},
 		},
-		log: testLogger(),
+		log:                testLogger(),
+		negotationStrategy: accountRegistrationStrategy,
 	}
 	_, err := d.setupStream(conn)
 
@@ -730,7 +741,8 @@ func (s *ConnectionXMPPSuite) Test_Dial_ifRegisterQueryDoesntContainDataFailsAtN
 				return nil
 			},
 		},
-		log: testLogger(),
+		log:                testLogger(),
+		negotationStrategy: accountRegistrationStrategy,
 	}
 	_, err := d.setupStream(conn)
 
@@ -768,7 +780,8 @@ func (s *ConnectionXMPPSuite) Test_Dial_afterRegisterFailsIfReceivesAnErrorEleme
 				return nil
 			},
 		},
-		log: testLogger(),
+		log:                testLogger(),
+		negotationStrategy: accountRegistrationStrategy,
 	}
 	_, err := d.setupStream(conn)
 
@@ -806,7 +819,8 @@ func (s *ConnectionXMPPSuite) Test_Dial_sendsBackUsernameAndPassword(c *C) {
 				return nil
 			},
 		},
-		log: testLogger(),
+		log:                testLogger(),
+		negotationStrategy: accountRegistrationStrategy,
 	}
 	_, err := d.setupStream(conn)
 
@@ -856,7 +870,8 @@ func (s *ConnectionXMPPSuite) Test_Dial_runsForm(c *C) {
 				return nil
 			},
 		},
-		log: testLogger(),
+		log:                testLogger(),
+		negotationStrategy: accountRegistrationStrategy,
 	}
 
 	_, err := d.setupStream(conn)
@@ -895,7 +910,8 @@ func (s *ConnectionXMPPSuite) Test_Dial_setsLog(c *C) {
 				return nil
 			},
 		},
-		log: testLogger(),
+		log:                testLogger(),
+		negotationStrategy: accountRegistrationStrategy,
 	}
 	_, err := d.setupStream(conn)
 
@@ -932,7 +948,8 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsWhenTryingToEstablishSession(c *C) 
 		config: data.Config{
 			SkipTLS: true,
 		},
-		log: testLogger(),
+		log:                testLogger(),
+		negotationStrategy: saslAuthenticateStrategy,
 	}
 	_, err := d.setupStream(conn)
 
@@ -975,7 +992,8 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsWhenTryingToEstablishSessionAndGets
 		config: data.Config{
 			SkipTLS: true,
 		},
-		log: testLogger(),
+		log:                testLogger(),
+		negotationStrategy: saslAuthenticateStrategy,
 	}
 	_, err := d.setupStream(conn)
 
@@ -1017,7 +1035,8 @@ func (s *ConnectionXMPPSuite) Test_Dial_succeedsEstablishingASession(c *C) {
 		config: data.Config{
 			SkipTLS: true,
 		},
-		log: testLogger(),
+		log:                testLogger(),
+		negotationStrategy: saslAuthenticateStrategy,
 	}
 	_, err := d.setupStream(conn)
 

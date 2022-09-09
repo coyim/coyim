@@ -51,11 +51,15 @@ type dialer struct {
 	sendALPN bool
 
 	known *servers.Server
+
+	negotationStrategy streamNegotiationStrategy
 }
+
+type streamNegotiationStrategy func(d *dialer, c interfaces.Conn) error
 
 // DialerFactory returns a new xmpp dialer
 func DialerFactory(verifier tls.Verifier, connFactory tls.Factory) interfaces.Dialer {
-	return &dialer{verifier: verifier, tlsConnFactory: connFactory}
+	return &dialer{verifier: verifier, tlsConnFactory: connFactory, negotationStrategy: saslAuthenticateStrategy}
 }
 
 func (d *dialer) SetJID(v string) {
@@ -137,8 +141,8 @@ func (d *dialer) getFallbackServer() string {
 
 // RegisterAccount registers an account on the server. The formCallback is used to handle XMPP forms.
 func (d *dialer) RegisterAccount(formCallback data.FormCallback) (interfaces.Conn, error) {
-	//TODO: notify in case the feature is not supported
 	d.config.CreateCallback = formCallback
+	d.negotationStrategy = accountRegistrationStrategy
 	return d.Dial()
 }
 
@@ -207,6 +211,7 @@ func (d *dialer) negotiateStreamFeatures(c interfaces.Conn, conn net.Conn) error
 		return err
 	}
 
+	d.log.WithField("step", "dialing").Debug("Negotiating TLS")
 	if !d.outerTLS {
 		// STARTTLS MUST be the first feature to be negotiated
 		if err := d.negotiateSTARTTLS(c, conn); err != nil {
@@ -214,9 +219,17 @@ func (d *dialer) negotiateStreamFeatures(c interfaces.Conn, conn net.Conn) error
 		}
 	}
 
-	if registered, err := d.negotiateInBandRegistration(c); err != nil || registered {
-		return err
-	}
+	return d.negotationStrategy(d, c)
+}
+
+func accountRegistrationStrategy(d *dialer, c interfaces.Conn) error {
+	d.log.WithField("step", "dialing").Debug("Negotiating in band registration")
+
+	return d.negotiateInBandRegistration(c)
+}
+
+func saslAuthenticateStrategy(d *dialer, c interfaces.Conn) error {
+	d.log.WithField("step", "dialing").Debug("Negotiating SASL")
 
 	// SASL negotiation. RFC 6120, section 6
 	if err := d.negotiateSASL(c); err != nil {

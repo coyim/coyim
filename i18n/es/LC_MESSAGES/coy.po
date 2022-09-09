@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-11 21:44+0000\n"
+"POT-Creation-Date: 2022-09-09 18:53+0000\n"
 "PO-Revision-Date: 2021-09-24 22:07+0000\n"
 "Last-Translator: sara-la-loca-de-los-gatos <sara@autonomia.digital>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/coyim/main/es/>\n"
@@ -276,11 +276,11 @@ msgstr "Cifrado"
 msgid "Recommended servers: "
 msgstr "Servidores recomendados: "
 
-#: ../gui/definitions/AccountRegistration.xml:38
+#: ../gui/definitions/AccountRegistration.xml:39
 msgid "1. Choose a server"
 msgstr "1. Selecciona un servidor"
 
-#: ../gui/definitions/AccountRegistration.xml:72
+#: ../gui/definitions/AccountRegistration.xml:74
 msgid "2. Create account"
 msgstr "2. Crea una cuenta"
 
@@ -5643,11 +5643,11 @@ msgstr "Ya estás en la sala."
 msgid "You were already connected to this room."
 msgstr "Ya estabas conectado a esta sala."
 
-#: ../gui/registration.go:83
+#: ../gui/registration.go:84
 msgid "* The field is required."
 msgstr "* El campo es necesario."
 
-#: ../gui/registration.go:130
+#: ../gui/registration.go:131
 msgid ""
 "We had an error:\n"
 "\n"
@@ -5657,7 +5657,7 @@ msgstr ""
 "\n"
 "Tiempo de espera excedido."
 
-#: ../gui/registration.go:132
+#: ../gui/registration.go:133
 msgid ""
 "The registration process currently requires Tor in order to ensure your "
 "safety.\n"
@@ -5671,7 +5671,18 @@ msgstr ""
 "Tor no se está ejecutando. Por favor, inícialo.\n"
 "\n"
 
-#: ../gui/registration.go:135 ../gui/registration.go:152
+#: ../gui/registration.go:136
+msgid ""
+"The chosen server does not support in-band registration.\n"
+"\n"
+"Either choose another server, or go to the website for the server to "
+"register."
+msgstr ""
+"No puedes registrarte a este servidor aquí.\n"
+"\n"
+"Por favor, elige otro servidor, o ve al sitio web del servidor para registrarte."
+
+#: ../gui/registration.go:138 ../gui/registration.go:155
 msgid ""
 "Could not contact the server.\n"
 "\n"
@@ -5681,7 +5692,7 @@ msgstr ""
 "\n"
 "Por favor, corrije tu elección de servidor e inténtalo de nuevo."
 
-#: ../gui/registration.go:144
+#: ../gui/registration.go:147
 msgid ""
 "We had an error:\n"
 "\n"
@@ -5692,7 +5703,7 @@ msgstr ""
 "Algunos campos obligatorios no han sido llenados. Por favor, vuelve a "
 "intentarlo y completa todos los campos."
 
-#: ../gui/registration.go:146
+#: ../gui/registration.go:149
 msgid ""
 "We had an error:\n"
 "\n"
@@ -5702,7 +5713,7 @@ msgstr ""
 "\n"
 "Nombre de usuario incorrecto."
 
-#: ../gui/registration.go:148
+#: ../gui/registration.go:151
 msgid ""
 "We had an error:\n"
 "\n"
@@ -5712,7 +5723,7 @@ msgstr ""
 "\n"
 "El captcha ingresado es incorrecto."
 
-#: ../gui/registration.go:150
+#: ../gui/registration.go:153
 msgid ""
 "We had an error:\n"
 "\n"
@@ -5722,7 +5733,7 @@ msgstr ""
 "\n"
 "El servidor recibió muchas solicitudes para crear una cuenta al mismo tiempo."
 
-#: ../gui/registration.go:240
+#: ../gui/registration.go:252
 msgid ""
 "Connecting to server for registration... \n"
 "\n"
@@ -5732,11 +5743,11 @@ msgstr ""
 "\n"
 "Esto puede tomar un momento."
 
-#: ../gui/registration.go:264
+#: ../gui/registration.go:279
 msgid "We had an error when trying to store your account information."
 msgstr "Ocurrió un error al intentar almacenar la información de tu cuenta."
 
-#: ../gui/registration.go:273
+#: ../gui/registration.go:288
 #, python-format
 msgid "<b>%s</b> successfully created."
 msgstr "<b>%s</b> creada exitosamente."

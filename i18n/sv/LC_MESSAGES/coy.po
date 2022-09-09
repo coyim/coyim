@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-11 21:44+0000\n"
+"POT-Creation-Date: 2022-09-09 18:53+0000\n"
 "PO-Revision-Date: 2021-09-24 22:07+0000\n"
 "Last-Translator: Ola Bini <ola@autonomia.digital>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/coyim/main/sv/>\n"
@@ -273,11 +273,11 @@ msgstr "Kryptering"
 msgid "Recommended servers: "
 msgstr "Rekommenderade servrar: "
 
-#: ../gui/definitions/AccountRegistration.xml:38
+#: ../gui/definitions/AccountRegistration.xml:39
 msgid "1. Choose a server"
 msgstr "1. Välj en server"
 
-#: ../gui/definitions/AccountRegistration.xml:72
+#: ../gui/definitions/AccountRegistration.xml:74
 msgid "2. Create account"
 msgstr "2. Skapa ett konto"
 
@@ -5622,11 +5622,11 @@ msgstr "Du är redan i rummet."
 msgid "You were already connected to this room."
 msgstr "Du var redan ansluten till rummet."
 
-#: ../gui/registration.go:83
+#: ../gui/registration.go:84
 msgid "* The field is required."
 msgstr "* Fältet är obligatoriskt."
 
-#: ../gui/registration.go:130
+#: ../gui/registration.go:131
 msgid ""
 "We had an error:\n"
 "\n"
@@ -5636,7 +5636,7 @@ msgstr ""
 "\n"
 "Tiden gick ut."
 
-#: ../gui/registration.go:132
+#: ../gui/registration.go:133
 msgid ""
 "The registration process currently requires Tor in order to ensure your "
 "safety.\n"
@@ -5650,7 +5650,18 @@ msgstr ""
 "Tor är inte aktiverat pä din maskin. Var god starta Tor och försök igen.\n"
 "\n"
 
-#: ../gui/registration.go:135 ../gui/registration.go:152
+#: ../gui/registration.go:136
+msgid ""
+"The chosen server does not support in-band registration.\n"
+"\n"
+"Either choose another server, or go to the website for the server to "
+"register."
+msgstr ""
+"Den valda servern har inte stöd för registrering från klienten.\n"
+"\n"
+"Var god välj en annan server, eller gå till webbsidan för servern för att registrera."
+
+#: ../gui/registration.go:138 ../gui/registration.go:155
 msgid ""
 "Could not contact the server.\n"
 "\n"
@@ -5660,7 +5671,7 @@ msgstr ""
 "\n"
 "Var god korrigera ditt serverval och försök igen."
 
-#: ../gui/registration.go:144
+#: ../gui/registration.go:147
 msgid ""
 "We had an error:\n"
 "\n"
@@ -5670,7 +5681,7 @@ msgstr ""
 "\n"
 "Nödvändiga fält saknas. Var god försök igen och fyll i alla fälten."
 
-#: ../gui/registration.go:146
+#: ../gui/registration.go:149
 msgid ""
 "We had an error:\n"
 "\n"
@@ -5680,7 +5691,7 @@ msgstr ""
 "\n"
 "Ogiltigt användarnamn"
 
-#: ../gui/registration.go:148
+#: ../gui/registration.go:151
 msgid ""
 "We had an error:\n"
 "\n"
@@ -5690,7 +5701,7 @@ msgstr ""
 "\n"
 "Captchan du skrev in är fel"
 
-#: ../gui/registration.go:150
+#: ../gui/registration.go:153
 msgid ""
 "We had an error:\n"
 "\n"
@@ -5700,7 +5711,7 @@ msgstr ""
 "\n"
 "Servern mottog för många samtidiga förfrågningar att skapa nytt konto."
 
-#: ../gui/registration.go:240
+#: ../gui/registration.go:252
 msgid ""
 "Connecting to server for registration... \n"
 "\n"
@@ -5710,11 +5721,11 @@ msgstr ""
 "\n"
 "Detta kan ta ett tag."
 
-#: ../gui/registration.go:264
+#: ../gui/registration.go:279
 msgid "We had an error when trying to store your account information."
 msgstr "Ett fel uppstod när vi försökta spara din kontoinformation."
 
-#: ../gui/registration.go:273
+#: ../gui/registration.go:288
 #, python-format
 msgid "<b>%s</b> successfully created."
 msgstr "<b>%s</b> skapades korrekt."

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-11 21:44+0000\n"
+"POT-Creation-Date: 2022-09-09 18:53+0000\n"
 "PO-Revision-Date: 2016-02-23 03:48-0500\n"
 "Last-Translator: Fan Jiang <fan.torchz@gmail.com>\n"
 "Language-Team: Chinese (Simplified, China)\n"
@@ -222,11 +222,11 @@ msgstr "加密"
 msgid "Recommended servers: "
 msgstr ""
 
-#: ../gui/definitions/AccountRegistration.xml:38
+#: ../gui/definitions/AccountRegistration.xml:39
 msgid "1. Choose a server"
 msgstr ""
 
-#: ../gui/definitions/AccountRegistration.xml:72
+#: ../gui/definitions/AccountRegistration.xml:74
 msgid "2. Create account"
 msgstr ""
 
@@ -4967,18 +4967,18 @@ msgstr ""
 msgid "You were already connected to this room."
 msgstr ""
 
-#: ../gui/registration.go:83
+#: ../gui/registration.go:84
 msgid "* The field is required."
 msgstr ""
 
-#: ../gui/registration.go:130
+#: ../gui/registration.go:131
 msgid ""
 "We had an error:\n"
 "\n"
 "Timeout."
 msgstr ""
 
-#: ../gui/registration.go:132
+#: ../gui/registration.go:133
 msgid ""
 "The registration process currently requires Tor in order to ensure your "
 "safety.\n"
@@ -4987,53 +4987,61 @@ msgid ""
 "\n"
 msgstr ""
 
-#: ../gui/registration.go:135 ../gui/registration.go:152
+#: ../gui/registration.go:136
+msgid ""
+"The chosen server does not support in-band registration.\n"
+"\n"
+"Either choose another server, or go to the website for the server to "
+"register."
+msgstr ""
+
+#: ../gui/registration.go:138 ../gui/registration.go:155
 msgid ""
 "Could not contact the server.\n"
 "\n"
 "Please, correct your server choice and try again."
 msgstr ""
 
-#: ../gui/registration.go:144
+#: ../gui/registration.go:147
 msgid ""
 "We had an error:\n"
 "\n"
 "Some required fields are missing. Please, try again and fill all fields."
 msgstr ""
 
-#: ../gui/registration.go:146
+#: ../gui/registration.go:149
 msgid ""
 "We had an error:\n"
 "\n"
 "Incorrect username"
 msgstr ""
 
-#: ../gui/registration.go:148
+#: ../gui/registration.go:151
 msgid ""
 "We had an error:\n"
 "\n"
 "The captcha entered is wrong"
 msgstr ""
 
-#: ../gui/registration.go:150
+#: ../gui/registration.go:153
 msgid ""
 "We had an error:\n"
 "\n"
 "The server received too many requests to create an account at the same time."
 msgstr ""
 
-#: ../gui/registration.go:240
+#: ../gui/registration.go:252
 msgid ""
 "Connecting to server for registration... \n"
 "\n"
 "This might take a while."
 msgstr ""
 
-#: ../gui/registration.go:264
+#: ../gui/registration.go:279
 msgid "We had an error when trying to store your account information."
 msgstr ""
 
-#: ../gui/registration.go:273
+#: ../gui/registration.go:288
 #, python-format
 msgid "<b>%s</b> successfully created."
 msgstr ""

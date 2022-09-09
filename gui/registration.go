@@ -68,6 +68,7 @@ func (f *registrationForm) addFields(fields []interface{}) {
 	f.fields = buildWidgetsForFields(fields)
 }
 
+// renderForm will NOT be executed in the UI thread
 func (f *registrationForm) renderForm(title string, fields []interface{}) error {
 	doInUIThread(func() {
 		f.addFields(fields)
@@ -89,6 +90,7 @@ func (f *registrationForm) renderForm(title string, fields []interface{}) error 
 	return nil
 }
 
+// requestAndRenderRegistrationForm will not be run in the UI thread
 func requestAndRenderRegistrationForm(server string, formHandler data.FormCallback, df interfaces.DialerFactory, verifier tls.Verifier, c *config.ApplicationConfig) error {
 	_, xmppLog, _ := session.CreateXMPPLogger(c.RawLogFile)
 	ll := log.StandardLogger().WithFields(log.Fields{
@@ -125,12 +127,13 @@ func (w *serverSelectionWindow) renderConnectionErrorFor(err error) {
 	setImageFromFile(w.formImage, "failure.svg")
 
 	switch err {
-
 	case ourNet.ErrTimeout:
 		renderError(w.formMessage, i18n.Local("We had an error:\n\nTimeout."), "Error when trying to get registration form", err, w.u)
 	case config.ErrTorNotRunning:
 		renderError(w.formMessage, i18n.Local("The registration process currently requires Tor in order to ensure your safety.\n\n"+
 			"You don't have Tor running. Please, start it.\n\n"), "We had an error when trying to register your account: Tor is not running.", err, w.u)
+	case xmpp.ErrInbandRegistrationNotSupported:
+		renderError(w.formMessage, i18n.Local("The chosen server does not support in-band registration.\n\nEither choose another server, or go to the website for the server to register."), "We had an error when trying to register your account: Registration is not supported.", err, w.u)
 	default:
 		renderError(w.formMessage, i18n.Local("Could not contact the server.\n\nPlease, correct your server choice and try again."), "Error when trying to get registration form", err, w.u)
 	}
@@ -201,37 +204,46 @@ func (w *serverSelectionWindow) initialPage() {
 	w.grid.Hide()
 }
 
+// renderForm will not be run in the UI thread. It returns a function that will not be run in the UI thread
 func (w *serverSelectionWindow) renderForm(pg gtki.Widget) func(string, string, []interface{}) error {
 	return func(title, instructions string, fields []interface{}) error {
-		w.spinner.Stop()
-		w.formMessage.SetLabel("")
-		w.doneMessage.SetLabel("")
+		doInUIThread(func() {
+			w.spinner.Stop()
+			w.formMessage.SetLabel("")
+			w.doneMessage.SetLabel("")
 
-		_ = w.form.renderForm(title, fields)
-		w.assistant.SetPageComplete(pg, true)
+			_ = w.form.renderForm(title, fields)
+			w.assistant.SetPageComplete(pg, true)
+		})
 
 		return <-w.formSubmitted
 	}
 }
 
+// doRendering will NOT be run in the UI thread
 func (w *serverSelectionWindow) doRendering(pg gtki.Widget) {
 	err := requestAndRenderRegistrationForm(w.form.server, w.renderForm(pg), w.u.dialerFactory, w.u.unassociatedVerifier(), w.u.config())
 	if err != nil {
 		w.u.hasLog.log.WithError(err).Debug("error while rendering registration form")
-		// TODO: refactor me!
-		if err == config.ErrTorNotRunning || err == xmppErr.ErrAuthenticationFailed || err == xmpp.ErrRegistrationFailed || err == ourNet.ErrTimeout {
-			w.assistant.SetPageType(pg, gtki.ASSISTANT_PAGE_SUMMARY)
-			w.assistant.SetPageComplete(pg, true)
-			w.renderConnectionErrorFor(err)
+		switch err {
+		case config.ErrTorNotRunning, xmppErr.ErrAuthenticationFailed, xmpp.ErrRegistrationFailed, xmpp.ErrInbandRegistrationNotSupported, ourNet.ErrTimeout:
+			doInUIThread(func() {
+				w.assistant.SetPageType(pg, gtki.ASSISTANT_PAGE_SUMMARY)
+				w.assistant.SetPageComplete(pg, true)
+				w.renderConnectionErrorFor(err)
+			})
 			return
 		}
 	}
 
-	go w.assistant.SetCurrentPage(2)
+	doInUIThread(func() {
+		w.assistant.SetCurrentPage(2)
+	})
 
 	w.done <- err
 }
 
+// serverChosenPage has to run inside of the UI thread
 func (w *serverSelectionWindow) serverChosenPage(pg gtki.Widget) {
 	w.serverBox.SetSensitive(false)
 	w.form.server = w.serverBox.GetActiveText()
@@ -243,36 +255,42 @@ func (w *serverSelectionWindow) serverChosenPage(pg gtki.Widget) {
 	go w.doRendering(pg)
 }
 
+// formSubmittedPage has to run in the UI thread
 func (w *serverSelectionWindow) formSubmittedPage() {
 	w.grid.Show()
 	w.formSubmitted <- w.form.accepted()
 
-	err := <-w.done
-	w.spinner.Stop()
+	go func() {
+		err := <-w.done
+		doInUIThread(func() {
+			w.spinner.Stop()
 
-	if err != nil {
-		w.u.hasLog.log.WithError(err).Debug("error for submitted page")
-		w.renderErrorFor(err)
-		return
-	}
+			if err != nil {
+				w.u.hasLog.log.WithError(err).Debug("error for submitted page")
+				w.renderErrorFor(err)
+				return
+			}
 
-	// Save the account
-	err = w.u.addAndSaveAccountConfig(w.form.conf)
+			// Save the account
+			err = w.u.addAndSaveAccountConfig(w.form.conf)
 
-	if err != nil {
-		w.u.hasLog.log.WithError(err).Debug("error when adding or saving account config")
-		renderError(w.doneMessage, i18n.Local("We had an error when trying to store your account information."), "We had an error when trying to store your account information. Please, try again.", err, w.u)
-		return
-	}
+			if err != nil {
+				w.u.hasLog.log.WithError(err).Debug("error when adding or saving account config")
+				renderError(w.doneMessage, i18n.Local("We had an error when trying to store your account information."), "We had an error when trying to store your account information. Please, try again.", err, w.u)
+				return
+			}
 
-	if acc, ok := w.u.getAccountByID(w.form.conf.ID()); ok {
-		acc.Connect()
-	}
+			if acc, ok := w.u.getAccountByID(w.form.conf.ID()); ok {
+				acc.Connect()
+			}
 
-	setImageFromFile(w.doneImage, "success.svg")
-	w.doneMessage.SetMarkup(i18n.Localf("<b>%s</b> successfully created.", w.form.conf.Account))
+			setImageFromFile(w.doneImage, "success.svg")
+			w.doneMessage.SetMarkup(i18n.Localf("<b>%s</b> successfully created.", w.form.conf.Account))
+		})
+	}()
 }
 
+// onPageChange must be called from the UI thread
 func (w *serverSelectionWindow) onPageChange(_ gtki.Assistant, pg gtki.Widget) {
 	switch w.assistant.GetCurrentPage() {
 	case 0:

@@ -6,7 +6,7 @@ import "encoding/xml"
 // argument is a list of pointers to FormField types. The function should type
 // cast the elements, prompt the user and fill in the result field in each
 // struct.
-type FormCallback func(title, instructions string, fields []interface{}) error
+type FormCallback func(title, instructions string, fields []interface{}, link *OobLink, hasForm bool) error
 
 // Form contains the definition for a data submission
 type Form struct {

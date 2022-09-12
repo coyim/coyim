@@ -19,9 +19,10 @@ import (
 type registrationForm struct {
 	grid gtki.Grid
 
-	server string
-	conf   *config.Account
-	fields []formField
+	server  string
+	conf    *config.Account
+	fields  []formField
+	hasForm bool
 
 	l withLog
 }
@@ -68,26 +69,64 @@ func (f *registrationForm) addFields(fields []interface{}) {
 	f.fields = buildWidgetsForFields(fields)
 }
 
-// renderForm will NOT be executed in the UI thread
-func (f *registrationForm) renderForm(title string, fields []interface{}) error {
-	doInUIThread(func() {
-		f.addFields(fields)
+func (f *registrationForm) addWideFormRow(el gtki.Widget, class string, i int) int {
+	addClassStyle(class, el)
+	f.grid.Attach(el, 0, i+1, 3, 1)
+	return i + 1
+}
 
+func (f *registrationForm) addPotentialTitle(t string, i int) int {
+	if t != "" {
+		l, _ := g.gtk.LabelNew(t)
+		l.SetSelectable(true)
+		return f.addWideFormRow(l, "formTitle", i)
+	}
+	return i
+}
+
+func (f *registrationForm) addPotentialInstructions(t string, i int) int {
+	if t != "" {
+		l, _ := g.gtk.LabelNew(t)
+		l.SetSelectable(true)
+		return f.addWideFormRow(l, "formInstructions", i)
+	}
+	return i
+}
+
+// renderForm will NOT be executed in the UI thread
+func (f *registrationForm) renderForm(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) {
+	doInUIThread(func() {
 		var i int
-		for _, field := range f.fields {
-			f.grid.Attach(field.label, 0, i+1, 1, 1)
-			f.grid.Attach(field.widget, 1, i+1, 1, 1)
-			f.grid.Attach(field.required, 2, i+1, 1, 1)
-			i++
+
+		i = f.addPotentialTitle(title, i)
+		i = f.addPotentialInstructions(instructions, i)
+
+		if link != nil {
+			if !hasForm && instructions == "" {
+				i = f.addPotentialInstructions(i18n.Local("To create an account, copy this link into a browser window and follow the instructions."), i)
+			}
+
+			l, _ := g.gtk.LabelNew(link.URL)
+			l.SetSelectable(true)
+			i = f.addWideFormRow(l, "formLink", i)
 		}
 
-		li, _ := g.gtk.LabelNew(i18n.Local("* The field is required."))
-		f.grid.Attach(li, 0, i+1, 1, i+1)
+		if hasForm {
+			f.addFields(fields)
+
+			for _, field := range f.fields {
+				f.grid.Attach(field.label, 0, i+1, 1, 1)
+				f.grid.Attach(field.widget, 1, i+1, 1, 1)
+				f.grid.Attach(field.required, 2, i+1, 1, 1)
+				i++
+			}
+
+			li, _ := g.gtk.LabelNew(i18n.Local("* The field is required."))
+			f.grid.Attach(li, 0, i+1, 1, i+1)
+		}
 
 		f.grid.ShowAll()
 	})
-
-	return nil
 }
 
 // requestAndRenderRegistrationForm will not be run in the UI thread
@@ -119,7 +158,7 @@ func requestAndRenderRegistrationForm(server string, formHandler data.FormCallba
 
 func renderError(message gtki.Label, errorMessage, logMessage string, err error, l withLog) {
 	l.Log().WithError(err).Warn(logMessage)
-	message.SetLabel(errorMessage)
+	message.SetText(errorMessage)
 }
 
 func (w *serverSelectionWindow) renderConnectionErrorFor(err error) {
@@ -205,18 +244,23 @@ func (w *serverSelectionWindow) initialPage() {
 }
 
 // renderForm will not be run in the UI thread. It returns a function that will not be run in the UI thread
-func (w *serverSelectionWindow) renderForm(pg gtki.Widget) func(string, string, []interface{}) error {
-	return func(title, instructions string, fields []interface{}) error {
+func (w *serverSelectionWindow) renderForm(pg gtki.Widget) data.FormCallback {
+	return func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 		doInUIThread(func() {
 			w.spinner.Stop()
-			w.formMessage.SetLabel("")
-			w.doneMessage.SetLabel("")
+			w.formMessage.SetText("")
+			w.doneMessage.SetText("")
 
-			_ = w.form.renderForm(title, fields)
+			w.form.renderForm(title, instructions, fields, link, hasForm)
 			w.assistant.SetPageComplete(pg, true)
 		})
 
-		return <-w.formSubmitted
+		w.form.hasForm = hasForm
+
+		if hasForm {
+			return <-w.formSubmitted
+		}
+		return nil
 	}
 }
 
@@ -236,11 +280,16 @@ func (w *serverSelectionWindow) doRendering(pg gtki.Widget) {
 		}
 	}
 
-	doInUIThread(func() {
-		w.assistant.SetCurrentPage(2)
-	})
+	if w.form.hasForm {
+		doInUIThread(func() {
+			w.assistant.SetCurrentPage(2)
+		})
 
-	w.done <- err
+		w.done <- err
+	} else {
+		w.assistant.SetPageType(pg, gtki.ASSISTANT_PAGE_SUMMARY)
+		w.assistant.SetPageComplete(pg, true)
+	}
 }
 
 // serverChosenPage has to run inside of the UI thread
@@ -249,7 +298,7 @@ func (w *serverSelectionWindow) serverChosenPage(pg gtki.Widget) {
 	w.form.server = w.serverBox.GetActiveText()
 	w.spinner.Start()
 
-	w.formMessage.SetLabel(i18n.Local("Connecting to server for registration... \n\n" +
+	w.formMessage.SetText(i18n.Local("Connecting to server for registration... \n\n" +
 		"This might take a while."))
 
 	go w.doRendering(pg)
@@ -258,36 +307,38 @@ func (w *serverSelectionWindow) serverChosenPage(pg gtki.Widget) {
 // formSubmittedPage has to run in the UI thread
 func (w *serverSelectionWindow) formSubmittedPage() {
 	w.grid.Show()
-	w.formSubmitted <- w.form.accepted()
+	if w.form.hasForm {
+		w.formSubmitted <- w.form.accepted()
 
-	go func() {
-		err := <-w.done
-		doInUIThread(func() {
-			w.spinner.Stop()
+		go func() {
+			err := <-w.done
+			doInUIThread(func() {
+				w.spinner.Stop()
 
-			if err != nil {
-				w.u.hasLog.log.WithError(err).Debug("error for submitted page")
-				w.renderErrorFor(err)
-				return
-			}
+				if err != nil {
+					w.u.hasLog.log.WithError(err).Debug("error for submitted page")
+					w.renderErrorFor(err)
+					return
+				}
 
-			// Save the account
-			err = w.u.addAndSaveAccountConfig(w.form.conf)
+				// Save the account
+				err = w.u.addAndSaveAccountConfig(w.form.conf)
 
-			if err != nil {
-				w.u.hasLog.log.WithError(err).Debug("error when adding or saving account config")
-				renderError(w.doneMessage, i18n.Local("We had an error when trying to store your account information."), "We had an error when trying to store your account information. Please, try again.", err, w.u)
-				return
-			}
+				if err != nil {
+					w.u.hasLog.log.WithError(err).Debug("error when adding or saving account config")
+					renderError(w.doneMessage, i18n.Local("We had an error when trying to store your account information."), "We had an error when trying to store your account information. Please, try again.", err, w.u)
+					return
+				}
 
-			if acc, ok := w.u.getAccountByID(w.form.conf.ID()); ok {
-				acc.Connect()
-			}
+				setImageFromFile(w.doneImage, "success.svg")
+				w.doneMessage.SetMarkup(i18n.Localf("<b>%s</b> successfully created.", w.form.conf.Account))
 
-			setImageFromFile(w.doneImage, "success.svg")
-			w.doneMessage.SetMarkup(i18n.Localf("<b>%s</b> successfully created.", w.form.conf.Account))
-		})
-	}()
+				if acc, ok := w.u.getAccountByID(w.form.conf.ID()); ok {
+					acc.Connect()
+				}
+			})
+		}()
+	}
 }
 
 // onPageChange must be called from the UI thread

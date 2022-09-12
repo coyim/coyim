@@ -205,10 +205,17 @@ func toFormFieldX(field interface{}) *data.FormFieldX {
 	}
 }
 
+func nonEmptyString(s1, s2 string) string {
+	if s1 != "" {
+		return s1
+	}
+	return s2
+}
+
 // processForm calls the callback with the given XMPP form and returns the
 // result form. The datas argument contains any additional XEP-0231 blobs that
 // might contain media for the questions in the form.
-func processForm(form *data.Form, datas []data.BobData, callback data.FormCallback) (*data.Form, error) {
+func processForm(form *data.Form, datas []data.BobData, instructions string, link *data.OobLink, callback data.FormCallback) (*data.Form, error) {
 	fields := make([]interface{}, 0, len(form.Fields))
 	result := &data.Form{
 		Type: "submit",
@@ -233,7 +240,7 @@ func processForm(form *data.Form, datas []data.BobData, callback data.FormCallba
 		}
 	}
 
-	if err := callback(form.Title, form.Instructions, fields); err != nil {
+	if err := callback(form.Title, nonEmptyString(instructions, form.Instructions), fields, link, true); err != nil {
 		return nil, err
 	}
 

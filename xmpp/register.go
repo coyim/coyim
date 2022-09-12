@@ -95,7 +95,7 @@ func (c *conn) createAccount(user, password string) error {
 
 	if len(register.Form.Type) > 0 {
 		c.log.Debug("createAccount() - processing form")
-		reply, err := processForm(&register.Form, register.Datas, c.config.CreateCallback)
+		reply, err := processForm(&register.Form, register.Datas, register.Instructions, register.Link, c.config.CreateCallback)
 		if err != nil {
 			c.log.WithError(err).Debug("createAccount() - couldn't process form")
 			return err
@@ -110,12 +110,15 @@ func (c *conn) createAccount(user, password string) error {
 		fmt.Fprintf(c.rawOut, "</query></iq>")
 		c.log.Debug("createAccount() - have sent the IQ with registration information")
 	} else if register.Username != nil && register.Password != nil {
-		//TODO: make sure this only happens via SSL
 		//TODO: should generate form asking for username and password,
 		//and call processForm for consistency
 
 		// Try the old-style registration.
 		fmt.Fprintf(c.rawOut, "<iq type='set' id='create_2'><query xmlns='jabber:iq:register'><username>%s</username><password>%s</password></query></iq>", user, password)
+	} else {
+		c.log.Debug("createAccount() - no form given")
+		c.config.CreateCallback("", register.Instructions, nil, register.Link, false)
+		return nil
 	}
 
 	iq2 := &data.ClientIQ{}

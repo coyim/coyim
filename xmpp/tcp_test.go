@@ -211,8 +211,6 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingFails(c *C) {
 	c.Check(p, MatchesExpectations)
 }
 
-// TODO: this test takes 10 seconds for me, for some reason
-
 func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingSucceedsButConnectionFails(c *C) {
 	dec, _ := hex.DecodeString("00511eea818000010001000000000c5f786d70702d636c69656e74045f746370076f6c6162696e690273650000210001c00c0021000100000258001700000005146604786d7070076f6c6162696e6902736500")
 
@@ -228,14 +226,14 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingSucceedsButConnectionFail
 		c.Check(network, Equals, "tcp")
 		c.Check(addr, Equals, "208.67.222.222:53")
 
-		return fakeTCPConnToDNS(dec)
+		return fakeTCPConnToDNS(dec, 49)
 	})
 
 	p.Expects(func(network, addr string) (net.Conn, error) {
 		c.Check(network, Equals, "tcp")
 		c.Check(addr, Equals, "208.67.222.222:53")
 
-		return fakeTCPConnToDNS(dec)
+		return fakeTCPConnToDNS(dec, 48)
 	})
 
 	p.Expects(func(network, addr string) (net.Conn, error) {
@@ -246,6 +244,7 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingSucceedsButConnectionFail
 	})
 
 	_, _, err := d.newTCPConn()
+
 	c.Check(p.called, Equals, 3)
 	c.Check(err, Equals, errors.ErrConnectionFailed)
 	c.Check(p, MatchesExpectations)

@@ -3,7 +3,7 @@ package xmpp
 import (
 	"encoding/hex"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net"
 	"sort"
 	"time"
@@ -17,8 +17,9 @@ var _ = Suite(&DNSXMPPSuite{})
 
 const tcpFakeConnToDNSTimeout = 5 * time.Second
 
-func fakeTCPConnToDNS(answer []byte) (net.Conn, error) {
+func fakeTCPConnToDNS(answer []byte, sizeToRead int) (net.Conn, error) {
 	host := "127.0.0.1"
+	output := make([]byte, sizeToRead)
 	if isTails() {
 		host = getLocalIP()
 	}
@@ -27,8 +28,7 @@ func fakeTCPConnToDNS(answer []byte) (net.Conn, error) {
 	go func() {
 		conn, _ := fakeResolver.Accept()
 
-		conn.SetReadDeadline(time.Now().Add(tcpFakeConnToDNSTimeout))
-		_, _ = ioutil.ReadAll(conn)
+		_, _ = io.ReadAtLeast(conn, output, sizeToRead)
 		_, _ = conn.Write(answer)
 
 		_ = conn.Close()
@@ -36,8 +36,6 @@ func fakeTCPConnToDNS(answer []byte) (net.Conn, error) {
 
 	return net.Dial("tcp", fakeResolver.Addr().String())
 }
-
-// TODO: this test takes a long time, for some reason
 
 func (s *DNSXMPPSuite) Test_resolve_resolvesCorrectly(c *C) {
 	dec, _ := hex.DecodeString("00511eea818000010001000000000c5f786d70702d636c69656e74045f746370076f6c6162696e690273650000210001c00c0021000100000258001700000005146604786d7070076f6c6162696e6902736500")
@@ -47,13 +45,13 @@ func (s *DNSXMPPSuite) Test_resolve_resolvesCorrectly(c *C) {
 		c.Check(network, Equals, "tcp")
 		c.Check(addr, Equals, "208.67.222.222:53")
 
-		return fakeTCPConnToDNS(dec)
+		return fakeTCPConnToDNS(dec, 49)
 	})
 	p.Expects(func(network, addr string) (net.Conn, error) {
 		c.Check(network, Equals, "tcp")
 		c.Check(addr, Equals, "208.67.222.222:53")
 
-		return fakeTCPConnToDNS(dec)
+		return fakeTCPConnToDNS(dec, 48)
 	})
 
 	hostport, err := resolveSRVWithProxy(p, "olabini.se")

@@ -627,7 +627,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsIfDecodingFallbackFails(c *C) {
 		password: "pass",
 		config: data.Config{
 			SkipTLS: true,
-			CreateCallback: func(title, instructions string, fields []interface{}) error {
+			CreateCallback: func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 				return nil
 			},
 		},
@@ -663,7 +663,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsIfAccountCreationFails(c *C) {
 		password: "pass",
 		config: data.Config{
 			SkipTLS: true,
-			CreateCallback: func(title, instructions string, fields []interface{}) error {
+			CreateCallback: func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 				return nil
 			},
 		},
@@ -699,7 +699,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsIfTheIQQueryHasNoContent(c *C) {
 		password: "pass",
 		config: data.Config{
 			SkipTLS: true,
-			CreateCallback: func(title, instructions string, fields []interface{}) error {
+			CreateCallback: func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 				return nil
 			},
 		},
@@ -737,7 +737,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_ifRegisterQueryDoesntContainDataFailsAtN
 		password: "pass",
 		config: data.Config{
 			SkipTLS: true,
-			CreateCallback: func(title, instructions string, fields []interface{}) error {
+			CreateCallback: func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 				return nil
 			},
 		},
@@ -746,11 +746,11 @@ func (s *ConnectionXMPPSuite) Test_Dial_ifRegisterQueryDoesntContainDataFailsAtN
 	}
 	_, err := d.setupStream(conn)
 
-	c.Assert(err.Error(), Matches, "unmarshal <iq>:( XML syntax error on line 1: unexpected)? EOF")
+	c.Assert(err, IsNil)
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
 		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+
-		"<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq>",
+		"<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq></stream:stream>",
 	)
 }
 
@@ -765,7 +765,17 @@ func (s *ConnectionXMPPSuite) Test_Dial_afterRegisterFailsIfReceivesAnErrorEleme
 			"<register xmlns='http://jabber.org/features/iq-register'/>" +
 			"</str:features>" +
 			"<iq xmlns='jabber:client' type='result'>" +
-			"<query xmlns='jabber:iq:register'></query>" +
+			"<query xmlns='jabber:iq:register'>" +
+			"<x xmlns='jabber:x:data' type='form'>" +
+			"<title>Contest Registration</title>" +
+			"<field type='hidden' var='FORM_TYPE'>" +
+			"<value>jabber:iq:register</value>" +
+			"</field>" +
+			"<field type='text-single' label='Given Name' var='first'>" +
+			"<required/>" +
+			"</field>" +
+			"</x>" +
+			"</query>" +
 			"</iq>" +
 			"<iq xmlns='jabber:client' type='error'></iq>",
 	)}
@@ -776,7 +786,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_afterRegisterFailsIfReceivesAnErrorEleme
 		password: "pass",
 		config: data.Config{
 			SkipTLS: true,
-			CreateCallback: func(title, instructions string, fields []interface{}) error {
+			CreateCallback: func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 				return nil
 			},
 		},
@@ -789,7 +799,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_afterRegisterFailsIfReceivesAnErrorEleme
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
 		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+
-		"<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq>",
+		"<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq><iq type='set' id='create_2'><query xmlns='jabber:iq:register'><x xmlns=\"jabber:x:data\" type=\"submit\"><field var=\"FORM_TYPE\"><value>jabber:iq:register</value></field><field var=\"first\"><value></value></field></x></query></iq>",
 	)
 }
 
@@ -815,7 +825,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_sendsBackUsernameAndPassword(c *C) {
 		password: "pass",
 		config: data.Config{
 			SkipTLS: true,
-			CreateCallback: func(title, instructions string, fields []interface{}) error {
+			CreateCallback: func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 				return nil
 			},
 		},
@@ -866,7 +876,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_runsForm(c *C) {
 		password: "pass",
 		config: data.Config{
 			SkipTLS: true,
-			CreateCallback: func(title, instructions string, fields []interface{}) error {
+			CreateCallback: func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 				return nil
 			},
 		},
@@ -906,7 +916,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_setsLog(c *C) {
 		config: data.Config{
 			SkipTLS: true,
 			Log:     l,
-			CreateCallback: func(title, instructions string, fields []interface{}) error {
+			CreateCallback: func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 				return nil
 			},
 		},

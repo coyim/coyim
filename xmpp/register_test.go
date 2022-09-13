@@ -74,7 +74,7 @@ func (s *RegisterSuite) Test_setupStream_registerWithoutAuthenticating(c *C) {
 		password: "pass",
 		config: data.Config{
 			SkipTLS: true,
-			CreateCallback: func(title, instructions string, fields []interface{}) error {
+			CreateCallback: func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 				return nil
 			},
 		},
@@ -113,6 +113,15 @@ func (s *RegisterSuite) Test_conn_createAccount_getsErrorAsFinalResult_conflict(
 	mockIn := &mockConnIOReaderWriter{read: []byte(`
 <iq xmlns="jabber:client" type="result">
   <query xmlns="jabber:iq:register">
+    <x xmlns='jabber:x:data' type='form'>
+      <title>Contest Registration</title>
+      <field type='hidden' var='FORM_TYPE'>
+        <value>jabber:iq:register</value>
+      </field>
+      <field type='text-single' label='Given Name' var='first'>
+        <required/>
+      </field>
+    </x>
   </query>
 </iq>
 <iq xmlns="jabber:client" type="error">
@@ -127,18 +136,28 @@ func (s *RegisterSuite) Test_conn_createAccount_getsErrorAsFinalResult_conflict(
 		log:    l,
 		in:     xml.NewDecoder(mockIn),
 		out:    mockOut,
+		rawOut: mockOut,
 		jid:    "crone1@shakespeare.lit",
-		config: data.Config{},
+		config: data.Config{
+			SkipTLS: true,
+			CreateCallback: func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
+				return nil
+			},
+		},
 	}
 
 	res := cn.createAccount("hello", "goodbye")
 
 	c.Assert(res, Equals, ErrUsernameConflict)
-	c.Assert(len(hook.Entries), Equals, 2)
+	c.Assert(len(hook.Entries), Equals, 4)
 	c.Assert(hook.Entries[0].Level, Equals, log.DebugLevel)
 	c.Assert(hook.Entries[0].Message, Equals, "Attempting to create account")
 	c.Assert(hook.Entries[1].Level, Equals, log.DebugLevel)
 	c.Assert(hook.Entries[1].Message, Equals, "createAccount() - received the registration form")
+	c.Assert(hook.Entries[2].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[2].Message, Equals, "createAccount() - processing form")
+	c.Assert(hook.Entries[3].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[3].Message, Equals, "createAccount() - have sent the IQ with registration information")
 }
 
 func (s *RegisterSuite) Test_conn_createAccount_getsErrorAsFinalResult_notAcceptable(c *C) {
@@ -148,6 +167,15 @@ func (s *RegisterSuite) Test_conn_createAccount_getsErrorAsFinalResult_notAccept
 	mockIn := &mockConnIOReaderWriter{read: []byte(`
 <iq xmlns="jabber:client" type="result">
   <query xmlns="jabber:iq:register">
+    <x xmlns='jabber:x:data' type='form'>
+      <title>Contest Registration</title>
+      <field type='hidden' var='FORM_TYPE'>
+        <value>jabber:iq:register</value>
+      </field>
+      <field type='text-single' label='Given Name' var='first'>
+        <required/>
+      </field>
+    </x>
   </query>
 </iq>
 <iq xmlns="jabber:client" type="error">
@@ -162,18 +190,28 @@ func (s *RegisterSuite) Test_conn_createAccount_getsErrorAsFinalResult_notAccept
 		log:    l,
 		in:     xml.NewDecoder(mockIn),
 		out:    mockOut,
+		rawOut: mockOut,
 		jid:    "crone1@shakespeare.lit",
-		config: data.Config{},
+		config: data.Config{
+			SkipTLS: true,
+			CreateCallback: func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
+				return nil
+			},
+		},
 	}
 
 	res := cn.createAccount("hello", "goodbye")
 
 	c.Assert(res, Equals, ErrMissingRequiredRegistrationInfo)
-	c.Assert(len(hook.Entries), Equals, 2)
+	c.Assert(len(hook.Entries), Equals, 4)
 	c.Assert(hook.Entries[0].Level, Equals, log.DebugLevel)
 	c.Assert(hook.Entries[0].Message, Equals, "Attempting to create account")
 	c.Assert(hook.Entries[1].Level, Equals, log.DebugLevel)
 	c.Assert(hook.Entries[1].Message, Equals, "createAccount() - received the registration form")
+	c.Assert(hook.Entries[2].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[2].Message, Equals, "createAccount() - processing form")
+	c.Assert(hook.Entries[3].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[3].Message, Equals, "createAccount() - have sent the IQ with registration information")
 }
 
 func (s *RegisterSuite) Test_conn_createAccount_getsErrorAsFinalResult_notAllowed(c *C) {
@@ -183,6 +221,15 @@ func (s *RegisterSuite) Test_conn_createAccount_getsErrorAsFinalResult_notAllowe
 	mockIn := &mockConnIOReaderWriter{read: []byte(`
 <iq xmlns="jabber:client" type="result">
   <query xmlns="jabber:iq:register">
+    <x xmlns='jabber:x:data' type='form'>
+      <title>Contest Registration</title>
+      <field type='hidden' var='FORM_TYPE'>
+        <value>jabber:iq:register</value>
+      </field>
+      <field type='text-single' label='Given Name' var='first'>
+        <required/>
+      </field>
+    </x>
   </query>
 </iq>
 <iq xmlns="jabber:client" type="error">
@@ -197,18 +244,28 @@ func (s *RegisterSuite) Test_conn_createAccount_getsErrorAsFinalResult_notAllowe
 		log:    l,
 		in:     xml.NewDecoder(mockIn),
 		out:    mockOut,
+		rawOut: mockOut,
 		jid:    "crone1@shakespeare.lit",
-		config: data.Config{},
+		config: data.Config{
+			SkipTLS: true,
+			CreateCallback: func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
+				return nil
+			},
+		},
 	}
 
 	res := cn.createAccount("hello", "goodbye")
 
 	c.Assert(res, Equals, ErrWrongCaptcha)
-	c.Assert(len(hook.Entries), Equals, 2)
+	c.Assert(len(hook.Entries), Equals, 4)
 	c.Assert(hook.Entries[0].Level, Equals, log.DebugLevel)
 	c.Assert(hook.Entries[0].Message, Equals, "Attempting to create account")
 	c.Assert(hook.Entries[1].Level, Equals, log.DebugLevel)
 	c.Assert(hook.Entries[1].Message, Equals, "createAccount() - received the registration form")
+	c.Assert(hook.Entries[2].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[2].Message, Equals, "createAccount() - processing form")
+	c.Assert(hook.Entries[3].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[3].Message, Equals, "createAccount() - have sent the IQ with registration information")
 }
 
 func (s *RegisterSuite) Test_conn_createAccount_getsErrorAsFinalResult_badRequest(c *C) {
@@ -218,6 +275,15 @@ func (s *RegisterSuite) Test_conn_createAccount_getsErrorAsFinalResult_badReques
 	mockIn := &mockConnIOReaderWriter{read: []byte(`
 <iq xmlns="jabber:client" type="result">
   <query xmlns="jabber:iq:register">
+    <x xmlns='jabber:x:data' type='form'>
+      <title>Contest Registration</title>
+      <field type='hidden' var='FORM_TYPE'>
+        <value>jabber:iq:register</value>
+      </field>
+      <field type='text-single' label='Given Name' var='first'>
+        <required/>
+      </field>
+    </x>
   </query>
 </iq>
 <iq xmlns="jabber:client" type="error">
@@ -232,14 +298,19 @@ func (s *RegisterSuite) Test_conn_createAccount_getsErrorAsFinalResult_badReques
 		log:    l,
 		in:     xml.NewDecoder(mockIn),
 		out:    mockOut,
+		rawOut: mockOut,
 		jid:    "crone1@shakespeare.lit",
-		config: data.Config{},
+		config: data.Config{
+			CreateCallback: func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
+				return nil
+			},
+		},
 	}
 
 	res := cn.createAccount("hello", "goodbye")
 
 	c.Assert(res, Equals, ErrRegistrationFailed)
-	c.Assert(len(hook.Entries), Equals, 2)
+	c.Assert(len(hook.Entries), Equals, 4)
 	c.Assert(hook.Entries[0].Level, Equals, log.DebugLevel)
 	c.Assert(hook.Entries[0].Message, Equals, "Attempting to create account")
 	c.Assert(hook.Entries[1].Level, Equals, log.DebugLevel)
@@ -253,6 +324,15 @@ func (s *RegisterSuite) Test_conn_createAccount_getsErrorAsFinalResult_resourceC
 	mockIn := &mockConnIOReaderWriter{read: []byte(`
 <iq xmlns="jabber:client" type="result">
   <query xmlns="jabber:iq:register">
+    <x xmlns='jabber:x:data' type='form'>
+      <title>Contest Registration</title>
+      <field type='hidden' var='FORM_TYPE'>
+        <value>jabber:iq:register</value>
+      </field>
+      <field type='text-single' label='Given Name' var='first'>
+        <required/>
+      </field>
+    </x>
   </query>
 </iq>
 <iq xmlns="jabber:client" type="error">
@@ -267,18 +347,28 @@ func (s *RegisterSuite) Test_conn_createAccount_getsErrorAsFinalResult_resourceC
 		log:    l,
 		in:     xml.NewDecoder(mockIn),
 		out:    mockOut,
+		rawOut: mockOut,
 		jid:    "crone1@shakespeare.lit",
-		config: data.Config{},
+		config: data.Config{
+			SkipTLS: true,
+			CreateCallback: func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
+				return nil
+			},
+		},
 	}
 
 	res := cn.createAccount("hello", "goodbye")
 
 	c.Assert(res, Equals, ErrResourceConstraint)
-	c.Assert(len(hook.Entries), Equals, 2)
+	c.Assert(len(hook.Entries), Equals, 4)
 	c.Assert(hook.Entries[0].Level, Equals, log.DebugLevel)
 	c.Assert(hook.Entries[0].Message, Equals, "Attempting to create account")
 	c.Assert(hook.Entries[1].Level, Equals, log.DebugLevel)
 	c.Assert(hook.Entries[1].Message, Equals, "createAccount() - received the registration form")
+	c.Assert(hook.Entries[2].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[2].Message, Equals, "createAccount() - processing form")
+	c.Assert(hook.Entries[3].Level, Equals, log.DebugLevel)
+	c.Assert(hook.Entries[3].Message, Equals, "createAccount() - have sent the IQ with registration information")
 }
 
 func (s *RegisterSuite) Test_conn_ChangePassword(c *C) {
@@ -717,7 +807,7 @@ func (s *RegisterSuite) Test_conn_createAccount_failsProcessingForm(c *C) {
 		out: mockOut,
 		jid: "crone1@shakespeare.lit",
 		config: data.Config{
-			CreateCallback: func(string, string, []interface{}) error {
+			CreateCallback: func(string, string, []interface{}, *data.OobLink, bool) error {
 				return errors.New("couldn't create form")
 			},
 		},
@@ -757,7 +847,7 @@ func (s *RegisterSuite) Test_conn_createAccount_failsOnWritingToRawOut(c *C) {
 		rawOut: mockOut,
 		jid:    "crone1@shakespeare.lit",
 		config: data.Config{
-			CreateCallback: func(string, string, []interface{}) error {
+			CreateCallback: func(string, string, []interface{}, *data.OobLink, bool) error {
 				return nil
 			},
 		},

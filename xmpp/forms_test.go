@@ -17,7 +17,7 @@ var _ = Suite(&FormsXMPPSuite{})
 func (s *FormsXMPPSuite) Test_processForm_returnsErrorFromCallback(c *C) {
 	e := errors.New("some kind of error")
 	f := &data.Form{}
-	_, err := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
+	_, err := processForm(f, nil, "", nil, func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 		c.Assert(len(fields), Equals, 0)
 		return e
 	})
@@ -27,7 +27,7 @@ func (s *FormsXMPPSuite) Test_processForm_returnsErrorFromCallback(c *C) {
 
 func (s *FormsXMPPSuite) Test_processForm_returnsEmptySubmitFormForEmptyForm(c *C) {
 	f := &data.Form{}
-	f2, err := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
+	f2, err := processForm(f, nil, "", nil, func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 		c.Assert(len(fields), Equals, 0)
 		return nil
 	})
@@ -52,7 +52,7 @@ func (s *FormsXMPPSuite) Test_processForm_processButDoesNotReturnFixedFields(c *
 			Type:  "fixed",
 		},
 	}
-	f2, err := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
+	f2, err := processForm(f, nil, "", nil, func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 		c.Assert(len(fields), Equals, 1)
 		c.Assert(fields[0], DeepEquals, &data.FixedFormField{
 			FormField: data.FormField{
@@ -80,7 +80,7 @@ func (s *FormsXMPPSuite) Test_processForm_returnsBooleanFields(c *C) {
 			Type:  "boolean",
 		},
 	}
-	f2, err := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
+	f2, err := processForm(f, nil, "", nil, func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 		c.Assert(len(fields), Equals, 1)
 		c.Assert(fields[0], DeepEquals, &data.BooleanFormField{
 			FormField: data.FormField{
@@ -119,7 +119,7 @@ func (s *FormsXMPPSuite) Test_processForm_returnsMultiFields(c *C) {
 			Type:  "text-multi",
 		},
 	}
-	f2, err := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
+	f2, err := processForm(f, nil, "", nil, func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 		c.Assert(len(fields), Equals, 2)
 
 		c.Assert(fields[0], DeepEquals, &data.MultiTextFormField{
@@ -169,7 +169,7 @@ func (s *FormsXMPPSuite) Test_processForm_returnsListSingle(c *C) {
 			Values: []string{"Four"},
 		},
 	}
-	f2, err := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
+	f2, err := processForm(f, nil, "", nil, func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 		c.Assert(len(fields), Equals, 1)
 
 		c.Assert(fields[0], DeepEquals, &data.SelectionFormField{
@@ -214,7 +214,7 @@ func (s *FormsXMPPSuite) Test_processForm_returnsListMulti(c *C) {
 			Values: []string{"Six", "Two"},
 		},
 	}
-	f2, err := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
+	f2, err := processForm(f, nil, "", nil, func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 		c.Assert(len(fields), Equals, 1)
 
 		c.Assert(fields[0], DeepEquals, &data.MultiSelectionFormField{
@@ -251,7 +251,7 @@ func (s *FormsXMPPSuite) Test_processForm_returnsHidden(c *C) {
 			Values: []string{"secret"},
 		},
 	}
-	f2, err := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
+	f2, err := processForm(f, nil, "", nil, func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 		c.Assert(len(fields), Equals, 0)
 		return nil
 	})
@@ -281,7 +281,7 @@ func (s *FormsXMPPSuite) Test_processForm_returnsUnknown(c *C) {
 			Values: []string{"another one"},
 		},
 	}
-	f2, err := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
+	f2, err := processForm(f, nil, "", nil, func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 		c.Assert(len(fields), Equals, 2)
 
 		c.Assert(fields[0], DeepEquals, &data.TextFormField{
@@ -332,7 +332,7 @@ func (s *FormsXMPPSuite) Test_processForm_panicsWhenGivenAWeirdFormType(c *C) {
 		},
 	}
 	c.Assert(func() {
-		_, _ = processForm(f, nil, func(title, instructions string, fields []interface{}) error {
+		_, _ = processForm(f, nil, "", nil, func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 			fields[0] = testOtherFormType{}
 			return nil
 		})
@@ -348,7 +348,7 @@ func (s *FormsXMPPSuite) Test_processForm_setsAValidBooleanReturnValue(c *C) {
 			Type:  "boolean",
 		},
 	}
-	f2, _ := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
+	f2, _ := processForm(f, nil, "", nil, func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 		c.Assert(len(fields), Equals, 1)
 		fields[0].(*data.BooleanFormField).Result = true
 		return nil
@@ -376,7 +376,7 @@ func (s *FormsXMPPSuite) Test_processForm_returnsListMultiWithResults(c *C) {
 			},
 		},
 	}
-	f2, err := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
+	f2, err := processForm(f, nil, "", nil, func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 		c.Assert(len(fields), Equals, 1)
 		fields[0].(*data.MultiSelectionFormField).Results = []int{1}
 		return nil
@@ -455,7 +455,7 @@ func (s *FormsXMPPSuite) Test_processForm_dealsWithMediaCorrectly(c *C) {
 		},
 	}
 
-	f2, err := processForm(f, datas, func(title, instructions string, fields []interface{}) error {
+	f2, err := processForm(f, datas, "", nil, func(title, instructions string, fields []interface{}, link *data.OobLink, hasForm bool) error {
 		//NOTE: hidden fields are not passed to the callback so you can't have access to any media
 		//in hidden fields.
 		c.Assert(len(fields), Equals, 1)

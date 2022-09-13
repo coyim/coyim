@@ -16,7 +16,7 @@ func (s *DialerSuite) Test_DialerMock(c *C) {
 	c.Assert(d.Config(), DeepEquals, data.Config{})
 	_, _ = d.Dial()
 	c.Assert(d.GetServer(), Equals, "")
-	_, _ = d.RegisterAccount(func(string, string, []interface{}) error { return nil })
+	_, _ = d.RegisterAccount(func(string, string, []interface{}, *data.OobLink, bool) error { return nil })
 	c.Assert(d.ServerAddress(), Equals, "")
 	d.SetConfig(data.Config{})
 	d.SetJID("")

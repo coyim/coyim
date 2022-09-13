@@ -180,14 +180,14 @@ func (s *DialerSuite) Test_dialer_RegisterAccount(c *C) {
 	})
 
 	called := false
-	ff := func(string, string, []interface{}) error {
+	ff := func(string, string, []interface{}, *data.OobLink, bool) error {
 		called = true
 		return nil
 	}
 	cn, e := d.RegisterAccount(ff)
 	c.Assert(e, Equals, ErrInbandRegistrationNotSupported)
 	c.Assert(cn, IsNil)
-	_ = d.config.CreateCallback("", "", nil)
+	_ = d.config.CreateCallback("", "", nil, nil, false)
 	c.Assert(called, Equals, true)
 }
 

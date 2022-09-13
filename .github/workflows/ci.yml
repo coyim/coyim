@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        go: [ '1.15', '1.14', '1.13' ]
+        go: [ '1.19', '1.18', '1.17', '1.16', '1.15', '1.14', '1.13' ]
 
     name: Test go-${{ matrix.go }} (Linux)
     steps:
@@ -352,7 +352,7 @@ jobs:
 
           cp -r /mingw64/share/locale/es/LC_MESSAGES/glib*.mo release/share/locale/es/LC_MESSAGES
           cp -r /mingw64/share/locale/es/LC_MESSAGES/gtk*.mo release/share/locale/es/LC_MESSAGES
-          
+
           cp -r /mingw64/share/locale/sv/LC_MESSAGES/glib*.mo release/share/locale/sv/LC_MESSAGES
           cp -r /mingw64/share/locale/sv/LC_MESSAGES/gtk*.mo release/share/locale/sv/LC_MESSAGES
 

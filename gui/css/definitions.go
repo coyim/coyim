@@ -223,6 +223,15 @@ ZXJzYXRpb24tc2VjdXJpdHktd2FybmluZy1mb3JlZ3JvdW5kOwogICAgYm9yZGVyOiAzcHg7Cn0K
 `,
 	},
 
+	"/definitions/coyim.css": {
+		local:   "definitions/coyim.css",
+		size:    56,
+		modtime: 1489449600,
+		compressed: `
+Ci8qIEdsb2JhbCBDU1MgZGVmaW5pdGlvbnMgZm9yIHRoZSBDb3lJTSBhcHBsaWNhdGlvbiAqLwo=
+`,
+	},
+
 	"/definitions/dark/colors.css": {
 		local:   "definitions/dark/colors.css",
 		size:    291,

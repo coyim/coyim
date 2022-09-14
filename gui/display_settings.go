@@ -15,6 +15,7 @@ type displaySettings struct {
 	defaultFontSize uint
 
 	provider             *cssProvider
+	globalProvider       *cssProvider
 	globalColorsProvider *cssProvider
 }
 
@@ -101,9 +102,13 @@ func newDisplaySettings(hl withLog) *displaySettings {
 	ds.provider = newCSSProvider(hl)
 	ds.defaultFontSize = 12
 
+	ds.globalProvider = newCSSProvider(hl)
 	ds.globalColorsProvider = newCSSProvider(hl)
 
 	doInUIThread(func() {
+		ds.globalProvider.load("application definitions", css.Get("coyim.css"))
+		addGlobalProvider(ds.globalProvider.provider)
+
 		// TODO: we need to update loading of color definitions
 		// based on dark or light theme
 		ds.globalColorsProvider.load("color definitions", css.Get("light/colors.css"))

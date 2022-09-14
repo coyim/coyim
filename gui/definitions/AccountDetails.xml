@@ -732,5 +732,8 @@ There are several applications that use the libotr format, such as Pidgin, Adium
         </child>
       </object>
     </child>
+    <style>
+      <class name="coyim"/>
+    </style>
   </object>
 </interface>

@@ -93,5 +93,8 @@
         <property name="page-type">GTK_ASSISTANT_PAGE_SUMMARY</property>
       </packing>
     </child>
+    <style>
+      <class name="coyim"/>
+    </style>
   </object>
 </interface>

@@ -13,5 +13,8 @@
     	<property name="orientation">GTK_ORIENTATION_VERTICAL</property>
       </object>
     </child>
+    <style>
+      <class name="coyim"/>
+    </style>
   </object>
 </interface>

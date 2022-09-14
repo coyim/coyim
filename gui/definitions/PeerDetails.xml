@@ -226,5 +226,8 @@
         </child>
       </object>
     </child>
+    <style>
+      <class name="coyim"/>
+    </style>
   </object>
 </interface>

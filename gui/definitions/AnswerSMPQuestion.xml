@@ -152,5 +152,8 @@
     <action-widgets>
       <action-widget response="ok">button_submit</action-widget>
     </action-widgets>
+    <style>
+      <class name="coyim"/>
+    </style>
   </object>
 </interface>

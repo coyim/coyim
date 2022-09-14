@@ -49,5 +49,8 @@
       <action-widget response="cancel">btn-cancel</action-widget>
       <action-widget response="ok" default="true">btn-ok</action-widget>
     </action-widgets>
+    <style>
+      <class name="coyim"/>
+    </style>
   </object>
 </interface>

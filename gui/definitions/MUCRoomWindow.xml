@@ -88,6 +88,7 @@
     </child>
     <style>
       <class name="muc"/>
+      <class name="coyim"/>
     </style>
   </object>
 </interface>

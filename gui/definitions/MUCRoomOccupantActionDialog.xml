@@ -22,7 +22,7 @@
                 <property name="spacing">12</property>
                 <child>
                   <object class="GtkButtonBox">
-                    <property name="visible">True</property>                    
+                    <property name="visible">True</property>
                     <property name="spacing">12</property>
                     <child>
                       <object class="GtkButton" id="cancel-button">
@@ -225,5 +225,8 @@
         </child>
       </object>
     </child>
+    <style>
+      <class name="coyim"/>
+    </style>
   </object>
 </interface>

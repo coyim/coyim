@@ -251,6 +251,7 @@
     </child>
     <style>
       <class name="warnings-dialog"/>
+      <class name="coyim"/>
     </style>
   </object>
 </interface>

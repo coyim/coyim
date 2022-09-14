@@ -50,5 +50,8 @@
       <action-widget response="cancel">btn-cancel</action-widget>
       <action-widget response="apply" default="true">btn-register</action-widget>
     </action-widgets>
+    <style>
+      <class name="coyim"/>
+    </style>
   </object>
 </interface>

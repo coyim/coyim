@@ -25,5 +25,8 @@
     <action-widgets>
       <action-widget response="ok" default="true">button_ok</action-widget>
     </action-widgets>
+    <style>
+      <class name="coyim"/>
+    </style>
   </object>
 </interface>

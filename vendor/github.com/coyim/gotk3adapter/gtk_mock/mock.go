@@ -27,6 +27,10 @@ func (*Mock) ApplicationNew(appId string, flags glibi.ApplicationFlags) (gtki.Ap
 	return nil, nil
 }
 
+func (*Mock) ApplicationWindowNew(gtki.Application) (gtki.ApplicationWindow, error) {
+	return nil, nil
+}
+
 func (*Mock) AssistantNew() (gtki.Assistant, error) {
 	return nil, nil
 }
@@ -246,4 +250,20 @@ func (*Mock) InfoBarSetRevealed(infobar gtki.InfoBar, setting bool) {
 
 func (*Mock) InfoBarGetRevealed(infobar gtki.InfoBar) bool {
 	return false
+}
+
+func (*Mock) WindowNew(wt gtki.WindowType) (gtki.Window, error) {
+	return nil, nil
+}
+
+func (*Mock) IconThemeNew() (gtki.IconTheme, error) {
+	return nil, nil
+}
+
+func (*Mock) IconThemeGetDefault() gtki.IconTheme {
+	return nil
+}
+
+func (*Mock) IconThemeGetForScreen(s gdki.Screen) gtki.IconTheme {
+	return nil
 }

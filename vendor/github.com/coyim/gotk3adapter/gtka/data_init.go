@@ -80,4 +80,7 @@ func init() {
 	gtki.SIZE_GROUP_HORIZONTAL = gtki.SizeGroupMode(gtk.SIZE_GROUP_HORIZONTAL)
 	gtki.SIZE_GROUP_VERTICAL = gtki.SizeGroupMode(gtk.SIZE_GROUP_VERTICAL)
 	gtki.SIZE_GROUP_BOTH = gtki.SizeGroupMode(gtk.SIZE_GROUP_BOTH)
+
+	gtki.WINDOW_TOPLEVEL = gtki.WindowType(gtk.WINDOW_TOPLEVEL)
+	gtki.WINDOW_POPUP = gtki.WindowType(gtk.WINDOW_POPUP)
 }

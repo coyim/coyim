@@ -11,6 +11,7 @@ type Gtk interface {
 	AcceleratorParse(string) (uint, gdki.ModifierType)
 	AddProviderForScreen(gdki.Screen, StyleProvider, uint)
 	ApplicationNew(string, glibi.ApplicationFlags) (Application, error)
+	ApplicationWindowNew(Application) (ApplicationWindow, error)
 	AssistantNew() (Assistant, error)
 	BuilderNew() (Builder, error)
 	BuilderNewFromResource(string) (Builder, error)
@@ -32,6 +33,9 @@ type Gtk interface {
 	GetMajorVersion() uint
 	GetMinorVersion() uint
 	GetMicroVersion() uint
+	IconThemeNew() (IconTheme, error)
+	IconThemeGetDefault() IconTheme
+	IconThemeGetForScreen(gdki.Screen) IconTheme
 	ImageNewFromFile(string) (Image, error)
 	ImageNewFromResource(string) (Image, error)
 	ImageNewFromPixbuf(gdki.Pixbuf) (Image, error)
@@ -61,6 +65,7 @@ type Gtk interface {
 	SettingsGetDefault() (Settings, error)
 	SeparatorNew(Orientation) (Separator, error)
 	EntryCompletionNew() (EntryCompletion, error)
+	WindowNew(WindowType) (Window, error)
 
 	StatusIconNew() (StatusIcon, error)
 	StatusIconNewFromFile(filename string) (StatusIcon, error)

@@ -35,6 +35,10 @@ func (*RealGtk) ApplicationNew(appId string, flags glibi.ApplicationFlags) (gtki
 	return WrapApplication(gtk.ApplicationNew(appId, glib.ApplicationFlags(flags)))
 }
 
+func (*RealGtk) ApplicationWindowNew(app gtki.Application) (gtki.ApplicationWindow, error) {
+	return WrapApplicationWindow(gtk.ApplicationWindowNew(UnwrapApplication(app)))
+}
+
 func (*RealGtk) AssistantNew() (gtki.Assistant, error) {
 	return WrapAssistant(gtk.AssistantNew())
 }
@@ -234,4 +238,20 @@ func (*RealGtk) StatusIconNewFromIconName(iconName string) (gtki.StatusIcon, err
 
 func (*RealGtk) StatusIconNewFromPixbuf(pixbuf gdki.Pixbuf) (gtki.StatusIcon, error) {
 	return WrapStatusIcon(gotk3extra.StatusIconNewFromPixbuf(gdka.UnwrapPixbuf(pixbuf)))
+}
+
+func (*RealGtk) WindowNew(wt gtki.WindowType) (gtki.Window, error) {
+	return WrapWindow(gtk.WindowNew(gtk.WindowType(wt)))
+}
+
+func (*RealGtk) IconThemeNew() (gtki.IconTheme, error) {
+	return WrapIconTheme(gotk3extra.IconThemeNew())
+}
+
+func (*RealGtk) IconThemeGetDefault() gtki.IconTheme {
+	return WrapIconThemeSimple(gotk3extra.IconThemeGetDefault())
+}
+
+func (*RealGtk) IconThemeGetForScreen(s gdki.Screen) gtki.IconTheme {
+	return WrapIconThemeSimple(gotk3extra.IconThemeGetForScreen(gdka.UnwrapScreen(s)))
 }

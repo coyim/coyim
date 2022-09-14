@@ -130,3 +130,10 @@ var (
 	SIZE_GROUP_VERTICAL   SizeGroupMode
 	SIZE_GROUP_BOTH       SizeGroupMode
 )
+
+type WindowType int
+
+var (
+	WINDOW_TOPLEVEL WindowType
+	WINDOW_POPUP    WindowType
+)

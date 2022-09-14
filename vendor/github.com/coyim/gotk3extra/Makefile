@@ -24,6 +24,8 @@ PANGO_BUILD_TAG="pango_$(PANGO_VERSION)"
 CAIRO_VERSION=$(shell pkg-config --modversion cairo | tr . _ | cut -d '_' -f 1-2)
 CAIRO_BUILD_TAG="cairo_$(CAIRO_VERSION)"
 
+export GO111MODULE=off
+
 TAGS := -tags $(GLIB_BUILD_TAG),$(GTK_BUILD_TAG),$(PANGO_BUILD_TAG),$(CAIRO_BUILD_TAG)
 
 GO := go

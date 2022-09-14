@@ -63,4 +63,5 @@ func init() {
 	gtki.AssertTreeViewColumn(&MockTreeViewColumn{})
 	gtki.AssertWidget(&MockWidget{})
 	gtki.AssertWindow(&MockWindow{})
+	gtki.AssertIconTheme(&MockIconTheme{})
 }

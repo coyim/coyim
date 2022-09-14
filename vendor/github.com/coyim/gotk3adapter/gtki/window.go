@@ -2,7 +2,6 @@ package gtki
 
 import (
 	"github.com/coyim/gotk3adapter/gdki"
-	"github.com/gotk3/gotk3/gdk"
 )
 
 type Window interface {
@@ -13,7 +12,7 @@ type Window interface {
 	AddMnemonic(uint, Widget)
 	Deiconify()
 	Fullscreen()
-	GetMnemonicModifier() gdk.ModifierType
+	GetMnemonicModifier() gdki.ModifierType
 	GetTitle() string
 	GetSize() (int, int)
 	HasToplevelFocus() bool

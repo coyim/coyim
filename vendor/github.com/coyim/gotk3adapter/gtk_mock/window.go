@@ -3,7 +3,6 @@ package gtk_mock
 import (
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
-	"github.com/gotk3/gotk3/gdk"
 )
 
 type MockWindow struct {
@@ -81,8 +80,8 @@ func (*MockWindow) ActivateMnemonic(v1 uint, v2 gdki.ModifierType) bool {
 	return true
 }
 
-func (*MockWindow) GetMnemonicModifier() gdk.ModifierType {
-	return gdk.ModifierType(gdki.GDK_SHIFT_MASK)
+func (*MockWindow) GetMnemonicModifier() gdki.ModifierType {
+	return gdki.ModifierType(gdki.GDK_SHIFT_MASK)
 }
 
 func (*MockWindow) SetMnemonicModifier(v1 gdki.ModifierType) {

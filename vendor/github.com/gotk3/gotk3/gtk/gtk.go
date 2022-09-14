@@ -4854,6 +4854,16 @@ func (v *FileChooser) GetDoOverwriteConfirmation() bool {
 	return gobool(c)
 }
 
+// SetAction is a wrapper around gtk_file_chooser_set_action().
+func (v *FileChooser) SetAction(action FileChooserAction) {
+	C.gtk_file_chooser_set_action(v.native(), C.GtkFileChooserAction(action))
+}
+
+// GetAction is a wrapper around gtk_file_chooser_get_action().
+func (v *FileChooser) GetAction() FileChooserAction {
+	return FileChooserAction(C.gtk_file_chooser_get_action(v.native()))
+}
+
 // SetCreateFolders is a wrapper around gtk_file_chooser_set_create_folders().
 func (v *FileChooser) SetCreateFolders(value bool) {
 	C.gtk_file_chooser_set_create_folders(v.native(), gbool(value))
@@ -5581,6 +5591,15 @@ type IconTheme struct {
 	Theme *C.GtkIconTheme
 }
 
+// IconThemeNew is a wrapper around gtk_icon_theme_new().
+func IconThemeNew() (*IconTheme, error) {
+	c := C.gtk_icon_theme_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return &IconTheme{c}, nil
+}
+
 // IconThemeGetDefault is a wrapper around gtk_icon_theme_get_default().
 func IconThemeGetDefault() (*IconTheme, error) {
 	c := C.gtk_icon_theme_get_default()
@@ -5620,6 +5639,22 @@ func (v *IconTheme) HasIcon(iconName string) bool {
 
 	c := C.gtk_icon_theme_has_icon(v.Theme, (*C.gchar)(cstr))
 	return gobool(c)
+}
+
+// AddResourcePath is a wrapper around gtk_icon_theme_add_resource_path().
+func (v *IconTheme) AddResourcePath(path string) {
+	cstr := C.CString(path)
+	defer C.free(unsafe.Pointer(cstr))
+
+	C.gtk_icon_theme_add_resource_path(v.Theme, (*C.gchar)(cstr))
+}
+
+// AppendSearchPath is a wrapper around gtk_icon_theme_append_search_path().
+func (v *IconTheme) AppendSearchPath(path string) {
+	cstr := C.CString(path)
+	defer C.free(unsafe.Pointer(cstr))
+
+	C.gtk_icon_theme_append_search_path(v.Theme, (*C.gchar)(cstr))
 }
 
 /*

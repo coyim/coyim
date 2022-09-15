@@ -534,41 +534,41 @@ jobs:
           asset_name: "CoyIM Installer.exe_checksum"
           asset_content_type: text/plain
 
-  # upload-release-osx:
-  #   name: Upload release (OS X)
-  #   needs: [build-release-osx, create-release-from-tag]
-  #   runs-on: ubuntu-20.04
+  upload-release-osx:
+    name: Upload release (OS X)
+    needs: [build-release-osx, create-release-from-tag]
+    runs-on: ubuntu-20.04
 
-  #   steps:
-  #     - uses: actions/download-artifact@v2
-  #       name: dist-osx
-  #     - name: Upload OS X binary
-  #       uses: actions/upload-release-asset@v1
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       with:
-  #         upload_url: ${{ needs.create-release-from-tag.outputs.upload-url }}
-  #         asset_path: dist-osx/coyim_darwin_amd64
-  #         asset_name: coyim_darwin_amd64
-  #         asset_content_type: application/octet-stream
-  #     - name: Upload OS X Disk Image
-  #       uses: actions/upload-release-asset@v1
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       with:
-  #         upload_url: ${{ needs.create-release-from-tag.outputs.upload-url }}
-  #         asset_path: dist-osx/coyim.dmg
-  #         asset_name: coyim.dmg
-  #         asset_content_type: application/octet-stream
-  #     - name: Upload OS X checksum
-  #       uses: actions/upload-release-asset@v1
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       with:
-  #         upload_url: ${{ needs.create-release-from-tag.outputs.upload-url }}
-  #         asset_path: dist-osx/checksum
-  #         asset_name: coyim_osx_checksum
-  #         asset_content_type: text/plain
+    steps:
+      - uses: actions/download-artifact@v2
+        name: dist-osx
+      - name: Upload OS X binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release-from-tag.outputs.upload-url }}
+          asset_path: dist-osx/coyim_darwin_amd64
+          asset_name: coyim_darwin_amd64
+          asset_content_type: application/octet-stream
+      - name: Upload OS X Disk Image
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release-from-tag.outputs.upload-url }}
+          asset_path: dist-osx/coyim.dmg
+          asset_name: coyim.dmg
+          asset_content_type: application/octet-stream
+      - name: Upload OS X checksum
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release-from-tag.outputs.upload-url }}
+          asset_path: dist-osx/checksum
+          asset_name: coyim_osx_checksum
+          asset_content_type: text/plain
 
   # upload-release-bintray-linux:
   #   name: Upload release to Bintray (Linux)

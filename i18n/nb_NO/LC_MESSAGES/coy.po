@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-09 18:53+0000\n"
+"POT-Creation-Date: 2022-09-16 17:00+0000\n"
 "PO-Revision-Date: 2021-09-28 18:20+0000\n"
 "Last-Translator: Ola Bini <ola@autonomia.digital>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/coyim/"
@@ -271,11 +271,11 @@ msgstr "Kryptering"
 msgid "Recommended servers: "
 msgstr "Anbefalte tjenere: "
 
-#: ../gui/definitions/AccountRegistration.xml:39
+#: ../gui/definitions/AccountRegistration.xml:43
 msgid "1. Choose a server"
 msgstr "1. Velg en tjener"
 
-#: ../gui/definitions/AccountRegistration.xml:74
+#: ../gui/definitions/AccountRegistration.xml:83
 msgid "2. Create account"
 msgstr "2. Opprett en konto"
 
@@ -5627,11 +5627,17 @@ msgstr "Du er allerede i rommet."
 msgid "You were already connected to this room."
 msgstr "Du var allerede tilkoblet til dette rommet."
 
-#: ../gui/registration.go:84
+#: ../gui/registration.go:106
+msgid ""
+"To create an account, copy this link into a browser window and follow the "
+"instructions."
+msgstr ""
+
+#: ../gui/registration.go:124
 msgid "* The field is required."
 msgstr ""
 
-#: ../gui/registration.go:131
+#: ../gui/registration.go:172
 #, fuzzy
 msgid ""
 "We had an error:\n"
@@ -5642,7 +5648,7 @@ msgstr ""
 "\n"
 "Tidsavbrudd."
 
-#: ../gui/registration.go:133
+#: ../gui/registration.go:174
 msgid ""
 "The registration process currently requires Tor in order to ensure your "
 "safety.\n"
@@ -5656,7 +5662,7 @@ msgstr ""
 "Tor kjører ikke hos deg. Start det.\n"
 "\n"
 
-#: ../gui/registration.go:136
+#: ../gui/registration.go:177
 msgid ""
 "The chosen server does not support in-band registration.\n"
 "\n"
@@ -5664,7 +5670,7 @@ msgid ""
 "register."
 msgstr ""
 
-#: ../gui/registration.go:138 ../gui/registration.go:155
+#: ../gui/registration.go:179 ../gui/registration.go:196
 msgid ""
 "Could not contact the server.\n"
 "\n"
@@ -5674,7 +5680,7 @@ msgstr ""
 "\n"
 "Fiks ditt tjenervalg og prøv igjen."
 
-#: ../gui/registration.go:147
+#: ../gui/registration.go:188
 #, fuzzy
 msgid ""
 "We had an error:\n"
@@ -5685,7 +5691,7 @@ msgstr ""
 "\n"
 "Noen påkrevde felter mangler. Fyll inn alle felter og prøv igjen."
 
-#: ../gui/registration.go:149
+#: ../gui/registration.go:190
 msgid ""
 "We had an error:\n"
 "\n"
@@ -5695,7 +5701,7 @@ msgstr ""
 "\n"
 "Feilaktig brukernavn"
 
-#: ../gui/registration.go:151
+#: ../gui/registration.go:192
 #, fuzzy
 msgid ""
 "We had an error:\n"
@@ -5706,7 +5712,7 @@ msgstr ""
 "\n"
 "Innskrevet CAPTCHA er feil"
 
-#: ../gui/registration.go:153
+#: ../gui/registration.go:194
 msgid ""
 "We had an error:\n"
 "\n"
@@ -5716,7 +5722,7 @@ msgstr ""
 "\n"
 "Tjeneren mottok for mange forespørsler til å opprette en konto samtidig."
 
-#: ../gui/registration.go:252
+#: ../gui/registration.go:304
 msgid ""
 "Connecting to server for registration... \n"
 "\n"
@@ -5726,11 +5732,11 @@ msgstr ""
 "\n"
 "Dette kan ta en stund."
 
-#: ../gui/registration.go:279
+#: ../gui/registration.go:332
 msgid "We had an error when trying to store your account information."
 msgstr "Kunne ikek lagre kontoinfoen din."
 
-#: ../gui/registration.go:288
+#: ../gui/registration.go:337
 #, python-format
 msgid "<b>%s</b> successfully created."
 msgstr "<b>%s</b> opprettet."

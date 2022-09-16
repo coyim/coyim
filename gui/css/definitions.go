@@ -225,10 +225,14 @@ ZXJzYXRpb24tc2VjdXJpdHktd2FybmluZy1mb3JlZ3JvdW5kOwogICAgYm9yZGVyOiAzcHg7Cn0K
 
 	"/definitions/coyim.css": {
 		local:   "definitions/coyim.css",
-		size:    56,
+		size:    274,
 		modtime: 1489449600,
 		compressed: `
-Ci8qIEdsb2JhbCBDU1MgZGVmaW5pdGlvbnMgZm9yIHRoZSBDb3lJTSBhcHBsaWNhdGlvbiAqLwo=
+Ci8qIEdsb2JhbCBDU1MgZGVmaW5pdGlvbnMgZm9yIHRoZSBDb3lJTSBhcHBsaWNhdGlvbiAqLwoKLnJl
+Z2lzdHJhdGlvbi5mb3JtIC5maWVsZFJlcXVpcmVkSW5zdHJ1Y3Rpb24gewogIGZvbnQtc3R5bGU6IGl0
+YWxpYzsKfQoKLnJlZ2lzdHJhdGlvbi5mb3JtIC50aXRsZSB7CiAgcGFkZGluZzogMC41ZW07CiAgZm9u
+dC1zaXplOiAyZW07CiAgZm9udC13ZWlnaHQ6IGJvbGQ7Cn0KCi5yZWdpc3RyYXRpb24uZm9ybSAuaW5z
+dHJ1Y3Rpb25zIHsKICBmb250LXNpemU6IDEuMmVtOwp9Cg==
 `,
 	},
 

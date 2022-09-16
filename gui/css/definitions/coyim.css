@@ -1,2 +1,16 @@
 
 /* Global CSS definitions for the CoyIM application */
+
+.registration.form .fieldRequiredInstruction {
+  font-style: italic;
+}
+
+.registration.form .title {
+  padding: 0.5em;
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.registration.form .instructions {
+  font-size: 1.2em;
+}

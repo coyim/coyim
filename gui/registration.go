@@ -79,7 +79,7 @@ func (f *registrationForm) addPotentialTitle(t string, i int) int {
 	if t != "" {
 		l, _ := g.gtk.LabelNew(t)
 		l.SetSelectable(true)
-		return f.addWideFormRow(l, "formTitle", i)
+		return f.addWideFormRow(l, "title", i)
 	}
 	return i
 }
@@ -88,7 +88,7 @@ func (f *registrationForm) addPotentialInstructions(t string, i int) int {
 	if t != "" {
 		l, _ := g.gtk.LabelNew(t)
 		l.SetSelectable(true)
-		return f.addWideFormRow(l, "formInstructions", i)
+		return f.addWideFormRow(l, "instructions", i)
 	}
 	return i
 }
@@ -108,7 +108,7 @@ func (f *registrationForm) renderForm(title, instructions string, fields []inter
 
 			l, _ := g.gtk.LabelNew(link.URL)
 			l.SetSelectable(true)
-			i = f.addWideFormRow(l, "formLink", i)
+			i = f.addWideFormRow(l, "link", i)
 		}
 
 		if hasForm {
@@ -122,6 +122,7 @@ func (f *registrationForm) renderForm(title, instructions string, fields []inter
 			}
 
 			li, _ := g.gtk.LabelNew(i18n.Local("* The field is required."))
+			addClassStyle("fieldRequiredInstruction", li)
 			f.grid.Attach(li, 0, i+1, 1, i+1)
 		}
 
@@ -158,6 +159,7 @@ func requestAndRenderRegistrationForm(server string, formHandler data.FormCallba
 
 func renderError(message gtki.Label, errorMessage, logMessage string, err error, l withLog) {
 	l.Log().WithError(err).Warn(logMessage)
+	addClassStyle("errorMessage", message)
 	message.SetText(errorMessage)
 }
 
@@ -298,6 +300,7 @@ func (w *serverSelectionWindow) serverChosenPage(pg gtki.Widget) {
 	w.form.server = w.serverBox.GetActiveText()
 	w.spinner.Start()
 
+	addClassStyle("serverFetchingRegistrationForm", w.formMessage)
 	w.formMessage.SetText(i18n.Local("Connecting to server for registration... \n\n" +
 		"This might take a while."))
 

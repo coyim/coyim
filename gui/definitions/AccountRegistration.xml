@@ -34,6 +34,10 @@
             </child>
 	      </object>
         </child>
+        <style>
+          <class name="registration"/>
+          <class name="serverSelection"/>
+        </style>
       </object>
       <packing>
         <property name="title" translatable="yes">1. Choose a server</property>
@@ -70,6 +74,10 @@
             <property name="column-spacing">6</property>
           </object>
         </child>
+        <style>
+          <class name="registration"/>
+          <class name="form"/>
+        </style>
       </object>
       <packing>
         <property name="title" translatable="yes">2. Create account</property>
@@ -88,6 +96,9 @@
             <property name="selectable">True</property>
           </object>
         </child>
+        <style>
+          <class name="registration"/>
+        </style>
       </object>
       <packing>
         <property name="page-type">GTK_ASSISTANT_PAGE_SUMMARY</property>

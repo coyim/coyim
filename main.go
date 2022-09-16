@@ -8,7 +8,6 @@ import (
 	"runtime/pprof"
 	"syscall"
 
-	"github.com/apenwarr/fixconsole"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/config"

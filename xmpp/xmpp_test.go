@@ -84,7 +84,7 @@ func (s *XMPPSuite) TestConnClose_sendsAStreamCloseTagWhenWeCloseFirst(c *C) {
 	conn.in = xml.NewDecoder(mockIn)
 	conn.out = mockCloser
 	conn.rawOut = mockCloser
-	su := make(chan string)
+	su := make(chan string, 1)
 	conn.statusUpdates = su
 
 	_, _ = nextElement(conn.in, conn.log) // Reads the opening tag and make the unmarshaller happy

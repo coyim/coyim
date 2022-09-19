@@ -3,6 +3,7 @@ package gui
 func authors() []string {
 	return []string{
 		"Adam Langley",
+		"Allan Nordhøy  -  epost@anotheragency.no",
 		"Bruce Leidl  -  bruce@subgraph.com",
 		"CodeLingo Bot  -  bot@codelingo.io",
 		"Cody Zacharias  -  22013186+haccer@users.noreply.github.com",
@@ -33,6 +34,7 @@ func authors() []string {
 		"Tulio Casagrande  -  tuliocasagrande@gmail.com",
 		"Varac  -  varac@leap.se",
 		"Yakira Dixon  -  ydixon@thoughtworks.com",
+		"dependabot[bot]  -  49699333+dependabot[bot]@users.noreply.github.com",
 		"pixelrust  -  pixelrust@users.noreply.github.com",
 		"reginazabo  -  reginazabo@anche.no",
 		"xSmurf  -  xsmurf+github@smurfturf.net",

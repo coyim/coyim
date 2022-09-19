@@ -17,7 +17,6 @@ Instructions for creating a release
     git push origin v0.x.y
 ```
 - Wait for Github Actions to finish building and publishing all binaries to the Github Release page
-- Wait for Travis to finish building and publishing the macOS build to the Github Release page
 - Add release notes to the Github Release page
 - Create a new release note entry on the CoyIM website
 - Create a new blog post about the release on the CoyIM website

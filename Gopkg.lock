@@ -110,7 +110,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:6cd0f3a7bda59da23f2999f801d51fd27f3b7472059eb5f85e57f3ac181e11e7"
+  digest = "1:265acf8e80ff2a1a22d8215f9a7a7b8d752b965ef3c573850db5f301b25bfa2f"
   name = "github.com/gotk3/gotk3"
   packages = [
     "cairo",
@@ -123,7 +123,7 @@
     "pango",
   ]
   pruneopts = "UT"
-  revision = "d885f48a549210495b31e2e7360c2561139bf82c"
+  revision = "655547b6cbbc2da7d962d2c234c28fb1fbc95b60"
 
 [[projects]]
   branch = "master"
@@ -358,7 +358,6 @@
   analyzer-version = 1
   input-imports = [
     "github.com/TheCreeper/go-notify",
-    "github.com/apenwarr/fixconsole",
     "github.com/coyim/gosx-notifier",
     "github.com/coyim/gotk3adapter/gdk_mock",
     "github.com/coyim/gotk3adapter/gdka",

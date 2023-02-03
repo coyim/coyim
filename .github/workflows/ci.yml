@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        go: [ '1.19', '1.18', '1.17', '1.16' ]
+        go: [ '1.20', '1.19' ]
 
     name: Test go-${{ matrix.go }} (Linux)
     steps:
@@ -51,7 +51,7 @@ jobs:
       run:
         working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
 
-    name: Test go-1.16 (OS X)
+    name: Test go-1.19 (OS X)
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -61,7 +61,7 @@ jobs:
         run: brew install gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info gtk-mac-integration fileicon
       - uses: actions/setup-go@v2
         with:
-          go-version: 1.16
+          go-version: 1.19
       - name: install project dependencies
         run: make -C ci/ deps
         env:
@@ -87,7 +87,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        go: [ '1.16' ]
+        go: [ '1.19' ]
 
     name: Test go-${{ matrix.go }} (Windows)
     steps:
@@ -188,7 +188,7 @@ jobs:
           path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
       - uses: actions/setup-go@v2
         with:
-          go-version: '1.16'
+          go-version: '1.19'
       - name: build release
         run: make -C ci/ make-gui-for-release-linux
       - name: Archive build artifacts
@@ -223,7 +223,7 @@ jobs:
         run: npm install --global appdmg
       - uses: actions/setup-go@v2
         with:
-          go-version: '1.16'
+          go-version: '1.19'
       - name: install project dependencies
         run: make -C ci/ deps
       - name: build release
@@ -264,7 +264,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
-          go-version: '1.16'
+          go-version: '1.19'
       - name: Setup msys2
         uses: msys2/setup-msys2@v2
         with:

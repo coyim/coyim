@@ -19,10 +19,10 @@ require (
 	github.com/miekg/dns v1.1.29
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e
 	github.com/pmezard/go-difflib v1.0.0
-	github.com/prashantv/gostub v1.0.0
+	github.com/prashantv/gostub v1.1.0
 	github.com/sirupsen/logrus v1.6.0
-	github.com/stretchr/objx v0.3.0
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/objx v0.5.0
+	github.com/stretchr/testify v1.8.1
 	github.com/xdg/stringprep v1.0.0
 	golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37
 	golang.org/x/net v0.0.0-20200520182314-0ba52f642ac2
@@ -30,12 +30,13 @@ require (
 	golang.org/x/text v0.3.2
 	golang.org/x/tools v0.0.0-20200522201501-cb1345f3a375
 	golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543
-	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
+	gopkg.in/yaml.v3 v3.0.1
 	howett.net/plist v0.0.0-20200419221736-3b63eb3a43b5
 )
 
 require (
-	github.com/coyim/gotk3extra v0.0.0-20230124171643-ecb0d8cd94b3 // indirect
+	github.com/coyim/gotk3extra v0.0.0-20230124185536-d67d716b99c8 // indirect
+	github.com/coyim/gotk3osx v0.0.0-20210924194818-6c37c30c671a // indirect
 	github.com/godbus/dbus/v5 v5.0.3 // indirect
 )

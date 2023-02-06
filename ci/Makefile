@@ -11,7 +11,7 @@ default: doctor test coveralls
 
 deps:
 	make -C ../ deps
-	go get -u github.com/mattn/goveralls
+	go install github.com/mattn/goveralls
 
 test:
 	${RUN_WITH} make check -C ../
@@ -19,7 +19,7 @@ test:
 doctor: check-go-imports
 
 check-go-imports:
-	go get -u golang.org/x/tools/cmd/goimports
+	go install golang.org/x/tools/cmd/goimports
 	goimports -w .
 	git diff --exit-code .
 

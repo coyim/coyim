@@ -23,4 +23,4 @@ Instructions for creating a release
 - Add the new release version for download to the website
 - Build and push reproducibility signatures from as many as possible (see [REPRODUCIBILITY](REPRODUCIBILITY.md) for instructions)
 - Tweet from @coyproject about the new release
-
+- Submit update to the Homebrew-cask project

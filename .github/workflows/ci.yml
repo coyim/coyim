@@ -6,13 +6,6 @@ jobs:
   test-linux:
     runs-on: ubuntu-18.04
 
-    env:
-      GOPATH: ${{ github.workspace }}
-      GO111MODULE: off
-    defaults:
-      run:
-        working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
-
     strategy:
       fail-fast: false
       matrix:
@@ -22,8 +15,6 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-        with:
-          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
       - name: install OS dependencies
         run: |
           sudo apt-get update
@@ -44,19 +35,10 @@ jobs:
   test-osx:
     runs-on: macos-10.15
 
-    env:
-      GOPATH: ${{ github.workspace }}
-      GO111MODULE: off
-    defaults:
-      run:
-        working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
-
     name: Test go-1.19 (OS X)
     steps:
       - name: checkout
         uses: actions/checkout@v2
-        with:
-          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
       - name: install OS dependencies
         run: brew install gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info gtk-mac-integration fileicon
       - uses: actions/setup-go@v2
@@ -75,13 +57,8 @@ jobs:
   test-win:
     runs-on: windows-2019
 
-    env:
-      GOPATH: ${{ github.workspace }}
-      GO111MODULE: off
-      REPOSITORY_DIR: ${{ github.workspace }}/src/github.com/${{ github.repository }}
     defaults:
       run:
-        working-directory: ${{ env.REPOSITORY_DIR }}
         shell: msys2 {0}
 
     strategy:
@@ -93,8 +70,6 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-        with:
-          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
       - uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go }}
@@ -174,18 +149,9 @@ jobs:
     runs-on: ubuntu-20.04
     if: startsWith( github.ref, 'refs/tags/')
 
-    env:
-      GOPATH: ${{ github.workspace }}
-      GO111MODULE: off
-    defaults:
-      run:
-        working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
-
     steps:
       - name: checkout
         uses: actions/checkout@v2
-        with:
-          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
       - uses: actions/setup-go@v2
         with:
           go-version: '1.19'
@@ -195,7 +161,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: dist-linux
-          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}/release/*
+          path: ${{ github.workspace }}/release/*
           retention-days: 5
           if-no-files-found: error
 
@@ -205,18 +171,9 @@ jobs:
     runs-on: macos-10.15
     if: startsWith( github.ref, 'refs/tags/')
 
-    env:
-      GOPATH: ${{ github.workspace }}
-      GO111MODULE: off
-    defaults:
-      run:
-        working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
-
     steps:
       - name: checkout
         uses: actions/checkout@v2
-        with:
-          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
       - name: install OS dependencies
         run: brew install gsettings-desktop-schemas gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info gtk-mac-integration fileicon
       - name: install appdmg
@@ -237,7 +194,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: dist-osx
-          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}/release/*
+          path: ${{ github.workspace }}/release/*
           retention-days: 5
           if-no-files-found: error
 
@@ -247,20 +204,13 @@ jobs:
     runs-on: windows-2019
     if: startsWith( github.ref, 'refs/tags/')
 
-    env:
-      GOPATH: ${{ github.workspace }}
-      GO111MODULE: off
-
     defaults:
       run:
-        working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
         shell: msys2 {0}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
@@ -374,8 +324,8 @@ jobs:
         with:
           name: dist-win
           path: |
-            ${{ env.GOPATH }}/src/github.com/${{ github.repository }}/release/coyim.zip
-            ${{ env.GOPATH }}/src/github.com/${{ github.repository }}/release/coyim.zip_checksum
+            ${{ github.workspace }}/release/coyim.zip
+            ${{ github.workspace }}/release/coyim.zip_checksum
           retention-days: 5
           if-no-files-found: error
 

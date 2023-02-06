@@ -36,6 +36,13 @@ require (
 )
 
 require (
+	github.com/mattn/goveralls v0.0.11 // indirect
+	github.com/rosatolen/esc v0.0.0-20170322162328-d21c3d2332cb // indirect
+	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
+	golang.org/x/mod v0.7.0 // indirect
+)
+
+require (
 	github.com/coyim/gosx-notifier v0.0.0-20160821204220-212122c14674
 	github.com/coyim/gotk3extra v0.0.0-20230124185536-d67d716b99c8 // indirect
 	github.com/coyim/gotk3osx v0.0.0-20210924194818-6c37c30c671a

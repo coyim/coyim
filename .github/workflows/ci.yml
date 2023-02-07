@@ -14,12 +14,12 @@ jobs:
     name: Test go-${{ matrix.go }} (Linux)
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: install OS dependencies
         run: |
           sudo apt-get update
           sudo apt-get install libgtk-3-dev gettext libglib2.0-dev libc6-dev-i386 xvfb
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go }}
       - name: install project dependencies
@@ -38,10 +38,10 @@ jobs:
     name: Test go-1.19 (OS X)
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: install OS dependencies
         run: brew install gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info gtk-mac-integration fileicon
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v3
         with:
           go-version: 1.19
       - name: install project dependencies
@@ -69,8 +69,8 @@ jobs:
     name: Test go-${{ matrix.go }} (Windows)
     steps:
       - name: checkout
-        uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+        uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go }}
       - name: Setup msys2
@@ -126,7 +126,7 @@ jobs:
     if: always()
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - uses: technote-space/workflow-conclusion-action@v1
       - uses: ./.github/actions/ci-conclusion-message
         id: message-generator
@@ -151,8 +151,8 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+        uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
         with:
           go-version: '1.19'
       - name: build release
@@ -173,12 +173,12 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: install OS dependencies
         run: brew install gsettings-desktop-schemas gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info gtk-mac-integration fileicon
       - name: install appdmg
         run: npm install --global appdmg
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v3
         with:
           go-version: '1.19'
       - name: install project dependencies
@@ -210,9 +210,9 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: '1.19'
       - name: Setup msys2
@@ -339,7 +339,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup msys2
         uses: msys2/setup-msys2@v2
         with:

@@ -2,11 +2,9 @@
 
 set -e
 
-found=0
+onpath=`which esc` || found=0
 
-onpath=`which esc`
-
-if [ -x $onpath ]; then
+if [ -x "$onpath" ]; then
     found=1
     cp $onpath $1/esc
 fi

@@ -9,11 +9,6 @@ import (
 	"github.com/kardianos/osext"
 )
 
-func ensureInstalled() {
-	ensureIconsInstalled()
-	ensureDesktopFileInstalled()
-}
-
 func iconFileName() string {
 	return "coyim-" + coyimIcon.hash() + ".png"
 }

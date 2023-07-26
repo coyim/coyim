@@ -47,7 +47,8 @@ GCC_IGNORE_DEPRECATED_WARNINGS := CGO_CFLAGS_ALLOW="-Wno-deprecated-declarations
 GO := $(PREF) $(GCC_IGNORE_DEPRECATED_WARNINGS) ${BUILD_RUN_PREFIX} go
 GOBUILD := $(GO) build
 GOTEST := $(GO) test
-TAGS := -tags $(GLIB_BUILD_TAG),$(GTK_BUILD_TAG),$(PANGO_BUILD_TAG),$(CAIRO_BUILD_TAG)
+TAGS_EXTRA :=
+TAGS := -tags $(GLIB_BUILD_TAG),$(GTK_BUILD_TAG),$(PANGO_BUILD_TAG),$(CAIRO_BUILD_TAG)$(TAGS_EXTRA)
 
 AUTOGEN := gui/settings/definitions/schemas.go gui/definitions.go gui/css/definitions.go
 

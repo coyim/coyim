@@ -1,0 +1,23 @@
+version = 0
+commit_goodlist = []
+
+[authorization."Ola Bini <ola@olabini.se>"]
+sign_commit = true
+sign_tag = true
+sign_archive = true
+add_user = true
+retire_user = true
+audit = true
+keyring = """
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Comment: 7B45 78C7 D012 2BF7 6B5E  E5DD 6786 A150 F6A2 B28F
+Comment: Ola Bini <ola@olabini.se>
+
+xjMEXSKP5hYJKwYBBAHaRw8BAQdA5RXHkbxT+vTvwEcBIkJbU8gj5KDfwqqeCqla
+sW7/nGjNGU9sYSBCaW5pIDxvbGFAb2xhYmluaS5zZT7ClgQTFgoAPgIbAwULCQgH
+AwUVCgkICwUWAgMBAAIeAQIXgBYhBHtFeMfQEiv3a17l3WeGoVD2orKPBQJiVuUJ
+BQkI9rwjAAoJEGeGoVD2orKPHt0BAOsyt9FQrMJSasBLcExcF8s/qIMOwM6NSU4M
+Ijad5ck9AQDGE8gqNAUopdhNVjcRc3P3O3TAJWCvJefOQP4yR6CoDg==
+=Cf4M
+-----END PGP PUBLIC KEY BLOCK-----
+"""

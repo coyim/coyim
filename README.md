@@ -66,7 +66,7 @@ or higher. The installation of this depends on your operating system:
 **Ubuntu:**
 
 ```sh
-sudo apt-get install gtk+3.0 libgtk-3-dev
+sudo apt-get install gtk+3.0 libgtk-3-dev ruby
 ```
 
 **MacOS:**
@@ -74,6 +74,7 @@ sudo apt-get install gtk+3.0 libgtk-3-dev
 ```sh
 brew install gnome-icon-theme
 brew install gtk+3 gtk-mac-integration
+brew install ruby
 ```
 
 In order to build CoyIM, you should check out the source code, and run:

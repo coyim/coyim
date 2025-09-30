@@ -4,9 +4,9 @@ set -e
 
 found=0
 
-onpath=`which esc`
+onpath=$(which esc 2>&1) || true
 
-if [ -x $onpath ]; then
+if [ -x "$onpath" ]; then
     found=1
     cp $onpath $1/esc
 fi

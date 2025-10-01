@@ -88,7 +88,7 @@ debug: $(BUILD_DIR)/coyim-debug
 	GDK_DEBUG=nograbs gdb -d $(shell go env GOROOT) --args $(BUILD_DIR)/coyim-debug -debug
 
 win-ci-deps:
-	go install github.com/rosatolen/esc
+	go install github.com/rosatolen/esc@v0.0.0-20170322162328-d21c3d2332cb
 
 reproducible-linux-create-image:
 	make -C ./reproducible/docker create-image
@@ -169,8 +169,8 @@ test-named: $(AUTOGEN)
 	$(GOTEST) -v $(TAGS) $(SRC_DIRS)
 
 deps:
-	go install golang.org/x/lint/golint
-	go install github.com/rosatolen/esc
+	go install golang.org/x/lint/golint@v0.0.0-20210508222113-6edffad5e616
+	go install github.com/rosatolen/esc@v0.0.0-20170322162328-d21c3d2332cb
 
 $(COVERPROFILES):
 	mkdir -p $@

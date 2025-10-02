@@ -12,7 +12,7 @@ require (
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 	github.com/miekg/dns v1.1.63
 	github.com/prashantv/gostub v1.1.0
-	github.com/sirupsen/logrus v1.9.0
+	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.1
 	github.com/xdg/stringprep v1.0.3
 	golang.org/x/crypto v0.29.0

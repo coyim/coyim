@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/TheCreeper/go-notify v0.2.0
 	github.com/coyim/gotk3adapter v0.0.2
-	github.com/coyim/otr3 v0.0.0-20211029160239-dc95becd2b1b
+	github.com/coyim/otr3 v0.0.0-20230314203300-86897a28af47
 	github.com/godbus/dbus v4.1.0+incompatible
 	github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3
 	github.com/gotk3/gotk3 v0.6.2
@@ -25,14 +25,14 @@ require (
 
 require (
 	github.com/awnumar/memcall v0.1.2 // indirect
-	github.com/coyim/constbn v0.0.0-20210213190550-014e567e077e // indirect
+	github.com/coyim/constbn v0.0.0-20230207191538-27f0129d98cd // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	golang.org/x/mod v0.7.0 // indirect
-	golang.org/x/sys v0.4.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/tools v0.5.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

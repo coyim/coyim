@@ -60,7 +60,7 @@ page](https://coy.im/features/).
 
 ## Building CoyIM
 
-**Please note**: CoyIM requires Golang version 1.19 or higher to build. CoyIM also requires at least GTK+ version 3.12
+**Please note**: CoyIM requires Golang version 1.21 or higher to build. CoyIM also requires at least GTK+ version 3.12
 or higher. The installation of this depends on your operating system:
 
 **Ubuntu:**

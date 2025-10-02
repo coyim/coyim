@@ -1,6 +1,6 @@
 module github.com/coyim/coyim
 
-go 1.19
+go 1.21
 
 require (
 	github.com/TheCreeper/go-notify v0.2.0

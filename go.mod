@@ -6,7 +6,6 @@ require (
 	github.com/TheCreeper/go-notify v0.2.0
 	github.com/coyim/gotk3adapter v0.0.2
 	github.com/coyim/otr3 v0.0.0-20230314203300-86897a28af47
-	github.com/godbus/dbus v4.1.0+incompatible
 	github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3
 	github.com/gotk3/gotk3 v0.6.2
 	github.com/hydrogen18/stalecucumber v0.0.0-20180226003526-6de214d141dd

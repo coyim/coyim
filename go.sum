@@ -2,8 +2,6 @@ github.com/TheCreeper/go-notify v0.2.0 h1:akzlSD8IWx+uOZqGNwS0FYsThYuw11JkXsYiQX
 github.com/TheCreeper/go-notify v0.2.0/go.mod h1:paZnY8fMbaOyZLQWJitGWAMrO5ot3Ow7id47cyEL1KA=
 github.com/awnumar/memcall v0.1.2 h1:7gOfDTL+BJ6nnbtAp9+HQzUFjtP1hEseRQq8eP055QY=
 github.com/awnumar/memcall v0.1.2/go.mod h1:S911igBPR9CThzd/hYQQmTc9SWNu3ZHIlCGaWsWsoJo=
-github.com/coyim/constbn v0.0.0-20210213190550-014e567e077e h1:JxL3bqzUqFGsSRP9S8zNUzaZzM9iLSBDxvjwW8BgsB0=
-github.com/coyim/constbn v0.0.0-20210213190550-014e567e077e/go.mod h1:qOpAn/YZz5UfE/6xHHTi2y8/Ik/xl7s2x/qe4/AJmOM=
 github.com/coyim/constbn v0.0.0-20230207191538-27f0129d98cd h1:tWNy3iPXxx5wmWH8qm7TuDM9vDLWWj18Pp7uxUQILpo=
 github.com/coyim/constbn v0.0.0-20230207191538-27f0129d98cd/go.mod h1:3IbgUXKHr9lHYW0qRClJ+UiGNwcvWm5Ce1iOY2Pe/oA=
 github.com/coyim/gosx-notifier v0.0.0-20160821204220-212122c14674 h1:3yMnmvE6E7NSamKQflNrTHzGqZu+G+MkZalVhkq0lYw=
@@ -14,8 +12,6 @@ github.com/coyim/gotk3extra v0.0.2 h1:LmgwTxEICcdpmm5m15Zg+hyhKu65hnSDJwO0XK63iw
 github.com/coyim/gotk3extra v0.0.2/go.mod h1:FKShTL6WkYgaA3M+dFjmEYsNskwYYQDTyIRCGuRAbaA=
 github.com/coyim/gotk3osx v0.0.0-20210924194818-6c37c30c671a h1:UaCpmSoK2J6+4fuEhrRvhnFb+dTm8k9l/VaAFEHA3NM=
 github.com/coyim/gotk3osx v0.0.0-20210924194818-6c37c30c671a/go.mod h1:7Ee1UW0msoUXZq0+NTnK+DT6OYn8dQfYabdFN3WEKOg=
-github.com/coyim/otr3 v0.0.0-20211029160239-dc95becd2b1b h1:CMF2SMnrJSar7+AxiyUU+nMHuqKYhT1jy5vTxVkdfcw=
-github.com/coyim/otr3 v0.0.0-20211029160239-dc95becd2b1b/go.mod h1:6ea5LtuvuVUVzD3mtBDV+Bu7wK7iFaYLpgD35vdBoVg=
 github.com/coyim/otr3 v0.0.0-20230314203300-86897a28af47 h1:mL+cP7RQUnuAhGW4+wPouDQEU1YuslV/4vjkcI4Ec2w=
 github.com/coyim/otr3 v0.0.0-20230314203300-86897a28af47/go.mod h1:7iUG2JMfJTDx4XgHkrSsCtS3iLGCnuEjuZXoXO3lBrc=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
@@ -92,8 +88,6 @@ golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20210510120138-977fb7262007/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
-golang.org/x/sys v0.4.0 h1:Zr2JFtRQNX3BCZ8YtxRE9hNJYC8J6I1MVbMg6owUp18=
-golang.org/x/sys v0.4.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.5.0 h1:MUK/U/4lj1t1oPg0HfuXDN/Z1wv31ZJ/YcPiGccS4DU=
 golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=

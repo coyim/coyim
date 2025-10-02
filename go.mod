@@ -40,6 +40,6 @@ require (
 	github.com/coyim/gosx-notifier v0.0.0-20160821204220-212122c14674
 	github.com/coyim/gotk3extra v0.0.2 // indirect
 	github.com/coyim/gotk3osx v0.0.0-20210924194818-6c37c30c671a
-	github.com/godbus/dbus/v5 v5.1.0 // indirect
+	github.com/godbus/dbus/v5 v5.1.0
 	github.com/kr/pretty v0.3.1 // indirect
 )

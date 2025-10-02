@@ -11,7 +11,7 @@ default: doctor test coveralls
 
 deps:
 	make -C ../ deps
-	go install github.com/mattn/goveralls
+	go install github.com/mattn/goveralls@v0.0.12
 
 test:
 	${RUN_WITH} make check -C ../

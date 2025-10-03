@@ -55,7 +55,7 @@ jobs:
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
 
   test-win:
-    runs-on: windows-2019
+    runs-on: windows-2025
 
     defaults:
       run:
@@ -201,7 +201,7 @@ jobs:
   build-release-win:
     name: Build release (Windows)
     needs: test-win
-    runs-on: windows-2019
+    runs-on: windows-2025
     if: startsWith( github.ref, 'refs/tags/')
 
     defaults:
@@ -330,7 +330,7 @@ jobs:
           if-no-files-found: error
 
   build-windows-installer:
-    runs-on: windows-2019
+    runs-on: windows-2025
     needs: build-release-win
 
     defaults:

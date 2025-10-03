@@ -143,7 +143,7 @@ jobs:
 
   notify-test:
     name: Notify on success or failure of test
-    needs: [test-linux, test-osx, test-win]
+    needs: [test-linux, test-osx-intel, test-osx-arm, test-win]
     runs-on: ubuntu-24.04
     if: always()
     steps:
@@ -189,7 +189,7 @@ jobs:
 
   build-release-osx:
     name: Build release (OS X)
-    needs: test-osx
+    needs: [test-osx-intel, test-osx-arm]
     runs-on: macos-10.15
     if: startsWith( github.ref, 'refs/tags/')
 

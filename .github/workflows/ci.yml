@@ -386,7 +386,7 @@ jobs:
           7z x -y -r -tzip ../dist-win/coyim.zip
       - name: Get the current tag
         id: current_tag
-        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
       - name: Create installer
         uses: joncloud/makensis-action@v3.4
         with:

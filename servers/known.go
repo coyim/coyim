@@ -34,7 +34,10 @@ func init() {
 	// The onion for this used to be uoj2xiqxk25p36wbpufiyuhluvxakhpqum7frembhoiuq7a5735ay3qd.onion, but doesn't work anymore
 	Server{"jabber.de", "", true, false, false}.register()
 	Server{"jabber.nr18.space", "szd7r26dbcrrrn4jthercrdypxfdmzzrysusyjohn4mpv2zbwcgmeqqd.onion", false, false, false}.register()
-	Server{"jabber.otr.im", "ynnuxkbbiy5gicdydekpihmpbqd4frruax2mqhpc35xqjxp5ayvrjuqd.onion", true, true, true}.register()
+
+	// Server seems gone
+	// Server{"jabber.otr.im", "ynnuxkbbiy5gicdydekpihmpbqd4frruax2mqhpc35xqjxp5ayvrjuqd.onion", true, true, true}.register()
+
 	Server{"jabber.so36.net", "yxkc2uu3rlwzzhxf2thtnzd7obsdd76vtv7n34zwald76g5ogbvjbbqd.onion", false, false, false}.register()
 
 	// This one gives a registration form that Coy can't handle (#851)

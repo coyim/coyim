@@ -82,6 +82,11 @@ In order to build CoyIM, you should check out the source code, and run:
 make build
 ```
 
+NOTE: If ```esc``` isn't found after make deps, it's likely in ```$HOME/go/bin``` which isn't in `PATH`. To fix this run ```sh
+export PATH="$HOME/go/bin:$PATH"
+```
+
+
 It might be possible to build CoyIM using `go get` but we currently do not support this method.
 
 

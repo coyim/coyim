@@ -55,7 +55,7 @@ jobs:
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
 
   test-osx-arm:
-    runs-on: macos-15-large
+    runs-on: macos-15
 
     name: Test go-1.21 (OS X)
     steps:

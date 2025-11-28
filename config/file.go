@@ -3,7 +3,6 @@ package config
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -61,7 +60,7 @@ func safeWrite(name string, data []byte, perm os.FileMode) error {
 	}
 
 	tempName := fmt.Sprintf("%s%s", name, tmpExtension)
-	err := ioutil.WriteFile(tempName, data, perm)
+	err := os.WriteFile(tempName, data, perm)
 	if err != nil {
 		return err
 	}
@@ -71,13 +70,13 @@ func safeWrite(name string, data []byte, perm os.FileMode) error {
 
 func readFileOrTemporaryBackup(name string) (data []byte, e error) {
 	if fileExists(name) {
-		data, e = ioutil.ReadFile(filepath.Clean(name))
+		data, e = os.ReadFile(filepath.Clean(name))
 		if len(data) == 0 && fileExists(name+tmpExtension) {
-			data, e = ioutil.ReadFile(filepath.Clean(name + tmpExtension))
+			data, e = os.ReadFile(filepath.Clean(name + tmpExtension))
 		}
 		return
 	}
-	return ioutil.ReadFile(filepath.Clean(name + tmpExtension))
+	return os.ReadFile(filepath.Clean(name + tmpExtension))
 }
 
 func configDir() string {

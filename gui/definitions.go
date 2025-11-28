@@ -3,7 +3,7 @@ package gui
 import (
 	"bytes"
 	"encoding/base64"
-	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
@@ -56,7 +56,7 @@ func (_escStaticFS) prepare(name string) (*_escFile, error) {
 			return
 		}
 		b64 := base64.NewDecoder(base64.StdEncoding, bytes.NewBufferString(f.compressed))
-		f.data, err = io.ReadAll(b64)
+		f.data, err = ioutil.ReadAll(b64)
 	})
 	if err != nil {
 		return nil, err
@@ -149,7 +149,7 @@ func FSByte(useLocal bool, name string) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		b, err := io.ReadAll(f)
+		b, err := ioutil.ReadAll(f)
 		f.Close()
 		return b, err
 	}

@@ -83,7 +83,7 @@ func (g *gajimImporter) importFingerprintsFrom(f string) (string, []*config.Know
 }
 
 func (g *gajimImporter) importKeyFrom(f string) (string, []byte, bool) {
-	content, err := ioutil.ReadFile(filepath.Clean(f))
+	content, err := os.ReadFile(filepath.Clean(f))
 	if err != nil {
 		return "", nil, false
 	}

@@ -277,7 +277,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithoutEncryption(c *C)
 
 	c.Assert(e, IsNil)
 
-	content, e := ioutil.ReadFile(a.filename)
+	content, e := os.ReadFile(a.filename)
 	c.Assert(e, IsNil)
 	c.Assert(string(content), Equals, fmt.Sprintf(""+
 		"{\n"+
@@ -334,7 +334,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withNewP
 	c.Assert(e, IsNil)
 	c.Assert(a.filename, Equals, tmpfile.Name()+".enc")
 
-	content, ex := ioutil.ReadFile(a.filename)
+	content, ex := os.ReadFile(a.filename)
 	c.Assert(ex, IsNil)
 
 	ed, e2 := parseEncryptedData(content)
@@ -386,7 +386,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withExis
 	c.Assert(a.params.P, Equals, 2)
 	c.Assert(a.params.Nonce, Not(Equals), "dbd8f7642b05349123d59d1b")
 
-	content, ee := ioutil.ReadFile(a.filename)
+	content, ee := os.ReadFile(a.filename)
 	c.Assert(ee, IsNil)
 
 	ed, e2 := parseEncryptedData(content)
@@ -423,7 +423,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_doesntAd
 	c.Assert(e, IsNil)
 	c.Assert(a.filename, Equals, tmpfile.Name()+".enc")
 
-	content, ex2 := ioutil.ReadFile(a.filename)
+	content, ex2 := os.ReadFile(a.filename)
 	c.Assert(ex2, IsNil)
 
 	ed, e2 := parseEncryptedData(content)

@@ -4,7 +4,6 @@ package i18n
 
 import (
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -22,7 +21,7 @@ const guardFileName = "coyim.guard"
 func (u *unpacker) hasCorrectGuard() bool {
 	targetFile := filepath.Join(u.dir, guardFileName)
 	u.log.WithField("file", targetFile).WithField("expected guard", u.guard).Debug("reading guard from file")
-	content, e := ioutil.ReadFile(targetFile)
+	content, e := os.ReadFile(targetFile)
 	if e != nil {
 		u.log.WithError(e).WithField("file", targetFile).Debug("couldn't read translation guard file")
 		return false
@@ -58,7 +57,7 @@ func (u *unpacker) prepareDirectory() bool {
 func (u *unpacker) writeGuard() {
 	targetFile := filepath.Join(u.dir, guardFileName)
 	u.log.WithField("file", targetFile).WithField("guard", u.guard).Debug("writing guard to file")
-	e := ioutil.WriteFile(targetFile, []byte(u.guard), defaultFilePermission)
+	e := os.WriteFile(targetFile, []byte(u.guard), defaultFilePermission)
 	if e != nil {
 		u.log.WithError(e).WithField("file", targetFile).Error("couldn't write translation guard file")
 	}
@@ -95,7 +94,7 @@ func (u *unpacker) copyTranslationFile(name string) {
 	}
 
 	log.WithField("where", "i18n").WithField("file", name).WithField("target", targetFile).Info("writing translation file")
-	e = ioutil.WriteFile(targetFile, content, defaultFilePermission)
+	e = os.WriteFile(targetFile, content, defaultFilePermission)
 
 	if e != nil {
 		u.log.WithError(e).WithField("file", targetFile).Error("couldn't write translation file")

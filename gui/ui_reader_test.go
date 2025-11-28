@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"io"
-	"io/ioutil"
 	"os"
 	"time"
 
@@ -34,7 +33,7 @@ const testFile string = `
 `
 
 func writeTestFile(name, content string) {
-	_ = ioutil.WriteFile(name, []byte(content), 0700)
+	_ = os.WriteFile(name, []byte(content), 0700)
 }
 
 func removeFile(name string) {

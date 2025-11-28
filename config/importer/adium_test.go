@@ -1,7 +1,6 @@
 package importer
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -285,14 +284,14 @@ func (s *AdiumSuite) Test_adiumImporter_TryImport(c *C) {
 	os.MkdirAll(filepath.Join(dir, adiumConfigDir), 0755)
 	os.MkdirAll(filepath.Join(dir, adiumConfigDir, "libpurple"), 0755)
 
-	input, e1 := ioutil.ReadFile(testResourceFilename("adium_test_data/Accounts.plist"))
+	input, e1 := os.ReadFile(testResourceFilename("adium_test_data/Accounts.plist"))
 	c.Assert(e1, IsNil)
-	e2 := ioutil.WriteFile(filepath.Join(dir, adiumConfigDir, adiumAccountMappingsFile), input, 0644)
+	e2 := os.WriteFile(filepath.Join(dir, adiumConfigDir, adiumAccountMappingsFile), input, 0644)
 	c.Assert(e2, IsNil)
 
-	input, e1 = ioutil.ReadFile(testResourceFilename("adium_test_data/libpurple/accounts.xml"))
+	input, e1 = os.ReadFile(testResourceFilename("adium_test_data/libpurple/accounts.xml"))
 	c.Assert(e1, IsNil)
-	e2 = ioutil.WriteFile(filepath.Join(dir, adiumConfigDir, "libpurple", pidginAccountsFile), input, 0644)
+	e2 = os.WriteFile(filepath.Join(dir, adiumConfigDir, "libpurple", pidginAccountsFile), input, 0644)
 	c.Assert(e2, IsNil)
 
 	res := (&adiumImporter{}).TryImport()

@@ -17,10 +17,10 @@ func createTemporaryDirectoryStructure(intoDir string) {
 	_ = os.MkdirAll(filepath.Join(intoDir, "foo", "somewhere"), 0755)
 	_ = os.MkdirAll(filepath.Join(intoDir, "another place"), 0755)
 
-	_ = ioutil.WriteFile(filepath.Join(intoDir, "a file"), []byte("some content"), 0755)
-	_ = ioutil.WriteFile(filepath.Join(intoDir, "another file"), []byte("some more content"), 0755)
-	_ = ioutil.WriteFile(filepath.Join(intoDir, "foo", "wut"), []byte("even more content"), 0755)
-	_ = ioutil.WriteFile(filepath.Join(intoDir, "another place", "oh well"), []byte("final content"), 0755)
+	_ = os.WriteFile(filepath.Join(intoDir, "a file"), []byte("some content"), 0755)
+	_ = os.WriteFile(filepath.Join(intoDir, "another file"), []byte("some more content"), 0755)
+	_ = os.WriteFile(filepath.Join(intoDir, "foo", "wut"), []byte("even more content"), 0755)
+	_ = os.WriteFile(filepath.Join(intoDir, "another place", "oh well"), []byte("final content"), 0755)
 }
 
 func (s *PackagingSuite) Test_pack_and_unpack(c *C) {
@@ -71,19 +71,19 @@ func (s *PackagingSuite) Test_pack_and_unpack(c *C) {
 	c.Assert(st, Not(IsNil))
 	c.Assert(st.IsDir(), Equals, true)
 
-	ct, ee2 := ioutil.ReadFile(filepath.Join(actualDir, "a file"))
+	ct, ee2 := os.ReadFile(filepath.Join(actualDir, "a file"))
 	c.Assert(ee2, IsNil)
 	c.Assert(string(ct), Equals, "some content")
 
-	ct, ee2 = ioutil.ReadFile(filepath.Join(actualDir, "another file"))
+	ct, ee2 = os.ReadFile(filepath.Join(actualDir, "another file"))
 	c.Assert(ee2, IsNil)
 	c.Assert(string(ct), Equals, "some more content")
 
-	ct, ee2 = ioutil.ReadFile(filepath.Join(actualDir, "foo", "wut"))
+	ct, ee2 = os.ReadFile(filepath.Join(actualDir, "foo", "wut"))
 	c.Assert(ee2, IsNil)
 	c.Assert(string(ct), Equals, "even more content")
 
-	ct, ee2 = ioutil.ReadFile(filepath.Join(actualDir, "another place", "oh well"))
+	ct, ee2 = os.ReadFile(filepath.Join(actualDir, "another place", "oh well"))
 	c.Assert(ee2, IsNil)
 	c.Assert(string(ct), Equals, "final content")
 }

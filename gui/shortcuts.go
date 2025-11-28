@@ -1,7 +1,7 @@
 package gui
 
 import (
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/coyim/coyim/config"
@@ -26,7 +26,7 @@ func init() {
 
 	ek, ok := config.FindFile(toLook)
 	if ok {
-		content, _ := ioutil.ReadFile(filepath.Clean(ek))
+		content, _ := os.ReadFile(filepath.Clean(ek))
 		emacsKeyConf = string(content)
 	}
 }

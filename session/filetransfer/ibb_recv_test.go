@@ -2,7 +2,7 @@ package filetransfer
 
 import (
 	"encoding/xml"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"sync"
 
@@ -156,7 +156,7 @@ func (s *IBBReceiverSuite) Test_IbbClose_works(c *C) {
 
 	c.Assert(len(hook.Entries), Equals, 0)
 
-	content, _ := ioutil.ReadFile(ctx.destination)
+	content, _ := os.ReadFile(ctx.destination)
 	c.Assert(string(content), DeepEquals, "hello world")
 }
 

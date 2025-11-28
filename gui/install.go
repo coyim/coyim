@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -46,8 +45,8 @@ func ensureDesktopFileInstalled() {
 	dataHome := config.SystemDataDir()
 	if dataHome != "" && fileExists(dataHome) {
 		_ = os.MkdirAll(filepath.Join(dataHome, "applications"), 0700)
-		_ = ioutil.WriteFile(filepath.Join(dataHome, "applications", "coyim.desktop"), []byte(generateDesktopFile(false)), 0600)
-		_ = ioutil.WriteFile(filepath.Join(dataHome, "applications", "coyim-debug.desktop"), []byte(generateDesktopFile(true)), 0600)
+		_ = os.WriteFile(filepath.Join(dataHome, "applications", "coyim.desktop"), []byte(generateDesktopFile(false)), 0600)
+		_ = os.WriteFile(filepath.Join(dataHome, "applications", "coyim-debug.desktop"), []byte(generateDesktopFile(true)), 0600)
 	}
 }
 

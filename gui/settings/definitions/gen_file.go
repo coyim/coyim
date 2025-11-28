@@ -3,6 +3,7 @@ package definitions
 import (
 	"encoding/hex"
 	"io/ioutil"
+	"os"
 	"path"
 )
 
@@ -12,7 +13,7 @@ func fileContent() []byte {
 }
 
 func writeSchemaToDir(dir string) {
-	_ = ioutil.WriteFile(path.Join(dir, "gschemas.compiled"), fileContent(), 0600)
+	_ = os.WriteFile(path.Join(dir, "gschemas.compiled"), fileContent(), 0600)
 }
 
 // SchemaInTempDir will create a new temporary directory and put the gsettings schema file in there. It is the callers responsibility to remove the directory

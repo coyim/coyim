@@ -1,7 +1,6 @@
 package importer
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
@@ -25,7 +24,7 @@ type adiumAccountMapping struct {
 }
 
 func (p *adiumImporter) readAccountMappings(s string) (map[string]adiumAccountMapping, bool) {
-	contents, e := ioutil.ReadFile(filepath.Clean(s))
+	contents, e := os.ReadFile(filepath.Clean(s))
 	if e != nil {
 		return nil, false
 	}

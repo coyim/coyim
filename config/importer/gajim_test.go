@@ -519,9 +519,9 @@ func (s *GajimSuite) Test_mergeAccountInformation_setRequireEncryption(c *C) {
 }
 
 func copyFile(c *C, from, to string) {
-	input, e := ioutil.ReadFile(from)
+	input, e := os.ReadFile(from)
 	c.Assert(e, IsNil)
-	e = ioutil.WriteFile(to, input, 0644)
+	e = os.WriteFile(to, input, 0644)
 	c.Assert(e, IsNil)
 }
 

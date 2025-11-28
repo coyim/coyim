@@ -1,7 +1,6 @@
 package definitions
 
 import (
-	"io/ioutil"
 	"os"
 	"path"
 
@@ -27,7 +26,7 @@ func (s *SettingsDefinitionsSuite) Test_SchemaInTempDir(c *C) {
 		c.Assert(ee, IsNil)
 	}()
 
-	data, e := ioutil.ReadFile(path.Join(res, "gschemas.compiled"))
+	data, e := os.ReadFile(path.Join(res, "gschemas.compiled"))
 	c.Assert(e, IsNil)
 
 	c.Assert(data, DeepEquals, fileContent())

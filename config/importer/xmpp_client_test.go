@@ -3,7 +3,6 @@ package importer
 import (
 	"encoding/hex"
 	"errors"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -73,9 +72,9 @@ func (s *XMPPClientXMPPSuite) Test_xmppClientImporter_TryImport(c *C) {
 	}()
 	os.Setenv("HOME", dir)
 
-	input, ee := ioutil.ReadFile(testResourceFilename("xmpp_client_test_conf.json"))
+	input, ee := os.ReadFile(testResourceFilename("xmpp_client_test_conf.json"))
 	c.Assert(ee, IsNil)
-	logPotentialError(c, ioutil.WriteFile(filepath.Join(dir, ".xmpp-client"), input, 0644))
+	logPotentialError(c, os.WriteFile(filepath.Join(dir, ".xmpp-client"), input, 0644))
 
 	res := (&xmppClientImporter{}).TryImport()
 	c.Assert(res, HasLen, 1)
@@ -103,7 +102,7 @@ func (s *XMPPClientXMPPSuite) Test_xmppClientImporter_TryImport_failsOnBadFile(c
 	}()
 	os.Setenv("HOME", dir)
 
-	logPotentialError(c, ioutil.WriteFile(filepath.Join(dir, ".xmpp-client"), []byte("{"), 0644))
+	logPotentialError(c, os.WriteFile(filepath.Join(dir, ".xmpp-client"), []byte("{"), 0644))
 
 	res := (&xmppClientImporter{}).TryImport()
 	c.Assert(res, HasLen, 0)

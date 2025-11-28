@@ -3,7 +3,7 @@ package importer
 import (
 	"encoding/hex"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/coyim/coyim/config"
@@ -43,7 +43,7 @@ var addNewAccount = func(a *config.ApplicationConfig) (*config.Account, error) {
 }
 
 func (x *xmppClientImporter) importFrom(f string) (*config.ApplicationConfig, bool) {
-	contents, err := ioutil.ReadFile(filepath.Clean(f))
+	contents, err := os.ReadFile(filepath.Clean(f))
 	if err != nil {
 		return nil, false
 	}

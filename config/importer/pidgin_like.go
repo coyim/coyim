@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/hex"
 	"encoding/xml"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -78,7 +77,7 @@ func ImportFingerprintsFromPidginStyle(f string, protocolMatcher func(string) bo
 }
 
 func importAccountsPidginStyle(f string) (map[string]*config.Account, bool) {
-	content, err := ioutil.ReadFile(filepath.Clean(f))
+	content, err := os.ReadFile(filepath.Clean(f))
 	if err != nil {
 		return nil, false
 	}
@@ -121,7 +120,7 @@ func importAccountsPidginStyle(f string) (map[string]*config.Account, bool) {
 }
 
 func importPeerPrefsPidginStyle(f string) (map[string]map[string]*pidginOTRSettings, bool) {
-	content, err := ioutil.ReadFile(filepath.Clean(f))
+	content, err := os.ReadFile(filepath.Clean(f))
 	if err != nil {
 		return nil, false
 	}
@@ -167,7 +166,7 @@ func importPeerPrefsPidginStyle(f string) (map[string]map[string]*pidginOTRSetti
 }
 
 func importGlobalPrefsPidginStyle(f string) (*pidginOTRSettings, bool) {
-	content, err := ioutil.ReadFile(filepath.Clean(f))
+	content, err := os.ReadFile(filepath.Clean(f))
 	if err != nil {
 		return nil, false
 	}

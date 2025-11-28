@@ -1,7 +1,7 @@
 package filetransfer
 
 import (
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -48,7 +48,7 @@ func (s *ReceiverSuite) Test_receiver_simpleReceiptWorks(c *C) {
 	c.Assert(toSend, IsNil)
 	c.Assert(strings.HasPrefix(fileName, filepath.Join(destDir, "simple_receipt_test_file_tmp8_")), Equals, true)
 
-	content, _ := ioutil.ReadFile(fileName)
+	content, _ := os.ReadFile(fileName)
 	c.Assert(content, DeepEquals, []byte{0x01, 0x02, 0x03, 0x04, 0x05})
 }
 
@@ -149,7 +149,7 @@ func (s *ReceiverSuite) Test_receiver_receiptOfEncryptedDataWorks(c *C) {
 	c.Assert(toSend, DeepEquals, testDataMacKey)
 	c.Assert(strings.HasPrefix(fileName, filepath.Join(destDir, "simple_receipt_test_file_tmp11_")), Equals, true)
 
-	content, _ := ioutil.ReadFile(fileName)
+	content, _ := os.ReadFile(fileName)
 	c.Assert(content, DeepEquals, testDataContent)
 }
 

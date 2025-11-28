@@ -5,7 +5,6 @@ package gui
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -53,7 +52,7 @@ func getDefinitionWithFileFallback(uiName string) string {
 }
 
 func readFile(fileName string) string {
-	data, _ := ioutil.ReadFile(filepath.Clean(fileName))
+	data, _ := os.ReadFile(filepath.Clean(fileName))
 	return string(data)
 }
 
@@ -163,7 +162,7 @@ func (b *builder) getItem(name string, target interface{}) {
 	elem.Set(reflect.ValueOf(b.get(name)))
 }
 
-//TODO: Why not a map[string]interface{}?
+// TODO: Why not a map[string]interface{}?
 func (b *builder) getItems(args ...interface{}) {
 	for len(args) >= 2 {
 		name, ok := args[0].(string)

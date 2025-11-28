@@ -2,7 +2,7 @@ package filetransfer
 
 import (
 	"io"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/coyim/coyim/config"
@@ -78,7 +78,7 @@ func (s *BytestreamsRecvSuite) Test_BytestreamQuery_works(c *C) {
 
 	c.Assert(<-done, Equals, true)
 
-	content, _ := ioutil.ReadFile(filepath.Join(destDir, "simple_receipt_test_file_tmp6_"))
+	content, _ := os.ReadFile(filepath.Join(destDir, "simple_receipt_test_file_tmp6_"))
 	c.Assert(content, DeepEquals, []byte{0x42, 0x44, 0x46, 0x43, 0x45})
 }
 

@@ -280,9 +280,9 @@ func (s *PidginSuite) Test_pidginImporter_TryImport_works(c *C) {
 	c.Assert(e, IsNil)
 	logPotentialError(c, ff.Close())
 
-	input, e2 := ioutil.ReadFile(testResourceFilename("pidgin_test_data/accounts.xml"))
+	input, e2 := os.ReadFile(testResourceFilename("pidgin_test_data/accounts.xml"))
 	c.Assert(e2, IsNil)
-	logPotentialError(c, ioutil.WriteFile(filepath.Join(dir, pidginConfigDir, pidginAccountsFile), input, 0644))
+	logPotentialError(c, os.WriteFile(filepath.Join(dir, pidginConfigDir, pidginAccountsFile), input, 0644))
 
 	res := (&pidginImporter{}).TryImport()
 	c.Assert(res, HasLen, 1)

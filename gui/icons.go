@@ -3,7 +3,6 @@ package gui
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -1168,7 +1167,7 @@ func (i *icon) getPath() string {
 		if fileNotFound(tmpIconPath) {
 			_ = os.MkdirAll(filepath.Join(os.TempDir(), "coyim"), 0750)
 			bytes, _ := i.get()
-			_ = ioutil.WriteFile(tmpIconPath, bytes, 0600)
+			_ = os.WriteFile(tmpIconPath, bytes, 0600)
 			log.WithFields(log.Fields{
 				"name": i.name,
 				"path": tmpIconPath,

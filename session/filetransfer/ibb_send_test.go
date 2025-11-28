@@ -3,7 +3,6 @@ package filetransfer
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"os"
 	"time"
 
@@ -28,7 +27,7 @@ func (s *IBBSendSuite) Test_ibbSendDoWithBlockSize_sendsProperly(c *C) {
 	}()
 	ibbScheduleSendLimit = time.Duration(1) * time.Millisecond
 
-	tf, ex := ioutil.TempFile("", "coyim-session-ibb_send-")
+	tf, ex := os.CreateTemp("", "coyim-session-ibb_send-")
 	c.Assert(ex, IsNil)
 	_, ex = tf.Write([]byte(`hello again`))
 	c.Assert(ex, IsNil)

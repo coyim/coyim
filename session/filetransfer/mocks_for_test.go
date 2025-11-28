@@ -1,7 +1,6 @@
 package filetransfer
 
 import (
-	"io/ioutil"
 	"net"
 	"os"
 	"time"
@@ -68,7 +67,7 @@ type WithTempFileSuite struct {
 }
 
 func (s *WithTempFileSuite) SetUpTest(c *C) {
-	tf, ex := ioutil.TempFile("", "coyim-filetransfer-42-")
+	tf, ex := os.CreateTemp("", "coyim-filetransfer-42-")
 	c.Assert(ex, IsNil)
 
 	s.content = []byte(`something new`)

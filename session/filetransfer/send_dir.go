@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -25,7 +24,7 @@ func (ctx *dirSendContext) startPackingDirectory() (<-chan string, <-chan error)
 	errorResult := make(chan error)
 
 	go func() {
-		tmpFile, e := ioutil.TempFile("", fmt.Sprintf("%s-coy-directory-", filepath.Base(ctx.dir)))
+		tmpFile, e := os.CreateTemp("", fmt.Sprintf("%s-coy-directory-", filepath.Base(ctx.dir)))
 		if e != nil {
 			errorResult <- e
 			return

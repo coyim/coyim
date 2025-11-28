@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/hex"
 	"io"
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -23,7 +22,7 @@ type gajimImporter struct{}
 
 func getFilesMatching(dir, ext string) []string {
 	var files []string
-	fs, err := ioutil.ReadDir(dir)
+	fs, err := os.ReadDir(dir)
 	if err == nil {
 		for _, fi := range fs {
 			if !fi.IsDir() && path.Ext(fi.Name()) == ext {

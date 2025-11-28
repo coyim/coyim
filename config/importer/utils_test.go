@@ -14,7 +14,7 @@ type UtilsSuite struct{}
 var _ = Suite(&UtilsSuite{})
 
 func (s *UtilsSuite) Test_ifExists_returnsTheValueAndTheFileIfItExists(c *C) {
-	tmpfile, ex := ioutil.TempFile("", "coyim-config-19-")
+	tmpfile, ex := os.CreateTemp("", "coyim-config-19-")
 	c.Assert(ex, IsNil)
 	logPotentialError(c, tmpfile.Close())
 
@@ -42,7 +42,7 @@ func (s *UtilsSuite) Test_ifExists_returnsTheValueButNothingElseIfDoesntExist(c 
 }
 
 func (s *UtilsSuite) Test_ifExistsDir_returnsTheValueButNothingElseIfFile(c *C) {
-	tmpfile, ex := ioutil.TempFile("", "coyim-config-20-")
+	tmpfile, ex := os.CreateTemp("", "coyim-config-20-")
 	c.Assert(ex, IsNil)
 	logPotentialError(c, tmpfile.Close())
 

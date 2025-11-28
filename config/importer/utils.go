@@ -1,7 +1,6 @@
 package importer
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -43,7 +42,7 @@ func ifExists(fs []string, f string) []string {
 // to the result and return that
 func ifExistsDir(fs []string, d string) []string {
 	if fi, err := os.Stat(d); err == nil && fi.IsDir() {
-		entries, err := ioutil.ReadDir(d)
+		entries, err := os.ReadDir(d)
 		if err == nil {
 			for _, e := range entries {
 				if !e.IsDir() {

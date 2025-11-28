@@ -1,7 +1,6 @@
 package filetransfer
 
 import (
-	"io/ioutil"
 	"os"
 
 	sdata "github.com/coyim/coyim/session/data"
@@ -57,14 +56,14 @@ func (s *RecvSuite) Test_iqResultChosenStreamMethod(c *C) {
 }
 
 func (s *RecvSuite) Test_recvContext_finalizeFileTransfer_forFile(c *C) {
-	tf, ex := ioutil.TempFile("", "coyim-session-7-")
+	tf, ex := os.CreateTemp("", "coyim-session-7-")
 	c.Assert(ex, IsNil)
 	_, ex = tf.Write([]byte(`hello again`))
 	c.Assert(ex, IsNil)
 	ex = tf.Close()
 	c.Assert(ex, IsNil)
 
-	tf2, ex3 := ioutil.TempFile("", "coyim-session-8-")
+	tf2, ex3 := os.CreateTemp("", "coyim-session-8-")
 	c.Assert(ex3, IsNil)
 	ex3 = tf2.Close()
 	c.Assert(ex3, IsNil)

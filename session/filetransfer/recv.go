@@ -3,7 +3,6 @@ package filetransfer
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -115,7 +114,7 @@ func (ctx *recvContext) openDestinationTempFile() (f *os.File, err error) {
 	// we avoid problems on linux when trying to os.Rename later - if tmp filesystem is different
 	// than the destination file system. It also serves as an early permissions check.
 	// If the transfer is a directory, we will save the zip file here, instead of the actual file. But it should have the same result
-	f, err = ioutil.TempFile(filepath.Dir(ctx.destination), filepath.Base(ctx.destination))
+	f, err = os.CreateTemp(filepath.Dir(ctx.destination), filepath.Base(ctx.destination))
 	if err != nil {
 		ctx.opaque = nil
 		ctx.s.Log().WithError(err).Warn("problem creating temporary file")

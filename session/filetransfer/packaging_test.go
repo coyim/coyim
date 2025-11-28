@@ -1,7 +1,6 @@
 package filetransfer
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -27,7 +26,7 @@ func (s *PackagingSuite) Test_pack_and_unpack(c *C) {
 	dd := c.MkDir()
 	createTemporaryDirectoryStructure(dd)
 
-	f, ex := ioutil.TempFile("", "coyim-session-6-")
+	f, ex := os.CreateTemp("", "coyim-session-6-")
 	c.Assert(ex, IsNil)
 	defer func() {
 		ex2 := os.Remove(f.Name())

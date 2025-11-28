@@ -3,7 +3,6 @@ package config
 import (
 	"errors"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -37,14 +36,14 @@ func (s *UtilsSuite) Test_FindFile_returnsNothingIfNoPlacesGiven(c *C) {
 }
 
 func (s *UtilsSuite) Test_FindFile_returnsTheFirstFileFound(c *C) {
-	tmpfile1, e := ioutil.TempFile("", "coyim-config-1-")
+	tmpfile1, e := os.CreateTemp("", "coyim-config-1-")
 	c.Assert(e, IsNil)
 	logPotentialError(c, tmpfile1.Close())
 	defer func() {
 		logPotentialError(c, os.Remove(tmpfile1.Name()))
 	}()
 
-	tmpfile2, e2 := ioutil.TempFile("", "coyim-config-2-")
+	tmpfile2, e2 := os.CreateTemp("", "coyim-config-2-")
 	c.Assert(e2, IsNil)
 	logPotentialError(c, tmpfile2.Close())
 	defer func() {
@@ -57,12 +56,12 @@ func (s *UtilsSuite) Test_FindFile_returnsTheFirstFileFound(c *C) {
 }
 
 func (s *UtilsSuite) Test_FindFile_returnsTheSecondFileIfTheFirstDoesntExist(c *C) {
-	tmpfile1, e := ioutil.TempFile("", "coyim-config-3-")
+	tmpfile1, e := os.CreateTemp("", "coyim-config-3-")
 	c.Assert(e, IsNil)
 	logPotentialError(c, tmpfile1.Close())
 	logPotentialError(c, os.Remove(tmpfile1.Name()))
 
-	tmpfile2, e2 := ioutil.TempFile("", "coyim-config-4-")
+	tmpfile2, e2 := os.CreateTemp("", "coyim-config-4-")
 	c.Assert(e2, IsNil)
 	logPotentialError(c, tmpfile2.Close())
 	defer func() {

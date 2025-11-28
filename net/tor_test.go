@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 
@@ -98,7 +98,7 @@ func (s *TorSuite) Test_defaultTorManager_IsConnectionOverTor_works(c *C) {
 	httpGet = func(*http.Client, string) (*http.Response, error) {
 		called = true
 		resp := &http.Response{}
-		resp.Body = ioutil.NopCloser(bytes.NewBufferString(`{"IsTor": true, "IP": "1.2.3.4"}`))
+		resp.Body = io.NopCloser(bytes.NewBufferString(`{"IsTor": true, "IP": "1.2.3.4"}`))
 		return resp, nil
 	}
 
@@ -142,7 +142,7 @@ func (s *TorSuite) Test_defaultTorManager_IsConnectionOverTor_failsWhenReadingBo
 
 	httpGet = func(*http.Client, string) (*http.Response, error) {
 		resp := &http.Response{}
-		resp.Body = ioutil.NopCloser(&errorReader{errors.New("feeh")})
+		resp.Body = io.NopCloser(&errorReader{errors.New("feeh")})
 		return resp, nil
 	}
 
@@ -158,7 +158,7 @@ func (s *TorSuite) Test_defaultTorManager_IsConnectionOverTor_failsWhenGivenBadJ
 
 	httpGet = func(*http.Client, string) (*http.Response, error) {
 		resp := &http.Response{}
-		resp.Body = ioutil.NopCloser(bytes.NewBufferString(`{"IsTor": true, "I`))
+		resp.Body = io.NopCloser(bytes.NewBufferString(`{"IsTor": true, "I`))
 		return resp, nil
 	}
 

@@ -1,7 +1,6 @@
 package importer
 
 import (
-	"io/ioutil"
 	"os"
 	"path"
 	"runtime"
@@ -15,7 +14,7 @@ func testResourceFilename(s string) string {
 }
 
 func tempFile(c *C) *os.File {
-	tmpfile, e := ioutil.TempFile(c.MkDir(), "coyim-config-18-")
+	tmpfile, e := os.CreateTemp(c.MkDir(), "coyim-config-18-")
 	c.Assert(e, IsNil)
 	return tmpfile
 }

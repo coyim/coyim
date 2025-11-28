@@ -1,7 +1,7 @@
 package muc
 
 import (
-	"io/ioutil"
+	"io"
 
 	log "github.com/sirupsen/logrus"
 
@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 }
 
 func getRealJidFromString(realJid string) jid.Full {

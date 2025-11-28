@@ -1,14 +1,14 @@
 package muc
 
 import (
-	"io/ioutil"
+	"io"
 
 	log "github.com/sirupsen/logrus"
 	. "gopkg.in/check.v1"
 )
 
 func init() {
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 }
 
 type MucOccupantRolePrivilegesSuite struct{}

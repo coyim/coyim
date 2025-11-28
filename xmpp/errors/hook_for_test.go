@@ -1,7 +1,7 @@
 package errors
 
 import (
-	"io/ioutil"
+	"io"
 	"testing"
 
 	"github.com/coyim/coyim/i18n"
@@ -13,6 +13,6 @@ import (
 func Test(t *testing.T) { TestingT(t) }
 
 func init() {
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 	i18n.InitLocalization(&glib_mock.Mock{})
 }

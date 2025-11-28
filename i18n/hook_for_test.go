@@ -1,7 +1,7 @@
 package i18n
 
 import (
-	"io/ioutil"
+	"io"
 	"testing"
 
 	"github.com/coyim/gotk3adapter/glib_mock"
@@ -12,6 +12,6 @@ import (
 func Test(t *testing.T) { TestingT(t) }
 
 func init() {
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 	InitLocalization(&localGlibMock{&glib_mock.Mock{}})
 }

@@ -3,6 +3,7 @@
 package i18n
 
 import (
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -87,7 +88,7 @@ func (u *unpacker) copyTranslationFile(name string) {
 		return
 	}
 
-	content, re := ioutil.ReadAll(f)
+	content, re := io.ReadAll(f)
 	if re != nil {
 		u.log.WithError(re).WithField("file", name).Error("couldn't read file content")
 		return

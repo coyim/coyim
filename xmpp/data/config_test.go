@@ -1,7 +1,7 @@
 package data
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 
 	. "gopkg.in/check.v1"
@@ -13,7 +13,7 @@ var _ = Suite(&ConfigSuite{})
 
 func (s *ConfigSuite) Test_Config_GetLog_returnsDiscardIfLogIsNil(c *C) {
 	conf := &Config{}
-	c.Assert(conf.GetLog(), Equals, ioutil.Discard)
+	c.Assert(conf.GetLog(), Equals, io.Discard)
 }
 
 func (s *ConfigSuite) Test_Config_GetLog_returnsTheLogSet(c *C) {

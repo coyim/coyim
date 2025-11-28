@@ -1,7 +1,7 @@
 package coylog
 
 import (
-	"io/ioutil"
+	"io"
 	"testing"
 
 	log "github.com/sirupsen/logrus"
@@ -11,5 +11,5 @@ import (
 func Test(t *testing.T) { TestingT(t) }
 
 func init() {
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 }

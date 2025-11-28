@@ -3,7 +3,6 @@ package data
 import (
 	"crypto/tls"
 	"io"
-	"io/ioutil"
 )
 
 // Config contains options for an XMPP connection.
@@ -40,7 +39,7 @@ type Config struct {
 // GetLog returns the log to use for logging, either a discard or a real log
 func (c *Config) GetLog() io.Writer {
 	if c.Log == nil {
-		return ioutil.Discard
+		return io.Discard
 	}
 
 	return c.Log

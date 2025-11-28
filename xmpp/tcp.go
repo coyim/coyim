@@ -14,6 +14,8 @@ import (
 var defaultDialTimeout = 60 * time.Second
 
 func (d *dialer) newTCPConn() (net.Conn, bool, error) {
+
+	// TODO: add d.config.AllowClearnet and only do this assignment when valid. Also log it.
 	if d.proxy == nil {
 		d.proxy = proxy.Direct
 	}

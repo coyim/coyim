@@ -1,7 +1,7 @@
 package data
 
 import (
-	"io/ioutil"
+	"io"
 
 	log "github.com/sirupsen/logrus"
 
@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 }
 
 func (s *MucSuite) Test_AffiliationFromString(c *C) {

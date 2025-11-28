@@ -2,7 +2,7 @@ package net
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"time"
@@ -18,7 +18,7 @@ var (
 	timeout         = 30 * time.Second
 )
 
-//TorState informs the state of Tor
+// TorState informs the state of Tor
 type TorState interface {
 	Detect() bool
 	Address() string
@@ -106,7 +106,7 @@ func (*defaultTorManager) IsConnectionOverTor(d proxy.Dialer) bool {
 		return false
 	}
 
-	content, err := ioutil.ReadAll(resp.Body)
+	content, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.WithError(err).Warn("Got error when trying to check tor")
 		return false

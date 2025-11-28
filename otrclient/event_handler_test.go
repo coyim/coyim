@@ -3,7 +3,7 @@ package otrclient
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"sync"
 
 	log "github.com/sirupsen/logrus"
@@ -17,7 +17,7 @@ import (
 )
 
 func init() {
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 	i18n.InitLocalization(&glib_mock.Mock{})
 }
 
@@ -108,7 +108,7 @@ func captureLog(ll *log.Logger, f func()) string {
 	ll.SetOutput(buf)
 	f()
 	// log.SetFlags(prevFlags)
-	ll.SetOutput(ioutil.Discard)
+	ll.SetOutput(io.Discard)
 	return buf.String()
 }
 

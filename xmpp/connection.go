@@ -13,7 +13,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"reflect"
 	"strconv"
 	"sync"
@@ -154,10 +153,10 @@ func (c *conn) SetJIDResource(v string) {
 }
 
 // NewConn creates a new connection
-//TODO: this is used only for testing. Remove when we have a Conn interface
+// TODO: this is used only for testing. Remove when we have a Conn interface
 func NewConn(in *xml.Decoder, out io.WriteCloser, jid string) interfaces.Conn {
 	l := log.New()
-	l.SetOutput(ioutil.Discard)
+	l.SetOutput(io.Discard)
 	conn := &conn{
 		in:     in,
 		out:    out,
@@ -216,7 +215,7 @@ func (c *conn) Close() error {
 	_, err := c.safeWrite([]byte("</stream:stream>"))
 
 	//TODO: find a better way to prevent sending message.
-	c.out = ioutil.Discard
+	c.out = io.Discard
 	c.closedLock.Unlock()
 
 	if err != nil {

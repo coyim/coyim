@@ -3,7 +3,6 @@ package xmpp
 import (
 	"encoding/hex"
 	"io"
-	"io/ioutil"
 	"net"
 	"time"
 
@@ -23,7 +22,7 @@ import (
 type TCPSuite struct{}
 
 func (*TCPSuite) SetUpSuite(c *C) {
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 	i18n.InitLocalization(&glib_mock.Mock{})
 }
 
@@ -127,7 +126,7 @@ func (s *TCPSuite) Test_newTCPConn_usesDirectProxyIfNoneGiven(c *C) {
 
 func testLogger() coylog.Logger {
 	l := log.New()
-	l.SetOutput(ioutil.Discard)
+	l.SetOutput(io.Discard)
 	return l
 }
 

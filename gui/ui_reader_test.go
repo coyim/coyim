@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"errors"
+	"io"
 	"io/ioutil"
 	"os"
 	"time"
@@ -194,7 +195,7 @@ NTgzMSAwLjM4NzM5NiA2Ljc4OTMgMC4yNTA4MzMgNi45NTY1MiAwLjE1MDQ5OUM3LjEyMzc1IDAuMDUw
 MTY1OSA3LjMwNDkgMCA3LjUgMEM3LjY5NTA5IDAgNy44NzYyNSAwLjA1MDE2NTkgOC4wNDM0NyAwLjE1
 MDQ5OUM4LjIxMDY5IDAuMjUwODMzIDguMzQxNjkgMC4zODczOTYgOC40MzY0NCAwLjU2MDE5MloiIGZp
 bGw9IiNGODlCMUMiLz4KPC9zdmc+Cg==`))
-	expectedBytes, _ := ioutil.ReadAll(r)
+	expectedBytes, _ := io.ReadAll(r)
 
 	c.Assert(expectedBytes, DeepEquals, mustGetImageBytes("alert.svg"))
 
@@ -248,7 +249,7 @@ NCA4LjQxNDcxMDg5LDcuNzk0ODY0MDcgQzguNDE0NzEwODksNy44NzU5NDgyOSA4LjM4NDIxODEzLDcu
 OTQ1OTc0NTMgOC4zMjMyMzE3MSw4LjAwNDk0NDg3IEw4LjMyMzIzMTcxLDguMDA0OTQ0ODcgWiIgaWQ9
 IlBhdGgiIGZpbGw9IiNGRkZGRkYiPjwvcGF0aD4KICAgICAgICAgICAgPC9nPgogICAgICAgIDwvZz4K
 ICAgIDwvZz4KPC9zdmc+`))
-	expectedBytes, _ = ioutil.ReadAll(r)
+	expectedBytes, _ = io.ReadAll(r)
 
 	c.Assert(expectedBytes, DeepEquals, mustGetImageBytes("padlock.svg"))
 }

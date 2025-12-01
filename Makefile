@@ -55,7 +55,7 @@ AUTOGEN := gui/settings/definitions/schemas.go gui/definitions.go gui/css/defini
 
 LDFLAGS_VARS := -X 'main.BuildTimestamp=$(BUILD_TIMESTAMP)' -X 'main.BuildCommit=$(GIT_VERSION)' -X 'main.BuildShortCommit=$(GIT_SHORT_VERSION)' -X 'main.BuildTag=$(TAG_VERSION)'
 LDFLAGS_REGULAR = -ldflags "$(LDFLAGS_VARS)"
-LDFLAGS_MAC = -ldflags "$(LDFLAGS_VARS) $(LD_IGNORE_DUPLICATED_LIBS)"
+LDFLAGS_MAC = -ldflags "$(LDFLAGS_VARS)" -extldflags "$(LD_IGNORE_DUPLICATED_LIBS)"
 LDFLAGS_WINDOWS = -ldflags "$(LDFLAGS_VARS) -H windowsgui"
 
 LDF = $(LDFLAGS_REGULAR)

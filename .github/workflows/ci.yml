@@ -35,7 +35,7 @@ jobs:
   test-osx-intel:
     runs-on: macos-15-intel
 
-    name: Test go-1.23 (OS X)
+    name: Test go-1.23 (OS X) (intel)
     steps:
       - name: checkout
         uses: actions/checkout@v3
@@ -57,7 +57,7 @@ jobs:
   test-osx-arm:
     runs-on: macos-15
 
-    name: Test go-1.23 (OS X)
+    name: Test go-1.23 (OS X) (ARM)
     steps:
       - name: checkout
         uses: actions/checkout@v3

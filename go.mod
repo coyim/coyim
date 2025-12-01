@@ -1,6 +1,6 @@
 module github.com/coyim/coyim
 
-go 1.21
+go 1.23
 
 require (
 	github.com/TheCreeper/go-notify v0.2.0
@@ -26,6 +26,7 @@ require (
 )
 
 require (
+	9fans.net/go v0.0.0-20181112161441-237454027057 // indirect
 	github.com/awnumar/memcall v0.1.2 // indirect
 	github.com/coyim/constbn v0.0.0-20230207191538-27f0129d98cd // indirect
 	github.com/coyim/gotk3extra v0.0.2 // indirect
@@ -34,6 +35,7 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
+	github.com/rogpeppe/godef v1.1.2 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	golang.org/x/mod v0.18.0 // indirect
 	golang.org/x/sync v0.9.0 // indirect

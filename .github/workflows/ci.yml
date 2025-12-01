@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        go: ["1.22", "1.21"]
+        go: ["1.25", "1.24", "1.23"]
 
     name: Test go-${{ matrix.go }} (Linux)
     steps:
@@ -35,7 +35,7 @@ jobs:
   test-osx-intel:
     runs-on: macos-15-intel
 
-    name: Test go-1.21 (OS X)
+    name: Test go-1.23 (OS X)
     steps:
       - name: checkout
         uses: actions/checkout@v3
@@ -43,7 +43,7 @@ jobs:
         run: brew install gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info gtk-mac-integration fileicon
       - uses: actions/setup-go@v3
         with:
-          go-version: 1.21
+          go-version: 1.23
       - name: install project dependencies
         run: make -C ci/ deps
         env:
@@ -57,7 +57,7 @@ jobs:
   test-osx-arm:
     runs-on: macos-15
 
-    name: Test go-1.21 (OS X)
+    name: Test go-1.23 (OS X)
     steps:
       - name: checkout
         uses: actions/checkout@v3
@@ -65,7 +65,7 @@ jobs:
         run: brew install gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info gtk-mac-integration fileicon
       - uses: actions/setup-go@v3
         with:
-          go-version: 1.21
+          go-version: 1.23
       - name: install project dependencies
         run: make -C ci/ deps
         env:
@@ -86,7 +86,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        go: [ '1.21' ]
+        go: [ '1.23' ]
 
     name: Test go-${{ matrix.go }} (Windows)
     steps:
@@ -141,29 +141,29 @@ jobs:
       - name: show temp directories after tests
         run: ls -alF C:/Users/runneradmin/AppData/Local/Temp
 
-  notify-test:
-    name: Notify on success or failure of test
-    needs: [test-linux, test-osx-intel, test-osx-arm, test-win]
-    runs-on: ubuntu-24.04
-    if: always()
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-      - uses: technote-space/workflow-conclusion-action@v1
-      - uses: ./.github/actions/ci-conclusion-message
-        id: message-generator
-        with:
-          status: ${{ env.WORKFLOW_CONCLUSION }}
-          commit_id: ${{ github.sha }}
-          commit_message: ${{ github.event.head_commit.message }}
-      - name: send message to Matrix on conclusion
-        uses: olabiniV2/matrix-message@v0.0.1
-        with:
-          room_id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
-          access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
-          server: ${{ secrets.MATRIX_SERVER }}
-          subject: ${{ steps.message-generator.outputs.subject }}
-          message: ${{ steps.message-generator.outputs.message }}
+  # notify-test:
+  #   name: Notify on success or failure of test
+  #   needs: [test-linux, test-osx-intel, test-osx-arm, test-win]
+  #   runs-on: ubuntu-24.04
+  #   if: always()
+  #   steps:
+  #     - name: checkout
+  #       uses: actions/checkout@v3
+  #     - uses: technote-space/workflow-conclusion-action@v1
+  #     - uses: ./.github/actions/ci-conclusion-message
+  #       id: message-generator
+  #       with:
+  #         status: ${{ env.WORKFLOW_CONCLUSION }}
+  #         commit_id: ${{ github.sha }}
+  #         commit_message: ${{ github.event.head_commit.message }}
+  #     - name: send message to Matrix on conclusion
+  #       uses: olabiniV2/matrix-message@v0.0.1
+  #       with:
+  #         room_id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
+  #         access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
+  #         server: ${{ secrets.MATRIX_SERVER }}
+  #         subject: ${{ steps.message-generator.outputs.subject }}
+  #         message: ${{ steps.message-generator.outputs.message }}
 
   build-release-linux:
     name: Build release (Linux)
@@ -176,7 +176,7 @@ jobs:
         uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
-          go-version: '1.21'
+          go-version: '1.23'
       - name: build release
         run: make -C ci/ make-gui-for-release-linux
       - name: Archive build artifacts
@@ -202,7 +202,7 @@ jobs:
         run: npm install --global appdmg
       - uses: actions/setup-go@v3
         with:
-          go-version: '1.21'
+          go-version: '1.23'
       - name: install project dependencies
         run: make -C ci/ deps
       - name: build release
@@ -236,7 +236,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.21'
+          go-version: '1.23'
       - name: Setup msys2
         uses: msys2/setup-msys2@v2
         with:

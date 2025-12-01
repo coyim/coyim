@@ -3,10 +3,7 @@ package text
 import (
 	"testing"
 
-	. "gopkg.in/check.v1"
+	"github.com/coyim/coyim/testutil"
 )
 
-func Test(t *testing.T) { TestingT(t) }
-
-func init() {
-}
+func Test(t *testing.T) { testutil.InitTest(t) }

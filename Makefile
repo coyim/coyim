@@ -44,6 +44,7 @@ SRC := $(filter-out $(SRC_TEST), $(SRC_ALL))
 
 PREF := PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:$$PKG_CONFIG_PATH
 GCC_IGNORE_DEPRECATED_WARNINGS := CGO_CFLAGS_ALLOW="-Wno-deprecated-declarations" CGO_CFLAGS="-Wno-deprecated-declarations"
+LD_IGNORE_DUPLICATED_LIBS := -Wl,-no_warn_duplicate_libraries
 GO := $(PREF) $(GCC_IGNORE_DEPRECATED_WARNINGS) ${BUILD_RUN_PREFIX} go
 GOBUILD := $(GO) build
 GOTEST := $(GO) test
@@ -54,7 +55,19 @@ AUTOGEN := gui/settings/definitions/schemas.go gui/definitions.go gui/css/defini
 
 LDFLAGS_VARS := -X 'main.BuildTimestamp=$(BUILD_TIMESTAMP)' -X 'main.BuildCommit=$(GIT_VERSION)' -X 'main.BuildShortCommit=$(GIT_SHORT_VERSION)' -X 'main.BuildTag=$(TAG_VERSION)'
 LDFLAGS_REGULAR = -ldflags "$(LDFLAGS_VARS)"
+LDFLAGS_MAC = -ldflags "$(LDFLAGS_VARS) $(LD_IGNORE_DUPLICATED_LIBS)"
 LDFLAGS_WINDOWS = -ldflags "$(LDFLAGS_VARS) -H windowsgui"
+
+LDF = $(LDFLAGS_REGULAR)
+
+ifeq ($(OS),Windows_NT)
+LDF = $(LDFLAGS_WINDOWS)
+else
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+LDF = $(LDFLAGS_MAC)
+endif
+endif
 
 .PHONY: default check autogen build build-gui build-gui-memory-analyzer build-gui-address-san build-gui-win build-debug debug win-ci-deps reproducible-linux-create-image reproducible-linux-build sign-reproducible send-reproducible-signature check-reproducible-signatures clean clean-cache update-vendor gosec ineffassign i18n lint test test-named dep-supported-only deps run-cover clean-cover cover all authors
 
@@ -62,20 +75,20 @@ default: check
 check: lint test
 
 $(BUILD_DIR)/coyim: $(AUTOGEN) $(SRC)
-	$(GOBUILD) $(LDFLAGS_REGULAR) $(TAGS) -o $@
+	$(GOBUILD) $(LDF) $(TAGS) -o $@
 
 $(BUILD_DIR)/coyim-ma: $(AUTOGEN) $(SRC)
-	$(GOBUILD) $(LDFLAGS_REGULAR) -x -msan $(TAGS) -o $@
+	$(GOBUILD) $(LDF) -x -msan $(TAGS) -o $@
 
 # run with: export ASAN_OPTIONS=detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1:verbosity=1:handle_segv=0
 $(BUILD_DIR)/coyim-aa: $(AUTOGEN) $(SRC)
 	CC="clang" CGO_CFLAGS="-fsanitize=address -fsanitize-address-use-after-scope -g -O1 -fno-omit-frame-pointer" CGO_LDFLAGS="-fsanitize=address" $(GOBUILD) $(LDFLAGS_REGULAR) -x -ldflags '-extldflags "-fsanitize=address"' $(TAGS) -o $@
 
 $(BUILD_DIR)/coyim.exe: $(AUTOGEN) $(SRC)
-	CGO_LDFLAGS_ALLOW=".*" CGO_CFLAGS_ALLOW=".*" CGO_CXXFLAGS_ALLOW=".*" CGO_CPPFLAGS_ALLOW=".*" $(GOBUILD) $(LDFLAGS_WINDOWS) $(TAGS) -o $@
+	CGO_LDFLAGS_ALLOW=".*" CGO_CFLAGS_ALLOW=".*" CGO_CXXFLAGS_ALLOW=".*" CGO_CPPFLAGS_ALLOW=".*" $(GOBUILD) $(LDF) $(TAGS) -o $@
 
 $(BUILD_DIR)/coyim-debug: $(AUTOGEN) $(SRC)
-	$(GOBUILD) $(LDFLAGS_REGULAR) -v -gcflags "-N -l" $(TAGS) -o $@
+	$(GOBUILD) $(LDF) -v -gcflags "-N -l" $(TAGS) -o $@
 
 build: build-gui
 build-gui: $(BUILD_DIR)/coyim
@@ -163,7 +176,7 @@ lint: $(AUTOGEN)
 	golint -set_exit_status $(SRC_DIRS)
 
 test: $(AUTOGEN)
-	$(GOTEST) -cover -v $(TAGS) ./...
+	$(GOTEST) $(LDF) -cover -v $(TAGS) ./...
 
 test-named: $(AUTOGEN)
 	$(GOTEST) -v $(TAGS) $(SRC_DIRS)

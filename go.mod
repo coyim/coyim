@@ -7,9 +7,9 @@ toolchain go1.23.12
 require (
 	github.com/TheCreeper/go-notify v0.2.0
 	github.com/coyim/gosx-notifier v0.0.0-20160821204220-212122c14674
-	github.com/coyim/gotk3adapter v0.0.2
-	github.com/coyim/gotk3osx v0.0.0-20210924194818-6c37c30c671a
-	github.com/coyim/otr3 v0.0.0-20251201151835-9faf51166271
+	github.com/coyim/gotk3adapter v0.0.3
+	github.com/coyim/gotk3osx v0.0.0-20251201162234-f321b73c1426
+	github.com/coyim/otr3 v0.0.0-20251201172118-4568b9acbc7c
 	github.com/godbus/dbus/v5 v5.2.0
 	github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3
 	github.com/gotk3/gotk3 v0.6.2
@@ -30,7 +30,7 @@ require (
 require (
 	github.com/awnumar/memcall v0.5.0 // indirect
 	github.com/coyim/constbn v0.0.0-20251201142907-b19b950d1e1c // indirect
-	github.com/coyim/gotk3extra v0.0.2 // indirect
+	github.com/coyim/gotk3extra v0.0.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect

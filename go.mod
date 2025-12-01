@@ -10,12 +10,12 @@ require (
 	github.com/coyim/gotk3adapter v0.0.2
 	github.com/coyim/gotk3osx v0.0.0-20210924194818-6c37c30c671a
 	github.com/coyim/otr3 v0.0.0-20251201151835-9faf51166271
-	github.com/godbus/dbus/v5 v5.1.0
+	github.com/godbus/dbus/v5 v5.2.0
 	github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3
 	github.com/gotk3/gotk3 v0.6.2
 	github.com/hydrogen18/stalecucumber v0.0.0-20180226003526-6de214d141dd
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
-	github.com/miekg/dns v1.1.63
+	github.com/miekg/dns v1.1.68
 	github.com/prashantv/gostub v1.1.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.11.1

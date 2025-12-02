@@ -12,25 +12,25 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"strings"
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/xmpp/interfaces"
 )
 
 func certName(cert *x509.Certificate) string {
-	name := cert.Subject
-	ret := ""
-
-	for _, org := range name.Organization {
-		ret += "O=" + org + "/"
-	}
-	for _, ou := range name.OrganizationalUnit {
-		ret += "OU=" + ou + "/"
-	}
-	if len(name.CommonName) > 0 {
-		ret += "CN=" + name.CommonName + "/"
-	}
-	return ret
+    name := cert.Subject
+    var b strings.Builder
+    for _, org := range name.Organization {
+        b.WriteString("O=" + org + "/")
+    }
+    for _, ou := range name.OrganizationalUnit {
+        b.WriteString("OU=" + ou + "/")
+    }
+    if len(name.CommonName) > 0 {
+        b.WriteString("CN=" + name.CommonName + "/")
+    }
+    return b.String()
 }
 
 // GetCipherSuiteName returns a human readable string of the cipher suite used in the state

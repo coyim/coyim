@@ -99,7 +99,7 @@ func (s *SessionSuite) Test_WatchStanzas_warnsAndExitsOnBadStanza(c *C) {
 	c.Assert(len(hook.Entries), Equals, 1)
 	c.Assert(hook.LastEntry().Level, Equals, log.ErrorLevel)
 	c.Assert(hook.LastEntry().Message, Equals, "error reading XMPP message")
-	c.Assert(hook.LastEntry().Data["error"].(error).Error(), Equals, "unexpected XMPP message clientx <message/>")
+	c.Assert(hook.LastEntry().Data["error"].(error).Error(), Equals, "failed to read stanza: unexpected XMPP message clientx <message/>")
 }
 
 func (s *SessionSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {

@@ -93,13 +93,13 @@ func (ctx *recvContext) finalizeFileTransfer(tempName string) error {
 		if err := unpack(tempName, ctx.destination); err != nil {
 			ctx.s.Log().WithField("destination", ctx.destination).WithError(err).Warn("problem unpacking data")
 			ctx.control.ReportError(errors.New("Couldn't unpack final file"))
-			return err
+			return fmt.Errorf("failed to unpack final file: %w", err)
 		}
 	} else {
 		if err := os.Rename(tempName, ctx.destination); err != nil {
 			ctx.s.Log().WithField("destination", ctx.destination).WithError(err).Warn("couldn't rename file")
 			ctx.control.ReportError(errors.New("Couldn't save final file"))
-			return err
+			return fmt.Errorf("failed to save final file: %w", err)
 		}
 	}
 

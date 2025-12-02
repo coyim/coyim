@@ -7,6 +7,8 @@ import (
 	"os"
 	"strings"
 	"sync"
+
+	"github.com/coyim/coyim/internal/util"
 )
 
 // HasApplication represents any object that has application config and can give access to it
@@ -96,7 +98,7 @@ func (a *ApplicationConfig) onAfterSave() {
 // genUniqueID will generate and set a new unique ID fro this application config
 func (a *ApplicationConfig) genUniqueID() {
 	s := [32]byte{}
-	_ = randomString(s[:])
+	util.LogIgnoredError(randomString(s[:]), nil, "generating random string")
 	a.UniqueConfigurationID = hex.EncodeToString(s[:])
 }
 

@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/coyim/coyim/internal/util"
+	
 	log "github.com/sirupsen/logrus"
 
 	"golang.org/x/net/proxy"
@@ -72,7 +74,7 @@ func detectTorInternal(host string, ports []string) (string, bool) {
 		}
 
 		defer func() {
-			_ = conn.Close()
+			util.LogIgnoredError(conn.Close(), nil, "closing connection")
 		}()
 		return addr, true
 	}

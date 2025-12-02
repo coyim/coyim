@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/coyim/coyim/internal/util"
+	
 	log "github.com/sirupsen/logrus"
 
 	"github.com/miekg/dns"
@@ -52,7 +54,7 @@ func LookupSRVWith(dialer proxy.Dialer, dnsServer, service, proto, name string) 
 
 		dnsConn := &dns.Conn{Conn: conn}
 		defer func() {
-			_ = dnsConn.Close()
+			util.LogIgnoredError(dnsConn.Close(), nil, "closing DNS connection")
 		}()
 
 		r, err := exchange(dnsConn, msgSRV(cname))

@@ -55,14 +55,14 @@ func safeWrite(name string, data []byte, perm os.FileMode) error {
 	if fileExists(name) {
 		err := osRename(name, backupName)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to rename %s to %s: %w", name, backupName, err)
 		}
 	}
 
 	tempName := fmt.Sprintf("%s%s", name, tmpExtension)
 	err := os.WriteFile(tempName, data, perm)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to write configuration to file %s: %w", tempName, err)
 	}
 
 	return osRename(tempName, name)

@@ -171,7 +171,7 @@ func (s *FileSuite) Test_safeWrite_filesIfWeCantSaveTheBackupFile(c *C) {
 
 	logPotentialError(c, os.WriteFile(filepath.Join(dir, "accounts.json"), []byte("previous content"), 0666))
 	e := safeWrite(filepath.Join(dir, "accounts.json"), []byte("12345678910111213"), 0700)
-	c.Assert(e, ErrorMatches, "so wro+ng")
+	c.Assert(e, ErrorMatches, ".*?: so wro+ng")
 }
 
 func (s *FileSuite) Test_safeWrite_failsIfImpossibleToWriteFile(c *C) {

@@ -1095,7 +1095,7 @@ func (s *ConnectionXMPPSuite) Test_readMessages_alertsOnError(c *C) {
 
 	_, ok := <-stanzaChan
 	c.Assert(ok, Equals, false)
-	c.Assert(err.Error(), Equals, "unexpected XMPP message clientx <message/>")
+	c.Assert(err.Error(), Equals, "failed to read stanza: unexpected XMPP message clientx <message/>")
 }
 
 func (s *ConnectionXMPPSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {

@@ -20,6 +20,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	"github.com/coyim/coyim/internal/util"
 	"github.com/coyim/coyim/cache"
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/servers"
@@ -384,7 +385,10 @@ func (c *conn) Send(to, msg string, otr bool) error {
 	_, _ = fmt.Fprintf(&outb, "<message to='%s' from='%s' type='chat'><body>%s</body>%s%s%s</message>", xmlEscape(to), xmlEscape(c.jid), xmlEscape(msg), archive, nocopy, otrMsg)
 
 	_, err := c.safeWrite(outb.Bytes())
-	return err
+	if err != nil {
+		return fmt.Errorf("failed to write to connection: %w", err)
+	}
+	return nil
 }
 
 // SendMessage sends a message to the intended recipient.
@@ -396,7 +400,10 @@ func (c *conn) SendMessage(m *data.ClientMessage) error {
 	mb := messageToByteArray(m)
 
 	_, err := c.safeWrite(mb)
-	return err
+	if err != nil {
+		return fmt.Errorf("failed to write to connection: %w", err)
+	}
+	return nil
 }
 
 func messageToByteArray(m *data.ClientMessage) []byte {
@@ -411,14 +418,14 @@ func messageToByteArray(m *data.ClientMessage) []byte {
 func (c *conn) ReadStanzas(stanzaChan chan<- data.Stanza) error {
 	defer close(stanzaChan)
 	defer func() {
-		_ = c.closeImmediately()
+		util.LogIgnoredError(c.closeImmediately(), c.log, "immediately closing connection")		
 	}()
 
 	for {
 		stanza, err := c.Next()
 		if err != nil {
 			c.log.WithError(err).Warn("xmpp: error receiving stanza")
-			return err
+			return fmt.Errorf("failed to read stanza: %w", err)
 		}
 
 		//The receiving entity has closed the channel

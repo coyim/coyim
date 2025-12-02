@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/internal/util"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/otr3"
 )
@@ -20,7 +21,7 @@ func ImportKeysFromPidginStyle(f string, protocolMatcher func(string) bool) (map
 	if err != nil {
 		return nil, false
 	}
-	defer closeAndIgnore(file)
+	defer util.CloseAndIgnore(file)
 
 	acs, err := otr3.ImportKeys(file)
 	if err != nil {
@@ -44,7 +45,7 @@ func ImportFingerprintsFromPidginStyle(f string, protocolMatcher func(string) bo
 		return nil, false
 	}
 
-	defer closeAndIgnore(file)
+	defer util.CloseAndIgnore(file)
 	sc := bufio.NewScanner(file)
 	result := make(map[string][]*config.KnownFingerprint)
 	for sc.Scan() {

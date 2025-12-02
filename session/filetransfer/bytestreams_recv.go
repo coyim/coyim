@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/coyim/coyim/digests"
+	"github.com/coyim/coyim/internal/util"
 	"github.com/coyim/coyim/xmpp/data"
 )
 
@@ -73,13 +74,13 @@ func (ctx *recvContext) bytestreamDoReceive(conn io.ReadWriteCloser) {
 
 	_, err := ioCopy(recv, conn)
 	if err != nil && err != errLocalCancel {
-		closeAndIgnore(conn)
+		util.CloseAndIgnore(conn)
 		return
 	}
 
 	toSend, fname, ok, _ := recv.wait()
 	if !ok {
-		closeAndIgnore(conn)
+		util.CloseAndIgnore(conn)
 		return
 	}
 
@@ -87,7 +88,7 @@ func (ctx *recvContext) bytestreamDoReceive(conn io.ReadWriteCloser) {
 		_, _ = conn.Write(toSend)
 	}
 
-	closeAndIgnore(conn)
+	util.CloseAndIgnore(conn)
 
 	if err := ctx.finalizeFileTransfer(fname); err != nil {
 		ctx.s.Log().WithError(err).Warn("Had error when trying to move the final file")

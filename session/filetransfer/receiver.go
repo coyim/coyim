@@ -6,6 +6,8 @@ import (
 	"os"
 	"sync"
 
+	"github.com/coyim/coyim/internal/util"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -134,7 +136,7 @@ var ioTeeReader = io.TeeReader
 func (r *receiver) cleanupAfterRun() {
 	ff := r.temporaryFile
 	if ff != nil {
-		closeAndIgnore(ff)
+		util.CloseAndIgnore(ff)
 		_ = os.Remove(ff.Name())
 		r.temporaryFile = nil
 	}
@@ -208,7 +210,7 @@ func (r *receiver) readAndRun() {
 	}
 
 	r.Lock()
-	closeAndIgnore(ff)
+	util.CloseAndIgnore(ff)
 	r.toSendAtFinish = toSend
 	r.fileNameAtFinish = ff.Name()
 	r.done = true

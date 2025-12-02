@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/coyim/coyim/internal/util"
 	"github.com/coyim/coyim/xmpp/data"
 )
 
@@ -101,7 +102,7 @@ func ibbSendChunk(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16) 
 		go trackResultOfSend(ctx, rpl)
 	}
 	if err == io.EOF {
-		closeAndIgnore(r)
+		util.CloseAndIgnore(r)
 		addInflightMAC(ctx)
 		_, _, _ = ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBClose{Sid: ctx.sid})
 		ctx.onFinish()

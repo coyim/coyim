@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/coyim/coyim/internal/util"
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -30,7 +31,7 @@ func (ctx *dirSendContext) startPackingDirectory() (<-chan string, <-chan error)
 			return
 		}
 		e = pack(ctx.dir, tmpFile)
-		closeAndIgnore(tmpFile)
+		util.CloseAndIgnore(tmpFile)
 		if e != nil {
 			_ = os.Remove(tmpFile.Name())
 			errorResult <- e

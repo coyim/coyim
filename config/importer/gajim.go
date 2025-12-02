@@ -3,7 +3,6 @@ package importer
 import (
 	"bufio"
 	"encoding/hex"
-	"io"
 	"os"
 	"path"
 	"path/filepath"
@@ -12,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/internal/util"
 	"github.com/hydrogen18/stalecucumber"
 )
 
@@ -45,17 +45,13 @@ func (g *gajimImporter) findFiles() (configFile string, pluginFile string, keyFi
 	return
 }
 
-func closeAndIgnore(c io.Closer) {
-	_ = c.Close()
-}
-
 func (g *gajimImporter) importFingerprintsFrom(f string) (string, []*config.KnownFingerprint, bool) {
 	file, err := os.Open(filepath.Clean(f))
 	if err != nil {
 		return "", nil, false
 	}
 
-	defer closeAndIgnore(file)
+	defer util.CloseAndIgnore(file)
 	sc := bufio.NewScanner(file)
 	var result []*config.KnownFingerprint
 	name := ""
@@ -125,7 +121,7 @@ func (g *gajimImporter) importOTRSettings(f string) (map[string]gajimOTRSettings
 	if err != nil {
 		return nil, nil, false
 	}
-	defer closeAndIgnore(file)
+	defer util.CloseAndIgnore(file)
 	res, err := stalecucumber.DictString(stalecucumber.Unpickle(file))
 	if err != nil {
 		return nil, nil, false
@@ -221,7 +217,7 @@ func (g *gajimImporter) importAccounts(f string) (map[string]gajimAccountInfo, b
 		return nil, false
 	}
 
-	defer closeAndIgnore(file)
+	defer util.CloseAndIgnore(file)
 	sc := bufio.NewScanner(file)
 
 	accountSettings := make(map[string]map[string]string)

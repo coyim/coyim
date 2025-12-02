@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/digests"
+	"github.com/coyim/coyim/internal/util"
 	"github.com/coyim/coyim/xmpp/data"
 	xi "github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -92,19 +93,15 @@ func bytestreamsGetCurrentValidProxies(s hasConnectionAndConfig) []*data.Bytestr
 
 var errLocalCancel = errors.New("local cancel")
 
-func closeAndIgnore(c io.Closer) {
-	_ = c.Close()
-}
-
 func bytestreamsSendData(ctx *sendContext, c io.ReadWriteCloser) {
-	defer closeAndIgnore(c)
+	defer util.CloseAndIgnore(c)
 
 	r, err := os.Open(ctx.file)
 	if err != nil {
 		ctx.onError(err)
 		return
 	}
-	defer closeAndIgnore(r)
+	defer util.CloseAndIgnore(r)
 
 	reporting := func(v int) error {
 		if ctx.weWantToCancel {

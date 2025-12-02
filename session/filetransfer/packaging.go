@@ -8,11 +8,13 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/coyim/coyim/internal/util"
 )
 
 func pack(dir string, zf *os.File) error {
 	a := zip.NewWriter(zf)
-	defer closeAndIgnore(a)
+	defer util.CloseAndIgnore(a)
 
 	baseDir := filepath.Base(dir)
 
@@ -47,7 +49,7 @@ func pack(dir string, zf *os.File) error {
 		if err != nil {
 			return err
 		}
-		defer closeAndIgnore(file)
+		defer util.CloseAndIgnore(file)
 		_, err = ioCopy(writer, file)
 		return err
 	})
@@ -58,7 +60,7 @@ func unpack(file string, intoDir string) error {
 	if err != nil {
 		return err
 	}
-	defer closeAndIgnore(reader)
+	defer util.CloseAndIgnore(reader)
 
 	if err := os.MkdirAll(intoDir, 0750); err != nil {
 		return err
@@ -82,7 +84,7 @@ func unpack(file string, intoDir string) error {
 		if err != nil {
 			return err
 		}
-		defer closeAndIgnore(fileReader)
+		defer util.CloseAndIgnore(fileReader)
 
 		// Limit each file to 2Gb
 		limReader := &io.LimitedReader{R: fileReader, N: 2 * 1024 * 1024 * 1024}
@@ -91,7 +93,7 @@ func unpack(file string, intoDir string) error {
 		if err != nil {
 			return err
 		}
-		defer closeAndIgnore(targetFile)
+		defer util.CloseAndIgnore(targetFile)
 
 		if _, err := ioCopy(targetFile, limReader); err != nil {
 			return err

@@ -72,7 +72,7 @@ func (d *dialer) negotiateSTARTTLS(c interfaces.Conn, conn net.Conn) error {
 	}
 
 	if err := d.startTLS(c, conn); err != nil {
-		return err
+		return fmt.Errorf("failed to start TLS: %w", err)
 	}
 
 	return c.SendInitialStreamHeader()
@@ -83,7 +83,7 @@ func (d *dialer) startTLS(c interfaces.Conn, conn net.Conn) error {
 
 	proceed, err := nextStart(c.In(), d.log)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get start stanza: %w", err)
 	}
 
 	if proceed.Name.Space != NsTLS || proceed.Name.Local != "proceed" {

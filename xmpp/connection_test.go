@@ -556,7 +556,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsIfReceivingEOFAfterStartingTLS(c *C
 	}
 	_, err := d.setupStream(conn)
 
-	c.Assert(err.Error(), Matches, "(XML syntax error on line 1: unexpected )?EOF")
+	c.Assert(err.Error(), Matches, "failed to start TLS: failed to get start stanza: (XML syntax error on line 1: unexpected )?EOF")
 }
 
 func (s *ConnectionXMPPSuite) Test_Dial_failsIfReceivingTheWrongNamespaceAfterStarttls(c *C) {
@@ -581,7 +581,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsIfReceivingTheWrongNamespaceAfterSt
 	}
 	_, err := d.setupStream(conn)
 
-	c.Assert(err.Error(), Equals, "xmpp: expected <proceed> after <starttls> but got <proceed> in http://etherx.jabber.org/streams")
+	c.Assert(err.Error(), Equals, "failed to start TLS: xmpp: expected <proceed> after <starttls> but got <proceed> in http://etherx.jabber.org/streams")
 }
 
 func (s *ConnectionXMPPSuite) Test_Dial_failsIfReceivingTheWrongTagName(c *C) {
@@ -606,7 +606,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsIfReceivingTheWrongTagName(c *C) {
 	}
 	_, err := d.setupStream(conn)
 
-	c.Assert(err.Error(), Equals, "xmpp: expected <proceed> after <starttls> but got <things> in urn:ietf:params:xml:ns:xmpp-tls")
+	c.Assert(err.Error(), Equals, "failed to start TLS: xmpp: expected <proceed> after <starttls> but got <things> in urn:ietf:params:xml:ns:xmpp-tls")
 }
 
 func (s *ConnectionXMPPSuite) Test_Dial_failsIfDecodingFallbackFails(c *C) {
@@ -1129,7 +1129,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
 	conn := &fullMockedConn{rw: rw}
 	_, err := d.setupStream(conn)
 
-	c.Assert(err, Equals, io.EOF)
+	c.Assert(fmt.Sprintf("%s", err), Equals, "failed to start TLS: EOF")
 }
 
 func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
@@ -1195,7 +1195,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInv
 	}
 	_, err := d.setupStream(conn)
 
-	c.Assert(err.Error(), Equals, "tls: server certificate does not match expected hash (got: 82454418cb04854aa721bb0596528ff802b1e18a4e3a7767412ac9f108c9d3a7, want: 6161616161)")
+	c.Assert(err.Error(), Equals, "failed to start TLS: tls: server certificate does not match expected hash (got: 82454418cb04854aa721bb0596528ff802b1e18a4e3a7767412ac9f108c9d3a7, want: 6161616161)")
 }
 
 func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButSucceedsOnValidCertHash(c *C) {

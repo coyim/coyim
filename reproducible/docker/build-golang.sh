@@ -2,7 +2,7 @@
 
 set -xe
 
-export GOROOT_BOOTSTRAP=/usr/lib/go-1.13
+export GOROOT_BOOTSTRAP=/usr/lib/go-1.18
 
 cd /root/go
 source /root/setup-reproducible

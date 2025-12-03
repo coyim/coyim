@@ -64,18 +64,18 @@ func safeWrite(name string, data []byte, perm os.FileMode) error {
 	// Verify the write by reading back the size
 	stat, err := os.Stat(tempName)
 	if err != nil || stat.Size() != int64(len(data)) {
-		_ = os.Remove(tempName)
+		_ = secureRemove(tempName)
 		return fmt.Errorf("failed to verify written data: expected %d bytes, got %d", len(data), stat.Size())
 	}
 
 	if fileExists(name) {
 		if fileExists(backupName) {
-			_ = os.Remove(backupName)
+			_ = secureRemove(backupName)
 		}
 
 		err := osRename(name, backupName)
 		if err != nil {
-			_ = os.Remove(tempName)
+			_ = secureRemove(tempName)
 			return fmt.Errorf("failed to rename %s to %s: %w", name, backupName, err)
 		}
 	}

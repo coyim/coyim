@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
 	"strings"
 	"sync"
 
@@ -122,8 +121,7 @@ func (a *ApplicationConfig) removeOldFileOnNextSave() {
 
 	a.doAfterSave(func() {
 		if fileExists(oldFilename) && a.filename != oldFilename {
-			// TODO: Hmm, should we safe wipe this maybe? The old file can contain potentially sensitive things
-			_ = os.Remove(oldFilename)
+			_ = secureRemove(oldFilename)
 		}
 	})
 }

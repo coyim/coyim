@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"syscall"
 	"time"
 )
 
@@ -76,7 +77,13 @@ func isLockStale(lockPath string) bool {
 		return true
 	}
 
-	_ = process
+	// On Unix, FindProcess always succeeds, so send signal 0 to check if process exists
+	// Signal 0 doesn't actually send a signal, it just checks if we *can* send one
+	err = process.Signal(syscall.Signal(0))
+	if err != nil {
+		// Process doesn't exist or we don't have permission (both mean stale lock)
+		return true
+	}
 
 	return false
 }

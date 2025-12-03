@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"strings"
 	"sync"
@@ -254,12 +255,23 @@ func (a *ApplicationConfig) GetAccount(jid string) (*Account, bool) {
 func (a *ApplicationConfig) Save(ks KeySupplier) error {
 	a.ioLock.Lock()
 	defer a.ioLock.Unlock()
+
+	// Validate before saving
+	if len(a.Accounts) == 0 {
+		return errors.New("refusing to save config with no accounts")
+	}
+
 	a.onBeforeSave()
 	defer a.onAfterSave()
 
 	contents, err := a.serialize()
 	if err != nil {
 		return err
+	}
+
+	// Verify the serialized data is reasonable
+	if len(contents) < 50 {
+		return fmt.Errorf("serialized config suspiciously small: %d bytes", len(contents))
 	}
 
 	if a.shouldEncrypt {
@@ -298,8 +310,8 @@ func (a *ApplicationConfig) UpdateToLatestVersion() bool {
 
 var jsonMarshalIndentFunc = json.MarshalIndent
 
-//TODO: This is where we generate a new JSON representation and serialize it.
-//We are currently serializing our internal representation (ApplicationConfig) directly.
+// TODO: This is where we generate a new JSON representation and serialize it.
+// We are currently serializing our internal representation (ApplicationConfig) directly.
 func (a *ApplicationConfig) serialize() ([]byte, error) {
 	return jsonMarshalIndentFunc(a, "", "\t")
 }

@@ -267,6 +267,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithoutEncryption(c *C)
 	a := &ApplicationConfig{
 		shouldEncrypt: false,
 		filename:      tmpfileName,
+		Accounts:      []*Account{&Account{}},
 	}
 
 	e := a.Save(nil)
@@ -280,7 +281,17 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithoutEncryption(c *C)
 	c.Assert(e, IsNil)
 	c.Assert(string(content), Equals, fmt.Sprintf(""+
 		"{\n"+
-		"\t\"Accounts\": null,\n"+
+		"\t\"Accounts\": [\n"+
+		"\t\t{\n"+
+		"\t\t\t\"Account\": \"\",\n"+
+		"\t\t\t\"Peers\": null,\n"+
+		"\t\t\t\"HideStatusUpdates\": false,\n"+
+		"\t\t\t\"OTRAutoTearDown\": false,\n"+
+		"\t\t\t\"OTRAutoAppendTag\": false,\n"+
+		"\t\t\t\"OTRAutoStartSession\": false,\n"+
+		"\t\t\t\"ConnectAutomatically\": false\n"+
+		"\t\t}\n"+
+		"\t],\n"+
 		"\t\"Bell\": false,\n"+
 		"\t\"ConnectAutomatically\": false,\n"+
 		"\t\"Display\": {\n"+
@@ -319,6 +330,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withNewP
 		shouldEncrypt:         true,
 		filename:              tmpfile.Name(),
 		UniqueConfigurationID: "123hello",
+		Accounts:              []*Account{&Account{}},
 	}
 
 	e := a.Save(&mockKeySupplier{
@@ -356,6 +368,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_withExis
 		shouldEncrypt:         true,
 		filename:              tmpfile.Name(),
 		UniqueConfigurationID: "123hello",
+		Accounts:              []*Account{&Account{}},
 	}
 
 	a.params = &EncryptionParameters{
@@ -408,6 +421,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_doesntAd
 		shouldEncrypt:         true,
 		filename:              tmpfile.Name() + ".enc",
 		UniqueConfigurationID: "123hello",
+		Accounts:              []*Account{&Account{}},
 	}
 
 	e := a.Save(&mockKeySupplier{
@@ -440,7 +454,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_failsOnSerialization(c *C) {
 		return nil, errors.New("ser went wrong")
 	}
 
-	a := &ApplicationConfig{}
+	a := &ApplicationConfig{Accounts: []*Account{&Account{}}}
 
 	e := a.Save(nil)
 	c.Assert(e, ErrorMatches, "ser went wrong")
@@ -456,6 +470,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_Save_savesWithEncryption_failsIfE
 		shouldEncrypt:         true,
 		filename:              tmpfile.Name() + ".enc",
 		UniqueConfigurationID: "123hello",
+		Accounts:              []*Account{&Account{}},
 	}
 
 	e := a.Save(&mockKeySupplier{
@@ -479,6 +494,7 @@ func (s *AccountsSuite) Test_ApplicationConfig_turnOnEncryption_turnsOnEncryptio
 	a := &ApplicationConfig{
 		shouldEncrypt: false,
 		filename:      "test1.config.enc",
+		Accounts:      []*Account{&Account{}},
 	}
 	res := a.turnOnEncryption()
 	c.Assert(res, Equals, true)

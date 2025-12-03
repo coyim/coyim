@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	"github.com/coyim/coyim/internal/util"
+	log "github.com/sirupsen/logrus"
 )
 
 // HasApplication represents any object that has application config and can give access to it
@@ -53,13 +54,24 @@ func (a *ApplicationConfig) WhenLoaded(f func(*ApplicationConfig)) {
 	loadEntries = append(loadEntries, f)
 }
 
+func splitAndReport(a *ApplicationConfig, f func(*ApplicationConfig)) {
+	go func(fn func(*ApplicationConfig)) {
+		defer func() {
+			if r := recover(); r != nil {
+				log.WithField("panic", r).Error("Panic in WhenLoaded callback")
+			}
+		}()
+		fn(a)
+	}(f)
+}
+
 func (a *ApplicationConfig) accountLoaded() {
 	loadEntryLock.Lock()
 	defer loadEntryLock.Unlock()
 	ourEntries := loadEntries
 	loadEntries = []func(*ApplicationConfig){}
 	for _, f := range ourEntries {
-		go f(a)
+		splitAndReport(a, f)
 	}
 }
 

@@ -220,17 +220,18 @@ func (a *Account) RemoveFingerprint(uid string, fpr []byte) bool {
 		return false
 	}
 
-	result := false
+	removed := false
 
 	newFprs := make([]*Fingerprint, 0, len(p.Fingerprints))
 	for _, f := range p.Fingerprints {
-		if !bytes.Equal(f.Fingerprint, fpr) {
+		if bytes.Equal(f.Fingerprint, fpr) {
+			removed = true
+		} else {
 			newFprs = append(newFprs, f)
-			result = true
 		}
 	}
 	p.Fingerprints = newFprs
-	return result
+	return removed
 }
 
 // RemovePeer removes the given peer

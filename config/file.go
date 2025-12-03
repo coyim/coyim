@@ -41,31 +41,53 @@ var osRename = os.Rename
 
 func safeWrite(name string, data []byte, perm os.FileMode) error {
 	// This function will leave a backup of the config file every time it writes
-
 	if len(data) < 10 {
 		return errors.New("data amount too small - unlikely to be real data")
 	}
 
+	lock, err := acquireFileLock(name)
+	if err != nil {
+		return fmt.Errorf("failed to acquire lock for %s: %w", name, err)
+	}
+	defer lock.release()
+
 	backupName := fmt.Sprintf("%s.backup.000~", name)
-
-	if fileExists(backupName) {
-		_ = os.Remove(backupName)
-	}
-
-	if fileExists(name) {
-		err := osRename(name, backupName)
-		if err != nil {
-			return fmt.Errorf("failed to rename %s to %s: %w", name, backupName, err)
-		}
-	}
-
 	tempName := fmt.Sprintf("%s%s", name, tmpExtension)
-	err := os.WriteFile(tempName, data, perm)
+
+	// Write to temporary file first, in case we are interrupted
+	err = os.WriteFile(tempName, data, perm)
 	if err != nil {
 		return fmt.Errorf("failed to write configuration to file %s: %w", tempName, err)
 	}
 
-	return osRename(tempName, name)
+	// Verify the write by reading back the size
+	stat, err := os.Stat(tempName)
+	if err != nil || stat.Size() != int64(len(data)) {
+		_ = os.Remove(tempName)
+		return fmt.Errorf("failed to verify written data: expected %d bytes, got %d", len(data), stat.Size())
+	}
+
+	if fileExists(name) {
+		if fileExists(backupName) {
+			_ = os.Remove(backupName)
+		}
+
+		err := osRename(name, backupName)
+		if err != nil {
+			_ = os.Remove(tempName)
+			return fmt.Errorf("failed to rename %s to %s: %w", name, backupName, err)
+		}
+	}
+
+	err = osRename(tempName, name)
+	if err != nil {
+		if fileExists(backupName) {
+			_ = osRename(backupName, name)
+		}
+		return fmt.Errorf("failed to rename %s to %s: %w", tempName, name, err)
+	}
+
+	return nil
 }
 
 func readFileOrTemporaryBackup(name string) (data []byte, e error) {

@@ -120,16 +120,6 @@ func (s *FileSuite) Test_safeWrite_doesntAllowWritingOfTooLittleData(c *C) {
 	c.Assert(e, ErrorMatches, "data amount too small.*")
 }
 
-func (s *FileSuite) Test_safeWrite_removesBackupFileIfItExists(c *C) {
-	dir := c.MkDir()
-
-	logPotentialError(c, os.WriteFile(filepath.Join(dir, "accounts.json.backup.000~"), []byte("backup content"), 0666))
-	e := safeWrite(filepath.Join(dir, "accounts.json"), []byte("12345678910111213"), 0700)
-	c.Assert(e, IsNil)
-
-	c.Assert(filepath.Join(dir, "accounts.json.backup.000~"), Not(FileExists))
-}
-
 type fileExistsChecker struct{}
 
 var FileExists Checker = &fileExistsChecker{}

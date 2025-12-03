@@ -2,10 +2,10 @@ package config
 
 import (
 	"crypto/rand"
+	"encoding/binary"
 	"encoding/hex"
 	"fmt"
 	"io"
-	mrand "math/rand"
 	"os"
 	"path/filepath"
 	"strings"
@@ -38,8 +38,12 @@ func FormatFingerprint(fpr []byte) string {
 	return result
 }
 
-func randomUint64() uint64 {
-	return mrand.Uint64()
+func randomUint64() (uint64, error) {
+	buf := make([]byte, 8)
+	if _, err := rand.Read(buf); err != nil {
+		return 0, err
+	}
+	return binary.BigEndian.Uint64(buf), nil
 }
 
 var ioReadFull = io.ReadFull

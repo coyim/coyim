@@ -6,6 +6,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	"github.com/coyim/coyim/internal/util"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/otr3"
 )
@@ -164,7 +165,13 @@ func (a *Account) SetOTRPoliciesFor(jid string, c *otr3.Conversation) {
 // ID returns the unique identifier for this account
 func (a *Account) ID() string {
 	if len(a.id) == 0 {
-		a.id = strconv.FormatUint(randomUint64(), 10)
+		r, err := randomUint64()
+		if err != nil {
+			util.LogIgnoredError(err, nil, "generating random number for account ID")
+			return ""
+		}
+
+		a.id = strconv.FormatUint(r, 10)
 	}
 
 	return a.id

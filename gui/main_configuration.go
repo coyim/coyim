@@ -12,6 +12,9 @@ type mainConfiguration struct {
 	haveConfigEntries  *callbacksSet
 
 	keySupplier config.KeySupplier
+
+	saveLock       sync.Mutex
+	saveInProgress bool
 }
 
 func (c *mainConfiguration) config() *config.ApplicationConfig {

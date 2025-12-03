@@ -366,7 +366,21 @@ func (u *gtkUI) saveConfigOnlyInternal() error {
 }
 
 func (u *gtkUI) SaveConfig() {
+	u.saveLock.Lock()
+	if u.saveInProgress {
+		u.saveLock.Unlock()
+		return
+	}
+	u.saveInProgress = true
+	u.saveLock.Unlock()
+
 	go func() {
+		defer func() {
+			u.saveLock.Lock()
+			u.saveInProgress = false
+			u.saveLock.Unlock()
+		}()
+
 		err := u.saveConfigInternal()
 		if err != nil {
 			u.hasLog.log.WithError(err).Warn("Failed to save config file")

@@ -9,6 +9,9 @@ import (
 	"errors"
 	"sync"
 
+	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/internal/util"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/scrypt"
 )
 
@@ -36,10 +39,14 @@ type EncryptionParameters struct {
 
 var randReaderRead = rand.Reader.Read
 
+var logger coylog.Logger = log.StandardLogger()
+
 func genRand(size int) []byte {
 	buf := make([]byte, size)
 	if _, err := randReaderRead(buf[:]); err != nil {
-		panic("Failed to read random bytes: " + err.Error())
+		// If we can't generate cryptographic random numbers, there's no way to continue in a safe way.
+		logger.Fatalf("failed to read random bytes: %w", err)
+		return nil
 	}
 	return buf
 }
@@ -66,13 +73,16 @@ const saltLen = 16
 
 // GenerateKeys takes a password and encryption parameters and generates an AES key and a MAC key using SCrypt
 func GenerateKeys(password string, params EncryptionParameters) ([]byte, []byte) {
-	res, _ := scrypt.Key([]byte(password), params.saltInternal, params.N, params.R, params.P, aesKeyLen+macKeyLen)
+	res, err := scrypt.Key([]byte(password), params.saltInternal, params.N, params.R, params.P, aesKeyLen+macKeyLen)
+	util.LogIgnoredError(err, logger, "generating key from password")
 	return res[0:aesKeyLen], res[aesKeyLen:]
 }
 
 func encryptData(key, macKey, nonce []byte, plain string) []byte {
-	c, _ := aes.NewCipher(key)
-	block, _ := cipher.NewGCM(c)
+	c, err := aes.NewCipher(key)
+	util.LogIgnoredError(err, logger, "creating new cipher from key")
+	block, err2 := cipher.NewGCM(c)
+	util.LogIgnoredError(err2, logger, "creating new cipher mode from cipher")
 	return block.Seal(nil, nonce, []byte(plain), macKey)
 }
 
@@ -104,7 +114,7 @@ func (p *EncryptionParameters) deserialize() (e error) {
 	return nil
 }
 
-//TODO: Similarly to ApplicationConfig, this should be where we generate a new JSON representation and serialize it.
+// TODO: Similarly to ApplicationConfig, this should be where we generate a new JSON representation and serialize it.
 func (p *EncryptionParameters) serialize() {
 	p.Nonce = hex.EncodeToString(p.nonceInternal)
 	p.Salt = hex.EncodeToString(p.saltInternal)

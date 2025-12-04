@@ -4,6 +4,9 @@ import (
 	"encoding/hex"
 	"errors"
 
+	"github.com/coyim/coyim/coylog"
+	"github.com/prashantv/gostub"
+	"github.com/stretchr/testify/mock"
 	. "gopkg.in/check.v1"
 )
 
@@ -133,16 +136,18 @@ func (s *EncryptedConfigXMPPSuite) Test_deserializeConfigurationEmptyErr(c *C) {
 }
 
 func (s *EncryptedConfigXMPPSuite) Test_genRand_panicsOnIOFailure(c *C) {
-	origRandReaderRead := randReaderRead
-	defer func() {
-		randReaderRead = origRandReaderRead
-	}()
-
-	randReaderRead = func([]byte) (int, error) {
+	defer gostub.Stub(&randReaderRead, func([]byte) (int, error) {
 		return 0, errors.New("problem with ioooooooooo")
-	}
+	}).Reset()
 
-	c.Assert(func() { genRand(10) }, PanicMatches, "Failed to read random bytes: problem with io+")
+	tl := &coylog.MockLogger{}
+	tl.On("Fatalf", "failed to read random bytes: %w", mock.Anything)
+
+	defer gostub.Stub(&logger, tl).Reset()
+
+	genRand(10)
+
+	tl.AssertExpectations(c)
 }
 
 func (s *EncryptedConfigXMPPSuite) Test_EncryptionParameters_deserialize_errorsOnInvalidNonce(c *C) {

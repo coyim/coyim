@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/coyim/coyim/internal/util"
 )
 
 func fileExists(filename string) bool {
@@ -15,7 +17,7 @@ func fileExists(filename string) bool {
 
 func ensureDir(dirname string, perm os.FileMode) {
 	if !fileExists(dirname) {
-		_ = os.MkdirAll(dirname, perm)
+		util.LogIgnoredError(os.MkdirAll(dirname, perm), nil, "ensuring directory")
 	}
 }
 
@@ -37,6 +39,7 @@ func findConfigFile(filename string) string {
 }
 
 const tmpExtension = ".000~"
+const backupExtension = ".backup" + tmpExtension
 
 var osRename = os.Rename
 
@@ -50,9 +53,11 @@ func safeWrite(name string, data []byte, perm os.FileMode) error {
 	if err != nil {
 		return fmt.Errorf("failed to acquire lock for %s: %w", name, err)
 	}
-	defer lock.release()
+	defer func() {
+		util.LogIgnoredError(lock.release(), nil, "releasing lock")
+	}()
 
-	backupName := fmt.Sprintf("%s.backup.000~", name)
+	backupName := fmt.Sprintf("%s%s", name, backupExtension)
 	tempName := fmt.Sprintf("%s%s", name, tmpExtension)
 
 	// Write to temporary file first, in case we are interrupted
@@ -64,18 +69,18 @@ func safeWrite(name string, data []byte, perm os.FileMode) error {
 	// Verify the write by reading back the size
 	stat, err := os.Stat(tempName)
 	if err != nil || stat.Size() != int64(len(data)) {
-		_ = secureRemove(tempName)
+		util.LogIgnoredError(secureRemove(tempName), nil, "securely removing temp file")
 		return fmt.Errorf("failed to verify written data: expected %d bytes, got %d", len(data), stat.Size())
 	}
 
 	if fileExists(name) {
 		if fileExists(backupName) {
-			_ = secureRemove(backupName)
+			util.LogIgnoredError(secureRemove(backupName), nil, "securely removing backup file")
 		}
 
 		err := osRename(name, backupName)
 		if err != nil {
-			_ = secureRemove(tempName)
+			util.LogIgnoredError(secureRemove(tempName), nil, "securely removing temp file")
 			return fmt.Errorf("failed to rename %s to %s: %w", name, backupName, err)
 		}
 	}
@@ -83,7 +88,7 @@ func safeWrite(name string, data []byte, perm os.FileMode) error {
 	err = osRename(tempName, name)
 	if err != nil {
 		if fileExists(backupName) {
-			_ = osRename(backupName, name)
+			util.LogIgnoredError(osRename(backupName, name), nil, "renaming backup to real name")
 		}
 		return fmt.Errorf("failed to rename %s to %s: %w", tempName, name, err)
 	}
@@ -113,11 +118,11 @@ func readFileOrTemporaryBackup(name string) (data []byte, e error) {
 			return nil, errors.New("config file is being written, please try again")
 		}
 		// Lock is stale - proceed to recovery
-		_ = os.Remove(lockPath)
+		util.LogIgnoredError(os.Remove(lockPath), nil, "removing stale lock file")
 	}
 
 	tempName := name + tmpExtension
-	backupName := name + ".backup.000~"
+	backupName := name + backupExtension
 
 	if fileExists(tempName) {
 		data, e = os.ReadFile(filepath.Clean(tempName))

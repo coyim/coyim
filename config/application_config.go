@@ -133,7 +133,7 @@ func (a *ApplicationConfig) removeOldFileOnNextSave() {
 
 	a.doAfterSave(func() {
 		if fileExists(oldFilename) && a.filename != oldFilename {
-			_ = secureRemove(oldFilename)
+			util.LogIgnoredError(secureRemove(oldFilename), nil, "securely removing old file")
 		}
 	})
 }
@@ -210,7 +210,7 @@ func (a *ApplicationConfig) tryLoad(ks KeySupplier) error {
 	}
 
 	// This can't actually fail - since the JSON unmarshal would have already failed earlier
-	_ = json.Unmarshal(contents, a)
+	util.LogIgnoredError(json.Unmarshal(contents, a), nil, "when unmarshalling content")
 
 	if len(a.Accounts) == 0 {
 		return errInvalidConfigFile

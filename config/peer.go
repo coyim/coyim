@@ -257,9 +257,25 @@ func (a *Account) UpdateEncryptionRequired(jid string, requireEnc bool) {
 	p := a.EnsurePeer(jid)
 	if requireEnc {
 		p.EncryptionSettings = AlwaysEncrypt
-		a.AlwaysEncryptWith = append(a.AlwaysEncryptWith, jid)
+		a.AlwaysEncryptWith = appendIfNotAlready(a.AlwaysEncryptWith, jid)
 	} else {
 		p.EncryptionSettings = NeverEncrypt
-		a.DontEncryptWith = append(a.DontEncryptWith, jid)
+		a.DontEncryptWith = appendIfNotAlready(a.DontEncryptWith, jid)
 	}
+}
+
+func appendIfNotAlready[T comparable](slice []T, item T) []T {
+	if !contains(slice, item) {
+		return append(slice, item)
+	}
+	return slice
+}
+
+func contains[T comparable](slice []T, item T) bool {
+	for _, s := range slice {
+		if s == item {
+			return true
+		}
+	}
+	return false
 }

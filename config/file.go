@@ -39,7 +39,7 @@ func findConfigFile(filename string) string {
 }
 
 const tmpExtension = ".000~"
-const backupExtension = ".backup" + tmpExtension
+const backupExtension = ".backup" + tmpExtension // ".backup.000~"
 
 var osRename = os.Rename
 

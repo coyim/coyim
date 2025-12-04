@@ -9,9 +9,16 @@ import (
 	"github.com/coyim/coyim/internal/util"
 )
 
-const lockExtension = ".lock"
-const lockTimeout = 30 * time.Second
-const staleLockAge = 60 * time.Second
+const (
+	lockExtension = ".lock"
+
+	// lockTimeout is how long acquireFileLock will wait for a lock before giving up
+	lockTimeout = 30 * time.Second
+
+	// staleLockAge is how old a lock must be before it's considered abandoned.
+	// Must be longer than lockTimeout to avoid race conditions.
+	staleLockAge = 60 * time.Second
+)
 
 type fileLock struct {
 	path string

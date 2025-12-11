@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-16 17:00+0000\n"
+"POT-Creation-Date: 2025-12-11 16:38-0500\n"
 "PO-Revision-Date: 2021-09-24 22:07+0000\n"
 "Last-Translator: sara-la-loca-de-los-gatos <sara@autonomia.digital>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/coyim/main/es/>\n"
@@ -42,9 +42,9 @@ msgstr "Detalles de la cuenta"
 #: ../gui/definitions/MUCRoomToolbar.xml:364
 #: ../gui/definitions/PeerDetails.xml:191
 #: ../gui/definitions/RegistrationForm.xml:35
-#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:546
+#: ../gui/definitions/WaitingSMPComplete.xml:46
 #: ../gui/file_transfer_notification.go:127
-#: ../gui/file_transfer_notification.go:432
+#: ../gui/file_transfer_notification.go:432 ../gui/muc_room.go:546
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -67,7 +67,7 @@ msgstr ""
 #: ../gui/definitions/AskForPassword.xml:50
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:282
 #: ../gui/definitions/MUCRoomLobby.xml:82 ../gui/definitions/Password.xml:11
-#: ../gui/muc_room_config_texts.go:178 ../gui/forms.go:16
+#: ../gui/forms.go:16 ../gui/muc_room_config_texts.go:178
 msgid "Password"
 msgstr "Contraseña"
 
@@ -100,9 +100,10 @@ msgstr "Política de Fijación"
 
 #: ../gui/definitions/AccountDetails.xml:271
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:355
-#: ../gui/muc_room_config_summary_field.go:172 ../gui/muc_room_roster.go:402
-#: ../gui/muc_room_roster.go:419 ../gui/muc_room_occupant_affiliation.go:179
-#: ../gui/muc_room_occupant_affiliation.go:193
+#: ../gui/muc_room_config_summary_field.go:172
+#: ../gui/muc_room_occupant_affiliation.go:179
+#: ../gui/muc_room_occupant_affiliation.go:193 ../gui/muc_room_roster.go:402
+#: ../gui/muc_room_roster.go:419
 msgid "None"
 msgstr "Ninguno"
 
@@ -962,8 +963,8 @@ msgstr "Cuent_as"
 msgid "Chat _Rooms"
 msgstr "Salas de _Chat"
 
-#: ../gui/definitions/Main.xml:63 ../gui/muc_room_config_assistant.go:144
-#: ../gui/muc_create_room_form.go:283
+#: ../gui/definitions/Main.xml:63 ../gui/muc_create_room_form.go:283
+#: ../gui/muc_room_config_assistant.go:144
 msgid "Create Room"
 msgstr "Crear sala"
 
@@ -1078,9 +1079,9 @@ msgid "Join a chat room"
 msgstr "Unirme a una sala de chat"
 
 #: ../gui/definitions/MUCJoinRoomDialog.xml:39
-#: ../gui/definitions/MUCRoomLobby.xml:118 ../gui/importer.go:299
-#: ../gui/importer.go:324 ../gui/importer.go:348 ../gui/importer.go:370
-#: ../gui/file_transfer.go:156 ../gui/file_transfer.go:266
+#: ../gui/definitions/MUCRoomLobby.xml:118 ../gui/file_transfer.go:156
+#: ../gui/file_transfer.go:266 ../gui/importer.go:299 ../gui/importer.go:324
+#: ../gui/importer.go:348 ../gui/importer.go:370
 msgid "_Cancel"
 msgstr "_Cancelar"
 
@@ -1129,8 +1130,8 @@ msgstr ""
 "propietarios."
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:159
-#: ../gui/definitions/MUCRoomRosterInfo.xml:596 ../gui/muc_room_roster.go:391
-#: ../gui/muc_room_occupant_affiliation.go:171
+#: ../gui/definitions/MUCRoomRosterInfo.xml:596
+#: ../gui/muc_room_occupant_affiliation.go:171 ../gui/muc_room_roster.go:391
 msgid "Owner"
 msgstr "Propietario"
 
@@ -1228,8 +1229,8 @@ msgid "Enter the room password"
 msgstr "Ingresa la contraseña de la sala"
 
 #: ../gui/definitions/MUCRoomConfigFormFieldPassword.xml:61
-#: ../gui/definitions/Password.xml:22 ../gui/password_component.go:46
-#: ../gui/muc_room_config_field_password.go:125
+#: ../gui/definitions/Password.xml:22
+#: ../gui/muc_room_config_field_password.go:125 ../gui/password_component.go:46
 msgid "Show"
 msgstr "Mostrar"
 
@@ -1355,8 +1356,8 @@ msgid "Change role"
 msgstr "Cambiar rol"
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:128
-#: ../gui/muc_room_config_component.go:159 ../gui/muc_room_roster.go:425
-#: ../gui/muc_room_occupant_affiliation.go:187
+#: ../gui/muc_room_config_component.go:159
+#: ../gui/muc_room_occupant_affiliation.go:187 ../gui/muc_room_roster.go:425
 msgid "Moderator"
 msgstr "Moderador"
 
@@ -1372,8 +1373,8 @@ msgstr ""
 "pueden convertir a otros ocupantes en moderadores."
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:194
-#: ../gui/muc_room_config_component.go:155 ../gui/muc_room_roster.go:421
-#: ../gui/muc_room_occupant_affiliation.go:189
+#: ../gui/muc_room_config_component.go:155
+#: ../gui/muc_room_occupant_affiliation.go:189 ../gui/muc_room_roster.go:421
 msgid "Participant"
 msgstr "Participante"
 
@@ -1388,8 +1389,8 @@ msgstr ""
 "participante y un visitante."
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:261
-#: ../gui/muc_room_config_component.go:161 ../gui/muc_room_roster.go:423
-#: ../gui/muc_room_occupant_affiliation.go:191
+#: ../gui/muc_room_config_component.go:161
+#: ../gui/muc_room_occupant_affiliation.go:191 ../gui/muc_room_roster.go:423
 msgid "Visitor"
 msgstr "Visitante"
 
@@ -1672,6 +1673,107 @@ msgstr "Consola XMPP: ACCOUNT_NAME"
 #: ../gui/definitions/XMLConsole.xml:56
 msgid "_Close"
 msgstr "_Cerrar"
+
+#: ../gui/muc_room_config_page.go:367 ../gui/muc_room_config_texts.go:181
+#: ../gui/muc_room_config_texts.go:260 ../gui/muc_room_config_texts.go:262
+msgid "Owners"
+msgstr "Propietarios"
+
+#: ../gui/muc_room_config_page.go:368 ../gui/muc_room_config_texts.go:192
+#: ../gui/muc_room_config_texts.go:266 ../gui/muc_room_config_texts.go:268
+msgid "Administrators"
+msgstr "Administradores"
+
+#: ../gui/muc_room_config_page.go:369
+msgid "Banned"
+msgstr "Bloqueado"
+
+#: ../gui/muc_room_config_page.go:381
+msgid "The room must have at least one owner"
+msgstr "La sala debe tener al menos un propietario"
+
+#: ../gui/muc_room_config_page.go:448
+msgid "Saving room configuration"
+msgstr "Guardando la configuración de la sala"
+
+#: ../gui/jid.go:16
+msgid ""
+"Validation failed: \n"
+"The XMPP address is invalid. An XMPP address should look like this: "
+"local@domain.com."
+msgstr ""
+"La validación falló:: \n"
+"La dirección XMPP no es válida. Una dirección XMPP debería verse así: "
+"local@domain.com."
+
+#: ../gui/jid.go:25
+msgid ""
+"Validation failed:\n"
+"The XMPP address has an invalid domain part, The XMPP address has an invalid "
+"local part. An XMPP address should look like this: local@domain.com."
+msgstr ""
+"La validación falló:\n"
+"La dirección XMPP tiene una parte del dominio no válida. La dirección XMPP "
+"tiene una parte local no válida. Una dirección XMPP debería verse así: "
+"local@domain.com."
+
+#: ../gui/jid.go:27
+msgid ""
+"Validation failed:\n"
+"The XMPP address has an invalid domain part. An XMPP address should look "
+"like this: local@domain.com."
+msgstr ""
+"La validación falló:\n"
+"La dirección XMPP tiene una parte no válida en el dominio. Una dirección "
+"XMPP debería verse así: local@domain.com."
+
+#: ../gui/jid.go:29
+msgid ""
+"Validation failed:\n"
+"The XMPP address has an invalid local part. An XMPP address should look like "
+"this: local@domain.com."
+msgstr ""
+"La validación falló:\n"
+"La dirección XMPP tiene una parte local no válida. Una dirección XMPP "
+"debería verse así: local@domain.com."
+
+#: ../gui/muc_room_toolbar.go:156
+msgid "You are no longer allowed to continue updating the room subject."
+msgstr "Ya no puedes continuar actualizando el tema de la sala."
+
+#: ../gui/muc_room_toolbar.go:250
+msgid "Hide room subject"
+msgstr "Ocultar tema de la sala"
+
+#: ../gui/edit_contact.go:114
+#, python-format
+msgid "There are no known fingerprints for %s"
+msgstr "No hay fingerprints conocidos para %s"
+
+#: ../gui/edit_contact.go:116
+#, python-format
+msgid "These are the fingerprints known for %s:"
+msgstr "Estos son los fingerprints conocidos para %s:"
+
+#: ../gui/edit_contact.go:122
+msgid "not trusted"
+msgstr "No es de confianza"
+
+#: ../gui/edit_contact.go:124
+msgid "trusted"
+msgstr "De confianza"
+
+#: ../gui/muc_room_config_field_password.go:122 ../gui/password_component.go:48
+msgid "Hide"
+msgstr "Ocultar"
+
+#: ../gui/roster.go:466
+msgid " (waiting for approval)"
+msgstr " (esperando la aprobación)"
+
+#: ../gui/infobar_component.go:155
+msgid "January 2, 2006 at 15:04:05"
+msgstr "2 de January, 2006 a las 15:04:05"
 
 #: ../gui/muc_notification_messages.go:19
 #: ../gui/muc_notification_messages.go:299
@@ -3458,13 +3560,665 @@ msgstr "El administrador $nickname{%s} te bloqueó en la sala."
 msgid "%[1]s The reason given was: %[2]s."
 msgstr "%[1]s La razón dada fue: %[2]s."
 
-#: ../gui/menubar.go:45
-msgid "About CoyIM"
-msgstr "Acerca de CoyIM"
+#: ../gui/muc_create_room_form.go:147
+msgid ""
+"Couldn't connect to the service, please verify that it exists or try again "
+"later."
+msgstr ""
+"No pudimos conectarnos con el servicio, por favor verifica si este existe o "
+"inténtalo de nuevo."
 
-#: ../gui/menubar.go:53
-msgid "Quit CoyIM"
-msgstr "Salir de CoyIM"
+#: ../gui/muc_create_room_form.go:149
+msgid "That room already exists, try again with a different name."
+msgstr "Esa sala ya existe, intenta de nuevo con un nombre diferente."
+
+#: ../gui/muc_create_room_form.go:151 ../gui/muc_room_config_component.go:145
+msgid "We didn't receive a response from the server."
+msgstr "No recibimos una respuesta del servidor."
+
+#: ../gui/muc_create_room_form.go:168
+msgid "Could not create the room."
+msgstr "No se pudo crear la sala."
+
+#: ../gui/muc_create_room_form.go:276
+msgid "Configure Room"
+msgstr "Configurar sala"
+
+#: ../gui/muc_create_room_form.go:280
+msgid "Create Room & Join"
+msgstr "Crear sala & unirte"
+
+#: ../gui/muc_room_occupant_role.go:137
+#, python-format
+msgid "You are changing the role of %s from moderator to:"
+msgstr "Estás cambiando el rol de %s de moderador a:"
+
+#: ../gui/muc_room_occupant_role.go:139
+#, python-format
+msgid "You are changing the role of %s from participant to:"
+msgstr "Estás cambiando el rol de %s de participante a:"
+
+#: ../gui/muc_room_occupant_role.go:141
+#, python-format
+msgid "You are changing the role of %s from visitor to:"
+msgstr "Estás cambiando el rol de %s de visitante a:"
+
+#: ../gui/muc_room_occupant_role.go:144
+#, python-format
+msgid "You are changing the role of %s to:"
+msgstr "Estás cambiando el rol de %s a:"
+
+#: ../gui/muc_public_rooms.go:364
+msgid "That service doesn't seem to exist."
+msgstr "Al parecer ese servicio no existe."
+
+#: ../gui/muc_public_rooms.go:366
+msgid "Your XMPP server doesn't seem to have any chat room services."
+msgstr "Al parecer tu servidor XMPP no tiene ningún servicio de salas de chat."
+
+#: ../gui/muc_public_rooms.go:450
+msgid "Something went wrong when trying to get chat rooms."
+msgstr "Algo salió mal al intentar cargar las salas de chat."
+
+#: ../gui/muc_public_rooms.go:526
+msgid "An unknown error occurred, please try again."
+msgstr "Ocurrió un error desconocido, por favor inténtalo de nuevo."
+
+#: ../gui/muc_public_rooms.go:530
+msgid "We can't determine what has been selected, please try again."
+msgstr ""
+"No podemos determinar lo que ha sido seleccionado, por favor inténtalo de "
+"nuevo."
+
+#: ../gui/muc_public_rooms.go:532
+msgid ""
+"The selected item is not a room, select one room from the list to join to."
+msgstr ""
+"El ítem seleccionado no es una sala, selecciona una de la lista para unirte."
+
+#: ../gui/muc_public_rooms.go:534
+msgid "Please, select one room from the list to join to."
+msgstr "Por favor, selecciona una sala de la lista para unirte."
+
+#: ../gui/muc_public_rooms.go:536
+msgid "We can't determine which service has been selected, please try again."
+msgstr ""
+"No podemos determinar qué servicio ha sido seleccionado, por favor inténtalo "
+"de nuevo."
+
+#: ../gui/muc_public_rooms.go:557
+msgid "No account was selected, please select one account from the list."
+msgstr ""
+"Ninguna cuenta ha sido seleccionada, por favor selecciona una de la lista."
+
+#: ../gui/forms.go:14
+msgid "Username"
+msgstr "Usuario"
+
+#: ../gui/muc_room_destroy.go:131
+msgid "You must provide a service name."
+msgstr "Debes proveer un nombre de servicio ."
+
+#: ../gui/muc_room_destroy.go:133
+msgid "You must provide a room name."
+msgstr "Debes proveer un nombre para la sala."
+
+#: ../gui/muc_room_destroy.go:135 ../gui/muc_join_room.go:184
+#: ../gui/muc_room_form_component.go:141
+msgid "You must provide a valid room name."
+msgstr "Debes proporcionar un nombre de sala válido."
+
+#: ../gui/muc_room_destroy.go:137 ../gui/muc_join_room.go:190
+#: ../gui/muc_room_form_component.go:147
+msgid "You must provide a valid service name."
+msgstr "Debes proporcionar un nombre de servicio válido."
+
+#: ../gui/muc_room_destroy.go:139
+msgid "You must provide a valid service and room name."
+msgstr "Debes proveer un servicio y nombre para la sala válidos."
+
+#: ../gui/muc_room_conversation_display.go:153
+msgid ""
+"You can no longer receive any messages in this room and the list of people "
+"in the room will not be updated anymore."
+msgstr ""
+"Ya no puedes recibir ningún mensaje en esta sala y la lista de personas en "
+"la misma no se actualizará más."
+
+#: ../gui/muc_room_occupant_action.go:95
+msgid "Expel person"
+msgstr "Expulsar persona"
+
+#: ../gui/muc_room_occupant_action.go:96
+#, python-format
+msgid "You are about to expel %s from the room."
+msgstr "Estás por expulsar a %s de la sala."
+
+#: ../gui/muc_room_occupant_action.go:113
+msgid "Ban person"
+msgstr "Bloquear persona"
+
+#: ../gui/muc_room_occupant_action.go:114
+#, python-format
+msgid "You are about to ban %s from the room"
+msgstr "Estás por bloquear a %s de la sala"
+
+#: ../gui/muc_room_occupant_action.go:115
+msgid ""
+"They won't be able to join the room again. Are you sure you want to continue?"
+msgstr ""
+"La persona no podrá unirse a la sala de nuevo. ¿Estás seguro de que deseas "
+"continuar?"
+
+#: ../gui/muc_room_occupant_action.go:116
+msgid ""
+"Here you can provide an optional reason for banning the person. Everyone in "
+"the room will see this reason."
+msgstr ""
+"Aquí puedes proporcionar una razón opcional para bloquear a la persona. "
+"Todos en la sala verán esta razón."
+
+#: ../gui/account.go:154
+msgid "Unable to Add Account"
+msgstr "No se pudo agregar la cuenta"
+
+#: ../gui/account.go:154
+msgid ""
+"Can't add account:\n"
+"\n"
+"You already have an account with this name."
+msgstr ""
+"No se puede agregar la cuenta:\n"
+"\n"
+"Ya tienes una cuenta con este nombre."
+
+#: ../gui/account.go:164
+msgid "Account added"
+msgstr "Cuenta agregada"
+
+#: ../gui/account.go:164
+#, python-format
+msgid "%s successfully added."
+msgstr "%s agregada con éxito."
+
+#: ../gui/account.go:242
+msgid "_Check Connection"
+msgstr "_Revisar conexión"
+
+#: ../gui/account.go:255
+msgid "_Connect"
+msgstr "_Conectar"
+
+#: ../gui/account.go:265
+msgid "_Disconnect"
+msgstr "_Desconectar"
+
+#: ../gui/account.go:283
+msgid "Connection _information..."
+msgstr "_Información de la conexión..."
+
+#: ../gui/account.go:299
+msgid "_Change Password..."
+msgstr "_Cambiar contraseña..."
+
+#: ../gui/account.go:312
+msgid "Connect _Automatically"
+msgstr "Conectar _automáticamente"
+
+#: ../gui/account.go:319
+msgid "Always Encrypt Conversation"
+msgstr "Siempre cifrar la conversación"
+
+#: ../gui/account.go:340
+msgid "XML Console"
+msgstr "Consola XML"
+
+#: ../gui/account.go:441
+#, python-format
+msgid ""
+"Connecting account\n"
+"%s"
+msgstr ""
+"Conectando la cuenta\n"
+"%s"
+
+#: ../gui/account.go:445
+#, python-format
+msgid ""
+"Connection failure\n"
+"%s"
+msgstr ""
+"Fallo de conexión\n"
+"%s"
+
+#: ../gui/account.go:449
+msgid "Tor is not currently running"
+msgstr "Tor no se está ejecutando actualmente"
+
+#: ../gui/muc_room_manager.go:40
+msgid "You are already in the room."
+msgstr "Ya estás en la sala."
+
+#: ../gui/muc_room_manager.go:52
+msgid "You were already connected to this room."
+msgstr "Ya estabas conectado a esta sala."
+
+#: ../gui/muc_room_destroy_dialog_error.go:30
+msgid "The room couldn't be destroyed"
+msgstr "La sala no pudo ser destruida"
+
+#: ../gui/muc_room_destroy_dialog_error.go:60
+msgid ""
+"We were able to connect to the room service, but we received an invalid "
+"response from it. Please try again later."
+msgstr ""
+"Pudimos conectarnos al servicio de salas, pero recibimos una respuesta no "
+"válida. Por favor inténtalo de nuevo más tarde."
+
+#: ../gui/muc_room_destroy_dialog_error.go:63
+msgid ""
+"You don't have the permission to destroy this room. Please contact one of "
+"the room owners."
+msgstr ""
+"No tienes permiso para destruir la sala. Por favor contacta a uno de los "
+"propietarios de la sala."
+
+#: ../gui/muc_room_destroy_dialog_error.go:66
+msgid "We couldn't find the room."
+msgstr "No pudimos encontrar la sala."
+
+#: ../gui/muc_room_destroy_dialog_error.go:68
+msgid "An unknown error occurred during the process. Please try again later."
+msgstr "Un error desconocido durante el proceso. Por favor inténtalo de nuevo."
+
+#: ../gui/muc_room_config_component.go:131
+msgid ""
+"We can't apply the given room configuration because an error occurred when "
+"trying to send the request for it. Please try again."
+msgstr ""
+"No podemos aplicar la configuración de sala porque se produjo un error al "
+"intentar enviar la solicitud. Inténtalo de nuevo."
+
+#: ../gui/muc_room_config_component.go:133
+msgid ""
+"We can't apply the given room configuration because either you don't have "
+"permission to do it or the location is not available right now. Please try "
+"again."
+msgstr ""
+"No podemos aplicar la configuración de la sala dada porque no tienes permiso "
+"para hacerlo o la ubicación no está disponible en este momento. Por favor, "
+"inténtalo de nuevo."
+
+#: ../gui/muc_room_config_component.go:135
+msgid ""
+"We can't cancel the room configuration process because an error occurred "
+"when trying to send the request for it. Please try again."
+msgstr ""
+"No podemos cancelar el proceso de configuración de la sala porque se produjo "
+"un error al intentar enviar la solicitud. Por favor inténtalo de nuevo."
+
+#: ../gui/muc_room_config_component.go:137
+msgid ""
+"We can't cancel the room configuration process because either you don't have "
+"permission to do it or the location is not available right now. Please try "
+"again."
+msgstr ""
+"No podemos cancelar el proceso de configuración de la sala porque no tienes "
+"permiso para hacerlo o la ubicación no está disponible en este momento. Por "
+"favor, inténtalo de nuevo."
+
+#: ../gui/muc_room_config_component.go:139
+msgid ""
+"The list affiliations couldn't be updated. Verify your permissions and try "
+"again."
+msgstr ""
+"No se pudieron actualizar las afiliaciones de la lista. Verifica tus "
+"permisos y vuelve a intentarlo."
+
+#: ../gui/muc_room_config_component.go:143
+msgid ""
+"The settings couldn't be changed. Please verify the information in the form."
+msgstr ""
+"No se pudo cambiar la configuración. Verifica la información en el "
+"formulario."
+
+#: ../gui/muc_room_config_component.go:147
+#, python-format
+msgid "Unsupported config error: %s"
+msgstr "Error de configuración no admitido: %s"
+
+#: ../gui/muc_room_config_component.go:153 ../gui/muc_room_roster.go:404
+msgid "Participants"
+msgstr "Participantes"
+
+#: ../gui/muc_room_config_component.go:157 ../gui/muc_room_roster.go:408
+msgid "Moderators"
+msgstr "Moderadores"
+
+#: ../gui/muc_room_config_component.go:163
+msgid "Anyone"
+msgstr "Todos"
+
+#: ../gui/muc_room_config_component.go:165
+msgid "Nobody"
+msgstr "Nadie"
+
+#: ../gui/muc_room_config_component.go:167
+msgid "No maximum"
+msgstr "Sin máximo"
+
+#: ../gui/muc_room_config_component.go:169
+msgid "10"
+msgstr "10"
+
+#: ../gui/muc_room_config_component.go:171
+msgid "20"
+msgstr "20"
+
+#: ../gui/muc_room_config_component.go:173
+msgid "30"
+msgstr "30"
+
+#: ../gui/muc_room_config_component.go:175
+msgid "50"
+msgstr "50"
+
+#: ../gui/muc_room_config_component.go:177
+msgid "100"
+msgstr "100"
+
+#: ../gui/muc_room_lobby.go:63
+#, python-format
+msgid "You are joining %s"
+msgstr "Te estás uniendo a %s"
+
+#: ../gui/muc_room_lobby.go:110
+msgid "That nickname is already being used."
+msgstr "Ese nickname ya está siendo usado."
+
+#: ../gui/muc_room_lobby.go:167
+msgid ""
+"An unknown error occurred while trying to join the room, please check your "
+"connection or try again."
+msgstr ""
+"Se produjo un error desconocido al intentar unirse a la sala, por favor "
+"verifica tu conexión o intenta nuevamente."
+
+#: ../gui/muc_room_config.go:96
+msgid "The room configuration changed."
+msgstr "La configuración de la sala cambió."
+
+#: ../gui/muc_room_config.go:108
+msgid "Unable to open the room configuration. Please, try again."
+msgstr ""
+"No se puede abrir la configuración de la sala. Por favor, inténtalo de nuevo."
+
+#: ../gui/muc_room_config.go:163
+msgid "Visitors can now request permission to speak."
+msgstr "Ahora los visitantes pueden solicitar permiso para hablar."
+
+#: ../gui/muc_room_config.go:165
+msgid ""
+"This room doesn't support \"voice\" requests anymore, which means that "
+"visitors can't ask for permission to speak."
+msgstr ""
+"Esta sala ya no admite solicitudes de \"voz\", lo que significa que los "
+"visitantes no pueden pedir permiso para hablar."
+
+#: ../gui/muc_room_config.go:171
+msgid "This room supports user registration."
+msgstr "Esta sala admite el registro de usuarios."
+
+#: ../gui/muc_room_config.go:173
+msgid "This room doesn't support user registration."
+msgstr "Esta sala no admite el registro de usuarios."
+
+#: ../gui/muc_room_config.go:178
+msgid "This room is now persistent."
+msgstr "Ahora esta sala es persistente."
+
+#: ../gui/muc_room_config.go:180
+msgid "This room is not persistent anymore."
+msgstr "Esta sala ya no es persistente."
+
+#: ../gui/muc_room_config.go:185
+msgid "Only participants and moderators can now send messages in this room."
+msgstr ""
+"Ahora sólo los participantes y los moderadores pueden enviar mensajes en "
+"esta sala."
+
+#: ../gui/muc_room_config.go:187
+msgid "Everyone can now send messages in this room."
+msgstr "Ahora todos pueden enviar mensajes en esta sala."
+
+#: ../gui/muc_room_config.go:192
+msgid "This room is now protected by a password."
+msgstr "Ahora esta sala está protegida por una contraseña."
+
+#: ../gui/muc_room_config.go:194
+msgid "This room is not protected by a password."
+msgstr "Esta sala no está protegida por una contraseña."
+
+#: ../gui/muc_room_config.go:199
+msgid "This room is publicly listed."
+msgstr "Esta sala aparece en listas públicas."
+
+#: ../gui/muc_room_config.go:201
+msgid "This room is not publicly listed anymore."
+msgstr "Esta sala ya no aparece en listas públicas."
+
+#: ../gui/muc_room_config.go:205
+#, python-format
+msgid "The language of this room was changed to %s."
+msgstr "El idioma de esta sala cambió a %s."
+
+#: ../gui/muc_room_config.go:219
+msgid "Participants and moderators can change the room subject."
+msgstr "Los participantes y moderadores pueden cambiar el tema de la sala."
+
+#: ../gui/muc_room_config.go:221
+msgid "Only moderators can change the room subject."
+msgstr "Sólo los moderadores pueden cambiar el tema de la sala."
+
+#: ../gui/muc_room_config.go:225
+#, python-format
+msgid "Title was changed to \"%s\"."
+msgstr "El título cambió a \"%s\"."
+
+#: ../gui/muc_room_config.go:229
+#, python-format
+msgid "Description was changed to \"%s\"."
+msgstr "La descripción cambió a \"%s\"."
+
+#: ../gui/muc_room_config.go:234
+msgid "Anyone can send private messages to people in the room."
+msgstr "Cualquiera puede enviar mensajes privados a las personas de la sala."
+
+#: ../gui/muc_room_config.go:236
+msgid "No one in this room can send private messages now."
+msgstr "Ahora nadie en esta sala puede enviar mensajes privados."
+
+#: ../gui/muc_room_config.go:241
+msgid "Members can now invite other users to join."
+msgstr "Ahora los miembros pueden invitar a otros usarios a unirsre."
+
+#: ../gui/muc_room_config.go:243
+msgid "Members cannot invite other users to join anymore."
+msgstr "Los miembros ya no pueden invitar a otros usuarios a unirse."
+
+#: ../gui/muc_room_config.go:247
+#, python-format
+msgid "The room's max history length was changed to %d."
+msgstr "La extensión máxima del historial de la sala se cambió a %d."
+
+#: ../gui/muc_room_config_list_add_component.go:198
+msgid "Add all"
+msgstr "Agregar todas"
+
+#: ../gui/muc_room_config_list_add_component.go:312
+msgid "You must enter the account address."
+msgstr "Debes ingresar la dirección de la cuenta."
+
+#: ../gui/muc_room_config_list_add_component.go:314
+msgid "You must provide a valid account address."
+msgstr "Debes proveer una dirección de cuenta válida."
+
+#: ../gui/muc_room_positions.go:91
+msgid "The positions were updated."
+msgstr "Las posiciones fueron actualizadas."
+
+#: ../gui/muc_room_positions.go:99
+msgid "Unable to update positions."
+msgstr "No fue posible actualizar las posiciones."
+
+#: ../gui/muc_room_positions.go:154
+msgid "We couldn't get the occupants by affiliation"
+msgstr "No pudimos cargar los ocupantes por su afiliación"
+
+#: ../gui/muc_join_room.go:142
+msgid "We couldn't find a room with that name."
+msgstr "No pudimos encontrar una sala con ese nombre."
+
+#: ../gui/muc_join_room.go:152
+msgid ""
+"It looks like the room you are trying to connect to doesn't exist, please "
+"verify the provided information."
+msgstr ""
+"Al parecer la sala a la que estás intentando conectarte no existe. Verifica "
+"la información proporcionada."
+
+#: ../gui/muc_join_room.go:162
+msgid ""
+"We can't get access to the service, please check your Internet connection or "
+"make sure the service exists."
+msgstr ""
+"No podemos acceder al servicio, verifica tu conexión a Internet o asegúrate "
+"de que el servicio exista."
+
+#: ../gui/muc_room_config_list_component.go:103
+msgid "Remove all"
+msgstr "Remover todos"
+
+#: ../gui/muc_room_roster_info.go:223
+#, python-format
+msgid ""
+"Administrators and owners will automatically be moderators for a room. "
+"Therefore, the role of %s can't be changed."
+msgstr ""
+"Los administradores y propietarios serán automáticamente moderadores de una "
+"sala. Por lo tanto, el rol de %s no se puede cambiar."
+
+#: ../gui/connection.go:28
+msgid "Connection lost"
+msgstr "Conexión perdida"
+
+#: ../gui/connection.go:28
+msgid ""
+"We lost connection to the server for unknown reasons.\n"
+"\n"
+"We will try to reconnect."
+msgstr ""
+"Perdimos conexión con el servidor for razones desconocidas.\n"
+"\n"
+"Trataremos re reconectarnos."
+
+#: ../gui/connection.go:32 ../gui/connection.go:36 ../gui/connection.go:41
+msgid "Connection failure"
+msgstr "Fallo de conexión"
+
+#: ../gui/connection.go:32
+msgid ""
+"We couldn't connect to the server because we couldn't determine a server "
+"address for the given domain.\n"
+"\n"
+"We will try to reconnect."
+msgstr ""
+"No pudimos conectarnos al servidor porque no pudimos determinar una "
+"dirección de servidor para el dominio dado.\n"
+"\n"
+"Trataremos de reconectarnos."
+
+#: ../gui/connection.go:36
+msgid ""
+"We couldn't connect to the server for some reason - verify that the server "
+"address is correct and that you are actually connected to the internet.\n"
+"\n"
+"We will try to reconnect."
+msgstr ""
+"Por alguna razón, no pudimos conectarnos al servidor - verifica que la "
+"dirección del servidor sea correcta y que estés realmente conectado a "
+"Internet.\n"
+"\n"
+"Trataremos de reconectarnos."
+
+#: ../gui/connection.go:42
+#, python-format
+msgid ""
+"We couldn't connect to the server - verify that the server address is "
+"correct and that you are actually connected to the internet.\n"
+"\n"
+"This is the error we got: %s\n"
+"\n"
+"We will try to reconnect."
+msgstr ""
+"No pudimos conectarnos al servidor; verifica que la dirección del servidor "
+"sea correcta y que realmente estés conectado a Internet.\n"
+"\n"
+"Este es el error que recibimos: %s\n"
+"\n"
+"Trataremos de reconectar."
+
+#: ../gui/muc_room_config_summary_field.go:146
+msgid "**********"
+msgstr "**********"
+
+#: ../gui/muc_room_config_summary_field.go:148
+#: ../gui/muc_room_config_summary_field.go:162
+msgid "Not assigned"
+msgstr "No asignado"
+
+#: ../gui/muc_room_config_summary_field.go:168
+msgid "One result"
+msgstr "Un resultado"
+
+#: ../gui/muc_room_config_summary_field.go:170
+#, python-format
+msgid "%d results"
+msgstr "%d resultado(s)"
+
+#: ../gui/muc_room_config_summary_field.go:178
+msgid "One role"
+msgstr "Un rol"
+
+#: ../gui/muc_room_config_summary_field.go:180
+#, python-format
+msgid "%d roles"
+msgstr "%d rol(es)"
+
+#: ../gui/muc_room_config_summary_field.go:182
+msgid "No roles"
+msgstr "Ningún rol"
+
+#: ../gui/muc_room_config_summary_field.go:188
+msgid "One account"
+msgstr "Una cuenta"
+
+#: ../gui/muc_room_config_summary_field.go:190
+#, python-format
+msgid "%d accounts"
+msgstr "%d cuenta(s)"
+
+#: ../gui/muc_room_config_summary_field.go:192
+msgid "No accounts"
+msgstr "NInguna cuenta"
+
+#: ../gui/muc_room_form_component.go:153
+msgid ""
+"No account is selected, please select one account from the list or connect "
+"to one."
+msgstr ""
+"No se ha seleccionado ninguna cuenta, selecciona una cuenta de la lista o "
+"conéctate a una."
 
 #: ../gui/muc_room_config_texts.go:28
 msgid "Basic information"
@@ -3681,11 +4435,6 @@ msgstr "Permitir que sólo los miembros se unan"
 msgid "Members"
 msgstr "Miembros"
 
-#: ../gui/muc_room_config_texts.go:181 ../gui/muc_room_config_texts.go:260
-#: ../gui/muc_room_config_texts.go:262 ../gui/muc_room_config_page.go:367
-msgid "Owners"
-msgstr "Propietarios"
-
 #: ../gui/muc_room_config_texts.go:184
 msgid "The account address of others in the room may be viewed by:"
 msgstr ""
@@ -3698,11 +4447,6 @@ msgstr "La dirección de la cuenta de los ocupantes puede ser vista por"
 #: ../gui/muc_room_config_texts.go:188 ../gui/muc_room_config_texts.go:189
 msgid "Maximum previous messages sent to people when joining the room"
 msgstr "Máximo de mensajes previos enviados a las personas al unirse a la sala"
-
-#: ../gui/muc_room_config_texts.go:192 ../gui/muc_room_config_texts.go:266
-#: ../gui/muc_room_config_texts.go:268 ../gui/muc_room_config_page.go:368
-msgid "Administrators"
-msgstr "Administradores"
 
 #: ../gui/muc_room_config_texts.go:195 ../gui/muc_room_config_texts.go:196
 msgid "A person can find out more information about other people in the room"
@@ -3839,297 +4583,334 @@ msgstr ""
 "Esta dirección puede ser simple, como user@example.org o completa, como "
 "user@example.org/abcdef."
 
-#: ../gui/muc_room_lobby.go:63
+#: ../gui/connected_accounts_component.go:82
+msgid "There are no connected accounts."
+msgstr "No hay cuentas conectadas."
+
+#: ../gui/file_transfer.go:79
 #, python-format
-msgid "You are joining %s"
-msgstr "Te estás uniendo a %s"
-
-#: ../gui/muc_room_lobby.go:110
-msgid "That nickname is already being used."
-msgstr "Ese nickname ya está siendo usado."
-
-#: ../gui/muc_room_lobby.go:167
-msgid ""
-"An unknown error occurred while trying to join the room, please check your "
-"connection or try again."
+msgid "The transfer to %s can't be done encrypted and securely."
 msgstr ""
-"Se produjo un error desconocido al intentar unirse a la sala, por favor "
-"verifica tu conexión o intenta nuevamente."
+"La transferencia a %s no se puede ser cifrada y hacersede forma segura."
 
-#: ../gui/roster.go:466
-msgid " (waiting for approval)"
-msgstr " (esperando la aprobación)"
-
-#: ../gui/forms.go:14
-msgid "Username"
-msgstr "Usuario"
-
-#: ../gui/muc_join_room.go:142
-msgid "We couldn't find a room with that name."
-msgstr "No pudimos encontrar una sala con ese nombre."
-
-#: ../gui/muc_join_room.go:152
+#: ../gui/file_transfer.go:80
 msgid ""
-"It looks like the room you are trying to connect to doesn't exist, please "
-"verify the provided information."
+"Do you want to continue anyway? This means an adversary or server "
+"administrator can potentially see the content of the file."
 msgstr ""
-"Al parecer la sala a la que estás intentando conectarte no existe. Verifica "
-"la información proporcionada."
+"¿Quieres continuar de todos modos? Esto significa que potencialmente un "
+"adversario o administrador del servidor puede ver el contenido del archivo."
 
-#: ../gui/muc_join_room.go:162
-msgid ""
-"We can't get access to the service, please check your Internet connection or "
-"make sure the service exists."
-msgstr ""
-"No podemos acceder al servicio, verifica tu conexión a Internet o asegúrate "
-"de que el servicio exista."
-
-#: ../gui/muc_join_room.go:184 ../gui/muc_room_destroy.go:135
-#: ../gui/muc_room_form_component.go:141
-msgid "You must provide a valid room name."
-msgstr "Debes proporcionar un nombre de sala válido."
-
-#: ../gui/muc_join_room.go:190 ../gui/muc_room_destroy.go:137
-#: ../gui/muc_room_form_component.go:147
-msgid "You must provide a valid service name."
-msgstr "Debes proporcionar un nombre de servicio válido."
-
-#: ../gui/muc_room_config_summary_field.go:146
-msgid "**********"
-msgstr "**********"
-
-#: ../gui/muc_room_config_summary_field.go:148
-#: ../gui/muc_room_config_summary_field.go:162
-msgid "Not assigned"
-msgstr "No asignado"
-
-#: ../gui/muc_room_config_summary_field.go:168
-msgid "One result"
-msgstr "Un resultado"
-
-#: ../gui/muc_room_config_summary_field.go:170
+#: ../gui/file_transfer.go:107
 #, python-format
-msgid "%d results"
-msgstr "%d resultado(s)"
+msgid ""
+"%s wants to send you a directory - this transfer will be encrypted and "
+"secure - do you want to receive it?"
+msgstr ""
+"%s quiere enviarte un directorio; esta transferencia estará cifrada y será "
+"segura - ¿deseas recibirla?"
 
-#: ../gui/muc_room_config_summary_field.go:178
-msgid "One role"
-msgstr "Un rol"
-
-#: ../gui/muc_room_config_summary_field.go:180
+#: ../gui/file_transfer.go:108 ../gui/file_transfer.go:111
 #, python-format
-msgid "%d roles"
-msgstr "%d rol(es)"
+msgid "Directory name: %s"
+msgstr "Nombre del directorio %s"
 
-#: ../gui/muc_room_config_summary_field.go:182
-msgid "No roles"
-msgstr "Ningún rol"
-
-#: ../gui/muc_room_config_summary_field.go:188
-msgid "One account"
-msgstr "Una cuenta"
-
-#: ../gui/muc_room_config_summary_field.go:190
+#: ../gui/file_transfer.go:110
 #, python-format
-msgid "%d accounts"
-msgstr "%d cuenta(s)"
-
-#: ../gui/muc_room_config_summary_field.go:192
-msgid "No accounts"
-msgstr "NInguna cuenta"
-
-#: ../gui/muc_room.go:209
 msgid ""
-"Loading the room information took longer than usual, perhaps the connection "
-"to the server was lost. Do you want to try again?"
+"%s wants to send you a directory - the transfer will NOT be encrypted or "
+"secure - do you want to receive it?"
 msgstr ""
-"La carga de la información de la sala tardó más de lo habitual, quizás se "
-"perdió la conexión con el servidor. ¿Quieres intentarlo de nuevo?"
+"%s quiere enviarte un directorio - la transferencia no será segura ni estará "
+"cifrada - ¿quieres recibirla?"
 
-#: ../gui/muc_room.go:212 ../gui/muc_room.go:754
-msgid "Yes, try again"
-msgstr "Sí, intentar de nuevo"
-
-#: ../gui/muc_room.go:272
-msgid ""
-"You have been removed from this room because it's now a members-only room."
-msgstr ""
-"Has sido removido de esta sala porque ahora es una sala exclusiva para "
-"miembros."
-
-#: ../gui/muc_room.go:283
-msgid ""
-"You have been removed from this members-only room since you are not "
-"$affiliation{a member} anymore."
-msgstr ""
-"Has sido removido de esta sala exclusiva para miembros pues ya no eres "
-"$affiliation{un miembro}."
-
-#: ../gui/muc_room.go:393
-msgid "The room has been destroyed"
-msgstr "La sala ha sido destruida"
-
-#: ../gui/muc_room.go:528
-msgid "The room subject couldn't be updated."
-msgstr "No se pudo actualizar el tema de la sala."
-
-#: ../gui/muc_room.go:535
-msgid "The room subject has been updated."
-msgstr "El tema de la sala ha sido actualizado."
-
-#: ../gui/muc_room.go:548
-msgid "Return"
-msgstr "Volver"
-
-#: ../gui/muc_room.go:731
-msgid "Your connection has been restored; you can join this room again."
-msgstr ""
-"Tu conexión ha sido restaurada; ahora puedes unirte a esta sala de nuevo."
-
-#: ../gui/muc_room.go:747
-msgid ""
-"Your connection was recovered but loading the room information took longer "
-"than usual, perhaps the connection to the server was lost. Do you want to "
-"try again?"
-msgstr ""
-"Tu conexión ha sido recuperada, pero cargar la información de la sala tardó "
-"más de lo habitual, quizás se perdió la conexión con el servidor. ¿Quieres "
-"intentarlo de nuevo?"
-
-#: ../gui/muc_room.go:760
-msgid "Trying to connect to the room..."
-msgstr "Tratando de conectarse con la sala..."
-
-#: ../gui/muc_room.go:802
-msgid ""
-"The connection to the server has been lost, please verify your connection."
-msgstr ""
-"Se ha perdido la conexión con el servidor, por favor verifica tu conexión."
-
-#: ../gui/muc_room.go:814
-msgid "Connecting to the room..."
-msgstr "Conectándose a la sala..."
-
-#: ../gui/muc_room_config_component.go:131
-msgid ""
-"We can't apply the given room configuration because an error occurred when "
-"trying to send the request for it. Please try again."
-msgstr ""
-"No podemos aplicar la configuración de sala porque se produjo un error al "
-"intentar enviar la solicitud. Inténtalo de nuevo."
-
-#: ../gui/muc_room_config_component.go:133
-msgid ""
-"We can't apply the given room configuration because either you don't have "
-"permission to do it or the location is not available right now. Please try "
-"again."
-msgstr ""
-"No podemos aplicar la configuración de la sala dada porque no tienes permiso "
-"para hacerlo o la ubicación no está disponible en este momento. Por favor, "
-"inténtalo de nuevo."
-
-#: ../gui/muc_room_config_component.go:135
-msgid ""
-"We can't cancel the room configuration process because an error occurred "
-"when trying to send the request for it. Please try again."
-msgstr ""
-"No podemos cancelar el proceso de configuración de la sala porque se produjo "
-"un error al intentar enviar la solicitud. Por favor inténtalo de nuevo."
-
-#: ../gui/muc_room_config_component.go:137
-msgid ""
-"We can't cancel the room configuration process because either you don't have "
-"permission to do it or the location is not available right now. Please try "
-"again."
-msgstr ""
-"No podemos cancelar el proceso de configuración de la sala porque no tienes "
-"permiso para hacerlo o la ubicación no está disponible en este momento. Por "
-"favor, inténtalo de nuevo."
-
-#: ../gui/muc_room_config_component.go:139
-msgid ""
-"The list affiliations couldn't be updated. Verify your permissions and try "
-"again."
-msgstr ""
-"No se pudieron actualizar las afiliaciones de la lista. Verifica tus "
-"permisos y vuelve a intentarlo."
-
-#: ../gui/muc_room_config_component.go:143
-msgid ""
-"The settings couldn't be changed. Please verify the information in the form."
-msgstr ""
-"No se pudo cambiar la configuración. Verifica la información en el "
-"formulario."
-
-#: ../gui/muc_room_config_component.go:145 ../gui/muc_create_room_form.go:151
-msgid "We didn't receive a response from the server."
-msgstr "No recibimos una respuesta del servidor."
-
-#: ../gui/muc_room_config_component.go:147
+#: ../gui/file_transfer.go:115
 #, python-format
-msgid "Unsupported config error: %s"
-msgstr "Error de configuración no admitido: %s"
+msgid ""
+"%s wants to send you a file - this transfer will be encrypted and secure - "
+"do you want to receive it?"
+msgstr ""
+"%s quiere enviarte un archivo - esta transferencia será segura y estará "
+"cifrada - ¿quieres recibirla?"
 
-#: ../gui/muc_room_config_component.go:153 ../gui/muc_room_roster.go:404
-msgid "Participants"
-msgstr "Participantes"
-
-#: ../gui/muc_room_config_component.go:157 ../gui/muc_room_roster.go:408
-msgid "Moderators"
-msgstr "Moderadores"
-
-#: ../gui/muc_room_config_component.go:163
-msgid "Anyone"
-msgstr "Todos"
-
-#: ../gui/muc_room_config_component.go:165
-msgid "Nobody"
-msgstr "Nadie"
-
-#: ../gui/muc_room_config_component.go:167
-msgid "No maximum"
-msgstr "Sin máximo"
-
-#: ../gui/muc_room_config_component.go:169
-msgid "10"
-msgstr "10"
-
-#: ../gui/muc_room_config_component.go:171
-msgid "20"
-msgstr "20"
-
-#: ../gui/muc_room_config_component.go:173
-msgid "30"
-msgstr "30"
-
-#: ../gui/muc_room_config_component.go:175
-msgid "50"
-msgstr "50"
-
-#: ../gui/muc_room_config_component.go:177
-msgid "100"
-msgstr "100"
-
-#: ../gui/muc_room_roster.go:295
-msgid "%s (%v)"
-msgstr "%s (%v)"
-
-#: ../gui/muc_room_roster.go:329
+#: ../gui/file_transfer.go:116 ../gui/file_transfer.go:119
 #, python-format
-msgid "%s (You)"
-msgstr "%s (Tú)"
+msgid "File name: %s"
+msgstr "Nombre del archivo: %s"
 
-#: ../gui/muc_room_roster.go:389 ../gui/muc_room_occupant_affiliation.go:173
-msgid "Admin"
-msgstr "Admin"
+#: ../gui/file_transfer.go:118
+#, python-format
+msgid ""
+"%s wants to send you a file - the transfer will NOT be encrypted or secure - "
+"do you want to receive it?"
+msgstr ""
+"%s quiere enviarte un archivo - la transferencia no será segura ni estará "
+"cifrada - ¿quieres recibirla?"
 
-#: ../gui/muc_room_roster.go:393 ../gui/muc_room_occupant_affiliation.go:177
-msgid "Outcast"
-msgstr "Outcast"
+#: ../gui/file_transfer.go:123
+msgid ""
+"%[1]s\n"
+"Encrypted: %[2]v"
+msgstr ""
+"%[1]s\n"
+"Cifrado: %[2]v"
 
-#: ../gui/muc_room_roster.go:406
-msgid "Visitors"
-msgstr "Visitantes"
+#: ../gui/file_transfer.go:126
+msgid ""
+"%[1]s\n"
+"Description: %[2]s"
+msgstr ""
+"%[1]s\n"
+"Descripción: %[2]s"
+
+#: ../gui/file_transfer.go:129
+msgid ""
+"%[1]s\n"
+"Last modified: %[2]s"
+msgstr ""
+"%[1]s\n"
+"Última modificación: %[2]s"
+
+#: ../gui/file_transfer.go:132
+msgid ""
+"%[1]s\n"
+"Size: %[2]d bytes"
+msgstr ""
+"%[1]s\n"
+"Tamaño: %[2]d bytes"
+
+#: ../gui/file_transfer.go:145
+msgid "Choose where to save file"
+msgstr "Escoge dónde guardar el archivo"
+
+#: ../gui/file_transfer.go:148
+msgid "Choose where to save folder"
+msgstr "Escoge dónde guardar la carpeta"
+
+#: ../gui/file_transfer.go:158
+msgid "_Save"
+msgstr "_Guardar"
+
+#: ../gui/file_transfer.go:280
+msgid "Choose file to send"
+msgstr "Escoge el archivo para enviar"
+
+#: ../gui/file_transfer.go:284
+msgid "Choose directory to send"
+msgstr "Escoge el directorio a enviar"
+
+#: ../gui/subscription.go:15
+#, python-format
+msgid "%s wants to talk to you. Is that ok?"
+msgstr "%s quiere hablar contigo. ¿Estás de acuerdo?"
+
+#: ../gui/subscription.go:102
+msgid "There are no currently connected accounts."
+msgstr "Al momento no hay cuentas conectadas."
+
+#: ../gui/subscription.go:119
+msgid "There is no connected account selected."
+msgstr "No hay una cuenta conectada seleccionada."
+
+#: ../gui/subscription.go:126
+msgid "We couldn't send a subscription."
+msgstr "No pudimos enviar una subscripción."
+
+#: ../gui/timeago.go:24
+msgid "Today"
+msgstr "Hoy"
+
+#: ../gui/timeago.go:31
+msgid "Yesterday"
+msgstr "Ayer"
+
+#: ../gui/timeago.go:38
+msgid "Two days ago"
+msgstr "Hace dos días"
+
+#: ../gui/timeago.go:45
+msgid "Three days ago"
+msgstr "Hace tres días"
+
+#: ../gui/timeago.go:52
+msgid "Four days ago"
+msgstr "Hace cuatro días"
+
+#: ../gui/timeago.go:79
+msgid "%[1]s, %[2]s %[3]d, %[4]d"
+msgstr "%[1]s, %[2]s %[3]d, %[4]d"
+
+#: ../gui/timeago.go:85
+msgid "Monday"
+msgstr "Lunes"
+
+#: ../gui/timeago.go:87
+msgid "Thursday"
+msgstr "Jueves"
+
+#: ../gui/timeago.go:89
+msgid "Wednesday"
+msgstr "Miércoles"
+
+#: ../gui/timeago.go:91
+msgid "Tuesday"
+msgstr "Martes"
+
+#: ../gui/timeago.go:93
+msgid "Friday"
+msgstr "Viernes"
+
+#: ../gui/timeago.go:95
+msgid "Saturday"
+msgstr "Sábado"
+
+#: ../gui/timeago.go:97
+msgid "Sunday"
+msgstr "Domingo"
+
+#: ../gui/timeago.go:106
+msgid "January"
+msgstr "Enero"
+
+#: ../gui/timeago.go:108
+msgid "February"
+msgstr "Febrero"
+
+#: ../gui/timeago.go:110
+msgid "March"
+msgstr "Marzo"
+
+#: ../gui/timeago.go:112
+msgid "April"
+msgstr "Abril"
+
+#: ../gui/timeago.go:114
+msgid "May"
+msgstr "Mayo"
+
+#: ../gui/timeago.go:116
+msgid "June"
+msgstr "Junio"
+
+#: ../gui/timeago.go:118
+msgid "July"
+msgstr "Julio"
+
+#: ../gui/timeago.go:120
+msgid "August"
+msgstr "Agosto"
+
+#: ../gui/timeago.go:122
+msgid "September"
+msgstr "Septiembre"
+
+#: ../gui/timeago.go:124
+msgid "October"
+msgstr "Octubre"
+
+#: ../gui/timeago.go:126
+msgid "November"
+msgstr "Noviembre"
+
+#: ../gui/timeago.go:128
+msgid "December"
+msgstr "Diciembre"
+
+#: ../gui/timeago.go:164
+msgid "An hour ago"
+msgstr "Hace una hora"
+
+#: ../gui/timeago.go:166
+msgid "Few hours ago"
+msgstr "Hace unas pocas horas"
+
+#: ../gui/timeago.go:168
+msgid "%v hours ago"
+msgstr "Hace %v horas"
+
+#: ../gui/timeago.go:170
+msgid "A minute ago"
+msgstr "Hace un minuto"
+
+#: ../gui/timeago.go:172
+msgid "A few minutes ago"
+msgstr "Hace unos pocos minutos"
+
+#: ../gui/timeago.go:174
+msgid "%v minutes ago"
+msgstr "Hace %v minutos"
+
+#: ../gui/timeago.go:176
+msgid "A second ago"
+msgstr "Hace un segundo"
+
+#: ../gui/timeago.go:178
+msgid "A few seconds ago"
+msgstr "Hace unos pocos segundos"
+
+#: ../gui/timeago.go:180
+msgid "%v seconds ago"
+msgstr "Hace %v segundos"
+
+#: ../gui/timeago.go:182
+msgid "Now"
+msgstr "Ahora"
+
+#: ../gui/master_password.go:30
+msgid "<b>Password can not be empty</b> - please try again"
+msgstr ""
+"<b>El campo de contraseña no puede estar vacío</b> - por favor inténtalo de "
+"nuevo"
+
+#: ../gui/master_password.go:33
+msgid "Passwords have to be the same - please try again"
+msgstr "Las contraseñas deben ser las mismas - por favor inténtalo de nuevo"
+
+#: ../gui/master_password.go:115
+msgid "Incorrect password entered, please try again."
+msgstr "Contraseña incorrecta ingresada, por favor inténtalo de nuevo."
+
+#: ../gui/master_password.go:126
+msgid "Checking password..."
+msgstr "Verificando contraseña..."
+
+#: ../gui/fingerprint_verification.go:19
+#, python-format
+msgid ""
+"You can't verify the fingerprint for %s yet.\n"
+"\n"
+"You first have to start an encrypted conversation with them."
+msgstr ""
+"Todavía no puedes verificar el fingerprint de %s.\n"
+"\n"
+"Primero debes iniciar una conversación cifrada con la persona."
+
+#: ../gui/fingerprint_verification.go:23
+msgid ""
+"\n"
+"Is this the correct fingerprint for %[1]s?\n"
+"\n"
+"Fingerprint for you (%[3]s):\n"
+"  %[4]s\n"
+"\n"
+"Purported fingerprint for %[1]s:\n"
+"  %[2]s\n"
+"\t"
+msgstr ""
+"\n"
+"¿Es este el fingerprint correcto para %[1]s?\n"
+"\n"
+"Tu fingerprint (%[3]s):\n"
+"  %[4]s\n"
+"\n"
+"Fingerprint a verificar para %[1]s:\n"
+"  %[2]s\n"
+"\t"
+
+#: ../gui/fingerprint_verification.go:59
+#, python-format
+msgid "Verify fingerprint for %s"
+msgstr "Verificando el fingerprint para: %s"
 
 #: ../gui/muc_room_config_list_form.go:91
 msgid "The account address is not valid."
@@ -4143,45 +4924,204 @@ msgstr "Por favor, llena los campos del formulario."
 msgid "Invalid form values."
 msgstr "Valores del formulario inválidos."
 
-#: ../gui/muc_room_loading.go:21
-msgid "Loading room information"
-msgstr "Cargando la información de la sala"
+#: ../gui/muc_room_window.go:41
+msgid "%[1]s [%[2]s]"
+msgstr "%[1]s [%[2]s]"
 
-#: ../gui/muc_room_loading.go:22
-msgid "This will only take a few moments."
-msgstr "Esto sólo tomará unos pocos instantes."
+#: ../gui/muc_room_config_assistant.go:115
+#, python-format
+msgid "Configuration for room [%s]"
+msgstr "Configuración para la sala [%s]"
 
-#: ../gui/muc_room_loading.go:29
-msgid "Joining room..."
-msgstr "Uniéndote a la sala..."
+#: ../gui/muc_room_config_assistant.go:146
+msgid "Update Configuration"
+msgstr "Actualizar configuración"
 
-#: ../gui/muc_room_loading.go:36
-msgid "Destroying room..."
-msgstr "Destruyendo la sala..."
+#: ../gui/muc_room_config_assistant.go:238
+msgid "Cancel room settings"
+msgstr "Cancelar los ajustes de la sala"
 
-#: ../gui/muc_room_loading.go:43
-msgid "Updating position..."
-msgstr "Actualizando posición..."
+#: ../gui/muc_room_config_assistant.go:239
+msgid "We were unable to cancel the room configuration"
+msgstr "No pudimos cancelar la configuración de la sala"
 
-#: ../gui/muc_room_loading.go:50
-msgid "Updating role..."
-msgstr "Actualizando rol..."
+#: ../gui/muc_room_config_assistant.go:240
+msgid "An error occurred while trying to cancel the configuration of the room."
+msgstr ""
+"Un error ocurrió mientras intentábamos cancelar la configuración de la sala."
 
-#: ../gui/muc_room_loading.go:52
-msgid "Expelling person from the room..."
-msgstr "Expulsando a la persona de la sala..."
+#: ../gui/accounts_menu.go:20
+msgid "Connect On _Startup"
+msgstr "Conectar al _Inicio"
 
-#: ../gui/muc_room_loading.go:61
-msgid "Loading room configuration..."
-msgstr "Cargando la configuración de la sala..."
+#: ../gui/accounts_menu.go:30
+msgid "_Connect All"
+msgstr "_Conectar todas"
 
-#: ../gui/muc_room_loading.go:68
-msgid "Loading room positions..."
-msgstr "Cargando las posiciones de la sala..."
+#: ../gui/accounts_menu.go:34
+msgid "_Disconnect All"
+msgstr "_Desconectar todas"
 
-#: ../gui/muc_room_loading.go:75
-msgid "Saving room positions..."
-msgstr "Guardando las posiciones de la sala..."
+#: ../gui/accounts_menu.go:41
+msgid "_New Account"
+msgstr "_Nueva cuenta"
+
+#: ../gui/accounts_menu.go:45
+msgid "_Add Account"
+msgstr "_Agregar cuenta"
+
+#: ../gui/accounts_menu.go:49
+msgid "_Import Account"
+msgstr "_Importar cuenta"
+
+#: ../gui/conversation.go:70
+msgid "The conversation is now private."
+msgstr "Ahora la conversación es privada."
+
+#: ../gui/conversation.go:78
+msgid ""
+"The verification failed - but the conversation is still private because of "
+"an earlier verification."
+msgstr ""
+"La verificación falló - pero la conversación sigue siendo privada gracias a "
+"una verificación anterior."
+
+#: ../gui/conversation.go:80
+msgid "The verification failed - the conversation is still unverified."
+msgstr "La verificación falló - la conversación aún no está verificada."
+
+#: ../gui/conversation.go:271
+msgid "Attempting to start a private conversation..."
+msgstr "Intentando iniciar una conversación privada..."
+
+#: ../gui/conversation.go:284 ../gui/account_events.go:143
+msgid "Private conversation has ended."
+msgstr "La conversación privada ha terminado."
+
+#: ../gui/conversation.go:294
+#, python-format
+msgid "You have verified the identity of %s."
+msgstr "Has verificado la identidad de %s."
+
+#: ../gui/conversation.go:428
+msgid ""
+"You are talking over an \n"
+"unprotected chat"
+msgstr ""
+"Estás hablando en un \n"
+"canal inseguro"
+
+#: ../gui/conversation.go:662
+msgid "Available"
+msgstr "Disponible"
+
+#: ../gui/conversation.go:664
+msgid "Not Available"
+msgstr "No disponible"
+
+#: ../gui/conversation.go:666
+msgid "Away"
+msgstr "Fuera"
+
+#: ../gui/conversation.go:668
+msgid "Busy"
+msgstr "Ocupado"
+
+#: ../gui/conversation.go:670
+msgid "Free for Chat"
+msgstr "Libre para conversar"
+
+#: ../gui/conversation.go:672
+msgid "Invisible"
+msgstr "Invisible"
+
+#: ../gui/conversation.go:680
+msgid "%[1]s%[2]s"
+msgstr "%[1]s%[2]s"
+
+#: ../gui/conversation.go:687 ../gui/conversation.go:701
+#, python-format
+msgid " (%s)"
+msgstr " (%s)"
+
+#: ../gui/conversation.go:699
+msgid " (%[1]s: %[2]s)"
+msgstr " (%[1]s: %[2]s)"
+
+#: ../gui/conversation.go:707
+msgid "Offline"
+msgstr "Desconectado"
+
+#: ../gui/conversation.go:713
+msgid "%[1]s is now %[2]s"
+msgstr "%[1]s está %[2]s ahora"
+
+#: ../gui/conversation.go:829
+msgid "The peer is using a key we haven't seen before!"
+msgstr "¡Tu compañero está usando una clave que no habíamos visto antes!"
+
+#: ../gui/certificate_window.go:124
+msgid "this account"
+msgstr "esta cuenta"
+
+#: ../gui/certificate_window.go:133
+#, python-format
+msgid ""
+"We couldn't verify the certificate for the connection to account %s. This "
+"can happen if the server you are connecting to doesn't use the traditional "
+"certificate hierarchies. It can also be the symptom of an attack.\n"
+"\n"
+"Try to verify that this information is correct before proceeding with the "
+"connection."
+msgstr ""
+"No pudimos verificar el certificado para la conexión de la cuenta %s. Esto "
+"puede suceder si el servidor al que te estás conectando no utiliza las "
+"jerarquías de certificados tradicionales. También puede ser síntoma de un "
+"ataque.\n"
+"\n"
+"Intenta verificar que esta información sea correcta antes de continuar con "
+"la conexión."
+
+#: ../gui/certificate_window.go:135
+msgid ""
+"The certificate for the connection to account %[1]s is correct, but the "
+"names for it doesn't match. We need a certificate for the name %[2]s, but "
+"this wasn't provided. This can happen if the server is configured "
+"incorrectly or there are other reasons the proper name couldn't be used. "
+"This is very common for corporate Google accounts. It can also be the "
+"symptom of an attack.\n"
+"\n"
+"Try to verify that this information is correct before proceeding with the "
+"connection."
+msgstr ""
+"El certificado para la conexión a la cuenta %[1]s es correcto, pero los "
+"nombres no coinciden. Necesitamos un certificado para el nombre %[2]s, pero "
+"este no fue proporcionado. Esto puede suceder si el servidor está "
+"configurado incorrectamente o si existen otras razones por las que no se "
+"pudo usar el nombre correcto. Esto es muy común para las cuentas "
+"corporativas de Google. También puede ser síntoma de un ataque.\n"
+"\n"
+"Intenta verificar que esta información sea correcta antes de continuar con "
+"la conexión."
+
+#: ../gui/certificate_window.go:137
+#, python-format
+msgid ""
+"The certificate for the connection to account %s is correct - but you have a "
+"pinning policy that requires us to ask whether you would like to continue "
+"connecting using this certificate, save it for the future, or stop "
+"connecting.\n"
+"\n"
+"Try to verify that this information is correct before proceeding with the "
+"connection."
+msgstr ""
+"El certificado para la conexión a la cuenta %s es correcto - pero tienes una "
+"política de fijación que requiere que te preguntemos si deseas continuar "
+"conectándote con este certificado, guardarlo para el futuro o dejar de "
+"conectarte.\n"
+"\n"
+"Intenta verificar que esta información sea correcta antes de continuar con "
+"la conexión."
 
 #: ../gui/importer.go:53
 msgid "Unable to Import Account"
@@ -4290,446 +5230,186 @@ msgstr "Fallo exportando los fingerprints"
 msgid "Couldn't export fingerprints to %s."
 msgstr "No se pudo exportar los fingerprints a %s."
 
-#: ../gui/muc_room_destroy.go:131
-msgid "You must provide a service name."
-msgstr "Debes proveer un nombre de servicio ."
+#: ../gui/muc_room_occupant_affiliation.go:158
+#, python-format
+msgid "You are changing the position of %s from owner to:"
+msgstr "Estás cambiando la posición de %s de propietario a:"
 
-#: ../gui/muc_room_destroy.go:133
-msgid "You must provide a room name."
-msgstr "Debes proveer un nombre para la sala."
+#: ../gui/muc_room_occupant_affiliation.go:160
+#, python-format
+msgid "You are changing the position of %s from administrator to:"
+msgstr "Estás cambiando la posición de %s de administrador a:"
 
-#: ../gui/muc_room_destroy.go:139
-msgid "You must provide a valid service and room name."
-msgstr "Debes proveer un servicio y nombre para la sala válidos."
+#: ../gui/muc_room_occupant_affiliation.go:162
+#, python-format
+msgid "You are changing the position of %s from member to:"
+msgstr "Estás cambiando la posición de %s de miembro a:"
 
-#: ../gui/proxy_edit.go:17
-msgid "Automatic Tor"
-msgstr "Tor automático"
+#: ../gui/muc_room_occupant_affiliation.go:165
+#, python-format
+msgid "You are changing the position of %s to:"
+msgstr "Estás cambiando la posición de %s a:"
 
-#: ../gui/proxy_edit.go:18
-msgid "SOCKS5"
-msgstr "SOCKS5"
+#: ../gui/muc_room_occupant_affiliation.go:173 ../gui/muc_room_roster.go:389
+msgid "Admin"
+msgstr "Admin"
 
-#: ../gui/proxy_edit.go:19
-msgid "SOCKS5 Unix Domain"
-msgstr "SOCKS5 Unix Domain"
+#: ../gui/muc_room_occupant_affiliation.go:177 ../gui/muc_room_roster.go:393
+msgid "Outcast"
+msgstr "Outcast"
 
-#: ../gui/muc_public_rooms.go:364
-msgid "That service doesn't seem to exist."
-msgstr "Al parecer ese servicio no existe."
-
-#: ../gui/muc_public_rooms.go:366
-msgid "Your XMPP server doesn't seem to have any chat room services."
-msgstr "Al parecer tu servidor XMPP no tiene ningún servicio de salas de chat."
-
-#: ../gui/muc_public_rooms.go:450
-msgid "Something went wrong when trying to get chat rooms."
-msgstr "Algo salió mal al intentar cargar las salas de chat."
-
-#: ../gui/muc_public_rooms.go:526
-msgid "An unknown error occurred, please try again."
-msgstr "Ocurrió un error desconocido, por favor inténtalo de nuevo."
-
-#: ../gui/muc_public_rooms.go:530
-msgid "We can't determine what has been selected, please try again."
-msgstr ""
-"No podemos determinar lo que ha sido seleccionado, por favor inténtalo de "
-"nuevo."
-
-#: ../gui/muc_public_rooms.go:532
+#: ../gui/muc_room_occupant_affiliation.go:200
 msgid ""
-"The selected item is not a room, select one room from the list to join to."
+"We couldn't update the position for the person because either you don't have "
+"permission to do it or the server is busy. Please try again."
 msgstr ""
-"El ítem seleccionado no es una sala, selecciona una de la lista para unirte."
+"No pudimos actualizar la posición de la persona porque no tienes permiso "
+"para hacerlo o el servidor está ocupado. Por favor, inténtalo de nuevo."
 
-#: ../gui/muc_public_rooms.go:534
-msgid "Please, select one room from the list to join to."
-msgstr "Por favor, selecciona una sala de la lista para unirte."
-
-#: ../gui/muc_public_rooms.go:536
-msgid "We can't determine which service has been selected, please try again."
-msgstr ""
-"No podemos determinar qué servicio ha sido seleccionado, por favor inténtalo "
-"de nuevo."
-
-#: ../gui/muc_public_rooms.go:557
-msgid "No account was selected, please select one account from the list."
-msgstr ""
-"Ninguna cuenta ha sido seleccionada, por favor selecciona una de la lista."
-
-#: ../gui/muc_room_config_page.go:369
-msgid "Banned"
-msgstr "Bloqueado"
-
-#: ../gui/muc_room_config_page.go:381
-msgid "The room must have at least one owner"
-msgstr "La sala debe tener al menos un propietario"
-
-#: ../gui/muc_room_config_page.go:448
-msgid "Saving room configuration"
-msgstr "Guardando la configuración de la sala"
-
-#: ../gui/muc_room_config_list_add_component.go:198
-msgid "Add all"
-msgstr "Agregar todas"
-
-#: ../gui/muc_room_config_list_add_component.go:312
-msgid "You must enter the account address."
-msgstr "Debes ingresar la dirección de la cuenta."
-
-#: ../gui/muc_room_config_list_add_component.go:314
-msgid "You must provide a valid account address."
-msgstr "Debes proveer una dirección de cuenta válida."
-
-#: ../gui/ui.go:218
-msgid "Tor is still not running"
-msgstr "Tor todavía no se está ejecutando"
-
-#: ../gui/ui.go:222
-msgid "Tor is now running"
-msgstr "Tor se está ejecutando ahora"
-
-#: ../gui/ui.go:570
+#: ../gui/muc_room_occupant_affiliation.go:202
 msgid ""
-"You are trying to connect to a Google account - sometimes Google will not "
-"allow connections even if you have entered the correct password. Try turning "
-"on App specific password, or if that fails allow less secure applications to "
-"access the account (don't worry, CoyIM is plenty secure)."
+"An error occurred when updating the position for the person. Please try "
+"again."
 msgstr ""
-"Estás intentando conectarte a una cuenta de Google; a veces, Google no "
-"permitirá conexiones incluso si has ingresado la contraseña correcta. "
-"Intenta activar la contraseña específica de la aplicación, o si eso falla, "
-"permite que las aplicaciones menos seguras accedan a la cuenta (no te "
-"preocupes, CoyIM es bastante seguro)."
+"Un error ocurrió mientras se actualizaba la posición de la persona. Por "
+"favor, inténtalo de nuevo."
 
-#: ../gui/ui.go:628
-msgid "CoyIM!"
-msgstr "CoyIM!"
+#: ../gui/file_transfer_notification.go:116
+msgid "Transfer started"
+msgstr "Transferencia iniciada"
 
-#: ../gui/ui.go:708
-msgid "There is no account with the id %q"
-msgstr "No existe cuenta con el id %q"
-
-#: ../gui/ui.go:712
-msgid "Can't send a contact request from an offline account"
-msgstr ""
-"No se puede enviar una solicitud de contacto desde una cuenta sin conexión"
-
-#: ../gui/connection.go:28
-msgid "Connection lost"
-msgstr "Conexión perdida"
-
-#: ../gui/connection.go:28
-msgid ""
-"We lost connection to the server for unknown reasons.\n"
-"\n"
-"We will try to reconnect."
-msgstr ""
-"Perdimos conexión con el servidor for razones desconocidas.\n"
-"\n"
-"Trataremos re reconectarnos."
-
-#: ../gui/connection.go:32 ../gui/connection.go:36 ../gui/connection.go:41
-msgid "Connection failure"
-msgstr "Fallo de conexión"
-
-#: ../gui/connection.go:32
-msgid ""
-"We couldn't connect to the server because we couldn't determine a server "
-"address for the given domain.\n"
-"\n"
-"We will try to reconnect."
-msgstr ""
-"No pudimos conectarnos al servidor porque no pudimos determinar una "
-"dirección de servidor para el dominio dado.\n"
-"\n"
-"Trataremos de reconectarnos."
-
-#: ../gui/connection.go:36
-msgid ""
-"We couldn't connect to the server for some reason - verify that the server "
-"address is correct and that you are actually connected to the internet.\n"
-"\n"
-"We will try to reconnect."
-msgstr ""
-"Por alguna razón, no pudimos conectarnos al servidor - verifica que la "
-"dirección del servidor sea correcta y que estés realmente conectado a "
-"Internet.\n"
-"\n"
-"Trataremos de reconectarnos."
-
-#: ../gui/connection.go:42
+#: ../gui/file_transfer_notification.go:150
 #, python-format
-msgid ""
-"We couldn't connect to the server - verify that the server address is "
-"correct and that you are actually connected to the internet.\n"
-"\n"
-"This is the error we got: %s\n"
-"\n"
-"We will try to reconnect."
-msgstr ""
-"No pudimos conectarnos al servidor; verifica que la dirección del servidor "
-"sea correcta y que realmente estés conectado a Internet.\n"
-"\n"
-"Este es el error que recibimos: %s\n"
-"\n"
-"Trataremos de reconectar."
+msgid "Sending: %s"
+msgstr "Enviando: %s"
 
-#: ../gui/accounts_menu.go:20
-msgid "Connect On _Startup"
-msgstr "Conectar al _Inicio"
-
-#: ../gui/accounts_menu.go:30
-msgid "_Connect All"
-msgstr "_Conectar todas"
-
-#: ../gui/accounts_menu.go:34
-msgid "_Disconnect All"
-msgstr "_Desconectar todas"
-
-#: ../gui/accounts_menu.go:41
-msgid "_New Account"
-msgstr "_Nueva cuenta"
-
-#: ../gui/accounts_menu.go:45
-msgid "_Add Account"
-msgstr "_Agregar cuenta"
-
-#: ../gui/accounts_menu.go:49
-msgid "_Import Account"
-msgstr "_Importar cuenta"
-
-#: ../gui/muc_room_toolbar.go:156
-msgid "You are no longer allowed to continue updating the room subject."
-msgstr "Ya no puedes continuar actualizando el tema de la sala."
-
-#: ../gui/muc_room_toolbar.go:250
-msgid "Hide room subject"
-msgstr "Ocultar tema de la sala"
-
-#: ../gui/password_component.go:48 ../gui/muc_room_config_field_password.go:122
-msgid "Hide"
-msgstr "Ocultar"
-
-#: ../gui/language_selector_component.go:205
-msgid "%[1]s (%[2]s)"
-msgstr "%[1]s (%[2]s)"
-
-#: ../gui/muc_room_config_list_component.go:103
-msgid "Remove all"
-msgstr "Remover todos"
-
-#: ../gui/infobar_component.go:155
-msgid "January 2, 2006 at 15:04:05"
-msgstr "2 de January, 2006 a las 15:04:05"
-
-#: ../gui/muc_room_occupant_role.go:137
+#: ../gui/file_transfer_notification.go:152
 #, python-format
-msgid "You are changing the role of %s from moderator to:"
-msgstr "Estás cambiando el rol de %s de moderador a:"
+msgid "Receiving: %s"
+msgstr "Recibiendo: %s"
 
-#: ../gui/muc_room_occupant_role.go:139
+#: ../gui/file_transfer_notification.go:154
 #, python-format
-msgid "You are changing the role of %s from participant to:"
-msgstr "Estás cambiando el rol de %s de participante a:"
+msgid "Sending securely: %s"
+msgstr "Enviando de forma segura: %s"
 
-#: ../gui/muc_room_occupant_role.go:141
+#: ../gui/file_transfer_notification.go:156
 #, python-format
-msgid "You are changing the role of %s from visitor to:"
-msgstr "Estás cambiando el rol de %s de visitante a:"
+msgid "Sending encrypted: %s"
+msgstr "Enviando cifrado: %s"
 
-#: ../gui/muc_room_occupant_role.go:144
+#: ../gui/file_transfer_notification.go:158
 #, python-format
-msgid "You are changing the role of %s to:"
-msgstr "Estás cambiando el rol de %s a:"
+msgid "Sending insecurely: %s"
+msgstr "Enviando de forma no segura: %s"
 
-#: ../gui/muc_room_config.go:96
-msgid "The room configuration changed."
-msgstr "La configuración de la sala cambió."
-
-#: ../gui/muc_room_config.go:108
-msgid "Unable to open the room configuration. Please, try again."
-msgstr ""
-"No se puede abrir la configuración de la sala. Por favor, inténtalo de nuevo."
-
-#: ../gui/muc_room_config.go:163
-msgid "Visitors can now request permission to speak."
-msgstr "Ahora los visitantes pueden solicitar permiso para hablar."
-
-#: ../gui/muc_room_config.go:165
-msgid ""
-"This room doesn't support \"voice\" requests anymore, which means that "
-"visitors can't ask for permission to speak."
-msgstr ""
-"Esta sala ya no admite solicitudes de \"voz\", lo que significa que los "
-"visitantes no pueden pedir permiso para hablar."
-
-#: ../gui/muc_room_config.go:171
-msgid "This room supports user registration."
-msgstr "Esta sala admite el registro de usuarios."
-
-#: ../gui/muc_room_config.go:173
-msgid "This room doesn't support user registration."
-msgstr "Esta sala no admite el registro de usuarios."
-
-#: ../gui/muc_room_config.go:178
-msgid "This room is now persistent."
-msgstr "Ahora esta sala es persistente."
-
-#: ../gui/muc_room_config.go:180
-msgid "This room is not persistent anymore."
-msgstr "Esta sala ya no es persistente."
-
-#: ../gui/muc_room_config.go:185
-msgid "Only participants and moderators can now send messages in this room."
-msgstr ""
-"Ahora sólo los participantes y los moderadores pueden enviar mensajes en "
-"esta sala."
-
-#: ../gui/muc_room_config.go:187
-msgid "Everyone can now send messages in this room."
-msgstr "Ahora todos pueden enviar mensajes en esta sala."
-
-#: ../gui/muc_room_config.go:192
-msgid "This room is now protected by a password."
-msgstr "Ahora esta sala está protegida por una contraseña."
-
-#: ../gui/muc_room_config.go:194
-msgid "This room is not protected by a password."
-msgstr "Esta sala no está protegida por una contraseña."
-
-#: ../gui/muc_room_config.go:199
-msgid "This room is publicly listed."
-msgstr "Esta sala aparece en listas públicas."
-
-#: ../gui/muc_room_config.go:201
-msgid "This room is not publicly listed anymore."
-msgstr "Esta sala ya no aparece en listas públicas."
-
-#: ../gui/muc_room_config.go:205
+#: ../gui/file_transfer_notification.go:160
 #, python-format
-msgid "The language of this room was changed to %s."
-msgstr "El idioma de esta sala cambió a %s."
+msgid "Receiving securely: %s"
+msgstr "Recibiendo de forma no segura: %s"
 
-#: ../gui/muc_room_config.go:219
-msgid "Participants and moderators can change the room subject."
-msgstr "Los participantes y moderadores pueden cambiar el tema de la sala."
-
-#: ../gui/muc_room_config.go:221
-msgid "Only moderators can change the room subject."
-msgstr "Sólo los moderadores pueden cambiar el tema de la sala."
-
-#: ../gui/muc_room_config.go:225
+#: ../gui/file_transfer_notification.go:162
 #, python-format
-msgid "Title was changed to \"%s\"."
-msgstr "El título cambió a \"%s\"."
+msgid "Receiving encrypted: %s"
+msgstr "Recibiendo cifrado: %s"
 
-#: ../gui/muc_room_config.go:229
+#: ../gui/file_transfer_notification.go:164
 #, python-format
-msgid "Description was changed to \"%s\"."
-msgstr "La descripción cambió a \"%s\"."
+msgid "Receiving insecurely: %s"
+msgstr "Recibiendo de forma no segura: %s"
 
-#: ../gui/muc_room_config.go:234
-msgid "Anyone can send private messages to people in the room."
-msgstr "Cualquiera puede enviar mensajes privados a las personas de la sala."
+#: ../gui/file_transfer_notification.go:252
+msgid "File and directory transfer(s) successful"
+msgstr "Transferencia de archivos y directorios exitosa"
 
-#: ../gui/muc_room_config.go:236
-msgid "No one in this room can send private messages now."
-msgstr "Ahora nadie en esta sala puede enviar mensajes privados."
+#: ../gui/file_transfer_notification.go:255
+msgid "Directory transfer(s) successful"
+msgstr "Transferencia de directorio(s) exitosa"
 
-#: ../gui/muc_room_config.go:241
-msgid "Members can now invite other users to join."
-msgstr "Ahora los miembros pueden invitar a otros usarios a unirsre."
+#: ../gui/file_transfer_notification.go:257
+msgid "File transfer(s) successful"
+msgstr "Transferencia de archivo(s) exitosa"
 
-#: ../gui/muc_room_config.go:243
-msgid "Members cannot invite other users to join anymore."
-msgstr "Los miembros ya no pueden invitar a otros usuarios a unirse."
+#: ../gui/file_transfer_notification.go:262
+msgid "File and directory transfer(s) failed"
+msgstr "La transferencia de archivos y directorios falló"
 
-#: ../gui/muc_room_config.go:247
+#: ../gui/file_transfer_notification.go:265
+msgid "Directory transfer(s) failed"
+msgstr "La transferencia de directorio(s) falló"
+
+#: ../gui/file_transfer_notification.go:267
+msgid "File transfer(s) failed"
+msgstr "La transferencia de archivo(s) falló"
+
+#: ../gui/file_transfer_notification.go:272
+msgid "File and directory transfer(s) canceled"
+msgstr "Transferencia de archivos y directorios cancelada"
+
+#: ../gui/file_transfer_notification.go:275
+msgid "Directory transfer(s) canceled"
+msgstr "Transferencia de directorio(s) cancelada"
+
+#: ../gui/file_transfer_notification.go:277
+msgid "File transfer(s) canceled"
+msgstr "Transferencia de archivo(s) cancelada"
+
+#: ../gui/file_transfer_notification.go:282
+msgid "File and directory transfer(s) declined"
+msgstr "Transferencia de archivos y directorios rechazada"
+
+#: ../gui/file_transfer_notification.go:285
+msgid "Directory transfer(s) declined"
+msgstr "Transferencia de directorio(s) rechazada"
+
+#: ../gui/file_transfer_notification.go:287
+msgid "File transfer(s) declined"
+msgstr "Transferencia de archivo(s) rechazada"
+
+#: ../gui/file_transfer_notification.go:362
 #, python-format
-msgid "The room's max history length was changed to %d."
-msgstr "La extensión máxima del historial de la sala se cambió a %d."
+msgid "Declined: %s"
+msgstr "Rechazado: %s"
 
-#: ../gui/connected_accounts_component.go:82
-msgid "There are no connected accounts."
-msgstr "No hay cuentas conectadas."
-
-#: ../gui/account.go:154
-msgid "Unable to Add Account"
-msgstr "No se pudo agregar la cuenta"
-
-#: ../gui/account.go:154
-msgid ""
-"Can't add account:\n"
-"\n"
-"You already have an account with this name."
-msgstr ""
-"No se puede agregar la cuenta:\n"
-"\n"
-"Ya tienes una cuenta con este nombre."
-
-#: ../gui/account.go:164
-msgid "Account added"
-msgstr "Cuenta agregada"
-
-#: ../gui/account.go:164
+#: ../gui/file_transfer_notification.go:376
 #, python-format
-msgid "%s successfully added."
-msgstr "%s agregada con éxito."
+msgid "Canceled: %s"
+msgstr "Cancelado: %s"
 
-#: ../gui/account.go:242
-msgid "_Check Connection"
-msgstr "_Revisar conexión"
-
-#: ../gui/account.go:255
-msgid "_Connect"
-msgstr "_Conectar"
-
-#: ../gui/account.go:265
-msgid "_Disconnect"
-msgstr "_Desconectar"
-
-#: ../gui/account.go:283
-msgid "Connection _information..."
-msgstr "_Información de la conexión..."
-
-#: ../gui/account.go:299
-msgid "_Change Password..."
-msgstr "_Cambiar contraseña..."
-
-#: ../gui/account.go:312
-msgid "Connect _Automatically"
-msgstr "Conectar _automáticamente"
-
-#: ../gui/account.go:319
-msgid "Always Encrypt Conversation"
-msgstr "Siempre cifrar la conversación"
-
-#: ../gui/account.go:340
-msgid "XML Console"
-msgstr "Consola XML"
-
-#: ../gui/account.go:441
+#: ../gui/file_transfer_notification.go:390
 #, python-format
-msgid ""
-"Connecting account\n"
-"%s"
-msgstr ""
-"Conectando la cuenta\n"
-"%s"
+msgid "Failed: %s"
+msgstr "Falló: %s"
 
-#: ../gui/account.go:445
+#: ../gui/file_transfer_notification.go:408
 #, python-format
-msgid ""
-"Connection failure\n"
-"%s"
-msgstr ""
-"Fallo de conexión\n"
-"%s"
+msgid "Sent securely: %s"
+msgstr "Enviado de forma segura: %s"
 
-#: ../gui/account.go:449
-msgid "Tor is not currently running"
-msgstr "Tor no se está ejecutando actualmente"
+#: ../gui/file_transfer_notification.go:410
+#, python-format
+msgid "Sent encrypted: %s"
+msgstr "Enviado cifrado: %s"
+
+#: ../gui/file_transfer_notification.go:412
+#, python-format
+msgid "Sent insecurely: %s"
+msgstr "Enviado de forma insegura: %s"
+
+#: ../gui/file_transfer_notification.go:414
+#, python-format
+msgid "Received securely: %s"
+msgstr "Recibido de forma segura: %s"
+
+#: ../gui/file_transfer_notification.go:416
+#, python-format
+msgid "Received encrypted: %s"
+msgstr "Recibido cifrado: %s"
+
+#: ../gui/file_transfer_notification.go:418
+#, python-format
+msgid "Received insecurely: %s"
+msgstr "Recibido de forma insegura: %s"
 
 #: ../gui/muc_room_warnings.go:32
 msgid ""
@@ -4794,17 +5474,125 @@ msgstr "Detalles"
 msgid "Warning %[1]d of %[2]d"
 msgstr "Advertencia %[1]d de %[2]d"
 
-#: ../gui/muc_room_positions.go:91
-msgid "The positions were updated."
-msgstr "Las posiciones fueron actualizadas."
+#: ../gui/muc_room.go:209
+msgid ""
+"Loading the room information took longer than usual, perhaps the connection "
+"to the server was lost. Do you want to try again?"
+msgstr ""
+"La carga de la información de la sala tardó más de lo habitual, quizás se "
+"perdió la conexión con el servidor. ¿Quieres intentarlo de nuevo?"
 
-#: ../gui/muc_room_positions.go:99
-msgid "Unable to update positions."
-msgstr "No fue posible actualizar las posiciones."
+#: ../gui/muc_room.go:212 ../gui/muc_room.go:754
+msgid "Yes, try again"
+msgstr "Sí, intentar de nuevo"
 
-#: ../gui/muc_room_positions.go:154
-msgid "We couldn't get the occupants by affiliation"
-msgstr "No pudimos cargar los ocupantes por su afiliación"
+#: ../gui/muc_room.go:272
+msgid ""
+"You have been removed from this room because it's now a members-only room."
+msgstr ""
+"Has sido removido de esta sala porque ahora es una sala exclusiva para "
+"miembros."
+
+#: ../gui/muc_room.go:283
+msgid ""
+"You have been removed from this members-only room since you are not "
+"$affiliation{a member} anymore."
+msgstr ""
+"Has sido removido de esta sala exclusiva para miembros pues ya no eres "
+"$affiliation{un miembro}."
+
+#: ../gui/muc_room.go:393
+msgid "The room has been destroyed"
+msgstr "La sala ha sido destruida"
+
+#: ../gui/muc_room.go:528
+msgid "The room subject couldn't be updated."
+msgstr "No se pudo actualizar el tema de la sala."
+
+#: ../gui/muc_room.go:535
+msgid "The room subject has been updated."
+msgstr "El tema de la sala ha sido actualizado."
+
+#: ../gui/muc_room.go:548
+msgid "Return"
+msgstr "Volver"
+
+#: ../gui/muc_room.go:731
+msgid "Your connection has been restored; you can join this room again."
+msgstr ""
+"Tu conexión ha sido restaurada; ahora puedes unirte a esta sala de nuevo."
+
+#: ../gui/muc_room.go:747
+msgid ""
+"Your connection was recovered but loading the room information took longer "
+"than usual, perhaps the connection to the server was lost. Do you want to "
+"try again?"
+msgstr ""
+"Tu conexión ha sido recuperada, pero cargar la información de la sala tardó "
+"más de lo habitual, quizás se perdió la conexión con el servidor. ¿Quieres "
+"intentarlo de nuevo?"
+
+#: ../gui/muc_room.go:760
+msgid "Trying to connect to the room..."
+msgstr "Tratando de conectarse con la sala..."
+
+#: ../gui/muc_room.go:802
+msgid ""
+"The connection to the server has been lost, please verify your connection."
+msgstr ""
+"Se ha perdido la conexión con el servidor, por favor verifica tu conexión."
+
+#: ../gui/muc_room.go:814
+msgid "Connecting to the room..."
+msgstr "Conectándose a la sala..."
+
+#: ../gui/language_selector_component.go:205
+msgid "%[1]s (%[2]s)"
+msgstr "%[1]s (%[2]s)"
+
+#: ../gui/muc_room_close_confirm.go:61
+msgid "Close & Leave Room"
+msgstr "Cerrar & salir de la sala"
+
+#: ../gui/muc_room_loading.go:21
+msgid "Loading room information"
+msgstr "Cargando la información de la sala"
+
+#: ../gui/muc_room_loading.go:22
+msgid "This will only take a few moments."
+msgstr "Esto sólo tomará unos pocos instantes."
+
+#: ../gui/muc_room_loading.go:29
+msgid "Joining room..."
+msgstr "Uniéndote a la sala..."
+
+#: ../gui/muc_room_loading.go:36
+msgid "Destroying room..."
+msgstr "Destruyendo la sala..."
+
+#: ../gui/muc_room_loading.go:43
+msgid "Updating position..."
+msgstr "Actualizando posición..."
+
+#: ../gui/muc_room_loading.go:50
+msgid "Updating role..."
+msgstr "Actualizando rol..."
+
+#: ../gui/muc_room_loading.go:52
+msgid "Expelling person from the room..."
+msgstr "Expulsando a la persona de la sala..."
+
+#: ../gui/muc_room_loading.go:61
+msgid "Loading room configuration..."
+msgstr "Cargando la configuración de la sala..."
+
+#: ../gui/muc_room_loading.go:68
+msgid "Loading room positions..."
+msgstr "Cargando las posiciones de la sala..."
+
+#: ../gui/muc_room_loading.go:75
+msgid "Saving room positions..."
+msgstr "Guardando las posiciones de la sala..."
 
 #: ../gui/muc.go:19
 msgid "Something went wrong trying to communicate with the server."
@@ -4825,6 +5613,221 @@ msgid ""
 msgstr ""
 "No se pudo crear la sala con el nombre proporcionado. Por favor, cámbialo e "
 "inténtalo de nuevo."
+
+#: ../gui/change_password_details.go:42
+msgid "The passwords do not match"
+msgstr "Las contraseñas no coinciden"
+
+#: ../gui/change_password_details.go:44
+msgid "The password can't be empty"
+msgstr "El campo de contraseña no puede estar vacío"
+
+#: ../gui/change_password_details.go:69
+#, python-format
+msgid "Password changed successfully for %s."
+msgstr "La contraseña cambió con éxito para %s."
+
+#: ../gui/change_password_details.go:75
+#, python-format
+msgid ""
+"Password change failed.\n"
+" Error: %s"
+msgstr ""
+"El cambio de contraseña cambió.\n"
+" Error: %s"
+
+#: ../gui/change_password_details.go:96
+#, python-format
+msgid "Error: %s"
+msgstr "Error: %s"
+
+#: ../gui/change_password_details.go:103
+msgid "Attempting to change password..."
+msgstr "Intentando cambiar la contraseña ..."
+
+#: ../gui/menubar.go:45
+msgid "About CoyIM"
+msgstr "Acerca de CoyIM"
+
+#: ../gui/menubar.go:53
+msgid "Quit CoyIM"
+msgstr "Salir de CoyIM"
+
+#: ../gui/proxy_edit.go:17
+msgid "Automatic Tor"
+msgstr "Tor automático"
+
+#: ../gui/proxy_edit.go:18
+msgid "SOCKS5"
+msgstr "SOCKS5"
+
+#: ../gui/proxy_edit.go:19
+msgid "SOCKS5 Unix Domain"
+msgstr "SOCKS5 Unix Domain"
+
+#: ../gui/registration.go:106
+msgid ""
+"To create an account, copy this link into a browser window and follow the "
+"instructions."
+msgstr ""
+"Para crear una cuenta, copia este enlace en una ventana de navegador y sigue "
+"las instrucciones."
+
+#: ../gui/registration.go:124
+msgid "* The field is required."
+msgstr "* El campo es necesario."
+
+#: ../gui/registration.go:172
+msgid ""
+"We had an error:\n"
+"\n"
+"Timeout."
+msgstr ""
+"Ocurrió un error:\n"
+"\n"
+"Tiempo de espera excedido."
+
+#: ../gui/registration.go:174
+msgid ""
+"The registration process currently requires Tor in order to ensure your "
+"safety.\n"
+"\n"
+"You don't have Tor running. Please, start it.\n"
+"\n"
+msgstr ""
+"Actualmente, el proceso de registro requiere Tor para garantizar tu "
+"seguridad.\n"
+"\n"
+"Tor no se está ejecutando. Por favor, inícialo.\n"
+"\n"
+
+#: ../gui/registration.go:177
+msgid ""
+"The chosen server does not support in-band registration.\n"
+"\n"
+"Either choose another server, or go to the website for the server to "
+"register."
+msgstr ""
+"No puedes registrarte a este servidor aquí.\n"
+"\n"
+"Por favor, elige otro servidor, o ve al sitio web del servidor para "
+"registrarte."
+
+#: ../gui/registration.go:179 ../gui/registration.go:196
+msgid ""
+"Could not contact the server.\n"
+"\n"
+"Please, correct your server choice and try again."
+msgstr ""
+"No se pudo contactar al servidor.\n"
+"\n"
+"Por favor, corrije tu elección de servidor e inténtalo de nuevo."
+
+#: ../gui/registration.go:188
+msgid ""
+"We had an error:\n"
+"\n"
+"Some required fields are missing. Please, try again and fill all fields."
+msgstr ""
+"Encontramos un error:\n"
+"\n"
+"Algunos campos obligatorios no han sido llenados. Por favor, vuelve a "
+"intentarlo y completa todos los campos."
+
+#: ../gui/registration.go:190
+msgid ""
+"We had an error:\n"
+"\n"
+"Incorrect username"
+msgstr ""
+"Ocurrió un error:\n"
+"\n"
+"Nombre de usuario incorrecto."
+
+#: ../gui/registration.go:192
+msgid ""
+"We had an error:\n"
+"\n"
+"The captcha entered is wrong"
+msgstr ""
+"Encontramos un error:\n"
+"\n"
+"El captcha ingresado es incorrecto."
+
+#: ../gui/registration.go:194
+msgid ""
+"We had an error:\n"
+"\n"
+"The server received too many requests to create an account at the same time."
+msgstr ""
+"Ocurrió un error:\n"
+"\n"
+"El servidor recibió muchas solicitudes para crear una cuenta al mismo tiempo."
+
+#: ../gui/registration.go:304
+msgid ""
+"Connecting to server for registration... \n"
+"\n"
+"This might take a while."
+msgstr ""
+"Conectando al servidor para el registro... \n"
+"\n"
+"Esto puede tomar un momento."
+
+#: ../gui/registration.go:332
+msgid "We had an error when trying to store your account information."
+msgstr "Ocurrió un error al intentar almacenar la información de tu cuenta."
+
+#: ../gui/registration.go:337
+#, python-format
+msgid "<b>%s</b> successfully created."
+msgstr "<b>%s</b> creada exitosamente."
+
+#: ../gui/muc_room_errors.go:77
+msgid "You must provide a valid nickname."
+msgstr "Debes proporcionar un nickname válido."
+
+#: ../gui/muc_room_errors.go:79
+msgid ""
+"You can't join the room using that nickname because it's already being used."
+msgstr ""
+"No puedes unirte a la sala usando ese nickname porque ya está siendo usado."
+
+#: ../gui/muc_room_errors.go:81
+msgid "Sorry, this room only allows registered members."
+msgstr "Lo sentimos, esta sala sólo permite miembros registrados."
+
+#: ../gui/muc_room_errors.go:83
+msgid "You can't join the room because the password is not valid."
+msgstr "No puedes unirte a la sala porque la contraseña no es válida."
+
+#: ../gui/muc_room_errors.go:85
+msgid ""
+"You can't join the room because the maximum number of people has been "
+"reached."
+msgstr ""
+"No puedes unirte a la sala porque el número máximo de personas ha sido "
+"alcanzado."
+
+#: ../gui/muc_room_errors.go:87
+msgid ""
+"An unknown error occurred when trying to join the room. Please try again "
+"later."
+msgstr ""
+"Un error desconocido ocurrió mientras intentabas unirte a la sala. Por favor "
+"inténtalo de nuevo."
+
+#: ../gui/muc_room_errors.go:89
+msgid "You can't join the room because your account is currently banned."
+msgstr "No puedes unirte a la sala porque actualmente tu cuenta está bloqueda."
+
+#: ../gui/muc_room_errors.go:91
+msgid ""
+"An error occurred when trying to join the room. Please check your connection "
+"or make sure the room exists."
+msgstr ""
+"Un error ocurrió mientras intentabas unirte a la sala. Por favor revisa tu "
+"conexión o asegúrate de que la sala exista."
 
 #: ../gui/muc_room_conversation_notification_messages.go:11
 msgid "You can't send messages because this room has been destroyed."
@@ -4973,511 +5976,6 @@ msgstr "La sala fue destruida. La razón dada fue \"%s\"."
 msgid "The room was destroyed."
 msgstr "La sala fue destruisa."
 
-#: ../gui/change_password_details.go:42
-msgid "The passwords do not match"
-msgstr "Las contraseñas no coinciden"
-
-#: ../gui/change_password_details.go:44
-msgid "The password can't be empty"
-msgstr "El campo de contraseña no puede estar vacío"
-
-#: ../gui/change_password_details.go:69
-#, python-format
-msgid "Password changed successfully for %s."
-msgstr "La contraseña cambió con éxito para %s."
-
-#: ../gui/change_password_details.go:75
-#, python-format
-msgid ""
-"Password change failed.\n"
-" Error: %s"
-msgstr ""
-"El cambio de contraseña cambió.\n"
-" Error: %s"
-
-#: ../gui/change_password_details.go:96
-#, python-format
-msgid "Error: %s"
-msgstr "Error: %s"
-
-#: ../gui/change_password_details.go:103
-msgid "Attempting to change password..."
-msgstr "Intentando cambiar la contraseña ..."
-
-#: ../gui/certificate_window.go:124
-msgid "this account"
-msgstr "esta cuenta"
-
-#: ../gui/certificate_window.go:133
-#, python-format
-msgid ""
-"We couldn't verify the certificate for the connection to account %s. This "
-"can happen if the server you are connecting to doesn't use the traditional "
-"certificate hierarchies. It can also be the symptom of an attack.\n"
-"\n"
-"Try to verify that this information is correct before proceeding with the "
-"connection."
-msgstr ""
-"No pudimos verificar el certificado para la conexión de la cuenta %s. Esto "
-"puede suceder si el servidor al que te estás conectando no utiliza las "
-"jerarquías de certificados tradicionales. También puede ser síntoma de un "
-"ataque.\n"
-"\n"
-"Intenta verificar que esta información sea correcta antes de continuar con "
-"la conexión."
-
-#: ../gui/certificate_window.go:135
-msgid ""
-"The certificate for the connection to account %[1]s is correct, but the "
-"names for it doesn't match. We need a certificate for the name %[2]s, but "
-"this wasn't provided. This can happen if the server is configured "
-"incorrectly or there are other reasons the proper name couldn't be used. "
-"This is very common for corporate Google accounts. It can also be the "
-"symptom of an attack.\n"
-"\n"
-"Try to verify that this information is correct before proceeding with the "
-"connection."
-msgstr ""
-"El certificado para la conexión a la cuenta %[1]s es correcto, pero los "
-"nombres no coinciden. Necesitamos un certificado para el nombre %[2]s, pero "
-"este no fue proporcionado. Esto puede suceder si el servidor está "
-"configurado incorrectamente o si existen otras razones por las que no se "
-"pudo usar el nombre correcto. Esto es muy común para las cuentas "
-"corporativas de Google. También puede ser síntoma de un ataque.\n"
-"\n"
-"Intenta verificar que esta información sea correcta antes de continuar con "
-"la conexión."
-
-#: ../gui/certificate_window.go:137
-#, python-format
-msgid ""
-"The certificate for the connection to account %s is correct - but you have a "
-"pinning policy that requires us to ask whether you would like to continue "
-"connecting using this certificate, save it for the future, or stop "
-"connecting.\n"
-"\n"
-"Try to verify that this information is correct before proceeding with the "
-"connection."
-msgstr ""
-"El certificado para la conexión a la cuenta %s es correcto - pero tienes una "
-"política de fijación que requiere que te preguntemos si deseas continuar "
-"conectándote con este certificado, guardarlo para el futuro o dejar de "
-"conectarte.\n"
-"\n"
-"Intenta verificar que esta información sea correcta antes de continuar con "
-"la conexión."
-
-#: ../gui/muc_room_config_assistant.go:115
-#, python-format
-msgid "Configuration for room [%s]"
-msgstr "Configuración para la sala [%s]"
-
-#: ../gui/muc_room_config_assistant.go:146
-msgid "Update Configuration"
-msgstr "Actualizar configuración"
-
-#: ../gui/muc_room_config_assistant.go:238
-msgid "Cancel room settings"
-msgstr "Cancelar los ajustes de la sala"
-
-#: ../gui/muc_room_config_assistant.go:239
-msgid "We were unable to cancel the room configuration"
-msgstr "No pudimos cancelar la configuración de la sala"
-
-#: ../gui/muc_room_config_assistant.go:240
-msgid "An error occurred while trying to cancel the configuration of the room."
-msgstr ""
-"Un error ocurrió mientras intentábamos cancelar la configuración de la sala."
-
-#: ../gui/muc_create_room_form.go:147
-msgid ""
-"Couldn't connect to the service, please verify that it exists or try again "
-"later."
-msgstr ""
-"No pudimos conectarnos con el servicio, por favor verifica si este existe o "
-"inténtalo de nuevo."
-
-#: ../gui/muc_create_room_form.go:149
-msgid "That room already exists, try again with a different name."
-msgstr "Esa sala ya existe, intenta de nuevo con un nombre diferente."
-
-#: ../gui/muc_create_room_form.go:168
-msgid "Could not create the room."
-msgstr "No se pudo crear la sala."
-
-#: ../gui/muc_create_room_form.go:276
-msgid "Configure Room"
-msgstr "Configurar sala"
-
-#: ../gui/muc_create_room_form.go:280
-msgid "Create Room & Join"
-msgstr "Crear sala & unirte"
-
-#: ../gui/file_transfer.go:79
-#, python-format
-msgid "The transfer to %s can't be done encrypted and securely."
-msgstr ""
-"La transferencia a %s no se puede ser cifrada y hacersede forma segura."
-
-#: ../gui/file_transfer.go:80
-msgid ""
-"Do you want to continue anyway? This means an adversary or server "
-"administrator can potentially see the content of the file."
-msgstr ""
-"¿Quieres continuar de todos modos? Esto significa que potencialmente un "
-"adversario o administrador del servidor puede ver el contenido del archivo."
-
-#: ../gui/file_transfer.go:107
-#, python-format
-msgid ""
-"%s wants to send you a directory - this transfer will be encrypted and "
-"secure - do you want to receive it?"
-msgstr ""
-"%s quiere enviarte un directorio; esta transferencia estará cifrada y será "
-"segura - ¿deseas recibirla?"
-
-#: ../gui/file_transfer.go:108 ../gui/file_transfer.go:111
-#, python-format
-msgid "Directory name: %s"
-msgstr "Nombre del directorio %s"
-
-#: ../gui/file_transfer.go:110
-#, python-format
-msgid ""
-"%s wants to send you a directory - the transfer will NOT be encrypted or "
-"secure - do you want to receive it?"
-msgstr ""
-"%s quiere enviarte un directorio - la transferencia no será segura ni estará "
-"cifrada - ¿quieres recibirla?"
-
-#: ../gui/file_transfer.go:115
-#, python-format
-msgid ""
-"%s wants to send you a file - this transfer will be encrypted and secure - "
-"do you want to receive it?"
-msgstr ""
-"%s quiere enviarte un archivo - esta transferencia será segura y estará "
-"cifrada - ¿quieres recibirla?"
-
-#: ../gui/file_transfer.go:116 ../gui/file_transfer.go:119
-#, python-format
-msgid "File name: %s"
-msgstr "Nombre del archivo: %s"
-
-#: ../gui/file_transfer.go:118
-#, python-format
-msgid ""
-"%s wants to send you a file - the transfer will NOT be encrypted or secure - "
-"do you want to receive it?"
-msgstr ""
-"%s quiere enviarte un archivo - la transferencia no será segura ni estará "
-"cifrada - ¿quieres recibirla?"
-
-#: ../gui/file_transfer.go:123
-msgid ""
-"%[1]s\n"
-"Encrypted: %[2]v"
-msgstr ""
-"%[1]s\n"
-"Cifrado: %[2]v"
-
-#: ../gui/file_transfer.go:126
-msgid ""
-"%[1]s\n"
-"Description: %[2]s"
-msgstr ""
-"%[1]s\n"
-"Descripción: %[2]s"
-
-#: ../gui/file_transfer.go:129
-msgid ""
-"%[1]s\n"
-"Last modified: %[2]s"
-msgstr ""
-"%[1]s\n"
-"Última modificación: %[2]s"
-
-#: ../gui/file_transfer.go:132
-msgid ""
-"%[1]s\n"
-"Size: %[2]d bytes"
-msgstr ""
-"%[1]s\n"
-"Tamaño: %[2]d bytes"
-
-#: ../gui/file_transfer.go:145
-msgid "Choose where to save file"
-msgstr "Escoge dónde guardar el archivo"
-
-#: ../gui/file_transfer.go:148
-msgid "Choose where to save folder"
-msgstr "Escoge dónde guardar la carpeta"
-
-#: ../gui/file_transfer.go:158
-msgid "_Save"
-msgstr "_Guardar"
-
-#: ../gui/file_transfer.go:280
-msgid "Choose file to send"
-msgstr "Escoge el archivo para enviar"
-
-#: ../gui/file_transfer.go:284
-msgid "Choose directory to send"
-msgstr "Escoge el directorio a enviar"
-
-#: ../gui/muc_room_window.go:41
-msgid "%[1]s [%[2]s]"
-msgstr "%[1]s [%[2]s]"
-
-#: ../gui/muc_room_conversation_display.go:153
-msgid ""
-"You can no longer receive any messages in this room and the list of people "
-"in the room will not be updated anymore."
-msgstr ""
-"Ya no puedes recibir ningún mensaje en esta sala y la lista de personas en "
-"la misma no se actualizará más."
-
-#: ../gui/muc_room_roster_info.go:223
-#, python-format
-msgid ""
-"Administrators and owners will automatically be moderators for a room. "
-"Therefore, the role of %s can't be changed."
-msgstr ""
-"Los administradores y propietarios serán automáticamente moderadores de una "
-"sala. Por lo tanto, el rol de %s no se puede cambiar."
-
-#: ../gui/conversation.go:70
-msgid "The conversation is now private."
-msgstr "Ahora la conversación es privada."
-
-#: ../gui/conversation.go:78
-msgid ""
-"The verification failed - but the conversation is still private because of "
-"an earlier verification."
-msgstr ""
-"La verificación falló - pero la conversación sigue siendo privada gracias a "
-"una verificación anterior."
-
-#: ../gui/conversation.go:80
-msgid "The verification failed - the conversation is still unverified."
-msgstr "La verificación falló - la conversación aún no está verificada."
-
-#: ../gui/conversation.go:271
-msgid "Attempting to start a private conversation..."
-msgstr "Intentando iniciar una conversación privada..."
-
-#: ../gui/conversation.go:284 ../gui/account_events.go:143
-msgid "Private conversation has ended."
-msgstr "La conversación privada ha terminado."
-
-#: ../gui/conversation.go:294
-#, python-format
-msgid "You have verified the identity of %s."
-msgstr "Has verificado la identidad de %s."
-
-#: ../gui/conversation.go:428
-msgid ""
-"You are talking over an \n"
-"unprotected chat"
-msgstr ""
-"Estás hablando en un \n"
-"canal inseguro"
-
-#: ../gui/conversation.go:662
-msgid "Available"
-msgstr "Disponible"
-
-#: ../gui/conversation.go:664
-msgid "Not Available"
-msgstr "No disponible"
-
-#: ../gui/conversation.go:666
-msgid "Away"
-msgstr "Fuera"
-
-#: ../gui/conversation.go:668
-msgid "Busy"
-msgstr "Ocupado"
-
-#: ../gui/conversation.go:670
-msgid "Free for Chat"
-msgstr "Libre para conversar"
-
-#: ../gui/conversation.go:672
-msgid "Invisible"
-msgstr "Invisible"
-
-#: ../gui/conversation.go:680
-msgid "%[1]s%[2]s"
-msgstr "%[1]s%[2]s"
-
-#: ../gui/conversation.go:687 ../gui/conversation.go:701
-#, python-format
-msgid " (%s)"
-msgstr " (%s)"
-
-#: ../gui/conversation.go:699
-msgid " (%[1]s: %[2]s)"
-msgstr " (%[1]s: %[2]s)"
-
-#: ../gui/conversation.go:707
-msgid "Offline"
-msgstr "Desconectado"
-
-#: ../gui/conversation.go:713
-msgid "%[1]s is now %[2]s"
-msgstr "%[1]s está %[2]s ahora"
-
-#: ../gui/conversation.go:829
-msgid "The peer is using a key we haven't seen before!"
-msgstr "¡Tu compañero está usando una clave que no habíamos visto antes!"
-
-#: ../gui/muc_room_occupant_action.go:95
-msgid "Expel person"
-msgstr "Expulsar persona"
-
-#: ../gui/muc_room_occupant_action.go:96
-#, python-format
-msgid "You are about to expel %s from the room."
-msgstr "Estás por expulsar a %s de la sala."
-
-#: ../gui/muc_room_occupant_action.go:113
-msgid "Ban person"
-msgstr "Bloquear persona"
-
-#: ../gui/muc_room_occupant_action.go:114
-#, python-format
-msgid "You are about to ban %s from the room"
-msgstr "Estás por bloquear a %s de la sala"
-
-#: ../gui/muc_room_occupant_action.go:115
-msgid ""
-"They won't be able to join the room again. Are you sure you want to continue?"
-msgstr ""
-"La persona no podrá unirse a la sala de nuevo. ¿Estás seguro de que deseas "
-"continuar?"
-
-#: ../gui/muc_room_occupant_action.go:116
-msgid ""
-"Here you can provide an optional reason for banning the person. Everyone in "
-"the room will see this reason."
-msgstr ""
-"Aquí puedes proporcionar una razón opcional para bloquear a la persona. "
-"Todos en la sala verán esta razón."
-
-#: ../gui/muc_room_errors.go:77
-msgid "You must provide a valid nickname."
-msgstr "Debes proporcionar un nickname válido."
-
-#: ../gui/muc_room_errors.go:79
-msgid ""
-"You can't join the room using that nickname because it's already being used."
-msgstr ""
-"No puedes unirte a la sala usando ese nickname porque ya está siendo usado."
-
-#: ../gui/muc_room_errors.go:81
-msgid "Sorry, this room only allows registered members."
-msgstr "Lo sentimos, esta sala sólo permite miembros registrados."
-
-#: ../gui/muc_room_errors.go:83
-msgid "You can't join the room because the password is not valid."
-msgstr "No puedes unirte a la sala porque la contraseña no es válida."
-
-#: ../gui/muc_room_errors.go:85
-msgid ""
-"You can't join the room because the maximum number of people has been "
-"reached."
-msgstr ""
-"No puedes unirte a la sala porque el número máximo de personas ha sido "
-"alcanzado."
-
-#: ../gui/muc_room_errors.go:87
-msgid ""
-"An unknown error occurred when trying to join the room. Please try again "
-"later."
-msgstr ""
-"Un error desconocido ocurrió mientras intentabas unirte a la sala. Por favor "
-"inténtalo de nuevo."
-
-#: ../gui/muc_room_errors.go:89
-msgid "You can't join the room because your account is currently banned."
-msgstr "No puedes unirte a la sala porque actualmente tu cuenta está bloqueda."
-
-#: ../gui/muc_room_errors.go:91
-msgid ""
-"An error occurred when trying to join the room. Please check your connection "
-"or make sure the room exists."
-msgstr ""
-"Un error ocurrió mientras intentabas unirte a la sala. Por favor revisa tu "
-"conexión o asegúrate de que la sala exista."
-
-#: ../gui/jid.go:16
-msgid ""
-"Validation failed: \n"
-"The XMPP address is invalid. An XMPP address should look like this: "
-"local@domain.com."
-msgstr ""
-"La validación falló:: \n"
-"La dirección XMPP no es válida. Una dirección XMPP debería verse así: "
-"local@domain.com."
-
-#: ../gui/jid.go:25
-msgid ""
-"Validation failed:\n"
-"The XMPP address has an invalid domain part, The XMPP address has an invalid "
-"local part. An XMPP address should look like this: local@domain.com."
-msgstr ""
-"La validación falló:\n"
-"La dirección XMPP tiene una parte del dominio no válida. La dirección XMPP "
-"tiene una parte local no válida. Una dirección XMPP debería verse así: "
-"local@domain.com."
-
-#: ../gui/jid.go:27
-msgid ""
-"Validation failed:\n"
-"The XMPP address has an invalid domain part. An XMPP address should look "
-"like this: local@domain.com."
-msgstr ""
-"La validación falló:\n"
-"La dirección XMPP tiene una parte no válida en el dominio. Una dirección "
-"XMPP debería verse así: local@domain.com."
-
-#: ../gui/jid.go:29
-msgid ""
-"Validation failed:\n"
-"The XMPP address has an invalid local part. An XMPP address should look like "
-"this: local@domain.com."
-msgstr ""
-"La validación falló:\n"
-"La dirección XMPP tiene una parte local no válida. Una dirección XMPP "
-"debería verse así: local@domain.com."
-
-#: ../gui/edit_contact.go:114
-#, python-format
-msgid "There are no known fingerprints for %s"
-msgstr "No hay fingerprints conocidos para %s"
-
-#: ../gui/edit_contact.go:116
-#, python-format
-msgid "These are the fingerprints known for %s:"
-msgstr "Estos son los fingerprints conocidos para %s:"
-
-#: ../gui/edit_contact.go:122
-msgid "not trusted"
-msgstr "No es de confianza"
-
-#: ../gui/edit_contact.go:124
-msgid "trusted"
-msgstr "De confianza"
-
-#: ../gui/account_details.go:199
-msgid ""
-"The fingerprints for %[1]s:\n"
-"%[2]s"
-msgstr ""
-"Los fingerprints para %[1]s:\n"
-"%[2]s"
-
 #: ../gui/muc_room_conversation.go:234
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an owner}."
@@ -5498,523 +5996,39 @@ msgstr "$nickname{%s} ha sido agregado como $affiliation{miembro}."
 msgid "$nickname{%s} has been added to the ban list."
 msgstr "$nickname{%s} ha sido agregado a la lista de bloqueados."
 
-#: ../gui/file_transfer_notification.go:116
-msgid "Transfer started"
-msgstr "Transferencia iniciada"
+#: ../gui/ui.go:218
+msgid "Tor is still not running"
+msgstr "Tor todavía no se está ejecutando"
 
-#: ../gui/file_transfer_notification.go:150
-#, python-format
-msgid "Sending: %s"
-msgstr "Enviando: %s"
+#: ../gui/ui.go:222
+msgid "Tor is now running"
+msgstr "Tor se está ejecutando ahora"
 
-#: ../gui/file_transfer_notification.go:152
-#, python-format
-msgid "Receiving: %s"
-msgstr "Recibiendo: %s"
-
-#: ../gui/file_transfer_notification.go:154
-#, python-format
-msgid "Sending securely: %s"
-msgstr "Enviando de forma segura: %s"
-
-#: ../gui/file_transfer_notification.go:156
-#, python-format
-msgid "Sending encrypted: %s"
-msgstr "Enviando cifrado: %s"
-
-#: ../gui/file_transfer_notification.go:158
-#, python-format
-msgid "Sending insecurely: %s"
-msgstr "Enviando de forma no segura: %s"
-
-#: ../gui/file_transfer_notification.go:160
-#, python-format
-msgid "Receiving securely: %s"
-msgstr "Recibiendo de forma no segura: %s"
-
-#: ../gui/file_transfer_notification.go:162
-#, python-format
-msgid "Receiving encrypted: %s"
-msgstr "Recibiendo cifrado: %s"
-
-#: ../gui/file_transfer_notification.go:164
-#, python-format
-msgid "Receiving insecurely: %s"
-msgstr "Recibiendo de forma no segura: %s"
-
-#: ../gui/file_transfer_notification.go:252
-msgid "File and directory transfer(s) successful"
-msgstr "Transferencia de archivos y directorios exitosa"
-
-#: ../gui/file_transfer_notification.go:255
-msgid "Directory transfer(s) successful"
-msgstr "Transferencia de directorio(s) exitosa"
-
-#: ../gui/file_transfer_notification.go:257
-msgid "File transfer(s) successful"
-msgstr "Transferencia de archivo(s) exitosa"
-
-#: ../gui/file_transfer_notification.go:262
-msgid "File and directory transfer(s) failed"
-msgstr "La transferencia de archivos y directorios falló"
-
-#: ../gui/file_transfer_notification.go:265
-msgid "Directory transfer(s) failed"
-msgstr "La transferencia de directorio(s) falló"
-
-#: ../gui/file_transfer_notification.go:267
-msgid "File transfer(s) failed"
-msgstr "La transferencia de archivo(s) falló"
-
-#: ../gui/file_transfer_notification.go:272
-msgid "File and directory transfer(s) canceled"
-msgstr "Transferencia de archivos y directorios cancelada"
-
-#: ../gui/file_transfer_notification.go:275
-msgid "Directory transfer(s) canceled"
-msgstr "Transferencia de directorio(s) cancelada"
-
-#: ../gui/file_transfer_notification.go:277
-msgid "File transfer(s) canceled"
-msgstr "Transferencia de archivo(s) cancelada"
-
-#: ../gui/file_transfer_notification.go:282
-msgid "File and directory transfer(s) declined"
-msgstr "Transferencia de archivos y directorios rechazada"
-
-#: ../gui/file_transfer_notification.go:285
-msgid "Directory transfer(s) declined"
-msgstr "Transferencia de directorio(s) rechazada"
-
-#: ../gui/file_transfer_notification.go:287
-msgid "File transfer(s) declined"
-msgstr "Transferencia de archivo(s) rechazada"
-
-#: ../gui/file_transfer_notification.go:362
-#, python-format
-msgid "Declined: %s"
-msgstr "Rechazado: %s"
-
-#: ../gui/file_transfer_notification.go:376
-#, python-format
-msgid "Canceled: %s"
-msgstr "Cancelado: %s"
-
-#: ../gui/file_transfer_notification.go:390
-#, python-format
-msgid "Failed: %s"
-msgstr "Falló: %s"
-
-#: ../gui/file_transfer_notification.go:408
-#, python-format
-msgid "Sent securely: %s"
-msgstr "Enviado de forma segura: %s"
-
-#: ../gui/file_transfer_notification.go:410
-#, python-format
-msgid "Sent encrypted: %s"
-msgstr "Enviado cifrado: %s"
-
-#: ../gui/file_transfer_notification.go:412
-#, python-format
-msgid "Sent insecurely: %s"
-msgstr "Enviado de forma insegura: %s"
-
-#: ../gui/file_transfer_notification.go:414
-#, python-format
-msgid "Received securely: %s"
-msgstr "Recibido de forma segura: %s"
-
-#: ../gui/file_transfer_notification.go:416
-#, python-format
-msgid "Received encrypted: %s"
-msgstr "Recibido cifrado: %s"
-
-#: ../gui/file_transfer_notification.go:418
-#, python-format
-msgid "Received insecurely: %s"
-msgstr "Recibido de forma insegura: %s"
-
-#: ../gui/muc_room_manager.go:40
-msgid "You are already in the room."
-msgstr "Ya estás en la sala."
-
-#: ../gui/muc_room_manager.go:52
-msgid "You were already connected to this room."
-msgstr "Ya estabas conectado a esta sala."
-
-#: ../gui/registration.go:106
+#: ../gui/ui.go:584
 msgid ""
-"To create an account, copy this link into a browser window and follow the "
-"instructions."
-msgstr "Para crear una cuenta, copia este enlace en una ventana de navegador y sigue las instrucciones."
-
-#: ../gui/registration.go:124
-msgid "* The field is required."
-msgstr "* El campo es necesario."
-
-#: ../gui/registration.go:172
-msgid ""
-"We had an error:\n"
-"\n"
-"Timeout."
+"You are trying to connect to a Google account - sometimes Google will not "
+"allow connections even if you have entered the correct password. Try turning "
+"on App specific password, or if that fails allow less secure applications to "
+"access the account (don't worry, CoyIM is plenty secure)."
 msgstr ""
-"Ocurrió un error:\n"
-"\n"
-"Tiempo de espera excedido."
+"Estás intentando conectarte a una cuenta de Google; a veces, Google no "
+"permitirá conexiones incluso si has ingresado la contraseña correcta. "
+"Intenta activar la contraseña específica de la aplicación, o si eso falla, "
+"permite que las aplicaciones menos seguras accedan a la cuenta (no te "
+"preocupes, CoyIM es bastante seguro)."
 
-#: ../gui/registration.go:174
-msgid ""
-"The registration process currently requires Tor in order to ensure your "
-"safety.\n"
-"\n"
-"You don't have Tor running. Please, start it.\n"
-"\n"
+#: ../gui/ui.go:642
+msgid "CoyIM!"
+msgstr "CoyIM!"
+
+#: ../gui/ui.go:722
+msgid "There is no account with the id %q"
+msgstr "No existe cuenta con el id %q"
+
+#: ../gui/ui.go:726
+msgid "Can't send a contact request from an offline account"
 msgstr ""
-"Actualmente, el proceso de registro requiere Tor para garantizar tu "
-"seguridad.\n"
-"\n"
-"Tor no se está ejecutando. Por favor, inícialo.\n"
-"\n"
-
-#: ../gui/registration.go:177
-msgid ""
-"The chosen server does not support in-band registration.\n"
-"\n"
-"Either choose another server, or go to the website for the server to "
-"register."
-msgstr ""
-"No puedes registrarte a este servidor aquí.\n"
-"\n"
-"Por favor, elige otro servidor, o ve al sitio web del servidor para "
-"registrarte."
-
-#: ../gui/registration.go:179 ../gui/registration.go:196
-msgid ""
-"Could not contact the server.\n"
-"\n"
-"Please, correct your server choice and try again."
-msgstr ""
-"No se pudo contactar al servidor.\n"
-"\n"
-"Por favor, corrije tu elección de servidor e inténtalo de nuevo."
-
-#: ../gui/registration.go:188
-msgid ""
-"We had an error:\n"
-"\n"
-"Some required fields are missing. Please, try again and fill all fields."
-msgstr ""
-"Encontramos un error:\n"
-"\n"
-"Algunos campos obligatorios no han sido llenados. Por favor, vuelve a "
-"intentarlo y completa todos los campos."
-
-#: ../gui/registration.go:190
-msgid ""
-"We had an error:\n"
-"\n"
-"Incorrect username"
-msgstr ""
-"Ocurrió un error:\n"
-"\n"
-"Nombre de usuario incorrecto."
-
-#: ../gui/registration.go:192
-msgid ""
-"We had an error:\n"
-"\n"
-"The captcha entered is wrong"
-msgstr ""
-"Encontramos un error:\n"
-"\n"
-"El captcha ingresado es incorrecto."
-
-#: ../gui/registration.go:194
-msgid ""
-"We had an error:\n"
-"\n"
-"The server received too many requests to create an account at the same time."
-msgstr ""
-"Ocurrió un error:\n"
-"\n"
-"El servidor recibió muchas solicitudes para crear una cuenta al mismo tiempo."
-
-#: ../gui/registration.go:304
-msgid ""
-"Connecting to server for registration... \n"
-"\n"
-"This might take a while."
-msgstr ""
-"Conectando al servidor para el registro... \n"
-"\n"
-"Esto puede tomar un momento."
-
-#: ../gui/registration.go:332
-msgid "We had an error when trying to store your account information."
-msgstr "Ocurrió un error al intentar almacenar la información de tu cuenta."
-
-#: ../gui/registration.go:337
-#, python-format
-msgid "<b>%s</b> successfully created."
-msgstr "<b>%s</b> creada exitosamente."
-
-#: ../gui/timeago.go:24
-msgid "Today"
-msgstr "Hoy"
-
-#: ../gui/timeago.go:31
-msgid "Yesterday"
-msgstr "Ayer"
-
-#: ../gui/timeago.go:38
-msgid "Two days ago"
-msgstr "Hace dos días"
-
-#: ../gui/timeago.go:45
-msgid "Three days ago"
-msgstr "Hace tres días"
-
-#: ../gui/timeago.go:52
-msgid "Four days ago"
-msgstr "Hace cuatro días"
-
-#: ../gui/timeago.go:79
-msgid "%[1]s, %[2]s %[3]d, %[4]d"
-msgstr "%[1]s, %[2]s %[3]d, %[4]d"
-
-#: ../gui/timeago.go:85
-msgid "Monday"
-msgstr "Lunes"
-
-#: ../gui/timeago.go:87
-msgid "Thursday"
-msgstr "Jueves"
-
-#: ../gui/timeago.go:89
-msgid "Wednesday"
-msgstr "Miércoles"
-
-#: ../gui/timeago.go:91
-msgid "Tuesday"
-msgstr "Martes"
-
-#: ../gui/timeago.go:93
-msgid "Friday"
-msgstr "Viernes"
-
-#: ../gui/timeago.go:95
-msgid "Saturday"
-msgstr "Sábado"
-
-#: ../gui/timeago.go:97
-msgid "Sunday"
-msgstr "Domingo"
-
-#: ../gui/timeago.go:106
-msgid "January"
-msgstr "Enero"
-
-#: ../gui/timeago.go:108
-msgid "February"
-msgstr "Febrero"
-
-#: ../gui/timeago.go:110
-msgid "March"
-msgstr "Marzo"
-
-#: ../gui/timeago.go:112
-msgid "April"
-msgstr "Abril"
-
-#: ../gui/timeago.go:114
-msgid "May"
-msgstr "Mayo"
-
-#: ../gui/timeago.go:116
-msgid "June"
-msgstr "Junio"
-
-#: ../gui/timeago.go:118
-msgid "July"
-msgstr "Julio"
-
-#: ../gui/timeago.go:120
-msgid "August"
-msgstr "Agosto"
-
-#: ../gui/timeago.go:122
-msgid "September"
-msgstr "Septiembre"
-
-#: ../gui/timeago.go:124
-msgid "October"
-msgstr "Octubre"
-
-#: ../gui/timeago.go:126
-msgid "November"
-msgstr "Noviembre"
-
-#: ../gui/timeago.go:128
-msgid "December"
-msgstr "Diciembre"
-
-#: ../gui/timeago.go:164
-msgid "An hour ago"
-msgstr "Hace una hora"
-
-#: ../gui/timeago.go:166
-msgid "Few hours ago"
-msgstr "Hace unas pocas horas"
-
-#: ../gui/timeago.go:168
-msgid "%v hours ago"
-msgstr "Hace %v horas"
-
-#: ../gui/timeago.go:170
-msgid "A minute ago"
-msgstr "Hace un minuto"
-
-#: ../gui/timeago.go:172
-msgid "A few minutes ago"
-msgstr "Hace unos pocos minutos"
-
-#: ../gui/timeago.go:174
-msgid "%v minutes ago"
-msgstr "Hace %v minutos"
-
-#: ../gui/timeago.go:176
-msgid "A second ago"
-msgstr "Hace un segundo"
-
-#: ../gui/timeago.go:178
-msgid "A few seconds ago"
-msgstr "Hace unos pocos segundos"
-
-#: ../gui/timeago.go:180
-msgid "%v seconds ago"
-msgstr "Hace %v segundos"
-
-#: ../gui/timeago.go:182
-msgid "Now"
-msgstr "Ahora"
-
-#: ../gui/muc_room_occupant_affiliation.go:158
-#, python-format
-msgid "You are changing the position of %s from owner to:"
-msgstr "Estás cambiando la posición de %s de propietario a:"
-
-#: ../gui/muc_room_occupant_affiliation.go:160
-#, python-format
-msgid "You are changing the position of %s from administrator to:"
-msgstr "Estás cambiando la posición de %s de administrador a:"
-
-#: ../gui/muc_room_occupant_affiliation.go:162
-#, python-format
-msgid "You are changing the position of %s from member to:"
-msgstr "Estás cambiando la posición de %s de miembro a:"
-
-#: ../gui/muc_room_occupant_affiliation.go:165
-#, python-format
-msgid "You are changing the position of %s to:"
-msgstr "Estás cambiando la posición de %s a:"
-
-#: ../gui/muc_room_occupant_affiliation.go:200
-msgid ""
-"We couldn't update the position for the person because either you don't have "
-"permission to do it or the server is busy. Please try again."
-msgstr ""
-"No pudimos actualizar la posición de la persona porque no tienes permiso "
-"para hacerlo o el servidor está ocupado. Por favor, inténtalo de nuevo."
-
-#: ../gui/muc_room_occupant_affiliation.go:202
-msgid ""
-"An error occurred when updating the position for the person. Please try "
-"again."
-msgstr ""
-"Un error ocurrió mientras se actualizaba la posición de la persona. Por "
-"favor, inténtalo de nuevo."
-
-#: ../gui/fingerprint_verification.go:19
-#, python-format
-msgid ""
-"You can't verify the fingerprint for %s yet.\n"
-"\n"
-"You first have to start an encrypted conversation with them."
-msgstr ""
-"Todavía no puedes verificar el fingerprint de %s.\n"
-"\n"
-"Primero debes iniciar una conversación cifrada con la persona."
-
-#: ../gui/fingerprint_verification.go:23
-msgid ""
-"\n"
-"Is this the correct fingerprint for %[1]s?\n"
-"\n"
-"Fingerprint for you (%[3]s):\n"
-"  %[4]s\n"
-"\n"
-"Purported fingerprint for %[1]s:\n"
-"  %[2]s\n"
-"\t"
-msgstr ""
-"\n"
-"¿Es este el fingerprint correcto para %[1]s?\n"
-"\n"
-"Tu fingerprint (%[3]s):\n"
-"  %[4]s\n"
-"\n"
-"Fingerprint a verificar para %[1]s:\n"
-"  %[2]s\n"
-"\t"
-
-#: ../gui/fingerprint_verification.go:59
-#, python-format
-msgid "Verify fingerprint for %s"
-msgstr "Verificando el fingerprint para: %s"
-
-#: ../gui/account_events.go:154
-msgid "Private conversation started."
-msgstr "La conversación privada ha iniciado."
-
-#: ../gui/account_events.go:154
-#, python-format
-msgid "Private conversation started (tagged: '%s')."
-msgstr "La conversación privada inició (etiquetada: '%s')."
-
-#: ../gui/account_events.go:154
-msgid "Unverified conversation started."
-msgstr "La conversación no verificada ha iniciado."
-
-#: ../gui/account_events.go:163
-msgid "Successfully refreshed the private conversation."
-msgstr "La conversación privada se actualizó con éxito."
-
-#: ../gui/account_events.go:163
-#, python-format
-msgid "Successfully refreshed the private conversation (tagged: '%s')."
-msgstr "La conversación privada se actualizó con éxito (etiquetada '%s')."
-
-#: ../gui/account_events.go:163
-msgid "Successfully refreshed the unverified private conversation."
-msgstr "La conversación privada no verificada se actualizó con éxito ."
-
-#: ../gui/subscription.go:15
-#, python-format
-msgid "%s wants to talk to you. Is that ok?"
-msgstr "%s quiere hablar contigo. ¿Estás de acuerdo?"
-
-#: ../gui/subscription.go:102
-msgid "There are no currently connected accounts."
-msgstr "Al momento no hay cuentas conectadas."
-
-#: ../gui/subscription.go:119
-msgid "There is no connected account selected."
-msgstr "No hay una cuenta conectada seleccionada."
-
-#: ../gui/subscription.go:126
-msgid "We couldn't send a subscription."
-msgstr "No pudimos enviar una subscripción."
+"No se puede enviar una solicitud de contacto desde una cuenta sin conexión"
 
 #: ../gui/verifier.go:192
 msgid ""
@@ -6079,63 +6093,52 @@ msgstr "Hurra! Nadie está escuchando tus conversaciones con <b>%s</b>"
 msgid "We could not verify this channel with <b>%s</b>."
 msgstr "No pudimos verificar este canal con <b>%s</b>."
 
-#: ../gui/muc_room_form_component.go:153
+#: ../gui/account_events.go:154
+msgid "Private conversation started."
+msgstr "La conversación privada ha iniciado."
+
+#: ../gui/account_events.go:154
+#, python-format
+msgid "Private conversation started (tagged: '%s')."
+msgstr "La conversación privada inició (etiquetada: '%s')."
+
+#: ../gui/account_events.go:154
+msgid "Unverified conversation started."
+msgstr "La conversación no verificada ha iniciado."
+
+#: ../gui/account_events.go:163
+msgid "Successfully refreshed the private conversation."
+msgstr "La conversación privada se actualizó con éxito."
+
+#: ../gui/account_events.go:163
+#, python-format
+msgid "Successfully refreshed the private conversation (tagged: '%s')."
+msgstr "La conversación privada se actualizó con éxito (etiquetada '%s')."
+
+#: ../gui/account_events.go:163
+msgid "Successfully refreshed the unverified private conversation."
+msgstr "La conversación privada no verificada se actualizó con éxito ."
+
+#: ../gui/muc_room_roster.go:295
+msgid "%s (%v)"
+msgstr "%s (%v)"
+
+#: ../gui/muc_room_roster.go:329
+#, python-format
+msgid "%s (You)"
+msgstr "%s (Tú)"
+
+#: ../gui/muc_room_roster.go:406
+msgid "Visitors"
+msgstr "Visitantes"
+
+#: ../gui/account_details.go:199
 msgid ""
-"No account is selected, please select one account from the list or connect "
-"to one."
+"The fingerprints for %[1]s:\n"
+"%[2]s"
 msgstr ""
-"No se ha seleccionado ninguna cuenta, selecciona una cuenta de la lista o "
-"conéctate a una."
-
-#: ../gui/muc_room_destroy_dialog_error.go:30
-msgid "The room couldn't be destroyed"
-msgstr "La sala no pudo ser destruida"
-
-#: ../gui/muc_room_destroy_dialog_error.go:60
-msgid ""
-"We were able to connect to the room service, but we received an invalid "
-"response from it. Please try again later."
-msgstr ""
-"Pudimos conectarnos al servicio de salas, pero recibimos una respuesta no "
-"válida. Por favor inténtalo de nuevo más tarde."
-
-#: ../gui/muc_room_destroy_dialog_error.go:63
-msgid ""
-"You don't have the permission to destroy this room. Please contact one of "
-"the room owners."
-msgstr ""
-"No tienes permiso para destruir la sala. Por favor contacta a uno de los "
-"propietarios de la sala."
-
-#: ../gui/muc_room_destroy_dialog_error.go:66
-msgid "We couldn't find the room."
-msgstr "No pudimos encontrar la sala."
-
-#: ../gui/muc_room_destroy_dialog_error.go:68
-msgid "An unknown error occurred during the process. Please try again later."
-msgstr "Un error desconocido durante el proceso. Por favor inténtalo de nuevo."
-
-#: ../gui/master_password.go:30
-msgid "<b>Password can not be empty</b> - please try again"
-msgstr ""
-"<b>El campo de contraseña no puede estar vacío</b> - por favor inténtalo de "
-"nuevo"
-
-#: ../gui/master_password.go:33
-msgid "Passwords have to be the same - please try again"
-msgstr "Las contraseñas deben ser las mismas - por favor inténtalo de nuevo"
-
-#: ../gui/master_password.go:115
-msgid "Incorrect password entered, please try again."
-msgstr "Contraseña incorrecta ingresada, por favor inténtalo de nuevo."
-
-#: ../gui/master_password.go:126
-msgid "Checking password..."
-msgstr "Verificando contraseña..."
-
-#: ../gui/muc_room_close_confirm.go:61
-msgid "Close & Leave Room"
-msgstr "Cerrar & salir de la sala"
+"Los fingerprints para %[1]s:\n"
+"%[2]s"
 
 #~ msgid "File and directory transfer(s) "
 #~ msgstr "Transferencia(s) de archivos y directorios "

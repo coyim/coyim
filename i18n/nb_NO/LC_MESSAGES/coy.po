@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-16 17:00+0000\n"
+"POT-Creation-Date: 2025-12-11 16:38-0500\n"
 "PO-Revision-Date: 2021-09-28 18:20+0000\n"
 "Last-Translator: Ola Bini <ola@autonomia.digital>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/coyim/"
@@ -42,9 +42,9 @@ msgstr "Kontodetaljer"
 #: ../gui/definitions/MUCRoomToolbar.xml:364
 #: ../gui/definitions/PeerDetails.xml:191
 #: ../gui/definitions/RegistrationForm.xml:35
-#: ../gui/definitions/WaitingSMPComplete.xml:46 ../gui/muc_room.go:546
+#: ../gui/definitions/WaitingSMPComplete.xml:46
 #: ../gui/file_transfer_notification.go:127
-#: ../gui/file_transfer_notification.go:432
+#: ../gui/file_transfer_notification.go:432 ../gui/muc_room.go:546
 msgid "Cancel"
 msgstr "Avbryt"
 
@@ -67,7 +67,7 @@ msgstr ""
 #: ../gui/definitions/AskForPassword.xml:50
 #: ../gui/definitions/MUCRoomDestroyDialog.xml:282
 #: ../gui/definitions/MUCRoomLobby.xml:82 ../gui/definitions/Password.xml:11
-#: ../gui/muc_room_config_texts.go:178 ../gui/forms.go:16
+#: ../gui/forms.go:16 ../gui/muc_room_config_texts.go:178
 msgid "Password"
 msgstr "Passord"
 
@@ -100,9 +100,10 @@ msgstr "Sertifikatspraksis"
 
 #: ../gui/definitions/AccountDetails.xml:271
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:355
-#: ../gui/muc_room_config_summary_field.go:172 ../gui/muc_room_roster.go:402
-#: ../gui/muc_room_roster.go:419 ../gui/muc_room_occupant_affiliation.go:179
-#: ../gui/muc_room_occupant_affiliation.go:193
+#: ../gui/muc_room_config_summary_field.go:172
+#: ../gui/muc_room_occupant_affiliation.go:179
+#: ../gui/muc_room_occupant_affiliation.go:193 ../gui/muc_room_roster.go:402
+#: ../gui/muc_room_roster.go:419
 msgid "None"
 msgstr "Ingen"
 
@@ -957,8 +958,8 @@ msgstr "_Kontoer"
 msgid "Chat _Rooms"
 msgstr "Sludre_rom"
 
-#: ../gui/definitions/Main.xml:63 ../gui/muc_room_config_assistant.go:144
-#: ../gui/muc_create_room_form.go:283
+#: ../gui/definitions/Main.xml:63 ../gui/muc_create_room_form.go:283
+#: ../gui/muc_room_config_assistant.go:144
 msgid "Create Room"
 msgstr "Opprett rom"
 
@@ -1075,9 +1076,9 @@ msgid "Join a chat room"
 msgstr "Ta del i sludrerom"
 
 #: ../gui/definitions/MUCJoinRoomDialog.xml:39
-#: ../gui/definitions/MUCRoomLobby.xml:118 ../gui/importer.go:299
-#: ../gui/importer.go:324 ../gui/importer.go:348 ../gui/importer.go:370
-#: ../gui/file_transfer.go:156 ../gui/file_transfer.go:266
+#: ../gui/definitions/MUCRoomLobby.xml:118 ../gui/file_transfer.go:156
+#: ../gui/file_transfer.go:266 ../gui/importer.go:299 ../gui/importer.go:324
+#: ../gui/importer.go:348 ../gui/importer.go:370
 msgid "_Cancel"
 msgstr "_Avbryt"
 
@@ -1126,8 +1127,8 @@ msgstr ""
 "innehavere."
 
 #: ../gui/definitions/MUCRoomAffiliationDialog.xml:159
-#: ../gui/definitions/MUCRoomRosterInfo.xml:596 ../gui/muc_room_roster.go:391
-#: ../gui/muc_room_occupant_affiliation.go:171
+#: ../gui/definitions/MUCRoomRosterInfo.xml:596
+#: ../gui/muc_room_occupant_affiliation.go:171 ../gui/muc_room_roster.go:391
 msgid "Owner"
 msgstr "Innehaver"
 
@@ -1222,8 +1223,8 @@ msgid "Enter the room password"
 msgstr "Skriv inn rompassordet"
 
 #: ../gui/definitions/MUCRoomConfigFormFieldPassword.xml:61
-#: ../gui/definitions/Password.xml:22 ../gui/password_component.go:46
-#: ../gui/muc_room_config_field_password.go:125
+#: ../gui/definitions/Password.xml:22
+#: ../gui/muc_room_config_field_password.go:125 ../gui/password_component.go:46
 msgid "Show"
 msgstr "Vis"
 
@@ -1349,8 +1350,8 @@ msgid "Change role"
 msgstr "Endre rolle"
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:128
-#: ../gui/muc_room_config_component.go:159 ../gui/muc_room_roster.go:425
-#: ../gui/muc_room_occupant_affiliation.go:187
+#: ../gui/muc_room_config_component.go:159
+#: ../gui/muc_room_occupant_affiliation.go:187 ../gui/muc_room_roster.go:425
 msgid "Moderator"
 msgstr "Moderator"
 
@@ -1366,8 +1367,8 @@ msgstr ""
 "moderatorer."
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:194
-#: ../gui/muc_room_config_component.go:155 ../gui/muc_room_roster.go:421
-#: ../gui/muc_room_occupant_affiliation.go:189
+#: ../gui/muc_room_config_component.go:155
+#: ../gui/muc_room_occupant_affiliation.go:189 ../gui/muc_room_roster.go:421
 msgid "Participant"
 msgstr "Deltager"
 
@@ -1381,8 +1382,8 @@ msgstr ""
 "umodererte rom er det ingen forskjell på en deltager og en besøkende."
 
 #: ../gui/definitions/MUCRoomRoleDialog.xml:261
-#: ../gui/muc_room_config_component.go:161 ../gui/muc_room_roster.go:423
-#: ../gui/muc_room_occupant_affiliation.go:191
+#: ../gui/muc_room_config_component.go:161
+#: ../gui/muc_room_occupant_affiliation.go:191 ../gui/muc_room_roster.go:423
 msgid "Visitor"
 msgstr "Besøkende"
 
@@ -1668,6 +1669,108 @@ msgstr "XMPP-konsoll: ACCOUNT_NAME"
 #: ../gui/definitions/XMLConsole.xml:56
 msgid "_Close"
 msgstr "_Lukk"
+
+#: ../gui/muc_room_config_page.go:367 ../gui/muc_room_config_texts.go:181
+#: ../gui/muc_room_config_texts.go:260 ../gui/muc_room_config_texts.go:262
+msgid "Owners"
+msgstr "Innehavere"
+
+#: ../gui/muc_room_config_page.go:368 ../gui/muc_room_config_texts.go:192
+#: ../gui/muc_room_config_texts.go:266 ../gui/muc_room_config_texts.go:268
+msgid "Administrators"
+msgstr "Administratorer"
+
+#: ../gui/muc_room_config_page.go:369
+msgid "Banned"
+msgstr "Bannlyst"
+
+#: ../gui/muc_room_config_page.go:381
+msgid "The room must have at least one owner"
+msgstr "Rommet må ha minst én innehaver"
+
+#: ../gui/muc_room_config_page.go:448
+msgid "Saving room configuration"
+msgstr "Lagrer romoppsett"
+
+#: ../gui/jid.go:16
+#, fuzzy
+msgid ""
+"Validation failed: \n"
+"The XMPP address is invalid. An XMPP address should look like this: "
+"local@domain.com."
+msgstr ""
+"Bekreftelse mislyktes:\n"
+"XMPP-adressen er ugyldig. En XMPP-adresse skal se slik ut: lokal@domene.no."
+
+#: ../gui/jid.go:25
+msgid ""
+"Validation failed:\n"
+"The XMPP address has an invalid domain part, The XMPP address has an invalid "
+"local part. An XMPP address should look like this: local@domain.com."
+msgstr ""
+"Bekreftelse mislyktes:\n"
+"XMPP-adressen har en ugyldig domenedel. XMPP-adressen har en ugyldig lokal "
+"del. En XMPP-adresse skal se slik ut: lokal@domene.no."
+
+#: ../gui/jid.go:27
+msgid ""
+"Validation failed:\n"
+"The XMPP address has an invalid domain part. An XMPP address should look "
+"like this: local@domain.com."
+msgstr ""
+"Bekreftelse mislyktes:\n"
+"XMPP-adressen har en ugydlig domenedel. En XMPP-adresse skal se slik ut: "
+"lokal@domene.com."
+
+#: ../gui/jid.go:29
+msgid ""
+"Validation failed:\n"
+"The XMPP address has an invalid local part. An XMPP address should look like "
+"this: local@domain.com."
+msgstr ""
+"Bekreftelse mislyktes:\n"
+"XMPP-adressen har en ugyldig lokal del. En XMPP-adresse skal se slik ut: "
+"lokal@domene.no."
+
+#: ../gui/muc_room_toolbar.go:156
+msgid "You are no longer allowed to continue updating the room subject."
+msgstr "Du har ikke lenger tilgang til å oppdatere rom-emnet."
+
+#: ../gui/muc_room_toolbar.go:250
+msgid "Hide room subject"
+msgstr "Skjul romemne"
+
+#: ../gui/edit_contact.go:114
+#, python-format
+msgid "There are no known fingerprints for %s"
+msgstr "Ingen kjente fingeravtrykk for %s"
+
+#: ../gui/edit_contact.go:116
+#, python-format
+msgid "These are the fingerprints known for %s:"
+msgstr "Dette er de kjente fingeravtrykkene for %s:"
+
+#: ../gui/edit_contact.go:122
+#, fuzzy
+msgid "not trusted"
+msgstr "ubetrodd"
+
+#: ../gui/edit_contact.go:124
+#, fuzzy
+msgid "trusted"
+msgstr "betrodd"
+
+#: ../gui/muc_room_config_field_password.go:122 ../gui/password_component.go:48
+msgid "Hide"
+msgstr "Skjul"
+
+#: ../gui/roster.go:466
+msgid " (waiting for approval)"
+msgstr " (venter på godkjennelse)"
+
+#: ../gui/infobar_component.go:155
+msgid "January 2, 2006 at 15:04:05"
+msgstr "2 Januar 2006, klokken 15.04.05"
 
 #: ../gui/muc_notification_messages.go:19
 #: ../gui/muc_notification_messages.go:299
@@ -3470,13 +3573,658 @@ msgstr "Administratoren $nickname{%s} bannlyste deg fra rommet."
 msgid "%[1]s The reason given was: %[2]s."
 msgstr "%[1]s Anledning: %[2]s."
 
-#: ../gui/menubar.go:45
-msgid "About CoyIM"
-msgstr "Om CoyIM"
+#: ../gui/muc_create_room_form.go:147
+msgid ""
+"Couldn't connect to the service, please verify that it exists or try again "
+"later."
+msgstr ""
+"Kunne ikke koble til tjenesten. Bekreft at den finnes eller prøv igjen "
+"senere."
 
-#: ../gui/menubar.go:53
-msgid "Quit CoyIM"
-msgstr "Avslutt CoyIM"
+#: ../gui/muc_create_room_form.go:149
+msgid "That room already exists, try again with a different name."
+msgstr "Det rommet finnes allerede. Prøv igjen med et annet navn."
+
+#: ../gui/muc_create_room_form.go:151 ../gui/muc_room_config_component.go:145
+msgid "We didn't receive a response from the server."
+msgstr "Mottok ikke noe svar fra tjeneren."
+
+#: ../gui/muc_create_room_form.go:168
+msgid "Could not create the room."
+msgstr "Kunne ikke opprette rommet."
+
+#: ../gui/muc_create_room_form.go:276
+msgid "Configure Room"
+msgstr "Sett opp rom"
+
+#: ../gui/muc_create_room_form.go:280
+#, fuzzy
+msgid "Create Room & Join"
+msgstr "Sett opp rom og ta del"
+
+#: ../gui/muc_room_occupant_role.go:137
+#, python-format
+msgid "You are changing the role of %s from moderator to:"
+msgstr "Du endrer rollen til %s fra moderator til:"
+
+#: ../gui/muc_room_occupant_role.go:139
+#, python-format
+msgid "You are changing the role of %s from participant to:"
+msgstr "Du endrer rollen til %s fra deltager til:"
+
+#: ../gui/muc_room_occupant_role.go:141
+#, python-format
+msgid "You are changing the role of %s from visitor to:"
+msgstr "Du endrer rollen til %s fra besøkende til:"
+
+#: ../gui/muc_room_occupant_role.go:144
+#, python-format
+msgid "You are changing the role of %s to:"
+msgstr "Du endrer %s sin rolle til:"
+
+#: ../gui/muc_public_rooms.go:364
+msgid "That service doesn't seem to exist."
+msgstr "Den tjenesten ser ikke ut til å eksistere."
+
+#: ../gui/muc_public_rooms.go:366
+msgid "Your XMPP server doesn't seem to have any chat room services."
+msgstr "Din XMPP-tjener ser ikke ut til å ha noen romsludringstjenester."
+
+#: ../gui/muc_public_rooms.go:450
+msgid "Something went wrong when trying to get chat rooms."
+msgstr "Noe gikk galt under innhenting av sludrerom."
+
+#: ../gui/muc_public_rooms.go:526
+msgid "An unknown error occurred, please try again."
+msgstr "En ukjent feil inntraff. Prøv igjen."
+
+#: ../gui/muc_public_rooms.go:530
+msgid "We can't determine what has been selected, please try again."
+msgstr "Kan ikke fastslå hva som har blitt valgt. Prøv igjen."
+
+#: ../gui/muc_public_rooms.go:532
+msgid ""
+"The selected item is not a room, select one room from the list to join to."
+msgstr "Valgt element er ikke et rom. Velg et rom fra listen å ta del i."
+
+#: ../gui/muc_public_rooms.go:534
+#, fuzzy
+msgid "Please, select one room from the list to join to."
+msgstr "Velg ett rom fra listen å ta del i."
+
+#: ../gui/muc_public_rooms.go:536
+msgid "We can't determine which service has been selected, please try again."
+msgstr "Kan ikke fastslå hvilken tjeneste som ble valgt. Prøv igjen."
+
+#: ../gui/muc_public_rooms.go:557
+msgid "No account was selected, please select one account from the list."
+msgstr "Velg en konto fra listen først."
+
+#: ../gui/forms.go:14
+msgid "Username"
+msgstr ""
+
+#: ../gui/muc_room_destroy.go:131
+msgid "You must provide a service name."
+msgstr "Du må angi et tjenestenavn."
+
+#: ../gui/muc_room_destroy.go:133
+msgid "You must provide a room name."
+msgstr "Du må angi et romnavn."
+
+#: ../gui/muc_room_destroy.go:135 ../gui/muc_join_room.go:184
+#: ../gui/muc_room_form_component.go:141
+msgid "You must provide a valid room name."
+msgstr "Du må angi et gyldig romnavn."
+
+#: ../gui/muc_room_destroy.go:137 ../gui/muc_join_room.go:190
+#: ../gui/muc_room_form_component.go:147
+msgid "You must provide a valid service name."
+msgstr "Du må angi et gyldig tjenestenavn."
+
+#: ../gui/muc_room_destroy.go:139
+msgid "You must provide a valid service and room name."
+msgstr "Du må angi en gyldig tjeneste og et romnavn."
+
+#: ../gui/muc_room_conversation_display.go:153
+msgid ""
+"You can no longer receive any messages in this room and the list of people "
+"in the room will not be updated anymore."
+msgstr ""
+"Du kan ikke lenger motta noen meldinger i dette rommet og listen over "
+"personer i rommet vil ikke bli oppdatert."
+
+#: ../gui/muc_room_occupant_action.go:95
+msgid "Expel person"
+msgstr "Kast ut person"
+
+#: ../gui/muc_room_occupant_action.go:96
+#, python-format
+msgid "You are about to expel %s from the room."
+msgstr "Du er i ferd med å kaste ut %s fra rommet."
+
+#: ../gui/muc_room_occupant_action.go:113
+msgid "Ban person"
+msgstr "Bannlys person"
+
+#: ../gui/muc_room_occupant_action.go:114
+#, python-format
+msgid "You are about to ban %s from the room"
+msgstr "Du er i ferd med å bannlyse %s fra rommet"
+
+#: ../gui/muc_room_occupant_action.go:115
+#, fuzzy
+msgid ""
+"They won't be able to join the room again. Are you sure you want to continue?"
+msgstr ""
+"Vedkommende vil ikke kunne ta del i rommet igjen. Er du sikker på at du vil "
+"fortsette?"
+
+#: ../gui/muc_room_occupant_action.go:116
+msgid ""
+"Here you can provide an optional reason for banning the person. Everyone in "
+"the room will see this reason."
+msgstr ""
+"Her kan du valgfritt angi en grunn til å bannlyse personen. Alle personer i "
+"rommet vil kunne se denne begrunnelsen."
+
+#: ../gui/account.go:154
+#, fuzzy
+msgid "Unable to Add Account"
+msgstr "Kunne ikke legge til konto"
+
+#: ../gui/account.go:154
+msgid ""
+"Can't add account:\n"
+"\n"
+"You already have an account with this name."
+msgstr ""
+"Kan ikke legge til konto:\n"
+"\n"
+"Du har allerede en konto med dette navnet."
+
+#: ../gui/account.go:164
+msgid "Account added"
+msgstr "Konto lagt til"
+
+#: ../gui/account.go:164
+#, fuzzy, python-format
+msgid "%s successfully added."
+msgstr "%s lagt til."
+
+#: ../gui/account.go:242
+msgid "_Check Connection"
+msgstr "_Sjekk tilkobling"
+
+#: ../gui/account.go:255
+msgid "_Connect"
+msgstr "_Koble til"
+
+#: ../gui/account.go:265
+msgid "_Disconnect"
+msgstr "_Koble fra"
+
+#: ../gui/account.go:283
+msgid "Connection _information..."
+msgstr "Tilkoblings_info …"
+
+#: ../gui/account.go:299
+msgid "_Change Password..."
+msgstr "_Endre passord …"
+
+#: ../gui/account.go:312
+msgid "Connect _Automatically"
+msgstr "Koble til _automatisk"
+
+#: ../gui/account.go:319
+#, fuzzy
+msgid "Always Encrypt Conversation"
+msgstr "Alltid krypter samtaler"
+
+#: ../gui/account.go:340
+msgid "XML Console"
+msgstr "XML-konsoll"
+
+#: ../gui/account.go:441
+#, python-format
+msgid ""
+"Connecting account\n"
+"%s"
+msgstr ""
+"Kobler til konto\n"
+"%s"
+
+#: ../gui/account.go:445
+#, python-format
+msgid ""
+"Connection failure\n"
+"%s"
+msgstr ""
+"Tilkoblingsfeil\n"
+"%s"
+
+#: ../gui/account.go:449
+msgid "Tor is not currently running"
+msgstr "Tor kjører ikke"
+
+#: ../gui/muc_room_manager.go:40
+msgid "You are already in the room."
+msgstr "Du er allerede i rommet."
+
+#: ../gui/muc_room_manager.go:52
+msgid "You were already connected to this room."
+msgstr "Du var allerede tilkoblet til dette rommet."
+
+#: ../gui/muc_room_destroy_dialog_error.go:30
+msgid "The room couldn't be destroyed"
+msgstr "Rommet kunne ikke destrueres"
+
+#: ../gui/muc_room_destroy_dialog_error.go:60
+msgid ""
+"We were able to connect to the room service, but we received an invalid "
+"response from it. Please try again later."
+msgstr ""
+"Koblet til romtjenesten, men mottok en ugyldig forespørsel fra den. Prøv "
+"igjen senere."
+
+#: ../gui/muc_room_destroy_dialog_error.go:63
+msgid ""
+"You don't have the permission to destroy this room. Please contact one of "
+"the room owners."
+msgstr ""
+"Du har ikke tilgang til å destruere dette rommet. Kontakt en av innehaverne "
+"av rommet."
+
+#: ../gui/muc_room_destroy_dialog_error.go:66
+msgid "We couldn't find the room."
+msgstr "Fant ikke rommet."
+
+#: ../gui/muc_room_destroy_dialog_error.go:68
+msgid "An unknown error occurred during the process. Please try again later."
+msgstr "En ukjent feil oppstod under prosessen. Prøv igjen senere."
+
+#: ../gui/muc_room_config_component.go:131
+msgid ""
+"We can't apply the given room configuration because an error occurred when "
+"trying to send the request for it. Please try again."
+msgstr ""
+"Kan ikke bruke gitt romoppsett fordi en feil inntraff under forsøk på å "
+"sende en forespørsel om det. Prøv igjen."
+
+#: ../gui/muc_room_config_component.go:133
+msgid ""
+"We can't apply the given room configuration because either you don't have "
+"permission to do it or the location is not available right now. Please try "
+"again."
+msgstr ""
+"Kan ikke bruke angitt romoppsett fordi du enten ikke har tilgang til å "
+"utføre endringene, eller fordi plasseringen ikke er tilgjengelig nå. Prøv "
+"igjen."
+
+#: ../gui/muc_room_config_component.go:135
+msgid ""
+"We can't cancel the room configuration process because an error occurred "
+"when trying to send the request for it. Please try again."
+msgstr ""
+"Kan ikke avbryte romoppsettsprosessen fordi en feil inntraff under forsøk på "
+"å sende en forespørsel for den. Prøv igjen."
+
+#: ../gui/muc_room_config_component.go:137
+msgid ""
+"We can't cancel the room configuration process because either you don't have "
+"permission to do it or the location is not available right now. Please try "
+"again."
+msgstr ""
+"Kan ikke avbryte romoppsettsprosessen fordi du enten ikke har tilgang til å "
+"gjøre det, eller fordi plasseringen ikke er tilgjengelig nå. Prøv igjen."
+
+#: ../gui/muc_room_config_component.go:139
+#, fuzzy
+msgid ""
+"The list affiliations couldn't be updated. Verify your permissions and try "
+"again."
+msgstr ""
+"Tilknytningene kunne ikke oppdateres. Kontroller tilgangene dine og prøv "
+"igjen."
+
+#: ../gui/muc_room_config_component.go:143
+msgid ""
+"The settings couldn't be changed. Please verify the information in the form."
+msgstr "Innstillingene kunne ikke endres. Kontroller informasjonen i skjemaet."
+
+#: ../gui/muc_room_config_component.go:147
+#, python-format
+msgid "Unsupported config error: %s"
+msgstr "Ukjent oppsettsfeil: %s"
+
+#: ../gui/muc_room_config_component.go:153 ../gui/muc_room_roster.go:404
+msgid "Participants"
+msgstr "Deltagere"
+
+#: ../gui/muc_room_config_component.go:157 ../gui/muc_room_roster.go:408
+msgid "Moderators"
+msgstr "Moderatorer"
+
+#: ../gui/muc_room_config_component.go:163
+msgid "Anyone"
+msgstr "Alle"
+
+#: ../gui/muc_room_config_component.go:165
+msgid "Nobody"
+msgstr "Ingen"
+
+#: ../gui/muc_room_config_component.go:167
+msgid "No maximum"
+msgstr "Uten tak"
+
+#: ../gui/muc_room_config_component.go:169
+msgid "10"
+msgstr "10"
+
+#: ../gui/muc_room_config_component.go:171
+msgid "20"
+msgstr "20"
+
+#: ../gui/muc_room_config_component.go:173
+msgid "30"
+msgstr "30"
+
+#: ../gui/muc_room_config_component.go:175
+msgid "50"
+msgstr "50"
+
+#: ../gui/muc_room_config_component.go:177
+msgid "100"
+msgstr "100"
+
+#: ../gui/muc_room_lobby.go:63
+#, python-format
+msgid "You are joining %s"
+msgstr "Du tar del i %s"
+
+#: ../gui/muc_room_lobby.go:110
+msgid "That nickname is already being used."
+msgstr "Det kallenavnet er allerede i bruk."
+
+#: ../gui/muc_room_lobby.go:167
+msgid ""
+"An unknown error occurred while trying to join the room, please check your "
+"connection or try again."
+msgstr ""
+"En ukjent feil inntraff under forsøk på å ta del i rommet. Sjekk "
+"tilkoblingen din og prøv igjen."
+
+#: ../gui/muc_room_config.go:96
+msgid "The room configuration changed."
+msgstr "Romoppsett endret."
+
+#: ../gui/muc_room_config.go:108
+msgid "Unable to open the room configuration. Please, try again."
+msgstr "Kunne ikke åpne romoppsettet. Prøv igjen."
+
+#: ../gui/muc_room_config.go:163
+msgid "Visitors can now request permission to speak."
+msgstr "Besøkende kan nå forespørre tilgang til å snakke."
+
+#: ../gui/muc_room_config.go:165
+msgid ""
+"This room doesn't support \"voice\" requests anymore, which means that "
+"visitors can't ask for permission to speak."
+msgstr ""
+"Dette rommet støtter ikke lenger «røst»-forespørsler. Dette betyr at "
+"besøkende ikke kan forespørre tilgang til å snakke."
+
+#: ../gui/muc_room_config.go:171
+msgid "This room supports user registration."
+msgstr "Rommet støtter brukerregistrering."
+
+#: ../gui/muc_room_config.go:173
+msgid "This room doesn't support user registration."
+msgstr "Dette rommet støtter ikke brukerregistrering."
+
+#: ../gui/muc_room_config.go:178
+msgid "This room is now persistent."
+msgstr "Dette rommet er nå vedvarende."
+
+#: ../gui/muc_room_config.go:180
+msgid "This room is not persistent anymore."
+msgstr "Dette rommet er ikke lenger vedvarende."
+
+#: ../gui/muc_room_config.go:185
+msgid "Only participants and moderators can now send messages in this room."
+msgstr "Nå kan kun deltagere og moderatorer sende meldinger i dette rommet."
+
+#: ../gui/muc_room_config.go:187
+msgid "Everyone can now send messages in this room."
+msgstr "Alle kan nå sende meldinger i dette rommet."
+
+#: ../gui/muc_room_config.go:192
+msgid "This room is now protected by a password."
+msgstr "Rommet er nå passordbeskyttet."
+
+#: ../gui/muc_room_config.go:194
+msgid "This room is not protected by a password."
+msgstr "Dette rommet er ikke passordbeskyttet."
+
+#: ../gui/muc_room_config.go:199
+msgid "This room is publicly listed."
+msgstr "Dette rommet er offentlig opplistet."
+
+#: ../gui/muc_room_config.go:201
+msgid "This room is not publicly listed anymore."
+msgstr "Dette rommet er ikke offentlig opplistet lenger."
+
+#: ../gui/muc_room_config.go:205
+#, python-format
+msgid "The language of this room was changed to %s."
+msgstr "Språket for dette rommet ble endret til %s."
+
+#: ../gui/muc_room_config.go:219
+msgid "Participants and moderators can change the room subject."
+msgstr "Deltagere og moderatorer kan endre romemnet."
+
+#: ../gui/muc_room_config.go:221
+msgid "Only moderators can change the room subject."
+msgstr "Kun moderatorer kan endre romemnet."
+
+#: ../gui/muc_room_config.go:225
+#, python-format
+msgid "Title was changed to \"%s\"."
+msgstr "Tittel ble endret til «%s»."
+
+#: ../gui/muc_room_config.go:229
+#, python-format
+msgid "Description was changed to \"%s\"."
+msgstr "Beskrivelse ble endret til «%s»."
+
+#: ../gui/muc_room_config.go:234
+msgid "Anyone can send private messages to people in the room."
+msgstr "Alle kan sende private meldinger til personer i rommet."
+
+#: ../gui/muc_room_config.go:236
+msgid "No one in this room can send private messages now."
+msgstr "Ingen i dette rommet kan sende private meldinger nå."
+
+#: ../gui/muc_room_config.go:241
+msgid "Members can now invite other users to join."
+msgstr "Medlemmer kan nå invitere andre brukere til å bli med."
+
+#: ../gui/muc_room_config.go:243
+msgid "Members cannot invite other users to join anymore."
+msgstr "Medlemmer kan ikke invitere andre brukere til å bli med lenger."
+
+#: ../gui/muc_room_config.go:247
+#, python-format
+msgid "The room's max history length was changed to %d."
+msgstr "Rommets maksimale historikklengde ble endret til %d."
+
+#: ../gui/muc_room_config_list_add_component.go:198
+msgid "Add all"
+msgstr "Legg til alle"
+
+#: ../gui/muc_room_config_list_add_component.go:312
+msgid "You must enter the account address."
+msgstr "Du må skrive inn kontoadressen."
+
+#: ../gui/muc_room_config_list_add_component.go:314
+msgid "You must provide a valid account address."
+msgstr "Du må angi en gyldig kontoadresse."
+
+#: ../gui/muc_room_positions.go:91
+msgid "The positions were updated."
+msgstr "Stillinger oppdatert."
+
+#: ../gui/muc_room_positions.go:99
+msgid "Unable to update positions."
+msgstr "Kunne ikke oppdatere stillinger."
+
+#: ../gui/muc_room_positions.go:154
+#, fuzzy
+msgid "We couldn't get the occupants by affiliation"
+msgstr "Kunne ikke hente deltagere ved tilknytning"
+
+#: ../gui/muc_join_room.go:142
+msgid "We couldn't find a room with that name."
+msgstr "Fant ikke noe rom med det navnet."
+
+#: ../gui/muc_join_room.go:152
+msgid ""
+"It looks like the room you are trying to connect to doesn't exist, please "
+"verify the provided information."
+msgstr ""
+"Det ser ut til at romme du prøver å koble til ikke finnes. Bekreft oppgitt "
+"info."
+
+#: ../gui/muc_join_room.go:162
+msgid ""
+"We can't get access to the service, please check your Internet connection or "
+"make sure the service exists."
+msgstr ""
+"Får ikke tilgang til tjenesten. Sjekk din tilknytning til Internett, eller "
+"forsikre deg om at tjenesten faktisk finnes."
+
+#: ../gui/muc_room_config_list_component.go:103
+msgid "Remove all"
+msgstr "Fjern alle"
+
+#: ../gui/muc_room_roster_info.go:223
+#, python-format
+msgid ""
+"Administrators and owners will automatically be moderators for a room. "
+"Therefore, the role of %s can't be changed."
+msgstr ""
+"Administratorer og innehavere vil automatisk bli moderatorer av et rom. "
+"Derfor kan ikke rollen til %s endres."
+
+#: ../gui/connection.go:28
+msgid "Connection lost"
+msgstr "Tilkoblingen gikk tapt"
+
+#: ../gui/connection.go:28
+msgid ""
+"We lost connection to the server for unknown reasons.\n"
+"\n"
+"We will try to reconnect."
+msgstr ""
+"Mistet tilkoblingen til tjeneren uvisst av hvilken grunn.\n"
+"\n"
+"Prøver å koble til igjen."
+
+#: ../gui/connection.go:32 ../gui/connection.go:36 ../gui/connection.go:41
+msgid "Connection failure"
+msgstr "Tilkoblingsfeil"
+
+#: ../gui/connection.go:32
+msgid ""
+"We couldn't connect to the server because we couldn't determine a server "
+"address for the given domain.\n"
+"\n"
+"We will try to reconnect."
+msgstr ""
+"Kunne ikke koble til tjeneren fordi tjeneradressen for gitt domene ikke "
+"kunne bestemmes.\n"
+"\n"
+"Prøver å koble til igjen."
+
+#: ../gui/connection.go:36
+msgid ""
+"We couldn't connect to the server for some reason - verify that the server "
+"address is correct and that you are actually connected to the internet.\n"
+"\n"
+"We will try to reconnect."
+msgstr ""
+"Kunne ikke koble til tjeneren. Bekreft at tjeneradressen er riktig og at du "
+"faktisk er koblet til Internett.\n"
+"\n"
+"Kobler til igjen."
+
+#: ../gui/connection.go:42
+#, python-format
+msgid ""
+"We couldn't connect to the server - verify that the server address is "
+"correct and that you are actually connected to the internet.\n"
+"\n"
+"This is the error we got: %s\n"
+"\n"
+"We will try to reconnect."
+msgstr ""
+"Kunne ikke koble til tjeneren. Bekreft at tjeneradressen er riktig og at du "
+"faktisk er tilkoblet Internett.\n"
+"\n"
+"Mottatt feil: %s\n"
+"\n"
+"Prøver å koble til igjen."
+
+#: ../gui/muc_room_config_summary_field.go:146
+msgid "**********"
+msgstr "**********"
+
+#: ../gui/muc_room_config_summary_field.go:148
+#: ../gui/muc_room_config_summary_field.go:162
+#, fuzzy
+msgid "Not assigned"
+msgstr "Ikke tildelt"
+
+#: ../gui/muc_room_config_summary_field.go:168
+msgid "One result"
+msgstr "Ett resultat"
+
+#: ../gui/muc_room_config_summary_field.go:170
+#, python-format
+msgid "%d results"
+msgstr "%d resultater"
+
+#: ../gui/muc_room_config_summary_field.go:178
+msgid "One role"
+msgstr "Én rolle"
+
+#: ../gui/muc_room_config_summary_field.go:180
+#, python-format
+msgid "%d roles"
+msgstr "%d roller"
+
+#: ../gui/muc_room_config_summary_field.go:182
+msgid "No roles"
+msgstr "Ingen roller"
+
+#: ../gui/muc_room_config_summary_field.go:188
+msgid "One account"
+msgstr "Én konto"
+
+#: ../gui/muc_room_config_summary_field.go:190
+#, python-format
+msgid "%d accounts"
+msgstr "%d kontoer"
+
+#: ../gui/muc_room_config_summary_field.go:192
+msgid "No accounts"
+msgstr "Ingen kontoer"
+
+#: ../gui/muc_room_form_component.go:153
+msgid ""
+"No account is selected, please select one account from the list or connect "
+"to one."
+msgstr "Ingen konto valgt. Velg en fra listen eller koble til en."
 
 #: ../gui/muc_room_config_texts.go:28
 msgid "Basic information"
@@ -3686,11 +4434,6 @@ msgstr "Kun tillat medlemmer å ta del"
 msgid "Members"
 msgstr "Medlemmer"
 
-#: ../gui/muc_room_config_texts.go:181 ../gui/muc_room_config_texts.go:260
-#: ../gui/muc_room_config_texts.go:262 ../gui/muc_room_config_page.go:367
-msgid "Owners"
-msgstr "Innehavere"
-
 #: ../gui/muc_room_config_texts.go:184
 msgid "The account address of others in the room may be viewed by:"
 msgstr "Kontoadressen til andre i rommet kan leses av:"
@@ -3703,11 +4446,6 @@ msgstr "Kontoadressen til deltagere kan leses av"
 msgid "Maximum previous messages sent to people when joining the room"
 msgstr ""
 "Maksimalt antall tidligere meldinger å sende folk når de tar del i rommet"
-
-#: ../gui/muc_room_config_texts.go:192 ../gui/muc_room_config_texts.go:266
-#: ../gui/muc_room_config_texts.go:268 ../gui/muc_room_config_page.go:368
-msgid "Administrators"
-msgstr "Administratorer"
 
 #: ../gui/muc_room_config_texts.go:195 ../gui/muc_room_config_texts.go:196
 msgid "A person can find out more information about other people in the room"
@@ -3838,295 +4576,325 @@ msgstr ""
 "adressen kan enten være enkel, som bruker@eksempel.no, eller en fullstendig "
 "adresse, som f.eks bruker@eksempel.no/abcdef."
 
-#: ../gui/muc_room_lobby.go:63
+#: ../gui/connected_accounts_component.go:82
+msgid "There are no connected accounts."
+msgstr "Det er ingen tilkoblede kontoer."
+
+#: ../gui/file_transfer.go:79
 #, python-format
-msgid "You are joining %s"
-msgstr "Du tar del i %s"
+msgid "The transfer to %s can't be done encrypted and securely."
+msgstr "Overføringen til %s kan ikke utføres kryptert og sikret."
 
-#: ../gui/muc_room_lobby.go:110
-msgid "That nickname is already being used."
-msgstr "Det kallenavnet er allerede i bruk."
-
-#: ../gui/muc_room_lobby.go:167
-msgid ""
-"An unknown error occurred while trying to join the room, please check your "
-"connection or try again."
-msgstr ""
-"En ukjent feil inntraff under forsøk på å ta del i rommet. Sjekk "
-"tilkoblingen din og prøv igjen."
-
-#: ../gui/roster.go:466
-msgid " (waiting for approval)"
-msgstr " (venter på godkjennelse)"
-
-#: ../gui/forms.go:14
-msgid "Username"
-msgstr ""
-
-#: ../gui/muc_join_room.go:142
-msgid "We couldn't find a room with that name."
-msgstr "Fant ikke noe rom med det navnet."
-
-#: ../gui/muc_join_room.go:152
-msgid ""
-"It looks like the room you are trying to connect to doesn't exist, please "
-"verify the provided information."
-msgstr ""
-"Det ser ut til at romme du prøver å koble til ikke finnes. Bekreft oppgitt "
-"info."
-
-#: ../gui/muc_join_room.go:162
-msgid ""
-"We can't get access to the service, please check your Internet connection or "
-"make sure the service exists."
-msgstr ""
-"Får ikke tilgang til tjenesten. Sjekk din tilknytning til Internett, eller "
-"forsikre deg om at tjenesten faktisk finnes."
-
-#: ../gui/muc_join_room.go:184 ../gui/muc_room_destroy.go:135
-#: ../gui/muc_room_form_component.go:141
-msgid "You must provide a valid room name."
-msgstr "Du må angi et gyldig romnavn."
-
-#: ../gui/muc_join_room.go:190 ../gui/muc_room_destroy.go:137
-#: ../gui/muc_room_form_component.go:147
-msgid "You must provide a valid service name."
-msgstr "Du må angi et gyldig tjenestenavn."
-
-#: ../gui/muc_room_config_summary_field.go:146
-msgid "**********"
-msgstr "**********"
-
-#: ../gui/muc_room_config_summary_field.go:148
-#: ../gui/muc_room_config_summary_field.go:162
-#, fuzzy
-msgid "Not assigned"
-msgstr "Ikke tildelt"
-
-#: ../gui/muc_room_config_summary_field.go:168
-msgid "One result"
-msgstr "Ett resultat"
-
-#: ../gui/muc_room_config_summary_field.go:170
-#, python-format
-msgid "%d results"
-msgstr "%d resultater"
-
-#: ../gui/muc_room_config_summary_field.go:178
-msgid "One role"
-msgstr "Én rolle"
-
-#: ../gui/muc_room_config_summary_field.go:180
-#, python-format
-msgid "%d roles"
-msgstr "%d roller"
-
-#: ../gui/muc_room_config_summary_field.go:182
-msgid "No roles"
-msgstr "Ingen roller"
-
-#: ../gui/muc_room_config_summary_field.go:188
-msgid "One account"
-msgstr "Én konto"
-
-#: ../gui/muc_room_config_summary_field.go:190
-#, python-format
-msgid "%d accounts"
-msgstr "%d kontoer"
-
-#: ../gui/muc_room_config_summary_field.go:192
-msgid "No accounts"
-msgstr "Ingen kontoer"
-
-#: ../gui/muc_room.go:209
-msgid ""
-"Loading the room information took longer than usual, perhaps the connection "
-"to the server was lost. Do you want to try again?"
-msgstr ""
-"Innlasting av rommet tok lengre tid enn vanlig, kanskje tilkoblingen til "
-"tjeneren gikk tapt. Vil du prøve igjen?"
-
-#: ../gui/muc_room.go:212 ../gui/muc_room.go:754
-msgid "Yes, try again"
-msgstr "Ja, prøv igjen"
-
-#: ../gui/muc_room.go:272
-msgid ""
-"You have been removed from this room because it's now a members-only room."
-msgstr ""
-"Du har blitt fjernet fra dette rommet fordi det nå er forbeholdt medlemmer."
-
-#: ../gui/muc_room.go:283
-msgid ""
-"You have been removed from this members-only room since you are not "
-"$affiliation{a member} anymore."
-msgstr ""
-"Du har blitt fjernet fra dette rommet forbehold medlemmer siden du ikke er "
-"$affiliation{medlem} lenger."
-
-#: ../gui/muc_room.go:393
-msgid "The room has been destroyed"
-msgstr "Rommet har blitt destruert"
-
-#: ../gui/muc_room.go:528
-msgid "The room subject couldn't be updated."
-msgstr "Romemnet kunne ikke oppdateres."
-
-#: ../gui/muc_room.go:535
-msgid "The room subject has been updated."
-msgstr "Romemnet har blitt oppdatert."
-
-#: ../gui/muc_room.go:548
-msgid "Return"
-msgstr "Gå tilbake"
-
-#: ../gui/muc_room.go:731
-msgid "Your connection has been restored; you can join this room again."
-msgstr ""
-"Tilkoblingen din har blitt gjenopprettet. Du kan ta del i dette rommet igjen."
-
-#: ../gui/muc_room.go:747
-msgid ""
-"Your connection was recovered but loading the room information took longer "
-"than usual, perhaps the connection to the server was lost. Do you want to "
-"try again?"
-msgstr ""
-"Tilkoblingen din ble gjenopprettet, men innlasting av rommet tok mer tid enn "
-"vanlig. Kanskje tilkoblingen til tjeneren gikk tapt? Vil du prøve igjen?"
-
-#: ../gui/muc_room.go:760
-#, fuzzy
-msgid "Trying to connect to the room..."
-msgstr "Prøver å koble til rommet …"
-
-#: ../gui/muc_room.go:802
-msgid ""
-"The connection to the server has been lost, please verify your connection."
-msgstr "Tilkoblingen til tjeneren gikk tapt. Bekreft tilkoblingen din."
-
-#: ../gui/muc_room.go:814
-msgid "Connecting to the room..."
-msgstr "Kobler til rommet …"
-
-#: ../gui/muc_room_config_component.go:131
-msgid ""
-"We can't apply the given room configuration because an error occurred when "
-"trying to send the request for it. Please try again."
-msgstr ""
-"Kan ikke bruke gitt romoppsett fordi en feil inntraff under forsøk på å "
-"sende en forespørsel om det. Prøv igjen."
-
-#: ../gui/muc_room_config_component.go:133
-msgid ""
-"We can't apply the given room configuration because either you don't have "
-"permission to do it or the location is not available right now. Please try "
-"again."
-msgstr ""
-"Kan ikke bruke angitt romoppsett fordi du enten ikke har tilgang til å "
-"utføre endringene, eller fordi plasseringen ikke er tilgjengelig nå. Prøv "
-"igjen."
-
-#: ../gui/muc_room_config_component.go:135
-msgid ""
-"We can't cancel the room configuration process because an error occurred "
-"when trying to send the request for it. Please try again."
-msgstr ""
-"Kan ikke avbryte romoppsettsprosessen fordi en feil inntraff under forsøk på "
-"å sende en forespørsel for den. Prøv igjen."
-
-#: ../gui/muc_room_config_component.go:137
-msgid ""
-"We can't cancel the room configuration process because either you don't have "
-"permission to do it or the location is not available right now. Please try "
-"again."
-msgstr ""
-"Kan ikke avbryte romoppsettsprosessen fordi du enten ikke har tilgang til å "
-"gjøre det, eller fordi plasseringen ikke er tilgjengelig nå. Prøv igjen."
-
-#: ../gui/muc_room_config_component.go:139
+#: ../gui/file_transfer.go:80
 #, fuzzy
 msgid ""
-"The list affiliations couldn't be updated. Verify your permissions and try "
-"again."
+"Do you want to continue anyway? This means an adversary or server "
+"administrator can potentially see the content of the file."
 msgstr ""
-"Tilknytningene kunne ikke oppdateres. Kontroller tilgangene dine og prøv "
-"igjen."
+"Vil du forsette uansett? Dette betyr at en fiende eller tjeneradministrator "
+"potensiellt kan se innholdet i filen."
 
-#: ../gui/muc_room_config_component.go:143
+#: ../gui/file_transfer.go:107
+#, python-format
 msgid ""
-"The settings couldn't be changed. Please verify the information in the form."
-msgstr "Innstillingene kunne ikke endres. Kontroller informasjonen i skjemaet."
+"%s wants to send you a directory - this transfer will be encrypted and "
+"secure - do you want to receive it?"
+msgstr ""
+"%s ønsker å sende deg en mappe. Denne overføringen vil skje kryptert og "
+"sikret. Vil du motta den?"
 
-#: ../gui/muc_room_config_component.go:145 ../gui/muc_create_room_form.go:151
-msgid "We didn't receive a response from the server."
-msgstr "Mottok ikke noe svar fra tjeneren."
-
-#: ../gui/muc_room_config_component.go:147
+#: ../gui/file_transfer.go:108 ../gui/file_transfer.go:111
 #, python-format
-msgid "Unsupported config error: %s"
-msgstr "Ukjent oppsettsfeil: %s"
+msgid "Directory name: %s"
+msgstr "Mappenavn: %s"
 
-#: ../gui/muc_room_config_component.go:153 ../gui/muc_room_roster.go:404
-msgid "Participants"
-msgstr "Deltagere"
-
-#: ../gui/muc_room_config_component.go:157 ../gui/muc_room_roster.go:408
-msgid "Moderators"
-msgstr "Moderatorer"
-
-#: ../gui/muc_room_config_component.go:163
-msgid "Anyone"
-msgstr "Alle"
-
-#: ../gui/muc_room_config_component.go:165
-msgid "Nobody"
-msgstr "Ingen"
-
-#: ../gui/muc_room_config_component.go:167
-msgid "No maximum"
-msgstr "Uten tak"
-
-#: ../gui/muc_room_config_component.go:169
-msgid "10"
-msgstr "10"
-
-#: ../gui/muc_room_config_component.go:171
-msgid "20"
-msgstr "20"
-
-#: ../gui/muc_room_config_component.go:173
-msgid "30"
-msgstr "30"
-
-#: ../gui/muc_room_config_component.go:175
-msgid "50"
-msgstr "50"
-
-#: ../gui/muc_room_config_component.go:177
-msgid "100"
-msgstr "100"
-
-#: ../gui/muc_room_roster.go:295
-msgid "%s (%v)"
-msgstr "%s (%v)"
-
-#: ../gui/muc_room_roster.go:329
+#: ../gui/file_transfer.go:110
 #, python-format
-msgid "%s (You)"
-msgstr "%s (deg)"
+msgid ""
+"%s wants to send you a directory - the transfer will NOT be encrypted or "
+"secure - do you want to receive it?"
+msgstr ""
+"%s ønsker å sende deg en mappe. Denne overføringen vil IKKE skje kryptert "
+"eller sikret. Vil du motta den?"
 
-#: ../gui/muc_room_roster.go:389 ../gui/muc_room_occupant_affiliation.go:173
-msgid "Admin"
-msgstr "Administrator"
+#: ../gui/file_transfer.go:115
+#, python-format
+msgid ""
+"%s wants to send you a file - this transfer will be encrypted and secure - "
+"do you want to receive it?"
+msgstr ""
+"%s ønsker å sende deg en fil. Denne overføringen vil skje kryptert og "
+"sikret. Vil du motta den?"
 
-#: ../gui/muc_room_roster.go:393 ../gui/muc_room_occupant_affiliation.go:177
+#: ../gui/file_transfer.go:116 ../gui/file_transfer.go:119
+#, fuzzy, python-format
+msgid "File name: %s"
+msgstr "Filnavn: %s"
+
+#: ../gui/file_transfer.go:118
+#, python-format
+msgid ""
+"%s wants to send you a file - the transfer will NOT be encrypted or secure - "
+"do you want to receive it?"
+msgstr ""
+"%s ønsker å sende deg en fil. Denne overføringen vil IKKE skje kryptert og "
+"sikret. Vil du motta den?"
+
+#: ../gui/file_transfer.go:123
+msgid ""
+"%[1]s\n"
+"Encrypted: %[2]v"
+msgstr ""
+"%[1]s\n"
+"Kryptert: %[2]v"
+
+#: ../gui/file_transfer.go:126
+msgid ""
+"%[1]s\n"
+"Description: %[2]s"
+msgstr ""
+"%[1]s\n"
+"Beskrivelse: %[2]s"
+
+#: ../gui/file_transfer.go:129
+msgid ""
+"%[1]s\n"
+"Last modified: %[2]s"
+msgstr ""
+"%[1]s\n"
+"Sist endret: %[2]s"
+
+#: ../gui/file_transfer.go:132
+msgid ""
+"%[1]s\n"
+"Size: %[2]d bytes"
+msgstr ""
+"%[1]s\n"
+"Størrelse: %[2]d byte"
+
+#: ../gui/file_transfer.go:145
+msgid "Choose where to save file"
+msgstr "Velg hvor filen skal lagres"
+
+#: ../gui/file_transfer.go:148
+msgid "Choose where to save folder"
+msgstr "Velg hvor mappen skal lagres"
+
+#: ../gui/file_transfer.go:158
+msgid "_Save"
+msgstr "_Lagre"
+
+#: ../gui/file_transfer.go:280
+msgid "Choose file to send"
+msgstr "Velg fil å sende"
+
+#: ../gui/file_transfer.go:284
+msgid "Choose directory to send"
+msgstr "Velg mappe å sende"
+
+#: ../gui/subscription.go:15
+#, fuzzy, python-format
+msgid "%s wants to talk to you. Is that ok?"
+msgstr "%s ønsker å snakke med deg. Er det OK?"
+
+#: ../gui/subscription.go:102
+msgid "There are no currently connected accounts."
+msgstr "Ingen tilkoblede kontoer."
+
+#: ../gui/subscription.go:119
+msgid "There is no connected account selected."
+msgstr "Ingen tilkoblet konto valgt."
+
+#: ../gui/subscription.go:126
+msgid "We couldn't send a subscription."
+msgstr "Kunne ikke sende abonnement."
+
+#: ../gui/timeago.go:24
+msgid "Today"
+msgstr "I dag"
+
+#: ../gui/timeago.go:31
+msgid "Yesterday"
+msgstr "I går"
+
+#: ../gui/timeago.go:38
+msgid "Two days ago"
+msgstr "To dager siden"
+
+#: ../gui/timeago.go:45
+msgid "Three days ago"
+msgstr "Tre dager siden"
+
+#: ../gui/timeago.go:52
+msgid "Four days ago"
+msgstr "Fire dager siden"
+
+#: ../gui/timeago.go:79
+msgid "%[1]s, %[2]s %[3]d, %[4]d"
+msgstr "%[1]s, %[2]s %[3]d, %[4]d"
+
+#: ../gui/timeago.go:85
+msgid "Monday"
+msgstr "Mandag"
+
+#: ../gui/timeago.go:87
 #, fuzzy
-msgid "Outcast"
-msgstr "Utstøtt"
+msgid "Thursday"
+msgstr "Torsdag"
 
-#: ../gui/muc_room_roster.go:406
-msgid "Visitors"
-msgstr "Besøkende"
+#: ../gui/timeago.go:89
+msgid "Wednesday"
+msgstr "Onsdag"
+
+#: ../gui/timeago.go:91
+#, fuzzy
+msgid "Tuesday"
+msgstr "Tirsdag"
+
+#: ../gui/timeago.go:93
+msgid "Friday"
+msgstr "Fredag"
+
+#: ../gui/timeago.go:95
+msgid "Saturday"
+msgstr "Lørdag"
+
+#: ../gui/timeago.go:97
+msgid "Sunday"
+msgstr "Søndag"
+
+#: ../gui/timeago.go:106
+msgid "January"
+msgstr "Januar"
+
+#: ../gui/timeago.go:108
+msgid "February"
+msgstr "Februar"
+
+#: ../gui/timeago.go:110
+msgid "March"
+msgstr "Mars"
+
+#: ../gui/timeago.go:112
+msgid "April"
+msgstr "April"
+
+#: ../gui/timeago.go:114
+msgid "May"
+msgstr "Mai"
+
+#: ../gui/timeago.go:116
+msgid "June"
+msgstr "Juni"
+
+#: ../gui/timeago.go:118
+msgid "July"
+msgstr "Juli"
+
+#: ../gui/timeago.go:120
+msgid "August"
+msgstr "August"
+
+#: ../gui/timeago.go:122
+msgid "September"
+msgstr "September"
+
+#: ../gui/timeago.go:124
+msgid "October"
+msgstr "Oktober"
+
+#: ../gui/timeago.go:126
+msgid "November"
+msgstr "November"
+
+#: ../gui/timeago.go:128
+msgid "December"
+msgstr "Desember"
+
+#: ../gui/timeago.go:164
+msgid "An hour ago"
+msgstr "Én time siden"
+
+#: ../gui/timeago.go:166
+msgid "Few hours ago"
+msgstr "Noen timer siden"
+
+#: ../gui/timeago.go:168
+msgid "%v hours ago"
+msgstr "%v timer siden"
+
+#: ../gui/timeago.go:170
+msgid "A minute ago"
+msgstr "Ett minutt siden"
+
+#: ../gui/timeago.go:172
+msgid "A few minutes ago"
+msgstr "Noen minutter siden"
+
+#: ../gui/timeago.go:174
+msgid "%v minutes ago"
+msgstr "%v minutter siden"
+
+#: ../gui/timeago.go:176
+msgid "A second ago"
+msgstr "Ett sekund siden"
+
+#: ../gui/timeago.go:178
+msgid "A few seconds ago"
+msgstr "Noen sekunder siden"
+
+#: ../gui/timeago.go:180
+msgid "%v seconds ago"
+msgstr "%v sekunder siden"
+
+#: ../gui/timeago.go:182
+msgid "Now"
+msgstr "Nå"
+
+#: ../gui/master_password.go:30
+msgid "<b>Password can not be empty</b> - please try again"
+msgstr "<b>Passordet kan ikke stå tomt</b>. Prøv igjen"
+
+#: ../gui/master_password.go:33
+msgid "Passwords have to be the same - please try again"
+msgstr "Passordene må samsvare. Prøv igjen"
+
+#: ../gui/master_password.go:115
+msgid "Incorrect password entered, please try again."
+msgstr "Feilaktig passord innskrevet. Prøv igjen."
+
+#: ../gui/master_password.go:126
+msgid "Checking password..."
+msgstr "Sjekker passord …"
+
+#: ../gui/fingerprint_verification.go:19
+#, python-format
+msgid ""
+"You can't verify the fingerprint for %s yet.\n"
+"\n"
+"You first have to start an encrypted conversation with them."
+msgstr ""
+"Du kan ikke bekrefte fingeravtrykket til %s enda.\n"
+"\n"
+"Du må starte en kryptert samtale med vedkommende først."
+
+#: ../gui/fingerprint_verification.go:23
+msgid ""
+"\n"
+"Is this the correct fingerprint for %[1]s?\n"
+"\n"
+"Fingerprint for you (%[3]s):\n"
+"  %[4]s\n"
+"\n"
+"Purported fingerprint for %[1]s:\n"
+"  %[2]s\n"
+"\t"
+msgstr ""
+
+#: ../gui/fingerprint_verification.go:59
+#, python-format
+msgid "Verify fingerprint for %s"
+msgstr "Bekreft fingeravtrykk tilhørende %s"
 
 #: ../gui/muc_room_config_list_form.go:91
 msgid "The account address is not valid."
@@ -4141,45 +4909,197 @@ msgstr "Fyll inn skjemafeltene."
 msgid "Invalid form values."
 msgstr "Ugyldige skjemaverdier."
 
-#: ../gui/muc_room_loading.go:21
-msgid "Loading room information"
-msgstr "Laster inn rominfo"
+#: ../gui/muc_room_window.go:41
+msgid "%[1]s [%[2]s]"
+msgstr "%[1]s [%[2]s]"
 
-#: ../gui/muc_room_loading.go:22
-msgid "This will only take a few moments."
-msgstr "Dette vil kun ta et øyeblikk."
+#: ../gui/muc_room_config_assistant.go:115
+#, python-format
+msgid "Configuration for room [%s]"
+msgstr "Romoppsett [%s]"
 
-#: ../gui/muc_room_loading.go:29
-msgid "Joining room..."
-msgstr "Tar del i rom …"
+#: ../gui/muc_room_config_assistant.go:146
+msgid "Update Configuration"
+msgstr "Oppdater oppsett"
 
-#: ../gui/muc_room_loading.go:36
-msgid "Destroying room..."
-msgstr "Destruerer rommet …"
+#: ../gui/muc_room_config_assistant.go:238
+msgid "Cancel room settings"
+msgstr "Avbryt rominnstillinger"
 
-#: ../gui/muc_room_loading.go:43
-msgid "Updating position..."
-msgstr "Oppdaterer posisjon …"
+#: ../gui/muc_room_config_assistant.go:239
+msgid "We were unable to cancel the room configuration"
+msgstr "Kunne ikke avbryte romoppsettet"
 
-#: ../gui/muc_room_loading.go:50
-msgid "Updating role..."
-msgstr "Oppdaterer rolle …"
+#: ../gui/muc_room_config_assistant.go:240
+msgid "An error occurred while trying to cancel the configuration of the room."
+msgstr "En feil inntraff under forsøk på å avbryte oppsett av rommet."
 
-#: ../gui/muc_room_loading.go:52
-msgid "Expelling person from the room..."
-msgstr "Kaster ut person fra rommet …"
+#: ../gui/accounts_menu.go:20
+#, fuzzy
+msgid "Connect On _Startup"
+msgstr "Koble til ved _oppstart"
 
-#: ../gui/muc_room_loading.go:61
-msgid "Loading room configuration..."
-msgstr "Laster inn romoppsett …"
+#: ../gui/accounts_menu.go:30
+msgid "_Connect All"
+msgstr "_Koble til alle"
 
-#: ../gui/muc_room_loading.go:68
-msgid "Loading room positions..."
-msgstr "Laster inn rom-stillinger …"
+#: ../gui/accounts_menu.go:34
+msgid "_Disconnect All"
+msgstr "Koble _fra alle"
 
-#: ../gui/muc_room_loading.go:75
-msgid "Saving room positions..."
-msgstr "Lagrer romposisjoner …"
+#: ../gui/accounts_menu.go:41
+msgid "_New Account"
+msgstr "_Ny konto"
+
+#: ../gui/accounts_menu.go:45
+msgid "_Add Account"
+msgstr "_Legg til konto"
+
+#: ../gui/accounts_menu.go:49
+msgid "_Import Account"
+msgstr "_Importer konto"
+
+#: ../gui/conversation.go:70
+msgid "The conversation is now private."
+msgstr ""
+
+#: ../gui/conversation.go:78
+msgid ""
+"The verification failed - but the conversation is still private because of "
+"an earlier verification."
+msgstr ""
+
+#: ../gui/conversation.go:80
+msgid "The verification failed - the conversation is still unverified."
+msgstr ""
+
+#: ../gui/conversation.go:271
+msgid "Attempting to start a private conversation..."
+msgstr "Prøver å starte en privat samtale …"
+
+#: ../gui/conversation.go:284 ../gui/account_events.go:143
+msgid "Private conversation has ended."
+msgstr "Privat samtale sluttført."
+
+#: ../gui/conversation.go:294
+#, python-format
+msgid "You have verified the identity of %s."
+msgstr "Du har bekreftet identiteten til %s."
+
+#: ../gui/conversation.go:428
+msgid ""
+"You are talking over an \n"
+"unprotected chat"
+msgstr ""
+"Du snakker i en\n"
+"ubeskyttet sludring"
+
+#: ../gui/conversation.go:662
+msgid "Available"
+msgstr "Tilgjengelig"
+
+#: ../gui/conversation.go:664
+msgid "Not Available"
+msgstr "Ikke tilgjengelig"
+
+#: ../gui/conversation.go:666
+msgid "Away"
+msgstr "Borte"
+
+#: ../gui/conversation.go:668
+msgid "Busy"
+msgstr "Opptatt"
+
+#: ../gui/conversation.go:670
+msgid "Free for Chat"
+msgstr "Ledig for sludring"
+
+#: ../gui/conversation.go:672
+msgid "Invisible"
+msgstr "Usynglig"
+
+#: ../gui/conversation.go:680
+msgid "%[1]s%[2]s"
+msgstr ""
+
+#: ../gui/conversation.go:687 ../gui/conversation.go:701
+#, python-format
+msgid " (%s)"
+msgstr ""
+
+#: ../gui/conversation.go:699
+msgid " (%[1]s: %[2]s)"
+msgstr ""
+
+#: ../gui/conversation.go:707
+msgid "Offline"
+msgstr "Frakoblet"
+
+#: ../gui/conversation.go:713
+msgid "%[1]s is now %[2]s"
+msgstr ""
+
+#: ../gui/conversation.go:829
+msgid "The peer is using a key we haven't seen before!"
+msgstr "Likemannen bruker en nøkkel du aldri har sett før!"
+
+#: ../gui/certificate_window.go:124
+msgid "this account"
+msgstr "denne kontoen"
+
+#: ../gui/certificate_window.go:133
+#, fuzzy, python-format
+msgid ""
+"We couldn't verify the certificate for the connection to account %s. This "
+"can happen if the server you are connecting to doesn't use the traditional "
+"certificate hierarchies. It can also be the symptom of an attack.\n"
+"\n"
+"Try to verify that this information is correct before proceeding with the "
+"connection."
+msgstr ""
+"Kunne ikke bekrefte sertifikatet for tilkobling til kontoen %s. Dette kan "
+"skje hvis tjeneren du kobler til ikke bruker tradisjonelle "
+"sertifikatshierarkier, Det kan også være et tegn på angrep.\n"
+"\n"
+"Prøv å bekrefte at infoen stemmer før du fortsetter med tilkoblingen."
+
+#: ../gui/certificate_window.go:135
+msgid ""
+"The certificate for the connection to account %[1]s is correct, but the "
+"names for it doesn't match. We need a certificate for the name %[2]s, but "
+"this wasn't provided. This can happen if the server is configured "
+"incorrectly or there are other reasons the proper name couldn't be used. "
+"This is very common for corporate Google accounts. It can also be the "
+"symptom of an attack.\n"
+"\n"
+"Try to verify that this information is correct before proceeding with the "
+"connection."
+msgstr ""
+"Sertifikatet for tilkobling til kontoen %[1]s er riktig, men navnene for det "
+"samsvarer ikke. Et sertifikat for navnet %[2]s kreves, men ble ikke tilbudt. "
+"Dette kan skje hvis tjeneren er satt opp feil, eller hvis det er andre "
+"grunner til at det ordentlige navnet ikke kan brukes. Det er veldig vanlig "
+"for bedriftskontoer fra Google. Det kan også være et tegn på angrep.\n"
+"\n"
+"Prøv å bekrefte at infoen stemmer før du fortsetter med tilkoblingen."
+
+#: ../gui/certificate_window.go:137
+#, python-format
+msgid ""
+"The certificate for the connection to account %s is correct - but you have a "
+"pinning policy that requires us to ask whether you would like to continue "
+"connecting using this certificate, save it for the future, or stop "
+"connecting.\n"
+"\n"
+"Try to verify that this information is correct before proceeding with the "
+"connection."
+msgstr ""
+"Sertifikatet for tilkobling til kontoen %s er riktig, men du har ingen "
+"tilknyttingsspraksis som krever at du spørres om du ønsker å fortsette å "
+"koble til ved bruk av dette sertifikatet, lagre det for fremtidig bruk, "
+"eller stoppe tilkoblingen.\n"
+"\n"
+"Prøv å bekrefte at denne infoen stemmer før du fortsetter tilkoblingen."
 
 #: ../gui/importer.go:53
 msgid "Unable to Import Account"
@@ -4288,440 +5208,185 @@ msgstr "Kunne ikke eksportere fingeravtrykk"
 msgid "Couldn't export fingerprints to %s."
 msgstr "Kunne ikke eksportere fingeravtrykk til %s."
 
-#: ../gui/muc_room_destroy.go:131
-msgid "You must provide a service name."
-msgstr "Du må angi et tjenestenavn."
+#: ../gui/muc_room_occupant_affiliation.go:158
+#, python-format
+msgid "You are changing the position of %s from owner to:"
+msgstr "Du endrer %s sin stilling fra innehaver til:"
 
-#: ../gui/muc_room_destroy.go:133
-msgid "You must provide a room name."
-msgstr "Du må angi et romnavn."
+#: ../gui/muc_room_occupant_affiliation.go:160
+#, python-format
+msgid "You are changing the position of %s from administrator to:"
+msgstr "Du endrer stillingen til %s fra administrator til:"
 
-#: ../gui/muc_room_destroy.go:139
-msgid "You must provide a valid service and room name."
-msgstr "Du må angi en gyldig tjeneste og et romnavn."
+#: ../gui/muc_room_occupant_affiliation.go:162
+#, python-format
+msgid "You are changing the position of %s from member to:"
+msgstr "Du endrer %s sin stilling fra medlem til:"
 
-#: ../gui/proxy_edit.go:17
-msgid "Automatic Tor"
-msgstr "Automatisk Tor"
+#: ../gui/muc_room_occupant_affiliation.go:165
+#, python-format
+msgid "You are changing the position of %s to:"
+msgstr "Du endrer %s sin stilling til:"
 
-#: ../gui/proxy_edit.go:18
-msgid "SOCKS5"
-msgstr "SOCKS5"
+#: ../gui/muc_room_occupant_affiliation.go:173 ../gui/muc_room_roster.go:389
+msgid "Admin"
+msgstr "Administrator"
 
-#: ../gui/proxy_edit.go:19
+#: ../gui/muc_room_occupant_affiliation.go:177 ../gui/muc_room_roster.go:393
 #, fuzzy
-msgid "SOCKS5 Unix Domain"
-msgstr "SOCKS5-Unixdomene"
+msgid "Outcast"
+msgstr "Utstøtt"
 
-#: ../gui/muc_public_rooms.go:364
-msgid "That service doesn't seem to exist."
-msgstr "Den tjenesten ser ikke ut til å eksistere."
-
-#: ../gui/muc_public_rooms.go:366
-msgid "Your XMPP server doesn't seem to have any chat room services."
-msgstr "Din XMPP-tjener ser ikke ut til å ha noen romsludringstjenester."
-
-#: ../gui/muc_public_rooms.go:450
-msgid "Something went wrong when trying to get chat rooms."
-msgstr "Noe gikk galt under innhenting av sludrerom."
-
-#: ../gui/muc_public_rooms.go:526
-msgid "An unknown error occurred, please try again."
-msgstr "En ukjent feil inntraff. Prøv igjen."
-
-#: ../gui/muc_public_rooms.go:530
-msgid "We can't determine what has been selected, please try again."
-msgstr "Kan ikke fastslå hva som har blitt valgt. Prøv igjen."
-
-#: ../gui/muc_public_rooms.go:532
+#: ../gui/muc_room_occupant_affiliation.go:200
 msgid ""
-"The selected item is not a room, select one room from the list to join to."
-msgstr "Valgt element er ikke et rom. Velg et rom fra listen å ta del i."
-
-#: ../gui/muc_public_rooms.go:534
-#, fuzzy
-msgid "Please, select one room from the list to join to."
-msgstr "Velg ett rom fra listen å ta del i."
-
-#: ../gui/muc_public_rooms.go:536
-msgid "We can't determine which service has been selected, please try again."
-msgstr "Kan ikke fastslå hvilken tjeneste som ble valgt. Prøv igjen."
-
-#: ../gui/muc_public_rooms.go:557
-msgid "No account was selected, please select one account from the list."
-msgstr "Velg en konto fra listen først."
-
-#: ../gui/muc_room_config_page.go:369
-msgid "Banned"
-msgstr "Bannlyst"
-
-#: ../gui/muc_room_config_page.go:381
-msgid "The room must have at least one owner"
-msgstr "Rommet må ha minst én innehaver"
-
-#: ../gui/muc_room_config_page.go:448
-msgid "Saving room configuration"
-msgstr "Lagrer romoppsett"
-
-#: ../gui/muc_room_config_list_add_component.go:198
-msgid "Add all"
-msgstr "Legg til alle"
-
-#: ../gui/muc_room_config_list_add_component.go:312
-msgid "You must enter the account address."
-msgstr "Du må skrive inn kontoadressen."
-
-#: ../gui/muc_room_config_list_add_component.go:314
-msgid "You must provide a valid account address."
-msgstr "Du må angi en gyldig kontoadresse."
-
-#: ../gui/ui.go:218
-msgid "Tor is still not running"
-msgstr "Tor kjører ikke"
-
-#: ../gui/ui.go:222
-msgid "Tor is now running"
-msgstr "Tor kjører"
-
-#: ../gui/ui.go:570
-msgid ""
-"You are trying to connect to a Google account - sometimes Google will not "
-"allow connections even if you have entered the correct password. Try turning "
-"on App specific password, or if that fails allow less secure applications to "
-"access the account (don't worry, CoyIM is plenty secure)."
+"We couldn't update the position for the person because either you don't have "
+"permission to do it or the server is busy. Please try again."
 msgstr ""
-"Du prøver å koble til med en Google-konto. Noen ganger tillater ikke Google "
-"tilkoblinger selv om du har skrevet inn rett passord. Prøv å skru på "
-"programspesifikke passord, eller tillat mindre sikre programmer på kontoen "
-"hvis det ikke fungerer (CoyIM har sikkerheten ivaretatt på sin side)."
+"Kunne ikke oppdatere personens stilling fordi du enten ikke har tilgang til "
+"det, eller fordi tjeneren er opptatt. Prøv igjen."
 
-#: ../gui/ui.go:628
-msgid "CoyIM!"
-msgstr "CoyIM!"
-
-#: ../gui/ui.go:708
-#, fuzzy
-msgid "There is no account with the id %q"
-msgstr "Ingen konto med ID-en %q"
-
-#: ../gui/ui.go:712
-msgid "Can't send a contact request from an offline account"
-msgstr "Kan ikke sende kontaktforespørsel fra frakoblet konto"
-
-#: ../gui/connection.go:28
-msgid "Connection lost"
-msgstr "Tilkoblingen gikk tapt"
-
-#: ../gui/connection.go:28
+#: ../gui/muc_room_occupant_affiliation.go:202
 msgid ""
-"We lost connection to the server for unknown reasons.\n"
-"\n"
-"We will try to reconnect."
+"An error occurred when updating the position for the person. Please try "
+"again."
+msgstr "En feil oppstod under oppdatering av personens stilling. Prøv igjen."
+
+#: ../gui/file_transfer_notification.go:116
+msgid "Transfer started"
 msgstr ""
-"Mistet tilkoblingen til tjeneren uvisst av hvilken grunn.\n"
-"\n"
-"Prøver å koble til igjen."
 
-#: ../gui/connection.go:32 ../gui/connection.go:36 ../gui/connection.go:41
-msgid "Connection failure"
-msgstr "Tilkoblingsfeil"
-
-#: ../gui/connection.go:32
-msgid ""
-"We couldn't connect to the server because we couldn't determine a server "
-"address for the given domain.\n"
-"\n"
-"We will try to reconnect."
-msgstr ""
-"Kunne ikke koble til tjeneren fordi tjeneradressen for gitt domene ikke "
-"kunne bestemmes.\n"
-"\n"
-"Prøver å koble til igjen."
-
-#: ../gui/connection.go:36
-msgid ""
-"We couldn't connect to the server for some reason - verify that the server "
-"address is correct and that you are actually connected to the internet.\n"
-"\n"
-"We will try to reconnect."
-msgstr ""
-"Kunne ikke koble til tjeneren. Bekreft at tjeneradressen er riktig og at du "
-"faktisk er koblet til Internett.\n"
-"\n"
-"Kobler til igjen."
-
-#: ../gui/connection.go:42
+#: ../gui/file_transfer_notification.go:150
 #, python-format
-msgid ""
-"We couldn't connect to the server - verify that the server address is "
-"correct and that you are actually connected to the internet.\n"
-"\n"
-"This is the error we got: %s\n"
-"\n"
-"We will try to reconnect."
-msgstr ""
-"Kunne ikke koble til tjeneren. Bekreft at tjeneradressen er riktig og at du "
-"faktisk er tilkoblet Internett.\n"
-"\n"
-"Mottatt feil: %s\n"
-"\n"
-"Prøver å koble til igjen."
+msgid "Sending: %s"
+msgstr "Sender: %s"
 
-#: ../gui/accounts_menu.go:20
-#, fuzzy
-msgid "Connect On _Startup"
-msgstr "Koble til ved _oppstart"
-
-#: ../gui/accounts_menu.go:30
-msgid "_Connect All"
-msgstr "_Koble til alle"
-
-#: ../gui/accounts_menu.go:34
-msgid "_Disconnect All"
-msgstr "Koble _fra alle"
-
-#: ../gui/accounts_menu.go:41
-msgid "_New Account"
-msgstr "_Ny konto"
-
-#: ../gui/accounts_menu.go:45
-msgid "_Add Account"
-msgstr "_Legg til konto"
-
-#: ../gui/accounts_menu.go:49
-msgid "_Import Account"
-msgstr "_Importer konto"
-
-#: ../gui/muc_room_toolbar.go:156
-msgid "You are no longer allowed to continue updating the room subject."
-msgstr "Du har ikke lenger tilgang til å oppdatere rom-emnet."
-
-#: ../gui/muc_room_toolbar.go:250
-msgid "Hide room subject"
-msgstr "Skjul romemne"
-
-#: ../gui/password_component.go:48 ../gui/muc_room_config_field_password.go:122
-msgid "Hide"
-msgstr "Skjul"
-
-#: ../gui/language_selector_component.go:205
-msgid "%[1]s (%[2]s)"
-msgstr "%[1]s (%[2]s)"
-
-#: ../gui/muc_room_config_list_component.go:103
-msgid "Remove all"
-msgstr "Fjern alle"
-
-#: ../gui/infobar_component.go:155
-msgid "January 2, 2006 at 15:04:05"
-msgstr "2 Januar 2006, klokken 15.04.05"
-
-#: ../gui/muc_room_occupant_role.go:137
+#: ../gui/file_transfer_notification.go:152
 #, python-format
-msgid "You are changing the role of %s from moderator to:"
-msgstr "Du endrer rollen til %s fra moderator til:"
+msgid "Receiving: %s"
+msgstr "Mottar: %s"
 
-#: ../gui/muc_room_occupant_role.go:139
+#: ../gui/file_transfer_notification.go:154
 #, python-format
-msgid "You are changing the role of %s from participant to:"
-msgstr "Du endrer rollen til %s fra deltager til:"
+msgid "Sending securely: %s"
+msgstr "Sender sikkert: %s"
 
-#: ../gui/muc_room_occupant_role.go:141
+#: ../gui/file_transfer_notification.go:156
 #, python-format
-msgid "You are changing the role of %s from visitor to:"
-msgstr "Du endrer rollen til %s fra besøkende til:"
+msgid "Sending encrypted: %s"
+msgstr "Sender kryptert: %s"
 
-#: ../gui/muc_room_occupant_role.go:144
-#, python-format
-msgid "You are changing the role of %s to:"
-msgstr "Du endrer %s sin rolle til:"
-
-#: ../gui/muc_room_config.go:96
-msgid "The room configuration changed."
-msgstr "Romoppsett endret."
-
-#: ../gui/muc_room_config.go:108
-msgid "Unable to open the room configuration. Please, try again."
-msgstr "Kunne ikke åpne romoppsettet. Prøv igjen."
-
-#: ../gui/muc_room_config.go:163
-msgid "Visitors can now request permission to speak."
-msgstr "Besøkende kan nå forespørre tilgang til å snakke."
-
-#: ../gui/muc_room_config.go:165
-msgid ""
-"This room doesn't support \"voice\" requests anymore, which means that "
-"visitors can't ask for permission to speak."
-msgstr ""
-"Dette rommet støtter ikke lenger «røst»-forespørsler. Dette betyr at "
-"besøkende ikke kan forespørre tilgang til å snakke."
-
-#: ../gui/muc_room_config.go:171
-msgid "This room supports user registration."
-msgstr "Rommet støtter brukerregistrering."
-
-#: ../gui/muc_room_config.go:173
-msgid "This room doesn't support user registration."
-msgstr "Dette rommet støtter ikke brukerregistrering."
-
-#: ../gui/muc_room_config.go:178
-msgid "This room is now persistent."
-msgstr "Dette rommet er nå vedvarende."
-
-#: ../gui/muc_room_config.go:180
-msgid "This room is not persistent anymore."
-msgstr "Dette rommet er ikke lenger vedvarende."
-
-#: ../gui/muc_room_config.go:185
-msgid "Only participants and moderators can now send messages in this room."
-msgstr "Nå kan kun deltagere og moderatorer sende meldinger i dette rommet."
-
-#: ../gui/muc_room_config.go:187
-msgid "Everyone can now send messages in this room."
-msgstr "Alle kan nå sende meldinger i dette rommet."
-
-#: ../gui/muc_room_config.go:192
-msgid "This room is now protected by a password."
-msgstr "Rommet er nå passordbeskyttet."
-
-#: ../gui/muc_room_config.go:194
-msgid "This room is not protected by a password."
-msgstr "Dette rommet er ikke passordbeskyttet."
-
-#: ../gui/muc_room_config.go:199
-msgid "This room is publicly listed."
-msgstr "Dette rommet er offentlig opplistet."
-
-#: ../gui/muc_room_config.go:201
-msgid "This room is not publicly listed anymore."
-msgstr "Dette rommet er ikke offentlig opplistet lenger."
-
-#: ../gui/muc_room_config.go:205
-#, python-format
-msgid "The language of this room was changed to %s."
-msgstr "Språket for dette rommet ble endret til %s."
-
-#: ../gui/muc_room_config.go:219
-msgid "Participants and moderators can change the room subject."
-msgstr "Deltagere og moderatorer kan endre romemnet."
-
-#: ../gui/muc_room_config.go:221
-msgid "Only moderators can change the room subject."
-msgstr "Kun moderatorer kan endre romemnet."
-
-#: ../gui/muc_room_config.go:225
-#, python-format
-msgid "Title was changed to \"%s\"."
-msgstr "Tittel ble endret til «%s»."
-
-#: ../gui/muc_room_config.go:229
-#, python-format
-msgid "Description was changed to \"%s\"."
-msgstr "Beskrivelse ble endret til «%s»."
-
-#: ../gui/muc_room_config.go:234
-msgid "Anyone can send private messages to people in the room."
-msgstr "Alle kan sende private meldinger til personer i rommet."
-
-#: ../gui/muc_room_config.go:236
-msgid "No one in this room can send private messages now."
-msgstr "Ingen i dette rommet kan sende private meldinger nå."
-
-#: ../gui/muc_room_config.go:241
-msgid "Members can now invite other users to join."
-msgstr "Medlemmer kan nå invitere andre brukere til å bli med."
-
-#: ../gui/muc_room_config.go:243
-msgid "Members cannot invite other users to join anymore."
-msgstr "Medlemmer kan ikke invitere andre brukere til å bli med lenger."
-
-#: ../gui/muc_room_config.go:247
-#, python-format
-msgid "The room's max history length was changed to %d."
-msgstr "Rommets maksimale historikklengde ble endret til %d."
-
-#: ../gui/connected_accounts_component.go:82
-msgid "There are no connected accounts."
-msgstr "Det er ingen tilkoblede kontoer."
-
-#: ../gui/account.go:154
-#, fuzzy
-msgid "Unable to Add Account"
-msgstr "Kunne ikke legge til konto"
-
-#: ../gui/account.go:154
-msgid ""
-"Can't add account:\n"
-"\n"
-"You already have an account with this name."
-msgstr ""
-"Kan ikke legge til konto:\n"
-"\n"
-"Du har allerede en konto med dette navnet."
-
-#: ../gui/account.go:164
-msgid "Account added"
-msgstr "Konto lagt til"
-
-#: ../gui/account.go:164
+#: ../gui/file_transfer_notification.go:158
 #, fuzzy, python-format
-msgid "%s successfully added."
-msgstr "%s lagt til."
+msgid "Sending insecurely: %s"
+msgstr "Sender usikkert: %s"
 
-#: ../gui/account.go:242
-msgid "_Check Connection"
-msgstr "_Sjekk tilkobling"
-
-#: ../gui/account.go:255
-msgid "_Connect"
-msgstr "_Koble til"
-
-#: ../gui/account.go:265
-msgid "_Disconnect"
-msgstr "_Koble fra"
-
-#: ../gui/account.go:283
-msgid "Connection _information..."
-msgstr "Tilkoblings_info …"
-
-#: ../gui/account.go:299
-msgid "_Change Password..."
-msgstr "_Endre passord …"
-
-#: ../gui/account.go:312
-msgid "Connect _Automatically"
-msgstr "Koble til _automatisk"
-
-#: ../gui/account.go:319
-#, fuzzy
-msgid "Always Encrypt Conversation"
-msgstr "Alltid krypter samtaler"
-
-#: ../gui/account.go:340
-msgid "XML Console"
-msgstr "XML-konsoll"
-
-#: ../gui/account.go:441
+#: ../gui/file_transfer_notification.go:160
 #, python-format
-msgid ""
-"Connecting account\n"
-"%s"
-msgstr ""
-"Kobler til konto\n"
-"%s"
+msgid "Receiving securely: %s"
+msgstr "Mottar usikkert: %s"
 
-#: ../gui/account.go:445
+#: ../gui/file_transfer_notification.go:162
 #, python-format
-msgid ""
-"Connection failure\n"
-"%s"
-msgstr ""
-"Tilkoblingsfeil\n"
-"%s"
+msgid "Receiving encrypted: %s"
+msgstr "Mottar kryptert: %s"
 
-#: ../gui/account.go:449
-msgid "Tor is not currently running"
-msgstr "Tor kjører ikke"
+#: ../gui/file_transfer_notification.go:164
+#, python-format
+msgid "Receiving insecurely: %s"
+msgstr "Mottar usikkert: %s"
+
+#: ../gui/file_transfer_notification.go:252
+msgid "File and directory transfer(s) successful"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:255
+msgid "Directory transfer(s) successful"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:257
+msgid "File transfer(s) successful"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:262
+msgid "File and directory transfer(s) failed"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:265
+msgid "Directory transfer(s) failed"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:267
+msgid "File transfer(s) failed"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:272
+msgid "File and directory transfer(s) canceled"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:275
+msgid "Directory transfer(s) canceled"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:277
+msgid "File transfer(s) canceled"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:282
+msgid "File and directory transfer(s) declined"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:285
+msgid "Directory transfer(s) declined"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:287
+msgid "File transfer(s) declined"
+msgstr ""
+
+#: ../gui/file_transfer_notification.go:362
+#, python-format
+msgid "Declined: %s"
+msgstr "Avslått: %s"
+
+#: ../gui/file_transfer_notification.go:376
+#, python-format
+msgid "Canceled: %s"
+msgstr "Avbrutt: %s"
+
+#: ../gui/file_transfer_notification.go:390
+#, python-format
+msgid "Failed: %s"
+msgstr "Mislykket: %s"
+
+#: ../gui/file_transfer_notification.go:408
+#, python-format
+msgid "Sent securely: %s"
+msgstr "Sendt sikkert: %s"
+
+#: ../gui/file_transfer_notification.go:410
+#, python-format
+msgid "Sent encrypted: %s"
+msgstr "Sendt kryptert: %s"
+
+#: ../gui/file_transfer_notification.go:412
+#, python-format
+msgid "Sent insecurely: %s"
+msgstr "Sendt usikkert: %s"
+
+#: ../gui/file_transfer_notification.go:414
+#, python-format
+msgid "Received securely: %s"
+msgstr "Mottatt sikkert: %s"
+
+#: ../gui/file_transfer_notification.go:416
+#, python-format
+msgid "Received encrypted: %s"
+msgstr "Mottatt kryptert: %s"
+
+#: ../gui/file_transfer_notification.go:418
+#, python-format
+msgid "Received insecurely: %s"
+msgstr "Mottatt usikkert: %s"
 
 #: ../gui/muc_room_warnings.go:32
 msgid ""
@@ -4784,18 +5449,123 @@ msgstr "Detaljer"
 msgid "Warning %[1]d of %[2]d"
 msgstr "Advarsel %[1]d av %[2]d"
 
-#: ../gui/muc_room_positions.go:91
-msgid "The positions were updated."
-msgstr "Stillinger oppdatert."
+#: ../gui/muc_room.go:209
+msgid ""
+"Loading the room information took longer than usual, perhaps the connection "
+"to the server was lost. Do you want to try again?"
+msgstr ""
+"Innlasting av rommet tok lengre tid enn vanlig, kanskje tilkoblingen til "
+"tjeneren gikk tapt. Vil du prøve igjen?"
 
-#: ../gui/muc_room_positions.go:99
-msgid "Unable to update positions."
-msgstr "Kunne ikke oppdatere stillinger."
+#: ../gui/muc_room.go:212 ../gui/muc_room.go:754
+msgid "Yes, try again"
+msgstr "Ja, prøv igjen"
 
-#: ../gui/muc_room_positions.go:154
+#: ../gui/muc_room.go:272
+msgid ""
+"You have been removed from this room because it's now a members-only room."
+msgstr ""
+"Du har blitt fjernet fra dette rommet fordi det nå er forbeholdt medlemmer."
+
+#: ../gui/muc_room.go:283
+msgid ""
+"You have been removed from this members-only room since you are not "
+"$affiliation{a member} anymore."
+msgstr ""
+"Du har blitt fjernet fra dette rommet forbehold medlemmer siden du ikke er "
+"$affiliation{medlem} lenger."
+
+#: ../gui/muc_room.go:393
+msgid "The room has been destroyed"
+msgstr "Rommet har blitt destruert"
+
+#: ../gui/muc_room.go:528
+msgid "The room subject couldn't be updated."
+msgstr "Romemnet kunne ikke oppdateres."
+
+#: ../gui/muc_room.go:535
+msgid "The room subject has been updated."
+msgstr "Romemnet har blitt oppdatert."
+
+#: ../gui/muc_room.go:548
+msgid "Return"
+msgstr "Gå tilbake"
+
+#: ../gui/muc_room.go:731
+msgid "Your connection has been restored; you can join this room again."
+msgstr ""
+"Tilkoblingen din har blitt gjenopprettet. Du kan ta del i dette rommet igjen."
+
+#: ../gui/muc_room.go:747
+msgid ""
+"Your connection was recovered but loading the room information took longer "
+"than usual, perhaps the connection to the server was lost. Do you want to "
+"try again?"
+msgstr ""
+"Tilkoblingen din ble gjenopprettet, men innlasting av rommet tok mer tid enn "
+"vanlig. Kanskje tilkoblingen til tjeneren gikk tapt? Vil du prøve igjen?"
+
+#: ../gui/muc_room.go:760
 #, fuzzy
-msgid "We couldn't get the occupants by affiliation"
-msgstr "Kunne ikke hente deltagere ved tilknytning"
+msgid "Trying to connect to the room..."
+msgstr "Prøver å koble til rommet …"
+
+#: ../gui/muc_room.go:802
+msgid ""
+"The connection to the server has been lost, please verify your connection."
+msgstr "Tilkoblingen til tjeneren gikk tapt. Bekreft tilkoblingen din."
+
+#: ../gui/muc_room.go:814
+msgid "Connecting to the room..."
+msgstr "Kobler til rommet …"
+
+#: ../gui/language_selector_component.go:205
+msgid "%[1]s (%[2]s)"
+msgstr "%[1]s (%[2]s)"
+
+#: ../gui/muc_room_close_confirm.go:61
+msgid "Close & Leave Room"
+msgstr "Lukk og forlat rom"
+
+#: ../gui/muc_room_loading.go:21
+msgid "Loading room information"
+msgstr "Laster inn rominfo"
+
+#: ../gui/muc_room_loading.go:22
+msgid "This will only take a few moments."
+msgstr "Dette vil kun ta et øyeblikk."
+
+#: ../gui/muc_room_loading.go:29
+msgid "Joining room..."
+msgstr "Tar del i rom …"
+
+#: ../gui/muc_room_loading.go:36
+msgid "Destroying room..."
+msgstr "Destruerer rommet …"
+
+#: ../gui/muc_room_loading.go:43
+msgid "Updating position..."
+msgstr "Oppdaterer posisjon …"
+
+#: ../gui/muc_room_loading.go:50
+msgid "Updating role..."
+msgstr "Oppdaterer rolle …"
+
+#: ../gui/muc_room_loading.go:52
+msgid "Expelling person from the room..."
+msgstr "Kaster ut person fra rommet …"
+
+#: ../gui/muc_room_loading.go:61
+msgid "Loading room configuration..."
+msgstr "Laster inn romoppsett …"
+
+#: ../gui/muc_room_loading.go:68
+msgid "Loading room positions..."
+msgstr "Laster inn rom-stillinger …"
+
+#: ../gui/muc_room_loading.go:75
+msgid "Saving room positions..."
+msgstr "Lagrer romposisjoner …"
 
 #: ../gui/muc.go:19
 msgid "Something went wrong trying to communicate with the server."
@@ -4814,6 +5584,217 @@ msgid ""
 "Could not create the room with the name provided. Please, change it and try "
 "again."
 msgstr "Kunne ikke opprette rom med angitt navn. Endre det og prøv igjen."
+
+#: ../gui/change_password_details.go:42
+msgid "The passwords do not match"
+msgstr "Passordene samsvarer ikke"
+
+#: ../gui/change_password_details.go:44
+msgid "The password can't be empty"
+msgstr "Passordet kan ikke stå tomt"
+
+#: ../gui/change_password_details.go:69
+#, python-format
+msgid "Password changed successfully for %s."
+msgstr "Passord endret for %s."
+
+#: ../gui/change_password_details.go:75
+#, python-format
+msgid ""
+"Password change failed.\n"
+" Error: %s"
+msgstr ""
+"Kunne ikke endre passord.\n"
+"Feil: %s"
+
+#: ../gui/change_password_details.go:96
+#, python-format
+msgid "Error: %s"
+msgstr "Feil: %s"
+
+#: ../gui/change_password_details.go:103
+msgid "Attempting to change password..."
+msgstr "Prøver å endre passord …"
+
+#: ../gui/menubar.go:45
+msgid "About CoyIM"
+msgstr "Om CoyIM"
+
+#: ../gui/menubar.go:53
+msgid "Quit CoyIM"
+msgstr "Avslutt CoyIM"
+
+#: ../gui/proxy_edit.go:17
+msgid "Automatic Tor"
+msgstr "Automatisk Tor"
+
+#: ../gui/proxy_edit.go:18
+msgid "SOCKS5"
+msgstr "SOCKS5"
+
+#: ../gui/proxy_edit.go:19
+#, fuzzy
+msgid "SOCKS5 Unix Domain"
+msgstr "SOCKS5-Unixdomene"
+
+#: ../gui/registration.go:106
+msgid ""
+"To create an account, copy this link into a browser window and follow the "
+"instructions."
+msgstr ""
+
+#: ../gui/registration.go:124
+msgid "* The field is required."
+msgstr ""
+
+#: ../gui/registration.go:172
+#, fuzzy
+msgid ""
+"We had an error:\n"
+"\n"
+"Timeout."
+msgstr ""
+"Feil:\n"
+"\n"
+"Tidsavbrudd."
+
+#: ../gui/registration.go:174
+msgid ""
+"The registration process currently requires Tor in order to ensure your "
+"safety.\n"
+"\n"
+"You don't have Tor running. Please, start it.\n"
+"\n"
+msgstr ""
+"Registreringsprosessen krever per nå at Tor kjører for å hegne om din "
+"sikkerhet.\n"
+"\n"
+"Tor kjører ikke hos deg. Start det.\n"
+"\n"
+
+#: ../gui/registration.go:177
+msgid ""
+"The chosen server does not support in-band registration.\n"
+"\n"
+"Either choose another server, or go to the website for the server to "
+"register."
+msgstr ""
+
+#: ../gui/registration.go:179 ../gui/registration.go:196
+msgid ""
+"Could not contact the server.\n"
+"\n"
+"Please, correct your server choice and try again."
+msgstr ""
+"Kunne ikke kontakte tjeneren.\n"
+"\n"
+"Fiks ditt tjenervalg og prøv igjen."
+
+#: ../gui/registration.go:188
+#, fuzzy
+msgid ""
+"We had an error:\n"
+"\n"
+"Some required fields are missing. Please, try again and fill all fields."
+msgstr ""
+"Feil:\n"
+"\n"
+"Noen påkrevde felter mangler. Fyll inn alle felter og prøv igjen."
+
+#: ../gui/registration.go:190
+msgid ""
+"We had an error:\n"
+"\n"
+"Incorrect username"
+msgstr ""
+"Feil:\n"
+"\n"
+"Feilaktig brukernavn"
+
+#: ../gui/registration.go:192
+#, fuzzy
+msgid ""
+"We had an error:\n"
+"\n"
+"The captcha entered is wrong"
+msgstr ""
+"Feil:\n"
+"\n"
+"Innskrevet CAPTCHA er feil"
+
+#: ../gui/registration.go:194
+msgid ""
+"We had an error:\n"
+"\n"
+"The server received too many requests to create an account at the same time."
+msgstr ""
+"En feil oppstod:\n"
+"\n"
+"Tjeneren mottok for mange forespørsler til å opprette en konto samtidig."
+
+#: ../gui/registration.go:304
+msgid ""
+"Connecting to server for registration... \n"
+"\n"
+"This might take a while."
+msgstr ""
+"Kobler til tjener for registrering …\n"
+"\n"
+"Dette kan ta en stund."
+
+#: ../gui/registration.go:332
+msgid "We had an error when trying to store your account information."
+msgstr "Kunne ikek lagre kontoinfoen din."
+
+#: ../gui/registration.go:337
+#, python-format
+msgid "<b>%s</b> successfully created."
+msgstr "<b>%s</b> opprettet."
+
+#: ../gui/muc_room_errors.go:77
+msgid "You must provide a valid nickname."
+msgstr "Du må angi et gyldig kallenavn."
+
+#: ../gui/muc_room_errors.go:79
+msgid ""
+"You can't join the room using that nickname because it's already being used."
+msgstr ""
+"Du kan ikke ta del i rommet med det kallenavnet fordi det allerede er i bruk."
+
+#: ../gui/muc_room_errors.go:81
+msgid "Sorry, this room only allows registered members."
+msgstr "Rommet tillater kun registrerte medlemmer."
+
+#: ../gui/muc_room_errors.go:83
+msgid "You can't join the room because the password is not valid."
+msgstr "Du kan ikke ta del i rommet fordi passordet ikke er gyldig."
+
+#: ../gui/muc_room_errors.go:85
+msgid ""
+"You can't join the room because the maximum number of people has been "
+"reached."
+msgstr ""
+"Du kan ikke ta del i rommet fordi det ikke er plass til flere personer i det."
+
+#: ../gui/muc_room_errors.go:87
+msgid ""
+"An unknown error occurred when trying to join the room. Please try again "
+"later."
+msgstr ""
+"En ukjent feil inntraff under forsøk på å koble til rommet. Prøv igjen "
+"senere."
+
+#: ../gui/muc_room_errors.go:89
+msgid "You can't join the room because your account is currently banned."
+msgstr "Du kan ikke ta del i rommet fordi kontoen din er bannlyst."
+
+#: ../gui/muc_room_errors.go:91
+msgid ""
+"An error occurred when trying to join the room. Please check your connection "
+"or make sure the room exists."
+msgstr ""
+"En feil inntraff under forsøk på å ta del i rommet. Sjekk tilkoblingen din "
+"og forsikre deg om at rommet finnes."
 
 #: ../gui/muc_room_conversation_notification_messages.go:11
 msgid "You can't send messages because this room has been destroyed."
@@ -4963,505 +5944,6 @@ msgstr "Rommet ble destruert. Angitt grunn: «%s»."
 msgid "The room was destroyed."
 msgstr "Rommet ble destruert."
 
-#: ../gui/change_password_details.go:42
-msgid "The passwords do not match"
-msgstr "Passordene samsvarer ikke"
-
-#: ../gui/change_password_details.go:44
-msgid "The password can't be empty"
-msgstr "Passordet kan ikke stå tomt"
-
-#: ../gui/change_password_details.go:69
-#, python-format
-msgid "Password changed successfully for %s."
-msgstr "Passord endret for %s."
-
-#: ../gui/change_password_details.go:75
-#, python-format
-msgid ""
-"Password change failed.\n"
-" Error: %s"
-msgstr ""
-"Kunne ikke endre passord.\n"
-"Feil: %s"
-
-#: ../gui/change_password_details.go:96
-#, python-format
-msgid "Error: %s"
-msgstr "Feil: %s"
-
-#: ../gui/change_password_details.go:103
-msgid "Attempting to change password..."
-msgstr "Prøver å endre passord …"
-
-#: ../gui/certificate_window.go:124
-msgid "this account"
-msgstr "denne kontoen"
-
-#: ../gui/certificate_window.go:133
-#, fuzzy, python-format
-msgid ""
-"We couldn't verify the certificate for the connection to account %s. This "
-"can happen if the server you are connecting to doesn't use the traditional "
-"certificate hierarchies. It can also be the symptom of an attack.\n"
-"\n"
-"Try to verify that this information is correct before proceeding with the "
-"connection."
-msgstr ""
-"Kunne ikke bekrefte sertifikatet for tilkobling til kontoen %s. Dette kan "
-"skje hvis tjeneren du kobler til ikke bruker tradisjonelle "
-"sertifikatshierarkier, Det kan også være et tegn på angrep.\n"
-"\n"
-"Prøv å bekrefte at infoen stemmer før du fortsetter med tilkoblingen."
-
-#: ../gui/certificate_window.go:135
-msgid ""
-"The certificate for the connection to account %[1]s is correct, but the "
-"names for it doesn't match. We need a certificate for the name %[2]s, but "
-"this wasn't provided. This can happen if the server is configured "
-"incorrectly or there are other reasons the proper name couldn't be used. "
-"This is very common for corporate Google accounts. It can also be the "
-"symptom of an attack.\n"
-"\n"
-"Try to verify that this information is correct before proceeding with the "
-"connection."
-msgstr ""
-"Sertifikatet for tilkobling til kontoen %[1]s er riktig, men navnene for det "
-"samsvarer ikke. Et sertifikat for navnet %[2]s kreves, men ble ikke tilbudt. "
-"Dette kan skje hvis tjeneren er satt opp feil, eller hvis det er andre "
-"grunner til at det ordentlige navnet ikke kan brukes. Det er veldig vanlig "
-"for bedriftskontoer fra Google. Det kan også være et tegn på angrep.\n"
-"\n"
-"Prøv å bekrefte at infoen stemmer før du fortsetter med tilkoblingen."
-
-#: ../gui/certificate_window.go:137
-#, python-format
-msgid ""
-"The certificate for the connection to account %s is correct - but you have a "
-"pinning policy that requires us to ask whether you would like to continue "
-"connecting using this certificate, save it for the future, or stop "
-"connecting.\n"
-"\n"
-"Try to verify that this information is correct before proceeding with the "
-"connection."
-msgstr ""
-"Sertifikatet for tilkobling til kontoen %s er riktig, men du har ingen "
-"tilknyttingsspraksis som krever at du spørres om du ønsker å fortsette å "
-"koble til ved bruk av dette sertifikatet, lagre det for fremtidig bruk, "
-"eller stoppe tilkoblingen.\n"
-"\n"
-"Prøv å bekrefte at denne infoen stemmer før du fortsetter tilkoblingen."
-
-#: ../gui/muc_room_config_assistant.go:115
-#, python-format
-msgid "Configuration for room [%s]"
-msgstr "Romoppsett [%s]"
-
-#: ../gui/muc_room_config_assistant.go:146
-msgid "Update Configuration"
-msgstr "Oppdater oppsett"
-
-#: ../gui/muc_room_config_assistant.go:238
-msgid "Cancel room settings"
-msgstr "Avbryt rominnstillinger"
-
-#: ../gui/muc_room_config_assistant.go:239
-msgid "We were unable to cancel the room configuration"
-msgstr "Kunne ikke avbryte romoppsettet"
-
-#: ../gui/muc_room_config_assistant.go:240
-msgid "An error occurred while trying to cancel the configuration of the room."
-msgstr "En feil inntraff under forsøk på å avbryte oppsett av rommet."
-
-#: ../gui/muc_create_room_form.go:147
-msgid ""
-"Couldn't connect to the service, please verify that it exists or try again "
-"later."
-msgstr ""
-"Kunne ikke koble til tjenesten. Bekreft at den finnes eller prøv igjen "
-"senere."
-
-#: ../gui/muc_create_room_form.go:149
-msgid "That room already exists, try again with a different name."
-msgstr "Det rommet finnes allerede. Prøv igjen med et annet navn."
-
-#: ../gui/muc_create_room_form.go:168
-msgid "Could not create the room."
-msgstr "Kunne ikke opprette rommet."
-
-#: ../gui/muc_create_room_form.go:276
-msgid "Configure Room"
-msgstr "Sett opp rom"
-
-#: ../gui/muc_create_room_form.go:280
-#, fuzzy
-msgid "Create Room & Join"
-msgstr "Sett opp rom og ta del"
-
-#: ../gui/file_transfer.go:79
-#, python-format
-msgid "The transfer to %s can't be done encrypted and securely."
-msgstr "Overføringen til %s kan ikke utføres kryptert og sikret."
-
-#: ../gui/file_transfer.go:80
-#, fuzzy
-msgid ""
-"Do you want to continue anyway? This means an adversary or server "
-"administrator can potentially see the content of the file."
-msgstr ""
-"Vil du forsette uansett? Dette betyr at en fiende eller tjeneradministrator "
-"potensiellt kan se innholdet i filen."
-
-#: ../gui/file_transfer.go:107
-#, python-format
-msgid ""
-"%s wants to send you a directory - this transfer will be encrypted and "
-"secure - do you want to receive it?"
-msgstr ""
-"%s ønsker å sende deg en mappe. Denne overføringen vil skje kryptert og "
-"sikret. Vil du motta den?"
-
-#: ../gui/file_transfer.go:108 ../gui/file_transfer.go:111
-#, python-format
-msgid "Directory name: %s"
-msgstr "Mappenavn: %s"
-
-#: ../gui/file_transfer.go:110
-#, python-format
-msgid ""
-"%s wants to send you a directory - the transfer will NOT be encrypted or "
-"secure - do you want to receive it?"
-msgstr ""
-"%s ønsker å sende deg en mappe. Denne overføringen vil IKKE skje kryptert "
-"eller sikret. Vil du motta den?"
-
-#: ../gui/file_transfer.go:115
-#, python-format
-msgid ""
-"%s wants to send you a file - this transfer will be encrypted and secure - "
-"do you want to receive it?"
-msgstr ""
-"%s ønsker å sende deg en fil. Denne overføringen vil skje kryptert og "
-"sikret. Vil du motta den?"
-
-#: ../gui/file_transfer.go:116 ../gui/file_transfer.go:119
-#, fuzzy, python-format
-msgid "File name: %s"
-msgstr "Filnavn: %s"
-
-#: ../gui/file_transfer.go:118
-#, python-format
-msgid ""
-"%s wants to send you a file - the transfer will NOT be encrypted or secure - "
-"do you want to receive it?"
-msgstr ""
-"%s ønsker å sende deg en fil. Denne overføringen vil IKKE skje kryptert og "
-"sikret. Vil du motta den?"
-
-#: ../gui/file_transfer.go:123
-msgid ""
-"%[1]s\n"
-"Encrypted: %[2]v"
-msgstr ""
-"%[1]s\n"
-"Kryptert: %[2]v"
-
-#: ../gui/file_transfer.go:126
-msgid ""
-"%[1]s\n"
-"Description: %[2]s"
-msgstr ""
-"%[1]s\n"
-"Beskrivelse: %[2]s"
-
-#: ../gui/file_transfer.go:129
-msgid ""
-"%[1]s\n"
-"Last modified: %[2]s"
-msgstr ""
-"%[1]s\n"
-"Sist endret: %[2]s"
-
-#: ../gui/file_transfer.go:132
-msgid ""
-"%[1]s\n"
-"Size: %[2]d bytes"
-msgstr ""
-"%[1]s\n"
-"Størrelse: %[2]d byte"
-
-#: ../gui/file_transfer.go:145
-msgid "Choose where to save file"
-msgstr "Velg hvor filen skal lagres"
-
-#: ../gui/file_transfer.go:148
-msgid "Choose where to save folder"
-msgstr "Velg hvor mappen skal lagres"
-
-#: ../gui/file_transfer.go:158
-msgid "_Save"
-msgstr "_Lagre"
-
-#: ../gui/file_transfer.go:280
-msgid "Choose file to send"
-msgstr "Velg fil å sende"
-
-#: ../gui/file_transfer.go:284
-msgid "Choose directory to send"
-msgstr "Velg mappe å sende"
-
-#: ../gui/muc_room_window.go:41
-msgid "%[1]s [%[2]s]"
-msgstr "%[1]s [%[2]s]"
-
-#: ../gui/muc_room_conversation_display.go:153
-msgid ""
-"You can no longer receive any messages in this room and the list of people "
-"in the room will not be updated anymore."
-msgstr ""
-"Du kan ikke lenger motta noen meldinger i dette rommet og listen over "
-"personer i rommet vil ikke bli oppdatert."
-
-#: ../gui/muc_room_roster_info.go:223
-#, python-format
-msgid ""
-"Administrators and owners will automatically be moderators for a room. "
-"Therefore, the role of %s can't be changed."
-msgstr ""
-"Administratorer og innehavere vil automatisk bli moderatorer av et rom. "
-"Derfor kan ikke rollen til %s endres."
-
-#: ../gui/conversation.go:70
-msgid "The conversation is now private."
-msgstr ""
-
-#: ../gui/conversation.go:78
-msgid ""
-"The verification failed - but the conversation is still private because of "
-"an earlier verification."
-msgstr ""
-
-#: ../gui/conversation.go:80
-msgid "The verification failed - the conversation is still unverified."
-msgstr ""
-
-#: ../gui/conversation.go:271
-msgid "Attempting to start a private conversation..."
-msgstr "Prøver å starte en privat samtale …"
-
-#: ../gui/conversation.go:284 ../gui/account_events.go:143
-msgid "Private conversation has ended."
-msgstr "Privat samtale sluttført."
-
-#: ../gui/conversation.go:294
-#, python-format
-msgid "You have verified the identity of %s."
-msgstr "Du har bekreftet identiteten til %s."
-
-#: ../gui/conversation.go:428
-msgid ""
-"You are talking over an \n"
-"unprotected chat"
-msgstr ""
-"Du snakker i en\n"
-"ubeskyttet sludring"
-
-#: ../gui/conversation.go:662
-msgid "Available"
-msgstr "Tilgjengelig"
-
-#: ../gui/conversation.go:664
-msgid "Not Available"
-msgstr "Ikke tilgjengelig"
-
-#: ../gui/conversation.go:666
-msgid "Away"
-msgstr "Borte"
-
-#: ../gui/conversation.go:668
-msgid "Busy"
-msgstr "Opptatt"
-
-#: ../gui/conversation.go:670
-msgid "Free for Chat"
-msgstr "Ledig for sludring"
-
-#: ../gui/conversation.go:672
-msgid "Invisible"
-msgstr "Usynglig"
-
-#: ../gui/conversation.go:680
-msgid "%[1]s%[2]s"
-msgstr ""
-
-#: ../gui/conversation.go:687 ../gui/conversation.go:701
-#, python-format
-msgid " (%s)"
-msgstr ""
-
-#: ../gui/conversation.go:699
-msgid " (%[1]s: %[2]s)"
-msgstr ""
-
-#: ../gui/conversation.go:707
-msgid "Offline"
-msgstr "Frakoblet"
-
-#: ../gui/conversation.go:713
-msgid "%[1]s is now %[2]s"
-msgstr ""
-
-#: ../gui/conversation.go:829
-msgid "The peer is using a key we haven't seen before!"
-msgstr "Likemannen bruker en nøkkel du aldri har sett før!"
-
-#: ../gui/muc_room_occupant_action.go:95
-msgid "Expel person"
-msgstr "Kast ut person"
-
-#: ../gui/muc_room_occupant_action.go:96
-#, python-format
-msgid "You are about to expel %s from the room."
-msgstr "Du er i ferd med å kaste ut %s fra rommet."
-
-#: ../gui/muc_room_occupant_action.go:113
-msgid "Ban person"
-msgstr "Bannlys person"
-
-#: ../gui/muc_room_occupant_action.go:114
-#, python-format
-msgid "You are about to ban %s from the room"
-msgstr "Du er i ferd med å bannlyse %s fra rommet"
-
-#: ../gui/muc_room_occupant_action.go:115
-#, fuzzy
-msgid ""
-"They won't be able to join the room again. Are you sure you want to continue?"
-msgstr ""
-"Vedkommende vil ikke kunne ta del i rommet igjen. Er du sikker på at du vil "
-"fortsette?"
-
-#: ../gui/muc_room_occupant_action.go:116
-msgid ""
-"Here you can provide an optional reason for banning the person. Everyone in "
-"the room will see this reason."
-msgstr ""
-"Her kan du valgfritt angi en grunn til å bannlyse personen. Alle personer i "
-"rommet vil kunne se denne begrunnelsen."
-
-#: ../gui/muc_room_errors.go:77
-msgid "You must provide a valid nickname."
-msgstr "Du må angi et gyldig kallenavn."
-
-#: ../gui/muc_room_errors.go:79
-msgid ""
-"You can't join the room using that nickname because it's already being used."
-msgstr ""
-"Du kan ikke ta del i rommet med det kallenavnet fordi det allerede er i bruk."
-
-#: ../gui/muc_room_errors.go:81
-msgid "Sorry, this room only allows registered members."
-msgstr "Rommet tillater kun registrerte medlemmer."
-
-#: ../gui/muc_room_errors.go:83
-msgid "You can't join the room because the password is not valid."
-msgstr "Du kan ikke ta del i rommet fordi passordet ikke er gyldig."
-
-#: ../gui/muc_room_errors.go:85
-msgid ""
-"You can't join the room because the maximum number of people has been "
-"reached."
-msgstr ""
-"Du kan ikke ta del i rommet fordi det ikke er plass til flere personer i det."
-
-#: ../gui/muc_room_errors.go:87
-msgid ""
-"An unknown error occurred when trying to join the room. Please try again "
-"later."
-msgstr ""
-"En ukjent feil inntraff under forsøk på å koble til rommet. Prøv igjen "
-"senere."
-
-#: ../gui/muc_room_errors.go:89
-msgid "You can't join the room because your account is currently banned."
-msgstr "Du kan ikke ta del i rommet fordi kontoen din er bannlyst."
-
-#: ../gui/muc_room_errors.go:91
-msgid ""
-"An error occurred when trying to join the room. Please check your connection "
-"or make sure the room exists."
-msgstr ""
-"En feil inntraff under forsøk på å ta del i rommet. Sjekk tilkoblingen din "
-"og forsikre deg om at rommet finnes."
-
-#: ../gui/jid.go:16
-#, fuzzy
-msgid ""
-"Validation failed: \n"
-"The XMPP address is invalid. An XMPP address should look like this: "
-"local@domain.com."
-msgstr ""
-"Bekreftelse mislyktes:\n"
-"XMPP-adressen er ugyldig. En XMPP-adresse skal se slik ut: lokal@domene.no."
-
-#: ../gui/jid.go:25
-msgid ""
-"Validation failed:\n"
-"The XMPP address has an invalid domain part, The XMPP address has an invalid "
-"local part. An XMPP address should look like this: local@domain.com."
-msgstr ""
-"Bekreftelse mislyktes:\n"
-"XMPP-adressen har en ugyldig domenedel. XMPP-adressen har en ugyldig lokal "
-"del. En XMPP-adresse skal se slik ut: lokal@domene.no."
-
-#: ../gui/jid.go:27
-msgid ""
-"Validation failed:\n"
-"The XMPP address has an invalid domain part. An XMPP address should look "
-"like this: local@domain.com."
-msgstr ""
-"Bekreftelse mislyktes:\n"
-"XMPP-adressen har en ugydlig domenedel. En XMPP-adresse skal se slik ut: "
-"lokal@domene.com."
-
-#: ../gui/jid.go:29
-msgid ""
-"Validation failed:\n"
-"The XMPP address has an invalid local part. An XMPP address should look like "
-"this: local@domain.com."
-msgstr ""
-"Bekreftelse mislyktes:\n"
-"XMPP-adressen har en ugyldig lokal del. En XMPP-adresse skal se slik ut: "
-"lokal@domene.no."
-
-#: ../gui/edit_contact.go:114
-#, python-format
-msgid "There are no known fingerprints for %s"
-msgstr "Ingen kjente fingeravtrykk for %s"
-
-#: ../gui/edit_contact.go:116
-#, python-format
-msgid "These are the fingerprints known for %s:"
-msgstr "Dette er de kjente fingeravtrykkene for %s:"
-
-#: ../gui/edit_contact.go:122
-#, fuzzy
-msgid "not trusted"
-msgstr "ubetrodd"
-
-#: ../gui/edit_contact.go:124
-#, fuzzy
-msgid "trusted"
-msgstr "betrodd"
-
-#: ../gui/account_details.go:199
-msgid ""
-"The fingerprints for %[1]s:\n"
-"%[2]s"
-msgstr ""
-"Fingeravtrykkene for %[1]s:\n"
-"%[2]s"
-
 #: ../gui/muc_room_conversation.go:234
 #, python-format
 msgid "$nickname{%s} has been added as $affiliation{an owner}."
@@ -5482,512 +5964,38 @@ msgstr "$nickname{%s} har blitt lagt til som $affiliation{medlem}."
 msgid "$nickname{%s} has been added to the ban list."
 msgstr "$nickname{%s} har blitt lagt til på bannlysningslisten."
 
-#: ../gui/file_transfer_notification.go:116
-msgid "Transfer started"
-msgstr ""
+#: ../gui/ui.go:218
+msgid "Tor is still not running"
+msgstr "Tor kjører ikke"
 
-#: ../gui/file_transfer_notification.go:150
-#, python-format
-msgid "Sending: %s"
-msgstr "Sender: %s"
+#: ../gui/ui.go:222
+msgid "Tor is now running"
+msgstr "Tor kjører"
 
-#: ../gui/file_transfer_notification.go:152
-#, python-format
-msgid "Receiving: %s"
-msgstr "Mottar: %s"
-
-#: ../gui/file_transfer_notification.go:154
-#, python-format
-msgid "Sending securely: %s"
-msgstr "Sender sikkert: %s"
-
-#: ../gui/file_transfer_notification.go:156
-#, python-format
-msgid "Sending encrypted: %s"
-msgstr "Sender kryptert: %s"
-
-#: ../gui/file_transfer_notification.go:158
-#, fuzzy, python-format
-msgid "Sending insecurely: %s"
-msgstr "Sender usikkert: %s"
-
-#: ../gui/file_transfer_notification.go:160
-#, python-format
-msgid "Receiving securely: %s"
-msgstr "Mottar usikkert: %s"
-
-#: ../gui/file_transfer_notification.go:162
-#, python-format
-msgid "Receiving encrypted: %s"
-msgstr "Mottar kryptert: %s"
-
-#: ../gui/file_transfer_notification.go:164
-#, python-format
-msgid "Receiving insecurely: %s"
-msgstr "Mottar usikkert: %s"
-
-#: ../gui/file_transfer_notification.go:252
-msgid "File and directory transfer(s) successful"
-msgstr ""
-
-#: ../gui/file_transfer_notification.go:255
-msgid "Directory transfer(s) successful"
-msgstr ""
-
-#: ../gui/file_transfer_notification.go:257
-msgid "File transfer(s) successful"
-msgstr ""
-
-#: ../gui/file_transfer_notification.go:262
-msgid "File and directory transfer(s) failed"
-msgstr ""
-
-#: ../gui/file_transfer_notification.go:265
-msgid "Directory transfer(s) failed"
-msgstr ""
-
-#: ../gui/file_transfer_notification.go:267
-msgid "File transfer(s) failed"
-msgstr ""
-
-#: ../gui/file_transfer_notification.go:272
-msgid "File and directory transfer(s) canceled"
-msgstr ""
-
-#: ../gui/file_transfer_notification.go:275
-msgid "Directory transfer(s) canceled"
-msgstr ""
-
-#: ../gui/file_transfer_notification.go:277
-msgid "File transfer(s) canceled"
-msgstr ""
-
-#: ../gui/file_transfer_notification.go:282
-msgid "File and directory transfer(s) declined"
-msgstr ""
-
-#: ../gui/file_transfer_notification.go:285
-msgid "Directory transfer(s) declined"
-msgstr ""
-
-#: ../gui/file_transfer_notification.go:287
-msgid "File transfer(s) declined"
-msgstr ""
-
-#: ../gui/file_transfer_notification.go:362
-#, python-format
-msgid "Declined: %s"
-msgstr "Avslått: %s"
-
-#: ../gui/file_transfer_notification.go:376
-#, python-format
-msgid "Canceled: %s"
-msgstr "Avbrutt: %s"
-
-#: ../gui/file_transfer_notification.go:390
-#, python-format
-msgid "Failed: %s"
-msgstr "Mislykket: %s"
-
-#: ../gui/file_transfer_notification.go:408
-#, python-format
-msgid "Sent securely: %s"
-msgstr "Sendt sikkert: %s"
-
-#: ../gui/file_transfer_notification.go:410
-#, python-format
-msgid "Sent encrypted: %s"
-msgstr "Sendt kryptert: %s"
-
-#: ../gui/file_transfer_notification.go:412
-#, python-format
-msgid "Sent insecurely: %s"
-msgstr "Sendt usikkert: %s"
-
-#: ../gui/file_transfer_notification.go:414
-#, python-format
-msgid "Received securely: %s"
-msgstr "Mottatt sikkert: %s"
-
-#: ../gui/file_transfer_notification.go:416
-#, python-format
-msgid "Received encrypted: %s"
-msgstr "Mottatt kryptert: %s"
-
-#: ../gui/file_transfer_notification.go:418
-#, python-format
-msgid "Received insecurely: %s"
-msgstr "Mottatt usikkert: %s"
-
-#: ../gui/muc_room_manager.go:40
-msgid "You are already in the room."
-msgstr "Du er allerede i rommet."
-
-#: ../gui/muc_room_manager.go:52
-msgid "You were already connected to this room."
-msgstr "Du var allerede tilkoblet til dette rommet."
-
-#: ../gui/registration.go:106
+#: ../gui/ui.go:584
 msgid ""
-"To create an account, copy this link into a browser window and follow the "
-"instructions."
+"You are trying to connect to a Google account - sometimes Google will not "
+"allow connections even if you have entered the correct password. Try turning "
+"on App specific password, or if that fails allow less secure applications to "
+"access the account (don't worry, CoyIM is plenty secure)."
 msgstr ""
+"Du prøver å koble til med en Google-konto. Noen ganger tillater ikke Google "
+"tilkoblinger selv om du har skrevet inn rett passord. Prøv å skru på "
+"programspesifikke passord, eller tillat mindre sikre programmer på kontoen "
+"hvis det ikke fungerer (CoyIM har sikkerheten ivaretatt på sin side)."
 
-#: ../gui/registration.go:124
-msgid "* The field is required."
-msgstr ""
+#: ../gui/ui.go:642
+msgid "CoyIM!"
+msgstr "CoyIM!"
 
-#: ../gui/registration.go:172
+#: ../gui/ui.go:722
 #, fuzzy
-msgid ""
-"We had an error:\n"
-"\n"
-"Timeout."
-msgstr ""
-"Feil:\n"
-"\n"
-"Tidsavbrudd."
-
-#: ../gui/registration.go:174
-msgid ""
-"The registration process currently requires Tor in order to ensure your "
-"safety.\n"
-"\n"
-"You don't have Tor running. Please, start it.\n"
-"\n"
-msgstr ""
-"Registreringsprosessen krever per nå at Tor kjører for å hegne om din "
-"sikkerhet.\n"
-"\n"
-"Tor kjører ikke hos deg. Start det.\n"
-"\n"
-
-#: ../gui/registration.go:177
-msgid ""
-"The chosen server does not support in-band registration.\n"
-"\n"
-"Either choose another server, or go to the website for the server to "
-"register."
-msgstr ""
-
-#: ../gui/registration.go:179 ../gui/registration.go:196
-msgid ""
-"Could not contact the server.\n"
-"\n"
-"Please, correct your server choice and try again."
-msgstr ""
-"Kunne ikke kontakte tjeneren.\n"
-"\n"
-"Fiks ditt tjenervalg og prøv igjen."
-
-#: ../gui/registration.go:188
-#, fuzzy
-msgid ""
-"We had an error:\n"
-"\n"
-"Some required fields are missing. Please, try again and fill all fields."
-msgstr ""
-"Feil:\n"
-"\n"
-"Noen påkrevde felter mangler. Fyll inn alle felter og prøv igjen."
-
-#: ../gui/registration.go:190
-msgid ""
-"We had an error:\n"
-"\n"
-"Incorrect username"
-msgstr ""
-"Feil:\n"
-"\n"
-"Feilaktig brukernavn"
-
-#: ../gui/registration.go:192
-#, fuzzy
-msgid ""
-"We had an error:\n"
-"\n"
-"The captcha entered is wrong"
-msgstr ""
-"Feil:\n"
-"\n"
-"Innskrevet CAPTCHA er feil"
-
-#: ../gui/registration.go:194
-msgid ""
-"We had an error:\n"
-"\n"
-"The server received too many requests to create an account at the same time."
-msgstr ""
-"En feil oppstod:\n"
-"\n"
-"Tjeneren mottok for mange forespørsler til å opprette en konto samtidig."
-
-#: ../gui/registration.go:304
-msgid ""
-"Connecting to server for registration... \n"
-"\n"
-"This might take a while."
-msgstr ""
-"Kobler til tjener for registrering …\n"
-"\n"
-"Dette kan ta en stund."
-
-#: ../gui/registration.go:332
-msgid "We had an error when trying to store your account information."
-msgstr "Kunne ikek lagre kontoinfoen din."
-
-#: ../gui/registration.go:337
-#, python-format
-msgid "<b>%s</b> successfully created."
-msgstr "<b>%s</b> opprettet."
-
-#: ../gui/timeago.go:24
-msgid "Today"
-msgstr "I dag"
-
-#: ../gui/timeago.go:31
-msgid "Yesterday"
-msgstr "I går"
-
-#: ../gui/timeago.go:38
-msgid "Two days ago"
-msgstr "To dager siden"
-
-#: ../gui/timeago.go:45
-msgid "Three days ago"
-msgstr "Tre dager siden"
-
-#: ../gui/timeago.go:52
-msgid "Four days ago"
-msgstr "Fire dager siden"
-
-#: ../gui/timeago.go:79
-msgid "%[1]s, %[2]s %[3]d, %[4]d"
-msgstr "%[1]s, %[2]s %[3]d, %[4]d"
-
-#: ../gui/timeago.go:85
-msgid "Monday"
-msgstr "Mandag"
-
-#: ../gui/timeago.go:87
-#, fuzzy
-msgid "Thursday"
-msgstr "Torsdag"
-
-#: ../gui/timeago.go:89
-msgid "Wednesday"
-msgstr "Onsdag"
-
-#: ../gui/timeago.go:91
-#, fuzzy
-msgid "Tuesday"
-msgstr "Tirsdag"
-
-#: ../gui/timeago.go:93
-msgid "Friday"
-msgstr "Fredag"
-
-#: ../gui/timeago.go:95
-msgid "Saturday"
-msgstr "Lørdag"
-
-#: ../gui/timeago.go:97
-msgid "Sunday"
-msgstr "Søndag"
-
-#: ../gui/timeago.go:106
-msgid "January"
-msgstr "Januar"
-
-#: ../gui/timeago.go:108
-msgid "February"
-msgstr "Februar"
-
-#: ../gui/timeago.go:110
-msgid "March"
-msgstr "Mars"
-
-#: ../gui/timeago.go:112
-msgid "April"
-msgstr "April"
-
-#: ../gui/timeago.go:114
-msgid "May"
-msgstr "Mai"
-
-#: ../gui/timeago.go:116
-msgid "June"
-msgstr "Juni"
-
-#: ../gui/timeago.go:118
-msgid "July"
-msgstr "Juli"
-
-#: ../gui/timeago.go:120
-msgid "August"
-msgstr "August"
-
-#: ../gui/timeago.go:122
-msgid "September"
-msgstr "September"
-
-#: ../gui/timeago.go:124
-msgid "October"
-msgstr "Oktober"
-
-#: ../gui/timeago.go:126
-msgid "November"
-msgstr "November"
-
-#: ../gui/timeago.go:128
-msgid "December"
-msgstr "Desember"
-
-#: ../gui/timeago.go:164
-msgid "An hour ago"
-msgstr "Én time siden"
-
-#: ../gui/timeago.go:166
-msgid "Few hours ago"
-msgstr "Noen timer siden"
-
-#: ../gui/timeago.go:168
-msgid "%v hours ago"
-msgstr "%v timer siden"
-
-#: ../gui/timeago.go:170
-msgid "A minute ago"
-msgstr "Ett minutt siden"
-
-#: ../gui/timeago.go:172
-msgid "A few minutes ago"
-msgstr "Noen minutter siden"
-
-#: ../gui/timeago.go:174
-msgid "%v minutes ago"
-msgstr "%v minutter siden"
-
-#: ../gui/timeago.go:176
-msgid "A second ago"
-msgstr "Ett sekund siden"
-
-#: ../gui/timeago.go:178
-msgid "A few seconds ago"
-msgstr "Noen sekunder siden"
-
-#: ../gui/timeago.go:180
-msgid "%v seconds ago"
-msgstr "%v sekunder siden"
-
-#: ../gui/timeago.go:182
-msgid "Now"
-msgstr "Nå"
-
-#: ../gui/muc_room_occupant_affiliation.go:158
-#, python-format
-msgid "You are changing the position of %s from owner to:"
-msgstr "Du endrer %s sin stilling fra innehaver til:"
-
-#: ../gui/muc_room_occupant_affiliation.go:160
-#, python-format
-msgid "You are changing the position of %s from administrator to:"
-msgstr "Du endrer stillingen til %s fra administrator til:"
-
-#: ../gui/muc_room_occupant_affiliation.go:162
-#, python-format
-msgid "You are changing the position of %s from member to:"
-msgstr "Du endrer %s sin stilling fra medlem til:"
-
-#: ../gui/muc_room_occupant_affiliation.go:165
-#, python-format
-msgid "You are changing the position of %s to:"
-msgstr "Du endrer %s sin stilling til:"
-
-#: ../gui/muc_room_occupant_affiliation.go:200
-msgid ""
-"We couldn't update the position for the person because either you don't have "
-"permission to do it or the server is busy. Please try again."
-msgstr ""
-"Kunne ikke oppdatere personens stilling fordi du enten ikke har tilgang til "
-"det, eller fordi tjeneren er opptatt. Prøv igjen."
-
-#: ../gui/muc_room_occupant_affiliation.go:202
-msgid ""
-"An error occurred when updating the position for the person. Please try "
-"again."
-msgstr "En feil oppstod under oppdatering av personens stilling. Prøv igjen."
-
-#: ../gui/fingerprint_verification.go:19
-#, python-format
-msgid ""
-"You can't verify the fingerprint for %s yet.\n"
-"\n"
-"You first have to start an encrypted conversation with them."
-msgstr ""
-"Du kan ikke bekrefte fingeravtrykket til %s enda.\n"
-"\n"
-"Du må starte en kryptert samtale med vedkommende først."
-
-#: ../gui/fingerprint_verification.go:23
-msgid ""
-"\n"
-"Is this the correct fingerprint for %[1]s?\n"
-"\n"
-"Fingerprint for you (%[3]s):\n"
-"  %[4]s\n"
-"\n"
-"Purported fingerprint for %[1]s:\n"
-"  %[2]s\n"
-"\t"
-msgstr ""
-
-#: ../gui/fingerprint_verification.go:59
-#, python-format
-msgid "Verify fingerprint for %s"
-msgstr "Bekreft fingeravtrykk tilhørende %s"
-
-#: ../gui/account_events.go:154
-msgid "Private conversation started."
-msgstr "Privat samtale startet."
-
-#: ../gui/account_events.go:154
-#, python-format
-msgid "Private conversation started (tagged: '%s')."
-msgstr "Privat samtale startet (etikettmerket: «%s»)."
-
-#: ../gui/account_events.go:154
-msgid "Unverified conversation started."
-msgstr "Ubekreftet samtale startet."
-
-#: ../gui/account_events.go:163
-msgid "Successfully refreshed the private conversation."
-msgstr "Gjenoppfrisket den private samtalen."
-
-#: ../gui/account_events.go:163
-#, python-format
-msgid "Successfully refreshed the private conversation (tagged: '%s')."
-msgstr "Gjenoppfrisket den private samtalen (etikettmerket: «%s»)."
-
-#: ../gui/account_events.go:163
-msgid "Successfully refreshed the unverified private conversation."
-msgstr "Gjenoppfrisket ubekreftet privat samtale."
-
-#: ../gui/subscription.go:15
-#, fuzzy, python-format
-msgid "%s wants to talk to you. Is that ok?"
-msgstr "%s ønsker å snakke med deg. Er det OK?"
-
-#: ../gui/subscription.go:102
-msgid "There are no currently connected accounts."
-msgstr "Ingen tilkoblede kontoer."
-
-#: ../gui/subscription.go:119
-msgid "There is no connected account selected."
-msgstr "Ingen tilkoblet konto valgt."
-
-#: ../gui/subscription.go:126
-msgid "We couldn't send a subscription."
-msgstr "Kunne ikke sende abonnement."
+msgid "There is no account with the id %q"
+msgstr "Ingen konto med ID-en %q"
+
+#: ../gui/ui.go:726
+msgid "Can't send a contact request from an offline account"
+msgstr "Kan ikke sende kontaktforespørsel fra frakoblet konto"
 
 #: ../gui/verifier.go:192
 msgid ""
@@ -6054,59 +6062,52 @@ msgstr "Hurra. Ingen lytter til din samtale med <b>%s</b>"
 msgid "We could not verify this channel with <b>%s</b>."
 msgstr "Kunne ikke bekrefte denne kanalen med <b>%s</b>."
 
-#: ../gui/muc_room_form_component.go:153
-msgid ""
-"No account is selected, please select one account from the list or connect "
-"to one."
-msgstr "Ingen konto valgt. Velg en fra listen eller koble til en."
+#: ../gui/account_events.go:154
+msgid "Private conversation started."
+msgstr "Privat samtale startet."
 
-#: ../gui/muc_room_destroy_dialog_error.go:30
-msgid "The room couldn't be destroyed"
-msgstr "Rommet kunne ikke destrueres"
+#: ../gui/account_events.go:154
+#, python-format
+msgid "Private conversation started (tagged: '%s')."
+msgstr "Privat samtale startet (etikettmerket: «%s»)."
 
-#: ../gui/muc_room_destroy_dialog_error.go:60
+#: ../gui/account_events.go:154
+msgid "Unverified conversation started."
+msgstr "Ubekreftet samtale startet."
+
+#: ../gui/account_events.go:163
+msgid "Successfully refreshed the private conversation."
+msgstr "Gjenoppfrisket den private samtalen."
+
+#: ../gui/account_events.go:163
+#, python-format
+msgid "Successfully refreshed the private conversation (tagged: '%s')."
+msgstr "Gjenoppfrisket den private samtalen (etikettmerket: «%s»)."
+
+#: ../gui/account_events.go:163
+msgid "Successfully refreshed the unverified private conversation."
+msgstr "Gjenoppfrisket ubekreftet privat samtale."
+
+#: ../gui/muc_room_roster.go:295
+msgid "%s (%v)"
+msgstr "%s (%v)"
+
+#: ../gui/muc_room_roster.go:329
+#, python-format
+msgid "%s (You)"
+msgstr "%s (deg)"
+
+#: ../gui/muc_room_roster.go:406
+msgid "Visitors"
+msgstr "Besøkende"
+
+#: ../gui/account_details.go:199
 msgid ""
-"We were able to connect to the room service, but we received an invalid "
-"response from it. Please try again later."
+"The fingerprints for %[1]s:\n"
+"%[2]s"
 msgstr ""
-"Koblet til romtjenesten, men mottok en ugyldig forespørsel fra den. Prøv "
-"igjen senere."
-
-#: ../gui/muc_room_destroy_dialog_error.go:63
-msgid ""
-"You don't have the permission to destroy this room. Please contact one of "
-"the room owners."
-msgstr ""
-"Du har ikke tilgang til å destruere dette rommet. Kontakt en av innehaverne "
-"av rommet."
-
-#: ../gui/muc_room_destroy_dialog_error.go:66
-msgid "We couldn't find the room."
-msgstr "Fant ikke rommet."
-
-#: ../gui/muc_room_destroy_dialog_error.go:68
-msgid "An unknown error occurred during the process. Please try again later."
-msgstr "En ukjent feil oppstod under prosessen. Prøv igjen senere."
-
-#: ../gui/master_password.go:30
-msgid "<b>Password can not be empty</b> - please try again"
-msgstr "<b>Passordet kan ikke stå tomt</b>. Prøv igjen"
-
-#: ../gui/master_password.go:33
-msgid "Passwords have to be the same - please try again"
-msgstr "Passordene må samsvare. Prøv igjen"
-
-#: ../gui/master_password.go:115
-msgid "Incorrect password entered, please try again."
-msgstr "Feilaktig passord innskrevet. Prøv igjen."
-
-#: ../gui/master_password.go:126
-msgid "Checking password..."
-msgstr "Sjekker passord …"
-
-#: ../gui/muc_room_close_confirm.go:61
-msgid "Close & Leave Room"
-msgstr "Lukk og forlat rom"
+"Fingeravtrykkene for %[1]s:\n"
+"%[2]s"
 
 #~ msgid "File and directory transfer(s) "
 #~ msgstr "Fil- og mappeoverføring(er) "

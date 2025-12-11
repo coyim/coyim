@@ -1,9 +1,9 @@
-//go:generate ../.build-tools/esc -o translations.go -modtime 1489449600 -pkg i18n -private es fr nb_NO pt sv
-
 package i18n
 
 import (
+	"embed"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -17,6 +17,9 @@ const defaultDirectoryPermission = 0755
 const defaultFilePermission = 0755
 
 const guardFileName = "coyim.guard"
+
+//go:embed es fr nb_NO pt sv
+var files embed.FS
 
 func (u *unpacker) hasCorrectGuard() bool {
 	targetFile := filepath.Join(u.dir, guardFileName)
@@ -63,12 +66,12 @@ func (u *unpacker) writeGuard() {
 	}
 }
 
-func (u *unpacker) isTranslationFile(name string, entry *_escFile) bool {
-	return !entry.isDir && strings.HasSuffix(name, translationFileSuffix)
+func (u *unpacker) isTranslationFile(name string, entry fs.DirEntry) bool {
+	return !entry.IsDir() && strings.HasSuffix(name, translationFileSuffix)
 }
 
 func (u *unpacker) copyTranslationFile(name string) {
-	f, e := _escStatic.Open(name)
+	f, e := files.Open(name)
 
 	if e != nil {
 		u.log.WithError(e).Error("couldn't open embedded file")
@@ -101,11 +104,17 @@ func (u *unpacker) copyTranslationFile(name string) {
 	}
 }
 
+func (u *unpacker) allFilesAndDirs(path string, d fs.DirEntry, err error) error {
+	if u.isTranslationFile(path, d) {
+		u.copyTranslationFile(path)
+	}
+	return nil
+}
+
 func (u *unpacker) copyAllTranslationFiles() {
-	for name, entry := range _escData {
-		if u.isTranslationFile(name, entry) {
-			u.copyTranslationFile(name)
-		}
+	e := fs.WalkDir(files, "", u.allFilesAndDirs)
+	if e != nil {
+		u.log.WithError(e).Error("couldn't walk translation files")
 	}
 }
 

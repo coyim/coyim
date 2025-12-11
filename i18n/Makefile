@@ -41,12 +41,3 @@ clean:
 
 # We need this to prevent make from removing the intermediate .po
 .PRECIOUS: %.po
-
-generate:
-	go generate -x .
-
-touch:
-	ls $(TRANSLATIONS:.mo=.po) | xargs -n1 touch
-
-doctor: touch generate
-	git diff --exit-code .

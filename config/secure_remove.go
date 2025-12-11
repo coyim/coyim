@@ -38,6 +38,7 @@ func secureRemove(filename string) error {
 	}
 
 	// Overwrite with random data 3 times
+	// This might not work completely perfectly on modern SSDs, but it is a best-effort measure.
 	for i := 0; i < 3; i++ {
 		err = writeRandomData(filename, info.Size())
 		if err != nil {

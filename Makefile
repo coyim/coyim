@@ -134,9 +134,6 @@ $(BUILD_TOOLS_DIR):
 $(BUILD_TOOLS_DIR)/esc: $(BUILD_TOOLS_DIR)
 	./build/find_esc.sh $(BUILD_TOOLS_DIR)
 
-gui/muc/definitions.go: $(BUILD_TOOLS_DIR)/esc gui/muc/definitions/*.xml
-	(cd gui/muc; go generate -x ui_reader.go)
-
 gui/authors.go: build/authors.rb
 	rm -rf $@
 	./build/authors.rb > $@

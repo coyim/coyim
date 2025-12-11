@@ -33,7 +33,6 @@ BUILD_TIMESTAMP := $(shell TZ='GMT' date '+%Y-%m-%d %H:%M:%S')
 GO_VERSION := $(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]*')
 
 BUILD_DIR := bin
-BUILD_TOOLS_DIR := .build-tools
 COVERPROFILES := .coverprofiles
 
 PKGS := $(shell go list ./... | grep -v /vendor)
@@ -69,7 +68,7 @@ LDF = $(LDFLAGS_MAC)
 endif
 endif
 
-.PHONY: default check autogen build build-gui build-gui-memory-analyzer build-gui-address-san build-gui-win build-debug debug win-ci-deps reproducible-linux-create-image reproducible-linux-build sign-reproducible send-reproducible-signature check-reproducible-signatures clean clean-cache update-vendor gosec ineffassign i18n lint test test-named dep-supported-only deps run-cover clean-cover cover all authors
+.PHONY: default check autogen build build-gui build-gui-memory-analyzer build-gui-address-san build-gui-win build-debug debug reproducible-linux-create-image reproducible-linux-build sign-reproducible send-reproducible-signature check-reproducible-signatures clean clean-cache update-vendor gosec ineffassign i18n lint test test-named dep-supported-only deps run-cover clean-cover cover all authors
 
 default: check
 check: lint test
@@ -100,9 +99,6 @@ build-debug: $(BUILD_DIR)/coyim-debug
 debug: $(BUILD_DIR)/coyim-debug
 	GDK_DEBUG=nograbs gdb -d $(shell go env GOROOT) --args $(BUILD_DIR)/coyim-debug -debug
 
-win-ci-deps:
-	go install github.com/rosatolen/esc@v0.0.0-20170322162328-d21c3d2332cb
-
 reproducible-linux-create-image:
 	make -C ./reproducible/docker create-image
 
@@ -121,18 +117,10 @@ check-reproducible-signatures:
 clean:
 	go clean -i -x
 	$(RM) -rf $(BUILD_DIR)
-	$(RM) -rf $(BUILD_TOOLS_DIR)
 
 clean-cache:
 	go clean -i -cache -x
 	$(RM) -rf $(BUILD_DIR)
-	$(RM) -rf $(BUILD_TOOLS_DIR)
-
-$(BUILD_TOOLS_DIR):
-	mkdir -p $@
-
-$(BUILD_TOOLS_DIR)/esc: $(BUILD_TOOLS_DIR)
-	./build/find_esc.sh $(BUILD_TOOLS_DIR)
 
 gui/authors.go: build/authors.rb
 	rm -rf $@
@@ -173,7 +161,6 @@ test-named: $(AUTOGEN)
 
 deps:
 	go install golang.org/x/lint/golint@v0.0.0-20210508222113-6edffad5e616
-	go install github.com/rosatolen/esc@v0.0.0-20170322162328-d21c3d2332cb
 
 $(COVERPROFILES):
 	mkdir -p $@

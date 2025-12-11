@@ -10,6 +10,7 @@ import (
 
 	"github.com/coyim/gotk3adapter/gtk_mock"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/sirupsen/logrus"
 
 	. "gopkg.in/check.v1"
 )
@@ -159,9 +160,17 @@ func (s *UIReaderSuite) Test_builderForDefinition_useGoFileIfXMLDoesntExists(c *
 func (s *UIReaderSuite) Test_builderForDefinition_shouldReturnErrorWhenDefinitionDoesntExist(c *C) {
 	ui := "nonexistent"
 
-	c.Assert(func() {
-		builderForDefinition(ui)
-	}, Panics, "No definition found for nonexistent")
+	defer func() {
+		if r := recover(); r != nil {
+			er := r.(*logrus.Entry)
+			c.Assert(er.Data["error"], ErrorMatches, "open definitions/nonexistent.xml: file does not exist")
+			c.Assert(er.Data["definition"], Equals, "nonexistent")
+		} else {
+			c.Error("expected builderForDefinition to fail when a definition doesn't exist")
+		}
+	}()
+
+	builderForDefinition(ui)
 }
 
 func (s *UIReaderSuite) Test_getImageBytes_forExistingImage(c *C) {

@@ -1,10 +1,10 @@
-//go:generate ../.build-tools/esc -o definitions.go -modtime 1489449600 -pkg gui -ignore "Makefile" definitions/
-
 package gui
 
 import (
+	"embed"
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path"
 	"path/filepath"
@@ -22,8 +22,11 @@ import (
 
 const (
 	xmlExtension = ".xml"
-	imagesFolder = "/definitions/images/"
+	imagesFolder = "definitions/images/"
 )
+
+//go:embed definitions
+var files embed.FS
 
 func getActualDefsFolder() string {
 	wd, _ := os.Getwd()
@@ -34,21 +37,11 @@ func getActualDefsFolder() string {
 }
 
 func getDefinitionWithFileFallback(uiName string) string {
-	fname := path.Join("/definitions", uiName+xmlExtension)
-
-	embeddedFile, err := FSString(false, fname)
-	if err != nil {
-		//Enforce the file is embedded, but dont use it.
-		panic(fmt.Sprintf("No definition found for %s", uiName))
+	content, e := fs.ReadFile(files, path.Join("definitions", uiName+xmlExtension))
+	if e != nil {
+		log.WithError(e).WithField("definition", uiName).Panic("No definition found")
 	}
-
-	fileName := filepath.Join(getActualDefsFolder(), uiName+xmlExtension)
-	if fileNotFound(fileName) {
-		return embeddedFile
-	}
-
-	log.WithField("file", fileName).Debug("Loading definition from local file")
-	return readFile(fileName)
+	return string(content)
 }
 
 func readFile(fileName string) string {
@@ -184,11 +177,11 @@ func (b *builder) get(name string) glibi.Object {
 }
 
 func mustGetImageBytes(filename string) []byte {
-	bs, err := FSByte(false, imagesFolder+filename)
-	if err != nil {
+	content, e := fs.ReadFile(files, path.Join(imagesFolder, filename))
+	if e != nil {
 		panic("Developer error: getting the image " + filename + " but it does not exist")
 	}
-	return bs
+	return content
 }
 
 // getPixbufFromBytes returns the pixbuff from a byte array.

@@ -51,7 +51,7 @@ GOTEST := $(GO) test
 TAGS_EXTRA :=
 TAGS := -tags $(GLIB_BUILD_TAG),$(GTK_BUILD_TAG),$(PANGO_BUILD_TAG),$(CAIRO_BUILD_TAG)$(TAGS_EXTRA)
 
-AUTOGEN := gui/settings/definitions/schemas.go gui/css/definitions.go
+AUTOGEN := gui/settings/definitions/schemas.go
 
 LDFLAGS_VARS := -X 'main.BuildTimestamp=$(BUILD_TIMESTAMP)' -X 'main.BuildCommit=$(GIT_VERSION)' -X 'main.BuildShortCommit=$(GIT_SHORT_VERSION)' -X 'main.BuildTag=$(TAG_VERSION)'
 LDFLAGS_REGULAR = -ldflags "$(LDFLAGS_VARS)"
@@ -133,9 +133,6 @@ $(BUILD_TOOLS_DIR):
 
 $(BUILD_TOOLS_DIR)/esc: $(BUILD_TOOLS_DIR)
 	./build/find_esc.sh $(BUILD_TOOLS_DIR)
-
-gui/css/definitions.go: $(BUILD_TOOLS_DIR)/esc gui/css/definitions/*.css gui/css/definitions/dark/*.css gui/css/definitions/light/*.css
-	(cd gui/css; go generate -x reader.go)
 
 gui/muc/definitions.go: $(BUILD_TOOLS_DIR)/esc gui/muc/definitions/*.xml
 	(cd gui/muc; go generate -x ui_reader.go)

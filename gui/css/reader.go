@@ -1,11 +1,21 @@
-//go:generate ../../.build-tools/esc -o definitions.go -private -modtime 1489449600 -pkg css -ignore "Makefile" definitions/
-
 package css
 
-import "path"
+import (
+	"embed"
+	"io/fs"
+	"path"
+
+	"github.com/sirupsen/logrus"
+)
+
+//go:embed definitions
+var files embed.FS
 
 // Get will return the CSS string corresponding to the name given
 func Get(name string) string {
-	fname := path.Join("/definitions", name)
-	return _escFSMustString(false, fname)
+	content, e := fs.ReadFile(files, path.Join("definitions", name))
+	if e != nil {
+		logrus.WithError(e).WithField("definition", name).Panic("No definition found")
+	}
+	return string(content)
 }

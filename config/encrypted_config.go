@@ -56,6 +56,7 @@ func (p *EncryptionParameters) regenerateNonce() {
 }
 
 func newEncryptionParameters() EncryptionParameters {
+	// These parameters are reasonable for 2025. They should be revisited in January 2027
 	res := EncryptionParameters{
 		N: 262144, // 2 ** 18
 		R: 8,

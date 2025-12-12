@@ -20,7 +20,7 @@ func (s *PresenceXMPPSuite) Test_SignalPresence_sendsPresenceInformation(c *C) {
 
 	err := conn.SignalPresence("fo'o")
 	c.Assert(err, IsNil)
-	c.Assert(string(mockOut.write), Equals, "<presence><show>fo&apos;o</show></presence>")
+	c.Assert(string(mockOut.write), Equals, "<presence><show>fo&#39;o</show></presence>")
 }
 
 func (s *PresenceXMPPSuite) Test_SignalPresence_returnsWriterError(c *C) {

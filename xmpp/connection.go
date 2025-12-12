@@ -218,7 +218,9 @@ func (c *conn) Close() error {
 	_, err := c.safeWrite([]byte("</stream:stream>"))
 
 	//TODO: find a better way to prevent sending message.
+	c.ioLock.Lock()
 	c.out = io.Discard
+	c.ioLock.Unlock()
 	c.closedLock.Unlock()
 
 	if err != nil {

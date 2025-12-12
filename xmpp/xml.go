@@ -7,7 +7,6 @@
 package xmpp
 
 import (
-	"bytes"
 	"encoding/xml"
 	"errors"
 	"reflect"
@@ -19,14 +18,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var xmlSpecial = map[byte]string{
-	'<':  "&lt;",
-	'>':  "&gt;",
-	'"':  "&quot;",
-	'\'': "&apos;",
-	'&':  "&amp;",
-}
-
 // xmlConn is a simplified subset of the Conn interface
 // that only exposes the functionality that XML needs
 type xmlConn interface {
@@ -36,15 +27,11 @@ type xmlConn interface {
 }
 
 func xmlEscape(s string) string {
-	//TODO: Why not using xml.EscapeText(), from stdlib?
-	var b bytes.Buffer
-	for i := 0; i < len(s); i++ {
-		c := s[i]
-		if s, ok := xmlSpecial[c]; ok {
-			_, _ = b.WriteString(s)
-		} else {
-			_ = b.WriteByte(c)
-		}
+	var b strings.Builder
+	err := xml.EscapeText(&b, []byte(s))
+	if err != nil {
+		log.WithError(err).Warn("couldn't escape XML text")
+		return ""
 	}
 	return b.String()
 }

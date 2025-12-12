@@ -19,7 +19,7 @@ var _ = Suite(&XMLXMPPSuite{})
 
 func (s *XMLXMPPSuite) Test_xmlEscape_escapesSpecialCharactersButNotRegularOnes(c *C) {
 	res := xmlEscape("abc\"<foo>bar>bar\\and &her'e;")
-	c.Assert(res, Equals, "abc&quot;&lt;foo&gt;bar&gt;bar\\and &amp;her&apos;e;")
+	c.Assert(res, Equals, "abc&#34;&lt;foo&gt;bar&gt;bar\\and &amp;her&#39;e;")
 }
 
 type testFoo struct {

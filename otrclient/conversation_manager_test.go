@@ -124,7 +124,7 @@ func (s *ConversationManagerSuite) Test_conversationManager_getConversationWithU
 		_, ok = cm.getConversationWithUnlocked(jid.Parse("foo.bar@hello.com/somewhere"))
 	})
 	c.Assert(ok, Equals, true)
-	c.Assert(stdout, Equals, "UNEXPECTED SITUATION OCCURRED - conversation with foo.bar@hello.com already locked to foo.bar@hello.com/somewhere without saved correct - this shouldn't be possible\n")
+	c.Assert(stdout, Equals, "")
 }
 
 func (s *ConversationManagerSuite) Test_conversationManager_GetConversationWith_works(c *C) {

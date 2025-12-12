@@ -79,10 +79,17 @@ func init() {
 	Server{"jabber-hosting.de", "chillingguw3yu2rmrkqsog4554egiry6fmy264l5wblyadds3c2lnyd.onion", false, false, false}.register()
 	Server{"xmpp-hosting.de", "chillingguw3yu2rmrkqsog4554egiry6fmy264l5wblyadds3c2lnyd.onion", false, false, false}.register()
 
+	Server{"5222.de", "fzdx522fvinbaqgwxdet45wryluchpplrkkzkry33um5tufkjd3wdaqd.onion", false, false, false}.register()
+	Server{"cock.li", "xdkriz6cn2avvcr2vks5lvvtmfojz2ohjzj4fhyuka55mvljeso2ztqd.onion", false, false, false}.register()
+	Server{"jabber.tcpreset.net", "ae3w7fkzr3elfwsk6mhittjj7e7whme2tumdrhw3dfumy2hsiwomc3yd.onion", false, false, false}.register()
+	Server{"jabbim.com", "mrbenqxl345o4u7yaln25ayzz5ut6ab3kteulzqusinjdx6oh7obdlad.onion", false, false, false}.register()
+	Server{"jabbers.one", "32qywqnlnqzbry42nmotr47ebts3k6lhiwfob6xniosmepz2tsnsx7ad.onion", true, false, false}.register()
+	Server{"qwik.space", "qwikoouqore6hxczat3gwbe2ixjpllh3yuhaecixyenprbn6r54mglqd.onion", false, false, false}.register()
+	Server{"skynetcloud.site", "xmppccwrohw3lmfap6e3quep2yzx3thewkfhw4vptb5gwgnkttlq2vyd.onion	", false, false, false}.register()
+
 	// These are servers that used to have onion services, but only v2 versions are available at this time.
 	// For this reason, the onion services have been removed, until we can find v3 versions for these servers.
 
-	Server{"5222.de", "", false, false, false}.register()
 	Server{"adamas.ai", "", false, false, false}.register()
 	Server{"bommboo.de", "", false, false, false}.register()
 
@@ -104,7 +111,7 @@ func init() {
 	Server{"im.koderoot.net", "", false, false, false}.register()
 
 	// No more inband registration
-	// Server{"jabber-germany.de", "", true, false, false}.register()
+	Server{"jabber-germany.de", "gku6irp4e65ikfkbrdx576zz6biapv37vv2cmklo2qyrtobugwz5iaad.onion", false, false, false}.register()
 
 	// Returns a V2 Tor onion from DNS and doesn't respond properly
 	// Server{"jabber.calyxinstitute.org", "", true, true, false}.register()
@@ -122,7 +129,7 @@ func init() {
 
 	// Server seems gone
 	// Server{"patchcord.be", "", true, false, false}.register()
-	Server{"pimux.de", "", false, false, false}.register()
+	Server{"pimux.de", "2n3tvihf4n27pqyqdtcqywl33kbjuv2kj3eeq6qvbtud57jwiaextmid.onion", false, false, false}.register()
 	Server{"securejabber.me", "", false, false, false}.register()
 	Server{"securetalks.biz", "", false, false, false}.register()
 
@@ -247,8 +254,7 @@ func init() {
 	Server{"chatrix.one", "", true, false, false}.register()
 	Server{"hookipa.net", "", true, false, false}.register()
 	Server{"jabber.fr", "", true, false, false}.register()
-	Server{"jabbers.one", "", true, false, false}.register()
-	Server{"magicbroccoli.de", "", true, false, false}.register()
+	Server{"magicbroccoli.de", "gois4b6fahhrlsieupl56xd6ya226m33abzuv26vgfpuvv44wf6vbdad.onion", true, false, false}.register()
 	Server{"redlibre.es", "", true, false, false}.register()
 	Server{"xmpp.earth", "", true, false, false}.register()
 	Server{"xmpp.eco.br", "", true, false, false}.register()

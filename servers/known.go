@@ -239,6 +239,20 @@ func init() {
 	//	Server{"xmpp.zone", "", true, false, false}.register()
 
 	Server{"yax.im", "", true, false, false}.register()
+
+	Server{"07f.de", "", true, false, false}.register()
+	Server{"chalec.org", "", true, false, false}.register()
+	Server{"chapril.org", "", true, false, false}.register()
+	Server{"chat.between-us.online", "", true, false, false}.register()
+	Server{"chatrix.one", "", true, false, false}.register()
+	Server{"hookipa.net", "", true, false, false}.register()
+	Server{"jabber.fr", "", true, false, false}.register()
+	Server{"jabbers.one", "", true, false, false}.register()
+	Server{"magicbroccoli.de", "", true, false, false}.register()
+	Server{"redlibre.es", "", true, false, false}.register()
+	Server{"xmpp.earth", "", true, false, false}.register()
+	Server{"xmpp.eco.br", "", true, false, false}.register()
+	Server{"xmpp.party", "", true, false, false}.register()
 }
 
 // Get returns the given server information if it is known, and not ok otherwise

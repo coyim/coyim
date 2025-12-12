@@ -65,5 +65,5 @@ func (s *KnownSuite) Test_GetOnion_returnsOnion(c *C) {
 
 func (s *KnownSuite) Test_GetServersForRegistration(c *C) {
 	res := GetServersForRegistration()
-	c.Assert(res, HasLen, 14)
+	c.Assert(res, HasLen, 27)
 }

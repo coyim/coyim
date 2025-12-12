@@ -105,6 +105,10 @@ func (u *unpacker) copyTranslationFile(name string) {
 }
 
 func (u *unpacker) allFilesAndDirs(path string, d fs.DirEntry, err error) error {
+	if d == nil {
+		return err
+	}
+
 	if u.isTranslationFile(path, d) {
 		u.copyTranslationFile(path)
 	}
@@ -112,7 +116,7 @@ func (u *unpacker) allFilesAndDirs(path string, d fs.DirEntry, err error) error 
 }
 
 func (u *unpacker) copyAllTranslationFiles() {
-	e := fs.WalkDir(files, "", u.allFilesAndDirs)
+	e := fs.WalkDir(files, ".", u.allFilesAndDirs)
 	if e != nil {
 		u.log.WithError(e).Error("couldn't walk translation files")
 	}

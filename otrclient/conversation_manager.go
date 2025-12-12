@@ -1,7 +1,6 @@
 package otrclient
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/coyim/coyim/coylog"
@@ -74,9 +73,6 @@ func (m *conversationManager) getConversationWithUnlocked(peer jid.Any) (Convers
 
 	c, ok := m.conversations[pwor.String()]
 	if ok && pwr != nil {
-		if c.locked {
-			fmt.Printf("UNEXPECTED SITUATION OCCURRED - conversation with %s already locked to %s without saved correct - this shouldn't be possible\n", pwor, pwr)
-		}
 		c.locked = true
 		c.peer = pwr
 		c.eh.peer = pwr

@@ -268,6 +268,9 @@ func (p *Peer) ResourceToUse() jid.Resource {
 
 // ResourceToUseFallback returns the resource to use for this peer or any resource if one exists
 func (p *Peer) ResourceToUseFallback() jid.Resource {
+	p.resourcesLock.RLock()
+	defer p.resourcesLock.RUnlock()
+
 	if p.lockedResource != jid.NewResource("") {
 		return p.lockedResource
 	}
@@ -283,6 +286,9 @@ func (p *Peer) IsOnline() bool {
 }
 
 func (p *Peer) currentResourceStatus() Status {
+	p.resourcesLock.RLock()
+	defer p.resourcesLock.RUnlock()
+
 	if p.lockedResource != jid.NewResource("") {
 		return p.resources[p.lockedResource.String()]
 	}

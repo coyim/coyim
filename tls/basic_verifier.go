@@ -46,7 +46,7 @@ func (v *BasicVerifier) canConnectInPresenceOfPins(certs []*x509.Certificate) er
 		return nil
 	case "deny": // We will never approve a new certificate and will fail immediately, not even asking the user
 		v.OnPinDeny()
-		return errors.New("tls: you have a pinning policy that stops us from connecting using this certificate")
+		return errors.New("tls: you have a pinning policy (deny) that stops us from connecting using this certificate")
 	case "add": // We will always add a new certificate to our list of certs
 		v.AddCert(certs[0])
 		return nil
@@ -62,13 +62,13 @@ func (v *BasicVerifier) canConnectInPresenceOfPins(certs []*x509.Certificate) er
 			return nil
 		}
 		v.OnPinDeny()
-		return errors.New("tls: you have a pinning policy that stops us from connecting using this certificate")
+		return errors.New("tls: you have a pinning policy (add-first-deny-rest) that stops us from connecting using this certificate")
 	case "ask": // We will always ask
 		return v.AskPinning(certs)
 	}
 
 	v.OnPinDeny()
-	return errors.New("tls: you have a pinning policy that stops us from connecting using other certificates")
+	return errors.New("tls: you do not have a pinning policy, this stops us from connecting using certificates that are not already saved")
 }
 
 // Verify implements tls.Verifier

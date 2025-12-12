@@ -69,7 +69,7 @@ func (s *VerifierSuite) Test_BasicVerifier_canConnectInPresenceOfPins_withPinnin
 		},
 	}
 
-	c.Assert(v.canConnectInPresenceOfPins(nil), ErrorMatches, "tls: you have a pinning policy that stops us from connecting using this certificate")
+	c.Assert(v.canConnectInPresenceOfPins(nil), ErrorMatches, "tls: you have a pinning policy \\(deny\\) that stops us from connecting using this certificate")
 	c.Assert(called, Equals, true)
 }
 
@@ -169,7 +169,7 @@ func (s *VerifierSuite) Test_BasicVerifier_canConnectInPresenceOfPins_withPinnin
 		},
 	}
 
-	c.Assert(v.canConnectInPresenceOfPins(certs), ErrorMatches, "tls: you have a pinning policy that stops us from connecting using this certificate")
+	c.Assert(v.canConnectInPresenceOfPins(certs), ErrorMatches, "tls: you have a pinning policy \\(add-first-deny-rest\\) that stops us from connecting using this certificate")
 	c.Assert(called, Equals, true)
 }
 
@@ -203,7 +203,7 @@ func (s *VerifierSuite) Test_BasicVerifier_canConnectInPresenceOfPins_withPinnin
 		},
 	}
 
-	c.Assert(v.canConnectInPresenceOfPins(certs), ErrorMatches, "tls: you have a pinning policy that stops us from connecting using other certificates")
+	c.Assert(v.canConnectInPresenceOfPins(certs), ErrorMatches, "tls: you do not have a pinning policy, this stops us from connecting using certificates that are not already saved")
 	c.Assert(called, Equals, true)
 }
 
@@ -320,6 +320,6 @@ func (s *VerifierSuite) Test_BasicVerifier_Verify_checksPinsForVerifiedDomain(c 
 	}
 
 	e := v.Verify(tls.ConnectionState{PeerCertificates: []*x509.Certificate{cert}}, conf, "foo.bar.com")
-	c.Assert(e, ErrorMatches, "tls: you have a pinning policy that stops us from connecting using this certificate")
+	c.Assert(e, ErrorMatches, "tls: you have a pinning policy \\(deny\\) that stops us from connecting using this certificate")
 	c.Assert(called, Equals, true)
 }

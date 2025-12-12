@@ -219,14 +219,16 @@ func (s *SaslXMPPSuite) Test_conn_authenticateWithPreferedMethod_handlesBrokenSe
 	e := cn.authenticateWithPreferedMethod("foo", "bar")
 
 	c.Assert(e, ErrorMatches, "EOF")
-	c.Assert(len(hook.Entries), Equals, 2)
+	c.Assert(len(hook.Entries), Equals, 4)
 	c.Assert(hook.Entries[0].Level, Equals, log.InfoLevel)
 	c.Assert(hook.Entries[0].Message, Equals, "sasl: server supports mechanisms")
 	c.Assert(hook.Entries[0].Data, HasLen, 1)
-	c.Assert(hook.Entries[1].Level, Equals, log.InfoLevel)
-	c.Assert(hook.Entries[1].Message, Equals, "sasl: authenticating via")
-	c.Assert(hook.Entries[1].Data, HasLen, 1)
-	c.Assert(hook.Entries[1].Data["mechanism"], Equals, "DIGEST-MD5")
+	c.Assert(hook.Entries[1].Message, Equals, "sasl: server only supports weak authentication - consider using a different server")
+	c.Assert(hook.Entries[2].Message, Equals, "Using deprecated DIGEST-MD5 authentication (RFC 6331)")
+	c.Assert(hook.Entries[3].Level, Equals, log.InfoLevel)
+	c.Assert(hook.Entries[3].Message, Equals, "sasl: authenticating via")
+	c.Assert(hook.Entries[3].Data, HasLen, 1)
+	c.Assert(hook.Entries[3].Data["mechanism"], Equals, "DIGEST-MD5")
 }
 
 func (s *SaslXMPPSuite) Test_conn_BindResource(c *C) {

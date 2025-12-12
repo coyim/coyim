@@ -1,3 +1,6 @@
+// Package tls provides several helper structures to support the CoyIM features for pinning and verifying certificates
+// in more ways than the standard crypto/tls package provides. It also includes support for factories to simplify
+// creation and testing.
 package tls
 
 import (
@@ -82,6 +85,10 @@ func (v *BasicVerifier) Verify(state tls.ConnectionState, conf *tls.Config, orig
 	chains, err := v.verifyCert(state.PeerCertificates, conf)
 	if err != nil {
 		return v.VerifyFailure(state.PeerCertificates, err)
+	}
+
+	if len(chains) == 0 || len(chains[0]) == 0 {
+		return v.VerifyHostnameFailure(state.PeerCertificates, originDomain, errors.New("no certificate chain to verify"))
 	}
 
 	if err = verifyHostName(chains[0][0], originDomain); err != nil {

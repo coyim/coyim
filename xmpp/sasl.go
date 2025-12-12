@@ -11,11 +11,13 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"slices"
 
 	"github.com/coyim/coyim/xmpp/data"
 	xe "github.com/coyim/coyim/xmpp/errors"
 	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/jid"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/sasl"
 	"github.com/coyim/coyim/sasl/digestmd5"
@@ -86,6 +88,8 @@ var preferedMechanisms = []string{"SCRAM-SHA-512-PLUS", "SCRAM-SHA-512", "SCRAM-
 var preferedMechanismsWithoutChannelBinding = []string{"SCRAM-SHA-512", "SCRAM-SHA-256", "SCRAM-SHA-1", "DIGEST-MD5", "PLAIN"}
 var preferedMechanismsWithoutSCRAM = []string{"DIGEST-MD5", "PLAIN"}
 
+var weakMechanisms = []string{"DIGEST-MD5", "SCRAM-SHA-1", "PLAIN"}
+
 func (c *conn) authenticateWithPreferedMethod(user, password string) error {
 	//TODO: this should be configurable by the client
 	pm := preferedMechanisms
@@ -103,6 +107,18 @@ func (c *conn) authenticateWithPreferedMethod(user, password string) error {
 	for _, prefered := range pm {
 		for _, m := range c.features.Mechanisms.Mechanism {
 			if prefered == m {
+				if slices.Contains(weakMechanisms, prefered) {
+					c.weakAuthenticationUsed = true
+					c.log.WithField("mechanism", prefered).Warn("sasl: server only supports weak authentication - consider using a different server")
+				}
+
+				if prefered == "DIGEST-MD5" {
+					c.log.WithFields(log.Fields{
+						"mechanism": prefered,
+						"server":    c.serverAddress,
+					}).Warn("Using deprecated DIGEST-MD5 authentication (RFC 6331)")
+				}
+
 				c.log.WithField("mechanism", prefered).Info("sasl: authenticating via")
 				return c.authenticateWith(prefered, user, password)
 			}

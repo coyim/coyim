@@ -20,9 +20,9 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/coyim/coyim/internal/util"
 	"github.com/coyim/coyim/cache"
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/internal/util"
 	"github.com/coyim/coyim/servers"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
@@ -74,6 +74,8 @@ type conn struct {
 
 	serverFeaturesInit sync.Once
 	serverFeatures     map[string]bool
+
+	weakAuthenticationUsed bool
 }
 
 func (c *conn) Cache() cache.WithExpiry {
@@ -418,7 +420,7 @@ func messageToByteArray(m *data.ClientMessage) []byte {
 func (c *conn) ReadStanzas(stanzaChan chan<- data.Stanza) error {
 	defer close(stanzaChan)
 	defer func() {
-		util.LogIgnoredError(c.closeImmediately(), c.log, "immediately closing connection")		
+		util.LogIgnoredError(c.closeImmediately(), c.log, "immediately closing connection")
 	}()
 
 	for {

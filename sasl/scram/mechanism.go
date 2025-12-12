@@ -49,8 +49,9 @@ func (m *scramMechanism) NewClient() sasl.Session {
 
 type scram struct {
 	state
-	channelBinding []byte
-	props          sasl.Properties
+	channelBinding     []byte
+	channelBindingType string
+	props              sasl.Properties
 }
 
 func (p *scram) SetProperty(prop sasl.Property, v string) error {
@@ -60,7 +61,7 @@ func (p *scram) SetProperty(prop sasl.Property, v string) error {
 
 func (p *scram) Step(t sasl.Token) (ret sasl.Token, err error) {
 	pairs := sasl.ParseAttributeValuePairs(t)
-	p.state, ret, err = p.state.next(t, p.props, pairs, p.channelBinding)
+	p.state, ret, err = p.state.next(t, p.props, pairs, p.channelBinding, p.channelBindingType)
 	return
 }
 
@@ -70,4 +71,8 @@ func (p *scram) NeedsMore() bool {
 
 func (p *scram) SetChannelBinding(v []byte) {
 	p.channelBinding = v
+}
+
+func (p *scram) SetChannelBindingType(t string) {
+	p.channelBindingType = t
 }

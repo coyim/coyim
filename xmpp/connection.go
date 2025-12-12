@@ -64,7 +64,8 @@ type conn struct {
 
 	statusUpdates chan<- string
 
-	channelBinding []byte
+	channelBinding     []byte
+	channelBindingType string // "tls-unique" for TLS 1.2, "tls-exporter" for TLS 1.3
 
 	log coylog.Logger
 
@@ -451,6 +452,16 @@ func (c *conn) SetChannelBinding(v []byte) {
 // support this
 func (c *conn) GetChannelBinding() []byte {
 	return c.channelBinding
+}
+
+// SetChannelBindingType sets the channel binding type (e.g., "tls-unique" or "tls-exporter")
+func (c *conn) SetChannelBindingType(t string) {
+	c.channelBindingType = t
+}
+
+// GetChannelBindingType gets the channel binding type
+func (c *conn) GetChannelBindingType() string {
+	return c.channelBindingType
 }
 
 func (c *conn) safeWrite(b []byte) (int, error) {

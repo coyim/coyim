@@ -159,6 +159,11 @@ func (c *conn) authenticateWith(mechanism string, user string, password string) 
 
 	clientAuth.SetChannelBinding(c.GetChannelBinding())
 
+	// Set channel binding type (tls-unique for TLS 1.2, tls-exporter for TLS 1.3)
+	if scramClient, ok := clientAuth.(interface{ SetChannelBindingType(string) }); ok {
+		scramClient.SetChannelBindingType(c.GetChannelBindingType())
+	}
+
 	//TODO: this should come from username if it were a full JID
 	//clientAuth.SetProperty(sasl.Realm, "")
 

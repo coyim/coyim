@@ -10,26 +10,26 @@ func (s *ScramSuite) Test_states_start_finished(c *C) {
 }
 
 func (s *ScramSuite) Test_states_start_next_failsOnMissingAuthID(c *C) {
-	_, _, e := (start{}).next(nil, sasl.Properties{}, nil, nil)
+	_, _, e := (start{}).next(nil, sasl.Properties{}, nil, nil, "")
 	c.Assert(e, ErrorMatches, "missing property '\\\\x00'")
 }
 
 func (s *ScramSuite) Test_states_start_next_failsOnMissingClientNonce(c *C) {
 	_, _, e := (start{}).next(nil, sasl.Properties{
 		sasl.AuthID: "foo",
-	}, nil, nil)
+	}, nil, nil, "")
 	c.Assert(e, ErrorMatches, "missing property '\\\\x06'")
 }
 
 func (s *ScramSuite) Test_states_expectingServerFirstMessage_next_failsOnMissingNonce(c *C) {
-	_, _, e := (expectingServerFirstMessage{}).next(nil, sasl.Properties{}, sasl.AttributeValuePairs{}, nil)
+	_, _, e := (expectingServerFirstMessage{}).next(nil, sasl.Properties{}, sasl.AttributeValuePairs{}, nil, "")
 	c.Assert(e, ErrorMatches, "missing parameter in server challenge")
 }
 
 func (s *ScramSuite) Test_states_expectingServerFirstMessage_next_failsOnMissingSalt(c *C) {
 	_, _, e := (expectingServerFirstMessage{}).next(nil, sasl.Properties{}, sasl.AttributeValuePairs{
 		"r": "foo",
-	}, nil)
+	}, nil, "")
 	c.Assert(e, ErrorMatches, "missing parameter in server challenge")
 }
 
@@ -37,7 +37,7 @@ func (s *ScramSuite) Test_states_expectingServerFirstMessage_next_failsOnBadSalt
 	_, _, e := (expectingServerFirstMessage{}).next(nil, sasl.Properties{}, sasl.AttributeValuePairs{
 		"r": "foo",
 		"s": "&%*&^*(&(",
-	}, nil)
+	}, nil, "")
 	c.Assert(e, ErrorMatches, "illegal base64 data at input byte 0")
 }
 
@@ -45,7 +45,7 @@ func (s *ScramSuite) Test_states_expectingServerFirstMessage_next_failsOnMissing
 	_, _, e := (expectingServerFirstMessage{}).next(nil, sasl.Properties{}, sasl.AttributeValuePairs{
 		"r": "foo",
 		"s": "salt",
-	}, nil)
+	}, nil, "")
 	c.Assert(e, ErrorMatches, "missing parameter in server challenge")
 }
 
@@ -54,7 +54,7 @@ func (s *ScramSuite) Test_states_expectingServerFirstMessage_next_failsOnBadCoun
 		"r": "foo",
 		"s": "salt",
 		"i": "not a number",
-	}, nil)
+	}, nil, "")
 	c.Assert(e, ErrorMatches, "strconv.Atoi.*")
 }
 
@@ -63,7 +63,7 @@ func (s *ScramSuite) Test_states_expectingServerFirstMessage_next_failsOnMissing
 		"r": "foo",
 		"s": "salt",
 		"i": "123",
-	}, nil)
+	}, nil, "")
 	c.Assert(e, ErrorMatches, "missing property '\\\\x01'")
 }
 
@@ -74,7 +74,7 @@ func (s *ScramSuite) Test_states_expectingServerFirstMessage_next_failsOnMissing
 		"r": "foo",
 		"s": "salt",
 		"i": "123",
-	}, nil)
+	}, nil, "")
 	c.Assert(e, ErrorMatches, "missing property '\\\\x06'")
 }
 
@@ -86,19 +86,19 @@ func (s *ScramSuite) Test_states_expectingServerFirstMessage_next_failsIfClientN
 		"r": "foo",
 		"s": "salt",
 		"i": "123",
-	}, nil)
+	}, nil, "")
 	c.Assert(e, ErrorMatches, "nonce mismatch")
 }
 
 func (s *ScramSuite) Test_calculateChannelBindingPrefix_withPlus(c *C) {
-	c.Assert(calculateChannelBindingPrefix(true, false), Equals, "p=tls-unique")
+	c.Assert(calculateChannelBindingPrefix(true, false, "tls-unique"), Equals, "p=tls-unique")
 }
 
 func (s *ScramSuite) Test_states_expectingServerFirstMessage_calculateChannelBinding(c *C) {
 	st := expectingServerFirstMessage{
 		plus: true,
 	}
-	res := st.calculateChannelBinding([]byte("something"))
+	res := st.calculateChannelBinding([]byte("something"), "tls-unique")
 	c.Assert(res, Equals, "cD10bHMtdW5pcXVlLCxzb21ldGhpbmc=")
 }
 
@@ -106,12 +106,12 @@ func (s *ScramSuite) Test_states_expectingServerFinalMessage_next_failsOnCompari
 	st := expectingServerFinalMessage{
 		serverAuthentication: []byte("foo bar"),
 	}
-	_, _, e := st.next(sasl.Token([]byte("something else")), nil, nil, nil)
+	_, _, e := st.next(sasl.Token([]byte("something else")), nil, nil, nil, "")
 	c.Assert(e, ErrorMatches, "server signature mismatch")
 }
 
 func (s *ScramSuite) Test_states_finished_next(c *C) {
 	st := finished{}
-	nst, _, _ := st.next(nil, nil, nil, nil)
+	nst, _, _ := st.next(nil, nil, nil, nil, "")
 	c.Assert(nst, DeepEquals, st)
 }

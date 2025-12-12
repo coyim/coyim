@@ -7,7 +7,7 @@
 package xmpp
 
 import (
-	"crypto/tls"
+	gotls "crypto/tls"
 	"crypto/x509"
 	"errors"
 	"fmt"
@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/tls"
 	"github.com/coyim/coyim/xmpp/interfaces"
 )
 
@@ -34,7 +35,7 @@ func certName(cert *x509.Certificate) string {
 }
 
 // GetCipherSuiteName returns a human readable string of the cipher suite used in the state
-func GetCipherSuiteName(tlsState tls.ConnectionState) string {
+func GetCipherSuiteName(tlsState gotls.ConnectionState) string {
 	cipherSuite, ok := tlsCipherSuiteNames[tlsState.CipherSuite]
 	if !ok {
 		return "unknown"
@@ -43,7 +44,7 @@ func GetCipherSuiteName(tlsState tls.ConnectionState) string {
 }
 
 // GetTLSVersion returns a human readable string of the TLS version used in the state
-func GetTLSVersion(tlsState tls.ConnectionState) string {
+func GetTLSVersion(tlsState gotls.ConnectionState) string {
 	version, ok := tlsVersionStrings[tlsState.Version]
 	if !ok {
 		return "unknown"
@@ -52,9 +53,43 @@ func GetTLSVersion(tlsState tls.ConnectionState) string {
 	return version
 }
 
-func printTLSDetails(ll coylog.Logger, tlsState tls.ConnectionState) {
+func printTLSDetails(ll coylog.Logger, tlsState gotls.ConnectionState) {
 	ll.WithField("version", GetTLSVersion(tlsState)).Info("  SSL/TLS/version")
 	ll.WithField("cipherSuite", GetCipherSuiteName(tlsState)).Info("  Cipher suite")
+}
+
+// setChannelBindingData sets channel binding data on the connection based on TLS version
+func setChannelBindingData(c interfaces.Conn, tlsConn tls.Conn, tlsState gotls.ConnectionState, log coylog.Logger) {
+	var channelBinding []byte
+	var channelBindingType string
+
+	if tlsState.Version == gotls.VersionTLS13 {
+		// For TLS 1.3, use the exporter mechanism (RFC 9266)
+		// ExportKeyingMaterial is on ConnectionState, not Conn
+		var err error
+		channelBinding, err = tlsState.ExportKeyingMaterial("EXPORTER-Channel-Binding", nil, 32)
+		if err != nil {
+			log.WithError(err).Warn("Failed to export keying material for TLS 1.3 channel binding")
+			channelBinding = nil
+			channelBindingType = ""
+		} else {
+			channelBindingType = "tls-exporter"
+			log.Info("Using TLS 1.3 channel binding (tls-exporter)")
+		}
+	} else {
+		// For TLS 1.2 and earlier, use tls-unique
+		channelBinding = tlsState.TLSUnique
+		if channelBinding != nil {
+			channelBindingType = "tls-unique"
+			log.Info("Using TLS 1.2 channel binding (tls-unique)")
+		}
+	}
+
+	c.SetChannelBinding(channelBinding)
+	// Set channel binding type if we can
+	if cc, ok := c.(*conn); ok {
+		cc.SetChannelBindingType(channelBindingType)
+	}
 }
 
 // RFC 6120, section 5.4
@@ -98,7 +133,7 @@ func (d *dialer) startRawTLS(c interfaces.Conn, conn net.Conn) error {
 
 	tlsConfig := c.Config().TLSConfig
 	if tlsConfig == nil {
-		tlsConfig = &tls.Config{}
+		tlsConfig = &gotls.Config{}
 	}
 
 	tlsConfig.ServerName = c.OriginDomain()
@@ -119,7 +154,9 @@ func (d *dialer) startRawTLS(c interfaces.Conn, conn net.Conn) error {
 		return err
 	}
 
-	c.SetChannelBinding(tlsState.TLSUnique)
+	// Set channel binding data based on TLS version
+	// TLS 1.3 uses tls-exporter (RFC 9266), earlier versions use tls-unique
+	setChannelBindingData(c, tlsConn, tlsState, d.log)
 	d.bindTransport(c, tlsConn)
 
 	return nil

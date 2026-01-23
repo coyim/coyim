@@ -20,39 +20,39 @@ func fileExists(filename string) bool {
 func ensureIconsInstalled() {
 	dataHome := config.SystemDataDir()
 	if dataHome != "" && fileExists(dataHome) {
-		icon16, _ := coyimIcon.createPixBufWithSize(16, 16)
-		icon32, _ := coyimIcon.createPixBufWithSize(32, 32)
-		icon48, _ := coyimIcon.createPixBufWithSize(48, 48)
-		icon128, _ := coyimIcon.createPixBufWithSize(128, 128)
-		icon256, _ := coyimIcon.createPixBufWithSize(256, 256)
+		icon16 := orErrOs(coyimIcon.createPixBufWithSize(16, 16))
+		icon32 := orErrOs(coyimIcon.createPixBufWithSize(32, 32))
+		icon48 := orErrOs(coyimIcon.createPixBufWithSize(48, 48))
+		icon128 := orErrOs(coyimIcon.createPixBufWithSize(128, 128))
+		icon256 := orErrOs(coyimIcon.createPixBufWithSize(256, 256))
 
-		_ = os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/16x16/apps"), 0700)
-		_ = os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/32x32/apps"), 0700)
-		_ = os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/48x48/apps"), 0700)
-		_ = os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/128x128/apps"), 0700)
-		_ = os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/256x256/apps"), 0700)
+		ignErrOs(os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/16x16/apps"), 0700))
+		ignErrOs(os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/32x32/apps"), 0700))
+		ignErrOs(os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/48x48/apps"), 0700))
+		ignErrOs(os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/128x128/apps"), 0700))
+		ignErrOs(os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/256x256/apps"), 0700))
 
 		fileName := iconFileName()
-		_ = icon16.SavePNG(filepath.Join(dataHome, "icons/hicolor/16x16/apps", fileName), 9)
-		_ = icon32.SavePNG(filepath.Join(dataHome, "icons/hicolor/32x32/apps", fileName), 9)
-		_ = icon48.SavePNG(filepath.Join(dataHome, "icons/hicolor/48x48/apps", fileName), 9)
-		_ = icon128.SavePNG(filepath.Join(dataHome, "icons/hicolor/128x128/apps", fileName), 9)
-		_ = icon256.SavePNG(filepath.Join(dataHome, "icons/hicolor/256x256/apps", fileName), 9)
+		ignErrOs(icon16.SavePNG(filepath.Join(dataHome, "icons/hicolor/16x16/apps", fileName), 9))
+		ignErrOs(icon32.SavePNG(filepath.Join(dataHome, "icons/hicolor/32x32/apps", fileName), 9))
+		ignErrOs(icon48.SavePNG(filepath.Join(dataHome, "icons/hicolor/48x48/apps", fileName), 9))
+		ignErrOs(icon128.SavePNG(filepath.Join(dataHome, "icons/hicolor/128x128/apps", fileName), 9))
+		ignErrOs(icon256.SavePNG(filepath.Join(dataHome, "icons/hicolor/256x256/apps", fileName), 9))
 	}
 }
 
 func ensureDesktopFileInstalled() {
 	dataHome := config.SystemDataDir()
-	if dataHome != "" && fileExists(dataHome) {
-		_ = os.MkdirAll(filepath.Join(dataHome, "applications"), 0700)
-		_ = os.WriteFile(filepath.Join(dataHome, "applications", "coyim.desktop"), []byte(generateDesktopFile(false)), 0600)
-		_ = os.WriteFile(filepath.Join(dataHome, "applications", "coyim-debug.desktop"), []byte(generateDesktopFile(true)), 0600)
+	if dataHome != "" && fileExists(dataHome) && !*config.DontCreateDesktopFlag {
+		ignErrOs(os.MkdirAll(filepath.Join(dataHome, "applications"), 0700))
+		ignErrOs(os.WriteFile(filepath.Join(dataHome, "applications", "coyim.desktop"), []byte(generateDesktopFile(false)), 0600))
+		ignErrOs(os.WriteFile(filepath.Join(dataHome, "applications", "coyim-debug.desktop"), []byte(generateDesktopFile(true)), 0600))
 	}
 }
 
 func generateDesktopFile(debug bool) string {
 	name := "CoyIM"
-	path, _ := osext.Executable()
+	path := orErrOs(osext.Executable())
 	icon := iconFileName()
 	revision := coyimVersion
 

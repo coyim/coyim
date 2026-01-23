@@ -11,6 +11,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/coyim/coyim/internal/util"
 	"github.com/coyim/coyim/xmpp/data"
 )
 
@@ -80,9 +81,9 @@ func (c *conn) watchPings() {
 			if failures >= maxPingFailures {
 				c.log.WithField("threshold", maxPingFailures).Warn("xmpp: ping failures reached threshold")
 
-				_ = c.sendStreamError(data.StreamError{
+				util.LogIgnoredError(c.sendStreamError(data.StreamError{
 					DefinedCondition: data.ConnectionTimeout,
-				})
+				}), c.log, "sending stream error")
 
 				return
 			}

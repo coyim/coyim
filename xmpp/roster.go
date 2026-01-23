@@ -25,7 +25,7 @@ func (c *conn) RequestRoster() (<-chan data.Stanza, data.Cookie, error) {
 
 	_, err := c.safeWrite(outb.Bytes())
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("writing bytes failed: %w", err)
 	}
 
 	return c.createInflight(cookie, "")

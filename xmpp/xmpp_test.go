@@ -265,7 +265,7 @@ func (s *XMPPSuite) TestConnRequestRosterErr(c *C) {
 	c.Assert(string(mockOut.write), Matches, "<iq type='get' id='.*'><query xmlns='jabber:iq:roster'/></iq>")
 	c.Assert(ch, IsNil)
 	c.Assert(cookie, NotNil)
-	c.Assert(err, Equals, io.EOF)
+	c.Assert(err, ErrorMatches, "writing bytes failed: EOF")
 }
 
 func (s *XMPPSuite) TestParseRoster(c *C) {

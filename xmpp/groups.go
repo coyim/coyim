@@ -65,7 +65,7 @@ func (c *conn) RequestRosterDelimiter() (<-chan data.Stanza, data.Cookie, error)
 
 	_, err := c.safeWrite(outb.Bytes())
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("writing bytes: %w", err)
 	}
 
 	return createInflight(c, cookie, "")

@@ -5,6 +5,7 @@ import (
 	"io"
 	"time"
 
+	"github.com/coyim/coyim/internal/util"
 	"github.com/coyim/coyim/xmpp/data"
 )
 
@@ -31,9 +32,9 @@ func (c *conn) watchKeepAlive() {
 		c.log.Info("xmpp: keepalive failed")
 
 		go func() {
-			_ = c.sendStreamError(data.StreamError{
+			util.LogIgnoredError(c.sendStreamError(data.StreamError{
 				DefinedCondition: data.ConnectionTimeout,
-			})
+			}), c.log, "sending stream error")
 		}()
 
 		return

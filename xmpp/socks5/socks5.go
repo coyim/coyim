@@ -2,10 +2,12 @@ package socks5
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"strconv"
 
+	"github.com/coyim/coyim/internal/util"
 	"golang.org/x/net/proxy"
 )
 
@@ -73,8 +75,8 @@ func (s *socks5) Dial(network, addr string) (net.Conn, error) {
 		return nil, err
 	}
 	if err := s.connect(conn, addr); err != nil {
-		_ = conn.Close()
-		return nil, err
+		util.LogIgnoredError(conn.Close(), nil, "close after failed connect")
+		return nil, fmt.Errorf("connection failed: %w", err)
 	}
 	return conn, nil
 }
@@ -85,12 +87,12 @@ func (s *socks5) Dial(network, addr string) (net.Conn, error) {
 func (s *socks5) connect(conn net.Conn, target string) error {
 	host, portStr, err := net.SplitHostPort(target)
 	if err != nil {
-		return err
+		return fmt.Errorf("proxy: failed to split host and port: %w", err)
 	}
 
 	port, err := strconv.Atoi(portStr)
 	if err != nil {
-		return errors.New("proxy: failed to parse port number: " + portStr)
+		return fmt.Errorf("proxy: failed to parse port number: %w", err)
 	}
 	if port > 0xffff {
 		return errors.New("proxy: port number out of range: " + portStr)
@@ -107,17 +109,17 @@ func (s *socks5) connect(conn net.Conn, target string) error {
 	}
 
 	if _, err := conn.Write(buf); err != nil {
-		return errors.New("proxy: failed to write greeting to SOCKS5 proxy at " + s.addr + ": " + err.Error())
+		return fmt.Errorf("proxy: failed to write greeting to SOCKS5 proxy at %s: %w", s.addr, err)
 	}
 
 	if _, err := io.ReadFull(conn, buf[:2]); err != nil {
-		return errors.New("proxy: failed to read greeting from SOCKS5 proxy at " + s.addr + ": " + err.Error())
+		return fmt.Errorf("proxy: failed to read greeting from SOCKS5 proxy at %s: %w", s.addr, err)
 	}
 	if buf[0] != 5 {
-		return errors.New("proxy: SOCKS5 proxy at " + s.addr + " has unexpected version " + strconv.Itoa(int(buf[0])))
+		return fmt.Errorf("proxy: SOCKS5 proxy at %s has unexpected version %s", s.addr, strconv.Itoa(int(buf[0])))
 	}
 	if buf[1] == 0xff {
-		return errors.New("proxy: SOCKS5 proxy at " + s.addr + " requires authentication")
+		return fmt.Errorf("proxy: SOCKS5 proxy at %s requires authentication", s.addr)
 	}
 
 	if buf[1] == socks5AuthPassword {
@@ -129,15 +131,15 @@ func (s *socks5) connect(conn net.Conn, target string) error {
 		buf = append(buf, s.password...)
 
 		if _, err := conn.Write(buf); err != nil {
-			return errors.New("proxy: failed to write authentication request to SOCKS5 proxy at " + s.addr + ": " + err.Error())
+			return fmt.Errorf("proxy: failed to write authentication request to SOCKS5 proxy at %s: %w", s.addr, err)
 		}
 
 		if _, err := io.ReadFull(conn, buf[:2]); err != nil {
-			return errors.New("proxy: failed to read authentication reply from SOCKS5 proxy at " + s.addr + ": " + err.Error())
+			return fmt.Errorf("proxy: failed to read authentication reply from SOCKS5 proxy at %s: %w", s.addr, err)
 		}
 
 		if buf[1] != 0 {
-			return errors.New("proxy: SOCKS5 proxy at " + s.addr + " rejected username/password")
+			return fmt.Errorf("proxy: SOCKS5 proxy at %s rejected username/password", s.addr)
 		}
 	}
 
@@ -145,7 +147,7 @@ func (s *socks5) connect(conn net.Conn, target string) error {
 	buf = append(buf, socks5Version, socks5Connect, 0 /* reserved */)
 
 	if len(host) > 255 {
-		return errors.New("proxy: destination hostname too long: " + host)
+		return fmt.Errorf("proxy: destination hostname too long: %s", host)
 	}
 	buf = append(buf, socks5Domain)
 	buf = append(buf, byte(len(host)))
@@ -153,11 +155,11 @@ func (s *socks5) connect(conn net.Conn, target string) error {
 	buf = append(buf, byte(port>>8), byte(port))
 
 	if _, err := conn.Write(buf); err != nil {
-		return errors.New("proxy: failed to write connect request to SOCKS5 proxy at " + s.addr + ": " + err.Error())
+		return fmt.Errorf("proxy: failed to write connect request to SOCKS5 proxy at %s: %w", s.addr, err)
 	}
 
 	if _, err := io.ReadFull(conn, buf[:4]); err != nil {
-		return errors.New("proxy: failed to read connect reply from SOCKS5 proxy at " + s.addr + ": " + err.Error())
+		return fmt.Errorf("proxy: failed to read connect reply from SOCKS5 proxy at %s: %w", s.addr, err)
 	}
 
 	failure := "unknown error"
@@ -166,7 +168,7 @@ func (s *socks5) connect(conn net.Conn, target string) error {
 	}
 
 	if len(failure) > 0 {
-		return errors.New("proxy: SOCKS5 proxy at " + s.addr + " failed to connect: " + failure)
+		return fmt.Errorf("proxy: SOCKS5 proxy at %s failed to connect: %s", s.addr, failure)
 	}
 
 	bytesToDiscard := 0
@@ -174,11 +176,11 @@ func (s *socks5) connect(conn net.Conn, target string) error {
 	case socks5Domain:
 		_, err := io.ReadFull(conn, buf[:1])
 		if err != nil {
-			return errors.New("proxy: failed to read domain length from SOCKS5 proxy at " + s.addr + ": " + err.Error())
+			return fmt.Errorf("proxy: failed to read domain length from SOCKS5 proxy at %s: %w", s.addr, err)
 		}
 		bytesToDiscard = int(buf[0])
 	default:
-		return errors.New("proxy: got unknown address type " + strconv.Itoa(int(buf[3])) + " from SOCKS5 proxy at " + s.addr)
+		return fmt.Errorf("proxy: got unknown address type %s from SOCKS5 proxy at %s", strconv.Itoa(int(buf[3])), s.addr)
 	}
 
 	if cap(buf) < bytesToDiscard {
@@ -187,12 +189,12 @@ func (s *socks5) connect(conn net.Conn, target string) error {
 		buf = buf[:bytesToDiscard]
 	}
 	if _, err := io.ReadFull(conn, buf); err != nil {
-		return errors.New("proxy: failed to read address from SOCKS5 proxy at " + s.addr + ": " + err.Error())
+		return fmt.Errorf("proxy: failed to read address from SOCKS5 proxy at %s: %w", s.addr, err)
 	}
 
 	// Also need to discard the port number
 	if _, err := io.ReadFull(conn, buf[:2]); err != nil {
-		return errors.New("proxy: failed to read port from SOCKS5 proxy at " + s.addr + ": " + err.Error())
+		return fmt.Errorf("proxy: failed to read port from SOCKS5 proxy at %s: %w", s.addr, err)
 	}
 
 	return nil

@@ -118,7 +118,7 @@ func (ctx *recvContext) openDestinationTempFile() (f *os.File, err error) {
 	if err != nil {
 		ctx.opaque = nil
 		ctx.s.Log().WithError(err).Warn("problem creating temporary file")
-		ctx.control.ReportError(errors.New("Couldn't open local temporary file"))
+		ctx.control.ReportError(fmt.Errorf("Couldn't open local temporary file: %w", err))
 		removeInflightRecv(ctx.sid)
 	}
 	return

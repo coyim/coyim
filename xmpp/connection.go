@@ -281,7 +281,7 @@ func (c *conn) asyncReturnIQResponse(stanza data.Stanza) error {
 	iq := stanza.Value.(*data.ClientIQ)
 	cookieValue, err := strconv.ParseUint(iq.ID, 16, 64)
 	if err != nil {
-		return errors.New("xmpp: failed to parse id from iq: " + err.Error())
+		return fmt.Errorf("xmpp: failed to parse id from iq: %w", err)
 	}
 
 	cookie := data.Cookie(cookieValue)

@@ -44,7 +44,7 @@ func (s *GroupsSuite) Test_conn_GetRosterDelimiter_failsIfRequestFails(c *C) {
 	}
 
 	res, e := cn.GetRosterDelimiter()
-	c.Assert(e, ErrorMatches, "marker error")
+	c.Assert(e, ErrorMatches, "writing bytes: marker error")
 	c.Assert(res, Equals, "")
 }
 

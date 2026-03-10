@@ -295,7 +295,6 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window, p
 
 func (cvf *ourConversationViewFactory) setConversationView(c conversationView) {
 	// fmt.Printf("setConversationView(peer=%s)\n", cvf.peer)
-	defer cvf.account.executeDelayed(cvf.ui, cvf.peer, cvf.targeted)
 
 	cvf.account.Lock()
 	defer cvf.account.Unlock()
@@ -306,6 +305,8 @@ func (cvf *ourConversationViewFactory) setConversationView(c conversationView) {
 
 	// fmt.Printf("setConversationView(target=%s)\n", c.getTarget())
 	cvf.account.c[c.getTarget().String()] = c
+
+	cvf.account.executeDelayed(cvf.ui, cvf.peer, cvf.targeted, c)
 }
 
 func (cvf *ourConversationViewFactory) isWindowingStyleConsistent(c conversationView) bool {

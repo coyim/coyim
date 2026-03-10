@@ -63,27 +63,19 @@ func samePeer(peer jid.Any, s string) bool {
 	return peer.NoResource().String() == sp.NoResource().String()
 }
 
-func (account *account) executeDelayed(ui *gtkUI, peer jid.Any, targeted bool) {
+func (account *account) executeDelayed(ui *gtkUI, peer jid.Any, targeted bool, cv conversationView) {
 	account.delayedConversationsLock.Lock()
 	defer account.delayedConversationsLock.Unlock()
 
-	ui.NewConversationViewFactory(account, peer, targeted).IfConversationView(func(cv conversationView) {
-		if targeted {
-			account.executeOneDelayed(ui, peer.String(), cv)
-		} else {
-			for s := range account.delayedConversations {
-				if samePeer(peer, s) {
-					account.executeOneDelayed(ui, s, cv)
-				}
+	if targeted {
+		account.executeOneDelayed(ui, peer.String(), cv)
+	} else {
+		for s := range account.delayedConversations {
+			if samePeer(peer, s) {
+				account.executeOneDelayed(ui, s, cv)
 			}
 		}
-
-	}, func() {
-		account.log.WithFields(log.Fields{
-			"peer":     peer,
-			"targeted": targeted,
-		}).Warn("Race condition in executeDelayed() - this shouldn't happen")
-	})
+	}
 }
 
 type byAccountNameAlphabetic []*account

@@ -580,7 +580,9 @@ func (conv *conversationPane) appendPendingDelayed() {
 
 	}
 
-	conv.hideDelayedMessagesWindow()
+	if len(current) > 0 {
+		conv.hideDelayedMessagesWindow()
+	}
 }
 
 func (conv *conversationPane) delayedMessageSent(trace int) {

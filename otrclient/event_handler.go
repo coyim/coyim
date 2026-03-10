@@ -33,6 +33,7 @@ type EventHandler struct {
 func (e *EventHandler) ConsumeDelayedState(trace int) bool {
 	val, ok := e.delays[trace]
 	delete(e.delays, trace)
+	e.pendingDelays = len(e.delays)
 	return ok && val
 }
 
@@ -113,8 +114,8 @@ func (e *EventHandler) HandleMessageEvent(event otr3.MessageEvent, message []byt
 		}).Debug("Unrecognized OTR message received")
 	case otr3.MessageEventEncryptionRequired:
 		e.delays[trace[0].(int)] = true
-		e.pendingDelays++
-		if e.pendingDelays == 1 {
+		e.pendingDelays = len(e.delays)
+		if e.pendingDelays > 0 {
 			e.notify(i18n.Local("Attempting to start a private conversation..."))
 		}
 	case otr3.MessageEventEncryptionError:

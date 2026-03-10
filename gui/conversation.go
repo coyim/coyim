@@ -574,7 +574,10 @@ func (conv *conversationPane) appendPendingDelayed() {
 				buff, _ := conv.pending.GetBuffer()
 				buff.Delete(buff.GetIterAtMark(dm.coordinates.start), buff.GetIterAtMark(dm.coordinates.end))
 			})
+		} else {
+			conv.pendingDelayed = append(conv.pendingDelayed, ctrace)
 		}
+
 	}
 
 	conv.hideDelayedMessagesWindow()

@@ -161,6 +161,8 @@ func (m *accountManager) removeAccount(conf *config.Account, k func()) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
 
+	close(toRemove.events)
+
 	accs := make([]*account, 0, len(m.accounts)-1)
 	for _, acc := range m.accounts {
 		if acc == toRemove {

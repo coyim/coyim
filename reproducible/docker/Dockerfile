@@ -1,6 +1,6 @@
 FROM ubuntu:24.04
 
-#ADD 2404/apt_preferences /etc/apt/preferences
+ADD 2404/apt_preferences /etc/apt/preferences
 
 RUN apt-get update && apt-get upgrade -y -o Dpkg::Options::="--force-confold" --no-install-recommends
 

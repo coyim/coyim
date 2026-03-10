@@ -15,7 +15,7 @@ Pin: version 2.52.0-1build1
 Pin-Priority: 1001
 
 Package: base-files
-Pin: version 13ubuntu10.3
+Pin: version 13ubuntu10.4
 Pin-Priority: 1001
 
 Package: base-passwd
@@ -27,19 +27,19 @@ Pin: version 5.2.21-2ubuntu4
 Pin-Priority: 1001
 
 Package: binutils
-Pin: version 2.42-4ubuntu2.7
+Pin: version 2.42-4ubuntu2.8
 Pin-Priority: 1001
 
-Package: binutils-common
-Pin: version 2.42-4ubuntu2.7
+Package: binutils-common:amd64
+Pin: version 2.42-4ubuntu2.8
 Pin-Priority: 1001
 
 Package: binutils-x86-64-linux-gnu
-Pin: version 2.42-4ubuntu2.7
+Pin: version 2.42-4ubuntu2.8
 Pin-Priority: 1001
 
 Package: bsdutils
-Pin: version 1:2.39.3-9ubuntu6.3
+Pin: version 1:2.39.3-9ubuntu6.4
 Pin-Priority: 1001
 
 Package: build-essential
@@ -63,11 +63,11 @@ Pin: version 4:13.2.0-7ubuntu1
 Pin-Priority: 1001
 
 Package: cpp-13
-Pin: version 13.3.0-6ubuntu2~24.04
+Pin: version 13.3.0-6ubuntu2~24.04.1
 Pin-Priority: 1001
 
 Package: cpp-13-x86-64-linux-gnu
-Pin: version 13.3.0-6ubuntu2~24.04
+Pin: version 13.3.0-6ubuntu2~24.04.1
 Pin-Priority: 1001
 
 Package: cpp-x86-64-linux-gnu
@@ -75,7 +75,7 @@ Pin: version 4:13.2.0-7ubuntu1
 Pin-Priority: 1001
 
 Package: curl
-Pin: version 8.5.0-2ubuntu10.6
+Pin: version 8.5.0-2ubuntu10.7
 Pin-Priority: 1001
 
 Package: dash
@@ -106,7 +106,7 @@ Package: dbus-user-session
 Pin: version 1.14.10-4ubuntu4.1
 Pin-Priority: 1001
 
-Package: dconf-gsettings-backend
+Package: dconf-gsettings-backend:amd64
 Pin: version 0.40.0-4ubuntu0.1
 Pin-Priority: 1001
 
@@ -167,11 +167,11 @@ Pin: version 4:13.2.0-7ubuntu1
 Pin-Priority: 1001
 
 Package: g++-13
-Pin: version 13.3.0-6ubuntu2~24.04
+Pin: version 13.3.0-6ubuntu2~24.04.1
 Pin-Priority: 1001
 
 Package: g++-13-x86-64-linux-gnu
-Pin: version 13.3.0-6ubuntu2~24.04
+Pin: version 13.3.0-6ubuntu2~24.04.1
 Pin-Priority: 1001
 
 Package: g++-x86-64-linux-gnu
@@ -183,19 +183,19 @@ Pin: version 4:13.2.0-7ubuntu1
 Pin-Priority: 1001
 
 Package: gcc-13
-Pin: version 13.3.0-6ubuntu2~24.04
+Pin: version 13.3.0-6ubuntu2~24.04.1
 Pin-Priority: 1001
 
-Package: gcc-13-base
-Pin: version 13.3.0-6ubuntu2~24.04
+Package: gcc-13-base:amd64
+Pin: version 13.3.0-6ubuntu2~24.04.1
 Pin-Priority: 1001
 
 Package: gcc-13-x86-64-linux-gnu
-Pin: version 13.3.0-6ubuntu2~24.04
+Pin: version 13.3.0-6ubuntu2~24.04.1
 Pin-Priority: 1001
 
-Package: gcc-14-base
-Pin: version 14.2.0-4ubuntu2~24.04
+Package: gcc-14-base:amd64
+Pin: version 14.2.0-4ubuntu2~24.04.1
 Pin-Priority: 1001
 
 Package: gcc-x86-64-linux-gnu
@@ -207,54 +207,54 @@ Pin: version 4:13.2.0-7ubuntu1
 Pin-Priority: 1001
 
 Package: gccgo-13
-Pin: version 13.3.0-6ubuntu2~24.04
+Pin: version 13.3.0-6ubuntu2~24.04.1
 Pin-Priority: 1001
 
 Package: gccgo-13-x86-64-linux-gnu
-Pin: version 13.3.0-6ubuntu2~24.04
+Pin: version 13.3.0-6ubuntu2~24.04.1
 Pin-Priority: 1001
 
 Package: gccgo-x86-64-linux-gnu
 Pin: version 4:13.2.0-7ubuntu1
 Pin-Priority: 1001
 
-Package: gir1.2-atk-1.0
+Package: gir1.2-atk-1.0:amd64
 Pin: version 2.52.0-1build1
 Pin-Priority: 1001
 
-Package: gir1.2-atspi-2.0
+Package: gir1.2-atspi-2.0:amd64
 Pin: version 2.52.0-1build1
 Pin-Priority: 1001
 
-Package: gir1.2-freedesktop
+Package: gir1.2-freedesktop:amd64
 Pin: version 1.80.1-1
 Pin-Priority: 1001
 
-Package: gir1.2-freedesktop-dev
+Package: gir1.2-freedesktop-dev:amd64
 Pin: version 1.80.1-1
 Pin-Priority: 1001
 
-Package: gir1.2-gdkpixbuf-2.0
+Package: gir1.2-gdkpixbuf-2.0:amd64
 Pin: version 2.42.10+dfsg-3ubuntu3.2
 Pin-Priority: 1001
 
-Package: gir1.2-glib-2.0
-Pin: version 2.80.0-6ubuntu3.4
+Package: gir1.2-glib-2.0:amd64
+Pin: version 2.80.0-6ubuntu3.8
 Pin-Priority: 1001
 
-Package: gir1.2-glib-2.0-dev
-Pin: version 2.80.0-6ubuntu3.4
+Package: gir1.2-glib-2.0-dev:amd64
+Pin: version 2.80.0-6ubuntu3.8
 Pin-Priority: 1001
 
-Package: gir1.2-gtk-3.0
+Package: gir1.2-gtk-3.0:amd64
 Pin: version 3.24.41-4ubuntu1.3
 Pin-Priority: 1001
 
-Package: gir1.2-harfbuzz-0.0
+Package: gir1.2-harfbuzz-0.0:amd64
 Pin: version 8.3.0-2build2
 Pin-Priority: 1001
 
-Package: gir1.2-pango-1.0
+Package: gir1.2-pango-1.0:amd64
 Pin: version 1.52.1+ds-1build1
 Pin-Priority: 1001
 
@@ -266,7 +266,7 @@ Package: git-man
 Pin: version 1:2.43.0-1ubuntu7.3
 Pin-Priority: 1001
 
-Package: golang
+Package: golang:amd64
 Pin: version 2:1.22~2build1
 Pin-Priority: 1001
 
@@ -290,7 +290,7 @@ Package: golang-doc
 Pin: version 2:1.22~2build1
 Pin-Priority: 1001
 
-Package: golang-go
+Package: golang-go:amd64
 Pin: version 2:1.22~2build1
 Pin-Priority: 1001
 
@@ -299,7 +299,7 @@ Pin: version 2:1.22~2build1
 Pin-Priority: 1001
 
 Package: gpgv
-Pin: version 2.4.4-2ubuntu17.3
+Pin: version 2.4.4-2ubuntu17.4
 Pin-Priority: 1001
 
 Package: grep
@@ -334,59 +334,59 @@ Package: init-system-helpers
 Pin: version 1.66ubuntu1
 Pin-Priority: 1001
 
-Package: libacl1
+Package: libacl1:amd64
 Pin: version 2.3.2-1build1.1
 Pin-Priority: 1001
 
-Package: libapparmor1
-Pin: version 4.0.1really4.0.1-0ubuntu0.24.04.4
+Package: libapparmor1:amd64
+Pin: version 4.0.1really4.0.1-0ubuntu0.24.04.5
 Pin-Priority: 1001
 
-Package: libapt-pkg6.0t64
+Package: libapt-pkg6.0t64:amd64
 Pin: version 2.8.3
 Pin-Priority: 1001
 
-Package: libargon2-1
+Package: libargon2-1:amd64
 Pin: version 0~20190702+dfsg-4build1
 Pin-Priority: 1001
 
-Package: libasan8
-Pin: version 14.2.0-4ubuntu2~24.04
+Package: libasan8:amd64
+Pin: version 14.2.0-4ubuntu2~24.04.1
 Pin-Priority: 1001
 
-Package: libassuan0
+Package: libassuan0:amd64
 Pin: version 2.5.6-1build1
 Pin-Priority: 1001
 
-Package: libatk-bridge2.0-0t64
+Package: libatk-bridge2.0-0t64:amd64
 Pin: version 2.52.0-1build1
 Pin-Priority: 1001
 
-Package: libatk-bridge2.0-dev
+Package: libatk-bridge2.0-dev:amd64
 Pin: version 2.52.0-1build1
 Pin-Priority: 1001
 
-Package: libatk1.0-0t64
+Package: libatk1.0-0t64:amd64
 Pin: version 2.52.0-1build1
 Pin-Priority: 1001
 
-Package: libatk1.0-dev
+Package: libatk1.0-dev:amd64
 Pin: version 2.52.0-1build1
 Pin-Priority: 1001
 
-Package: libatomic1
-Pin: version 14.2.0-4ubuntu2~24.04
+Package: libatomic1:amd64
+Pin: version 14.2.0-4ubuntu2~24.04.1
 Pin-Priority: 1001
 
-Package: libatspi2.0-0t64
+Package: libatspi2.0-0t64:amd64
 Pin: version 2.52.0-1build1
 Pin-Priority: 1001
 
-Package: libatspi2.0-dev
+Package: libatspi2.0-dev:amd64
 Pin: version 2.52.0-1build1
 Pin-Priority: 1001
 
-Package: libattr1
+Package: libattr1:amd64
 Pin: version 1:2.5.2-1build1.1
 Pin-Priority: 1001
 
@@ -394,175 +394,175 @@ Package: libaudit-common
 Pin: version 1:3.1.2-2.1build1.1
 Pin-Priority: 1001
 
-Package: libaudit1
+Package: libaudit1:amd64
 Pin: version 1:3.1.2-2.1build1.1
 Pin-Priority: 1001
 
-Package: libavahi-client3
-Pin: version 0.8-13ubuntu6
+Package: libavahi-client3:amd64
+Pin: version 0.8-13ubuntu6.1
 Pin-Priority: 1001
 
-Package: libavahi-common-data
-Pin: version 0.8-13ubuntu6
+Package: libavahi-common-data:amd64
+Pin: version 0.8-13ubuntu6.1
 Pin-Priority: 1001
 
-Package: libavahi-common3
-Pin: version 0.8-13ubuntu6
+Package: libavahi-common3:amd64
+Pin: version 0.8-13ubuntu6.1
 Pin-Priority: 1001
 
-Package: libbinutils
-Pin: version 2.42-4ubuntu2.7
+Package: libbinutils:amd64
+Pin: version 2.42-4ubuntu2.8
 Pin-Priority: 1001
 
-Package: libblkid-dev
-Pin: version 2.39.3-9ubuntu6.3
+Package: libblkid-dev:amd64
+Pin: version 2.39.3-9ubuntu6.4
 Pin-Priority: 1001
 
-Package: libblkid1
-Pin: version 2.39.3-9ubuntu6.3
+Package: libblkid1:amd64
+Pin: version 2.39.3-9ubuntu6.4
 Pin-Priority: 1001
 
-Package: libbrotli-dev
+Package: libbrotli-dev:amd64
 Pin: version 1.1.0-2build2
 Pin-Priority: 1001
 
-Package: libbrotli1
+Package: libbrotli1:amd64
 Pin: version 1.1.0-2build2
 Pin-Priority: 1001
 
-Package: libbsd0
+Package: libbsd0:amd64
 Pin: version 0.12.1-1build1.1
 Pin-Priority: 1001
 
-Package: libbz2-1.0
+Package: libbz2-1.0:amd64
 Pin: version 1.0.8-5.1build0.1
 Pin-Priority: 1001
 
-Package: libbz2-dev
+Package: libbz2-dev:amd64
 Pin: version 1.0.8-5.1build0.1
 Pin-Priority: 1001
 
 Package: libc-bin
-Pin: version 2.39-0ubuntu8.6
+Pin: version 2.39-0ubuntu8.7
 Pin-Priority: 1001
 
 Package: libc-dev-bin
-Pin: version 2.39-0ubuntu8.6
+Pin: version 2.39-0ubuntu8.7
 Pin-Priority: 1001
 
-Package: libc6
-Pin: version 2.39-0ubuntu8.6
+Package: libc6:amd64
+Pin: version 2.39-0ubuntu8.7
 Pin-Priority: 1001
 
-Package: libc6-dev
-Pin: version 2.39-0ubuntu8.6
+Package: libc6-dev:amd64
+Pin: version 2.39-0ubuntu8.7
 Pin-Priority: 1001
 
-Package: libcairo-gobject2
+Package: libcairo-gobject2:amd64
 Pin: version 1.18.0-3build1
 Pin-Priority: 1001
 
-Package: libcairo-script-interpreter2
+Package: libcairo-script-interpreter2:amd64
 Pin: version 1.18.0-3build1
 Pin-Priority: 1001
 
-Package: libcairo2
+Package: libcairo2:amd64
 Pin: version 1.18.0-3build1
 Pin-Priority: 1001
 
-Package: libcairo2-dev
+Package: libcairo2-dev:amd64
 Pin: version 1.18.0-3build1
 Pin-Priority: 1001
 
-Package: libcap-ng0
+Package: libcap-ng0:amd64
 Pin: version 0.8.4-2build2
 Pin-Priority: 1001
 
-Package: libcap2
+Package: libcap2:amd64
 Pin: version 1:2.66-5ubuntu2.2
 Pin-Priority: 1001
 
-Package: libcc1-0
-Pin: version 14.2.0-4ubuntu2~24.04
+Package: libcc1-0:amd64
+Pin: version 14.2.0-4ubuntu2~24.04.1
 Pin-Priority: 1001
 
-Package: libcolord2
+Package: libcolord2:amd64
 Pin: version 1.4.7-1build2
 Pin-Priority: 1001
 
-Package: libcom-err2
+Package: libcom-err2:amd64
 Pin: version 1.47.0-2.4~exp1ubuntu4.1
 Pin-Priority: 1001
 
-Package: libcrypt-dev
+Package: libcrypt-dev:amd64
 Pin: version 1:4.4.36-4build1
 Pin-Priority: 1001
 
-Package: libcrypt1
+Package: libcrypt1:amd64
 Pin: version 1:4.4.36-4build1
 Pin-Priority: 1001
 
-Package: libcryptsetup12
+Package: libcryptsetup12:amd64
 Pin: version 2:2.7.0-1ubuntu4.2
 Pin-Priority: 1001
 
-Package: libctf-nobfd0
-Pin: version 2.42-4ubuntu2.7
+Package: libctf-nobfd0:amd64
+Pin: version 2.42-4ubuntu2.8
 Pin-Priority: 1001
 
-Package: libctf0
-Pin: version 2.42-4ubuntu2.7
+Package: libctf0:amd64
+Pin: version 2.42-4ubuntu2.8
 Pin-Priority: 1001
 
-Package: libcups2t64
-Pin: version 2.4.7-1.2ubuntu7.7
+Package: libcups2t64:amd64
+Pin: version 2.4.7-1.2ubuntu7.9
 Pin-Priority: 1001
 
-Package: libcurl3t64-gnutls
-Pin: version 8.5.0-2ubuntu10.6
+Package: libcurl3t64-gnutls:amd64
+Pin: version 8.5.0-2ubuntu10.7
 Pin-Priority: 1001
 
-Package: libcurl4t64
-Pin: version 8.5.0-2ubuntu10.6
+Package: libcurl4t64:amd64
+Pin: version 8.5.0-2ubuntu10.7
 Pin-Priority: 1001
 
-Package: libdatrie-dev
+Package: libdatrie-dev:amd64
 Pin: version 0.2.13-3build1
 Pin-Priority: 1001
 
-Package: libdatrie1
+Package: libdatrie1:amd64
 Pin: version 0.2.13-3build1
 Pin-Priority: 1001
 
-Package: libdb5.3t64
+Package: libdb5.3t64:amd64
 Pin: version 5.3.28+dfsg2-7
 Pin-Priority: 1001
 
-Package: libdbus-1-3
+Package: libdbus-1-3:amd64
 Pin: version 1.14.10-4ubuntu4.1
 Pin-Priority: 1001
 
-Package: libdbus-1-dev
+Package: libdbus-1-dev:amd64
 Pin: version 1.14.10-4ubuntu4.1
 Pin-Priority: 1001
 
-Package: libdconf1
+Package: libdconf1:amd64
 Pin: version 0.40.0-4ubuntu0.1
 Pin-Priority: 1001
 
-Package: libdebconfclient0
+Package: libdebconfclient0:amd64
 Pin: version 0.271ubuntu3
 Pin-Priority: 1001
 
-Package: libdeflate-dev
+Package: libdeflate-dev:amd64
 Pin: version 1.19-1build1.1
 Pin-Priority: 1001
 
-Package: libdeflate0
+Package: libdeflate0:amd64
 Pin: version 1.19-1build1.1
 Pin-Priority: 1001
 
-Package: libdevmapper1.02.1
+Package: libdevmapper1.02.1:amd64
 Pin: version 2:1.02.185-3ubuntu3.2
 Pin-Priority: 1001
 
@@ -570,51 +570,51 @@ Package: libdpkg-perl
 Pin: version 1.22.6ubuntu6.5
 Pin-Priority: 1001
 
-Package: libdrm-amdgpu1
-Pin: version 2.4.122-1~ubuntu0.24.04.2
+Package: libdrm-amdgpu1:amd64
+Pin: version 2.4.125-1ubuntu0.1~24.04.1
 Pin-Priority: 1001
 
 Package: libdrm-common
-Pin: version 2.4.122-1~ubuntu0.24.04.2
+Pin: version 2.4.125-1ubuntu0.1~24.04.1
 Pin-Priority: 1001
 
-Package: libdrm-intel1
-Pin: version 2.4.122-1~ubuntu0.24.04.2
+Package: libdrm-intel1:amd64
+Pin: version 2.4.125-1ubuntu0.1~24.04.1
 Pin-Priority: 1001
 
-Package: libdrm2
-Pin: version 2.4.122-1~ubuntu0.24.04.2
+Package: libdrm2:amd64
+Pin: version 2.4.125-1ubuntu0.1~24.04.1
 Pin-Priority: 1001
 
-Package: libedit2
+Package: libedit2:amd64
 Pin: version 3.1-20230828-1build1
 Pin-Priority: 1001
 
-Package: libegl-dev
+Package: libegl-dev:amd64
 Pin: version 1.7.0-1build1
 Pin-Priority: 1001
 
-Package: libegl-mesa0
-Pin: version 25.0.7-0ubuntu0.24.04.2
+Package: libegl-mesa0:amd64
+Pin: version 25.2.8-0ubuntu0.24.04.1
 Pin-Priority: 1001
 
-Package: libegl1
+Package: libegl1:amd64
 Pin: version 1.7.0-1build1
 Pin-Priority: 1001
 
-Package: libegl1-mesa-dev
-Pin: version 25.0.7-0ubuntu0.24.04.2
+Package: libegl1-mesa-dev:amd64
+Pin: version 25.2.8-0ubuntu0.24.04.1
 Pin-Priority: 1001
 
-Package: libelf1t64
+Package: libelf1t64:amd64
 Pin: version 0.190-1.1ubuntu0.1
 Pin-Priority: 1001
 
-Package: libepoxy-dev
+Package: libepoxy-dev:amd64
 Pin: version 1.5.10-1build1
 Pin-Priority: 1001
 
-Package: libepoxy0
+Package: libepoxy0:amd64
 Pin: version 1.5.10-1build1
 Pin-Priority: 1001
 
@@ -622,87 +622,87 @@ Package: liberror-perl
 Pin: version 0.17029-2
 Pin-Priority: 1001
 
-Package: libexpat1
-Pin: version 2.6.1-2ubuntu0.3
+Package: libexpat1:amd64
+Pin: version 2.6.1-2ubuntu0.4
 Pin-Priority: 1001
 
-Package: libexpat1-dev
-Pin: version 2.6.1-2ubuntu0.3
+Package: libexpat1-dev:amd64
+Pin: version 2.6.1-2ubuntu0.4
 Pin-Priority: 1001
 
-Package: libext2fs2t64
+Package: libext2fs2t64:amd64
 Pin: version 1.47.0-2.4~exp1ubuntu4.1
 Pin-Priority: 1001
 
-Package: libfaketime
+Package: libfaketime:amd64
 Pin: version 0.9.10-2.1
 Pin-Priority: 1001
 
-Package: libfdisk1
-Pin: version 2.39.3-9ubuntu6.3
+Package: libfdisk1:amd64
+Pin: version 2.39.3-9ubuntu6.4
 Pin-Priority: 1001
 
-Package: libffi-dev
+Package: libffi-dev:amd64
 Pin: version 3.4.6-1build1
 Pin-Priority: 1001
 
-Package: libffi8
+Package: libffi8:amd64
 Pin: version 3.4.6-1build1
 Pin-Priority: 1001
 
-Package: libfontconfig-dev
+Package: libfontconfig-dev:amd64
 Pin: version 2.15.0-1.1ubuntu2
 Pin-Priority: 1001
 
-Package: libfontconfig1
+Package: libfontconfig1:amd64
 Pin: version 2.15.0-1.1ubuntu2
 Pin-Priority: 1001
 
-Package: libfreetype-dev
+Package: libfreetype-dev:amd64
 Pin: version 2.13.2+dfsg-1build3
 Pin-Priority: 1001
 
-Package: libfreetype6
+Package: libfreetype6:amd64
 Pin: version 2.13.2+dfsg-1build3
 Pin-Priority: 1001
 
-Package: libfribidi-dev
+Package: libfribidi-dev:amd64
 Pin: version 1.0.13-3build1
 Pin-Priority: 1001
 
-Package: libfribidi0
+Package: libfribidi0:amd64
 Pin: version 1.0.13-3build1
 Pin-Priority: 1001
 
-Package: libgbm1
-Pin: version 25.0.7-0ubuntu0.24.04.2
+Package: libgbm1:amd64
+Pin: version 25.2.8-0ubuntu0.24.04.1
 Pin-Priority: 1001
 
-Package: libgcc-13-dev
-Pin: version 13.3.0-6ubuntu2~24.04
+Package: libgcc-13-dev:amd64
+Pin: version 13.3.0-6ubuntu2~24.04.1
 Pin-Priority: 1001
 
-Package: libgcc-s1
-Pin: version 14.2.0-4ubuntu2~24.04
+Package: libgcc-s1:amd64
+Pin: version 14.2.0-4ubuntu2~24.04.1
 Pin-Priority: 1001
 
-Package: libgcrypt20
+Package: libgcrypt20:amd64
 Pin: version 1.10.3-2build1
 Pin-Priority: 1001
 
-Package: libgdbm-compat4t64
+Package: libgdbm-compat4t64:amd64
 Pin: version 1.23-5.1build1
 Pin-Priority: 1001
 
-Package: libgdbm6t64
+Package: libgdbm6t64:amd64
 Pin: version 1.23-5.1build1
 Pin-Priority: 1001
 
-Package: libgdk-pixbuf-2.0-0
+Package: libgdk-pixbuf-2.0-0:amd64
 Pin: version 2.42.10+dfsg-3ubuntu3.2
 Pin-Priority: 1001
 
-Package: libgdk-pixbuf-2.0-dev
+Package: libgdk-pixbuf-2.0-dev:amd64
 Pin: version 2.42.10+dfsg-3ubuntu3.2
 Pin-Priority: 1001
 
@@ -714,119 +714,119 @@ Package: libgdk-pixbuf2.0-common
 Pin: version 2.42.10+dfsg-3ubuntu3.2
 Pin-Priority: 1001
 
-Package: libgirepository-2.0-0
-Pin: version 2.80.0-6ubuntu3.4
+Package: libgirepository-2.0-0:amd64
+Pin: version 2.80.0-6ubuntu3.8
 Pin-Priority: 1001
 
-Package: libgl-dev
+Package: libgl-dev:amd64
 Pin: version 1.7.0-1build1
 Pin-Priority: 1001
 
-Package: libgl1
+Package: libgl1:amd64
 Pin: version 1.7.0-1build1
 Pin-Priority: 1001
 
-Package: libgl1-mesa-dri
-Pin: version 25.0.7-0ubuntu0.24.04.2
+Package: libgl1-mesa-dri:amd64
+Pin: version 25.2.8-0ubuntu0.24.04.1
 Pin-Priority: 1001
 
-Package: libgles-dev
+Package: libgles-dev:amd64
 Pin: version 1.7.0-1build1
 Pin-Priority: 1001
 
-Package: libgles1
+Package: libgles1:amd64
 Pin: version 1.7.0-1build1
 Pin-Priority: 1001
 
-Package: libgles2
+Package: libgles2:amd64
 Pin: version 1.7.0-1build1
 Pin-Priority: 1001
 
-Package: libglib2.0-0t64
-Pin: version 2.80.0-6ubuntu3.4
+Package: libglib2.0-0t64:amd64
+Pin: version 2.80.0-6ubuntu3.8
 Pin-Priority: 1001
 
 Package: libglib2.0-bin
-Pin: version 2.80.0-6ubuntu3.4
+Pin: version 2.80.0-6ubuntu3.8
 Pin-Priority: 1001
 
 Package: libglib2.0-data
-Pin: version 2.80.0-6ubuntu3.4
+Pin: version 2.80.0-6ubuntu3.8
 Pin-Priority: 1001
 
-Package: libglib2.0-dev
-Pin: version 2.80.0-6ubuntu3.4
+Package: libglib2.0-dev:amd64
+Pin: version 2.80.0-6ubuntu3.8
 Pin-Priority: 1001
 
 Package: libglib2.0-dev-bin
-Pin: version 2.80.0-6ubuntu3.4
+Pin: version 2.80.0-6ubuntu3.8
 Pin-Priority: 1001
 
-Package: libglvnd-core-dev
+Package: libglvnd-core-dev:amd64
 Pin: version 1.7.0-1build1
 Pin-Priority: 1001
 
-Package: libglvnd-dev
+Package: libglvnd-dev:amd64
 Pin: version 1.7.0-1build1
 Pin-Priority: 1001
 
-Package: libglvnd0
+Package: libglvnd0:amd64
 Pin: version 1.7.0-1build1
 Pin-Priority: 1001
 
-Package: libglx-dev
+Package: libglx-dev:amd64
 Pin: version 1.7.0-1build1
 Pin-Priority: 1001
 
-Package: libglx-mesa0
-Pin: version 25.0.7-0ubuntu0.24.04.2
+Package: libglx-mesa0:amd64
+Pin: version 25.2.8-0ubuntu0.24.04.1
 Pin-Priority: 1001
 
-Package: libglx0
+Package: libglx0:amd64
 Pin: version 1.7.0-1build1
 Pin-Priority: 1001
 
-Package: libgmp10
+Package: libgmp10:amd64
 Pin: version 2:6.3.0+dfsg-2ubuntu6.1
 Pin-Priority: 1001
 
-Package: libgnutls30t64
-Pin: version 3.8.3-1.1ubuntu3.4
+Package: libgnutls30t64:amd64
+Pin: version 3.8.3-1.1ubuntu3.5
 Pin-Priority: 1001
 
-Package: libgo-13-dev
-Pin: version 13.3.0-6ubuntu2~24.04
+Package: libgo-13-dev:amd64
+Pin: version 13.3.0-6ubuntu2~24.04.1
 Pin-Priority: 1001
 
-Package: libgo22
-Pin: version 13.3.0-6ubuntu2~24.04
+Package: libgo22:amd64
+Pin: version 13.3.0-6ubuntu2~24.04.1
 Pin-Priority: 1001
 
-Package: libgomp1
-Pin: version 14.2.0-4ubuntu2~24.04
+Package: libgomp1:amd64
+Pin: version 14.2.0-4ubuntu2~24.04.1
 Pin-Priority: 1001
 
-Package: libgpg-error0
+Package: libgpg-error0:amd64
 Pin: version 1.47-3build2.1
 Pin-Priority: 1001
 
-Package: libgprofng0
-Pin: version 2.42-4ubuntu2.7
+Package: libgprofng0:amd64
+Pin: version 2.42-4ubuntu2.8
 Pin-Priority: 1001
 
-Package: libgraphite2-3
+Package: libgraphite2-3:amd64
 Pin: version 1.3.14-2build1
 Pin-Priority: 1001
 
-Package: libgraphite2-dev
+Package: libgraphite2-dev:amd64
 Pin: version 1.3.14-2build1
 Pin-Priority: 1001
 
-Package: libgssapi-krb5-2
+Package: libgssapi-krb5-2:amd64
 Pin: version 1.20.1-6ubuntu2.6
 Pin-Priority: 1001
 
-Package: libgtk-3-0t64
+Package: libgtk-3-0t64:amd64
 Pin: version 3.24.41-4ubuntu1.3
 Pin-Priority: 1001
 
@@ -834,219 +834,219 @@ Package: libgtk-3-common
 Pin: version 3.24.41-4ubuntu1.3
 Pin-Priority: 1001
 
-Package: libgtk-3-dev
+Package: libgtk-3-dev:amd64
 Pin: version 3.24.41-4ubuntu1.3
 Pin-Priority: 1001
 
-Package: libharfbuzz-cairo0
+Package: libharfbuzz-cairo0:amd64
 Pin: version 8.3.0-2build2
 Pin-Priority: 1001
 
-Package: libharfbuzz-dev
+Package: libharfbuzz-dev:amd64
 Pin: version 8.3.0-2build2
 Pin-Priority: 1001
 
-Package: libharfbuzz-gobject0
+Package: libharfbuzz-gobject0:amd64
 Pin: version 8.3.0-2build2
 Pin-Priority: 1001
 
-Package: libharfbuzz-icu0
+Package: libharfbuzz-icu0:amd64
 Pin: version 8.3.0-2build2
 Pin-Priority: 1001
 
-Package: libharfbuzz-subset0
+Package: libharfbuzz-subset0:amd64
 Pin: version 8.3.0-2build2
 Pin-Priority: 1001
 
-Package: libharfbuzz0b
+Package: libharfbuzz0b:amd64
 Pin: version 8.3.0-2build2
 Pin-Priority: 1001
 
-Package: libhogweed6t64
+Package: libhogweed6t64:amd64
 Pin: version 3.9.1-2.2build1.1
 Pin-Priority: 1001
 
-Package: libhwasan0
-Pin: version 14.2.0-4ubuntu2~24.04
+Package: libhwasan0:amd64
+Pin: version 14.2.0-4ubuntu2~24.04.1
 Pin-Priority: 1001
 
-Package: libice-dev
+Package: libice-dev:amd64
 Pin: version 2:1.0.10-1build3
 Pin-Priority: 1001
 
-Package: libice6
+Package: libice6:amd64
 Pin: version 2:1.0.10-1build3
 Pin-Priority: 1001
 
-Package: libicu-dev
+Package: libicu-dev:amd64
 Pin: version 74.2-1ubuntu3.1
 Pin-Priority: 1001
 
-Package: libicu74
+Package: libicu74:amd64
 Pin: version 74.2-1ubuntu3.1
 Pin-Priority: 1001
 
-Package: libidn2-0
+Package: libidn2-0:amd64
 Pin: version 2.3.7-2build1.1
 Pin-Priority: 1001
 
-Package: libisl23
+Package: libisl23:amd64
 Pin: version 0.26-3build1.1
 Pin-Priority: 1001
 
-Package: libitm1
-Pin: version 14.2.0-4ubuntu2~24.04
+Package: libitm1:amd64
+Pin: version 14.2.0-4ubuntu2~24.04.1
 Pin-Priority: 1001
 
-Package: libjansson4
+Package: libjansson4:amd64
 Pin: version 2.14-2build2
 Pin-Priority: 1001
 
-Package: libjbig-dev
+Package: libjbig-dev:amd64
 Pin: version 2.1-6.1ubuntu2
 Pin-Priority: 1001
 
-Package: libjbig0
+Package: libjbig0:amd64
 Pin: version 2.1-6.1ubuntu2
 Pin-Priority: 1001
 
-Package: libjpeg-dev
+Package: libjpeg-dev:amd64
 Pin: version 8c-2ubuntu11
 Pin-Priority: 1001
 
-Package: libjpeg-turbo8
+Package: libjpeg-turbo8:amd64
 Pin: version 2.1.5-2ubuntu2
 Pin-Priority: 1001
 
-Package: libjpeg-turbo8-dev
+Package: libjpeg-turbo8-dev:amd64
 Pin: version 2.1.5-2ubuntu2
 Pin-Priority: 1001
 
-Package: libjpeg8
+Package: libjpeg8:amd64
 Pin: version 8c-2ubuntu11
 Pin-Priority: 1001
 
-Package: libjpeg8-dev
+Package: libjpeg8-dev:amd64
 Pin: version 8c-2ubuntu11
 Pin-Priority: 1001
 
-Package: libjson-c5
+Package: libjson-c5:amd64
 Pin: version 0.17-1build1
 Pin-Priority: 1001
 
-Package: libk5crypto3
+Package: libk5crypto3:amd64
 Pin: version 1.20.1-6ubuntu2.6
 Pin-Priority: 1001
 
-Package: libkeyutils1
+Package: libkeyutils1:amd64
 Pin: version 1.6.3-3build1
 Pin-Priority: 1001
 
-Package: libkmod2
+Package: libkmod2:amd64
 Pin: version 31+20240202-2ubuntu7.1
 Pin-Priority: 1001
 
-Package: libkrb5-3
+Package: libkrb5-3:amd64
 Pin: version 1.20.1-6ubuntu2.6
 Pin-Priority: 1001
 
-Package: libkrb5support0
+Package: libkrb5support0:amd64
 Pin: version 1.20.1-6ubuntu2.6
 Pin-Priority: 1001
 
-Package: liblcms2-2
+Package: liblcms2-2:amd64
 Pin: version 2.14-2build1
 Pin-Priority: 1001
 
-Package: libldap2
-Pin: version 2.6.7+dfsg-1~exp1ubuntu8.2
+Package: libldap2:amd64
+Pin: version 2.6.10+dfsg-0ubuntu0.24.04.1
 Pin-Priority: 1001
 
-Package: liblerc-dev
+Package: liblerc-dev:amd64
 Pin: version 4.0.0+ds-4ubuntu2
 Pin-Priority: 1001
 
-Package: liblerc4
+Package: liblerc4:amd64
 Pin: version 4.0.0+ds-4ubuntu2
 Pin-Priority: 1001
 
-Package: libllvm20
+Package: libllvm20:amd64
 Pin: version 1:20.1.2-0ubuntu1~24.04.2
 Pin-Priority: 1001
 
-Package: liblsan0
-Pin: version 14.2.0-4ubuntu2~24.04
+Package: liblsan0:amd64
+Pin: version 14.2.0-4ubuntu2~24.04.1
 Pin-Priority: 1001
 
-Package: liblz4-1
+Package: liblz4-1:amd64
 Pin: version 1.9.4-1build1.1
 Pin-Priority: 1001
 
-Package: liblzma-dev
+Package: liblzma-dev:amd64
 Pin: version 5.6.1+really5.4.5-1ubuntu0.2
 Pin-Priority: 1001
 
-Package: liblzma5
+Package: liblzma5:amd64
 Pin: version 5.6.1+really5.4.5-1ubuntu0.2
 Pin-Priority: 1001
 
-Package: liblzo2-2
+Package: liblzo2-2:amd64
 Pin: version 2.10-2build4
 Pin-Priority: 1001
 
-Package: libmd0
+Package: libmd0:amd64
 Pin: version 1.1.0-2build1.1
 Pin-Priority: 1001
 
-Package: libmount-dev
-Pin: version 2.39.3-9ubuntu6.3
+Package: libmount-dev:amd64
+Pin: version 2.39.3-9ubuntu6.4
 Pin-Priority: 1001
 
-Package: libmount1
-Pin: version 2.39.3-9ubuntu6.3
+Package: libmount1:amd64
+Pin: version 2.39.3-9ubuntu6.4
 Pin-Priority: 1001
 
-Package: libmpc3
+Package: libmpc3:amd64
 Pin: version 1.3.1-1build1.1
 Pin-Priority: 1001
 
-Package: libmpfr6
+Package: libmpfr6:amd64
 Pin: version 4.2.1-1build1.1
 Pin-Priority: 1001
 
-Package: libncurses6
+Package: libncurses6:amd64
 Pin: version 6.4+20240113-1ubuntu2
 Pin-Priority: 1001
 
-Package: libncursesw6
+Package: libncursesw6:amd64
 Pin: version 6.4+20240113-1ubuntu2
 Pin-Priority: 1001
 
-Package: libnettle8t64
+Package: libnettle8t64:amd64
 Pin: version 3.9.1-2.2build1.1
 Pin-Priority: 1001
 
-Package: libnghttp2-14
+Package: libnghttp2-14:amd64
 Pin: version 1.59.0-1ubuntu0.2
 Pin-Priority: 1001
 
-Package: libnpth0t64
+Package: libnpth0t64:amd64
 Pin: version 1.6-3.1build1
 Pin-Priority: 1001
 
-Package: libopengl-dev
+Package: libopengl-dev:amd64
 Pin: version 1.7.0-1build1
 Pin-Priority: 1001
 
-Package: libopengl0
+Package: libopengl0:amd64
 Pin: version 1.7.0-1build1
 Pin-Priority: 1001
 
-Package: libp11-kit0
+Package: libp11-kit0:amd64
 Pin: version 0.25.3-4ubuntu2.1
 Pin-Priority: 1001
 
-Package: libpam-modules
+Package: libpam-modules:amd64
 Pin: version 1.5.3-5ubuntu5.5
 Pin-Priority: 1001
 
@@ -1058,143 +1058,143 @@ Package: libpam-runtime
 Pin: version 1.5.3-5ubuntu5.5
 Pin-Priority: 1001
 
-Package: libpam-systemd
-Pin: version 255.4-1ubuntu8.11
+Package: libpam-systemd:amd64
+Pin: version 255.4-1ubuntu8.12
 Pin-Priority: 1001
 
-Package: libpam0g
+Package: libpam0g:amd64
 Pin: version 1.5.3-5ubuntu5.5
 Pin-Priority: 1001
 
-Package: libpango-1.0-0
+Package: libpango-1.0-0:amd64
 Pin: version 1.52.1+ds-1build1
 Pin-Priority: 1001
 
-Package: libpango1.0-dev
+Package: libpango1.0-dev:amd64
 Pin: version 1.52.1+ds-1build1
 Pin-Priority: 1001
 
-Package: libpangocairo-1.0-0
+Package: libpangocairo-1.0-0:amd64
 Pin: version 1.52.1+ds-1build1
 Pin-Priority: 1001
 
-Package: libpangoft2-1.0-0
+Package: libpangoft2-1.0-0:amd64
 Pin: version 1.52.1+ds-1build1
 Pin-Priority: 1001
 
-Package: libpangoxft-1.0-0
+Package: libpangoxft-1.0-0:amd64
 Pin: version 1.52.1+ds-1build1
 Pin-Priority: 1001
 
-Package: libpciaccess0
+Package: libpciaccess0:amd64
 Pin: version 0.17-3ubuntu0.24.04.2
 Pin-Priority: 1001
 
-Package: libpcre2-16-0
+Package: libpcre2-16-0:amd64
 Pin: version 10.42-4ubuntu2.1
 Pin-Priority: 1001
 
-Package: libpcre2-32-0
+Package: libpcre2-32-0:amd64
 Pin: version 10.42-4ubuntu2.1
 Pin-Priority: 1001
 
-Package: libpcre2-8-0
+Package: libpcre2-8-0:amd64
 Pin: version 10.42-4ubuntu2.1
 Pin-Priority: 1001
 
-Package: libpcre2-dev
+Package: libpcre2-dev:amd64
 Pin: version 10.42-4ubuntu2.1
 Pin-Priority: 1001
 
-Package: libpcre2-posix3
+Package: libpcre2-posix3:amd64
 Pin: version 10.42-4ubuntu2.1
 Pin-Priority: 1001
 
-Package: libperl5.38t64
+Package: libperl5.38t64:amd64
 Pin: version 5.38.2-3.2ubuntu0.2
 Pin-Priority: 1001
 
-Package: libpixman-1-0
+Package: libpixman-1-0:amd64
 Pin: version 0.42.2-1build1
 Pin-Priority: 1001
 
-Package: libpixman-1-dev
+Package: libpixman-1-dev:amd64
 Pin: version 0.42.2-1build1
 Pin-Priority: 1001
 
-Package: libpkgconf3
+Package: libpkgconf3:amd64
 Pin: version 1.8.1-2build1
 Pin-Priority: 1001
 
-Package: libpng-dev
-Pin: version 1.6.43-5build1
+Package: libpng-dev:amd64
+Pin: version 1.6.43-5ubuntu0.5
 Pin-Priority: 1001
 
-Package: libpng16-16t64
-Pin: version 1.6.43-5build1
+Package: libpng16-16t64:amd64
+Pin: version 1.6.43-5ubuntu0.5
 Pin-Priority: 1001
 
-Package: libproc2-0
+Package: libproc2-0:amd64
 Pin: version 2:4.0.4-4ubuntu3.2
 Pin-Priority: 1001
 
-Package: libpsl5t64
+Package: libpsl5t64:amd64
 Pin: version 0.21.2-1.1build1
 Pin-Priority: 1001
 
-Package: libpthread-stubs0-dev
+Package: libpthread-stubs0-dev:amd64
 Pin: version 0.4-1build3
 Pin-Priority: 1001
 
-Package: libpython3-stdlib
+Package: libpython3-stdlib:amd64
 Pin: version 3.12.3-0ubuntu2.1
 Pin-Priority: 1001
 
-Package: libpython3.12-minimal
-Pin: version 3.12.3-1ubuntu0.9
+Package: libpython3.12-minimal:amd64
+Pin: version 3.12.3-1ubuntu0.12
 Pin-Priority: 1001
 
-Package: libpython3.12-stdlib
-Pin: version 3.12.3-1ubuntu0.9
+Package: libpython3.12-stdlib:amd64
+Pin: version 3.12.3-1ubuntu0.12
 Pin-Priority: 1001
 
-Package: libquadmath0
-Pin: version 14.2.0-4ubuntu2~24.04
+Package: libquadmath0:amd64
+Pin: version 14.2.0-4ubuntu2~24.04.1
 Pin-Priority: 1001
 
-Package: libreadline8t64
+Package: libreadline8t64:amd64
 Pin: version 8.2-4build1
 Pin-Priority: 1001
 
-Package: librtmp1
+Package: librtmp1:amd64
 Pin: version 2.4+20151223.gitfa8646d.1-2build7
 Pin-Priority: 1001
 
-Package: libruby
+Package: libruby:amd64
 Pin: version 1:3.2~ubuntu1
 Pin-Priority: 1001
 
-Package: libruby3.2
+Package: libruby3.2:amd64
 Pin: version 3.2.3-1ubuntu0.24.04.6
 Pin-Priority: 1001
 
-Package: libsasl2-2
+Package: libsasl2-2:amd64
 Pin: version 2.1.28+dfsg1-5ubuntu3.1
 Pin-Priority: 1001
 
-Package: libsasl2-modules-db
+Package: libsasl2-modules-db:amd64
 Pin: version 2.1.28+dfsg1-5ubuntu3.1
 Pin-Priority: 1001
 
-Package: libseccomp2
+Package: libseccomp2:amd64
 Pin: version 2.5.5-1ubuntu3.1
 Pin-Priority: 1001
 
-Package: libselinux1
+Package: libselinux1:amd64
 Pin: version 3.5-2ubuntu2.1
 Pin-Priority: 1001
 
-Package: libselinux1-dev
+Package: libselinux1-dev:amd64
 Pin: version 3.5-2ubuntu2.1
 Pin-Priority: 1001
 
@@ -1202,7 +1202,7 @@ Package: libsemanage-common
 Pin: version 3.5-1build5
 Pin-Priority: 1001
 
-Package: libsemanage2
+Package: libsemanage2:amd64
 Pin: version 3.5-1build5
 Pin-Priority: 1001
 
@@ -1210,127 +1210,127 @@ Package: libsensors-config
 Pin: version 1:3.6.0-9build1
 Pin-Priority: 1001
 
-Package: libsensors5
+Package: libsensors5:amd64
 Pin: version 1:3.6.0-9build1
 Pin-Priority: 1001
 
-Package: libsepol-dev
+Package: libsepol-dev:amd64
 Pin: version 3.5-2build1
 Pin-Priority: 1001
 
-Package: libsepol2
+Package: libsepol2:amd64
 Pin: version 3.5-2build1
 Pin-Priority: 1001
 
-Package: libsframe1
-Pin: version 2.42-4ubuntu2.7
+Package: libsframe1:amd64
+Pin: version 2.42-4ubuntu2.8
 Pin-Priority: 1001
 
-Package: libsharpyuv-dev
+Package: libsharpyuv-dev:amd64
 Pin: version 1.3.2-0.4build3
 Pin-Priority: 1001
 
-Package: libsharpyuv0
+Package: libsharpyuv0:amd64
 Pin: version 1.3.2-0.4build3
 Pin-Priority: 1001
 
-Package: libsm-dev
+Package: libsm-dev:amd64
 Pin: version 2:1.2.3-1build3
 Pin-Priority: 1001
 
-Package: libsm6
+Package: libsm6:amd64
 Pin: version 2:1.2.3-1build3
 Pin-Priority: 1001
 
-Package: libsmartcols1
-Pin: version 2.39.3-9ubuntu6.3
+Package: libsmartcols1:amd64
+Pin: version 2.39.3-9ubuntu6.4
 Pin-Priority: 1001
 
-Package: libsqlite3-0
+Package: libsqlite3-0:amd64
 Pin: version 3.45.1-1ubuntu2.5
 Pin-Priority: 1001
 
-Package: libss2
+Package: libss2:amd64
 Pin: version 1.47.0-2.4~exp1ubuntu4.1
 Pin-Priority: 1001
 
-Package: libssh-4
-Pin: version 0.10.6-2ubuntu0.2
+Package: libssh-4:amd64
+Pin: version 0.10.6-2ubuntu0.3
 Pin-Priority: 1001
 
-Package: libssl3t64
-Pin: version 3.0.13-0ubuntu3.6
+Package: libssl3t64:amd64
+Pin: version 3.0.13-0ubuntu3.7
 Pin-Priority: 1001
 
-Package: libstdc++-13-dev
-Pin: version 13.3.0-6ubuntu2~24.04
+Package: libstdc++-13-dev:amd64
+Pin: version 13.3.0-6ubuntu2~24.04.1
 Pin-Priority: 1001
 
-Package: libstdc++6
-Pin: version 14.2.0-4ubuntu2~24.04
+Package: libstdc++6:amd64
+Pin: version 14.2.0-4ubuntu2~24.04.1
 Pin-Priority: 1001
 
-Package: libsystemd-shared
-Pin: version 255.4-1ubuntu8.11
+Package: libsystemd-shared:amd64
+Pin: version 255.4-1ubuntu8.12
 Pin-Priority: 1001
 
-Package: libsystemd0
-Pin: version 255.4-1ubuntu8.11
+Package: libsystemd0:amd64
+Pin: version 255.4-1ubuntu8.12
 Pin-Priority: 1001
 
-Package: libtasn1-6
-Pin: version 4.19.0-3ubuntu0.24.04.1
+Package: libtasn1-6:amd64
+Pin: version 4.19.0-3ubuntu0.24.04.2
 Pin-Priority: 1001
 
 Package: libthai-data
 Pin: version 0.1.29-2build1
 Pin-Priority: 1001
 
-Package: libthai-dev
+Package: libthai-dev:amd64
 Pin: version 0.1.29-2build1
 Pin-Priority: 1001
 
-Package: libthai0
+Package: libthai0:amd64
 Pin: version 0.1.29-2build1
 Pin-Priority: 1001
 
-Package: libtiff-dev
+Package: libtiff-dev:amd64
 Pin: version 4.5.1+git230720-4ubuntu2.4
 Pin-Priority: 1001
 
-Package: libtiff6
+Package: libtiff6:amd64
 Pin: version 4.5.1+git230720-4ubuntu2.4
 Pin-Priority: 1001
 
-Package: libtiffxx6
+Package: libtiffxx6:amd64
 Pin: version 4.5.1+git230720-4ubuntu2.4
 Pin-Priority: 1001
 
-Package: libtinfo6
+Package: libtinfo6:amd64
 Pin: version 6.4+20240113-1ubuntu2
 Pin-Priority: 1001
 
-Package: libtsan2
-Pin: version 14.2.0-4ubuntu2~24.04
+Package: libtsan2:amd64
+Pin: version 14.2.0-4ubuntu2~24.04.1
 Pin-Priority: 1001
 
-Package: libubsan1
-Pin: version 14.2.0-4ubuntu2~24.04
+Package: libubsan1:amd64
+Pin: version 14.2.0-4ubuntu2~24.04.1
 Pin-Priority: 1001
 
-Package: libudev1
-Pin: version 255.4-1ubuntu8.11
+Package: libudev1:amd64
+Pin: version 255.4-1ubuntu8.12
 Pin-Priority: 1001
 
-Package: libunistring5
+Package: libunistring5:amd64
 Pin: version 1.1-2build1.1
 Pin-Priority: 1001
 
-Package: libuuid1
-Pin: version 2.39.3-9ubuntu6.3
+Package: libuuid1:amd64
+Pin: version 2.39.3-9ubuntu6.4
 Pin-Priority: 1001
 
-Package: libvulkan1
+Package: libvulkan1:amd64
 Pin: version 1.3.275.0-1build1
 Pin-Priority: 1001
 
@@ -1338,47 +1338,47 @@ Package: libwayland-bin
 Pin: version 1.22.0-2.1build1
 Pin-Priority: 1001
 
-Package: libwayland-client0
+Package: libwayland-client0:amd64
 Pin: version 1.22.0-2.1build1
 Pin-Priority: 1001
 
-Package: libwayland-cursor0
+Package: libwayland-cursor0:amd64
 Pin: version 1.22.0-2.1build1
 Pin-Priority: 1001
 
-Package: libwayland-dev
+Package: libwayland-dev:amd64
 Pin: version 1.22.0-2.1build1
 Pin-Priority: 1001
 
-Package: libwayland-egl1
+Package: libwayland-egl1:amd64
 Pin: version 1.22.0-2.1build1
 Pin-Priority: 1001
 
-Package: libwayland-server0
+Package: libwayland-server0:amd64
 Pin: version 1.22.0-2.1build1
 Pin-Priority: 1001
 
-Package: libwebp-dev
+Package: libwebp-dev:amd64
 Pin: version 1.3.2-0.4build3
 Pin-Priority: 1001
 
-Package: libwebp7
+Package: libwebp7:amd64
 Pin: version 1.3.2-0.4build3
 Pin-Priority: 1001
 
-Package: libwebpdecoder3
+Package: libwebpdecoder3:amd64
 Pin: version 1.3.2-0.4build3
 Pin-Priority: 1001
 
-Package: libwebpdemux2
+Package: libwebpdemux2:amd64
 Pin: version 1.3.2-0.4build3
 Pin-Priority: 1001
 
-Package: libwebpmux3
+Package: libwebpmux3:amd64
 Pin: version 1.3.2-0.4build3
 Pin-Priority: 1001
 
-Package: libx11-6
+Package: libx11-6:amd64
 Pin: version 2:1.8.7-1build1
 Pin-Priority: 1001
 
@@ -1386,204 +1386,204 @@ Package: libx11-data
 Pin: version 2:1.8.7-1build1
 Pin-Priority: 1001
 
-Package: libx11-dev
+Package: libx11-dev:amd64
 Pin: version 2:1.8.7-1build1
 Pin-Priority: 1001
 
-Package: libx11-xcb1
+Package: libx11-xcb1:amd64
 Pin: version 2:1.8.7-1build1
 Pin-Priority: 1001
 
-Package: libxau-dev
+Package: libxau-dev:amd64
 Pin: version 1:1.0.9-1build6
 Pin-Priority: 1001
 
-Package: libxau6
+Package: libxau6:amd64
 Pin: version 1:1.0.9-1build6
 Pin-Priority: 1001
 
-Package: libxcb-dri3-0
+Package: libxcb-dri3-0:amd64
 Pin: version 1.15-1ubuntu2
 Pin-Priority: 1001
 
-Package: libxcb-glx0
+Package: libxcb-glx0:amd64
 Pin: version 1.15-1ubuntu2
 Pin-Priority: 1001
 
-Package: libxcb-present0
+Package: libxcb-present0:amd64
 Pin: version 1.15-1ubuntu2
 Pin-Priority: 1001
 
-Package: libxcb-randr0
+Package: libxcb-randr0:amd64
 Pin: version 1.15-1ubuntu2
 Pin-Priority: 1001
 
-Package: libxcb-render0
+Package: libxcb-render0:amd64
 Pin: version 1.15-1ubuntu2
 Pin-Priority: 1001
 
-Package: libxcb-render0-dev
+Package: libxcb-render0-dev:amd64
 Pin: version 1.15-1ubuntu2
 Pin-Priority: 1001
 
-Package: libxcb-shm0
+Package: libxcb-shm0:amd64
 Pin: version 1.15-1ubuntu2
 Pin-Priority: 1001
 
-Package: libxcb-shm0-dev
+Package: libxcb-shm0-dev:amd64
 Pin: version 1.15-1ubuntu2
 Pin-Priority: 1001
 
-Package: libxcb-sync1
+Package: libxcb-sync1:amd64
 Pin: version 1.15-1ubuntu2
 Pin-Priority: 1001
 
-Package: libxcb-xfixes0
+Package: libxcb-xfixes0:amd64
 Pin: version 1.15-1ubuntu2
 Pin-Priority: 1001
 
-Package: libxcb1
+Package: libxcb1:amd64
 Pin: version 1.15-1ubuntu2
 Pin-Priority: 1001
 
-Package: libxcb1-dev
+Package: libxcb1-dev:amd64
 Pin: version 1.15-1ubuntu2
 Pin-Priority: 1001
 
-Package: libxcomposite-dev
+Package: libxcomposite-dev:amd64
 Pin: version 1:0.4.5-1build3
 Pin-Priority: 1001
 
-Package: libxcomposite1
+Package: libxcomposite1:amd64
 Pin: version 1:0.4.5-1build3
 Pin-Priority: 1001
 
-Package: libxcursor-dev
+Package: libxcursor-dev:amd64
 Pin: version 1:1.2.1-1build1
 Pin-Priority: 1001
 
-Package: libxcursor1
+Package: libxcursor1:amd64
 Pin: version 1:1.2.1-1build1
 Pin-Priority: 1001
 
-Package: libxdamage-dev
+Package: libxdamage-dev:amd64
 Pin: version 1:1.1.6-1build1
 Pin-Priority: 1001
 
-Package: libxdamage1
+Package: libxdamage1:amd64
 Pin: version 1:1.1.6-1build1
 Pin-Priority: 1001
 
-Package: libxdmcp-dev
+Package: libxdmcp-dev:amd64
 Pin: version 1:1.1.3-0ubuntu6
 Pin-Priority: 1001
 
-Package: libxdmcp6
+Package: libxdmcp6:amd64
 Pin: version 1:1.1.3-0ubuntu6
 Pin-Priority: 1001
 
-Package: libxext-dev
+Package: libxext-dev:amd64
 Pin: version 2:1.3.4-1build2
 Pin-Priority: 1001
 
-Package: libxext6
+Package: libxext6:amd64
 Pin: version 2:1.3.4-1build2
 Pin-Priority: 1001
 
-Package: libxfixes-dev
+Package: libxfixes-dev:amd64
 Pin: version 1:6.0.0-2build1
 Pin-Priority: 1001
 
-Package: libxfixes3
+Package: libxfixes3:amd64
 Pin: version 1:6.0.0-2build1
 Pin-Priority: 1001
 
-Package: libxft-dev
+Package: libxft-dev:amd64
 Pin: version 2.3.6-1build1
 Pin-Priority: 1001
 
-Package: libxft2
+Package: libxft2:amd64
 Pin: version 2.3.6-1build1
 Pin-Priority: 1001
 
-Package: libxi-dev
+Package: libxi-dev:amd64
 Pin: version 2:1.8.1-1build1
 Pin-Priority: 1001
 
-Package: libxi6
+Package: libxi6:amd64
 Pin: version 2:1.8.1-1build1
 Pin-Priority: 1001
 
-Package: libxinerama-dev
+Package: libxinerama-dev:amd64
 Pin: version 2:1.1.4-3build1
 Pin-Priority: 1001
 
-Package: libxinerama1
+Package: libxinerama1:amd64
 Pin: version 2:1.1.4-3build1
 Pin-Priority: 1001
 
-Package: libxkbcommon-dev
+Package: libxkbcommon-dev:amd64
 Pin: version 1.6.0-1build1
 Pin-Priority: 1001
 
-Package: libxkbcommon0
+Package: libxkbcommon0:amd64
 Pin: version 1.6.0-1build1
 Pin-Priority: 1001
 
-Package: libxml2
-Pin: version 2.9.14+dfsg-1.3ubuntu3.6
+Package: libxml2:amd64
+Pin: version 2.9.14+dfsg-1.3ubuntu3.7
 Pin-Priority: 1001
 
-Package: libxrandr-dev
+Package: libxrandr-dev:amd64
 Pin: version 2:1.5.2-2build1
 Pin-Priority: 1001
 
-Package: libxrandr2
+Package: libxrandr2:amd64
 Pin: version 2:1.5.2-2build1
 Pin-Priority: 1001
 
-Package: libxrender-dev
+Package: libxrender-dev:amd64
 Pin: version 1:0.9.10-1.1build1
 Pin-Priority: 1001
 
-Package: libxrender1
+Package: libxrender1:amd64
 Pin: version 1:0.9.10-1.1build1
 Pin-Priority: 1001
 
-Package: libxshmfence1
+Package: libxshmfence1:amd64
 Pin: version 1.3-1build5
 Pin-Priority: 1001
 
-Package: libxtst-dev
+Package: libxtst-dev:amd64
 Pin: version 2:1.2.3-1.1build1
 Pin-Priority: 1001
 
-Package: libxtst6
+Package: libxtst6:amd64
 Pin: version 2:1.2.3-1.1build1
 Pin-Priority: 1001
 
-Package: libxxf86vm1
+Package: libxxf86vm1:amd64
 Pin: version 1:1.1.4-1build4
 Pin-Priority: 1001
 
-Package: libxxhash0
+Package: libxxhash0:amd64
 Pin: version 0.8.2-2build1
 Pin-Priority: 1001
 
-Package: libyaml-0-2
+Package: libyaml-0-2:amd64
 Pin: version 0.2.5-1build1
 Pin-Priority: 1001
 
-Package: libzstd-dev
+Package: libzstd-dev:amd64
 Pin: version 1.5.5+dfsg2-2build1.1
 Pin-Priority: 1001
 
-Package: libzstd1
+Package: libzstd1:amd64
 Pin: version 1.5.5+dfsg2-2build1.1
 Pin-Priority: 1001
 
-Package: linux-libc-dev
-Pin: version 6.8.0-88.89
+Package: linux-libc-dev:amd64
+Pin: version 6.8.0-101.101
 Pin-Priority: 1001
 
 Package: login
@@ -1610,12 +1610,12 @@ Package: media-types
 Pin: version 10.1.0
 Pin-Priority: 1001
 
-Package: mesa-libgallium
-Pin: version 25.0.7-0ubuntu0.24.04.2
+Package: mesa-libgallium:amd64
+Pin: version 25.2.8-0ubuntu0.24.04.1
 Pin-Priority: 1001
 
 Package: mount
-Pin: version 2.39.3-9ubuntu6.3
+Pin: version 2.39.3-9ubuntu6.4
 Pin-Priority: 1001
 
 Package: ncurses-base
@@ -1631,7 +1631,7 @@ Pin: version 6.4
 Pin-Priority: 1001
 
 Package: openssl
-Pin: version 3.0.13-0ubuntu3.6
+Pin: version 3.0.13-0ubuntu3.7
 Pin-Priority: 1001
 
 Package: pango1.0-tools
@@ -1658,7 +1658,7 @@ Package: perl-modules-5.38
 Pin: version 5.38.2-3.2ubuntu0.2
 Pin-Priority: 1001
 
-Package: pkgconf
+Package: pkgconf:amd64
 Pin: version 1.8.1-2build1
 Pin-Priority: 1001
 
@@ -1683,11 +1683,11 @@ Pin: version 24.0-1
 Pin-Priority: 1001
 
 Package: python3.12
-Pin: version 3.12.3-1ubuntu0.9
+Pin: version 3.12.3-1ubuntu0.12
 Pin-Priority: 1001
 
 Package: python3.12-minimal
-Pin: version 3.12.3-1ubuntu0.9
+Pin: version 3.12.3-1ubuntu0.12
 Pin-Priority: 1001
 
 Package: rake
@@ -1714,7 +1714,7 @@ Package: ruby-rubygems
 Pin: version 3.4.20-1
 Pin-Priority: 1001
 
-Package: ruby-sdbm
+Package: ruby-sdbm:amd64
 Pin: version 1.0.0-5build4
 Pin-Priority: 1001
 
@@ -1751,15 +1751,15 @@ Pin: version 2.4-4
 Pin-Priority: 1001
 
 Package: systemd
-Pin: version 255.4-1ubuntu8.11
+Pin: version 255.4-1ubuntu8.12
 Pin-Priority: 1001
 
 Package: systemd-dev
-Pin: version 255.4-1ubuntu8.11
+Pin: version 255.4-1ubuntu8.12
 Pin-Priority: 1001
 
 Package: systemd-sysv
-Pin: version 255.4-1ubuntu8.11
+Pin: version 255.4-1ubuntu8.12
 Pin-Priority: 1001
 
 Package: sysvinit-utils
@@ -1787,15 +1787,15 @@ Pin: version 0.2.1
 Pin-Priority: 1001
 
 Package: util-linux
-Pin: version 2.39.3-9ubuntu6.3
+Pin: version 2.39.3-9ubuntu6.4
 Pin-Priority: 1001
 
-Package: uuid-dev
-Pin: version 2.39.3-9ubuntu6.3
+Package: uuid-dev:amd64
+Pin: version 2.39.3-9ubuntu6.4
 Pin-Priority: 1001
 
 Package: wayland-protocols
-Pin: version 1.38-1~ubuntu0.24.04.1
+Pin: version 1.45-1~ubuntu0.24.04.1
 Pin-Priority: 1001
 
 Package: x11-common
@@ -1826,11 +1826,10 @@ Package: xz-utils
 Pin: version 5.6.1+really5.4.5-1ubuntu0.2
 Pin-Priority: 1001
 
-Package: zlib1g
+Package: zlib1g:amd64
 Pin: version 1:1.3.dfsg-3.1ubuntu2.1
 Pin-Priority: 1001
 
-Package: zlib1g-dev
+Package: zlib1g-dev:amd64
 Pin: version 1:1.3.dfsg-3.1ubuntu2.1
 Pin-Priority: 1001
-

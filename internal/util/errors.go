@@ -12,6 +12,7 @@ func LogIgnoredError(err error, log logrus.FieldLogger, msg string) {
 	}
 }
 
+// OrErr will log the error if it is not nil, returning the value given
 func OrErr[T any](v T, err error, log logrus.FieldLogger, msg string) T {
 	if err != nil {
 		if log == nil {
@@ -22,6 +23,7 @@ func OrErr[T any](v T, err error, log logrus.FieldLogger, msg string) T {
 	return v
 }
 
+// Must will panic if an error is given, otherwise returning the value
 func Must[T any](v T, err error) T {
 	if err != nil {
 		panic(err) // or log.Fatal(err)

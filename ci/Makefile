@@ -75,10 +75,10 @@ build-linux-reproducible:
 
 make-gui-for-release: $(RELEASE_DIR)/coyim$(PLATFORM) $(RELEASE_DIR)/coyim$(PLATFORM)_checksum
 
-make-gui-for-release-linux: build-linux-reproducible $(RELEASE_DIR)
+make-gui-for-release-linux: #build-linux-reproducible $(RELEASE_DIR)
 	cp ../bin/coyim $(RELEASE_DIR)/coyim$(PLATFORM)
 	cp ../bin/build_info $(RELEASE_DIR)/build_info$(PLATFORM)
-	openssl dgst -sha256 $(RELEASE_DIR)/coyim$(PLATFORM) >> $(RELEASE_DIR)/coyim$(PLATFORM)_checksum
+	(cd $(RELEASE_DIR); sha256sum coyim$(PLATFORM) >> coyim$(PLATFORM)_checksum)
 
 $(RELEASE_DIR)/toast.exe: $(RELEASE_DIR)
 	cp $(BUILD_WIN)/toast.exe $@

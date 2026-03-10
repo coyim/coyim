@@ -967,6 +967,7 @@ func (conv *conversationPane) updateConversationDataFrom(pcp *conversationPane) 
 	conv.pendingDelayed = pcp.pendingDelayed
 	conv.delayed = pcp.delayed
 	conv.currentPeer = pcp.currentPeer
+	conv.shownPrivate = pcp.shownPrivate
 
 	conv.verifier.copyStatusFrom(pcp.verifier)
 	conv.verifier.updateDisplay()

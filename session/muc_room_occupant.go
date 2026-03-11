@@ -313,7 +313,7 @@ func (m *mucManager) handleNonMembersRemoved(roomID jid.Bare, op *muc.OccupantPr
 		l.WithError(err).Error("An error occurred trying to remove the occupant from the roster")
 	}
 
-	if r.SelfOccupant().Nickname == op.Nickname {
+	if r.SelfOccupant() != nil && r.SelfOccupant().Nickname == op.Nickname {
 		m.removeSelfOccupant(roomID)
 		m.deleteRoomFromManager(roomID)
 		return
@@ -339,7 +339,7 @@ func (m *mucManager) handleOccupantRemovedOnAffiliationChange(roomID jid.Bare, o
 		l.WithError(err).Error("An error occurred trying to remove the occupant from the roster")
 	}
 
-	if r.SelfOccupant().Nickname == op.Nickname {
+	if r.SelfOccupant() != nil && r.SelfOccupant().Nickname == op.Nickname {
 		m.selfOccupantRemovedOnAffiliationChange(roomID)
 		m.deleteRoomFromManager(roomID)
 		return

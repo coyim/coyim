@@ -54,7 +54,8 @@ type session struct {
 
 	// timeouts maps from Cookies (from outstanding requests) to the
 	// absolute time when that request should timeout.
-	timeouts map[data.Cookie]time.Time
+	timeouts     map[data.Cookie]time.Time
+	timeoutsLock sync.Mutex
 
 	// LastActionTime is the time at which the user last entered a command,
 	// or was last notified.
@@ -426,7 +427,7 @@ func (s *session) receiveStanza(stanzaChan chan data.Stanza) bool {
 	return result
 }
 
-//TODO: differentiate errors from disconnect request
+// TODO: differentiate errors from disconnect request
 func (s *session) watchStanzas() {
 	defer s.connectionLost()
 
@@ -672,37 +673,49 @@ func (s *session) AwaitVersionReply(ch <-chan data.Stanza, user string) {
 
 var tickInterval = time.Second
 
+func (s *session) timeoutTick() {
+	now := <-time.After(tickInterval)
+
+	s.timeoutsLock.Lock()
+	defer s.timeoutsLock.Unlock()
+
+	haveExpired := false
+
+	for _, expiry := range s.timeouts {
+		if now.After(expiry) {
+			haveExpired = true
+			break
+		}
+	}
+
+	if !haveExpired {
+		return
+	}
+
+	newTimeouts := make(map[data.Cookie]time.Time)
+	for cookie, expiry := range s.timeouts {
+		if now.After(expiry) {
+			s.log.WithField("cookie", cookie).Debug("session: cookie has expired")
+			s.conn.Cancel(cookie)
+		} else {
+			newTimeouts[cookie] = expiry
+		}
+	}
+
+	s.timeouts = newTimeouts
+}
+
 func (s *session) watchTimeout() {
 	for s.IsConnected() {
-		now := <-time.After(tickInterval)
-		haveExpired := false
-		for _, expiry := range s.timeouts {
-			if now.After(expiry) {
-				haveExpired = true
-				break
-			}
-		}
-
-		if !haveExpired {
-			continue
-		}
-
-		newTimeouts := make(map[data.Cookie]time.Time)
-		for cookie, expiry := range s.timeouts {
-			if now.After(expiry) {
-				s.log.WithField("cookie", cookie).Debug("session: cookie has expired")
-				s.conn.Cancel(cookie)
-			} else {
-				newTimeouts[cookie] = expiry
-			}
-		}
-
-		s.timeouts = newTimeouts
+		s.timeoutTick()
 	}
 }
 
 // Timeout set the timeout for an XMPP request
 func (s *session) Timeout(c data.Cookie, t time.Time) {
+	s.timeoutsLock.Lock()
+	defer s.timeoutsLock.Unlock()
+
 	s.timeouts[c] = t
 }
 

@@ -65,7 +65,8 @@ type session struct {
 
 	// WantToBeOnline keeps track of whether a user has expressed a wish
 	// to be online - if it's true, it will do more aggressive reconnecting
-	wantToBeOnline bool
+	wantToBeOnline     bool
+	wantToBeOnlineLock sync.Mutex
 
 	subscribers struct {
 		sync.RWMutex
@@ -882,14 +883,18 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 		DialerFactory: s.dialerFactory,
 	}
 
+	s.wantToBeOnlineLock.Lock()
+	wantToBeOnline := s.wantToBeOnline
+	s.wantToBeOnlineLock.Unlock()
+
 	resource := ""
-	if s.wantToBeOnline {
+	if wantToBeOnline {
 		resource = s.resource
 	}
 
 	s.log.WithFields(log.Fields{
 		"resource":       resource,
-		"wantToBeOnline": s.wantToBeOnline,
+		"wantToBeOnline": wantToBeOnline,
 	}).Debug("Connect()")
 
 	conn, err := policy.Connect(password, resource, conf, verifier)
@@ -956,7 +961,11 @@ func (s *session) Close() {
 
 	conn := s.conn
 	if conn != nil {
-		if !s.wantToBeOnline {
+		s.wantToBeOnlineLock.Lock()
+		wantToBeOnline := s.wantToBeOnline
+		s.wantToBeOnlineLock.Unlock()
+
+		if !wantToBeOnline {
 			s.terminateConversations()
 		}
 		s.setStatus(DISCONNECTED)
@@ -982,6 +991,9 @@ func (s *session) ConversationManager() otrclient.ConversationManager {
 }
 
 func (s *session) SetWantToBeOnline(val bool) {
+	s.wantToBeOnlineLock.Lock()
+	defer s.wantToBeOnlineLock.Unlock()
+
 	s.wantToBeOnline = val
 }
 

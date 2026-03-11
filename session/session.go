@@ -61,6 +61,7 @@ type session struct {
 	// LastActionTime is the time at which the user last entered a command,
 	// or was last notified.
 	lastActionTime      time.Time
+	lastActionTimeLock  sync.Mutex
 	sessionEventHandler access.EventHandler
 
 	// WantToBeOnline keeps track of whether a user has expressed a wish
@@ -628,6 +629,10 @@ func (s *session) maybeNotify() {
 	if idleThreshold == 0 {
 		idleThreshold = 60
 	}
+
+	s.lastActionTimeLock.Lock()
+	defer s.lastActionTimeLock.Unlock()
+
 	notifyTime := s.lastActionTime.Add(time.Duration(idleThreshold) * time.Second)
 	if now.Before(notifyTime) {
 		return
@@ -1022,6 +1027,9 @@ func (s *session) Conn() xi.Conn {
 }
 
 func (s *session) SetLastActionTime(t time.Time) {
+	s.lastActionTimeLock.Lock()
+	defer s.lastActionTimeLock.Unlock()
+
 	s.lastActionTime = t
 }
 

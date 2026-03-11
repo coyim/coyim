@@ -431,7 +431,7 @@ func (s *session) receiveStanza(stanzaChan chan data.Stanza) bool {
 func (s *session) watchStanzas() {
 	defer s.connectionLost()
 
-	stanzaChan := make(chan data.Stanza)
+	stanzaChan := make(chan data.Stanza, 10)
 	go s.readStanzasAndAlertOnErrors(stanzaChan)
 	for s.receiveStanza(stanzaChan) {
 	}

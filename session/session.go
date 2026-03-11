@@ -15,6 +15,7 @@ import (
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/internal/util"
 	"github.com/coyim/coyim/otrclient"
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
@@ -280,7 +281,8 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		jjr := jjnr.String()
 		if s.autoApproves[jjr] {
 			delete(s.autoApproves, jjr)
-			_ = s.ApprovePresenceSubscription(jjnr, stanza.ID)
+			e := s.ApprovePresenceSubscription(jjnr, stanza.ID)
+			util.LogIgnoredError(e, s.log, "approve presence subscription")
 		} else {
 			s.r.SubscribeRequest(jjnr, either(stanza.ID, "0000"), s.GetConfig().ID())
 			s.publishPeerEvent(
@@ -526,7 +528,9 @@ func (s *session) HandleConfirmOrDeny(jid jid.WithoutResource, isConfirm bool) {
 	}
 
 	if isConfirm {
-		_ = s.RequestPresenceSubscription(jid, "")
+		err = s.RequestPresenceSubscription(jid, "")
+		util.LogIgnoredError(err, s.log, "request presence subscription")
+
 	}
 }
 
@@ -902,7 +906,9 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 		s.setStatus(CONNECTED)
 		s.resource = s.conn.GetJIDResource()
 
-		_ = conn.SignalPresence("")
+		err = conn.SignalPresence("")
+		util.LogIgnoredError(err, s.log, "signal presence")
+
 		go s.watchRoster()
 		go func() {
 			if s.conn.ServerHasFeature("vcard-temp") {
@@ -913,7 +919,9 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 		go s.watchStanzas()
 	} else {
 		if s.conn != nil {
-			_ = s.conn.Close()
+			err = s.conn.Close()
+			util.LogIgnoredError(err, s.log, "closing connection")
+
 		}
 	}
 
@@ -952,7 +960,9 @@ func (s *session) Close() {
 			s.terminateConversations()
 		}
 		s.setStatus(DISCONNECTED)
-		_ = conn.Close()
+		e := conn.Close()
+		util.LogIgnoredError(e, s.log, "closing connection")
+
 		s.conn = nil
 	} else {
 		s.setStatus(DISCONNECTED)

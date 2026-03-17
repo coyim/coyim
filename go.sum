@@ -16,6 +16,8 @@ github.com/coyim/otr3 v0.0.0-20251201172118-4568b9acbc7c h1:1GU1P8ECWyRQc8NFGzKr
 github.com/coyim/otr3 v0.0.0-20251201172118-4568b9acbc7c/go.mod h1:cEC1vJFaN8Vc4J8SCrDworb7cL6XLSSNcm6mP51kTQQ=
 github.com/coyim/otr3 v0.0.0-20260310190452-e6609c68432e h1:neOF1K/NJs8Bk0KioxgbKgfPKzbCzQJSyt8k4obx0zs=
 github.com/coyim/otr3 v0.0.0-20260310190452-e6609c68432e/go.mod h1:cEC1vJFaN8Vc4J8SCrDworb7cL6XLSSNcm6mP51kTQQ=
+github.com/coyim/otr3 v0.0.0-20260317173733-2db8f2c31b07 h1:ca0tSBlq1HWGVo3wh9+9LOG2IlCVxV8BDovUxSR1gX4=
+github.com/coyim/otr3 v0.0.0-20260317173733-2db8f2c31b07/go.mod h1:cEC1vJFaN8Vc4J8SCrDworb7cL6XLSSNcm6mP51kTQQ=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=

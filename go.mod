@@ -9,7 +9,7 @@ require (
 	github.com/coyim/gosx-notifier v0.0.0-20160821204220-212122c14674
 	github.com/coyim/gotk3adapter v0.0.3
 	github.com/coyim/gotk3osx v0.0.0-20251201162234-f321b73c1426
-	github.com/coyim/otr3 v0.0.0-20260310190452-e6609c68432e
+	github.com/coyim/otr3 v0.0.0-20260317173733-2db8f2c31b07
 	github.com/godbus/dbus/v5 v5.2.0
 	github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3
 	github.com/gotk3/gotk3 v0.6.2

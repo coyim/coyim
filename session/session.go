@@ -86,7 +86,8 @@ type session struct {
 
 	dialerFactory func(tls.Verifier, tls.Factory) xi.Dialer
 
-	autoApproves map[string]bool
+	autoApproves     map[string]bool
+	autoApprovesLock sync.Mutex
 
 	nicknames []string
 
@@ -281,8 +282,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 	switch stanza.Type {
 	case "subscribe":
 		jjr := jjnr.String()
-		if s.autoApproves[jjr] {
-			delete(s.autoApproves, jjr)
+		if s.hasAndRemoveAutoApprove(jjr) {
 			e := s.ApprovePresenceSubscription(jjnr, stanza.ID)
 			util.LogIgnoredError(e, s.log, "approve presence subscription")
 		} else {

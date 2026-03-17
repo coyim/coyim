@@ -6,7 +6,22 @@ import (
 
 // AutoApprove will automatically approve an incoming subscription request for the given peer
 func (s *session) AutoApprove(jid string) {
+	s.autoApprovesLock.Lock()
+	defer s.autoApprovesLock.Unlock()
+
 	s.autoApproves[jid] = true
+}
+
+func (s *session) hasAndRemoveAutoApprove(jid string) bool {
+	s.autoApprovesLock.Lock()
+	defer s.autoApprovesLock.Unlock()
+
+	has := s.autoApproves[jid]
+	if has {
+		delete(s.autoApproves, jid)
+	}
+
+	return has
 }
 
 // ApprovePresenceSubscription is used to request subscription approval

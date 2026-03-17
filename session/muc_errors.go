@@ -2,12 +2,11 @@ package session
 
 import (
 	"github.com/coyim/coyim/session/events"
-	"github.com/coyim/coyim/xmpp/data"
 	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-func (m *mucManager) publishMUCError(roomID jid.Bare, nickname string, e *data.StanzaError) {
+func (m *mucManager) publishMUCError(roomID jid.Bare, nickname string, e *xmppData.StanzaError) {
 	ev := events.MUCError{}
 	ev.ErrorType = getEventErrorTypeBasedOnStanzaError(e)
 	ev.Room = roomID
@@ -16,7 +15,7 @@ func (m *mucManager) publishMUCError(roomID jid.Bare, nickname string, e *data.S
 	m.publishEvent(ev)
 }
 
-func (m *mucManager) publishMUCMessageError(roomID jid.Bare, e *data.StanzaError) {
+func (m *mucManager) publishMUCMessageError(roomID jid.Bare, e *xmppData.StanzaError) {
 	ev := events.MUCError{}
 	ev.ErrorType = getEventErrorTypeBasedOnMessageError(e)
 	ev.Room = roomID
@@ -35,7 +34,7 @@ func isMUCErrorPresence(e *xmppData.StanzaError) bool {
 		e.MUCServiceUnavailable != nil)
 }
 
-func getEventErrorTypeBasedOnMessageError(e *data.StanzaError) events.MUCErrorType {
+func getEventErrorTypeBasedOnMessageError(e *xmppData.StanzaError) events.MUCErrorType {
 	t := events.MUCNoError
 	switch {
 	case e.MUCForbidden != nil:
@@ -46,7 +45,7 @@ func getEventErrorTypeBasedOnMessageError(e *data.StanzaError) events.MUCErrorTy
 	return t
 }
 
-func getEventErrorTypeBasedOnStanzaError(e *data.StanzaError) events.MUCErrorType {
+func getEventErrorTypeBasedOnStanzaError(e *xmppData.StanzaError) events.MUCErrorType {
 	t := events.MUCNoError
 	switch {
 	case e.MUCNotAuthorized != nil:
@@ -69,6 +68,6 @@ func getEventErrorTypeBasedOnStanzaError(e *data.StanzaError) events.MUCErrorTyp
 	return t
 }
 
-func isMUCError(e *data.StanzaError) bool {
+func isMUCError(e *xmppData.StanzaError) bool {
 	return getEventErrorTypeBasedOnStanzaError(e) != events.MUCNoError
 }

@@ -10,7 +10,6 @@ import (
 	"github.com/coyim/coyim/coylog"
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/xmpp/data"
-	"github.com/coyim/coyim/xmpp/interfaces"
 	xi "github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
@@ -52,7 +51,7 @@ func discoverSupport(s xi.Has, p string) (profiles map[string]bool, err error) {
 	return profiles, errors.New("Problem discovering the features of the peer")
 }
 
-func genSid(c interfaces.Conn) string {
+func genSid(c xi.Conn) string {
 	var buf [8]byte
 	if _, err := c.Rand().Read(buf[:]); err != nil {
 		panic("Failed to read random bytes: " + err.Error())

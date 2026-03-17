@@ -19,7 +19,7 @@ test:
 doctor: check-go-imports
 
 check-go-imports:
-	go install golang.org/x/tools/cmd/goimports
+	go install golang.org/x/tools/cmd/goimports@v0.41.0
 	goimports -w .
 	git diff --exit-code .
 

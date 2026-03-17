@@ -269,7 +269,7 @@ func (s *EncryptionSuite) Test_wrapForSending_doesntDoAnythingWithoutEncryptionP
 	var enc *encryptionParameters
 
 	data := &nopWriterCloser{&bytes.Buffer{}}
-	d2, f := enc.wrapForSending(data, data)
+	d2, f, _ := enc.wrapForSending(data, data)
 
 	f()
 
@@ -286,7 +286,7 @@ func (s *EncryptionSuite) Test_wrapForSending_works(c *C) {
 	orgData := &bytes.Buffer{}
 	macWriter := &bytes.Buffer{}
 
-	d2, f := enc.wrapForSending(&nopWriterCloser{orgData}, macWriter)
+	d2, f, _ := enc.wrapForSending(&nopWriterCloser{orgData}, macWriter)
 	_, _ = d2.Write(testDataContent)
 	_ = d2.Close()
 

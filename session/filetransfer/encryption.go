@@ -10,6 +10,8 @@ import (
 	"errors"
 	"hash"
 	"io"
+
+	"github.com/coyim/coyim/internal/util"
 )
 
 type encryptionParameters struct {
@@ -61,24 +63,33 @@ func (enc *encryptionParameters) totalSize(fileSize int64) int64 {
 	return int64(16) + fileSize + int64(hmac.New(sha256.New, enc.macKey).Size())
 }
 
-func (enc *encryptionParameters) wrapForSending(data io.WriteCloser, ivMacWriter io.Writer) (io.WriteCloser, func()) {
+func (enc *encryptionParameters) wrapForSending(data io.WriteCloser, ivMacWriter io.Writer) (io.WriteCloser, func(), error) {
 	if enc == nil {
-		return data, func() {}
+		return data, func() {}, nil
 	}
 
 	mac := hmac.New(sha256.New, enc.macKey)
-	aesc, _ := aes.NewCipher(enc.encryptionKey)
+	aesc, e := aes.NewCipher(enc.encryptionKey)
+	util.LogIgnoredError(e, nil, "creating new cipher")
+	if e != nil {
+		return nil, nil, e
+	}
 	blockc := cipher.NewCTR(aesc, enc.iv)
 
-	_, _ = ivMacWriter.Write(enc.iv)
+	_, e = ivMacWriter.Write(enc.iv)
+	util.LogIgnoredError(e, nil, "writing IV")
+	if e != nil {
+		return nil, nil, e
+	}
 
 	ww := &cipher.StreamWriter{S: blockc, W: ioMultiWriter(data, mac)}
 	beforeFinish := func() {
 		sum := mac.Sum(nil)
-		_, _ = ivMacWriter.Write(sum)
+		_, e = ivMacWriter.Write(sum)
+		util.LogIgnoredError(e, nil, "writing mac")
 	}
 
-	return ww, beforeFinish
+	return ww, beforeFinish, nil
 }
 
 func (enc *encryptionParameters) wrapForReceiving(r io.Reader) (io.Reader, func() ([]byte, error), error) {

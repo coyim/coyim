@@ -116,15 +116,20 @@ func bytestreamsSendData(ctx *sendContext, c io.ReadWriteCloser) {
 
 	ctx.totalSize = ctx.enc.totalSize(ctx.size)
 
-	ww, beforeFinish := ctx.enc.wrapForSending(c, ioMultiWriter(c, rep))
+	ww, beforeFinish, err := ctx.enc.wrapForSending(c, ioMultiWriter(c, rep))
+	if err != nil {
+		ctx.onError(err)
+		return
+	}
 
 	_, err = ioCopy(ioMultiWriter(ww, rep), r)
 	if err != nil && err != errLocalCancel {
 		ctx.onError(err)
-	} else {
-		beforeFinish()
-		ctx.onFinish()
+		return
 	}
+
+	beforeFinish()
+	ctx.onFinish()
 }
 
 func bytestreamsSendDo(ctx *sendContext) {

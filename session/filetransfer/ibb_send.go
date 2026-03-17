@@ -59,7 +59,10 @@ func ibbReadAndWrite(ctx *sendContext) io.ReadCloser {
 	ctx.totalSize = ctx.enc.totalSize(ctx.size)
 
 	go func() {
-		w2, beforeFinish := ctx.enc.wrapForSending(w, w)
+		w2, beforeFinish, err := ctx.enc.wrapForSending(w, w)
+		if err != nil {
+			ctx.onError(err)
+		}
 		_, err = ioCopy(w2, f)
 		if err != nil && err != errLocalCancel {
 			ctx.onError(err)
@@ -67,9 +70,9 @@ func ibbReadAndWrite(ctx *sendContext) io.ReadCloser {
 
 		beforeFinish()
 
-		_ = f.Close()
-		_ = w2.Close()
-		_ = w.Close()
+		util.CloseAndIgnore(f)
+		util.CloseAndIgnore(w2)
+		util.CloseAndIgnore(w)
 	}()
 
 	return r

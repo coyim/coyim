@@ -75,8 +75,8 @@ func getInflightRecv(id string) (result *recvContext, ok bool) {
 }
 
 func setInflightRecvDestination(id, destination string) {
-	inflightRecvs.RLock()
-	defer inflightRecvs.RUnlock()
+	inflightRecvs.Lock()
+	defer inflightRecvs.Unlock()
 	inflightRecvs.transfers[id].destination = destination
 }
 

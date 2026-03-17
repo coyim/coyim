@@ -53,7 +53,7 @@ var logFile *os.File
 
 func initLogFile(name string) {
 	var err error
-	logFile, err = os.OpenFile(name, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	logFile, err = os.OpenFile(name, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0600)
 	if err != nil {
 		log.WithError(err).WithField("file", name).Error("Couldn't open file for logging")
 		return

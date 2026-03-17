@@ -3,6 +3,7 @@ package gui
 import (
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/internal/util"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -86,7 +87,9 @@ func (o *onetimeSavedPassword) GenerateKey(params config.EncryptionParameters) (
 		ourPwd := o.savedPassword
 		o.savedPassword = ""
 
-		l, r := config.GenerateKeys(ourPwd, params)
+		l, r, err := config.GenerateKeys(ourPwd, params)
+		util.LogIgnoredError(err, nil, "generating master password")
+
 		return l, r, true
 	}
 	return o.realF.GenerateKey(params)
@@ -149,7 +152,9 @@ func (u *gtkUI) getMainPassword(params config.EncryptionParameters, lastAttemptF
 		return nil, nil, false
 	}
 
-	l, r := config.GenerateKeys(pwd, params)
+	l, r, err := config.GenerateKeys(pwd, params)
+	util.LogIgnoredError(err, u.hasLog.log, "generating master password")
+
 	doInUIThread(cleanup)
 	return l, r, true
 }

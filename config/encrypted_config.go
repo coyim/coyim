@@ -73,23 +73,38 @@ const nonceLen = 12
 const saltLen = 16
 
 // GenerateKeys takes a password and encryption parameters and generates an AES key and a MAC key using SCrypt
-func GenerateKeys(password string, params EncryptionParameters) ([]byte, []byte) {
+func GenerateKeys(password string, params EncryptionParameters) ([]byte, []byte, error) {
 	res, err := scrypt.Key([]byte(password), params.saltInternal, params.N, params.R, params.P, aesKeyLen+macKeyLen)
 	util.LogIgnoredError(err, logger, "generating key from password")
-	return res[0:aesKeyLen], res[aesKeyLen:]
+	if err != nil {
+		return nil, nil, err
+	}
+	return res[0:aesKeyLen], res[aesKeyLen:], nil
 }
 
-func encryptData(key, macKey, nonce []byte, plain string) []byte {
+func encryptData(key, macKey, nonce []byte, plain string) ([]byte, error) {
 	c, err := aes.NewCipher(key)
 	util.LogIgnoredError(err, logger, "creating new cipher from key")
+	if err != nil {
+		return nil, err
+	}
 	block, err2 := cipher.NewGCM(c)
 	util.LogIgnoredError(err2, logger, "creating new cipher mode from cipher")
-	return block.Seal(nil, nonce, []byte(plain), macKey)
+	if err2 != nil {
+		return nil, err2
+	}
+	return block.Seal(nil, nonce, []byte(plain), macKey), nil
 }
 
 func decryptData(key, macKey, nonce, cipherText []byte) ([]byte, error) {
-	c, _ := aes.NewCipher(key)
-	block, _ := cipher.NewGCM(c)
+	c, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+	block, err := cipher.NewGCM(c)
+	if err != nil {
+		return nil, err
+	}
 	res, e := block.Open(nil, nonce, cipherText, macKey)
 	if e != nil {
 		return nil, errDecryptionFailed
@@ -164,7 +179,10 @@ func encryptConfiguration(content string, params *EncryptionParameters, ks KeySu
 		return nil, errors.New("no password supplied, aborting")
 	}
 
-	ctext := encryptData(key, macKey, params.nonceInternal, content)
+	ctext, err := encryptData(key, macKey, params.nonceInternal, content)
+	if err != nil {
+		return nil, err
+	}
 
 	params.serialize()
 

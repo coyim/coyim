@@ -45,16 +45,18 @@ func (s *EncryptedConfigXMPPSuite) Test_generateKeys(c *C) {
 	}
 	params.saltInternal = testSalt
 
-	res, res2 := GenerateKeys(testPassword, params)
+	res, res2, err := GenerateKeys(testPassword, params)
 	c.Assert(res, DeepEquals, testKey)
 	c.Assert(res2, DeepEquals, testMacKey)
 	c.Assert(len(res), Equals, aesKeyLen)
 	c.Assert(len(res2), Equals, macKeyLen)
+	c.Assert(err, IsNil)
 }
 
 func (s *EncryptedConfigXMPPSuite) Test_encryptData(c *C) {
-	res := encryptData(testKey, testMacKey, testNonce, "this is some data I want to have encrypted")
+	res, err := encryptData(testKey, testMacKey, testNonce, "this is some data I want to have encrypted")
 	c.Assert(res, DeepEquals, testEncryptedData)
+	c.Assert(err, IsNil)
 }
 
 func (s *EncryptedConfigXMPPSuite) Test_decryptData(c *C) {

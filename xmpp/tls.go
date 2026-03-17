@@ -97,6 +97,7 @@ func (d *dialer) negotiateSTARTTLS(c interfaces.Conn, conn net.Conn) error {
 	// RFC 6120, section 5.3
 	mandatoryToNegotiate := c.Features().StartTLS.Required.Local == "required"
 	if c.Config().SkipTLS && !mandatoryToNegotiate {
+		d.log.Warn("Skipping TLS negotiation as requested - connection is NOT encrypted")
 		return nil
 	}
 

@@ -16,6 +16,7 @@ import (
 	"github.com/coyim/coyim/gui"
 	"github.com/coyim/coyim/gui/settings"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/names"
 	"github.com/coyim/coyim/sasl"
 	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/xmpp"
@@ -107,9 +108,6 @@ func printFinalNewline() {
 	_, _ = os.Stdout.Write([]byte("\n"))
 }
 
-var coyimVersionKey = struct{}{}
-var coyimLogKey = struct{}{}
-
 func main() {
 	ctx := context.Background()
 
@@ -129,9 +127,9 @@ func main() {
 
 	log.WithField("version", coyimVersion).Info("Welcome to CoyIM!")
 
-	ctx = context.WithValue(ctx, coyimVersionKey, coyimVersion)
+	ctx = context.WithValue(ctx, names.Version, coyimVersion)
 	l := logrus.WithContext(ctx)
-	ctx = context.WithValue(ctx, coyimLogKey, l)
+	ctx = context.WithValue(ctx, names.Log, l)
 	ctx, cancelCtx := context.WithCancel(ctx)
 	context.AfterFunc(ctx, func() {
 		if logFile != nil {

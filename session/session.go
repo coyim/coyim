@@ -17,6 +17,7 @@ import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/internal/util"
+	"github.com/coyim/coyim/names"
 	"github.com/coyim/coyim/otrclient"
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
@@ -162,7 +163,9 @@ func Factory(ctx context.Context) func(*config.ApplicationConfig, *config.Accoun
 
 		inMemoryLog, xmppLogger, _ := CreateXMPPLogger(c.RawLogFile)
 
-		sessionLog := log.WithFields(log.Fields{
+		mainLog := ctx.Value(names.Log).(*log.Entry)
+
+		sessionLog := mainLog.WithFields(log.Fields{
 			"account": cu.Account,
 		})
 

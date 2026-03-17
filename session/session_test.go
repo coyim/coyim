@@ -13,6 +13,7 @@ import (
 	"github.com/sirupsen/logrus/hooks/test"
 
 	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/names"
 	"github.com/coyim/coyim/otrclient"
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/events"
@@ -36,11 +37,16 @@ type SessionSuite struct{}
 var _ = Suite(&SessionSuite{})
 
 func (s *SessionSuite) Test_NewSession_returnsANewSession(c *C) {
-	sess := Factory(context.Background())(&config.ApplicationConfig{}, &config.Account{}, xmpp.DialerFactory(context.Background()))
+	sess := Factory(contextWithLog())(&config.ApplicationConfig{}, &config.Account{}, xmpp.DialerFactory(contextWithLog()))
 	c.Assert(sess, Not(IsNil))
 }
 
 const testTimeout = time.Duration(5) * time.Second
+
+func contextWithLog() context.Context {
+	ctx := context.Background()
+	return context.WithValue(ctx, names.Log, log.WithContext(ctx))
+}
 
 func (s *SessionSuite) Test_iqReceived_publishesIQReceivedEvent(c *C) {
 	sess := &session{
@@ -224,10 +230,10 @@ func (s *SessionSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 		"some@one.org/foo",
 	)
 
-	sess := Factory(context.Background())(
+	sess := Factory(contextWithLog())(
 		&config.ApplicationConfig{},
 		&config.Account{InstanceTag: uint32(42)},
-		xmpp.DialerFactory(context.Background()),
+		xmpp.DialerFactory(contextWithLog()),
 	).(*session)
 
 	sess.conn = conn

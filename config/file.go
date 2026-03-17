@@ -98,22 +98,16 @@ func safeWrite(name string, data []byte, perm os.FileMode) error {
 
 func readFileOrTemporaryBackup(name string) (data []byte, e error) {
 	// Fast path
-	if fileExists(name) {
-		data, e = os.ReadFile(filepath.Clean(name))
-		if e == nil && len(data) > 0 {
-			return data, nil
-		}
+	if data, err := os.ReadFile(filepath.Clean(name)); err == nil && len(data) > 0 {
+		return data, nil
 	}
 
 	lockPath := name + lockExtension
 	if fileExists(lockPath) {
 		if !isLockStale(lockPath) {
 			time.Sleep(200 * time.Millisecond)
-			if fileExists(name) {
-				data, e = os.ReadFile(filepath.Clean(name))
-				if e == nil && len(data) > 0 {
-					return data, nil
-				}
+			if data, err := os.ReadFile(filepath.Clean(name)); err == nil && len(data) > 0 {
+				return data, nil
 			}
 			return nil, errors.New("config file is being written, please try again")
 		}
@@ -124,18 +118,12 @@ func readFileOrTemporaryBackup(name string) (data []byte, e error) {
 	tempName := name + tmpExtension
 	backupName := name + backupExtension
 
-	if fileExists(tempName) {
-		data, e = os.ReadFile(filepath.Clean(tempName))
-		if e == nil && len(data) > 0 {
-			return data, nil
-		}
+	if data, err := os.ReadFile(filepath.Clean(tempName)); err == nil && len(data) > 0 {
+		return data, nil
 	}
 
-	if fileExists(backupName) {
-		data, e = os.ReadFile(filepath.Clean(backupName))
-		if e == nil && len(data) > 0 {
-			return data, nil
-		}
+	if data, err := os.ReadFile(filepath.Clean(backupName)); err == nil && len(data) > 0 {
+		return data, nil
 	}
 
 	return nil, fmt.Errorf("no valid config file found at %s", name)

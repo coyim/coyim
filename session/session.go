@@ -432,17 +432,17 @@ func (s *session) receiveStanza(stanzaChan chan data.Stanza) bool {
 }
 
 // TODO: differentiate errors from disconnect request
-func (s *session) watchStanzas() {
+func (s *session) watchStanzas(conn xi.Conn) {
 	defer s.connectionLost()
 
 	stanzaChan := make(chan data.Stanza, 10)
-	go s.readStanzasAndAlertOnErrors(stanzaChan)
+	go s.readStanzasAndAlertOnErrors(conn, stanzaChan)
 	for s.receiveStanza(stanzaChan) {
 	}
 }
 
-func (s *session) readStanzasAndAlertOnErrors(stanzaChan chan data.Stanza) {
-	if err := s.conn.ReadStanzas(stanzaChan); err != nil {
+func (s *session) readStanzasAndAlertOnErrors(conn xi.Conn, stanzaChan chan data.Stanza) {
+	if err := conn.ReadStanzas(stanzaChan); err != nil {
 		s.log.WithError(err).Error("error reading XMPP message")
 	}
 	if s.doneBadStanza != nil {
@@ -686,6 +686,11 @@ var tickInterval = time.Second
 func (s *session) timeoutTick() {
 	now := <-time.After(tickInterval)
 
+	conn, ok := s.connection()
+	if !ok {
+		return
+	}
+
 	s.timeoutsLock.Lock()
 	defer s.timeoutsLock.Unlock()
 
@@ -706,7 +711,7 @@ func (s *session) timeoutTick() {
 	for cookie, expiry := range s.timeouts {
 		if now.After(expiry) {
 			s.log.WithField("cookie", cookie).Debug("session: cookie has expired")
-			s.conn.Cancel(cookie)
+			conn.Cancel(cookie)
 		} else {
 			newTimeouts[cookie] = expiry
 		}
@@ -842,7 +847,9 @@ func (s *session) IsConnected() bool {
 }
 
 func (s *session) connection() (xi.Conn, bool) {
-	return s.conn, s.getConnStatus() == CONNECTED
+	s.connStatusLock.RLock()
+	defer s.connStatusLock.RUnlock()
+	return s.conn, s.connStatus == CONNECTED
 }
 
 func (s *session) setStatus(status connStatus) {
@@ -912,26 +919,32 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 	}
 
 	if s.getConnStatus() == CONNECTING {
+		s.connStatusLock.Lock()
 		s.conn = conn
+		s.connStatusLock.Unlock()
+
 		s.setStatus(CONNECTED)
-		s.resource = s.conn.GetJIDResource()
+		s.resource = conn.GetJIDResource()
 
 		err = conn.SignalPresence("")
 		util.LogIgnoredError(err, s.log, "signal presence")
 
 		go s.watchRoster()
 		go func() {
-			if s.conn.ServerHasFeature("vcard-temp") {
+			if conn.ServerHasFeature("vcard-temp") {
 				s.getVCard()
 			}
 		}()
 		go s.watchTimeout()
-		go s.watchStanzas()
+		go s.watchStanzas(conn)
 	} else {
-		if s.conn != nil {
-			err = s.conn.Close()
-			util.LogIgnoredError(err, s.log, "closing connection")
+		s.connStatusLock.Lock()
+		oldConn := s.conn
+		s.connStatusLock.Unlock()
 
+		if oldConn != nil {
+			err = oldConn.Close()
+			util.LogIgnoredError(err, s.log, "closing connection")
 		}
 	}
 
@@ -964,7 +977,11 @@ func (s *session) Close() {
 		return
 	}
 
+	s.connStatusLock.Lock()
 	conn := s.conn
+	s.conn = nil
+	s.connStatusLock.Unlock()
+
 	if conn != nil {
 		s.wantToBeOnlineLock.Lock()
 		wantToBeOnline := s.wantToBeOnline
@@ -976,8 +993,6 @@ func (s *session) Close() {
 		s.setStatus(DISCONNECTED)
 		e := conn.Close()
 		util.LogIgnoredError(e, s.log, "closing connection")
-
-		s.conn = nil
 	} else {
 		s.setStatus(DISCONNECTED)
 	}
@@ -1023,6 +1038,8 @@ func (s *session) Config() *config.ApplicationConfig {
 }
 
 func (s *session) Conn() xi.Conn {
+	s.connStatusLock.RLock()
+	defer s.connStatusLock.RUnlock()
 	return s.conn
 }
 
@@ -1037,7 +1054,11 @@ var pingTimeout = 10 * time.Second
 
 // SendPing is called to checks if account's connection still alive
 func (s *session) SendPing() {
-	reply, _, err := s.conn.SendPing()
+	conn, ok := s.connection()
+	if !ok {
+		return
+	}
+	reply, _, err := conn.SendPing()
 	if err != nil {
 		s.log.WithError(err).Warn("Failure to ping server")
 		return

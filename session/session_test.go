@@ -92,7 +92,7 @@ func (s *SessionSuite) Test_WatchStanzas_warnsAndExitsOnBadStanza(c *C) {
 	done := make(chan bool)
 	sess.doneBadStanza = done
 
-	sess.watchStanzas()
+	sess.watchStanzas(sess.conn)
 
 	<-done
 
@@ -123,7 +123,7 @@ func (s *SessionSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
 
-	sess.watchStanzas()
+	sess.watchStanzas(sess.conn)
 
 	e := checkLogHasAny(hook, log.InfoLevel, "unhandled stanza")
 	c.Assert(e, Not(IsNil))
@@ -173,7 +173,7 @@ func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
 
-	sess.watchStanzas()
+	sess.watchStanzas(sess.conn)
 
 	e := checkLogHasAny(hook, log.ErrorLevel, "Exiting in response to fatal error from server")
 	c.Assert(e, Not(IsNil))
@@ -208,7 +208,7 @@ func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(c *C
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 
-	sess.watchStanzas()
+	sess.watchStanzas(sess.conn)
 
 	e := checkLogHasAny(hook, log.ErrorLevel, "Exiting in response to fatal error from server")
 	c.Assert(e, Not(IsNil))
@@ -236,7 +236,7 @@ func (s *SessionSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
 
-	sess.watchStanzas()
+	sess.watchStanzas(sess.conn)
 
 	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
 		t, ok := ev.(events.Message)
@@ -270,7 +270,7 @@ func (s *SessionSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
 
-	sess.watchStanzas()
+	sess.watchStanzas(sess.conn)
 
 	e := checkLogHasAny(hook, log.InfoLevel, "unrecognized iq")
 	c.Assert(e, Not(IsNil))
@@ -384,7 +384,7 @@ func (s *SessionSuite) Test_WatchStanzas_getsUnknown(c *C) {
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 
-	sess.watchStanzas()
+	sess.watchStanzas(sess.conn)
 
 	e := checkLogHasAny(hook, log.InfoLevel, "Unknown IQ: <query xmlns='jabber:iq:somethingStrange'/>")
 	c.Assert(e, Not(IsNil))
@@ -448,7 +448,7 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid(c *
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 
-	sess.watchStanzas()
+	sess.watchStanzas(sess.conn)
 
 	e := checkLogHasAny(hook, log.WarnLevel, "Failed to parse roster push IQ")
 	c.Assert(e, Not(IsNil))
@@ -477,7 +477,7 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c *C) 
 	}
 	sess.conn = conn
 
-	sess.watchStanzas()
+	sess.watchStanzas(sess.conn)
 
 	c.Assert(sess.r.ToSlice(), DeepEquals, []*roster.Peer{
 		peerFrom(data.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Romeo", Group: []string{"Friends"}}, sess.GetConfig())})
@@ -511,7 +511,7 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterItem(c 
 	sess.r.AddOrReplace(peerFrom(data.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()))
 	sess.r.AddOrReplace(peerFrom(data.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}, sess.GetConfig()))
 
-	sess.watchStanzas()
+	sess.watchStanzas(sess.conn)
 
 	c.Assert(called, Equals, 0)
 	c.Assert(sess.r.ToSlice(), DeepEquals, []*roster.Peer{
@@ -550,7 +550,7 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c *C) 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 
-	sess.watchStanzas()
+	sess.watchStanzas(sess.conn)
 
 	c.Assert(sess.r.ToSlice(), DeepEquals, []*roster.Peer{
 		peerFrom(data.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()),
@@ -592,7 +592,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_unavailable_forNoneKnownUser(c
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 
-	sess.watchStanzas()
+	sess.watchStanzas(sess.conn)
 
 	for {
 		select {
@@ -635,7 +635,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c *C)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
 
-	sess.watchStanzas()
+	sess.watchStanzas(sess.conn)
 
 	p, _ := sess.r.Get(jid.NR("some2@one.org"))
 	c.Assert(p.IsOnline(), Equals, false)
@@ -668,7 +668,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_subscribe(c *C) {
 	}
 	sess.conn = conn
 
-	sess.watchStanzas()
+	sess.watchStanzas(sess.conn)
 
 	v, _ := sess.r.GetPendingSubscribe(jid.NR("some2@one.org"))
 	c.Assert(v, Equals, "adf12112")
@@ -693,7 +693,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_unknown(c *C) {
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 
-	sess.watchStanzas()
+	sess.watchStanzas(sess.conn)
 
 	for {
 		select {
@@ -740,7 +740,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *C) {
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
 
-	sess.watchStanzas()
+	sess.watchStanzas(sess.conn)
 
 	pp, _ := sess.r.Get(jid.NR("some2@one.org"))
 	st := pp.MainStatus()
@@ -778,7 +778,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 
-	sess.watchStanzas()
+	sess.watchStanzas(sess.conn)
 
 	pp, _ := sess.r.Get(jid.NR("some2@one.org"))
 	st := pp.MainStatus()

@@ -1,6 +1,7 @@
 package xmpp
 
 import (
+	"context"
 	"encoding/xml"
 	"io"
 	"net"
@@ -58,8 +59,10 @@ type dialer struct {
 type streamNegotiationStrategy func(d *dialer, c interfaces.Conn) error
 
 // DialerFactory returns a new xmpp dialer
-func DialerFactory(verifier tls.Verifier, connFactory tls.Factory) interfaces.Dialer {
-	return &dialer{verifier: verifier, tlsConnFactory: connFactory, negotationStrategy: saslAuthenticateStrategy}
+func DialerFactory(ctx context.Context) func(verifier tls.Verifier, connFactory tls.Factory) interfaces.Dialer {
+	return func(verifier tls.Verifier, connFactory tls.Factory) interfaces.Dialer {
+		return &dialer{verifier: verifier, tlsConnFactory: connFactory, negotationStrategy: saslAuthenticateStrategy}
+	}
 }
 
 func (d *dialer) SetJID(v string) {

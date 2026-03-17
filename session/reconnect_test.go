@@ -1,6 +1,7 @@
 package session
 
 import (
+	"context"
 	"time"
 
 	. "gopkg.in/check.v1"
@@ -34,6 +35,7 @@ func (s *ReconnectSuite) Test_checkReconnect_whileConnected(c *C) {
 		calledNum++
 		if calledNum == 2 {
 			done <- true
+			return nil
 		}
 		return cc
 	}
@@ -47,6 +49,7 @@ func (s *ReconnectSuite) Test_checkReconnect_whileConnected(c *C) {
 	}
 
 	sess := &session{
+		ctx:       context.Background(),
 		connector: mc,
 	}
 
@@ -71,6 +74,7 @@ func (s *ReconnectSuite) Test_checkReconnect_whileDisconnected(c *C) {
 		calledNum++
 		if calledNum == 2 {
 			done <- true
+			return nil
 		}
 		return cc
 	}
@@ -84,6 +88,7 @@ func (s *ReconnectSuite) Test_checkReconnect_whileDisconnected(c *C) {
 	}
 
 	sess := &session{
+		ctx:        context.Background(),
 		connStatus: DISCONNECTED,
 		connector:  mc,
 	}
@@ -109,6 +114,7 @@ func (s *ReconnectSuite) Test_checkReconnect_whileDisconnectedAndWantToBeOnline(
 		calledNum++
 		if calledNum == 2 {
 			done <- true
+			return nil
 		}
 		return cc
 	}
@@ -122,6 +128,7 @@ func (s *ReconnectSuite) Test_checkReconnect_whileDisconnectedAndWantToBeOnline(
 	}
 
 	sess := &session{
+		ctx:            context.Background(),
 		connStatus:     DISCONNECTED,
 		wantToBeOnline: true,
 		connector:      mc,

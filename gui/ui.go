@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -84,7 +85,7 @@ func argsWithApplicationName() *[]string {
 }
 
 // NewGTK returns a new client for a GTK ui
-func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx Graphics, hooks OSHooks, translationDirectory string) UI {
+func NewGTK(ctx context.Context, version string, sf sessions.Factory, df interfaces.DialerFactory, gx Graphics, hooks OSHooks, translationDirectory string) UI {
 	runtime.LockOSThread()
 
 	inuit := &inUIThread{g: gx}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"flag"
 	"io"
 	"os"
@@ -118,7 +119,7 @@ func (s *MainSuite) Test_main_parsesFlagsAndRunsClient(c *C) {
 
 	called1 := false
 	ml := &mockLooper{}
-	createGTK = func(g gui.Graphics) looper {
+	createGTK = func(g gui.Graphics, ctx context.Context) looper {
 		called1 = true
 		return ml
 	}
@@ -259,7 +260,7 @@ func (s *MainSuite) Test_createGTK_works(c *C) {
 		&gdk_mock.Mock{},
 		&pango_mock.Mock{},
 		nil,
-	))
+	), context.Background())
 	c.Assert(res, Not(IsNil))
 }
 

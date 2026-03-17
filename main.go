@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"os"
@@ -8,6 +9,7 @@ import (
 	"runtime/pprof"
 	"syscall"
 
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/config"
@@ -60,14 +62,6 @@ func initLogFile(name string) {
 	}
 
 	log.SetOutput(logFile)
-
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-	go func() {
-		<-sigs
-		logFile.Close()
-		os.Exit(1)
-	}()
 }
 
 func initLog() {
@@ -113,7 +107,12 @@ func printFinalNewline() {
 	_, _ = os.Stdout.Write([]byte("\n"))
 }
 
+var coyimVersionKey = struct{}{}
+var coyimLogKey = struct{}{}
+
 func main() {
+	ctx := context.Background()
+
 	flag.Parse()
 
 	if *config.VersionFlag {
@@ -130,23 +129,40 @@ func main() {
 
 	log.WithField("version", coyimVersion).Info("Welcome to CoyIM!")
 
+	ctx = context.WithValue(ctx, coyimVersionKey, coyimVersion)
+	l := logrus.WithContext(ctx)
+	ctx = context.WithValue(ctx, coyimLogKey, l)
+	ctx, cancelCtx := context.WithCancel(ctx)
+	context.AfterFunc(ctx, func() {
+		if logFile != nil {
+			logFile.Close()
+		}
+	})
+
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-sigs
+		cancelCtx()
+		os.Exit(1)
+	}()
+
 	initTranslations()
-	runClient()
+	runClient(ctx)
 	printFinalNewline()
-	if logFile != nil {
-		logFile.Close()
-	}
+
+	cancelCtx()
 }
 
 type looper interface {
 	Loop()
 }
 
-var createGTK = func(g gui.Graphics) looper {
-	return gui.NewGTK(coyimVersion, session.Factory, xmpp.DialerFactory, g, hooks(), translationsDirectory())
+var createGTK = func(g gui.Graphics, ctx context.Context) looper {
+	return gui.NewGTK(ctx, coyimVersion, session.Factory(ctx), xmpp.DialerFactory(ctx), g, hooks(), translationsDirectory())
 }
 
-func runClient() {
+func runClient(ctx context.Context) {
 	g := gui.CreateGraphics(
 		gtka.Real,
 		gliba.Real,
@@ -158,5 +174,5 @@ func runClient() {
 	i18n.InitLocalization(gliba.Real)
 	settings.InitSettings(gliba.Real)
 
-	createGTK(g).Loop()
+	createGTK(g, ctx).Loop()
 }

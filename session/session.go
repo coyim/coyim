@@ -2,6 +2,7 @@ package session
 
 import (
 	"bytes"
+	"context"
 	"encoding/xml"
 	"errors"
 	"fmt"
@@ -38,6 +39,8 @@ const (
 )
 
 type session struct {
+	ctx context.Context
+
 	conn xi.Conn
 	log  coylog.Logger
 	r    *roster.List
@@ -153,40 +156,43 @@ func CreateXMPPLogger(rawLog string) (*bytes.Buffer, io.Writer, io.Closer) {
 }
 
 // Factory creates a new session from the given config
-func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifier, tls.Factory) xi.Dialer) access.Session {
-	// Make xmppLogger go to in memory STRING and/or the log file
+func Factory(ctx context.Context) func(*config.ApplicationConfig, *config.Account, func(tls.Verifier, tls.Factory) xi.Dialer) access.Session {
+	return func(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifier, tls.Factory) xi.Dialer) access.Session {
+		// Make xmppLogger go to in memory STRING and/or the log file
 
-	inMemoryLog, xmppLogger, _ := CreateXMPPLogger(c.RawLogFile)
+		inMemoryLog, xmppLogger, _ := CreateXMPPLogger(c.RawLogFile)
 
-	sessionLog := log.WithFields(log.Fields{
-		"account": cu.Account,
-	})
+		sessionLog := log.WithFields(log.Fields{
+			"account": cu.Account,
+		})
 
-	s := &session{
-		config:        c,
-		accountConfig: cu,
+		s := &session{
+			ctx:           ctx,
+			config:        c,
+			accountConfig: cu,
 
-		r:              roster.New(),
-		lastActionTime: time.Now(),
+			r:              roster.New(),
+			lastActionTime: time.Now(),
 
-		timeouts: make(map[data.Cookie]time.Time),
+			timeouts: make(map[data.Cookie]time.Time),
 
-		autoApproves: make(map[string]bool),
+			autoApproves: make(map[string]bool),
 
-		inMemoryLog:   inMemoryLog,
-		xmppLogger:    xmppLogger,
-		log:           sessionLog.WithField("component", "session"),
-		dialerFactory: df,
+			inMemoryLog:   inMemoryLog,
+			xmppLogger:    xmppLogger,
+			log:           sessionLog.WithField("component", "session"),
+			dialerFactory: df,
+		}
+
+		s.ReloadKeys()
+		s.convManager = otrclient.NewConversationManager(s.newConversation, s, cu.Account, s.onOtrEventHandlerCreate, sessionLog.WithField("component", "otr"))
+		s.muc = newMUCManager(s.log, s.Conn, s.publishEvent)
+
+		go observe(s)
+		go checkReconnect(s)
+
+		return s
 	}
-
-	s.ReloadKeys()
-	s.convManager = otrclient.NewConversationManager(s.newConversation, s, cu.Account, s.onOtrEventHandlerCreate, sessionLog.WithField("component", "otr"))
-	s.muc = newMUCManager(s.log, s.Conn, s.publishEvent)
-
-	go observe(s)
-	go checkReconnect(s)
-
-	return s
 }
 
 // ReloadKeys will reload the keys from the configuration

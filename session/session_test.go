@@ -2,6 +2,7 @@ package session
 
 import (
 	"bytes"
+	"context"
 	"encoding/xml"
 	"errors"
 	"fmt"
@@ -35,7 +36,7 @@ type SessionSuite struct{}
 var _ = Suite(&SessionSuite{})
 
 func (s *SessionSuite) Test_NewSession_returnsANewSession(c *C) {
-	sess := Factory(&config.ApplicationConfig{}, &config.Account{}, xmpp.DialerFactory)
+	sess := Factory(context.Background())(&config.ApplicationConfig{}, &config.Account{}, xmpp.DialerFactory(context.Background()))
 	c.Assert(sess, Not(IsNil))
 }
 
@@ -223,10 +224,10 @@ func (s *SessionSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 		"some@one.org/foo",
 	)
 
-	sess := Factory(
+	sess := Factory(context.Background())(
 		&config.ApplicationConfig{},
 		&config.Account{InstanceTag: uint32(42)},
-		xmpp.DialerFactory,
+		xmpp.DialerFactory(context.Background()),
 	).(*session)
 
 	sess.conn = conn

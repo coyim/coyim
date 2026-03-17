@@ -1,6 +1,7 @@
 package session
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 	"time"
@@ -21,6 +22,7 @@ func (s *SessionObserverSuite) Test_observe_onDisconnected(c *C) {
 	evsDone := make(chan bool)
 
 	sess := &session{
+		ctx:               context.Background(),
 		r:                 roster.New(),
 		eventsReachedZero: evsDone,
 	}
@@ -88,6 +90,7 @@ func (s *SessionObserverSuite) Test_observe_onConnectionLost(c *C) {
 	evsDone := make(chan bool)
 
 	sess := &session{
+		ctx:               context.Background(),
 		r:                 roster.New(),
 		eventsReachedZero: evsDone,
 	}

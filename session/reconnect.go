@@ -14,16 +14,18 @@ var randomDelayChannel = func() <-chan time.Time {
 }
 
 func checkReconnect(s *session) {
-	_, cont := <-randomDelayChannel()
-	for cont {
-		s.wantToBeOnlineLock.Lock()
-		want := s.wantToBeOnline
-		s.wantToBeOnlineLock.Unlock()
+	for {
+		select {
+		case <-s.ctx.Done():
+			return
+		case <-randomDelayChannel():
+			s.wantToBeOnlineLock.Lock()
+			want := s.wantToBeOnline
+			s.wantToBeOnlineLock.Unlock()
 
-		if s.IsDisconnected() && want {
-			s.connector.Connect()
+			if s.IsDisconnected() && want {
+				s.connector.Connect()
+			}
 		}
-
-		_, cont = <-randomDelayChannel()
 	}
 }

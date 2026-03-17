@@ -1,6 +1,7 @@
 package xmpp
 
 import (
+	"context"
 	gotls "crypto/tls"
 	"errors"
 	"net"
@@ -18,7 +19,7 @@ type DialerSuite struct{}
 var _ = Suite(&DialerSuite{})
 
 func (s *DialerSuite) Test_DialerFactory(c *C) {
-	dd := DialerFactory(nil, nil)
+	dd := DialerFactory(context.Background())(nil, nil)
 	c.Assert(dd, Not(IsNil))
 }
 

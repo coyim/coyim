@@ -80,6 +80,7 @@ brew install ruby
 In order to build CoyIM, you should check out the source code, and run:
 
 ```sh
+make deps
 make build
 ```
 

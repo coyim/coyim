@@ -58,19 +58,7 @@ func (ds *displaySettings) decreaseFontSize() {
 }
 
 func (ds *displaySettings) update() {
-	css := fmt.Sprintf(`
-        .currentFontSetting {
-          font-size: %dpx;
-        }
-
-        .currentBackgroundColor {
-          background-color: #fff;
-        }
-
-        .shadedBackgroundColor {
-          background-color: #fafafa;
-        }
-        `, ds.fontSize)
+	css := fmt.Sprintf("* { --coyim-font-size: %dpx; }", ds.fontSize)
 	doInUIThread(func() {
 		ds.provider.load("current font", css)
 	})

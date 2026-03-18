@@ -1,6 +1,18 @@
 
 /* Global CSS definitions for the CoyIM application */
 
+.currentFontSetting {
+  font-size: var(--coyim-font-size, 12px);
+}
+
+.currentBackgroundColor {
+  background-color: #fff;
+}
+
+.shadedBackgroundColor {
+  background-color: #fafafa;
+}
+
 .registration.form .fieldRequiredInstruction {
   font-style: italic;
 }

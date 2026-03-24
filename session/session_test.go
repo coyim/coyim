@@ -329,6 +329,7 @@ func (s *SessionSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
 		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"http://jabber.org/protocol/si/profile/directory-transfer\"></feature>"+
 		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"http://jabber.org/protocol/si/profile/encrypted-data-transfer\"></feature>"+
 		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"http://jabber.org/protocol/bytestreams\"></feature>"+
+		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"urn:xmpp:otr:0\"></feature>"+
 		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"urn:xmpp:eme:0\"></feature>"+
 		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"http://jabber.org/protocol/muc\"></feature>"+
 		"</query>"+

@@ -194,6 +194,7 @@ func DiscoveryReply(name, node string) interface{} {
 				{Var: "http://jabber.org/protocol/si/profile/directory-transfer"},      //XEP-xxxx: SI Directory Transfer
 				{Var: "http://jabber.org/protocol/si/profile/encrypted-data-transfer"}, //XEP-xxxx: SI Encrypted Data Transfer
 				{Var: "http://jabber.org/protocol/bytestreams"},                        //XEP-0047
+				{Var: "urn:xmpp:otr:0"},                                                //XEP-0378
 				{Var: "urn:xmpp:eme:0"},                                                //XEP-0380
 				{Var: "http://jabber.org/protocol/muc"},                                //XEP-0045
 			},

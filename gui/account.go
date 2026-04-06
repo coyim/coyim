@@ -30,7 +30,7 @@ type account struct {
 
 	session access.Session
 
-	sessionObserver         chan interface{}
+	sessionObserver         chan events.Is
 	connectionEventHandlers []func()
 	sessionObserverLock     sync.RWMutex
 
@@ -42,7 +42,7 @@ type account struct {
 
 	log coylog.Logger
 
-	events chan interface{}
+	events chan events.Is
 
 	sync.RWMutex
 
@@ -91,7 +91,7 @@ func newAccount(conf *config.ApplicationConfig, currentConf *config.Account, sf 
 		session:              sf(conf, currentConf, df),
 		c:                    make(map[string]conversationView),
 		delayedConversations: make(map[string][]func(conversationView)),
-		events:               make(chan interface{}),
+		events:               make(chan events.Is),
 		mucRooms:             make(map[string]*roomView),
 	}
 }
@@ -125,7 +125,7 @@ func (account *account) enableExistingConversationWindows(enable bool) {
 	}
 }
 
-func (account *account) executeCmd(c interface{}) {
+func executeCmd[T cmd](account *account, c T) {
 	account.session.CommandManager().ExecuteCmd(c)
 }
 
@@ -227,7 +227,7 @@ func (account *account) observeConnectionEvents(u *gtkUI, f func()) {
 	defer account.sessionObserverLock.Unlock()
 
 	if account.sessionObserver == nil {
-		account.sessionObserver = make(chan interface{})
+		account.sessionObserver = make(chan events.Is)
 		account.session.Subscribe(account.sessionObserver)
 		go account.runSessionObserver(u)
 	}
@@ -402,36 +402,36 @@ func (account *account) buildAccountSubmenu(u *gtkUI) {
 
 func (account *account) Connect() {
 	account.session.SetWantToBeOnline(true)
-	account.executeCmd(connectAccountCmd{account})
+	executeCmd(account, connectAccountCmd{account})
 }
 
 func (account *account) disconnect() {
 	account.session.SetWantToBeOnline(false)
-	account.executeCmd(disconnectAccountCmd{account})
+	executeCmd(account, disconnectAccountCmd{account})
 }
 
 func (account *account) toggleAutoConnect() {
-	account.executeCmd(toggleAutoConnectCmd{account})
+	executeCmd(account, toggleAutoConnectCmd{account})
 }
 
 func (account *account) toggleAlwaysEncrypt() {
-	account.executeCmd(toggleAlwaysEncryptCmd{account})
+	executeCmd(account, toggleAlwaysEncryptCmd{account})
 }
 
 func (account *account) edit() {
-	account.executeCmd(editAccountCmd{account})
+	executeCmd(account, editAccountCmd{account})
 }
 
 func (account *account) changePassword() {
-	account.executeCmd(changePasswordAccountCmd{account})
+	executeCmd(account, changePasswordAccountCmd{account})
 }
 
 func (account *account) connectionInfo() {
-	account.executeCmd(connectionInfoCmd{account})
+	executeCmd(account, connectionInfoCmd{account})
 }
 
 func (account *account) remove() {
-	account.executeCmd(removeAccountCmd{account})
+	executeCmd(account, removeAccountCmd{account})
 }
 
 func (account *account) buildNotification(template, msg string, moreInfo func()) gtki.InfoBar {

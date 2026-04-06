@@ -18,7 +18,7 @@ var _ = Suite(&SessionObserverSuite{})
 
 func (s *SessionObserverSuite) Test_observe_onDisconnected(c *C) {
 	done := make(chan bool)
-	evc := make(chan interface{})
+	evc := make(chan events.Is)
 	evsDone := make(chan bool)
 
 	sess := &session{
@@ -48,7 +48,7 @@ func (s *SessionObserverSuite) Test_observe_onDisconnected(c *C) {
 
 	waitUntilHasSubscribers(sess, 2)
 
-	sess.publishEvent("hello")
+	sess.publishEvent(events.Notification{nil, "hello"})
 	<-evsDone
 	sess.publish(events.Ping)
 	<-evsDone
@@ -63,7 +63,7 @@ func (s *SessionObserverSuite) Test_observe_onDisconnected(c *C) {
 	<-done
 
 	c.Assert(sess.r.ToSlice(), HasLen, 0)
-	c.Assert(listContains(evs, "hello"), Equals, true)
+	c.Assert(listContains(evs, events.Notification{nil, "hello"}), Equals, true)
 	c.Assert(listContains(evs, events.Event{Type: events.Ping}), Equals, true)
 	c.Assert(listContains(evs, events.Event{Type: events.Disconnected}), Equals, true)
 	c.Assert(listContains(evs, events.Event{Type: events.RosterReceived}), Equals, true)
@@ -86,7 +86,7 @@ func waitUntilHasSubscribers(sess *session, num int) {
 
 func (s *SessionObserverSuite) Test_observe_onConnectionLost(c *C) {
 	done := make(chan bool)
-	evc := make(chan interface{})
+	evc := make(chan events.Is)
 	evsDone := make(chan bool)
 
 	sess := &session{
@@ -116,7 +116,7 @@ func (s *SessionObserverSuite) Test_observe_onConnectionLost(c *C) {
 
 	waitUntilHasSubscribers(sess, 2)
 
-	sess.publishEvent("hello")
+	sess.publishEvent(events.Notification{nil, "hello"})
 	<-evsDone
 	sess.publish(events.Ping)
 	<-evsDone
@@ -132,7 +132,7 @@ func (s *SessionObserverSuite) Test_observe_onConnectionLost(c *C) {
 
 	c.Assert(sess.r.ToSlice(), HasLen, 0)
 
-	c.Assert(listContains(evs, "hello"), Equals, true)
+	c.Assert(listContains(evs, events.Notification{nil, "hello"}), Equals, true)
 	c.Assert(listContains(evs, events.Event{Type: events.Ping}), Equals, true)
 	c.Assert(listContains(evs, events.Event{Type: events.ConnectionLost}), Equals, true)
 	c.Assert(listContains(evs, events.Event{Type: events.RosterReceived}), Equals, true)

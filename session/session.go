@@ -75,7 +75,7 @@ type session struct {
 
 	subscribers struct {
 		sync.RWMutex
-		subs []chan<- interface{}
+		subs []chan<- events.Is
 	}
 
 	groupDelimiter string

@@ -8,6 +8,12 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
+// Is is a marker interface for events
+type Is interface {
+	// EventName returns the name of the event
+	EventName() string
+}
+
 // Event represents a Session event
 type Event struct {
 	Type EventType
@@ -110,3 +116,27 @@ const (
 	Success
 	Failure
 )
+
+// EventName returns the name of the event
+func (e Event) EventName() string { return "Event" }
+
+// EventName returns the name of the event
+func (e Peer) EventName() string { return "Peer" }
+
+// EventName returns the name of the event
+func (e Notification) EventName() string { return "Notification" }
+
+// EventName returns the name of the event
+func (e DelayedMessageSent) EventName() string { return "DelayedMessageSent" }
+
+// EventName returns the name of the event
+func (e Presence) EventName() string { return "Presence" }
+
+// EventName returns the name of the event
+func (e Message) EventName() string { return "Message" }
+
+// EventName returns the name of the event
+func (e FileTransfer) EventName() string { return "FileTransfer" }
+
+// EventName returns the name of the event
+func (e SMP) EventName() string { return "SMP" }

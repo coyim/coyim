@@ -3,7 +3,7 @@ package session
 import "github.com/coyim/coyim/session/events"
 
 func observe(s *session) {
-	observer := make(chan interface{})
+	observer := make(chan events.Is)
 	s.Subscribe(observer)
 
 	for {

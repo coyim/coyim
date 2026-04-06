@@ -26,7 +26,7 @@ func (m *mockForInitIQ) Log() coylog.Logger {
 	return m.log
 }
 
-func (m *mockForInitIQ) PublishEvent(v interface{}) {
+func (m *mockForInitIQ) PublishEvent(v events.Is) {
 	m.publishEventValue = v
 }
 

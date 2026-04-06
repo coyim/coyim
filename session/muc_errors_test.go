@@ -97,7 +97,7 @@ func (s *MUCErrorsSuite) Test_isMUCErrorPresence_works(c *C) {
 
 func (s *MUCErrorsSuite) Test_mucManager_publishMUCError_works(c *C) {
 	sess := &session{}
-	ch := make(chan interface{})
+	ch := make(chan events.Is)
 	waiting := make(chan bool)
 	sess.eventsReachedZero = waiting
 	sess.subscribers.subs = append(sess.subscribers.subs, ch)
@@ -129,7 +129,7 @@ func (s *MUCErrorsSuite) Test_mucManager_publishMUCError_works(c *C) {
 }
 func (s *MUCErrorsSuite) Test_mucManager_publishMUCMessageError_works(c *C) {
 	sess := &session{}
-	ch := make(chan interface{})
+	ch := make(chan events.Is)
 	waiting := make(chan bool)
 	sess.eventsReachedZero = waiting
 	sess.subscribers.subs = append(sess.subscribers.subs, ch)

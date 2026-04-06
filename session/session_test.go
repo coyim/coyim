@@ -53,7 +53,7 @@ func (s *SessionSuite) Test_iqReceived_publishesIQReceivedEvent(c *C) {
 		log: log.StandardLogger(),
 	}
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 1)
 	sess.eventsReachedZero = eventsDone
@@ -92,7 +92,7 @@ func (s *SessionSuite) Test_WatchStanzas_warnsAndExitsOnBadStanza(c *C) {
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 1)
 	sess.eventsReachedZero = eventsDone
@@ -125,7 +125,7 @@ func (s *SessionSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -138,9 +138,9 @@ func (s *SessionSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 	c.Assert(*(e.Data["value"].(*data.BindBind)), Equals, data.BindBind{XMLName: xml.Name{Space: "urn:ietf:params:xml:ns:xmpp-bind", Local: "bind"}, Resource: "", Jid: ""})
 }
 
-type checker func(interface{}) bool
+type checker func(events.Is) bool
 
-func assertReceivesEvent(c *C, eventsDone chan bool, observer <-chan interface{}, exp checker) {
+func assertReceivesEvent(c *C, eventsDone chan bool, observer <-chan events.Is, exp checker) {
 	select {
 	case <-eventsDone:
 		for {
@@ -175,7 +175,7 @@ func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -212,7 +212,7 @@ func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(c *C
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas(sess.conn)
@@ -238,14 +238,14 @@ func (s *SessionSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
 
 	sess.watchStanzas(sess.conn)
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.Message)
 		if !ok {
 			return false
@@ -272,7 +272,7 @@ func (s *SessionSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -388,7 +388,7 @@ func (s *SessionSuite) Test_WatchStanzas_getsUnknown(c *C) {
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas(sess.conn)
@@ -416,7 +416,7 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 
 	stanzaChan := make(chan data.Stanza, 1000)
@@ -452,7 +452,7 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid(c *
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas(sess.conn)
@@ -554,7 +554,7 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c *C) 
 	sess.r.AddOrReplace(peerFrom(data.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()))
 	sess.r.AddOrReplace(peerFrom(data.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}, sess.GetConfig()))
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas(sess.conn)
@@ -596,7 +596,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_unavailable_forNoneKnownUser(c
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas(sess.conn)
@@ -637,7 +637,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c *C)
 	sess.conn = conn
 	sess.r.AddOrReplace(roster.PeerWithState(jid.NR("some2@one.org"), "somewhere", "", "", jid.NewResource("balcony")))
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -647,7 +647,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c *C)
 	p, _ := sess.r.Get(jid.NR("some2@one.org"))
 	c.Assert(p.IsOnline(), Equals, false)
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.Presence)
 		if !ok {
 			return false
@@ -697,7 +697,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_unknown(c *C) {
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas(sess.conn)
@@ -742,7 +742,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *C) {
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -753,7 +753,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *C) {
 	st := pp.MainStatus()
 	c.Assert(st, Equals, "dnd")
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.Presence)
 		if !ok {
 			return false
@@ -782,7 +782,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 	sess.conn = conn
 	sess.r.AddOrReplace(roster.PeerWithState(jid.NR("some2@one.org"), "dnd", "", "", jid.NewResource("main")))
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas(sess.conn)
@@ -822,7 +822,7 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_failsWhenNoPendingSubscribeIsWai
 		r:   roster.New(),
 	}
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -916,7 +916,7 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *C) {
 	sess.conn = conn
 	sess.r.SubscribeRequest(jid.NR("foo@bar.com"), "123", "")
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -1075,14 +1075,14 @@ func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncr
 
 	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
 
 	go sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello<br>ola<BR/>wazup?")
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.Message)
 		if !ok {
 			return false
@@ -1111,14 +1111,14 @@ func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(
 
 	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
 
 	go sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello<br>ola<br/><BR/>wazup?")
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.Message)
 		if !ok {
 			return false
@@ -1159,7 +1159,7 @@ func (s *SessionSuite) Test_logsError_whenWeStartSMPWithoutAConversation(c *C) {
 	l, hook := test.NewNullLogger()
 	sess.log = l
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 1)
 	sess.eventsReachedZero = eventsDone
@@ -1176,7 +1176,7 @@ func (s *SessionSuite) Test_logsError_whenWeFinishSMPWithoutAConversation(c *C) 
 	l, hook := test.NewNullLogger()
 	sess.log = l
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 1)
 	sess.eventsReachedZero = eventsDone
@@ -1193,7 +1193,7 @@ func (s *SessionSuite) Test_logsError_whenWeAbortSMPWithoutAConversation(c *C) {
 	l, hook := test.NewNullLogger()
 	sess.log = l
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 1)
 	sess.eventsReachedZero = eventsDone
@@ -1427,7 +1427,7 @@ func (s *SessionSuite) Test_session_receivedClientMessage_works(c *C) {
 
 	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -1468,7 +1468,7 @@ func (s *SessionSuite) Test_session_receivedClientMessage_processesEncryptionTag
 
 	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -1526,7 +1526,7 @@ func (s *SessionSuite) Test_session_receivedClientMessage_handlesMUCError(c *C) 
 
 	published := []interface{}{}
 
-	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev interface{}) {
+	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev events.Is) {
 		published = append(published, ev)
 	})
 
@@ -1564,7 +1564,7 @@ func (s *SessionSuite) Test_session_receivedClientMessage_handlesGroupChat(c *C)
 
 	published := []interface{}{}
 
-	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev interface{}) {
+	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev events.Is) {
 		published = append(published, ev)
 	})
 
@@ -1614,7 +1614,7 @@ func (s *SessionSuite) Test_session_SendMUCMessage_works(c *C) {
 
 	published := []interface{}{}
 
-	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev interface{}) {
+	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev events.Is) {
 		published = append(published, ev)
 	})
 
@@ -1645,7 +1645,7 @@ func (s *SessionSuite) Test_session_UpdateRoomSubject(c *C) {
 
 	published := []interface{}{}
 
-	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev interface{}) {
+	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev events.Is) {
 		published = append(published, ev)
 	})
 
@@ -1748,14 +1748,14 @@ func (s *SessionSuite) Test_session_setStatus_setsConnected(c *C) {
 		},
 	}
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
 
 	sess.setStatus(CONNECTED)
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.Event)
 		if !ok {
 			return false
@@ -1773,14 +1773,14 @@ func (s *SessionSuite) Test_session_setStatus_setsDisconnected(c *C) {
 		},
 	}
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
 
 	sess.setStatus(DISCONNECTED)
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.Event)
 		if !ok {
 			return false
@@ -1798,14 +1798,14 @@ func (s *SessionSuite) Test_session_setStatus_setsConnecting(c *C) {
 		},
 	}
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
 
 	sess.setStatus(CONNECTING)
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.Event)
 		if !ok {
 			return false
@@ -1864,7 +1864,7 @@ func (s *SessionSuite) Test_session_receivedClientPresence_unavailable_forMUC(c 
 
 	published := []interface{}{}
 
-	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev interface{}) {
+	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev events.Is) {
 		published = append(published, ev)
 	})
 
@@ -1932,7 +1932,7 @@ func (s *SessionSuite) Test_session_receivedClientPresence_empty_forMUC(c *C) {
 
 	published := []interface{}{}
 
-	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev interface{}) {
+	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev events.Is) {
 		published = append(published, ev)
 	})
 
@@ -1969,7 +1969,7 @@ func (s *SessionSuite) Test_session_receivedClientPresence_subscribed(c *C) {
 
 	sess.r.AddOrReplace(&roster.Peer{Jid: jid.ParseBare("hello@goodbye.com")})
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -1987,7 +1987,7 @@ func (s *SessionSuite) Test_session_receivedClientPresence_subscribed(c *C) {
 
 	c.Assert(hook.Entries, HasLen, 0)
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.Peer)
 		if !ok {
 			return false
@@ -2010,7 +2010,7 @@ func (s *SessionSuite) Test_session_receivedClientPresence_unsubscribe(c *C) {
 
 	sess.r.AddOrReplace(&roster.Peer{Jid: jid.ParseBare("hello@goodbye.com")})
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -2028,7 +2028,7 @@ func (s *SessionSuite) Test_session_receivedClientPresence_unsubscribe(c *C) {
 
 	c.Assert(hook.Entries, HasLen, 0)
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.Peer)
 		if !ok {
 			return false
@@ -2116,7 +2116,7 @@ func (s *SessionSuite) Test_session_receivedClientPresence_MUCerror(c *C) {
 
 	published := []interface{}{}
 
-	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev interface{}) {
+	sess.muc = newMUCManager(sess.log, sess.Conn, func(ev events.Is) {
 		published = append(published, ev)
 	})
 
@@ -2418,7 +2418,7 @@ func (s *SessionSuite) Test_receiveClientMessage_logsConversationReceivalError(c
 
 	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -2452,7 +2452,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesNewOTRKeys(c *C) {
 
 	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -2460,7 +2460,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesNewOTRKeys(c *C) {
 	eh.HandleSecurityEvent(otr3.GoneSecure)
 	sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello")
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.Peer)
 		if !ok {
 			return false
@@ -2492,7 +2492,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesRenewedOTRKeys(c *C) {
 
 	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -2500,7 +2500,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesRenewedOTRKeys(c *C) {
 	eh.HandleSecurityEvent(otr3.StillSecure)
 	sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello")
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.Peer)
 		if !ok {
 			return false
@@ -2537,7 +2537,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesConversationEnded(c *C) 
 
 	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -2545,7 +2545,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesConversationEnded(c *C) 
 	eh.HandleSecurityEvent(otr3.GoneInsecure)
 	sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello")
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.Peer)
 		if !ok {
 			return false
@@ -2593,7 +2593,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesConversationEnded_withAu
 
 	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -2601,7 +2601,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesConversationEnded_withAu
 	eh.HandleSecurityEvent(otr3.GoneInsecure)
 	sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello")
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.Peer)
 		if !ok {
 			return false
@@ -2653,7 +2653,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesConversationEnded_withAu
 
 	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -2661,7 +2661,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesConversationEnded_withAu
 	eh.HandleSecurityEvent(otr3.GoneInsecure)
 	sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello")
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.Peer)
 		if !ok {
 			return false
@@ -2709,7 +2709,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesSMPSecretNeeded(c *C) {
 
 	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -2717,7 +2717,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesSMPSecretNeeded(c *C) {
 	eh.HandleSMPEvent(otr3.SMPEventAskForSecret, 42, "the life, universe and everything")
 	sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello")
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.SMP)
 		if !ok {
 			return false
@@ -2754,7 +2754,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesSMPFailed(c *C) {
 
 	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -2762,7 +2762,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesSMPFailed(c *C) {
 	eh.HandleSMPEvent(otr3.SMPEventCheated, 42, "the life, universe and everything")
 	sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello")
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.SMP)
 		if !ok {
 			return false
@@ -2808,7 +2808,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesSMPComplete(c *C) {
 
 	mcm.On("EnsureConversationWith", mck.Anything, mck.Anything).Return(mc, false).Once()
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -2816,7 +2816,7 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesSMPComplete(c *C) {
 	eh.HandleSMPEvent(otr3.SMPEventSuccess, 100, "the life, universe and everything")
 	sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello")
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.SMP)
 		if !ok {
 			return false
@@ -3929,7 +3929,7 @@ func (s *SessionSuite) Test_session_connectionLost_closes(c *C) {
 		},
 	}
 
-	observer := make(chan interface{}, 1000)
+	observer := make(chan events.Is, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
@@ -3939,7 +3939,7 @@ func (s *SessionSuite) Test_session_connectionLost_closes(c *C) {
 	c.Assert(sess.connStatus, Equals, DISCONNECTED)
 	c.Assert(called, Equals, true)
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	assertReceivesEvent(c, eventsDone, observer, func(ev events.Is) bool {
 		t, ok := ev.(events.Event)
 		if !ok || t.Type != events.ConnectionLost {
 			return false

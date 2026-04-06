@@ -9,6 +9,7 @@ import (
 
 // MUC is a marker interface that is used to differentiate MUC "events"
 type MUC interface {
+	Is
 	markAsMUCEventTypeInterface()
 }
 
@@ -280,3 +281,127 @@ func (MUCSelfOccupantConnecting) markAsMUCEventTypeInterface()                 {
 func (MUCAccountAffiliationUpdated) markAsMUCEventTypeInterface()              {}
 func (MUCOccupantRemovedOnAffiliationChange) markAsMUCEventTypeInterface()     {}
 func (MUCSelfOccupantRemovedOnAffiliationChange) markAsMUCEventTypeInterface() {}
+
+// EventName returns the name of the event
+func (e MUCError) EventName() string { return "MUCError" }
+
+// EventName returns the name of the event
+func (e MUCRoom) EventName() string { return "MUCRoom" }
+
+// EventName returns the name of the event
+func (e MUCRoomCreated) EventName() string { return "MUCRoomCreated" }
+
+// EventName returns the name of the event
+func (e MUCRoomDestroyed) EventName() string { return "MUCRoomDestroyed" }
+
+// EventName returns the name of the event
+func (e MUCRoomRenamed) EventName() string { return "MUCRoomRenamed" }
+
+// EventName returns the name of the event
+func (e MUCOccupant) EventName() string { return "MUCOccupant" }
+
+// EventName returns the name of the event
+func (e MUCOccupantUpdated) EventName() string { return "MUCOccupantUpdated" }
+
+// EventName returns the name of the event
+func (e MUCOccupantJoined) EventName() string { return "MUCOccupantJoined" }
+
+// EventName returns the name of the event
+func (e MUCSelfOccupantJoined) EventName() string { return "MUCSelfOccupantJoined" }
+
+// EventName returns the name of the event
+func (e MUCOccupantLeft) EventName() string { return "MUCOccupantLeft" }
+
+// EventName returns the name of the event
+func (e MUCLiveMessageReceived) EventName() string { return "MUCLiveMessageReceived" }
+
+// EventName returns the name of the event
+func (e MUCDelayedMessageReceived) EventName() string { return "MUCDelayedMessageReceived" }
+
+// EventName returns the name of the event
+func (e MUCSubjectUpdated) EventName() string { return "MUCSubjectUpdated" }
+
+// EventName returns the name of the event
+func (e MUCSubjectReceived) EventName() string { return "MUCSubjectReceived" }
+
+// EventName returns the name of the event
+func (e MUCJoinRoomFinished) EventName() string { return "MUCJoinRoomFinished" }
+
+// EventName returns the name of the event
+func (e MUCLoggingEnabled) EventName() string { return "MUCLoggingEnabled" }
+
+// EventName returns the name of the event
+func (e MUCLoggingDisabled) EventName() string { return "MUCLoggingDisabled" }
+
+// EventName returns the name of the event
+func (e MUCRoomAnonymityChanged) EventName() string { return "MUCRoomAnonymityChanged" }
+
+// EventName returns the name of the event
+func (e MUCDiscussionHistoryReceived) EventName() string { return "MUCDiscussionHistoryReceived" }
+
+// EventName returns the name of the event
+func (e MUCRoomDiscoInfoReceived) EventName() string { return "MUCRoomDiscoInfoReceived" }
+
+// EventName returns the name of the event
+func (e MUCRoomConfigTimeout) EventName() string { return "MUCRoomConfigTimeout" }
+
+// EventName returns the name of the event
+func (e MUCRoomConfigChanged) EventName() string { return "MUCRoomConfigChanged" }
+
+// EventName returns the name of the event
+func (e MUCOccupantRemoved) EventName() string { return "MUCOccupantRemoved" }
+
+// EventName returns the name of the event
+func (e MUCSelfOccupantRemoved) EventName() string { return "MUCSelfOccupantRemoved" }
+
+// EventName returns the name of the event
+func (e MUCOccupantAffiliationUpdated) EventName() string { return "MUCOccupantAffiliationUpdated" }
+
+// EventName returns the name of the event
+func (e MUCSelfOccupantAffiliationUpdated) EventName() string {
+	return "MUCSelfOccupantAffiliationUpdated"
+}
+
+// EventName returns the name of the event
+func (e MUCOccupantRoleUpdated) EventName() string { return "MUCOccupantRoleUpdated" }
+
+// EventName returns the name of the event
+func (e MUCSelfOccupantRoleUpdated) EventName() string { return "MUCSelfOccupantRoleUpdated" }
+
+// EventName returns the name of the event
+func (e MUCOccupantAffiliationRoleUpdated) EventName() string {
+	return "MUCOccupantAffiliationRoleUpdated"
+}
+
+// EventName returns the name of the event
+func (e MUCSelfOccupantAffiliationRoleUpdated) EventName() string {
+	return "MUCSelfOccupantAffiliationRoleUpdated"
+}
+
+// EventName returns the name of the event
+func (e MUCOccupantKicked) EventName() string { return "MUCOccupantKicked" }
+
+// EventName returns the name of the event
+func (e MUCSelfOccupantKicked) EventName() string { return "MUCSelfOccupantKicked" }
+
+// EventName returns the name of the event
+func (e MUCSelfOccupantConnected) EventName() string { return "MUCSelfOccupantConnected" }
+
+// EventName returns the name of the event
+func (e MUCSelfOccupantDisconnected) EventName() string { return "MUCSelfOccupantDisconnected" }
+
+// EventName returns the name of the event
+func (e MUCSelfOccupantConnecting) EventName() string { return "MUCSelfOccupantConnecting" }
+
+// EventName returns the name of the event
+func (e MUCAccountAffiliationUpdated) EventName() string { return "MUCAccountAffiliationUpdated" }
+
+// EventName returns the name of the event
+func (e MUCOccupantRemovedOnAffiliationChange) EventName() string {
+	return "MUCOccupantRemovedOnAffiliationChange"
+}
+
+// EventName returns the name of the event
+func (e MUCSelfOccupantRemovedOnAffiliationChange) EventName() string {
+	return "MUCSelfOccupantRemovedOnAffiliationChange"
+}

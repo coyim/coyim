@@ -222,7 +222,7 @@ func (s *OTRSuite) Test_terminateConversations_works(c *C) {
 }
 
 func (s *OTRSuite) Test_newOTRKeys_sendsNotification(c *C) {
-	ch := make(chan interface{})
+	ch := make(chan events.Is)
 	done := make(chan bool)
 	sess := &session{
 		eventsReachedZero: done,
@@ -254,7 +254,7 @@ func (s *OTRSuite) Test_newOTRKeys_sendsNotification(c *C) {
 }
 
 func (s *OTRSuite) Test_renewedOTRKeys_sendsNotification(c *C) {
-	ch := make(chan interface{})
+	ch := make(chan events.Is)
 	done := make(chan bool)
 	sess := &session{
 		eventsReachedZero: done,
@@ -286,7 +286,7 @@ func (s *OTRSuite) Test_renewedOTRKeys_sendsNotification(c *C) {
 }
 
 func (s *OTRSuite) Test_otrEnded_sendsNotification(c *C) {
-	ch := make(chan interface{})
+	ch := make(chan events.Is)
 	done := make(chan bool)
 	sess := &session{
 		eventsReachedZero: done,
@@ -318,7 +318,7 @@ func (s *OTRSuite) Test_otrEnded_sendsNotification(c *C) {
 }
 
 func (s *OTRSuite) Test_listenToOtrDelayedMessageDelivery_works(c *C) {
-	ch := make(chan interface{})
+	ch := make(chan events.Is)
 	done := make(chan bool)
 	sess := &session{
 		eventsReachedZero: done,
@@ -364,7 +364,7 @@ func (s *OTRSuite) Test_listenToOtrDelayedMessageDelivery_works(c *C) {
 }
 
 func (s *OTRSuite) Test_listenToOtrNotifications_works(c *C) {
-	ch := make(chan interface{})
+	ch := make(chan events.Is)
 	done := make(chan bool)
 	sess := &session{
 		eventsReachedZero: done,

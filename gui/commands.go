@@ -8,10 +8,6 @@ type executable interface {
 	execute(u *gtkUI)
 }
 
-type mainCommands struct {
-	commands chan interface{}
-}
-
 type connectAccountCmd struct{ a *account }
 type disconnectAccountCmd struct{ a *account }
 type connectionInfoCmd struct{ a *account }
@@ -20,6 +16,22 @@ type changePasswordAccountCmd struct{ a *account }
 type removeAccountCmd struct{ a *account }
 type toggleAutoConnectCmd struct{ a *account }
 type toggleAlwaysEncryptCmd struct{ a *account }
+
+type cmd interface {
+	connectAccountCmd |
+		disconnectAccountCmd |
+		connectionInfoCmd |
+		editAccountCmd |
+		changePasswordAccountCmd |
+		removeAccountCmd |
+		toggleAutoConnectCmd |
+		toggleAlwaysEncryptCmd |
+		otrclient.AuthorizeFingerprintCmd
+}
+
+type mainCommands struct {
+	commands chan interface{}
+}
 
 func (m *mainCommands) ExecuteCmd(c interface{}) {
 	m.commands <- c

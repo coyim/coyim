@@ -338,7 +338,7 @@ type accountMockSession struct {
 	isDisconnected bool
 	isConnected    bool
 	config         *config.Account
-	events         []chan<- interface{}
+	events         []chan<- events.Is
 
 	lock sync.Mutex
 }
@@ -363,7 +363,7 @@ func (v *accountMockSession) GetConfig() *config.Account {
 	return v.config
 }
 
-func (v *accountMockSession) Subscribe(v1 chan<- interface{}) {
+func (v *accountMockSession) Subscribe(v1 chan<- events.Is) {
 	v.events = append(v.events, v1)
 }
 

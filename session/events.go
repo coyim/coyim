@@ -8,19 +8,19 @@ import (
 )
 
 // Subscribe subscribes the observer to XMPP events
-func (s *session) Subscribe(c chan<- interface{}) {
+func (s *session) Subscribe(c chan<- events.Is) {
 	s.subscribers.Lock()
 	defer s.subscribers.Unlock()
 
 	if s.subscribers.subs == nil {
-		s.subscribers.subs = make([]chan<- interface{}, 0)
+		s.subscribers.subs = make([]chan<- events.Is, 0)
 	}
 
 	s.subscribers.subs = append(s.subscribers.subs, c)
 }
 
 // Unsubscribe unsubscribes the observer to XMPP events
-func (s *session) unsubscribe(c chan<- interface{}) {
+func (s *session) unsubscribe(c chan<- events.Is) {
 	s.subscribers.Lock()
 	defer s.subscribers.Unlock()
 
@@ -34,7 +34,7 @@ func (s *session) unsubscribe(c chan<- interface{}) {
 	}
 }
 
-func (s *session) publishEventTo(subscriber chan<- interface{}, e interface{}, subWait *sync.WaitGroup) {
+func (s *session) publishEventTo(subscriber chan<- events.Is, e events.Is, subWait *sync.WaitGroup) {
 	defer func() {
 		subWait.Done()
 		if r := recover(); r != nil {
@@ -59,7 +59,7 @@ func (s *session) publishPeerEvent(e events.PeerType, peer jid.Any) {
 	})
 }
 
-func (s *session) publishEvent(e interface{}) {
+func (s *session) publishEvent(e events.Is) {
 	s.pendingEventsLock.Lock()
 	s.pendingEvents++
 	s.pendingEventsLock.Unlock()
@@ -88,7 +88,7 @@ func (s *session) publishEvent(e interface{}) {
 	}()
 }
 
-func (s *session) PublishEvent(e interface{}) {
+func (s *session) PublishEvent(e events.Is) {
 	s.publishEvent(e)
 }
 

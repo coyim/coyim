@@ -10,7 +10,7 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-func (u *gtkUI) handleOneAccountEvent(ev interface{}, a *account) {
+func (u *gtkUI) handleOneAccountEvent(ev events.Is, a *account) {
 	switch t := ev.(type) {
 	case events.Event:
 		doInUIThread(func() {

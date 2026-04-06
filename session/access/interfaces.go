@@ -9,6 +9,7 @@ import (
 	"github.com/coyim/coyim/otrclient"
 	"github.com/coyim/coyim/roster"
 	sdata "github.com/coyim/coyim/session/data"
+	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/session/muc"
 	mdata "github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/tls"
@@ -44,7 +45,7 @@ type HasSymmetricKey interface {
 
 // Publisher is anything that can publish events
 type Publisher interface {
-	PublishEvent(interface{})
+	PublishEvent(events.Is)
 }
 
 // SMP contains functionality related to SMP
@@ -142,7 +143,7 @@ type Logging interface {
 
 // Events allow you to subscribe to events
 type Events interface {
-	Subscribe(chan<- interface{})
+	Subscribe(chan<- events.Is)
 }
 
 // Version gives access to version functionality

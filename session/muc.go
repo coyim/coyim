@@ -17,7 +17,7 @@ import (
 type mucManager struct {
 	log          coylog.Logger
 	conn         func() xi.Conn
-	publishEvent func(ev interface{})
+	publishEvent func(ev events.Is)
 
 	roomInfos     map[jid.Bare]*muc.RoomListing
 	roomInfosLock sync.Mutex
@@ -32,7 +32,7 @@ type mucManager struct {
 	roomConfigChangesHandlersLock sync.Mutex
 }
 
-func newMUCManager(log coylog.Logger, conn func() xi.Conn, publishEvent func(ev interface{})) *mucManager {
+func newMUCManager(log coylog.Logger, conn func() xi.Conn, publishEvent func(ev events.Is)) *mucManager {
 	m := &mucManager{
 		log:              log,
 		conn:             conn,

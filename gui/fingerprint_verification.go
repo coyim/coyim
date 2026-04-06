@@ -75,7 +75,7 @@ func verifyFingerprintDialog(account *account, peer jid.Any, parent gtki.Window)
 	responseType := gtki.ResponseType(dialog.Run())
 	switch responseType {
 	case gtki.RESPONSE_YES:
-		account.executeCmd(otrclient.AuthorizeFingerprintCmd{
+		executeCmd(account, otrclient.AuthorizeFingerprintCmd{
 			Account:     accountConfig,
 			Session:     account.session,
 			Peer:        peer.NoResource(),

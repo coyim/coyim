@@ -10,6 +10,7 @@ import (
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
+	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/session/muc"
 	mdata "github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/tls"
@@ -172,7 +173,7 @@ func (*SessionMock) SetLastActionTime(time.Time) {}
 func (*SessionMock) SetWantToBeOnline(bool) {}
 
 // Subscribe is the implementation for Session interface
-func (*SessionMock) Subscribe(chan<- interface{}) {}
+func (*SessionMock) Subscribe(chan<- events.Is) {}
 
 // Timeout is the implementation for Session interface
 func (*SessionMock) Timeout(data.Cookie, time.Time) {}
@@ -187,7 +188,7 @@ func (*SessionMock) FinishSMP(jid.WithResource, string) {}
 func (*SessionMock) AbortSMP(jid.WithResource) {}
 
 // PublishEvent is the implementation for Session interface
-func (*SessionMock) PublishEvent(interface{}) {}
+func (*SessionMock) PublishEvent(events.Is) {}
 
 // SendIQError is the implementation for Session interface
 func (*SessionMock) SendIQError(*data.ClientIQ, interface{}) {}

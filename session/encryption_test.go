@@ -17,7 +17,7 @@ var _ = Suite(&EncryptionSuite{})
 
 func (s *EncryptionSuite) Test_session_notify_publishesANotification(c *C) {
 	sess := &session{}
-	ch := make(chan interface{})
+	ch := make(chan events.Is)
 	waiting := make(chan bool)
 	sess.eventsReachedZero = waiting
 	sess.subscribers.subs = append(sess.subscribers.subs, ch)
@@ -64,7 +64,7 @@ func (s *EncryptionSuite) Test_session_processEncryption_handlesOtherKnownAlgori
 	l, hook := test.NewNullLogger()
 	l.SetLevel(log.DebugLevel)
 
-	ch := make(chan interface{})
+	ch := make(chan events.Is)
 	done := make(chan bool)
 	sess := &session{
 		log:               l,
@@ -105,7 +105,7 @@ func (s *EncryptionSuite) Test_session_processEncryption_handlesUnknownAlgorithm
 	l, hook := test.NewNullLogger()
 	l.SetLevel(log.DebugLevel)
 
-	ch := make(chan interface{})
+	ch := make(chan events.Is)
 	done := make(chan bool)
 	sess := &session{
 		log:               l,

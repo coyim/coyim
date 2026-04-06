@@ -15,7 +15,7 @@ type SessionEventSuite struct{}
 var _ = Suite(&SessionEventSuite{})
 
 func (s *SessionEventSuite) Test_publish_notifiesWithEvents(c *C) {
-	observer := make(chan interface{}, 1)
+	observer := make(chan events.Is, 1)
 
 	session := &session{}
 	session.Subscribe(observer)
@@ -39,8 +39,8 @@ func (s *SessionEventSuite) Test_publish_doesNotBlockIfThereIsNoSubscriber(c *C)
 func (s *SessionEventSuite) Test_session_unsubscribe_works(c *C) {
 	sess := &session{}
 
-	c1 := make(chan interface{})
-	c2 := make(chan interface{})
+	c1 := make(chan events.Is)
+	c2 := make(chan events.Is)
 
 	sess.Subscribe(c1)
 	c.Assert(sess.subscribers.subs, HasLen, 1)
@@ -55,7 +55,7 @@ func (s *SessionEventSuite) Test_session_unsubscribe_works(c *C) {
 func (s *SessionEventSuite) Test_session_publishEventTo_unsubscribesOnFailure(c *C) {
 	sess := &session{}
 
-	c1 := make(chan interface{})
+	c1 := make(chan events.Is)
 
 	sess.Subscribe(c1)
 
@@ -69,7 +69,7 @@ func (s *SessionEventSuite) Test_session_publishEventTo_unsubscribesOnFailure(c 
 }
 
 func (s *SessionEventSuite) Test_session_PublishEvent_works(c *C) {
-	ch := make(chan interface{})
+	ch := make(chan events.Is)
 	done := make(chan bool)
 	sess := &session{
 		eventsReachedZero: done,
@@ -79,7 +79,7 @@ func (s *SessionEventSuite) Test_session_PublishEvent_works(c *C) {
 
 	var wg sync.WaitGroup
 	wg.Add(1)
-	var nots []interface{}
+	var nots []events.Is
 	go func() {
 		for n := range ch {
 			nots = append(nots, n)
@@ -88,19 +88,19 @@ func (s *SessionEventSuite) Test_session_PublishEvent_works(c *C) {
 	}()
 
 	go func() {
-		sess.PublishEvent("hello")
+		sess.PublishEvent(events.Notification{nil, "hello"})
 	}()
 
 	<-done
 	close(ch)
 	wg.Wait()
 
-	c.Assert(nots, DeepEquals, []interface{}{"hello"})
+	c.Assert(nots, DeepEquals, []events.Is{events.Notification{nil, "hello"}})
 
 }
 
 func (s *SessionEventSuite) Test_session_publishSMPEvent_works(c *C) {
-	ch := make(chan interface{})
+	ch := make(chan events.Is)
 	done := make(chan bool)
 	sess := &session{
 		eventsReachedZero: done,

@@ -5,13 +5,13 @@ import (
 	"encoding/xml"
 	"io"
 	"net"
-	"strings"
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/servers"
 	"github.com/coyim/coyim/tls"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/jid"
 
 	"golang.org/x/net/proxy"
 )
@@ -118,15 +118,11 @@ func (d *dialer) hasCustomServer() bool {
 }
 
 func (d *dialer) getJIDLocalpart() string {
-	// TODO: this should use the `jid` package
-	parts := strings.SplitN(d.JID, "@", 2)
-	return parts[0]
+	return jid.ParseBare(d.JID).Local().String()
 }
 
 func (d *dialer) getJIDDomainpart() string {
-	//TODO: remove any existing resourcepart although our doc says it is a bare JID (without resourcepart) but it would be nice
-	parts := strings.SplitN(d.JID, "@", 2)
-	return parts[1]
+	return jid.Parse(d.JID).Host().String()
 }
 
 // GetServer returns the "hardcoded" server chosen if available, otherwise returns the domainpart from the JID. The server contains port information

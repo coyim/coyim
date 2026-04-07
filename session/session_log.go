@@ -1,6 +1,7 @@
 package session
 
 import (
+	"errors"
 	"io"
 	"os"
 
@@ -9,10 +10,10 @@ import (
 	"github.com/coyim/coyim/coylog"
 )
 
-//TODO: error
-func openLogFile(logFile string) io.Writer {
+// TODO: error
+func openLogFile(logFile string) (io.Writer, error) {
 	if len(logFile) == 0 {
-		return nil
+		return nil, errors.New("no log file given")
 	}
 
 	log.WithField("file", logFile).Debug("Logging XMPP messages to file")
@@ -21,10 +22,10 @@ func openLogFile(logFile string) io.Writer {
 	if err != nil {
 		log.WithError(err).Warn("Failed to open log file.")
 		//return nil, errors.New("Failed to open raw log file: " + err.Error())
-		return nil
+		return nil, err
 	}
 
-	return rawLog
+	return rawLog, nil
 }
 
 // Log is the implementation for session interface

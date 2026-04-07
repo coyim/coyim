@@ -15,7 +15,8 @@ type SessionLogSuite struct{}
 var _ = Suite(&SessionLogSuite{})
 
 func (s *SessionLogSuite) Test_openLogFile_returnsNilIfNoFilenameGiven(c *C) {
-	c.Assert(openLogFile(""), IsNil)
+	v, _ := openLogFile("")
+	c.Assert(v, IsNil)
 }
 
 func (s *SessionLogSuite) Test_openLogFile_failsIfCantOpenFile(c *C) {
@@ -37,7 +38,9 @@ func (s *SessionLogSuite) Test_openLogFile_failsIfCantOpenFile(c *C) {
 	ll.SetLevel(log.DebugLevel)
 	hook := test.NewGlobal()
 
-	c.Assert(openLogFile(filepath.Join(tf.Name(), "something elsE")), IsNil)
+	v, _ := openLogFile(filepath.Join(tf.Name(), "something elsE"))
+
+	c.Assert(v, IsNil)
 
 	c.Assert(len(hook.Entries), Equals, 2)
 	c.Assert(hook.LastEntry().Level, Equals, log.WarnLevel)
@@ -64,7 +67,7 @@ func (s *SessionLogSuite) Test_openLogFile_succeeds(c *C) {
 	ll.SetLevel(log.DebugLevel)
 	hook := test.NewGlobal()
 
-	res := openLogFile(tf.Name())
+	res, _ := openLogFile(tf.Name())
 	c.Assert(res, Not(IsNil))
 
 	c.Assert(len(hook.Entries), Equals, 1)

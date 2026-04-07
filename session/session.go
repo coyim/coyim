@@ -134,8 +134,8 @@ func parseFromConfig(cu *config.Account) []otr3.PrivateKey {
 }
 
 // CreateXMPPLogger creates a XMPP log.
-func CreateXMPPLogger(rawLog string) (*bytes.Buffer, io.Writer, io.Closer) {
-	log := openLogFile(rawLog)
+func CreateXMPPLogger(rawLog string) (*bytes.Buffer, io.Writer, io.Closer, error) {
+	log, e := openLogFile(rawLog)
 
 	var closer io.Closer
 	if cl, ok := log.(io.Closer); ok {
@@ -151,23 +151,31 @@ func CreateXMPPLogger(rawLog string) (*bytes.Buffer, io.Writer, io.Closer) {
 		} else {
 			log = inMemory
 		}
+	} else {
+		if e != nil {
+			return nil, nil, nil, e
+		}
 	}
 
-	return inMemory, log, closer
+	return inMemory, log, closer, nil
 }
 
 // Factory creates a new session from the given config
 func Factory(ctx context.Context) func(*config.ApplicationConfig, *config.Account, func(tls.Verifier, tls.Factory) xi.Dialer) access.Session {
 	return func(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifier, tls.Factory) xi.Dialer) access.Session {
-		// Make xmppLogger go to in memory STRING and/or the log file
-
-		inMemoryLog, xmppLogger, _ := CreateXMPPLogger(c.RawLogFile)
-
 		mainLog := ctx.Value(names.Log).(*log.Entry)
 
 		sessionLog := mainLog.WithFields(log.Fields{
-			"account": cu.Account,
+			"account":   cu.Account,
+			"component": "session",
 		})
+
+		// Make xmppLogger go to in memory STRING and/or the log file
+		inMemoryLog, xmppLogger, _, e := CreateXMPPLogger(c.RawLogFile)
+
+		if e != nil {
+			sessionLog.WithError(e).Error("error while creating xmpp logger")
+		}
 
 		s := &session{
 			ctx:           ctx,
@@ -183,7 +191,7 @@ func Factory(ctx context.Context) func(*config.ApplicationConfig, *config.Accoun
 
 			inMemoryLog:   inMemoryLog,
 			xmppLogger:    xmppLogger,
-			log:           sessionLog.WithField("component", "session"),
+			log:           sessionLog,
 			dialerFactory: df,
 		}
 

@@ -27,10 +27,10 @@ func (s *OTRSuite) Test_GetAndWipeSymmetricKeyFor_failsIfConversationNotFound(c 
 }
 
 type mockCommandManager struct {
-	exec func(interface{})
+	exec func(otrclient.IsCmd)
 }
 
-func (m *mockCommandManager) ExecuteCmd(c interface{}) {
+func (m *mockCommandManager) ExecuteCmd(c otrclient.IsCmd) {
 	if m.exec != nil {
 		m.exec(c)
 	}

@@ -17,23 +17,20 @@ type removeAccountCmd struct{ a *account }
 type toggleAutoConnectCmd struct{ a *account }
 type toggleAlwaysEncryptCmd struct{ a *account }
 
-type cmd interface {
-	connectAccountCmd |
-		disconnectAccountCmd |
-		connectionInfoCmd |
-		editAccountCmd |
-		changePasswordAccountCmd |
-		removeAccountCmd |
-		toggleAutoConnectCmd |
-		toggleAlwaysEncryptCmd |
-		otrclient.AuthorizeFingerprintCmd
-}
+func (connectAccountCmd) IsCmdMarker()        {}
+func (disconnectAccountCmd) IsCmdMarker()     {}
+func (connectionInfoCmd) IsCmdMarker()        {}
+func (editAccountCmd) IsCmdMarker()           {}
+func (changePasswordAccountCmd) IsCmdMarker() {}
+func (removeAccountCmd) IsCmdMarker()         {}
+func (toggleAutoConnectCmd) IsCmdMarker()     {}
+func (toggleAlwaysEncryptCmd) IsCmdMarker()   {}
 
 type mainCommands struct {
-	commands chan interface{}
+	commands chan otrclient.IsCmd
 }
 
-func (m *mainCommands) ExecuteCmd(c interface{}) {
+func (m *mainCommands) ExecuteCmd(c otrclient.IsCmd) {
 	m.commands <- c
 }
 

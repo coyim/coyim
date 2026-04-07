@@ -14,6 +14,7 @@ import (
 	"github.com/coyim/coyim/gui/settings"
 	"github.com/coyim/coyim/i18n"
 	ournet "github.com/coyim/coyim/net"
+	"github.com/coyim/coyim/otrclient"
 	rosters "github.com/coyim/coyim/roster"
 	sessions "github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/session/events"
@@ -110,7 +111,7 @@ func NewGTK(ctx context.Context, version string, sf sessions.Factory, df interfa
 
 	ret := &gtkUI{}
 
-	ret.commands = make(chan interface{}, 5)
+	ret.commands = make(chan otrclient.IsCmd, 5)
 	ret.hasLog.log = log.StandardLogger().WithField("component", "gui")
 
 	ret.toggleConnectAllAutomaticallyRequest = make(chan bool, 100)

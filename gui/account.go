@@ -10,6 +10,7 @@ import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/internal/util"
+	"github.com/coyim/coyim/otrclient"
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/interfaces"
@@ -125,7 +126,7 @@ func (account *account) enableExistingConversationWindows(enable bool) {
 	}
 }
 
-func executeCmd[T cmd](account *account, c T) {
+func executeCmd(account *account, c otrclient.IsCmd) {
 	account.session.CommandManager().ExecuteCmd(c)
 }
 

@@ -2786,9 +2786,9 @@ func (s *SessionSuite) Test_receiveClientMessage_handlesSMPComplete(c *C) {
 	}
 	mcm := &mockConvManager{}
 
-	var commands []interface{}
+	var commands []otrclient.IsCmd
 	mcmdm := &mockCommandManager{
-		exec: func(v interface{}) {
+		exec: func(v otrclient.IsCmd) {
 			commands = append(commands, v)
 		},
 	}

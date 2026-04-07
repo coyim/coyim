@@ -20,10 +20,22 @@ type SaveInstanceTagCmd struct {
 	InstanceTag uint32
 }
 
+// IsCmdMarker implements IsCmd
+func (AuthorizeFingerprintCmd) IsCmdMarker() {}
+
+// IsCmdMarker implements IsCmd
+func (SaveInstanceTagCmd) IsCmdMarker() {}
+
 // SaveApplicationConfigCmd is a command that represents a request to save the application configuration
 type SaveApplicationConfigCmd struct{}
 
+// IsCmdMarker implements IsCmd
+func (SaveApplicationConfigCmd) IsCmdMarker() {}
+
+// IsCmd marks an a command event
+type IsCmd interface{ IsCmdMarker() }
+
 // CommandManager is anything that can execute commands
 type CommandManager interface {
-	ExecuteCmd(c interface{})
+	ExecuteCmd(c IsCmd)
 }

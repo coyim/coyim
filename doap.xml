@@ -6,15 +6,30 @@
     <Project>
         <name>CoyIM</name>
         <shortdesc xml:lang="en">A safe and secure chat client</shortdesc>
+        <description xml:lang='en'>
+            The CoyIM is not a general purpose chat client. We want to provide an alternative for secure and private chat.
+            We want to be as secure as possible, from the moment you start up.
+            We want to leak the minimum information necessary for you to be able to communicate what you need to communicate.
+        </description>
         <homepage rdf:resource="https://coy.im/"/>
-        <schema:logo rdf:resource="https://pidgin.im/images/logo.png"/>
-        <schema:screenshot rdf:resource="https://coy.im/images/coyim-logo.png"/>
+        <schema:logo rdf:resource="https://coy.im/favicon/apple-touch-icon.png"/>
+        <schema:screenshot rdf:resource="https://coy.im/images/coyim.png"/>
         <schema:documentation rdf:resource="https://coy.im/documentation/"/>
         <download-page rdf:resource="https://coy.im/download/"/>
         <bug-database rdf:resource="https://github.com/coyim/coyim/issues"/>
         <license rdf:resource="https://raw.githubusercontent.com/coyim/coyim/refs/heads/main/LICENSE"/>
+        <language>de</language>
         <language>en</language>
         <language>es</language>
+        <language>fi</language>
+        <language>fr</language>
+        <language>nb_NO</language>
+        <language>pt</language>
+        <language>pt_BR</language>
+        <language>ru</language>
+        <language>sv</language>
+        <language>ta</language>
+        <language>zh_Hans</language>
         <programming-language>Go</programming-language>
         <os>Linux</os>
         <os>Windows</os>
@@ -132,6 +147,12 @@
         </implements>
         <implements>
             <xmpp:SupportedXep>
+                <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0364.html"/>
+                <xmpp:status>complete</xmpp:status>
+            </xmpp:SupportedXep>
+        </implements>
+        <implements>
+            <xmpp:SupportedXep>
                 <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0368.html"/>
                 <xmpp:status>complete</xmpp:status>
             </xmpp:SupportedXep>
@@ -140,6 +161,13 @@
             <xmpp:SupportedXep>
                 <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0380.html"/>
                 <xmpp:status>complete</xmpp:status>
+            </xmpp:SupportedXep>
+        </implements>
+        <implements>
+            <xmpp:SupportedXep>
+                <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0384.html"/>
+                <xmpp:status>wontfix</xmpp:status>
+                <xmpp:note xml:lang='en'>Not planned, see https://github.com/coyim/coyim/issues/233</xmpp:note>
             </xmpp:SupportedXep>
         </implements>
     </Project>
